@@ -1,0 +1,63 @@
+<module>
+	<inherits name="com.google.gwt.user.User"/>
+	<inherits name='com.google.gwt.user.theme.clean.Clean'/>
+	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+		
+	<!-- Other module inherits                                      -->
+  	<inherits name="com.google.gwt.activity.Activity" />
+	<inherits name="com.google.gwt.place.Place" />
+	<inherits name="com.google.gwt.logging.Logging" />
+	<inherits name="com.google.gwt.cell.Cell" />
+	<inherits name="com.google.gwt.resources.Resources" />
+	<inherits name="com.google.gwt.logging.Logging"/>
+
+	<!-- form factor code -->
+	<inherits name='edu.emory.oit.vpcprovisioning.FormFactor'/> 
+	<inherits name='edu.emory.oit.vpcprovisioning.ui.UI'/>
+
+	<!-- <set-property name="user.agent" value="safari" /> -->
+	
+	<!-- specify the 'public' stylesheet -->
+	<stylesheet src="VpcProvisioningEntryPoint.css" />
+
+	<set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true" />
+
+	<entry-point class="edu.emory.oit.vpcprovisioning.client.VpcProvisioningEntryPoint"/>
+	
+	<!-- determine client factory to use -->	
+	<!-- Use DesktopClientFactory by default. -->
+	<replace-with class="edu.emory.oit.vpcprovisioning.client.ClientFactoryImplDesktop">
+		<when-type-is class="edu.emory.oit.vpcprovisioning.client.ClientFactory" />
+	</replace-with>
+
+	<!-- Use MobileClientFactory for mobile form factor. -->
+ 	<replace-with class="edu.emory.oit.vpcprovisioning.client.ClientFactoryImplMobile">
+		<when-type-is class="edu.emory.oit.vpcprovisioning.client.ClientFactory"/>
+		<when-property-is name="formfactor" value="mobile"/>
+	</replace-with>
+	
+	<!-- Use tablet for tablet form factor. -->
+	<!-- 
+ 	<replace-with class="edu.emory.oit.mtp.client.TabletClientFactory">
+		<when-type-is class="edu.emory.oit.mtp.client.ClientFactory"/>
+		<when-property-is name="formfactor" value="tablet"/>
+	</replace-with>
+	-->
+	 
+	<!-- <set-property name="gwt.logging.popupHandler" value="DISABLED" /> -->
+	<!-- <set-property name="gwt.logging.logLevel" value="INFO"/> -->
+    <!-- <set-property name="gwt.logging.enabled" value="FALSE"/> -->
+    <!-- <set-property name="gwt.logging.consoleHandler" value="DISABLED"/> -->
+    
+	<!-- 
+	<define-linker name="appcachelinker" class="com.google.gwt.sample.mobilewebapp.linker.AppCacheLinker" />
+	<add-linker name="appcachelinker" />
+	 -->
+
+	<!-- Specify the paths for translatable code                    -->
+	<source path='client'/>
+	<source path='presenter'/>
+	<source path='shared'/>
+</module>

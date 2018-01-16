@@ -1,0 +1,159 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:VerticalPanel spacing="8" width="100%">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:CaptionPanel width="90%" captionHTML="Notice" styleName="{style.medium-captionpanel}">
+					<g:VerticalPanel width="100%" height="100%">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<!-- 
+							AWS_ACCOUNTS_URL is dynamically replaced by the 
+							presenter/UI with the value of the
+							awsAccountURL which is a property found in the config doc.  This 
+							happens each time the page is loaded.  So, changes 
+							to the value of this property in the config doc 
+							should be reflected WITHOUT bouncing the app server.   
+							href="https://login.emory.edu:4443/idp/profile/SAML2/Unsolicited/SSO?providerId=urn:amazon:webservices" title="Open AWS Console in new tab.">here</a> 
+						-->
+						<g:HTML ui:field="accountInfoHTML">Make a note of the account number you wish to log into and 
+							then click <a target="_blank" 
+							href="AWS_ACCOUNTS_URL" title="Open AWS Console in new tab.">here</a> 
+							to log into AWS accounts using your Emory login.  
+							Once you are logged into the appropriate account and 
+							assumed the appropriate role, you can use these 
+							links to access various account information:
+							<ul>
+								<!-- 
+									AWS_BILLING_MANAGEMENT_URL is dynamically replaced by the 
+									presenter/UI with the value of the
+									awsBillingManagementURL which is a property found in the config doc.  This 
+									happens each time the page is loaded.  So, changes 
+									to the value of this property in the config doc 
+									should be reflected WITHOUT bouncing the app server.   
+									href="https://login.emory.edu:4443/idp/profile/SAML2/Unsolicited/SSO?providerId=urn:amazon:webservices" title="Open AWS Console in new tab.">here</a> 
+								-->
+								<li>Billing Management:  AWS_BILLING_MANAGEMENT_URL</li>
+							</ul>
+						</g:HTML>
+						</g:cell>
+					</g:VerticalPanel>
+				</g:CaptionPanel>
+			</g:cell>
+		</g:VerticalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountIdTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Account Name:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountNameTB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Owner Net Id:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="ownerNetIdTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Password Location:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="passwordLocationTB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="financialAccountNumberTB" />
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+			<g:HorizontalPanel>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+						<g:ScrollPanel>
+							<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
+								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
+								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addNetIdButton"
+											addStyleNames="{style.glowing-border} {style.addButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.heading_label}">Admin Net Ids associated to this AWS Account:</g:Label>
+									<g:FlexTable ui:field="netIdTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+						<g:ScrollPanel>
+							<g:VerticalPanel spacing="8" ui:field="emailsVP" height="100%">
+								<g:Label addStyleNames="{style.heading_label}">Add/remove email(s):</g:Label>
+								<g:HorizontalPanel ui:field="addEmailHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+											ui:field="addEmailTypeLB" />
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addEmailButton"
+											addStyleNames="{style.glowing-border} {style.addButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.heading_label}">e-mail addresses associated to this account:</g:Label>
+									<g:FlexTable ui:field="emailTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+							ui:field="okayButton">Okay</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.cancelButton}"
+							ui:field="cancelButton">Cancel</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.addButton}"
+							ui:field="billSummaryButton">View Bills</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 

@@ -1,0 +1,76 @@
+package edu.emory.oit.vpcprovisioning.shared;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+@SuppressWarnings("serial")
+public class AccountQueryFilterPojo extends SharedObject implements IsSerializable {
+	String accountId;
+	String accountName;
+	// TODO: change to a list of emails (and query spec)?
+	EmailPojo email;
+	String accountOwnerNetId;
+	String financialAccountNumber;
+	String createUser;
+	String lastUpdateUser;
+	
+	public AccountQueryFilterPojo() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public EmailPojo getEmail() {
+		return email;
+	}
+
+	public void setEmail(EmailPojo email) {
+		this.email = email;
+	}
+
+	public String getAccountOwnerNetId() {
+		return accountOwnerNetId;
+	}
+
+	public void setAccountOwnerNetId(String accountOwnerNetId) {
+		this.accountOwnerNetId = accountOwnerNetId;
+	}
+
+	public String getFinancialAccountNumber() {
+		return financialAccountNumber;
+	}
+
+	public void setFinancialAccountNumber(String financialAccountNumber) {
+		this.financialAccountNumber = financialAccountNumber;
+	}
+
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
+	public String getLastUpdateUser() {
+		return lastUpdateUser;
+	}
+
+	public void setLastUpdateUser(String lastUpdateUser) {
+		this.lastUpdateUser = lastUpdateUser;
+	}
+
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:HorizontalPanel spacing="8">
+					<g:Label text="Please wait..."/>
+					<g:Image url="images/ajax-loader.gif"/>
+				</g:HorizontalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			
+			<!-- Hide this one when generating -->
+			<g:Grid ui:field="maintainVpcpGrid" cellSpacing="12" visible="false">
+			<!-- NEEDS these (when maintaining):
+				<!ELEMENT VirtualPrivateCloudProvisioning (
+					ProvisioningId, 
+					VirtualPrivateCloudRequisition, 
+					Status, 
+					ProvisioningResult?, 
+					ActualTime?, 
+					AnticipatedTime?, 
+					ProvisioningStep*, 
+					CreateUser, 
+					CreateDatetime, 
+					LastUpdateUser?, 
+					LastUpdateDatetime?)>
+			 -->
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Provisioning ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="provisioningIdTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Status:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="statusTB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">VPC Requisition Type:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcTypeLB" />
+			    	</g:customCell>
+				</g:row>
+				<!-- TODO create/update user/time read only -->
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<!-- hide this one when maintaining -->
+			<g:VerticalPanel ui:field="generateVpcpPanel">
+			<!-- NEEDS these (when generating):
+			<!ELEMENT VirtualPrivateCloudRequisition (AccountId?, 
+				TicketId?, 
+				AuthenticatedRequestorNetId, 
+				AccountOwnerNetId, 
+				FinancialAccountNumber, 
+				CustomerAdminNetId+, 
+				Type, 
+				ComplianceClass, 
+				NotifyAdmins)>
+			 -->
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Select Account:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountLB" />
+			    	</g:customCell>
+			    	<g:customCell>
+			    		<g:CaptionPanel ui:field="accountCP" captionHTML="Account Info" addStyleNames="{style.light-captionpanel}">
+			    		</g:CaptionPanel>
+			    	</g:customCell>
+			    </g:row>
+			</g:Grid>
+			<g:Grid cellSpacing="12">
+			    <g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Account Owner NetId:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcpReqOwnerNetIdTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Ticket ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcpReqTicketIdTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Requestor NetId:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcpReqRequestorNetIdTB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcpReqFinancialAcctNumberTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcpReqTypeLB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcpReqComplianceClassLB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+			    		<g:CheckBox ui:field="vpcpReqNotifyAdminsCB" title="Check if you want to notify admins when this VPCP is generated."/>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+			</g:VerticalPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+			<g:HorizontalPanel>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+						<g:ScrollPanel>
+							<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
+								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
+								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addNetIdButton"
+											addStyleNames="{style.glowing-border} {style.addButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.heading_label}">Admin Net Ids associated to this VPC:</g:Label>
+									<g:FlexTable ui:field="netIdTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+							ui:field="okayButton">Okay</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.cancelButton}"
+							ui:field="cancelButton">Cancel</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 

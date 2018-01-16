@@ -1,0 +1,156 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:ScrollPanel height="99%" width="99%">
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:HorizontalPanel spacing="8">
+					<g:Label text="Please wait..."/>
+					<g:Image url="images/ajax-loader.gif"/>
+				</g:HorizontalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
+    		<g:CaptionPanel ui:field="introPanel" captionHTML="Intro" addStyleNames="{style.light-captionpanel}" width="95%">
+    		<g:VerticalPanel>
+	   			<g:Grid cellSpacing ="8">
+					<g:row>
+				    	<g:customCell>
+							<g:HTML>Below is the current status of this VPC Provisioning 
+							object.  The page will refresh every 5 seconds with the latest 
+							status of the object (until the Overall Status is "completed").  
+							Alternatively, you may click on the "Refresh" button 
+							to manually refresh the status.  You can click the 
+							"Done" button to leave the page and return to the list of VPCP 
+							objects and you can return to this page at any time to check 
+							the status of this particular provisioning object.</g:HTML>
+				    	</g:customCell>
+				    </g:row>
+				</g:Grid>
+			</g:VerticalPanel>
+			</g:CaptionPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+							ui:field="doneButton">Done</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.addButton}"
+							ui:field="refreshButton">Refresh</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
+			<!-- EVERYTHING IS READ ONLY ON THIS PAGE -->
+			
+    		<g:CaptionPanel ui:field="vpcpStatusCP" captionHTML="Overall Status" addStyleNames="{style.light-captionpanel}" width="95%">
+    			<g:VerticalPanel>
+    			<g:Grid ui:field="vpcpGeneralStatusGrid" cellSpacing ="8">
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Provisioning ID:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="provisioningIdLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+	 						<g:Label addStyleNames="{style.label}">Overall Status:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="vpcpStatusLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Provisioning Result:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="provisioningResultLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+					</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Anticpated Completion Time:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="anticipatedTimeLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Actual Completion Time:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="actualTimeLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+					</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Requestor:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="requestorNetIdLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="ownerNetIdLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="financialAccountLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+					</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="vpcTypeLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="complianceClassLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="notifyAdminsLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+					</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Overall Progress:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:HTML ui:field="progressHTML"/>
+				    	</g:customCell>
+					</g:row>
+    			</g:Grid>
+				<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
+					<g:Label addStyleNames="{style.heading_label}">Admin Net Ids associated to this VPC:</g:Label>
+					<g:FlexTable ui:field="netIdTable" cellSpacing="3" cellPadding="3"/>
+				</g:VerticalPanel>
+    			</g:VerticalPanel>
+    		</g:CaptionPanel>
+    	</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
+    		<g:CaptionPanel ui:field="vpcpStepStatusCP" captionHTML="Provisioing Step Status" addStyleNames="{style.light-captionpanel}" width="95%">
+    			<g:VerticalPanel ui:field="vpcpStepsPanel">
+					<g:Label addStyleNames="{style.label}">VPCP Step Status Table/List goes here</g:Label>
+    			</g:VerticalPanel>
+			</g:CaptionPanel>
+		</g:cell>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 

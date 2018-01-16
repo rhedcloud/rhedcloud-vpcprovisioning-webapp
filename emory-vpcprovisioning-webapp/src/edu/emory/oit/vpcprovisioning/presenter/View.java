@@ -1,0 +1,20 @@
+package edu.emory.oit.vpcprovisioning.presenter;
+
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
+
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+
+public interface View extends IsWidget {
+	void showMessageToUser(String message);
+	void showPleaseWaitDialog();
+	void hidePleaseWaitDialog();
+	void setInitialFocus();
+//	void initPage();
+	public void showStatus(Widget source, String message);
+	public Widget getStatusMessageSource();
+//	public void applyAuthorizationMask();
+	public void applyEmoryAWSAdminMask();
+	public void applyEmoryAWSAuditorMask();
+	public void setUserLoggedIn(UserAccountPojo user);
+}

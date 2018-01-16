@@ -1,0 +1,52 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel width="100%" spacing="8">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:HorizontalPanel spacing="8">
+					<g:Label text="Please wait..."/>
+					<g:Image url="images/ajax-loader.gif"/>
+				</g:HorizontalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:HTML addStyleNames="{style.introHeading}">VPC List</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing AWS VPCs that you can view or edit.<br/><br/>
+		These reside in the database associated to the Emory AWS ESB Service.  
+		The Emory AWS Service is authoritatative for 
+		AWS Account and VirtualPrivateCloud objects and allows applications like this one 
+		to query, create, update and delete those objects.<br/><br/>
+		Click the 'Generate' button to go to the VPC maintenance page where you can generate an AWS VPC.</g:HTML>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+					<g:customCell>
+						<c:CellTable width="100%" ui:field="vpcListTable"  title="Existing CIDRs"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="vpcListPager" location="CENTER"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+					<!-- 
+					<g:customCell>
+						<g:Button ui:field="addVpcButton" text="Generate VPC" addStyleNames="{style.glowing-border} {style.addButton}" title="Generate a new VPC"/>
+					</g:customCell>
+					 -->
+					<g:customCell>
+						<g:Button ui:field="registerVpcButton" text="Register VPC" addStyleNames="{style.glowing-border} {style.addButton}" title="Register an existing VPC"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 

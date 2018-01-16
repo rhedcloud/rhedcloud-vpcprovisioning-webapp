@@ -1,0 +1,167 @@
+/*******************************************************************************
+ * Copyright 2011 Google Inc. All Rights Reserved.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************/
+package edu.emory.oit.vpcprovisioning.client;
+
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.BillPojo;
+import edu.emory.oit.vpcprovisioning.shared.BillQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.BillQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentStatus;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentStatusPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
+
+@RemoteServiceRelativePath("VpcProvisioningService")
+public interface VpcProvisioningService extends RemoteService {
+	/**
+	 * Utility class for simplifying access to the instance of async service.
+	 */
+	public static class Util {
+		private static VpcProvisioningServiceAsync instance;
+		public static VpcProvisioningServiceAsync getInstance(){
+			if (instance == null) {
+				instance = GWT.create(VpcProvisioningService.class);
+			}
+			return instance;
+		}
+	}
+	
+	
+	// START TEMPORARY
+	String testPropertyReload() throws RpcException;
+	// END TEMPORARY
+	
+	String getLoginURL() throws RpcException;
+	
+	// Identity services
+	DirectoryMetaDataPojo getDirectoryMetaDataForNetId(String netId) throws RpcException;
+
+	// UserAccount services (user logged in)
+	UserAccountPojo getUserLoggedIn() throws RpcException;
+	void invalidateSessionForUser(String userId);
+	boolean isSessionValidForUser(UserAccountPojo user) throws RpcException;
+	String getClientInfoForUser(UserAccountPojo user);
+	String getClientInfo();
+	
+	// Account
+	List<AccountPojo>getAccountsForUserLoggedIn() throws RpcException;
+	AccountQueryResultPojo getAccountsForFilter(AccountQueryFilterPojo filter) throws RpcException;
+	AccountPojo createAccount(AccountPojo account) throws RpcException;
+	AccountPojo updateAccount(AccountPojo account) throws RpcException;
+	void deleteAccount(AccountPojo account) throws RpcException;
+	List<String> getEmailTypeItems();
+	String getAwsAccountsURL() throws RpcException;
+	String getAwsBillingManagementURL() throws RpcException;
+	
+	// CIDR
+	List<CidrPojo>getCidrsForUserLoggedIn() throws RpcException;
+	CidrQueryResultPojo getCidrsForFilter(CidrQueryFilterPojo filter) throws RpcException;
+	CidrPojo createCidr(CidrPojo cidr) throws RpcException;
+	CidrPojo updateCidr(CidrPojo cidr) throws RpcException;
+	void deleteCidr(CidrPojo cidr) throws RpcException;
+	boolean isCidrAssigned(CidrPojo cidr) throws RpcException;
+	CidrAssignmentStatus getCidrAssignmentStatusForCidr(CidrPojo cidr) throws RpcException;
+
+	// CidrAssignment
+	List<CidrAssignmentPojo>getCidrAssignmentsForUserLoggedIn() throws RpcException;
+	CidrAssignmentQueryResultPojo getCidrAssignmentsForFilter(CidrAssignmentQueryFilterPojo filter) throws RpcException;
+	CidrAssignmentPojo createCidrAssignment(CidrAssignmentPojo cidrAssignment) throws RpcException;
+	CidrAssignmentPojo updateCidrAssignment(CidrAssignmentPojo cidrAssignment) throws RpcException;
+	void deleteCidrAssignment(CidrAssignmentPojo cidr) throws RpcException;
+	List<VpcPojo> getVpcsForAccount(String accountId) throws RpcException;
+	List<CidrPojo> getUnassignedCidrs() throws RpcException;
+	
+	// CidrAssignmentSummary
+	CidrAssignmentSummaryQueryResultPojo getCidrAssignmentSummariesForFilter(CidrAssignmentSummaryQueryFilterPojo filter) throws RpcException;
+	
+	// VPC
+	List<VpcPojo>getVpcsForUserLoggedIn() throws RpcException;
+	VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter) throws RpcException;
+	VpcPojo generateVpc(VpcRequisitionPojo vpcRequisition) throws RpcException;
+	VpcPojo updateVpc(VpcPojo vpc) throws RpcException;
+	VpcPojo registerVpc(VpcPojo vpc) throws RpcException;
+	void deleteVpc(VpcPojo vpc) throws RpcException;
+	List<String> getVpcTypeItems() throws RpcException;
+	
+	// VPCP
+	VpcpQueryResultPojo getVpcpsForFilter(VpcpQueryFilterPojo filter) throws RpcException;
+	void deleteVpcp(VpcpPojo vpc) throws RpcException;
+	VpcpPojo generateVpcp(VpcRequisitionPojo vpcRequisition) throws RpcException;
+	VpcpPojo updateVpcp(VpcpPojo vpc) throws RpcException;
+	List<String> getComplianceClassItems() throws RpcException;
+	
+	// Elastic IP
+	ElasticIpQueryResultPojo getElasticIpsForFilter(ElasticIpQueryFilterPojo filter) throws RpcException;
+	ElasticIpPojo createElasticIp(ElasticIpPojo elasticIp) throws RpcException;
+	void deleteElasticIp(ElasticIpPojo vpc) throws RpcException;
+	ElasticIpPojo updateElasticIp(ElasticIpPojo vpc) throws RpcException;
+	boolean isElasticIpAssigned(ElasticIpPojo elasticIp) throws RpcException;
+	ElasticIpAssignmentStatusPojo getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo elasticIp) throws RpcException;
+	
+	// ElasticIpAssignment
+	List<ElasticIpAssignmentPojo>getElasticIpAssignmentsForUserLoggedIn() throws RpcException;
+	ElasticIpAssignmentQueryResultPojo getElasticIpAssignmentsForFilter(ElasticIpAssignmentQueryFilterPojo filter) throws RpcException;
+	ElasticIpAssignmentPojo createElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment) throws RpcException;
+	ElasticIpAssignmentPojo updateElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment) throws RpcException;
+	void deleteElasticIpAssignment(ElasticIpAssignmentPojo cidr) throws RpcException;
+	List<ElasticIpPojo> getUnassignedElasticIps() throws RpcException;
+	
+	// ElasticIpAssignmentSummary
+	ElasticIpAssignmentSummaryQueryResultPojo getElasticIpAssignmentSummariesForFilter(ElasticIpAssignmentSummaryQueryFilterPojo filter) throws RpcException;
+	
+	// Bill and LineItem methods
+	BillQueryResultPojo getBillsForFilter(BillQueryFilterPojo filter) throws RpcException;
+	List<BillPojo> getCachedBillsForAccount(String accountId) throws RpcException;
+	void refreshMasterBillData() throws RpcException;
+
+
+	// caching methods
+	CidrPojo storeCidrInCacheForUser(String eppn, CidrPojo cidr);
+	CidrPojo getCidrFromCacheForUser(String eppn);
+	CidrAssignmentPojo storeCidrAssignmentInCacheForUser(String eppn, CidrAssignmentPojo cidrAssignment);
+	CidrAssignmentPojo getCidrAssignmentFromCacheForUser(String eppn);
+}

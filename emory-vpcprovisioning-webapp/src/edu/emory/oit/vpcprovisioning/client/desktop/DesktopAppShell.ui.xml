@@ -1,0 +1,134 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+		.header {
+			background: #1a1a1a;
+			color: white;
+			font-size: 2.8em;
+			line-height: 25pt;
+			text-align: center;
+			font-weight: bold;
+		}
+
+		.subTitle {
+			background: #1a1a1a;
+			color: white;
+			font-size: 14pt;
+			text-align: center;
+			font-weight: bold;
+		}
+	
+		.releaseInfo {
+			background: #1a1a1a;
+			color: white;
+			font-size: 12pt;
+			text-align: center;
+			font-weight: bold;
+		}
+	
+		.content {
+			color: black;
+			font-size: 14pt;
+			text-align: center;
+			font-weight: bold;
+			line-height: 200%;
+		}
+	</ui:style>
+	
+	<g:LayoutPanel ui:field='layoutPanel' width="100%" height="100%">
+
+		<!-- Title -->
+		<g:layer top='0px' height='3.5em' left='0px' right='0px'>
+			<g:HTMLPanel ui:field='titleBar' addStyleNames="{otherStyles.header}">
+				<div ui:field='titleElem'>VPC Provisioning App</div>
+			</g:HTMLPanel>
+		</g:layer>
+
+		<!-- sub title -->
+		<g:layer top='3.5em' height='2.0em' left='0px' right='0px'>
+			<g:HTMLPanel ui:field='subTitleBar' addStyleNames="{otherStyles.subTitle}">
+				<div ui:field='subTitleElem'>Client Info</div>
+			</g:HTMLPanel>
+		</g:layer>
+		
+		<!-- sub title -->
+		<g:layer top='5.5em' height='2.0em' left='0px' right='0px'>
+			<g:HTMLPanel ui:field='releaseInfoTitleBar' addStyleNames="{otherStyles.releaseInfo}">
+				<div ui:field='releaseInfoElem'>Release Info</div>
+			</g:HTMLPanel>
+		</g:layer>
+		
+		<!-- Content -->
+		<g:layer top='7.5em' bottom='0px' left='0px' right='0px'>
+			<g:ScrollPanel width="100%" height="99%">
+			<g:HorizontalPanel width="100%">
+				<g:cell horizontalAlignment="ALIGN_LEFT" width="1%"><g:HTML></g:HTML></g:cell>
+				<g:cell horizontalAlignment="ALIGN_CENTER" width="98%">
+					<g:VerticalPanel width="100%" height="100%">
+					<g:TabLayoutPanel 
+						barHeight="2" 
+						barUnit="EM" 
+						width="100%"
+						height="900px" 
+						animationDuration="500" 
+						animationVertical="false" 
+						ui:field="mainTabPanel"
+						addStyleNames="gwt-TabLayoutPanel">
+		
+						<g:tab>
+							<g:header>AWS Account Maintenance</g:header>
+							<g:DeckLayoutPanel ui:field="accountContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>CIDR Maintenance</g:header>
+							<g:DeckLayoutPanel ui:field="cidrContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>CIDR Assignments</g:header>
+							<g:DeckLayoutPanel ui:field="cidrAssignmentContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>VPC Maintenance</g:header>
+							<g:DeckLayoutPanel ui:field="vpcContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>VPC Provisioning Maintenance</g:header>
+							<g:DeckLayoutPanel ui:field="vpcpContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>Elastic IP Maintenance</g:header>
+							<g:DeckLayoutPanel ui:field="elasticIpContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>Elastic IP Assignments</g:header>
+							<g:DeckLayoutPanel ui:field="elasticIpAssignmentContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>Firewall Rule Maintenance</g:header>
+							<g:DeckLayoutPanel ui:field="firewallContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<!-- 
+						<g:tab>
+							<g:header>e-mail Distribution List Maintenance</g:header>
+							<g:HTMLPanel addStyleNames="{style.content}">
+								<div>e-mail distribution list Maintentenance content here</div>
+							</g:HTMLPanel>
+						</g:tab>
+						<g:tab>
+							<g:header>LDS Maintenance</g:header>
+							<g:HTMLPanel addStyleNames="{style.content}">
+								<div>LDS Maintentenance content here</div>
+							</g:HTMLPanel>
+						</g:tab>
+						 -->
+					</g:TabLayoutPanel>
+					</g:VerticalPanel>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_RIGHT" width="%1"><g:HTML></g:HTML></g:cell>
+			</g:HorizontalPanel>
+			</g:ScrollPanel>
+		</g:layer>
+	</g:LayoutPanel>
+</ui:UiBinder> 

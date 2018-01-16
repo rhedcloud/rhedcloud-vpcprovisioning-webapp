@@ -1,0 +1,142 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			
+			<!-- Hide this one when generating -->
+			<g:Grid ui:field="maintainVpcGrid" cellSpacing="12">
+			<!-- NEEDS these (when maintaining):
+				<!ELEMENT VirtualPrivateCloud (
+					AccountId, 
+					VpcId, 
+					Type, 
+					CustomerAdminNetId+, 
+					CreateUser (view only), 
+					CreateDatetime (view only), 
+					LastUpdateUser? (view only), 
+					LastUpdateDatetime? (view only))>
+			 -->
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountIdTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<!-- <g:TextBox enabled="false" addStyleNames="{style.field} {style.glowing-border}" -->
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcIdTB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcTypeLB" />
+			    	</g:customCell>
+				</g:row>
+				<!-- TODO create/update user/time read only -->
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<!-- hide this one when maintaining -->
+			<g:Grid ui:field="generateVpcGrid" cellSpacing="12">
+			<!-- NEEDS these (when generating):
+				<!ELEMENT VirtualPrivateCloudRequisition (
+					AccountId?, 
+					AccountOwnerNetId, 
+					FinancialAccountNumber, 
+					CustomerAdminNetId+, 
+					Type)>
+			 -->
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcReqAccountIdTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Owner NetId:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcReqOwnerNetIdTB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcReqFinancialAcctNumberTB" />
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcReqTypeLB" />
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<!-- this should be visible for both but the target object will vary 
+		based on what we're doing (VpcPojo vs. VpcRequisitionPojo) -->
+		<!-- 
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:ScrollPanel>
+							<g:VerticalPanel spacing="8" ui:field="netIdVP">
+								<g:Label addStyleNames="{style.label}">Add/remove Admin NetId(s):</g:Label>
+								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addNetIdButton"
+											addStyleNames="{style.glowing-border} {style.addButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.label}">Admin Net Ids associated to this AWS Account:</g:Label>
+									<g:FlexTable ui:field="netIdTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		 -->
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+							ui:field="okayButton">Okay</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.cancelButton}"
+							ui:field="cancelButton">Cancel</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 

@@ -1,0 +1,310 @@
+package edu.emory.oit.vpcprovisioning.client.desktop;
+
+import java.util.Comparator;
+import java.util.List;
+
+import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.SafeHtmlCell;
+import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
+
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
+import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
+import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+
+public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
+	Presenter presenter;
+	private ListDataProvider<VpcpPojo> dataProvider = new ListDataProvider<VpcpPojo>();
+	private SingleSelectionModel<VpcpPojo> selectionModel;
+	List<VpcpPojo> vpcpList = new java.util.ArrayList<VpcpPojo>();
+	UserAccountPojo userLoggedIn;
+
+	/*** FIELDS ***/
+	@UiField SimplePager vpcpListPager;
+	@UiField Button generateVpcButton;
+	@UiField(provided=true) CellTable<VpcpPojo> vpcpListTable = new CellTable<VpcpPojo>();
+	@UiField HorizontalPanel pleaseWaitPanel;
+
+	private static DesktopListVpcpUiBinder uiBinder = GWT.create(DesktopListVpcpUiBinder.class);
+
+	interface DesktopListVpcpUiBinder extends UiBinder<Widget, DesktopListVpcp> {
+	}
+
+	public DesktopListVpcp() {
+		initWidget(uiBinder.createAndBindUi(this));
+		
+		generateVpcButton.addDomHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				GWT.log("Should go to generate vpcp here...");
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPCP);
+			}
+		}, ClickEvent.getType());
+	}
+
+	@Override
+	public void setInitialFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Widget getStatusMessageSource() {
+		return vpcpListTable;
+	}
+
+	@Override
+	public void applyEmoryAWSAdminMask() {
+		generateVpcButton.setEnabled(true);
+	}
+
+	@Override
+	public void applyEmoryAWSAuditorMask() {
+		generateVpcButton.setEnabled(false);
+	}
+
+	@Override
+	public void setUserLoggedIn(UserAccountPojo user) {
+		this.userLoggedIn = user;
+	}
+
+	@Override
+	public void clearList() {
+		vpcpListTable.setVisibleRangeAndClearData(vpcpListTable.getVisibleRange(), true);
+	}
+
+	@Override
+	public void setPresenter(Presenter presenter) {
+		this.presenter = presenter;
+	}
+
+	@Override
+	public void setVpcps(List<VpcpPojo> vpcps) {
+		this.vpcpList = vpcps;
+		this.initializeVpcpListTable();
+	    vpcpListPager.setDisplay(vpcpListTable);
+	}
+
+	private Widget initializeVpcpListTable() {
+		GWT.log("initializing VPCP list table...");
+		vpcpListTable.setTableLayoutFixed(false);
+		vpcpListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		
+		// set range to display
+		vpcpListTable.setVisibleRange(0, 5);
+		
+		// create dataprovider
+		dataProvider = new ListDataProvider<VpcpPojo>();
+		dataProvider.addDataDisplay(vpcpListTable);
+		dataProvider.getList().clear();
+		dataProvider.getList().addAll(this.vpcpList);
+		
+		selectionModel = 
+	    	new SingleSelectionModel<VpcpPojo>(VpcpPojo.KEY_PROVIDER);
+		vpcpListTable.setSelectionModel(selectionModel);
+	    
+	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	@Override
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+	    		VpcpPojo m = selectionModel.getSelectedObject();
+	    		GWT.log("Selected vpcp is: " + m.getProvisioningId());
+	    	}
+	    });
+
+	    ListHandler<VpcpPojo> sortHandler = 
+	    	new ListHandler<VpcpPojo>(dataProvider.getList());
+	    vpcpListTable.addColumnSortHandler(sortHandler);
+
+	    if (vpcpListTable.getColumnCount() == 0) {
+		    initVpcpListTableColumns(sortHandler);
+	    }
+		
+		return vpcpListTable;
+	}
+
+	private void initVpcpListTableColumns(ListHandler<VpcpPojo> sortHandler) {
+		GWT.log("initializing VPCP list table columns...");
+		
+		/*
+		*String provisioningId;
+		VpcRequisitionPojo vpcRequisition;
+		*String status;
+		*String provisioningResult;
+		*String anticipatedTime;
+		*String actualTime;
+		*List<ProvisioningStepPojo> provisioningSteps = new java.util.ArrayList<ProvisioningStepPojo>();	
+		 */
+		
+		// Provisioning id column
+		Column<VpcpPojo, String> provIdColumn = 
+			new Column<VpcpPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(VpcpPojo object) {
+				return object.getProvisioningId();
+			}
+		};
+		provIdColumn.setSortable(true);
+		sortHandler.setComparator(provIdColumn, new Comparator<VpcpPojo>() {
+			public int compare(VpcpPojo o1, VpcpPojo o2) {
+				return o1.getProvisioningId().compareTo(o2.getProvisioningId());
+			}
+		});
+		vpcpListTable.addColumn(provIdColumn, "Provisioning ID");
+		
+		// Status
+		Column<VpcpPojo, String> statusColumn = 
+			new Column<VpcpPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(VpcpPojo object) {
+				return object.getStatus();
+			}
+		};
+		statusColumn.setSortable(true);
+		sortHandler.setComparator(provIdColumn, new Comparator<VpcpPojo>() {
+			public int compare(VpcpPojo o1, VpcpPojo o2) {
+				return o1.getStatus().compareTo(o2.getStatus());
+			}
+		});
+		vpcpListTable.addColumn(statusColumn, "Status");
+		
+		// Provisioning result
+		Column<VpcpPojo, String> resultColumn = 
+			new Column<VpcpPojo, String> (new TextCell()) {
+				
+				@Override
+				public String getValue(VpcpPojo object) {
+					return object.getProvisioningResult();
+				}
+		};
+		resultColumn.setSortable(true);
+		sortHandler.setComparator(resultColumn, new Comparator<VpcpPojo>() {
+			public int compare(VpcpPojo o1, VpcpPojo o2) {
+				return o1.getProvisioningResult().compareTo(o2.getProvisioningResult());
+			}
+		});
+		vpcpListTable.addColumn(resultColumn, "Provisioning Result");
+		
+		// Anticipated time
+		Column<VpcpPojo, String> anticipatedTimeColumn = 
+			new Column<VpcpPojo, String> (new TextCell()) {
+					
+				@Override
+				public String getValue(VpcpPojo object) {
+					return object.getAnticipatedTime();
+				}
+		};
+		anticipatedTimeColumn.setSortable(true);
+		sortHandler.setComparator(anticipatedTimeColumn, new Comparator<VpcpPojo>() {
+			public int compare(VpcpPojo o1, VpcpPojo o2) {
+				return o1.getAnticipatedTime().compareTo(o2.getAnticipatedTime());
+			}
+		});
+		vpcpListTable.addColumn(anticipatedTimeColumn, "Anticipated Time");
+		
+		// Actual time
+		Column<VpcpPojo, String> actualTimeColumn = 
+			new Column<VpcpPojo, String> (new TextCell()) {
+						
+				@Override
+				public String getValue(VpcpPojo object) {
+					return object.getActualTime();
+				}
+		};
+		actualTimeColumn.setSortable(true);
+		sortHandler.setComparator(actualTimeColumn, new Comparator<VpcpPojo>() {
+			public int compare(VpcpPojo o1, VpcpPojo o2) {
+				return o1.getActualTime().compareTo(o2.getActualTime());
+			}
+		});
+		vpcpListTable.addColumn(actualTimeColumn, "Actual Time");
+
+		// Provisioning steps progress status
+		final SafeHtmlCell stepProgressCell = new SafeHtmlCell();
+
+	    Column<VpcpPojo, SafeHtml> stepProgressCol = new Column<VpcpPojo, SafeHtml>(
+	            stepProgressCell) {
+	
+	        @Override
+	        public SafeHtml getValue(VpcpPojo value) {
+	            SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getTotalStepCount(), value.getCompletedStepCount());
+	            return sh;
+	        }
+	    };		 
+		vpcpListTable.addColumn(stepProgressCol, "Progress");
+		
+		// view/edit row column
+		Column<VpcpPojo, String> viewStatusColumn = new Column<VpcpPojo, String>(
+				new ButtonCell()) {
+			@Override
+			public String getValue(VpcpPojo object) {
+				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+					GWT.log(userLoggedIn.getEppn() + " is an admin");
+					return "View";
+				}
+				else {
+					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
+					return "View";
+				}
+			}
+		};
+		vpcpListTable.addColumn(viewStatusColumn, "");
+		vpcpListTable.setColumnWidth(viewStatusColumn, 50.0, Unit.PX);
+		viewStatusColumn.setFieldUpdater(new FieldUpdater<VpcpPojo, String>() {
+			@Override
+			public void update(int index, final VpcpPojo vpcp,
+					String value) {
+				
+				// fire SHOW_VPCP_STATUS event passing the vpcp to be viewed
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_VPCP_STATUS, vpcp);
+			}
+		});
+
+	}
+	
+	@Override
+	public void setReleaseInfo(String releaseInfoHTML) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hidePleaseWaitPanel() {
+		pleaseWaitPanel.setVisible(false);
+	}
+
+	@Override
+	public void showPleaseWaitPanel() {
+		pleaseWaitPanel.setVisible(true);
+	}
+
+	@Override
+	public void removeVpcpFromView(VpcpPojo vpcp) {
+		dataProvider.getList().remove(vpcp);
+	}
+
+}

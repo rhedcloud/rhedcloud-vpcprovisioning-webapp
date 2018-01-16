@@ -1,0 +1,50 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel width="100%" spacing="20">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:HorizontalPanel spacing="8">
+					<g:Label text="Please wait..."/>
+					<g:Image url="images/ajax-loader.gif"/>
+				</g:HorizontalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:HTML addStyleNames="{style.introHeading}">CIDR Assignments</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing ElasticIpAssignments that you can view or delete.<br/><br/>
+		These reside in the database associated to the Emory ElasticIp ESB Service.  
+		The Emory ElasticIp Service is authoritatative for 
+		ElasticIp and ElasticIpAssignment objects and allows applications like this one 
+		to query, create, update and delete those objects if appropriate.</g:HTML>
+		<!-- 
+		<br/><br/>
+		ElasticIpAssignments are created automatically by backend services when a 
+		VirtualPrivateCloud is generated.  Therefore, for ElasticIpAssignments, the 
+		only supported operations from this application are query and delete, 
+		you can delete a ElasticIpAssignent or you can select a 
+		row and view more details about the selected ElasticIpAssignment.
+		-->
+		<g:VerticalPanel ui:field="elasticIpAssignmentSummaryListPanel" width="100%">
+			<g:Grid>
+				<g:row>
+					<g:customCell>
+						<c:CellTable width="100%" ui:field="elasticIpAssignmentSummaryListTable"  title="Existing ElasticIpAssignments"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="elasticIpAssignmentSummaryListPager" location="CENTER"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:Button ui:field="addElasticIpAssignmentButton" text="Add ElasticIpAssignment" addStyleNames="{style.glowing-border} {style.addButton}"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:VerticalPanel>
+	</g:VerticalPanel>
+</ui:UiBinder> 

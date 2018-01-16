@@ -1,0 +1,70 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			
+			<g:Grid ui:field="registerVpcGrid" cellSpacing="12">
+			<!-- NEEDS these (when registering an existing VPC -> Vpc.Create):
+				<!ELEMENT VirtualPrivateCloud (
+					AccountId, 
+					VpcId, 
+					Type, 
+					CustomerAdminNetId+, 
+					CreateUser (view only), 
+					CreateDatetime (view only), 
+					LastUpdateUser? (view only), 
+					LastUpdateDatetime? (view only))>
+			 -->
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Select Account:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountLB" />
+			    	</g:customCell>
+			    	<g:customCell>
+			    		<g:CaptionPanel ui:field="accountCP" captionHTML="Account Info" addStyleNames="{style.light-captionpanel}">
+			    		</g:CaptionPanel>
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcIdTB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcTypeLB" />
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+							ui:field="okayButton">Okay</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.cancelButton}"
+							ui:field="cancelButton">Cancel</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 
