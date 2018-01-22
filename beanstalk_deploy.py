@@ -110,7 +110,7 @@ def deploy_new_version():
 
 def main():
     " Your favorite wrapper's favorite wrapper "
-    if not upload_to_s3('emory-gwt-sample-webapp/target/emory-gwt-sample-webapp-1.0-SNAPSHOT-TJ.war'):
+    if not upload_to_s3('emory-vpcprovisioning-webapp/target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war'):
         sys.exit(1)
     if not create_new_version():
         sys.exit(1)
