@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ReleaseInfo implements IsSerializable {
 	/**
-	 * 
+	 * test
 	 */
 	private static final long serialVersionUID = 1L;
 	String version = "1.0";
