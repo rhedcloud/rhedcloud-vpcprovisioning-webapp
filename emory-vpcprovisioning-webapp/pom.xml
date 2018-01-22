@@ -69,7 +69,8 @@
 		<version>1.2.15</version>
 		<scope>system</scope>
 		<systemPath>${project.basedir}/war/WEB-INF/lib/log4j-1.2.15.jar</systemPath>
-	</dependency>		
+	</dependency>
+	<!-- 
 	<dependency>
 		<groupId>edu.emory</groupId>
 		<artifactId>jsse</artifactId>
@@ -77,12 +78,27 @@
 		<scope>system</scope>
 		<systemPath>${project.basedir}/war/WEB-INF/lib/jsse.jar</systemPath>
 	</dependency>		
+	 -->		
 	<dependency>
 		<groupId>edu.emory</groupId>
 		<artifactId>openeai_utils</artifactId>
 		<version>1</version>
 		<scope>system</scope>
 		<systemPath>${project.basedir}/war/WEB-INF/lib/openeai_utils.jar</systemPath>
+	</dependency>		
+	<dependency>
+		<groupId>edu.emory</groupId>
+		<artifactId>aws-moa</artifactId>
+		<version>1</version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-moa.jar</systemPath>
+	</dependency>		
+	<dependency>
+		<groupId>edu.emory</groupId>
+		<artifactId>emory-moa</artifactId>
+		<version>1</version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/emory-moa.jar</systemPath>
 	</dependency>		
   </dependencies>
 
