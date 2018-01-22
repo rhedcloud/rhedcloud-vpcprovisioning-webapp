@@ -1,12 +1,35 @@
-# This is a sample build configuration for Other.
-# Check our guides at https://confluence.atlassian.com/x/5Q4SMw for more examples.
+# This is a sample build configuration for Java (Maven).
+# Check our guides at https://confluence.atlassian.com/x/zd-5Mw for more examples.
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-# image: atlassian/default-image:latest
+image: maven:3.3.9
 
 pipelines:
   default:
     - step:
-        script:
-          - echo "Everything is awesome!"
+        caches:
+          - maven
+        script: # Modify the commands below to build your repository.
+          - apt-get update 
+          - apt-get install -y zip 
+          - apt-get install -y python3
+          - apt-get install -y python-pip python-dev build-essential 
+          - pip install --upgrade pip
+          - pip install --upgrade virtualenv 
+          - pip install boto3==1.3.0
+          - cd ${GWT_PROJECT_NAME}
+          - sed -i 's/APPLICATION_ENVIRONMENT/'"$APPLICATION_ENVIRONMENT"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/APPLICATION_NAME/'"$APPLICATION_NAME"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/AWS_DEFAULT_REGION/'"$AWS_DEFAULT_REGION"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/GWT_PROJECT_NAME/'"$GWT_PROJECT_NAME"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/BRANCH_NAME/'"$BITBUCKET_BRANCH"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/MVN_ARTIFACT_ID/'"$MVN_ARTIFACT_ID"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/MVN_VERSION/'"$MVN_VERSION"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/MVN_PACKAGING/'"$MVN_PACKAGING"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/BUILD_NUMBER/'"$BITBUCKET_BUILD_NUMBER"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/S3_BUCKET/'"$S3_BUCKET"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+#          - mvn package
+#          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING}"
+#          - cd ..
+#          - python beanstalk_deploy.py
