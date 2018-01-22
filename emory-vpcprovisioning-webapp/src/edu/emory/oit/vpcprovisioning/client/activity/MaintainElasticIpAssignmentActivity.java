@@ -44,7 +44,7 @@ public class MaintainElasticIpAssignmentActivity extends AbstractActivity {
 	}
 
 	@Override
-	public void start(AcceptsOneWidget container, EventBus eventBus) {
+	public void start(final AcceptsOneWidget container, EventBus eventBus) {
 		this.childEventBus = new ResettableEventBus(eventBus);
 		eventBus.addHandler(EditElasticIpAssignmentEvent.TYPE, new EditElasticIpAssignmentEvent.Handler() {
 			@Override
