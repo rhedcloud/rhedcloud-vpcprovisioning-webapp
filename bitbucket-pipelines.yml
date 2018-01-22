@@ -19,16 +19,16 @@ pipelines:
           - pip install --upgrade virtualenv 
           - pip install boto3==1.3.0
           - cd ${GWT_PROJECT_NAME}
-          - sed -i 's/APPLICATION_ENVIRONMENT/'"$APPLICATION_ENVIRONMENT"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/APPLICATION_NAME/'"$APPLICATION_NAME"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/AWS_DEFAULT_REGION/'"$AWS_DEFAULT_REGION"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/GWT_PROJECT_NAME/'"$GWT_PROJECT_NAME"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/BRANCH_NAME/'"$BITBUCKET_BRANCH"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/MVN_ARTIFACT_ID/'"$MVN_ARTIFACT_ID"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/MVN_VERSION/'"$MVN_VERSION"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/MVN_PACKAGING/'"$MVN_PACKAGING"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/BUILD_NUMBER/'"$BITBUCKET_BUILD_NUMBER"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
-          - sed -i 's/S3_BUCKET/'"$S3_BUCKET"'/g' src/edu/emory/gwt/sample/shared/ReleaseInfo.java
+          - sed -i 's/APPLICATION_ENVIRONMENT/'"$APPLICATION_ENVIRONMENT"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/APPLICATION_NAME/'"$APPLICATION_NAME"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/AWS_DEFAULT_REGION/'"$AWS_DEFAULT_REGION"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/GWT_PROJECT_NAME/'"$GWT_PROJECT_NAME"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/BRANCH_NAME/'"$BITBUCKET_BRANCH"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/MVN_ARTIFACT_ID/'"$MVN_ARTIFACT_ID"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/MVN_VERSION/'"$MVN_VERSION"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/MVN_PACKAGING/'"$MVN_PACKAGING"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/BUILD_NUMBER/'"$BITBUCKET_BUILD_NUMBER"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
+          - sed -i 's/S3_BUCKET/'"$S3_BUCKET"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
 #          - mvn package
 #          - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING}"
 #          - cd ..
