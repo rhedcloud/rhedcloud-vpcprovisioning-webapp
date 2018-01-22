@@ -96,9 +96,9 @@
 	<dependency>
 		<groupId>edu.emory</groupId>
 		<artifactId>emory-moa</artifactId>
-		<version>1</version>
+		<version>1.2</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/emory-moa.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/emory-moa-1.2.jar</systemPath>
 	</dependency>		
   </dependencies>
 
