@@ -425,7 +425,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public void setAwsAccountsURL(String awsAccountsURL) {
 		String acctInfo = accountInfoHTML.getHTML();
-//		accountInfoHTML.setHTML(acctInfo.replaceAll("AWS_ACCOUNTS_URL", awsAccountsURL));
+		accountInfoHTML.setHTML(acctInfo.replaceAll("AWS_ACCOUNTS_URL", awsAccountsURL));
 	}
 	@Override
 	public void setAwsBillingManagementURL(String awsBillingManagementURL) {
