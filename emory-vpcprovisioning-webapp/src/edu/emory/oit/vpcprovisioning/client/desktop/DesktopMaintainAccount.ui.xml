@@ -17,7 +17,6 @@
 							happens each time the page is loaded.  So, changes 
 							to the value of this property in the config doc 
 							should be reflected WITHOUT bouncing the app server.   
-							href="https://login.emory.edu:4443/idp/profile/SAML2/Unsolicited/SSO?providerId=urn:amazon:webservices" title="Open AWS Console in new tab.">here</a> 
 						-->
 						<g:HTML ui:field="accountInfoHTML">Make a note of the account number you wish to log into and 
 							then click <a target="_blank" 
@@ -34,7 +33,6 @@
 									happens each time the page is loaded.  So, changes 
 									to the value of this property in the config doc 
 									should be reflected WITHOUT bouncing the app server.   
-									href="https://login.emory.edu:4443/idp/profile/SAML2/Unsolicited/SSO?providerId=urn:amazon:webservices" title="Open AWS Console in new tab.">here</a> 
 								-->
 								<li>Billing Management:  AWS_BILLING_MANAGEMENT_URL</li>
 							</ul>
