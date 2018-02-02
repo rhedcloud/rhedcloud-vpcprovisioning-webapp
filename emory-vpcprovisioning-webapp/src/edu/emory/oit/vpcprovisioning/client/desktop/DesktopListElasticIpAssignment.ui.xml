@@ -41,7 +41,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="addElasticIpAssignmentButton" text="Add ElasticIpAssignment" addStyleNames="{style.glowing-border} {style.addButton}"/>
+						<g:Button ui:field="addElasticIpAssignmentButton" text="Add ElasticIpAssignment" addStyleNames="{style.glowing-border} {style.actionButton}"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

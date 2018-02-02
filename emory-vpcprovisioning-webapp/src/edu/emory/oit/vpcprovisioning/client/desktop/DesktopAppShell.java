@@ -86,7 +86,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	/*** FIELDS ***/
 	@UiField TabLayoutPanel mainTabPanel;
-    @UiField Element titleElem;
 	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
 	@UiField DeckLayoutPanel cidrContentContainer;
 	@UiField DeckLayoutPanel accountContentContainer;
@@ -96,8 +95,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField DeckLayoutPanel elasticIpAssignmentContentContainer;
 	@UiField DeckLayoutPanel firewallContentContainer;
 
-    @UiField Element subTitleElem;
-    @UiField Element releaseInfoElem;
+//	@UiField Element titleElem;
+//    @UiField Element subTitleElem;
+//    @UiField Element releaseInfoElem;
+	@UiField Element userNameElem;
 
 	/**
 	 * A boolean indicating that we have not yet seen the first content widget.
@@ -299,20 +300,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void setTitle(String title) {
 		super.setTitle(title);
-        titleElem.setInnerHTML(title);
+//        titleElem.setInnerHTML(title);
 	}
 
 	@Override
 	public void setSubTitle(String subTitle) {
 		super.setTitle(subTitle);
-        subTitleElem.setInnerHTML(subTitle);
+//        subTitleElem.setInnerHTML(subTitle);
 	}
 
 	@Override
 	public void setReleaseInfo(String releaseInfo) {
 		super.setTitle(releaseInfo);
 		GWT.log("setting release info to " + releaseInfo);
-        releaseInfoElem.setInnerHTML(releaseInfo);
+//        releaseInfoElem.setInnerHTML(releaseInfo);
 		GWT.log("set release info to " + releaseInfo);
+	}
+
+	@Override
+	public void setUserName(String userName) {
+		userNameElem.setInnerHTML(userName);		
 	}
 }

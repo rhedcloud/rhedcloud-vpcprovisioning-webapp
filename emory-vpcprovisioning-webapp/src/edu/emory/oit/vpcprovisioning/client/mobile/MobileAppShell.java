@@ -191,4 +191,10 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		
 	}
 
+	@Override
+	public void setUserName(String userName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

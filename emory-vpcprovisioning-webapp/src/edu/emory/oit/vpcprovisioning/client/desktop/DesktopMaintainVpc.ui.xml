@@ -8,7 +8,7 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			
 			<!-- Hide this one when generating -->
-			<g:Grid ui:field="maintainVpcGrid" cellSpacing="12">
+			<g:Grid ui:field="maintainVpcGrid" cellSpacing="8">
 			<!-- NEEDS these (when maintaining):
 				<!ELEMENT VirtualPrivateCloud (
 					AccountId, 
@@ -51,7 +51,7 @@
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<!-- hide this one when maintaining -->
-			<g:Grid ui:field="generateVpcGrid" cellSpacing="12">
+			<g:Grid ui:field="generateVpcGrid" cellSpacing="8">
 			<!-- NEEDS these (when generating):
 				<!ELEMENT VirtualPrivateCloudRequisition (
 					AccountId?, 
@@ -128,11 +128,11 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.cancelButton}"
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>

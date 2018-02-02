@@ -7,4 +7,5 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	  void setTitle(String title);
 	  void setSubTitle(String subTitle);
 	  void setReleaseInfo(String releaseInfo);
+	  void setUserName(String userName);
 }

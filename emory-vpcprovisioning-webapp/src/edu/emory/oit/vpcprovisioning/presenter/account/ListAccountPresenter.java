@@ -109,6 +109,7 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 //				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Accounts");
+				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 				ReleaseInfo ri = new ReleaseInfo();
 				clientFactory.getShell().setReleaseInfo(ri.toString());
 

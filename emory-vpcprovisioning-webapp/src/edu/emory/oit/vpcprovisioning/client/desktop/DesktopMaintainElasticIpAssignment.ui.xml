@@ -85,11 +85,11 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="okayButton">Assign</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.cancelButton}"
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>

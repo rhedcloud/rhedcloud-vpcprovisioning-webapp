@@ -48,7 +48,8 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	/*** FIELDS ***/
 	@UiField SimplePager accountListPager;
 	@UiField Button addAccountButton;
-	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>();
+//	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>();
+	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel accountListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 //	@UiField Button refreshPropertyButton;
@@ -58,6 +59,12 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	interface DesktopListAccountUiBinder extends UiBinder<Widget, DesktopListAccount> {
 	}
 
+	public interface MyCellTableResources extends CellTable.Resources {
+
+	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+	     public CellTable.Style cellTableStyle();
+	 }
+	
 	public DesktopListAccount() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -89,7 +96,6 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_ACCOUNT);
 			}
 		}, ClickEvent.getType());
-		
 	}
 
 	@Override

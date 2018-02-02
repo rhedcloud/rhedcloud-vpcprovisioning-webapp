@@ -45,48 +45,52 @@
 			</g:cell>
 		</g:VerticalPanel>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="12">
+			<g:Grid cellSpacing="8">
 				<g:row>
-			    	<g:customCell>
+				    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
+				    	</g:customCell>
+				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="accountIdTB" />
-			    	</g:customCell>
-			    	<g:customCell>
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Account Name:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
+				    	</g:customCell>
+				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="accountNameTB" />
-			    	</g:customCell>
-				</g:row>
+				    	</g:customCell>
+			    	</g:row>
 				<g:row>
-			    	<g:customCell>
+				    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Owner Net Id:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
+				    	</g:customCell>
+				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="ownerNetIdTB" />
-			    	</g:customCell>
-			    	<g:customCell>
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Password Location:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
+				    	</g:customCell>
+				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="passwordLocationTB" />
-			    	</g:customCell>
-				</g:row>
+				    	</g:customCell>
+			    	</g:row>
 				<g:row>
-			    	<g:customCell>
+				    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
+				    	</g:customCell>
+				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="financialAccountNumberTB" />
-			    	</g:customCell>
-				</g:row>
+				    	</g:customCell>
+			    	</g:row>
 			</g:Grid>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
@@ -101,7 +105,7 @@
 									</g:cell>
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 										<g:Button ui:field="addNetIdButton"
-											addStyleNames="{style.glowing-border} {style.addButton}">Add</g:Button>
+											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
 									</g:cell>
 								</g:HorizontalPanel>
 								<g:VerticalPanel spacing="8">
@@ -125,7 +129,7 @@
 									</g:cell>
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 										<g:Button ui:field="addEmailButton"
-											addStyleNames="{style.glowing-border} {style.addButton}">Add</g:Button>
+											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
 									</g:cell>
 								</g:HorizontalPanel>
 								<g:VerticalPanel spacing="8">
@@ -141,15 +145,15 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.saveButton}"
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.cancelButton}"
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.addButton}"
+						<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
 							ui:field="billSummaryButton">View Bills</g:Button>
 			    	</g:customCell>
 				</g:row>

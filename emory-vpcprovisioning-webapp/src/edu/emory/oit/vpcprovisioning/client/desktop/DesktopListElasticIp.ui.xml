@@ -39,7 +39,7 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="generateElasticIpButton" text="Generate Elastic IP" addStyleNames="{style.glowing-border} {style.addButton}" title="Provision a new AWS Elastic IP"/>
+						<g:Button ui:field="generateElasticIpButton" text="Generate Elastic IP" addStyleNames="{style.glowing-border} {style.actionButton}" title="Provision a new AWS Elastic IP"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

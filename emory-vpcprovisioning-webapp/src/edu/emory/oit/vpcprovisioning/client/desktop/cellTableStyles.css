@@ -1,0 +1,152 @@
+/* GWT CellTable styles */
+.cellTableWidget {
+	border: 1px solid #ccc;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-style: solid;
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-top-color: rgb(204, 204, 204);
+    border-right-color: rgb(204, 204, 204);
+    border-bottom-color: rgb(204, 204, 204);
+    border-left-color: rgb(204, 204, 204);
+    -moz-border-top-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    border-image-source: none;
+    border-image-slice: 100%;
+    border-image-width: 1;
+    border-image-outset: 0;
+    border-image-repeat: stretch stretch;
+}
+.cellTableHeader {
+    font-family: arial;
+	font-size: 13px;
+	font-weight: bold;
+	line-height: 21px;
+	color: #444;
+	font: 14px/ 1.3em "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#e0e0e0));
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #fff;
+	line-height: 40px;
+	text-align: left;
+	overflow: hidden;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #ccc;
+	padding: 0 10px;
+}
+.cellTableFirstColumnHeader {
+}
+.cellTableLastColumnHeader {
+}
+.cellTableCell {
+}
+.cellTableEvenRow {
+	background: #fff;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #fff;
+}
+.cellTableOddRow {
+	background: #fff;
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #fff;
+}
+.cellTableSelectedRow {
+	color: #444;
+	background: #f0f9ff;
+    background-color: rgb(240, 249, 255);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto auto;
+}
+.cellTableSelectedRowCell {
+	color: #444;
+	background: #f0f9ff;
+    background-color: rgb(240, 249, 255);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto auto;
+}
+.cellTableHoveredRow {
+	color: #444;
+	background: #f0f9ff;
+    background-color: rgb(240, 249, 255);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto auto;
+    cursor: pointer;
+}
+.cellTableHoveredRowCell {
+	color: #444;
+	background: #f0f9ff;
+    background-color: rgb(240, 249, 255);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto auto;
+    cursor: pointer;
+}
+.cellTableKeyboardSelectedRow {
+	color: #444;
+	background: #f0f9ff;
+    background-color: rgb(240, 249, 255);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto auto;
+}
+.cellTableKeyboardSelectedRowCell {
+	color: #444;
+	background: #f0f9ff;
+    background-color: rgb(240, 249, 255);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto auto;
+}
+.cellTableKeyboardSelectedCell {
+	color: #444;
+	background: #f0f9ff;
+    background-color: rgb(240, 249, 255);
+    background-image: none;
+    background-repeat: repeat;
+    background-attachment: scroll;
+    background-clip: border-box;
+    background-origin: padding-box;
+    background-position-x: 0%;
+    background-position-y: 0%;
+    background-size: auto auto;
+}
+/* end GWT CellTable styles */
