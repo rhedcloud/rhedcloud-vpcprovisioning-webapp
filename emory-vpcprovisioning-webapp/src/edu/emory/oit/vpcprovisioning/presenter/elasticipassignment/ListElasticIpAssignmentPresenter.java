@@ -66,11 +66,11 @@ public class ListElasticIpAssignmentPresenter implements ListElasticIpAssignment
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
-				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server retrieving information about the user logged " +
-							"in.  Message from server is: " + caught.getMessage());
-				}
+//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server retrieving information about the user logged " +
+//							"in.  Message from server is: " + caught.getMessage());
+//				}
 			}
 
 			@Override

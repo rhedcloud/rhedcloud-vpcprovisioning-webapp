@@ -57,7 +57,7 @@ public interface VpcProvisioningServiceAsync {
 	void testPropertyReload(AsyncCallback<String> callback);
 	// END TEMPORARY
 	
-	void getLoginURL(AsyncCallback<String> callback);
+//	void getLoginURL(AsyncCallback<String> callback);
 	
 	// Identity services
 	void getDirectoryMetaDataForNetId(String netId, AsyncCallback<DirectoryMetaDataPojo> callback);

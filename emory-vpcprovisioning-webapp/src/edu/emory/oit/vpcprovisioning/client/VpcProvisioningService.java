@@ -75,7 +75,7 @@ public interface VpcProvisioningService extends RemoteService {
 	String testPropertyReload() throws RpcException;
 	// END TEMPORARY
 	
-	String getLoginURL() throws RpcException;
+//	String getLoginURL() throws RpcException;
 	
 	// Identity services
 	DirectoryMetaDataPojo getDirectoryMetaDataForNetId(String netId) throws RpcException;

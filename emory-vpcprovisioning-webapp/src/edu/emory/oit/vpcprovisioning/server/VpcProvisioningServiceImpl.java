@@ -153,7 +153,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private int sessionTimeoutIntervalSeconds = 28800;
 	private int userCnt=0;
 	private boolean manageSessionLocally=true;
-	private String baseLoginURL = null;
+//	private String baseLoginURL = null;
 	
 	boolean fakeVpcpGen = false;
 	HashMap<String, VpcpPojo> vpcpMap = new HashMap<String, VpcpPojo>();
@@ -241,11 +241,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					AUTHZ_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			
-			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
-			if (baseLoginURL == null) {
-				info("'baseLoginURL' property from config doc is null, defaulting to DEV IDP URL.");
-				baseLoginURL = "nothing";
-			}
+//			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
+//			if (baseLoginURL == null) {
+//				info("'baseLoginURL' property from config doc is null, defaulting to DEV IDP URL.");
+//				baseLoginURL = "nothing";
+//			}
 			
 			String redirect = generalProps.getProperty("manageSessionLocally", "true");
 			manageSessionLocally = Boolean.parseBoolean(redirect);
@@ -353,18 +353,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	@Override
-	public String getLoginURL() throws RpcException {
-		HttpServletRequest r = this.getThreadLocalRequest();
-		String referer = r.getHeader("Referer");
-		info("referrer is; " + referer);
-		info("baseLoginURL is: " + getBaseLoginURL());
-
-		String loginURL = getBaseLoginURL() + "?target=" + referer;
-		info("returning a loginURL of: '" + loginURL + "'");
+//	@Override
+//	public String getLoginURL() throws RpcException {
+//		HttpServletRequest r = this.getThreadLocalRequest();
+//		String referer = r.getHeader("Referer");
+//		info("referrer is; " + referer);
+//		info("baseLoginURL is: " + getBaseLoginURL());
+//
+//		String loginURL = getBaseLoginURL() + "?target=" + referer;
+//		info("returning a loginURL of: '" + loginURL + "'");
 		
-		return loginURL;
-	}
+//		return loginURL;
+//		return "";
+//	}
 
 	@Override
 	public UserAccountPojo getUserLoggedIn() throws RpcException {
@@ -1597,13 +1598,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.manageSessionLocally = manageSessionLocally;
 	}
 
-	public String getBaseLoginURL() {
-		return baseLoginURL;
-	}
-
-	public void setBaseLoginURL(String baseLoginURL) {
-		this.baseLoginURL = baseLoginURL;
-	}
+//	public String getBaseLoginURL() {
+//		return baseLoginURL;
+//	}
+//
+//	public void setBaseLoginURL(String baseLoginURL) {
+//		this.baseLoginURL = baseLoginURL;
+//	}
 
 	private RequestService getIdentityServiceRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) identityServiceProducerPool.getProducer();

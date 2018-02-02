@@ -78,14 +78,14 @@ public class ListElasticIpPresenter implements ListElasticIpView.Presenter {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
-				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-					log.log(Level.SEVERE, 
-							"Exception getting user logged in on server", 
-							caught);
-					getView().showMessageToUser("There was an exception on the " +
-							"server retrieving information about the user logged " +
-							"in.  Message from server is: " + caught.getMessage());
-				}
+//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
+//					log.log(Level.SEVERE, 
+//							"Exception getting user logged in on server", 
+//							caught);
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server retrieving information about the user logged " +
+//							"in.  Message from server is: " + caught.getMessage());
+//				}
 			}
 
 			@Override

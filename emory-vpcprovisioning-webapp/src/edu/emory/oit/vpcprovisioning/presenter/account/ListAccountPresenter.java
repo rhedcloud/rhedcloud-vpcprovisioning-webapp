@@ -88,17 +88,17 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
-				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-					log.log(Level.SEVERE, 
-							"Exception getting user logged in on server", 
-							caught);
-					getView().showMessageToUser("There was an exception on the " +
-							"server retrieving information about the user logged " +
-							"in.  Message from server is: " + caught.getMessage());
-					
-					// TODO try to account for shib session timeout
-					// caught.getMessage() from server returns "0"
-				}
+//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
+//					log.log(Level.SEVERE, 
+//							"Exception getting user logged in on server", 
+//							caught);
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server retrieving information about the user logged " +
+//							"in.  Message from server is: " + caught.getMessage());
+//					
+//					// TODO try to account for shib session timeout
+//					// caught.getMessage() from server returns "0"
+//				}
 			}
 
 			@Override
