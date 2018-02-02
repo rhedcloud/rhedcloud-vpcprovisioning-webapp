@@ -244,7 +244,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
 			if (baseLoginURL == null) {
 				info("'baseLoginURL' property from config doc is null, defaulting to DEV IDP URL.");
-				baseLoginURL = "https://dev.app.emory.edu/Shibboleth.sso/Login";
+				baseLoginURL = "nothing";
 			}
 			
 			String redirect = generalProps.getProperty("manageSessionLocally", "true");
