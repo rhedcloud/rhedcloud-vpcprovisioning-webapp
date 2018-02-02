@@ -28,6 +28,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
@@ -94,14 +96,13 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public DesktopMaintainVpcp() {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		// TODO: add this back in.
-//		cancelButton.addDomHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				GWT.log("VPCP generation canceled...");
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.VPCP_EDITING_CANCELED);
-//			}
-//		}, ClickEvent.getType());
+		cancelButton.addDomHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				GWT.log("VPCP generation canceled...");
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.VPCP_EDITING_CANCELED);
+			}
+		}, ClickEvent.getType());
 
 		okayButton.addDomHandler(new ClickHandler() {
 			@Override
