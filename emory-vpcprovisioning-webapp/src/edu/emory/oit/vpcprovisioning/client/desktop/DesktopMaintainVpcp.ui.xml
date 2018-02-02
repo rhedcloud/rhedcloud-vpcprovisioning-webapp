@@ -16,7 +16,7 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			
 			<!-- Hide this one when generating -->
-			<g:Grid ui:field="maintainVpcpGrid" cellSpacing="12" visible="false">
+			<g:Grid ui:field="maintainVpcpGrid" cellSpacing="8" visible="false">
 			<!-- NEEDS these (when maintaining):
 				<!ELEMENT VirtualPrivateCloudProvisioning (
 					ProvisioningId, 
@@ -39,6 +39,8 @@
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="provisioningIdTB" />
 			    	</g:customCell>
+				</g:row>
+			    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Status:</g:Label>
 			    	</g:customCell>
@@ -73,7 +75,7 @@
 				ComplianceClass, 
 				NotifyAdmins)>
 			 -->
-			<g:Grid cellSpacing="12">
+			<g:Grid cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Select Account:</g:Label>
@@ -97,6 +99,8 @@
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="vpcpReqOwnerNetIdTB" />
 			    	</g:customCell>
+				</g:row>
+				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Ticket ID:</g:Label>
 			    	</g:customCell>
@@ -104,6 +108,8 @@
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="vpcpReqTicketIdTB" />
 			    	</g:customCell>
+			    	</g:row>
+			    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Requestor NetId:</g:Label>
 			    	</g:customCell>
@@ -120,6 +126,8 @@
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="vpcpReqFinancialAcctNumberTB" />
 			    	</g:customCell>
+			    	</g:row>
+			    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
 			    	</g:customCell>

@@ -7,7 +7,7 @@
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			
-			<g:Grid ui:field="registerVpcGrid" cellSpacing="12">
+			<g:Grid ui:field="registerVpcGrid" cellSpacing="8">
 			<!-- NEEDS these (when registering an existing VPC -> Vpc.Create):
 				<!ELEMENT VirtualPrivateCloud (
 					AccountId, 
@@ -53,7 +53,7 @@
 			</g:Grid>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
-			<g:Grid cellSpacing="12">
+			<g:Grid cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
