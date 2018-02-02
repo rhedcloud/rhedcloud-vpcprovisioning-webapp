@@ -96,13 +96,13 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public DesktopMaintainVpcp() {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		cancelButton.addDomHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				GWT.log("VPCP generation canceled...");
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.VPCP_EDITING_CANCELED);
-			}
-		}, ClickEvent.getType());
+//		cancelButton.addDomHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				GWT.log("VPCP generation canceled...");
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.VPCP_EDITING_CANCELED);
+//			}
+//		}, ClickEvent.getType());
 
 		okayButton.addDomHandler(new ClickHandler() {
 			@Override
