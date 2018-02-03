@@ -152,7 +152,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	// default, 8 hours in prod
 	private int sessionTimeoutIntervalSeconds = 28800;
 	private int userCnt=0;
-	private boolean manageSessionLocally=true;
+	private boolean manageSessionLocally=false;
 //	private String baseLoginURL = null;
 	
 	boolean fakeVpcpGen = false;
@@ -247,7 +247,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				baseLoginURL = "nothing";
 //			}
 			
-			String redirect = generalProps.getProperty("manageSessionLocally", "true");
+			String redirect = generalProps.getProperty("manageSessionLocally", "false");
 			manageSessionLocally = Boolean.parseBoolean(redirect);
 			
 			String shib = generalProps.getProperty("useShibboleth", "true");
