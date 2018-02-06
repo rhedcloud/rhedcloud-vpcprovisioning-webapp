@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
@@ -8,11 +9,17 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -58,6 +65,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
     Logger log=Logger.getLogger(DesktopAppShell.class.getName());
     ClientFactory clientFactory;
     EventBus eventBus;
+//    HashMap<String, List<AWSServicePojo>> awsServices;
     private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
 	interface DesktopAppShellUiBinder extends UiBinder<Widget, DesktopAppShell> {
@@ -73,6 +81,20 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
+		
+//		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				GWT.log("problem getting services..." + caught.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
+//				awsServices = result;
+//				GWT.log("got " + result.size() + " categories of services back.");
+//			}
+//		};
+//		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 
 		ListAccountView listAccountView = clientFactory.getListAccountView();
 		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
@@ -82,6 +104,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		mainTabPanel.addStyleName("tab-style-content");
 
+		registerEvents();
 	}
 
 	/*** FIELDS ***/
@@ -100,7 +123,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //    @UiField Element releaseInfoElem;
 	@UiField Element userNameElem;
 
-	/**
+    PopupPanel productsPopup = new PopupPanel(true);
+	@UiField Element productsElem;
+	@UiField HorizontalPanel generalInfoPanel;
+
+    /**
 	 * A boolean indicating that we have not yet seen the first content widget.
 	 */
 	private boolean firstCidrContentWidget = true;
@@ -111,6 +138,73 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstElasticIpContentWidget = true;
 	private boolean firstElasticIpAssignmentContentWidget = true;
 	private boolean firstFirewallContentWidget = true;
+
+	private void registerEvents() {
+	    Event.sinkEvents(productsElem, Event.ONMOUSEOVER);
+	    Event.setEventListener(productsElem, new EventListener() {
+	        @Override
+	        public void onBrowserEvent(Event event) {
+	             if(Event.ONMOUSEOVER == event.getTypeInt()) {
+	            	 	productsPopup.clear();
+	            	 	productsPopup.setAutoHideEnabled(true);
+		            	productsPopup.setWidth("1200px");
+		            	productsPopup.setHeight("800px");
+		            	productsPopup.setAnimationEnabled(true);
+		            	 
+		            	ScrollPanel sp = new ScrollPanel();
+		            	sp.setHeight("99%");
+		            	sp.setWidth("100%");
+		            	productsPopup.add(sp);
+		            	 
+		            	HorizontalPanel hp = new HorizontalPanel();
+		            	hp.setWidth("100%");
+		            	sp.add(hp);
+		            	// 4 columns
+		            	List<VerticalPanel> vpList = new java.util.ArrayList<VerticalPanel>();
+		            	vpList.add(new VerticalPanel());
+		            	vpList.add(new VerticalPanel());
+		            	vpList.add(new VerticalPanel());
+		            	vpList.add(new VerticalPanel());
+		            	 
+		            	
+//		            	int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
+//		            	GWT.log("catsPerPanel: " + catsPerPanel);
+//		            	int catCntr = 0;
+//		            	int vpCntr = 0;
+//	            		Iterator<String> keys = awsServices.keySet().iterator();
+//	            		while (keys.hasNext()) {
+//	            			String catName = keys.next();
+//	            			catCntr++;
+//	            			if (catCntr >= catsPerPanel) {
+//	            				catCntr = 0;
+//	            				GWT.log("adding vp number " + vpCntr + " to the HP");
+//	            				hp.add(vpList.get(vpCntr));
+//	            				vpCntr++;
+//	            			}
+//	            			else {
+//	            				GWT.log("using vp number " + vpCntr);
+//	            				VerticalPanel vp = vpList.get(vpCntr);
+//	            				HTMLPanel catHtml = new HTMLPanel(catName);
+//	            				catHtml.addStyleName("productCategory");
+//	            				vp.add(catHtml);
+//	            				List<AWSServicePojo> services = awsServices.get(catName);
+//	            				for (AWSServicePojo svc : services) {
+//		            				HTMLPanel svcHtml = new HTMLPanel(svc.getName());
+//		            				svcHtml.addStyleName("productAnchor");
+//		            				vp.add(svcHtml);
+//	            				}
+//	            				HTMLPanel html = new HTMLPanel("<hr>");
+//	            				vp.add(html);
+//	            			}
+//	            		}
+//	            		// add last VP to the HP because it gets populated but not added above
+//	            		hp.add(vpList.get(3));
+		            	
+					productsPopup.showRelativeTo(generalInfoPanel);
+	             }
+	        }
+	    });
+	}
 
 	/*** Handlers ***/
 	@UiHandler ("mainTabPanel") 

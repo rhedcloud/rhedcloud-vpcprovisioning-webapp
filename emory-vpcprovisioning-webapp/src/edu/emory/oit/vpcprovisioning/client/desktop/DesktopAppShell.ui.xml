@@ -12,7 +12,7 @@
 			<g:HorizontalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:HTMLPanel ui:field='logoTitleBar'>
-						<div ui:field='logoElem'><img src="images/aws-emory-logos_169x30.png"/></div>
+						<div ui:field='logoElem'><img src="images/emory-aws-logos.png"/></div>
 					</g:HTMLPanel>
 				</g:cell>
 			</g:HorizontalPanel>
