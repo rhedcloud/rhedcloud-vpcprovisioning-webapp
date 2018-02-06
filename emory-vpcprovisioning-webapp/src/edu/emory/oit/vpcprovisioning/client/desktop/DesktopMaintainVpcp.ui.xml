@@ -13,6 +13,7 @@
 				</g:HorizontalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
+		<g:HorizontalPanel width="100%">
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			
 			<!-- Hide this one when generating -->
@@ -180,6 +181,7 @@
 				</g:cell>
 			</g:HorizontalPanel>
 		</g:cell>
+		</g:HorizontalPanel>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
 				<g:row>

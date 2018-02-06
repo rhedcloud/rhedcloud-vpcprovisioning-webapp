@@ -276,7 +276,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 				}
 			}
 		};
-		editRowColumn.setCellStyleNames("glowing-border");
+		editRowColumn.setCellStyleNames("actionButton");
 		cidrListTable.addColumn(editRowColumn, "");
 		cidrListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
 		editRowColumn.setFieldUpdater(new FieldUpdater<CidrPojo, String>() {
