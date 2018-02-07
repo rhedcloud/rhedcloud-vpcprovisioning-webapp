@@ -142,9 +142,6 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	}
 	private void initVpcListTableColumns(ListHandler<VpcPojo> sortHandler) {
 		GWT.log("initializing VPC list table columns...");
-		/*
-<!ELEMENT VirtualPrivateCloud (AccountId, VpcId, Type, CustomerAdminNetId+, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-		 */
 		// Account id column
 		Column<VpcPojo, String> acctIdColumn = 
 			new Column<VpcPojo, String> (new TextCell()) {
@@ -195,6 +192,23 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 			}
 		});
 		vpcListTable.addColumn(vpcTypeColumn, "VPC Type");
+		
+		// compliance class
+		Column<VpcPojo, String> complianceClassColumn = 
+			new Column<VpcPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(VpcPojo object) {
+				return object.getComplianceClass();
+			}
+		};
+		complianceClassColumn.setSortable(true);
+		sortHandler.setComparator(complianceClassColumn, new Comparator<VpcPojo>() {
+			public int compare(VpcPojo o1, VpcPojo o2) {
+				return o1.getComplianceClass().compareTo(o2.getComplianceClass());
+			}
+		});
+		vpcListTable.addColumn(complianceClassColumn, "Compliance Class");
 		
 		// create user
 		Column<VpcPojo, String> createUserColumn = 
