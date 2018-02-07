@@ -915,7 +915,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setAccountId(pojo.getAccountId());
 		}
 		if (pojo.getVpcId() != null) {
-			pojo.setVpcId(moa.getVpcId());
+			moa.setVpcId(pojo.getVpcId());
 		}
 		else {
 			moa.setVpcId(UUID.uuid());
