@@ -13,6 +13,9 @@
 	<inherits name="com.google.gwt.resources.Resources" />
 	<inherits name="com.google.gwt.logging.Logging"/>
 
+	<!-- GWT Bootstrap 3 -->
+	<inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
+
 	<!-- form factor code -->
 	<inherits name='edu.emory.oit.vpcprovisioning.FormFactor'/> 
 	<inherits name='edu.emory.oit.vpcprovisioning.ui.UI'/>

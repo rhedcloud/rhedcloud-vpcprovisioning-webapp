@@ -154,7 +154,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
 	@UiField DeckLayoutPanel elasticIpContentContainer;
-	@UiField DeckLayoutPanel elasticIpAssignmentContentContainer;
+//	@UiField DeckLayoutPanel elasticIpAssignmentContentContainer;
 	@UiField DeckLayoutPanel firewallContentContainer;
 
 //	@UiField Element titleElem;
@@ -381,21 +381,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				elasticIpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
 				break;
+//			case 6:
+//				GWT.log("need to get Elastic IP Assignment Maintentenance content.");
+//				firstElasticIpAssignmentContentWidget = true;
+//				elasticIpAssignmentContentContainer.clear();
+//				HTMLPanel hp = new HTMLPanel("<div>Elastic IP Assignment list Maintentenance content here</div>");
+//				hp.addStyleName("content");
+//				elasticIpAssignmentContentContainer.setWidget(hp);
+//				ListElasticIpAssignmentView listEipaView = clientFactory.getListElasticIpAssignmentView();
+//				MaintainElasticIpAssignmentView maintainEipaView = clientFactory.getMaintainElasticIpAssignmentView();
+//				elasticIpAssignmentContentContainer.add(listEipaView);
+//				elasticIpAssignmentContentContainer.add(maintainEipaView);
+//				elasticIpAssignmentContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT);
+//				break;
 			case 6:
-				GWT.log("need to get Elastic IP Assignment Maintentenance content.");
-				firstElasticIpAssignmentContentWidget = true;
-				elasticIpAssignmentContentContainer.clear();
-				HTMLPanel hp = new HTMLPanel("<div>Elastic IP Assignment list Maintentenance content here</div>");
-				hp.addStyleName("content");
-				elasticIpAssignmentContentContainer.setWidget(hp);
-				ListElasticIpAssignmentView listEipaView = clientFactory.getListElasticIpAssignmentView();
-				MaintainElasticIpAssignmentView maintainEipaView = clientFactory.getMaintainElasticIpAssignmentView();
-				elasticIpAssignmentContentContainer.add(listEipaView);
-				elasticIpAssignmentContentContainer.add(maintainEipaView);
-				elasticIpAssignmentContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT);
-				break;
-			case 7:
 				GWT.log("need to get Firewall Maintentenance content.");
 				firstFirewallContentWidget = true;
 				firewallContentContainer.clear();
@@ -487,15 +487,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-		if (w instanceof ListElasticIpAssignmentPresenter || w instanceof MaintainElasticIpAssignmentPresenter) {
-			elasticIpAssignmentContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstElasticIpAssignmentContentWidget) {
-				firstElasticIpAssignmentContentWidget = false;
-				elasticIpAssignmentContentContainer.animate(0);
-			}
-			return;
-		}
+//		if (w instanceof ListElasticIpAssignmentPresenter || w instanceof MaintainElasticIpAssignmentPresenter) {
+//			elasticIpAssignmentContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstElasticIpAssignmentContentWidget) {
+//				firstElasticIpAssignmentContentWidget = false;
+//				elasticIpAssignmentContentContainer.animate(0);
+//			}
+//			return;
+//		}
 		
 		// TODO: ListNotificationPresenter, MaintainNotificationPresenter
 		

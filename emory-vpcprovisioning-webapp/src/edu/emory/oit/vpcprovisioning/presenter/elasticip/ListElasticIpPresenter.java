@@ -21,6 +21,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListElasticIpPresenter implements ListElasticIpView.Presenter {
 	private static final Logger log = Logger.getLogger(ListElasticIpPresenter.class.getName());
@@ -184,8 +185,14 @@ public class ListElasticIpPresenter implements ListElasticIpView.Presenter {
 
 			@Override
 			public void onSuccess(ElasticIpQueryResultPojo result) {
-				GWT.log("Got " + result.getResults().size() + " ElasticIPs for " + result.getFilterUsed());
-				setElasticIpList(result.getResults());
+				if (result != null && result.getResults() != null) {
+					GWT.log("Got " + result.getResults().size() + " ElasticIPs for " + result.getFilterUsed());
+					setElasticIpList(result.getResults());
+				}
+				else {
+					GWT.log("null elastic ip results returned.");
+					setElasticIpList(Collections.<ElasticIpPojo> emptyList());
+				}
 				// apply authorization mask
 				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
 					getView().applyEmoryAWSAdminMask();

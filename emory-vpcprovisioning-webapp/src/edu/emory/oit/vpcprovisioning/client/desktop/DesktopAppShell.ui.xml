@@ -139,13 +139,15 @@
 							<g:DeckLayoutPanel ui:field="vpcpContentContainer" width="100%" height="100%"/>
 						</g:tab>
 						<g:tab>
-							<g:header>Elastic IP Maintenance</g:header>
+							<g:header>Elastic IPs</g:header>
 							<g:DeckLayoutPanel ui:field="elasticIpContentContainer" width="100%" height="100%"/>
 						</g:tab>
+						<!-- 
 						<g:tab>
 							<g:header>Elastic IP Assignments</g:header>
 							<g:DeckLayoutPanel ui:field="elasticIpAssignmentContentContainer" width="100%" height="100%"/>
 						</g:tab>
+						 -->
 						<g:tab>
 							<g:header>Firewall Rule Maintenance</g:header>
 							<g:DeckLayoutPanel ui:field="firewallContentContainer" width="100%" height="100%"/>
