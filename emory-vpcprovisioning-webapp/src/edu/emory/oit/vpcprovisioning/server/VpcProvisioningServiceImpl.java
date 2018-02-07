@@ -921,6 +921,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setVpcId(UUID.uuid());
 			pojo.setVpcId(moa.getVpcId());
 		}
+		moa.setComplianceClass(pojo.getComplianceClass());
 		moa.setType(pojo.getType());
 		// owner net ids
 //        for (String p : pojo.getCustomerAdminNetIdList()) {
@@ -938,6 +939,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setVpcId(moa.getVpcId());
 		pojo.setType(moa.getType());
+		pojo.setComplianceClass(moa.getComplianceClass());
+
 //		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
 //			pojo.getCustomerAdminNetIdList().add(netId);
 //		}

@@ -251,6 +251,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		            	// TODO: only do this for admins...
         				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
         				manageSvcsAnchor.addStyleName("productAnchor");
+        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
         				manageSvcsAnchor.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {

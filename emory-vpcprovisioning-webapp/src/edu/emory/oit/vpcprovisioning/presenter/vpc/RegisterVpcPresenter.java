@@ -114,6 +114,10 @@ public class RegisterVpcPresenter implements RegisterVpcView.Presenter {
 								GWT.log("got " + accountItems.getResults().size() + " accounts.");
 								getView().setVpcTypeItems(vpcItems);
 								getView().setAccountItems(accountItems.getResults());
+								List<String> complianceClassTypes = new java.util.ArrayList<String>();
+								complianceClassTypes.add("HIPAA");
+								complianceClassTypes.add("Standard");
+								getView().setComplianceClassItems(complianceClassTypes);
 								getView().initPage();
 								getView().setInitialFocus();
 								// apply authorization mask

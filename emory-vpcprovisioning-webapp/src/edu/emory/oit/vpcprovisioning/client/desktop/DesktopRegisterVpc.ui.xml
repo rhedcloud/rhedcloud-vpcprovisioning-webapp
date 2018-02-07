@@ -50,6 +50,15 @@
 							ui:field="vpcTypeLB" />
 			    	</g:customCell>
 				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="complianceClassLB" />
+			    	</g:customCell>
+				</g:row>
 			</g:Grid>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
