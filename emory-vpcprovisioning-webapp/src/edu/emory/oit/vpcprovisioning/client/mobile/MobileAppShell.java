@@ -197,4 +197,28 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		
 	}
 
+	@Override
+	public void showOtherFeaturesPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hideOtherFeaturesPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showMainTabPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hideMainTabPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

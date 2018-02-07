@@ -8,4 +8,9 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	  void setSubTitle(String subTitle);
 	  void setReleaseInfo(String releaseInfo);
 	  void setUserName(String userName);
+	  
+	  void showOtherFeaturesPanel();
+	  void hideOtherFeaturesPanel();
+	  void showMainTabPanel();
+	  void hideMainTabPanel();
 }

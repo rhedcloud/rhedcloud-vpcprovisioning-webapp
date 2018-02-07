@@ -14,10 +14,12 @@
  *******************************************************************************/
 package edu.emory.oit.vpcprovisioning.client;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -43,6 +45,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
@@ -146,4 +149,6 @@ public interface VpcProvisioningServiceAsync {
 	
 	// ElasticIpAssignmentSummary
 	void getElasticIpAssignmentSummariesForFilter(ElasticIpAssignmentSummaryQueryFilterPojo filter, AsyncCallback<ElasticIpAssignmentSummaryQueryResultPojo> callback);
+
+	void getAWSServiceMap(AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback) throws RpcException;
 }

@@ -14,6 +14,8 @@
  *******************************************************************************/
 package edu.emory.oit.vpcprovisioning.server;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
@@ -25,9 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Logger;
 
 import javax.jms.JMSException;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +84,9 @@ import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceCategoryPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicesJsonHelper;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -161,6 +171,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private List<BillPojo> masterBills = new java.util.ArrayList<BillPojo>();
 	// Key is account id, List is a list of Bills for that account id
 	private HashMap<String, List<BillPojo>> billsByAccount = new HashMap<String, List<BillPojo>>();
+
+	// key is category
+	private HashMap<String, List<AWSServicePojo>> awsServicesMap = new HashMap<String, List<AWSServicePojo>>();
+
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -3390,5 +3404,80 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ElasticIpAssignmentSummaryQueryFilterPojo filter) throws RpcException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException {
+	    ByteArrayInputStream instream = 
+	    		new ByteArrayInputStream(new AWSServicesJsonHelper().getServicesJson().toString().getBytes());
+	    
+		int svcCnt = 0;
+	    if (awsServicesMap.isEmpty()) {
+		    try {
+		        // do something useful
+		    		JsonReader jr = Json.createReader(instream);
+		    		JsonObject obj = jr.readObject();
+		    		jr.close();
+	            
+		    		// read string data
+		    		JsonArray services = obj.getJsonArray("services");
+		    		for (JsonObject service : services.getValuesAs(JsonObject.class)) {
+		    			svcCnt++;
+			    		JsonArray categories = service.getJsonArray("categories");
+		    			int randomNum = ThreadLocalRandom.current().nextInt(0, categories.size());
+		    			info("using category number " + randomNum);
+			    		String name = service.getString("name");
+			    		String code = service.getString("code");
+			    		String status = service.getString("status");
+			    		
+			    		// build the AWSServicePojo
+			    		AWSServicePojo svcPojo = new AWSServicePojo();
+			    		svcPojo.setName(name);
+			    		svcPojo.setCode(code);
+			    		svcPojo.setStatus(status);
+			    		// build the AWSServiceCategoryPojo
+			    		for (JsonObject category : categories.getValuesAs(JsonObject.class)) {
+				    		AWSServiceCategoryPojo svcCat = new AWSServiceCategoryPojo();
+				    		svcCat.setName(category.getString("name"));
+				    		svcCat.setCode(category.getString("code"));
+				    		svcPojo.getCategories().add(svcCat);
+			    		}
+			    		// randomly pick a category from the list of categories for this service
+			    		JsonObject categoryObj = categories.getJsonObject(randomNum);
+			    		String categoryKey = categoryObj.getString("name");
+			    		info("category key is: " + categoryKey);
+			    		// see if this category is already in the awsServicesMap
+			    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(categoryKey);
+			    		if (servicesForCat == null) {
+			    			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
+			    			servicesForCat.add(svcPojo);
+			    			awsServicesMap.put(categoryKey, servicesForCat);
+			    		}
+			    		else {
+			    			servicesForCat.add(svcPojo);
+			    		}
+		    		}
+		    } finally {
+		        try {
+					instream.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+	    }
+	    else {
+	    		svcCnt = awsServicesMap.values().size();
+	    }
+	    info("returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
+		return awsServicesMap;
+	}
+
+	public HashMap<String, List<AWSServicePojo>> getAwsServicesMap() {
+		return awsServicesMap;
+	}
+
+	public void setAwsServicesMap(HashMap<String, List<AWSServicePojo>> awsServicesMap) {
+		this.awsServicesMap = awsServicesMap;
 	}
 }

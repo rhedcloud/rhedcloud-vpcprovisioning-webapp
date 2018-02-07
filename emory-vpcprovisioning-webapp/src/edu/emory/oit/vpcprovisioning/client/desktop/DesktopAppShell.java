@@ -1,17 +1,25 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -25,6 +33,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPresenter;
@@ -59,13 +68,14 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 
 public class DesktopAppShell extends ResizeComposite implements AppShell {
 
     Logger log=Logger.getLogger(DesktopAppShell.class.getName());
     ClientFactory clientFactory;
     EventBus eventBus;
-//    HashMap<String, List<AWSServicePojo>> awsServices;
+    HashMap<String, List<AWSServicePojo>> awsServices;
     private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
 	interface DesktopAppShellUiBinder extends UiBinder<Widget, DesktopAppShell> {
@@ -82,19 +92,19 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
 		
-//		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				GWT.log("problem getting services..." + caught.getMessage());
-//			}
-//
-//			@Override
-//			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
-//				awsServices = result;
-//				GWT.log("got " + result.size() + " categories of services back.");
-//			}
-//		};
-//		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("problem getting services..." + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
+				awsServices = result;
+				GWT.log("got " + result.size() + " categories of services back.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 
 		ListAccountView listAccountView = clientFactory.getListAccountView();
 		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
@@ -105,9 +115,38 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		mainTabPanel.addStyleName("tab-style-content");
 
 		registerEvents();
+
+//		HTML notificationsHtml = new HTML(
+//			"<div ui:field='notificationsElem' style=\"background: url('images/bell-512.png'); width: 24px; height:24px;\">" +
+//			"<div style=\"font-weight: bold; color: red;\">" +
+//			"3" +
+//			"</div>" +
+//			"</div>");
+//		notificationsHTML.clear();
+//		notificationsHTML.add(notificationsHtml);
+				
+		/*
+			<div ui:field='notificationsElem'><img src="images/bell-512.png" width="24" height="24"/></div>
+			if (notificationCount > 0) {
+				notificationsHtml =
+					"<div style=\"position: relative; background: url('images/notifications.png'); width: 32px; height:32px;\">" +
+					"<div style=\"position: relative; top: 6px; font-weight: bold; color: red;\">" +
+					"<p>" + result.size() + "</p>" +
+					"</div>" +
+					"</div>";
+			}
+			else {
+				notificationsHtml =
+					"<div style=\"position: relative; background: url('images/notifications.png'); width: 32px; height:32px;\"/>";
+			}
+		 */
 	}
 
 	/*** FIELDS ***/
+	@UiField VerticalPanel appShellPanel;
+	// for services, notifications and other stuff
+	// temporary, will be a DeckLayoutPanel
+	@UiField VerticalPanel otherFeaturesPanel;
 	@UiField TabLayoutPanel mainTabPanel;
 	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
 	@UiField DeckLayoutPanel cidrContentContainer;
@@ -125,7 +164,19 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
     PopupPanel productsPopup = new PopupPanel(true);
 	@UiField Element productsElem;
+	@UiField Element notificationsElem;
+	@UiField Element logoElem;
 	@UiField HorizontalPanel generalInfoPanel;
+	@UiField HorizontalPanel linksPanel;
+	@UiField Button closeOtherFeaturesButton;
+	@UiField HTMLPanel notificationsHTML;
+	
+	// temporary
+	@UiHandler ("closeOtherFeaturesButton")
+	void closeOtherFeaturesButtonClicked(ClickEvent e) {
+		hideOtherFeaturesPanel();
+		showMainTabPanel();
+	}
 
     /**
 	 * A boolean indicating that we have not yet seen the first content widget.
@@ -138,13 +189,44 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstElasticIpContentWidget = true;
 	private boolean firstElasticIpAssignmentContentWidget = true;
 	private boolean firstFirewallContentWidget = true;
+	private boolean firstNotificationContentWidget = true;
+	private boolean firstServicesContentWidget = true;
 
 	private void registerEvents() {
+	    Event.sinkEvents(logoElem, Event.ONCLICK);
+	    Event.setEventListener(logoElem, new EventListener() {
+			@Override
+			public void onBrowserEvent(Event event) {
+				if(Event.ONCLICK == event.getTypeInt()) {
+					productsPopup.hide();
+					hideOtherFeaturesPanel();
+					showMainTabPanel();
+				}
+			}
+	    });
+	    
+	    Event.sinkEvents(notificationsElem, Event.ONCLICK);
+	    Event.setEventListener(notificationsElem, new EventListener() {
+			@Override
+			public void onBrowserEvent(Event event) {
+				if(Event.ONCLICK == event.getTypeInt()) {
+					productsPopup.hide();
+					// clear other features panel
+//					otherFeaturesPanel.clear();
+					// add list notifications view
+					// add maintain notifications view
+					hideMainTabPanel();
+					showOtherFeaturesPanel();
+					// TODO: ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATIONS);
+				}
+			}
+	    });
+	    
 	    Event.sinkEvents(productsElem, Event.ONMOUSEOVER);
 	    Event.setEventListener(productsElem, new EventListener() {
 	        @Override
 	        public void onBrowserEvent(Event event) {
-	             if(Event.ONMOUSEOVER == event.getTypeInt()) {
+	        		if(Event.ONMOUSEOVER == event.getTypeInt()) {
 	            	 	productsPopup.clear();
 	            	 	productsPopup.setAutoHideEnabled(true);
 		            	productsPopup.setWidth("1200px");
@@ -166,41 +248,59 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		            	vpList.add(new VerticalPanel());
 		            	vpList.add(new VerticalPanel());
 		            	 
+		            	// TODO: only do this for admins...
+        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
+        				manageSvcsAnchor.addStyleName("productAnchor");
+        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								productsPopup.hide();
+								// clear other features panel
+								// add list services view
+								// add maintain services view
+				        			hideMainTabPanel();
+				        			showOtherFeaturesPanel();
+				    				// TODO: ActionEvent.fire(eventBus, ActionNames.GO_HOME_MANAGE_SERVICES);
+							}
+        				});
+
+        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
+		            	vpList.get(0).add(manageSvcsAnchor);
+		            	vpList.get(0).add(hrHtml);
+
+		            	// build products list and populate popup with data
+		            	int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
+		            	int catCntr = 0;
+		            	int vpCntr = 0;
+	            		Iterator<String> keys = awsServices.keySet().iterator();
+	            		while (keys.hasNext()) {
+	            			String catName = keys.next();
+	            			catCntr++;
+	            			if (catCntr >= catsPerPanel) {
+	            				catCntr = 0;
+	            				hp.add(vpList.get(vpCntr));
+	            				vpCntr++;
+	            			}
+	            			else {
+	            				VerticalPanel vp = vpList.get(vpCntr);
+	            				HTMLPanel catHtml = new HTMLPanel(catName);
+	            				catHtml.addStyleName("productCategory");
+	            				vp.add(catHtml);
+	            				List<AWSServicePojo> services = awsServices.get(catName);
+	            				for (AWSServicePojo svc : services) {
+	            					Anchor svcAnchor = new Anchor(svc.getName());
+		            				svcAnchor.addStyleName("productAnchor");
+		            				// TODO: click handler
+		            				vp.add(svcAnchor);
+	            				}
+	            				HTMLPanel html = new HTMLPanel("<hr>");
+	            				vp.add(html);
+	            			}
+	            		}
+	            		// add last VP to the HP because it gets populated but not added above
+	            		hp.add(vpList.get(3));
 		            	
-//		            	int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
-//		            	GWT.log("catsPerPanel: " + catsPerPanel);
-//		            	int catCntr = 0;
-//		            	int vpCntr = 0;
-//	            		Iterator<String> keys = awsServices.keySet().iterator();
-//	            		while (keys.hasNext()) {
-//	            			String catName = keys.next();
-//	            			catCntr++;
-//	            			if (catCntr >= catsPerPanel) {
-//	            				catCntr = 0;
-//	            				GWT.log("adding vp number " + vpCntr + " to the HP");
-//	            				hp.add(vpList.get(vpCntr));
-//	            				vpCntr++;
-//	            			}
-//	            			else {
-//	            				GWT.log("using vp number " + vpCntr);
-//	            				VerticalPanel vp = vpList.get(vpCntr);
-//	            				HTMLPanel catHtml = new HTMLPanel(catName);
-//	            				catHtml.addStyleName("productCategory");
-//	            				vp.add(catHtml);
-//	            				List<AWSServicePojo> services = awsServices.get(catName);
-//	            				for (AWSServicePojo svc : services) {
-//		            				HTMLPanel svcHtml = new HTMLPanel(svc.getName());
-//		            				svcHtml.addStyleName("productAnchor");
-//		            				vp.add(svcHtml);
-//	            				}
-//	            				HTMLPanel html = new HTMLPanel("<hr>");
-//	            				vp.add(html);
-//	            			}
-//	            		}
-//	            		// add last VP to the HP because it gets populated but not added above
-//	            		hp.add(vpList.get(3));
-		            	
-					productsPopup.showRelativeTo(generalInfoPanel);
+					productsPopup.showRelativeTo(linksPanel);
 	             }
 	        }
 	    });
@@ -323,6 +423,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				firstAccountContentWidget = false;
 				accountContentContainer.animate(0);
 			}
+			return;
 		}
 
 		if (w instanceof ListCidrPresenter || w instanceof MaintainCidrPresenter) {
@@ -332,6 +433,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				firstCidrContentWidget = false;
 				cidrContentContainer.animate(0);
 			}
+			return;
 		}
 
 		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
@@ -347,6 +449,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					cidrAssignmentContentContainer.animate(0);
 				}
 			}
+			return;
 		}
 
 		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
@@ -358,6 +461,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				firstVpcContentWidget = false;
 				vpcContentContainer.animate(0);
 			}
+			return;
 		}
 
 		if (w instanceof ListVpcpPresenter || 
@@ -369,6 +473,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				firstVpcpContentWidget = false;
 				vpcpContentContainer.animate(0);
 			}
+			return;
 		}
 		
 		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
@@ -378,6 +483,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				firstElasticIpContentWidget = false;
 				elasticIpContentContainer.animate(0);
 			}
+			return;
 		}
 
 		if (w instanceof ListElasticIpAssignmentPresenter || w instanceof MaintainElasticIpAssignmentPresenter) {
@@ -387,8 +493,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				firstElasticIpAssignmentContentWidget = false;
 				elasticIpAssignmentContentContainer.animate(0);
 			}
+			return;
 		}
-
+		
+		// TODO: ListNotificationPresenter, MaintainNotificationPresenter
+		
+		// TOOD: ListServicesPresenter, MaintainServicePresenter
 	}
 
 	@Override
@@ -414,5 +524,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void setUserName(String userName) {
 		userNameElem.setInnerHTML(userName);		
+	}
+
+	@Override
+	public void showOtherFeaturesPanel() {
+		otherFeaturesPanel.setVisible(true);
+	}
+
+	@Override
+	public void hideOtherFeaturesPanel() {
+		otherFeaturesPanel.setVisible(false);
+	}
+
+	@Override
+	public void showMainTabPanel() {
+		mainTabPanel.setVisible(true);
+	}
+
+	@Override
+	public void hideMainTabPanel() {
+		mainTabPanel.setVisible(false);
 	}
 }

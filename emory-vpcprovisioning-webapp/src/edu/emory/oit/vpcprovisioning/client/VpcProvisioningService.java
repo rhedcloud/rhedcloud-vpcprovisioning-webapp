@@ -14,12 +14,14 @@
  *******************************************************************************/
 package edu.emory.oit.vpcprovisioning.client;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -164,4 +166,7 @@ public interface VpcProvisioningService extends RemoteService {
 	CidrPojo getCidrFromCacheForUser(String eppn);
 	CidrAssignmentPojo storeCidrAssignmentInCacheForUser(String eppn, CidrAssignmentPojo cidrAssignment);
 	CidrAssignmentPojo getCidrAssignmentFromCacheForUser(String eppn);
+	
+	HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException;
+
 }

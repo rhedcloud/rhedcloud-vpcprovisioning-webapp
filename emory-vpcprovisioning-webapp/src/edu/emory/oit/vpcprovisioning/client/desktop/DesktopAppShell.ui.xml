@@ -7,7 +7,7 @@
 
 		<!-- header -->
 		<g:layer top='0px' height='5.0em' left='0px' right='0px'>
-			<g:HorizontalPanel addStyleNames="{style.linksPanel}" width="100%" height="100%">
+			<g:HorizontalPanel ui:field="linksPanel" addStyleNames="{style.linksPanel}" width="100%" height="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 			<g:HorizontalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -20,7 +20,7 @@
 			<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:HorizontalPanel ui:field="generalInfoPanel" width="100%">
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel title="Security Notifications" ui:field='notificationsTitleBar'>
+					<g:HTMLPanel title="Security Notifications" ui:field='notificationsHTML' styleName="{style.linksMenuHeader}">
 						<div ui:field='notificationsElem'><img src="images/bell-512.png" width="24" height="24"/></div>
 					</g:HTMLPanel>
 				</g:cell>
@@ -101,7 +101,13 @@
 			<g:HorizontalPanel width="100%">
 				<g:cell horizontalAlignment="ALIGN_LEFT" width="1%"><g:HTML></g:HTML></g:cell>
 				<g:cell horizontalAlignment="ALIGN_CENTER" width="98%">
-					<g:VerticalPanel width="100%" height="100%">
+					<g:VerticalPanel ui:field="appShellPanel" width="100%" height="100%">
+					<!-- TODO: this will be a DeckLayoutPanel -->
+					<g:VerticalPanel visible="false" ui:field="otherFeaturesPanel">
+						<g:HTMLPanel>This is the other features panel that will house the views used to manage services and account specific notifications etc....</g:HTMLPanel>
+						<g:Button width="150px" addStyleNames="{style.awsButton}"
+							ui:field="closeOtherFeaturesButton">Close</g:Button>
+					</g:VerticalPanel>
 					<g:TabLayoutPanel 
 						barHeight="2" 
 						barUnit="EM" 
