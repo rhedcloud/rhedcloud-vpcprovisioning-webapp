@@ -611,8 +611,17 @@ a:visited {
 }
 .field {
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	width: 100%;
+	width: 250px;
 	font-size: 12pt;
+}
+.listBoxField {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	width: 250px;
+	font-size: 12pt;
+	padding: 5px;
+}
+.fieldGrid {
+	padding: 5px !important;
 }
 .textBoxWrapper {
 	margin-right: 10px;

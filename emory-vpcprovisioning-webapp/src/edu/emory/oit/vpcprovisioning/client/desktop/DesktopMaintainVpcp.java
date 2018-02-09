@@ -74,6 +74,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField CheckBox vpcpReqNotifyAdminsCB;
 	@UiField ListBox accountLB;
 	@UiField CaptionPanel accountCP;
+//	@UiField HTML accountInfoHTML;
 
 	// admins (net ids)
 	@UiField VerticalPanel netIdVP;
