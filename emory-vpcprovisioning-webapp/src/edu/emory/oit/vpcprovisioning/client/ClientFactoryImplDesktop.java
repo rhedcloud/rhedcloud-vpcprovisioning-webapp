@@ -17,6 +17,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIpAssignment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainAccount;
@@ -39,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -77,6 +79,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainElasticIpView maintainElasticIpView;
 	private ListElasticIpAssignmentView elasticIpAssignmentListView;
 	private MaintainElasticIpAssignmentView maintainElasticIpAssignmentView;
+	private ListServiceView listServiceView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -315,5 +318,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainElasticIpAssignmentView createMaintainElasticIpAssignmentView() {
 		return new DesktopMaintainElasticIpAssignment();
+	}
+	@Override
+	public ListServiceView getListServiceView() {
+        if (listServiceView == null) {
+        	listServiceView = createServiceListView();
+        }
+        return listServiceView;
+	}
+	protected ListServiceView createServiceListView() {
+		return new DesktopListService();
 	}
 }

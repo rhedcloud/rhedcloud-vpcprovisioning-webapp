@@ -36,9 +36,9 @@
 						  <b:DropDownMenu>
 						    <b:AnchorListItem>Release addresses</b:AnchorListItem>
 						    <b:AnchorListItem>Associate address</b:AnchorListItem>
-						    <b:AnchorListItem>Disassociate address</b:AnchorListItem>
-						    <b:AnchorListItem>Move to VPC scope</b:AnchorListItem>
-						    <b:AnchorListItem>Restore to EC2 scope</b:AnchorListItem>
+						    <b:AnchorListItem enabled="false">Disassociate address</b:AnchorListItem>
+						    <b:AnchorListItem enabled="false">Move to VPC scope</b:AnchorListItem>
+						    <b:AnchorListItem enabled="false">Restore to EC2 scope</b:AnchorListItem>
 						    <b:AnchorListItem>Add/Edit Tags</b:AnchorListItem>
 						  </b:DropDownMenu>
 						</b:ButtonGroup>

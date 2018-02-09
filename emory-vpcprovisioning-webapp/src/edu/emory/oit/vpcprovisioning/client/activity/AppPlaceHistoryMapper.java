@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
@@ -37,7 +38,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 				 ListElasticIpPlace.Tokenizer.class, 
 				 MaintainElasticIpPlace.Tokenizer.class,
 				 ListElasticIpAssignmentPlace.Tokenizer.class,
-				 MaintainElasticIpAssignmentPlace.Tokenizer.class})
+				 MaintainElasticIpAssignmentPlace.Tokenizer.class,
+				 ListServicePlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

@@ -17,9 +17,7 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -53,10 +51,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
-import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
-import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
@@ -147,6 +143,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	// for services, notifications and other stuff
 	// temporary, will be a DeckLayoutPanel
 	@UiField VerticalPanel otherFeaturesPanel;
+//	@UiField DeckLayoutPanel otherFeaturesContentContainer;
 	@UiField TabLayoutPanel mainTabPanel;
 	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
 	@UiField DeckLayoutPanel cidrContentContainer;
@@ -168,15 +165,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField Element logoElem;
 	@UiField HorizontalPanel generalInfoPanel;
 	@UiField HorizontalPanel linksPanel;
-	@UiField Button closeOtherFeaturesButton;
+//	@UiField Button closeOtherFeaturesButton;
 	@UiField HTMLPanel notificationsHTML;
 	
 	// temporary
-	@UiHandler ("closeOtherFeaturesButton")
-	void closeOtherFeaturesButtonClicked(ClickEvent e) {
-		hideOtherFeaturesPanel();
-		showMainTabPanel();
-	}
+//	@UiHandler ("closeOtherFeaturesButton")
+//	void closeOtherFeaturesButtonClicked(ClickEvent e) {
+//		hideOtherFeaturesPanel();
+//		showMainTabPanel();
+//	}
 
     /**
 	 * A boolean indicating that we have not yet seen the first content widget.
@@ -201,6 +198,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					productsPopup.hide();
 					hideOtherFeaturesPanel();
 					showMainTabPanel();
+					ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
 				}
 			}
 	    });
@@ -253,53 +251,79 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
         				manageSvcsAnchor.addStyleName("productAnchor");
         				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
         				manageSvcsAnchor.addClickHandler(new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent event) {
-								productsPopup.hide();
-								// clear other features panel
-								// add list services view
-								// add maintain services view
-				        			hideMainTabPanel();
-				        			showOtherFeaturesPanel();
-				    				// TODO: ActionEvent.fire(eventBus, ActionNames.GO_HOME_MANAGE_SERVICES);
-							}
+						@Override
+						public void onClick(ClickEvent event) {
+							productsPopup.hide();
+							// clear other features panel
+							// add list services view
+							// add maintain services view
+//							otherFeaturesContentContainer.clear();
+							otherFeaturesPanel.clear();
+			        			hideMainTabPanel();
+			        			showOtherFeaturesPanel();
+			    				firstServicesContentWidget = true;
+//			    				ListServiceView listServiceView = clientFactory.getListServiceView();
+//				    				MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
+//			    				otherFeaturesContentContainer.add(listServiceView);
+//				    				otherFeaturesPanel.add(maintainServiceView);
+//			    				otherFeaturesContentContainer.setAnimationDuration(500);
+			    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+						}
         				});
 
         				HTMLPanel hrHtml = new HTMLPanel("<hr>");
 		            	vpList.get(0).add(manageSvcsAnchor);
 		            	vpList.get(0).add(hrHtml);
 
-		            	// build products list and populate popup with data
 		            	int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
+		            	if (catsPerPanel < 5) {
+		            		catsPerPanel = awsServices.size();
+		            	}
+		            	GWT.log("catsPerPanel: " + catsPerPanel);
 		            	int catCntr = 0;
 		            	int vpCntr = 0;
 	            		Iterator<String> keys = awsServices.keySet().iterator();
 	            		while (keys.hasNext()) {
 	            			String catName = keys.next();
-	            			catCntr++;
+	            			GWT.log("Category is: " + catName);
 	            			if (catCntr >= catsPerPanel) {
 	            				catCntr = 0;
+	            				GWT.log("adding vp number " + vpCntr + " to the HP");
 	            				hp.add(vpList.get(vpCntr));
 	            				vpCntr++;
 	            			}
 	            			else {
+	            				GWT.log("using vp number " + vpCntr);
 	            				VerticalPanel vp = vpList.get(vpCntr);
 	            				HTMLPanel catHtml = new HTMLPanel(catName);
 	            				catHtml.addStyleName("productCategory");
 	            				vp.add(catHtml);
 	            				List<AWSServicePojo> services = awsServices.get(catName);
+	            				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 	            				for (AWSServicePojo svc : services) {
+	            					GWT.log("Adding service: " + svc.getName());
 	            					Anchor svcAnchor = new Anchor(svc.getName());
 		            				svcAnchor.addStyleName("productAnchor");
-		            				// TODO: click handler
+		            				svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
+		            					"  DESCRIPTION: " + svc.getDescription());
+		            				svcAnchor.setHref(svc.getLandingPage());
+		            				svcAnchor.setTarget("_blank");
+		            				if (svc.getStatus().toLowerCase().contains("blocked")) {
+		            					svcAnchor.addStyleName("productAnchorBlocked");
+		            				}
 		            				vp.add(svcAnchor);
 	            				}
 	            				HTMLPanel html = new HTMLPanel("<hr>");
 	            				vp.add(html);
 	            			}
+	            			catCntr++;
 	            		}
 	            		// add last VP to the HP because it gets populated but not added above
-	            		hp.add(vpList.get(3));
+	            		if (hp.getWidgetCount() < 4) {
+	            			for (int i=hp.getWidgetCount(); i<4; i++) {
+	    	            			hp.add(vpList.get(i));
+	            			}
+	            		}
 		            	
 					productsPopup.showRelativeTo(linksPanel);
 	             }
@@ -499,7 +523,19 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		// TODO: ListNotificationPresenter, MaintainNotificationPresenter
 		
-		// TOOD: ListServicesPresenter, MaintainServicePresenter
+		// ListServicePresenter, MaintainServicePresenter
+		if (w instanceof ListServicePresenter) {
+			GWT.log("It's the services presenter...");
+//			otherFeaturesContentContainer.setWidget(w);
+			otherFeaturesPanel.clear();
+			otherFeaturesPanel.add(w);
+			// Do not animate the first time we show a widget.
+//			if (firstServicesContentWidget) {
+//				firstServicesContentWidget = false;
+//				otherFeaturesContentContainer.animate(0);
+//			}
+			return;
+		}
 	}
 
 	@Override

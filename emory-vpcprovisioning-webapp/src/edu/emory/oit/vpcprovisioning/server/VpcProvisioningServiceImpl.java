@@ -42,6 +42,8 @@ import javax.servlet.http.HttpSession;
 
 import org.any_openeai_enterprise.moa.jmsobjects.services.v2_0.Authorization;
 import org.any_openeai_enterprise.moa.objects.resources.v2_0.AuthorizationQuerySpecification;
+import org.jdom.Document;
+import org.jdom.Element;
 import org.openeai.config.AppConfig;
 import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
@@ -62,6 +64,8 @@ import org.openeai.transport.RequestService;
 import org.openeai.utils.config.AppConfigFactory;
 import org.openeai.utils.config.AppConfigFactoryException;
 import org.openeai.utils.config.SimpleAppConfigFactory;
+import org.openeai.xml.XmlDocumentReader;
+import org.openeai.xml.XmlDocumentReaderException;
 
 import com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
@@ -86,6 +90,8 @@ import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceCategoryPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicesJsonHelper;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
@@ -3409,12 +3415,71 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException {
-	    ByteArrayInputStream instream = 
+		int svcCnt = 0;
+
+		if (awsServicesMap.isEmpty()) {
+		XmlDocumentReader xmlReader = new XmlDocumentReader();
+		try {
+			Document provideDoc = xmlReader.initializeDocument("configs/messaging/Environments/Examples/InputFiles/VpcProvisioningWebApp/Provide-Replies.xml", false);
+			info("Read document.  Root element is: " + provideDoc.getRootElement().getName());
+			Element dataArea = provideDoc.getRootElement().getChild("DataArea");
+			List<Element> eServices = dataArea.getChildren("Service");
+			for (Element eService : eServices) {
+				svcCnt++;
+				String category = eService.getChildText("ConsoleCategory");
+				String id = eService.getChildText("ServiceId");
+				String code = eService.getChildText("ServiceCode");
+				String name = eService.getChildText("ServiceName");
+				String status = eService.getChildText("Status");
+				String url = eService.getChildText("ServiceLandingPageUrl");
+				String description = eService.getChildText("Description");
+				String hipaaEligible = eService.getChildText("HippaEligible");
+				
+				AWSServicePojo svcPojo = new AWSServicePojo();
+				svcPojo.setCode(code);
+				svcPojo.setName(name);
+				svcPojo.setStatus(status);
+				svcPojo.setLandingPage(url);
+				svcPojo.setDescription(description);
+				svcPojo.setHipaaEligible(hipaaEligible == null ? false : Boolean.getBoolean(hipaaEligible));
+				svcPojo.getConsoleCategories().add(category);
+				info(category + ": " + svcPojo.getName());
+
+		    		// see if this category is already in the awsServicesMap
+		    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
+		    		if (servicesForCat == null) {
+		    			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
+		    			servicesForCat.add(svcPojo);
+		    			awsServicesMap.put(category, servicesForCat);
+		    		}
+		    		else {
+		    			servicesForCat.add(svcPojo);
+		    		}
+			}
+		} catch (XmlDocumentReaderException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		}
+	    else {
+        		Iterator<String> keys = awsServicesMap.keySet().iterator();
+        		while (keys.hasNext()) {
+        			String catName = keys.next();
+    				List<AWSServicePojo> services = awsServicesMap.get(catName);
+    				for (AWSServicePojo svc : services) {
+    					info(catName + ": " + svc.getName());
+    					svcCnt++;
+    				}
+        		}
+	    }
+
+		/*
+		ByteArrayInputStream instream = 
 	    		new ByteArrayInputStream(new AWSServicesJsonHelper().getServicesJson().toString().getBytes());
 	    
-		int svcCnt = 0;
 	    if (awsServicesMap.isEmpty()) {
 		    try {
 		        // do something useful
@@ -3472,6 +3537,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	    else {
 	    		svcCnt = awsServicesMap.values().size();
 	    }
+	    */
 	    info("returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
 		return awsServicesMap;
 	}
@@ -3482,5 +3548,31 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	public void setAwsServicesMap(HashMap<String, List<AWSServicePojo>> awsServicesMap) {
 		this.awsServicesMap = awsServicesMap;
+	}
+
+	@Override
+	public AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException {
+		AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
+		result.setFilterUsed(filter);
+		result.setResults(Collections.<AWSServicePojo> emptyList());
+		return result;
+	}
+
+	@Override
+	public AWSServicePojo createService(AWSServicePojo service) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AWSServicePojo updateService(AWSServicePojo service) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteService(AWSServicePojo service) throws RpcException {
+		// TODO Auto-generated method stub
+		
 	}
 }

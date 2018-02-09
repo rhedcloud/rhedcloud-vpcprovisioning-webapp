@@ -24,6 +24,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -43,6 +45,22 @@ public class AppActivityMapper implements ActivityMapper {
 
 	@Override
 	public Activity getActivity(final Place place) {
+		if (place instanceof ListServicePlace) {
+			// The list of services
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListServicePresenter presenter = new ListServicePresenter(clientFactory, (ListServicePlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+
+				/*
+				 * Note no call to presenter.stop(). The CaseRecordListViews do that
+				 * themselves as a side effect of setPresenter.
+				 */
+			};
+		}
 		if (place instanceof ListVpcPlace) {
 			// The list of case records.
 			return new AbstractActivity() {

@@ -20,6 +20,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -149,6 +151,12 @@ public interface VpcProvisioningServiceAsync {
 	
 	// ElasticIpAssignmentSummary
 	void getElasticIpAssignmentSummariesForFilter(ElasticIpAssignmentSummaryQueryFilterPojo filter, AsyncCallback<ElasticIpAssignmentSummaryQueryResultPojo> callback);
+	
+	// services
+	void getServicesForFilter(AWSServiceQueryFilterPojo filter, AsyncCallback<AWSServiceQueryResultPojo> callback);
+	void createService(AWSServicePojo service, AsyncCallback<AWSServicePojo> callback);
+	void updateService(AWSServicePojo service, AsyncCallback<AWSServicePojo> callback);
+	void deleteService(AWSServicePojo service, AsyncCallback<Void> callback);
 
 	void getAWSServiceMap(AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback) throws RpcException;
 }

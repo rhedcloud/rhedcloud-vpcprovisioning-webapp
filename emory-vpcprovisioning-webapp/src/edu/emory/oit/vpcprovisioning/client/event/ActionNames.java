@@ -51,6 +51,8 @@ public interface ActionNames {
 	final String GO_BACK_VPCP = "goBackVpcp";
 	final String GO_HOME_VPC = "goHomeVpc";
 	final String GO_BACK_VPC = "goBackVpc";
+	final String GO_HOME_SERVICE = "goHomeService";
+	final String GO_BACK_SERVICE = "goBackService";
 	final String GO_HOME_ACCOUNT = "goHomeAccount";
 	final String GO_BACK_ACCOUNT = "goBackAccount";
 	final String GO_HOME_CIDR = "goHomeCidr";

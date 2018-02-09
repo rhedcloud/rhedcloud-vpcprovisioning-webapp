@@ -22,6 +22,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -159,6 +161,12 @@ public interface VpcProvisioningService extends RemoteService {
 	BillQueryResultPojo getBillsForFilter(BillQueryFilterPojo filter) throws RpcException;
 	List<BillPojo> getCachedBillsForAccount(String accountId) throws RpcException;
 	void refreshMasterBillData() throws RpcException;
+
+	// AWS Services
+	AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException;
+	AWSServicePojo createService(AWSServicePojo service) throws RpcException;
+	AWSServicePojo updateService(AWSServicePojo service) throws RpcException;
+	void deleteService(AWSServicePojo service) throws RpcException;
 
 
 	// caching methods

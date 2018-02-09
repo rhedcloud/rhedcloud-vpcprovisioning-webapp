@@ -1,6 +1,5 @@
 /* GWT CellTable styles */
 .cellTableWidget {
-	border: 1px solid #ccc;
     border-top-width: 1px;
     border-right-width: 1px;
     border-bottom-width: 1px;
@@ -22,12 +21,13 @@
     border-image-width: 1;
     border-image-outset: 0;
     border-image-repeat: stretch stretch;
+    padding: 5px !important;
 }
 .cellTableHeader {
     font-family: arial;
 	font-size: 13px;
 	font-weight: bold;
-	line-height: 21px;
+	line-height: 25px;
 	color: #444;
 	font: 14px/ 1.3em "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
 	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#e0e0e0));
@@ -47,14 +47,18 @@
 .cellTableCell {
 }
 .cellTableEvenRow {
+	/*
 	background: #fff;
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid #fff;
+	*/
 }
 .cellTableOddRow {
+	/*
 	background: #fff;
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid #fff;
+	*/
 }
 .cellTableSelectedRow {
 	color: #444;
@@ -81,6 +85,11 @@
     background-position-x: 0%;
     background-position-y: 0%;
     background-size: auto auto;
+    border-top: 2px solid #778bb5 !important;
+    border-bottom: 2px solid #778bb5 !important;
+    border-left: 2px solid #778bb5 !important;
+    border-right: 2px solid #778bb5 !important;
+    border-spacing: 2px !important;
 }
 .cellTableHoveredRow {
 	color: #444;

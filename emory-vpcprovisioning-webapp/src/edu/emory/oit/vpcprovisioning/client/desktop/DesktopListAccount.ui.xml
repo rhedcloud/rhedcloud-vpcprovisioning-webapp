@@ -24,7 +24,7 @@
 			<g:Grid>
 				<g:row>
 					<g:customCell>
-						<c:CellTable width="100%" ui:field="accountListTable"  title="Existing CIDRs"/>
+						<c:CellTable width="100%" ui:field="accountListTable"  title="Existing Accounts"/>
 					</g:customCell>
 				</g:row>
 				<g:row>

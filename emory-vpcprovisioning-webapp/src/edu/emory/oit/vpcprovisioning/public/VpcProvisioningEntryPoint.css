@@ -487,6 +487,12 @@ a:visited {
 .productAnchor:hover {
 	color: orange;
 }
+.productAnchorBlocked {
+	text-decoration: line-through;
+}
+.productAnchorBlocked:hover {
+	text-decoration: line-through;
+}
 
 .sideCarousel {
     z-index: 0;

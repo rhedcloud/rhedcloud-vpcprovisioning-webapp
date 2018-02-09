@@ -22,6 +22,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -190,6 +191,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainElasticIpAssignmentView getMaintainElasticIpAssignmentView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListServiceView getListServiceView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

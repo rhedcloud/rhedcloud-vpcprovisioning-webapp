@@ -22,6 +22,7 @@ import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
@@ -60,6 +61,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private ElasticIpPojo elasticIp;
 	private ElasticIpAssignmentPojo elasticIpAssignment;
 	private ElasticIpAssignmentSummaryPojo elasticIpAssignmentSummary;
+	private AWSServicePojo awsService;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -109,6 +111,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(account), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service) {
+		eventBus.fireEventFromSource(new ActionEvent(service), sourceName);
+	}
+
 	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc) {
 		GWT.log("[ActionEvent.fire] editing VPC: " + vpc.getVpcId());
 		eventBus.fireEventFromSource(new ActionEvent(vpc), sourceName);
@@ -130,12 +136,15 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	protected ActionEvent() {
 	}
 
+	public ActionEvent(AWSServicePojo service) {
+		this.awsService = service;
+	}
+
 	public ActionEvent(VpcpPojo vpcp) {
 		this.vpcp = vpcp;
 	}
 	
 	public ActionEvent(VpcPojo vpc) {
-		GWT.log("[ActionEvent.constructor] editing VPC: " + vpc.getVpcId());
 		this.vpc = vpc;
 	}
 	
@@ -267,5 +276,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setElasticIpAssignmentSummary(ElasticIpAssignmentSummaryPojo elasticIpAssignmentSummary) {
 		this.elasticIpAssignmentSummary = elasticIpAssignmentSummary;
+	}
+
+	public AWSServicePojo getAwsService() {
+		return awsService;
+	}
+
+	public void setAwsService(AWSServicePojo awsService) {
+		this.awsService = awsService;
 	}
 }

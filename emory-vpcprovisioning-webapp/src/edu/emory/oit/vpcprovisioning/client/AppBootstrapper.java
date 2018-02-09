@@ -28,6 +28,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
@@ -142,6 +143,13 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
 				placeController.goTo(new ListVpcpPlace(false));
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_SERVICE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				// TODO need pass filter...
+				placeController.goTo(new ListServicePlace(false));
 			}
 		});
 		
