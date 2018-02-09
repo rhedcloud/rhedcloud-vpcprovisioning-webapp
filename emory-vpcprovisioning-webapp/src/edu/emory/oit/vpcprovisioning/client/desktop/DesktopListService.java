@@ -1,17 +1,27 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
@@ -19,6 +29,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListService extends ViewImplBase implements ListServiceView {
@@ -27,7 +38,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	private SingleSelectionModel<AWSServicePojo> selectionModel;
 	List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
 	UserAccountPojo userLoggedIn;
-
 
 	private static DesktopListServiceUiBinder uiBinder = GWT.create(DesktopListServiceUiBinder.class);
 
@@ -39,6 +49,10 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		GWT.log("List services desktop view implementation...");
 	}
 
+	/*** FIELDS ***/
+	@UiField SimplePager listPager;
+	@UiField Button createServiceButton;
+	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
 	
@@ -57,20 +71,17 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
-		return null;
+		return serviceListTable;
 	}
 
 	@Override
 	public void applyEmoryAWSAdminMask() {
-		// TODO Auto-generated method stub
-		
+		createServiceButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyEmoryAWSAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		createServiceButton.setEnabled(false);
 	}
 
 	@Override
@@ -80,8 +91,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@Override
 	public void clearList() {
-		// TODO Auto-generated method stub
-		
+		serviceListTable.setVisibleRangeAndClearData(serviceListTable.getVisibleRange(), true);
 	}
 
 	@Override
@@ -107,14 +117,260 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@Override
 	public void setServices(List<AWSServicePojo> services) {
-		// TODO Auto-generated method stub
-		
+		this.serviceList = services;
+		this.initializeServiceListTable();
+	    listPager.setDisplay(serviceListTable);
 	}
 
 	@Override
 	public void removeServiceFromView(AWSServicePojo service) {
-		// TODO Auto-generated method stub
-		
+		dataProvider.getList().remove(service);
 	}
 
+	private Widget initializeServiceListTable() {
+		GWT.log("initializing service list table...");
+		serviceListTable.setTableLayoutFixed(false);
+		serviceListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		
+		// set range to display
+		serviceListTable.setVisibleRange(0, 5);
+		
+		// create dataprovider
+		dataProvider = new ListDataProvider<AWSServicePojo>();
+		dataProvider.addDataDisplay(serviceListTable);
+		dataProvider.getList().clear();
+		dataProvider.getList().addAll(this.serviceList);
+		
+		selectionModel = 
+	    	new SingleSelectionModel<AWSServicePojo>(AWSServicePojo.KEY_PROVIDER);
+		serviceListTable.setSelectionModel(selectionModel);
+	    
+	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	@Override
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+	    		AWSServicePojo m = selectionModel.getSelectedObject();
+	    		GWT.log("Selected service is: " + m.getServiceId());
+	    	}
+	    });
+
+	    ListHandler<AWSServicePojo> sortHandler = 
+	    	new ListHandler<AWSServicePojo>(dataProvider.getList());
+	    serviceListTable.addColumnSortHandler(sortHandler);
+
+	    if (serviceListTable.getColumnCount() == 0) {
+		    initServiceListTableColumns(sortHandler);
+	    }
+		
+		return serviceListTable;
+	}
+	private void initServiceListTableColumns(ListHandler<AWSServicePojo> sortHandler) {
+		GWT.log("initializing VPC list table columns...");
+		// Account id column
+		Column<AWSServicePojo, String> acctIdColumn = 
+			new Column<AWSServicePojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getConsoleCategories().get(0);
+			}
+		};
+		acctIdColumn.setSortable(true);
+		sortHandler.setComparator(acctIdColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getConsoleCategories().get(0).compareTo(o2.getConsoleCategories().get(0));
+			}
+		});
+		serviceListTable.addColumn(acctIdColumn, "Category");
+
+		// VPC id column
+		Column<AWSServicePojo, String> vpcIdColumn = 
+			new Column<AWSServicePojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getCode();
+			}
+		};
+		vpcIdColumn.setSortable(true);
+		sortHandler.setComparator(vpcIdColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getCode().compareTo(o2.getCode());
+			}
+		});
+		serviceListTable.addColumn(vpcIdColumn, "Code");
+		
+		// type
+		Column<AWSServicePojo, String> vpcTypeColumn = 
+			new Column<AWSServicePojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getName();
+			}
+		};
+		vpcTypeColumn.setSortable(true);
+		sortHandler.setComparator(vpcTypeColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		serviceListTable.addColumn(vpcTypeColumn, "Name");
+		
+		/*
+<!ELEMENT Service (ServiceId, ServiceCode, ServiceName, Status, ServiceLandingPageUrl, Description?, Category*, ConsoleCategory*, HippaEligible?, Tag*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+		 */
+		// compliance class
+		Column<AWSServicePojo, String> complianceClassColumn = 
+			new Column<AWSServicePojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getStatus();
+			}
+		};
+		complianceClassColumn.setSortable(true);
+		sortHandler.setComparator(complianceClassColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getStatus().compareTo(o2.getStatus());
+			}
+		});
+		serviceListTable.addColumn(complianceClassColumn, "Status");
+		
+		Column<AWSServicePojo, String> descColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+				
+				@Override
+				public String getValue(AWSServicePojo object) {
+					return object.getDescription();
+				}
+			};
+			descColumn.setSortable(true);
+			sortHandler.setComparator(descColumn, new Comparator<AWSServicePojo>() {
+				public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+					return o1.getDescription().compareTo(o2.getDescription());
+				}
+			});
+			serviceListTable.addColumn(descColumn, "Description");
+
+		// create user
+		Column<AWSServicePojo, String> createUserColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getCreateUser();
+			}
+		};
+		createUserColumn.setSortable(true);
+		sortHandler.setComparator(createUserColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getCreateUser().compareTo(o2.getCreateUser());
+			}
+		});
+		serviceListTable.addColumn(createUserColumn, "Create User");
+		
+		// create time
+		Column<AWSServicePojo, String> createTimeColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return dateFormat.format(object.getCreateTime());
+			}
+		};
+		createTimeColumn.setSortable(true);
+		sortHandler.setComparator(createTimeColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getCreateTime().compareTo(o2.getCreateTime());
+			}
+		});
+		serviceListTable.addColumn(createTimeColumn, "Create Time");
+
+		// last update user
+		Column<AWSServicePojo, String> lastUpdateUserColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getUpdateUser();
+			}
+		};
+		lastUpdateUserColumn.setSortable(true);
+		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getUpdateUser().compareTo(o2.getUpdateUser());
+			}
+		});
+		serviceListTable.addColumn(lastUpdateUserColumn, "Update User");
+		
+		// update time
+		Column<AWSServicePojo, String> updateTimeColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return dateFormat.format(object.getUpdateTime());
+			}
+		};
+		updateTimeColumn.setSortable(true);
+		sortHandler.setComparator(updateTimeColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+			}
+		});
+		serviceListTable.addColumn(updateTimeColumn, "Update Time");
+
+		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+			GWT.log(userLoggedIn.getEppn() + " is an admin");
+			// delete row column
+			Column<AWSServicePojo, String> deleteRowColumn = new Column<AWSServicePojo, String>(
+					new ButtonCell()) {
+				@Override
+				public String getValue(AWSServicePojo object) {
+					return "Delete";
+				}
+			};
+			deleteRowColumn.setCellStyleNames("glowing-border");
+			serviceListTable.addColumn(deleteRowColumn, "");
+			serviceListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
+			deleteRowColumn
+			.setFieldUpdater(new FieldUpdater<AWSServicePojo, String>() {
+				@Override
+				public void update(int index, final AWSServicePojo svc,
+						String value) {
+	
+					presenter.deleteService(svc);
+				}
+			});
+		}
+
+		// edit row column
+		Column<AWSServicePojo, String> editRowColumn = new Column<AWSServicePojo, String>(
+				new ButtonCell()) {
+			@Override
+			public String getValue(AWSServicePojo object) {
+				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+					GWT.log(userLoggedIn.getEppn() + " is an admin");
+					return "Edit";
+				}
+				else {
+					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
+					return "View";
+				}
+			}
+		};
+		editRowColumn.setCellStyleNames("glowing-border");
+		serviceListTable.addColumn(editRowColumn, "");
+		serviceListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
+		editRowColumn.setFieldUpdater(new FieldUpdater<AWSServicePojo, String>() {
+			@Override
+			public void update(int index, final AWSServicePojo svc,
+					String value) {
+				
+				// fire MAINTAIN_VPC event passing the vpc to be maintained
+				GWT.log("[DesktopListVpc] editing Service: " + svc.getName());
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE, svc);
+			}
+		});
+	}
 }

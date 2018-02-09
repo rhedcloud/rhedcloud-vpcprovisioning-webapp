@@ -24,6 +24,8 @@ public interface ActionNames {
 	final String VPCP_EDITING_CANCELED = "vpcpEditingCanceled";
 	final String GENERATE_VPC = "generateVpc";
 	
+	final String MAINTAIN_SERVICE = "maintainSvc";
+	final String CREATE_SERVICE = "createSvc";
 	final String REGISTER_VPC = "registerVpc";
 	final String MAINTAIN_VPC = "maintainVpc";
 	final String CREATE_ACCOUNT = "createAccount";

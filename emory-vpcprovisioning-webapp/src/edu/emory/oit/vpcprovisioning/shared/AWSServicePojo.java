@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class AWSServicePojo extends SharedObject implements IsSerializable {
@@ -11,32 +12,19 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	String code;
 	String status;
 	
-	/*
-			<ServiceId>EC2</ServiceId>
-			<ServiceCode>EC2</ServiceCode>
-			<ServiceName>Elastic Compute Cloud</ServiceName>
-			<Status>Fully Available</Status>
-			<ServiceLandingPageUrl>https://aws.amazon.com/ec2/</ServiceLandingPageUrl>
-			<Description>Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute capacity in the cloud.</Description>
-			<Category>Compute</Category>
-			<ConsoleCategory>Compute</ConsoleCategory>
-			<HippaEligible>true</HippaEligible>
-			<Tag>
-				<Key>VerificationDate</Key>
-				<Value>12/13/2016</Value>
-			</Tag>
-			<Tag>
-				<Key>Verifier</Key>
-				<Value>Steve Wheat</Value>
-			</Tag>
-	 */
-
 	String serviceId;
 	String landingPage;
 	String description;
 	boolean hipaaEligible;
 	List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
 	List<String> consoleCategories = new java.util.ArrayList<String>();
+
+	public static final ProvidesKey<AWSServicePojo> KEY_PROVIDER = new ProvidesKey<AWSServicePojo>() {
+		@Override
+		public Object getKey(AWSServicePojo item) {
+			return item == null ? null : item.getName();
+		}
+	};
 
 	public AWSServicePojo() {
 		// TODO Auto-generated constructor stub

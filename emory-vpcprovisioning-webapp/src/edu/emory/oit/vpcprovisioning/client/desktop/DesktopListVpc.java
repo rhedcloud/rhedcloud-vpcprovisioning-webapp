@@ -42,10 +42,8 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 	/*** FIELDS ***/
 	@UiField SimplePager vpcListPager;
-//	@UiField Button addVpcButton;
 	@UiField Button registerVpcButton;
 	@UiField(provided=true) CellTable<VpcPojo> vpcListTable = new CellTable<VpcPojo>();
-//	@UiField VerticalPanel vpcListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 
 	private static DesktopListVpcUiBinder uiBinder = GWT.create(DesktopListVpcUiBinder.class);
@@ -56,14 +54,6 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	public DesktopListVpc() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-//		addVpcButton.addDomHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				GWT.log("Should go to maintain vpc here...");
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPC);
-//			}
-//		}, ClickEvent.getType());
-
 		registerVpcButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" 
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
@@ -25,5 +26,29 @@
 		to query, create, update and delete those objects.<br/><br/>
 		Click the 'Add Service' button to go to the Service maintenance 
 		page where you can create a new Emory AWS Service.</g:HTML>
+
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+					<g:customCell>
+						<c:CellTable width="100%" ui:field="serviceListTable"  title="Existing Services"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="listPager" location="CENTER"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+					<g:customCell>
+						<g:Button ui:field="createServiceButton" text="Add Service" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Service"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
 	</g:VerticalPanel>
 </ui:UiBinder> 

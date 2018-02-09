@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @SuppressWarnings("serial")
 public class AWSServiceQueryResultPojo extends SharedObject implements IsSerializable {
 	AWSServiceQueryFilterPojo filterUsed;
-	List<AWSServicePojo> results;
+	List<AWSServicePojo> results = new java.util.ArrayList<AWSServicePojo>();
 
 	public AWSServiceQueryResultPojo() {
 		// TODO Auto-generated constructor stub
