@@ -24,6 +24,8 @@ public interface ActionNames {
 	final String VPCP_EDITING_CANCELED = "vpcpEditingCanceled";
 	final String GENERATE_VPC = "generateVpc";
 	
+	final String MAINTAIN_NOTIFICATION = "viewNotification";
+	final String CREATE_NOTIFICATION = "createNotification";
 	final String MAINTAIN_SERVICE = "maintainSvc";
 	final String CREATE_SERVICE = "createSvc";
 	final String REGISTER_VPC = "registerVpc";
@@ -48,6 +50,8 @@ public interface ActionNames {
 	final String CIDR_ASSIGNMENT_EDITING_CANCELED_AFTER_VPC_REGISTRATION = "cidrAssignmentEditingCanceledAfterVpcReg";
 	final String ELASTIC_IP_EDITING_CANCELED = "elasticIpEditingCanceled";
 	final String ELASTIC_IP_ASSIGNMENT_EDITING_CANCELED = "elasticIpAssignmentEditingCanceled";
+	final String SERVICE_EDITING_CANCELED = "svcEditingCanceled";
+	final String NOTIFICATION_EDITING_CANCELED = "notificationEditingCanceled";
 
 	final String GO_HOME_VPCP = "goHomeVpcp";
 	final String GO_BACK_VPCP = "goBackVpcp";
@@ -65,6 +69,7 @@ public interface ActionNames {
 	final String GO_BACK_ELASTIC_IP = "goBackElasticIp";
 	final String GO_HOME_ELASTIC_IP_ASSIGNMENT = "goHomeElasticIpAssignment";
 	final String GO_BACK_ELASTIC_IP_ASSIGNMENT = "goBackElasticIpAssignment";
+	final String GO_HOME_NOTIFICATION = "goHomeNotification";
 
 	final String VPC_CACHED = "vpcCached";
 	final String ACCOUNT_CACHED = "accountCached";
@@ -89,6 +94,8 @@ public interface ActionNames {
 	final String CIDR_ASSIGNMENT_SAVED_AFTER_VPC_REGISTRATION = "cidrAssignmentSavedAfterVpcReg";
 	final String ELASTIC_IP_SAVED = "elasticIpSaved";
 	final String ELASTIC_IP_ASSIGNMENT_SAVED = "elasticIpAssignmentSaved";
+	final String SERVICE_SAVED = "svcSaved";
+	final String NOTIFICATION_SAVED = "notificationSaved";
 
 	final String INAUTHENTIC_CLIENT = "inauthenticClient";
 

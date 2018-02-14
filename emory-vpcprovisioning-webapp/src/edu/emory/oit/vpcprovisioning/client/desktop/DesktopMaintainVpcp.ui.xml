@@ -55,7 +55,7 @@
 						<g:Label addStyleNames="{style.label}">VPC Requisition Type:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
 							ui:field="vpcTypeLB" />
 			    	</g:customCell>
 				</g:row>
@@ -82,7 +82,7 @@
 						<g:Label addStyleNames="{style.label}">Select Account:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
 							ui:field="accountLB" />
 			    	</g:customCell>
 			    	<g:customCell>
@@ -133,7 +133,7 @@
 						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
 							ui:field="vpcpReqTypeLB" />
 			    	</g:customCell>
 				</g:row>
@@ -142,7 +142,7 @@
 						<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
 							ui:field="vpcpReqComplianceClassLB" />
 			    	</g:customCell>
 				</g:row>

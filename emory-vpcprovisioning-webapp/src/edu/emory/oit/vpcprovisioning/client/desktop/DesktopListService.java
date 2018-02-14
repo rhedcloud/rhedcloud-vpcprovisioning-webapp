@@ -51,16 +51,20 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	/*** FIELDS ***/
 	@UiField SimplePager listPager;
-	@UiField Button createServiceButton;
 	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
+	@UiField Button createServiceButton;
 	
 	@UiHandler ("closeOtherFeaturesButton")
 	void closeOtherFeaturesButtonClicked(ClickEvent e) {
 		presenter.getClientFactory().getShell().hideOtherFeaturesPanel();
 		presenter.getClientFactory().getShell().showMainTabPanel();
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ACCOUNT);
+	}
+	@UiHandler ("createServiceButton")
+	void createSserviceClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE);
 	}
 
 	@Override

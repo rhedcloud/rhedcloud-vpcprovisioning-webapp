@@ -28,7 +28,10 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
@@ -152,6 +155,14 @@ public class AppBootstrapper {
 				placeController.goTo(new ListServicePlace(false));
 			}
 		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_NOTIFICATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				// TODO need pass filter...
+				placeController.goTo(new ListNotificationPlace(false));
+			}
+		});
+		
 		
 		ActionEvent.register(eventBus, ActionNames.CREATE_ELASTIC_IP, new ActionEvent.Handler() {
 			@Override
@@ -400,7 +411,64 @@ public class AppBootstrapper {
 			}
 		});
 
-		
+		ActionEvent.register(eventBus, ActionNames.CREATE_SERVICE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper:MaintainService event fired.");
+				placeController.goTo(MaintainServicePlace.getMaintainServicePlace());
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SERVICE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainServicePlace.createMaintainServicePlace(event.getAwsService()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListServicePlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListServicePlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_NOTIFICATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper:MaintainService event fired.");
+				placeController.goTo(MaintainNotificationPlace.getMaintainNotificationPlace());
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_NOTIFICATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainNotificationPlace.createMaintainNotificationPlace(event.getNotification()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.NOTIFICATION_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListNotificationPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.NOTIFICATION_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListNotificationPlace(false));
+			}
+		});
+
 //		ActionEvent.register(eventBus, ActionNames.GO_BACK, new ActionEvent.Handler() {
 //			@Override
 //			public void onAction(ActionEvent event) {

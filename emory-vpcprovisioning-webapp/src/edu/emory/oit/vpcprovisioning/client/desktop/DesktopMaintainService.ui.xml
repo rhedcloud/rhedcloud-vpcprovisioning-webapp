@@ -1,0 +1,98 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:VerticalPanel spacing="8" width="100%">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:CaptionPanel width="90%" captionHTML="Notice" styleName="{style.medium-captionpanel}">
+					<g:VerticalPanel width="100%" height="100%">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="infoHTML">Maintain service
+						</g:HTML>
+						</g:cell>
+					</g:VerticalPanel>
+				</g:CaptionPanel>
+			</g:cell>
+		</g:VerticalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid cellSpacing="8">
+				<g:row>
+				    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Service ID:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="serviceIdTB" />
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Service Code:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="serviceCodeTB" />
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Service Name:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="serviceNameTB" />
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Status:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+							ui:field="statusLB" />
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Description:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="descriptionTA" />
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Landing Page URL:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="landingPageURLTB" />
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="testURLButton">Test URL</g:Button>
+				    	</g:customCell>
+			    	</g:row>
+		 		<!-- TODO: categories, console categories, hipaa eligible, tags -->
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="okayButton">Okay</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="cancelButton">Cancel</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+</ui:UiBinder> 

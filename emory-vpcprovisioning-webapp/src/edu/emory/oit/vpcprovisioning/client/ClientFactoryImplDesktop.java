@@ -17,6 +17,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIpAssignment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpcp;
@@ -25,6 +26,8 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIpAssignment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainNotification;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
@@ -40,7 +43,10 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -80,6 +86,9 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListElasticIpAssignmentView elasticIpAssignmentListView;
 	private MaintainElasticIpAssignmentView maintainElasticIpAssignmentView;
 	private ListServiceView listServiceView;
+	private MaintainServiceView maintainServiceView;
+	private ListNotificationView listNotificationView;
+	private MaintainNotificationView maintainNotificationView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -328,5 +337,35 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected ListServiceView createServiceListView() {
 		return new DesktopListService();
+	}
+	@Override
+	public MaintainServiceView getMaintainServiceView() {
+        if (maintainServiceView == null) {
+        	maintainServiceView = createMaintainServiceView();
+        }
+        return maintainServiceView;
+	}
+	protected MaintainServiceView createMaintainServiceView() {
+		return new DesktopMaintainService();
+	}
+	@Override
+	public ListNotificationView getListNotificationView() {
+        if (listNotificationView == null) {
+        	listNotificationView = createNotificationListView();
+        }
+        return listNotificationView;
+	}
+	protected ListNotificationView createNotificationListView() {
+		return new DesktopListNotification();
+	}
+	@Override
+	public MaintainNotificationView getMaintainNotificationView() {
+        if (maintainNotificationView == null) {
+        	maintainNotificationView = createMaintainNotificationView();
+        }
+        return maintainNotificationView;
+	}
+	protected MaintainNotificationView createMaintainNotificationView() {
+		return new DesktopMaintainNotification();
 	}
 }

@@ -49,7 +49,12 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
@@ -167,7 +172,16 @@ public interface VpcProvisioningService extends RemoteService {
 	AWSServicePojo createService(AWSServicePojo service) throws RpcException;
 	AWSServicePojo updateService(AWSServicePojo service) throws RpcException;
 	void deleteService(AWSServicePojo service) throws RpcException;
+	List<String> getServiceStatusItems();
 
+	// Notifications
+	NotificationQueryResultPojo getNotificationsForFilter(NotificationQueryFilterPojo filter) throws RpcException;
+	NotificationPojo createNotification(NotificationPojo notification) throws RpcException;
+	NotificationPojo updateNotification(NotificationPojo notification) throws RpcException;
+	void deleteNotification(NotificationPojo notification) throws RpcException;
+	
+	// Speed Chart
+	SpeedChartQueryResultPojo getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter) throws RpcException;
 
 	// caching methods
 	CidrPojo storeCidrInCacheForUser(String eppn, CidrPojo cidr);

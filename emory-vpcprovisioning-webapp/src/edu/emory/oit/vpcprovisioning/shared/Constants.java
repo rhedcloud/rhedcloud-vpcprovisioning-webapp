@@ -24,6 +24,8 @@ public class Constants implements IsSerializable {
 		PERMISSION_VIEW_EVERYTHING
 	};
 
+	public static final String MOA_SPEEDCHART_QUERY_SPEC = "SPEEDCHART_QUERY.v1_0";
+	public static final String MOA_SPEEDCHART = "SPEEDCHART.v1_0";
 	public static final String MOA_VPC_QUERY_SPEC = "VirtualPrivateCloudQuerySpecification.v1_0";
 	public static final String MOA_VPC_GENERATE = "GenerateVirtualPrivateCloud.v1_0";
 	public static final String MOA_VPC_MAINTAIN = "MaintainVirtualPrivateCloud.v1_0";

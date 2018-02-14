@@ -1,9 +1,8 @@
-package edu.emory.oit.vpcprovisioning.presenter.account;
+package edu.emory.oit.vpcprovisioning.presenter.service;
 
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -12,22 +11,18 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
+public class MaintainServicePresenter implements MaintainServiceView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
-	private String accountId;
-	private String smartChartKey=null;
-	private AccountPojo account;
-	private String awsAccountsURL = "Cannot retrieve AWS Accounts URL";
+	private String serviceId;
+	private AWSServicePojo account;
+	private String awsServicesURL = "Cannot retrieve AWS Services URL";
 	private String awsBillingManagementURL = "Cannot retrieve AWS Billing Management URL";
 
 	/**
@@ -39,23 +34,23 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 	/**
 	 * For creating a new ACCOUNT.
 	 */
-	public MaintainAccountPresenter(ClientFactory clientFactory) {
+	public MaintainServicePresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
 		this.account = null;
-		this.accountId = null;
+		this.serviceId = null;
 		this.clientFactory = clientFactory;
-		clientFactory.getMaintainAccountView().setPresenter(this);
+		clientFactory.getMaintainServiceView().setPresenter(this);
 	}
 
 	/**
 	 * For editing an existing ACCOUNT.
 	 */
-	public MaintainAccountPresenter(ClientFactory clientFactory, AccountPojo account) {
+	public MaintainServicePresenter(ClientFactory clientFactory, AWSServicePojo account) {
 		this.isEditing = true;
-		this.accountId = account.getAccountId();
+		this.serviceId = account.getServiceId();
 		this.clientFactory = clientFactory;
 		this.account = account;
-		clientFactory.getMaintainAccountView().setPresenter(this);
+		clientFactory.getMaintainServiceView().setPresenter(this);
 	}
 
 	@Override
@@ -68,42 +63,14 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		
-		// TODO: get awsAccountsURL and awsBillingManagementURL in parallel
-		AsyncCallback<String> accountsUrlCB = new AsyncCallback<String>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				GWT.log("accounts URL from server: " + result);
-				awsAccountsURL = result;
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getAwsAccountsURL(accountsUrlCB);
-
-		AsyncCallback<String> billingUrlCB = new AsyncCallback<String>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				GWT.log("billing URL from server: " + result);
-				awsBillingManagementURL = result;
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getAwsBillingManagementURL(billingUrlCB);
-		
 		ReleaseInfo ri = new ReleaseInfo();
 		
 		clientFactory.getShell().setReleaseInfo(ri.toString());
-		if (accountId == null) {
-			clientFactory.getShell().setSubTitle("Create Account");
+		if (serviceId == null) {
+			clientFactory.getShell().setSubTitle("Create Service");
 			startCreate();
 		} else {
-			clientFactory.getShell().setSubTitle("Edit Account");
+			clientFactory.getShell().setSubTitle("Edit Service");
 			startEdit();
 		}
 		
@@ -131,7 +98,7 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 					@Override
 					public void onSuccess(List<String> result) {
 						getView().initPage();
-						getView().setEmailTypeItems(result);
+						getView().setServiceStatusItems(result);
 						getView().hidePleaseWaitDialog();
 						getView().setInitialFocus();
 						// apply authorization mask
@@ -139,32 +106,30 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 							getView().applyEmoryAWSAdminMask();
 						}
 						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-							clientFactory.getShell().setSubTitle("View Account");
+							clientFactory.getShell().setSubTitle("View Service");
 							getView().applyEmoryAWSAuditorMask();
 						}
 						else {
 							// ??
 						}
 						
-						getView().setAwsAccountsURL(awsAccountsURL);
-						getView().setAwsBillingManagementURL(awsBillingManagementURL);
 					}
 				};
-				VpcProvisioningService.Util.getInstance().getEmailTypeItems(callback);
+				VpcProvisioningService.Util.getInstance().getServiceStatusItems(callback);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 
 	private void startCreate() {
-		GWT.log("Maintain account: create");
+		GWT.log("Maintain service: create");
 		isEditing = false;
 		getView().setEditing(false);
-		account = new AccountPojo();
+		account = new AWSServicePojo();
 	}
 
 	private void startEdit() {
-		GWT.log("Maintain account: edit");
+		GWT.log("Maintain service: edit");
 		isEditing = true;
 		getView().setEditing(true);
 		// Lock the display until the account is loaded.
@@ -174,7 +139,7 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 	@Override
 	public void stop() {
 		eventBus = null;
-		clientFactory.getMaintainAccountView().setLocked(false);
+		clientFactory.getMaintainServiceView().setLocked(false);
 	}
 
 	@Override
@@ -188,80 +153,80 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 	}
 
 	@Override
-	public void deleteAccount() {
+	public void deleteService() {
 		if (isEditing) {
-			doDeleteAccount();
+			doDeleteService();
 		} else {
-			doCancelAccount();
+			doCancelService();
 		}
 	}
 
 	/**
 	 * Cancel the current case record.
 	 */
-	private void doCancelAccount() {
+	private void doCancelService() {
 		ActionEvent.fire(eventBus, ActionNames.ACCOUNT_EDITING_CANCELED);
 	}
 
 	/**
 	 * Delete the current case record.
 	 */
-	private void doDeleteAccount() {
+	private void doDeleteService() {
 		if (account == null) {
 			return;
 		}
 
-		// TODO Delete the account on server then fire onAccountDeleted();
+		// TODO Delete the account on server then fire onServiceDeleted();
 	}
 
 	@Override
-	public void saveAccount() {
+	public void saveService() {
 		getView().showPleaseWaitDialog();
-		AsyncCallback<AccountPojo> callback = new AsyncCallback<AccountPojo>() {
+		AsyncCallback<AWSServicePojo> callback = new AsyncCallback<AWSServicePojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception saving the Account", caught);
+				GWT.log("Exception saving the Service", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the Account.  Message " +
+						"server saving the Service.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(AccountPojo result) {
+			public void onSuccess(AWSServicePojo result) {
 				getView().hidePleaseWaitDialog();
 				ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, account);
 			}
 		};
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().createAccount(account, callback);
+			VpcProvisioningService.Util.getInstance().createService(account, callback);
 		}
 		else {
 			// it's an update
-			VpcProvisioningService.Util.getInstance().updateAccount(account, callback);
+			VpcProvisioningService.Util.getInstance().updateService(account, callback);
 		}
 	}
 
 	@Override
-	public AccountPojo getAccount() {
+	public AWSServicePojo getService() {
 		return this.account;
 	}
 
 	@Override
-	public boolean isValidAccountId(String value) {
+	public boolean isValidServiceId(String value) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public boolean isValidAccountName(String value) {
+	public boolean isValidServiceName(String value) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	private MaintainAccountView getView() {
-		return clientFactory.getMaintainAccountView();
+	private MaintainServiceView getView() {
+		return clientFactory.getMaintainServiceView();
 	}
 
 	public EventBus getEventBus() {
@@ -272,19 +237,19 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 		this.eventBus = eventBus;
 	}
 
-	public String getAccountId() {
-		return accountId;
+	public String getServiceId() {
+		return serviceId;
 	}
 
-	public void setAccountId(String accountId) {
-		this.accountId = accountId;
+	public void setServiceId(String serviceId) {
+		this.serviceId = serviceId;
 	}
 
 	public ClientFactory getClientFactory() {
 		return clientFactory;
 	}
 
-	public void setAccount(AccountPojo account) {
+	public void setService(AWSServicePojo account) {
 		this.account = account;
 	}
 
@@ -310,46 +275,5 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForNetId(netId, callback);
-	}
-
-	@Override
-	public void setSpeedChartStatusForKeyOnWidget(String key, final Widget w) {
-		AsyncCallback<SpeedChartQueryResultPojo> callback = new AsyncCallback<SpeedChartQueryResultPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(SpeedChartQueryResultPojo result) {
-				if (result == null || result.getResults().size() == 0) {
-					w.setTitle("Invalid account number, can't validate this number");
-				}
-				else {
-				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
-					SpeedChartPojo scp = result.getResults().get(0);
-					w.setTitle(scp.getEuValidityDescription() + 
-						"  End date: " + dateFormat.format(scp.getEuProjectEndDate()));
-				}
-			}
-		};
-		if (key != null && key.length() > 0) {
-			SpeedChartQueryFilterPojo filter = new SpeedChartQueryFilterPojo();
-			filter.getSpeedChartKeys().add(key);
-			if (smartChartKey == null) {
-				smartChartKey = key;
-				VpcProvisioningService.Util.getInstance().getSpeedChartsForFilter(filter, callback);
-			}
-			else if (!smartChartKey.equals(key)) {
-				VpcProvisioningService.Util.getInstance().getSpeedChartsForFilter(filter, callback);
-			}
-			else {
-				GWT.log("no need to re-validate key");
-			}
-		}
-		else {
-			GWT.log("null key, can't validate yet");
-		}
 	}
 }

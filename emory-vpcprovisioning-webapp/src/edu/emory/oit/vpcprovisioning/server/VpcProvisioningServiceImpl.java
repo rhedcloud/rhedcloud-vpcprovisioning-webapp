@@ -73,6 +73,8 @@ import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioning
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
+import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
 
 import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
 import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
@@ -114,10 +116,16 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.LineItemPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SharedObject;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UUID;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -132,6 +140,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
 	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
+	private static final String AWS_PEOPLE_SOFT_SERVICE_NAME = "AWSPeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
 	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
 	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
@@ -149,6 +158,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private String appId = null;
 	private ProducerPool identityServiceProducerPool = null;
 	private ProducerPool awsProducerPool = null;
+	private ProducerPool awsPeopleSoftProducerPool = null;
 	private ProducerPool cidrProducerPool = null;
 	private ProducerPool authzProducerPool = null;
 	private Object lock = new Object();
@@ -242,6 +252,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			AppConfigFactory acf = new SimpleAppConfigFactory();
 			setAppConfig(acf.makeAppConfig(configDocPath, appId));
 			info("AppConfig initialized...");
+			awsPeopleSoftProducerPool = (ProducerPool) getAppConfig().getObject(
+					AWS_PEOPLE_SOFT_SERVICE_NAME);
 			identityServiceProducerPool = (ProducerPool) getAppConfig().getObject(
 					IDENTITY_SERVICE_NAME);
 			awsProducerPool = (ProducerPool) getAppConfig().getObject(
@@ -1622,6 +1634,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private RequestService getIdentityServiceRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) identityServiceProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
+	private RequestService getAWSPeopleSoftRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) awsPeopleSoftProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
@@ -3474,6 +3492,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				String hipaaEligible = eService.getChildText("HippaEligible");
 				
 				AWSServicePojo svcPojo = new AWSServicePojo();
+				svcPojo.setServiceId(id);
 				svcPojo.setCode(code);
 				svcPojo.setName(name);
 				svcPojo.setStatus(status);
@@ -3512,5 +3531,159 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteService(AWSServicePojo service) throws RpcException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<String> getServiceStatusItems() {
+		List<String> statusItems = new java.util.ArrayList<String>();
+		statusItems.add("Available");
+		statusItems.add("Available with Countermeasures");
+		statusItems.add("Blocked");
+		statusItems.add("Blocked Pending Review");
+		statusItems.add("Fully Available");
+		return statusItems;
+	}
+
+	@Override
+	public NotificationQueryResultPojo getNotificationsForFilter(NotificationQueryFilterPojo filter)
+			throws RpcException {
+
+		NotificationQueryResultPojo result = new NotificationQueryResultPojo();
+		result.setResults(Collections.<NotificationPojo> emptyList());
+		return result;
+	}
+
+	@Override
+	public NotificationPojo createNotification(NotificationPojo notification) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public NotificationPojo updateNotification(NotificationPojo notification) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteNotification(NotificationPojo notification) throws RpcException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public SpeedChartQueryResultPojo getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter) throws RpcException {
+		SpeedChartQueryResultPojo result = new SpeedChartQueryResultPojo();
+		List<SpeedChartPojo> pojos = new java.util.ArrayList<SpeedChartPojo>();
+		try {
+			SPEEDCHART_QUERY queryObject = (SPEEDCHART_QUERY) getObject(Constants.MOA_SPEEDCHART_QUERY_SPEC);
+			SPEEDCHART actionable = (SPEEDCHART) getObject(Constants.MOA_SPEEDCHART);
+
+			if (filter != null) {
+				for (String key : filter.getSpeedChartKeys()) {
+					queryObject.addSPEEDCHART_KEY(key);
+				}
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<SPEEDCHART> moas = actionable.query(queryObject,
+					this.getAWSPeopleSoftRequestService());
+			info("got " + moas.size() + " speed chart objects back from ESB");
+			for (SPEEDCHART moa : moas) {
+				info("SPEEDCHART: " + moa.toXmlString());
+				SpeedChartPojo pojo = new SpeedChartPojo();
+//				SpeedChartPojo baseline = new SpeedChartPojo();
+				this.populateSpeedChartPojo(moa, pojo);
+//				this.populateSpeedChartPojo(moa, baseline);
+//				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+	
+	private void populateSpeedChartMoa(SpeedChartPojo pojo,
+			SPEEDCHART moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		if (pojo.getSpeedChartKey() != null) {
+			moa.setSPEEDCHART_KEY(pojo.getSpeedChartKey());
+		}
+		else {
+		}
+		moa.setDESCR(pojo.getDescription());
+		moa.setVALID_CODE(this.toStringFromBoolean(pojo.isValidCode()));
+
+//		this.setMoaCreateInfo(moa, pojo);
+//		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	private void populateSpeedChartPojo(SPEEDCHART moa,
+			SpeedChartPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
+		/*
+		<!ELEMENT SPEEDCHART (SPEEDCHART_KEY, DESCR?, VALID_CODE?, EU_VALIDITY_DESCR?, BUSINESS_UNIT_GL?, 
+		BU_DESCR?, OPERATING_UNIT?, OPER_UNIT_DESCR?, FUND_CODE?, DEPTID?, DEPT_DESCR?, BUSINESS_UNIT_PC?, 
+		PROJECT_ID?, PROJECT_ID_DESCR?, EFF_STATUS?, EU_PROJ_END_DT?, EU_PC_ACT_STAT_END?, 
+		EU_PC_ACT_STAT_CLS?, EU_PC_ACT_STAT_FIN?)>
+		 */
+		pojo.setSpeedChartKey(moa.getSPEEDCHART_KEY());
+		pojo.setDescription(moa.getDESCR());
+		if (moa.getVALID_CODE() != null) {
+			info("VALID_CODE: " + moa.getVALID_CODE());
+			pojo.setValidCode(moa.getVALID_CODE().equalsIgnoreCase("Y") ? true : false);
+		}
+		pojo.setEuValidityDescription(moa.getEU_VALIDITY_DESCR());
+		pojo.setBusinessUnitGL(moa.getBUSINESS_UNIT_GL());
+		pojo.setBusinessDescription(moa.getBU_DESCR());
+		pojo.setOperatingUnit(moa.getOPERATING_UNIT());
+		pojo.setOperatingUnitDescription(moa.getOPER_UNIT_DESCR());
+		pojo.setFundCode(moa.getFUND_CODE());
+		pojo.setDepartmentId(moa.getDEPTID());
+		pojo.setDepartmentDescription(moa.getDEPT_DESCR());
+		pojo.setBusinessUnitPC(moa.getBUSINESS_UNIT_PC());
+		pojo.setProjectId(moa.getPROJECT_ID());
+		pojo.setProjectIdDescription(moa.getPROJECT_ID_DESCR());
+		pojo.setEffectiveStatus(moa.getEFF_STATUS());
+		if (moa.getEU_PROJ_END_DT() != null) {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			pojo.setEuProjectEndDate(df.parse(moa.getEU_PROJ_END_DT()));
+		}
+		pojo.setEuPcActStatEnd(moa.getEU_PC_ACT_STAT_END());
+		pojo.setEuPcActStatClose(moa.getEU_PC_ACT_STAT_CLS());
+		pojo.setEuPcActStatFin(moa.getEU_PC_ACT_STAT_FIN());
+		
+//		this.setPojoCreateInfo(pojo, moa);
+//		this.setPojoUpdateInfo(pojo, moa);
 	}
 }

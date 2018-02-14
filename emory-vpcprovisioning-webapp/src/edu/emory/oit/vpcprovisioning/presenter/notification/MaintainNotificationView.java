@@ -1,4 +1,4 @@
-package edu.emory.oit.vpcprovisioning.presenter.account;
+package edu.emory.oit.vpcprovisioning.presenter.notification;
 
 import java.util.List;
 
@@ -9,11 +9,10 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View {
+public interface MaintainNotificationView extends Editor<NotificationPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
@@ -21,20 +20,19 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		/**
 		 * Delete the current account or cancel the creation of a account.
 		 */
-		void deleteAccount();
+		void deleteNotification();
 
 		/**
 		 * Create a new account or save the current account based on the values in the
 		 * inputs.
 		 */
-		void saveAccount();
-		AccountPojo getAccount();
-		public boolean isValidAccountId(String value);
-		public boolean isValidAccountName(String value);
+		void saveNotification();
+		NotificationPojo getNotification();
+		public boolean isValidNotificationId(String value);
+		public boolean isValidNotificationName(String value);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
-		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
 	}
 
 	/**
@@ -63,8 +61,8 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	 * 
 	 * @param message the message to show, or null if no violation
 	 */
-	void setAccountIdViolation(String message);
-	void setAccountNameViolation(String message);
+	void setNotificationIdViolation(String message);
+	void setNotificationNameViolation(String message);
 
 	/**
 	 * Set the {@link Presenter} for this view.
@@ -77,7 +75,6 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void setReleaseInfo(String releaseInfoHTML);
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
-	void setEmailTypeItems(List<String> emailTypes);
-	void setAwsAccountsURL(String awsAccountsURL);
-	void setAwsBillingManagementURL(String awsBillingManagementURL);
+
+
 }

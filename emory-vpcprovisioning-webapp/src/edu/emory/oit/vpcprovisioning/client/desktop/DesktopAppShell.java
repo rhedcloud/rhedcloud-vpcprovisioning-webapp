@@ -51,8 +51,10 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
+import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
-import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
@@ -188,6 +190,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstFirewallContentWidget = true;
 	private boolean firstNotificationContentWidget = true;
 	private boolean firstServicesContentWidget = true;
+	private boolean firstNotificationsContentWidget = true;
 
 	private void registerEvents() {
 	    Event.sinkEvents(logoElem, Event.ONCLICK);
@@ -210,21 +213,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				if(Event.ONCLICK == event.getTypeInt()) {
 					productsPopup.hide();
 					// clear other features panel
-//					otherFeaturesPanel.clear();
+					otherFeaturesPanel.clear();
 					// add list notifications view
 					// add maintain notifications view
 					hideMainTabPanel();
 					showOtherFeaturesPanel();
-					// TODO: ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATIONS);
+					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
 				}
 			}
 	    });
 	    
-	    Event.sinkEvents(productsElem, Event.ONMOUSEOVER);
+	    Event.sinkEvents(productsElem, Event.ONCLICK);
 	    Event.setEventListener(productsElem, new EventListener() {
 	        @Override
 	        public void onBrowserEvent(Event event) {
-	        		if(Event.ONMOUSEOVER == event.getTypeInt()) {
+	        		if(Event.ONCLICK == event.getTypeInt()) {
 	            	 	productsPopup.clear();
 	            	 	productsPopup.setAutoHideEnabled(true);
 		            	productsPopup.setWidth("1200px");
@@ -521,10 +524,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //			return;
 //		}
 		
-		// TODO: ListNotificationPresenter, MaintainNotificationPresenter
+		// TODO: MaintainNotificationPresenter
+		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
+			GWT.log("It's the notifications presenter...");
+			otherFeaturesPanel.clear();
+			otherFeaturesPanel.add(w);
+			return;
+		}
 		
-		// ListServicePresenter, MaintainServicePresenter
-		if (w instanceof ListServicePresenter) {
+		if (w instanceof ListServicePresenter || w instanceof MaintainServicePresenter) {
 			GWT.log("It's the services presenter...");
 //			otherFeaturesContentContainer.setWidget(w);
 			otherFeaturesPanel.clear();

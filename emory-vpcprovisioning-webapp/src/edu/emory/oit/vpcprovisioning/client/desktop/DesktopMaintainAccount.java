@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -65,6 +66,26 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	
 	@UiField HTML accountInfoHTML;
 
+	@UiHandler ("financialAccountNumberTB")
+	void finacctMouseOver(MouseOverEvent e) {
+		String acct = financialAccountNumberTB.getText();
+//		if (acct != null && acct.length() == 10) {
+			presenter.setSpeedChartStatusForKeyOnWidget(acct, financialAccountNumberTB);
+//		}
+	}
+	@UiHandler ("financialAccountNumberTB")
+	void finacctBlur(BlurEvent e) {
+		GWT.log("financial account blur...");
+	}
+	@UiHandler ("financialAccountNumberTB")
+	void finacctKeyPressed(KeyPressEvent e) {
+		GWT.log("financial account key pressed...");
+		String acct = financialAccountNumberTB.getText(); 
+		if (acct.length() >= 9) {
+			GWT.log("time to validate...");
+		}
+	}
+	
 	@UiHandler ("billSummaryButton")
 	void billSummaryButtonClick(ClickEvent e) {
 		// show billing information for this account

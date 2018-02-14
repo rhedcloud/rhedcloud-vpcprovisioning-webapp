@@ -47,7 +47,12 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
@@ -157,6 +162,16 @@ public interface VpcProvisioningServiceAsync {
 	void createService(AWSServicePojo service, AsyncCallback<AWSServicePojo> callback);
 	void updateService(AWSServicePojo service, AsyncCallback<AWSServicePojo> callback);
 	void deleteService(AWSServicePojo service, AsyncCallback<Void> callback);
+	void getServiceStatusItems(AsyncCallback<List<String>> callback);
 
 	void getAWSServiceMap(AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback) throws RpcException;
+	
+	// SpeedChart
+	void getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter, AsyncCallback<SpeedChartQueryResultPojo> callback);
+	
+	// notifications
+	void getNotificationsForFilter(NotificationQueryFilterPojo filter, AsyncCallback<NotificationQueryResultPojo> callback);
+	void createNotification(NotificationPojo notification, AsyncCallback<NotificationPojo> callback);
+	void updateNotification(NotificationPojo notification, AsyncCallback<NotificationPojo> callback);
+	void deleteNotification(NotificationPojo notification, AsyncCallback<Void> callback);
 }

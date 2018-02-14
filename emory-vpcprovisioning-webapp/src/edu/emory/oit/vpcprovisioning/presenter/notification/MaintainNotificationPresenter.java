@@ -1,0 +1,258 @@
+package edu.emory.oit.vpcprovisioning.presenter.notification;
+
+import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
+
+import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+
+public class MaintainNotificationPresenter implements MaintainNotificationView.Presenter {
+	private final ClientFactory clientFactory;
+	private EventBus eventBus;
+	private String notificationId;
+	private NotificationPojo notification;
+
+	/**
+	 * Indicates whether the activity is editing an existing case record or creating a
+	 * new case record.
+	 */
+	private boolean isEditing;
+
+	/**
+	 * For creating a new ACCOUNT.
+	 */
+	public MaintainNotificationPresenter(ClientFactory clientFactory) {
+		this.isEditing = false;
+		this.notification = null;
+		this.notificationId = null;
+		this.clientFactory = clientFactory;
+		clientFactory.getMaintainNotificationView().setPresenter(this);
+	}
+
+	/**
+	 * For editing an existing ACCOUNT.
+	 */
+	public MaintainNotificationPresenter(ClientFactory clientFactory, NotificationPojo notification) {
+		this.isEditing = true;
+		this.notificationId = notification.getNotificationId();
+		this.clientFactory = clientFactory;
+		this.notification = notification;
+		clientFactory.getMaintainNotificationView().setPresenter(this);
+	}
+
+	@Override
+	public String mayStop() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void start(EventBus eventBus) {
+		this.eventBus = eventBus;
+
+		ReleaseInfo ri = new ReleaseInfo();
+		
+		clientFactory.getShell().setReleaseInfo(ri.toString());
+		if (notificationId == null) {
+			clientFactory.getShell().setSubTitle("Create Notification");
+			startCreate();
+		} else {
+			clientFactory.getShell().setSubTitle("Edit Notification");
+			startEdit();
+		}
+		
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(final UserAccountPojo user) {
+				getView().setUserLoggedIn(user);
+				getView().initPage();
+				getView().hidePleaseWaitDialog();
+				getView().setInitialFocus();
+				// apply authorization mask
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+					clientFactory.getShell().setSubTitle("View Notification");
+					getView().applyEmoryAWSAuditorMask();
+				}
+				else {
+					// ??
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+	}
+
+	private void startCreate() {
+		GWT.log("Maintain notification: create");
+		isEditing = false;
+		getView().setEditing(false);
+		notification = new NotificationPojo();
+	}
+
+	private void startEdit() {
+		GWT.log("Maintain notification: edit");
+		isEditing = true;
+		getView().setEditing(true);
+		// Lock the display until the notification is loaded.
+		getView().setLocked(true);
+	}
+
+	@Override
+	public void stop() {
+		eventBus = null;
+		clientFactory.getMaintainNotificationView().setLocked(false);
+	}
+
+	@Override
+	public void setInitialFocus() {
+		getView().setInitialFocus();
+	}
+
+	@Override
+	public Widget asWidget() {
+		return getView().asWidget();
+	}
+
+	@Override
+	public void deleteNotification() {
+		if (isEditing) {
+			doDeleteNotification();
+		} else {
+			doCancelNotification();
+		}
+	}
+
+	/**
+	 * Cancel the current case record.
+	 */
+	private void doCancelNotification() {
+		ActionEvent.fire(eventBus, ActionNames.ACCOUNT_EDITING_CANCELED);
+	}
+
+	/**
+	 * Delete the current case record.
+	 */
+	private void doDeleteNotification() {
+		if (notification == null) {
+			return;
+		}
+
+		// TODO Delete the notification on server then fire onNotificationDeleted();
+	}
+
+	@Override
+	public void saveNotification() {
+		getView().showPleaseWaitDialog();
+		AsyncCallback<NotificationPojo> callback = new AsyncCallback<NotificationPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception saving the Notification", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the Notification.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(NotificationPojo result) {
+				getView().hidePleaseWaitDialog();
+				ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, notification);
+			}
+		};
+		if (!this.isEditing) {
+			// it's a create
+			VpcProvisioningService.Util.getInstance().createNotification(notification, callback);
+		}
+		else {
+			// it's an update
+			VpcProvisioningService.Util.getInstance().updateNotification(notification, callback);
+		}
+	}
+
+	@Override
+	public NotificationPojo getNotification() {
+		return this.notification;
+	}
+
+	@Override
+	public boolean isValidNotificationId(String value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isValidNotificationName(String value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private MaintainNotificationView getView() {
+		return clientFactory.getMaintainNotificationView();
+	}
+
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+
+	public void setEventBus(EventBus eventBus) {
+		this.eventBus = eventBus;
+	}
+
+	public String getNotificationId() {
+		return notificationId;
+	}
+
+	public void setNotificationId(String notificationId) {
+		this.notificationId = notificationId;
+	}
+
+	public ClientFactory getClientFactory() {
+		return clientFactory;
+	}
+
+	public void setNotification(NotificationPojo notification) {
+		this.notification = notification;
+	}
+
+	@Override
+	public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w) {
+		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(DirectoryMetaDataPojo result) {
+				if (result.getFirstName() == null) {
+					result.setFirstName("Unknown");
+				}
+				if (result.getLastName() == null) {
+					result.setLastName("Net ID");
+				}
+				w.setTitle(result.getFirstName() + " " + result.getLastName() + 
+					" - from the Identity Notification.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForNetId(netId, callback);
+	}
+}
