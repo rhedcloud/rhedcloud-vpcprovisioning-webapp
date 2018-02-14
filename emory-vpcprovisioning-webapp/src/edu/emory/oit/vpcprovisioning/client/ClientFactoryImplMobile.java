@@ -33,7 +33,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
 
-public abstract class ClientFactoryImplMobile implements ClientFactory {
+public class ClientFactoryImplMobile implements ClientFactory {
 	private final EventBus eventBus = new SimpleEventBus();
 	private final PlaceController placeController = new PlaceController(eventBus);
 	private AppShell shell;
@@ -202,6 +202,21 @@ public abstract class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainNotificationView getMaintainNotificationView() {
+		return null;
+	}
+	@Override
+	public ListElasticIpAssignmentView getListElasticIpAssignmentView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainElasticIpAssignmentView getMaintainElasticIpAssignmentView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListServiceView getListServiceView() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }
