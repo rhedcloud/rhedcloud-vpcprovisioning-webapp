@@ -22,7 +22,10 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -58,6 +61,11 @@ public abstract class ClientFactoryImplMobile implements ClientFactory {
 	private BillSummaryView billSummaryView;
 	private ListElasticIpView elasticIpListView;
 	private MaintainElasticIpView maintainElasticIpView;
+	private MaintainElasticIpAssignmentView maintainElasticIpAssignmentView;
+	private ListServiceView listServiceView;
+	private MaintainServiceView maintainServiceView;
+	private ListNotificationView listNotificationView;
+	private MaintainNotificationView maintainNotificationView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -185,19 +193,15 @@ public abstract class ClientFactoryImplMobile implements ClientFactory {
 		return null;
 	}
 	@Override
-	public ListElasticIpAssignmentView getListElasticIpAssignmentView() {
-		// TODO Auto-generated method stub
+	public MaintainServiceView getMaintainServiceView() {
 		return null;
 	}
 	@Override
-	public MaintainElasticIpAssignmentView getMaintainElasticIpAssignmentView() {
-		// TODO Auto-generated method stub
+	public ListNotificationView getListNotificationView() {
 		return null;
 	}
 	@Override
-	public ListServiceView getListServiceView() {
-		// TODO Auto-generated method stub
+	public MaintainNotificationView getMaintainNotificationView() {
 		return null;
 	}
-
 }
