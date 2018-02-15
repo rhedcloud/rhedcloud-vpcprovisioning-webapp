@@ -51,6 +51,7 @@ import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -168,6 +169,7 @@ public interface VpcProvisioningServiceAsync {
 	
 	// SpeedChart
 	void getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter, AsyncCallback<SpeedChartQueryResultPojo> callback);
+	void getSpeedChartForFinancialAccountNumber(String accountNumber, AsyncCallback<SpeedChartPojo> callback);
 	
 	// notifications
 	void getNotificationsForFilter(NotificationQueryFilterPojo filter, AsyncCallback<NotificationQueryResultPojo> callback);

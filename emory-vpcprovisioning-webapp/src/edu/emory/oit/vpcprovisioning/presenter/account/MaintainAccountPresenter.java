@@ -314,7 +314,7 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 
 	@Override
 	public void setSpeedChartStatusForKeyOnWidget(String key, final Widget w) {
-		AsyncCallback<SpeedChartQueryResultPojo> callback = new AsyncCallback<SpeedChartQueryResultPojo>() {
+		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
@@ -322,13 +322,12 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 			}
 
 			@Override
-			public void onSuccess(SpeedChartQueryResultPojo result) {
-				if (result == null || result.getResults().size() == 0) {
+			public void onSuccess(SpeedChartPojo scp) {
+				if (scp == null) {
 					w.setTitle("Invalid account number, can't validate this number");
 				}
 				else {
 				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
-					SpeedChartPojo scp = result.getResults().get(0);
 					w.setTitle(scp.getEuValidityDescription() + 
 						"  End date: " + dateFormat.format(scp.getEuProjectEndDate()));
 				}
@@ -339,10 +338,10 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 			filter.getSpeedChartKeys().add(key);
 			if (smartChartKey == null) {
 				smartChartKey = key;
-				VpcProvisioningService.Util.getInstance().getSpeedChartsForFilter(filter, callback);
+				VpcProvisioningService.Util.getInstance().getSpeedChartForFinancialAccountNumber(key, callback);
 			}
 			else if (!smartChartKey.equals(key)) {
-				VpcProvisioningService.Util.getInstance().getSpeedChartsForFilter(filter, callback);
+				VpcProvisioningService.Util.getInstance().getSpeedChartForFinancialAccountNumber(key, callback);
 			}
 			else {
 				GWT.log("no need to re-validate key");

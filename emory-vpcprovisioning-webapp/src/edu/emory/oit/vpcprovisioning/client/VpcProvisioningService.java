@@ -53,6 +53,7 @@ import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -182,6 +183,7 @@ public interface VpcProvisioningService extends RemoteService {
 	
 	// Speed Chart
 	SpeedChartQueryResultPojo getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter) throws RpcException;
+	SpeedChartPojo getSpeedChartForFinancialAccountNumber(String accountNumber) throws RpcException;
 
 	// caching methods
 	CidrPojo storeCidrInCacheForUser(String eppn, CidrPojo cidr);

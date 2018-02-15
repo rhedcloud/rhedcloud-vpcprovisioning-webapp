@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -123,6 +124,8 @@ import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SharedObject;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartCache;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartCachedItem;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
@@ -3569,6 +3572,31 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteNotification(NotificationPojo notification) throws RpcException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public SpeedChartPojo getSpeedChartForFinancialAccountNumber(String accountNumber) throws RpcException {
+		SpeedChartCachedItem cachedScp = SpeedChartCache.getCache().get(accountNumber);
+		if (cachedScp == null) {
+			cachedScp = new SpeedChartCachedItem();
+		}
+		if (SpeedChartCache.isExpired(cachedScp)) {
+			info("refreshing cached item from ESB service");
+			SpeedChartQueryFilterPojo filter = new SpeedChartQueryFilterPojo();
+			List<String> keys = new java.util.ArrayList<String>();
+			keys.add(accountNumber);
+			filter.setSpeedChartKeys(keys);
+			SpeedChartQueryResultPojo result = this.getSpeedChartsForFilter(filter);
+			SpeedChartPojo scp = result.getResults().get(0);
+			cachedScp.setLastUpdated(new Date());
+			cachedScp.setSpeedChartKey(accountNumber);
+			cachedScp.setSpeedChart(scp);
+			SpeedChartCache.getCache().put(accountNumber, cachedScp);
+		}
+		else {
+			info("returning SpeedChart from cache");
+		}
+		return cachedScp.getSpeedChart();
 	}
 
 	@Override
