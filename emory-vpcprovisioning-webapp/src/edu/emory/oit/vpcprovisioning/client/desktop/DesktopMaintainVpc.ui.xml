@@ -21,30 +21,34 @@
 					LastUpdateDatetime? (view only))>
 			 -->
 				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="accountIdTB" />
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<!-- <g:TextBox enabled="false" addStyleNames="{style.field} {style.glowing-border}" -->
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcIdTB" />
-			    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="accountIdTB" />
+				    	</g:customCell>
+			    	</g:row>
+			    	
+			    	<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<!-- <g:TextBox enabled="false" addStyleNames="{style.field} {style.glowing-border}" -->
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcIdTB" />
+				    	</g:customCell>
 				</g:row>
+				
 				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcTypeLB" />
-			    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcTypeLB" />
+				    	</g:customCell>
 				</g:row>
 				<!-- TODO create/update user/time read only -->
 			</g:Grid>
@@ -61,36 +65,45 @@
 					Type)>
 			 -->
 				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcReqAccountIdTB" />
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Owner NetId:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcReqOwnerNetIdTB" />
-			    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqAccountIdTB" />
+				    	</g:customCell>
+			    	</g:row>
+			    	
+			    	<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Owner NetId:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqOwnerNetIdTB" />
+				    	</g:customCell>
 				</g:row>
+				
 				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcReqFinancialAcctNumberTB" />
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcReqTypeLB" />
-			    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqSpeedTypeTB" />
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">SpeedType status</g:Label>
+				    	</g:customCell>
+			    	</g:row>
+			    	<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqTypeLB" />
+				    	</g:customCell>
 				</g:row>
 			</g:Grid>
 		</g:cell>

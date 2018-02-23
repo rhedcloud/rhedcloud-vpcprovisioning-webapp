@@ -22,6 +22,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
@@ -66,6 +67,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainServiceView maintainServiceView;
 	private ListNotificationView listNotificationView;
 	private MaintainNotificationView maintainNotificationView;
+	private ListFirewallRuleView listFirewallRuleView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -216,6 +218,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public ListServiceView getListServiceView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListFirewallRuleView getListFirewallRuleView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

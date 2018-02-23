@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -17,4 +19,7 @@ public interface View extends IsWidget {
 	public void applyEmoryAWSAdminMask();
 	public void applyEmoryAWSAuditorMask();
 	public void setUserLoggedIn(UserAccountPojo user);
+	public List<Widget> getMissingRequiredFields();
+	public void resetFieldStyles();
+	public void applyStyleToMissingFields(List<Widget> fields);
 }

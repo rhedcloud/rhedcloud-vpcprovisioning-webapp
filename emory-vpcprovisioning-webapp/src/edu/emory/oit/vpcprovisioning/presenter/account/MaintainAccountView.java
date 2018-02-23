@@ -4,13 +4,13 @@ import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View {
@@ -35,6 +35,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
+		public void setSpeedChartStatusForKey(String key, Label label);
 	}
 
 	/**
@@ -80,4 +81,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void setEmailTypeItems(List<String> emailTypes);
 	void setAwsAccountsURL(String awsAccountsURL);
 	void setAwsBillingManagementURL(String awsBillingManagementURL);
+	void setSpeedTypeStatus(String status);
+	void setSpeedTypeColor(String color);
+	Widget getSpeedTypeWidget();
 }

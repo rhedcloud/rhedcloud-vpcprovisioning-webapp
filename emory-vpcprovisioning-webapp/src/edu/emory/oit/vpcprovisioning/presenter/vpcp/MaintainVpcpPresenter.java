@@ -3,7 +3,9 @@ package edu.emory.oit.vpcprovisioning.presenter.vpcp;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -15,6 +17,8 @@ import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
@@ -224,6 +228,16 @@ public class MaintainVpcpPresenter implements MaintainVpcpView.Presenter {
 	@Override
 	public void saveVpcp() {
 		getView().showPleaseWaitDialog();
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
 		AsyncCallback<VpcpPojo> callback = new AsyncCallback<VpcpPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -368,4 +382,55 @@ public class MaintainVpcpPresenter implements MaintainVpcpView.Presenter {
 //		filter.setProvisioningId(provisioningId);
 //		VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, callback);
 //	}
+
+	@Override
+	public void setSpeedChartStatusForKeyOnWidget(String key, final Widget w) {
+		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Server exception validating speedtype", caught);
+				w.setTitle("Server exception validating speedtype");
+				getView().setSpeedTypeStatus("Invalid account");
+				getView().setSpeedTypeColor(Constants.COLOR_RED);
+			}
+
+			@Override
+			public void onSuccess(SpeedChartPojo scp) {
+				if (scp == null) {
+					w.setTitle("Invalid account number, can't validate this number");
+					getView().setSpeedTypeStatus("Invalid account");
+					getView().setSpeedTypeColor(Constants.COLOR_RED);
+				}
+				else {
+				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+				    String status = scp.getEuValidityDescription() + 
+							"  End date: " + dateFormat.format(scp.getEuProjectEndDate()); 
+					w.setTitle(status);
+					getView().setSpeedTypeStatus(status);
+					getView().setSpeedTypeColor(Constants.COLOR_GREEN);
+				}
+			}
+		};
+		if (key != null && key.length() > 0) {
+			SpeedChartQueryFilterPojo filter = new SpeedChartQueryFilterPojo();
+			filter.getSpeedChartKeys().add(key);
+			VpcProvisioningService.Util.getInstance().getSpeedChartForFinancialAccountNumber(key, callback);
+		}
+		else {
+			GWT.log("null key, can't validate yet");
+		}
+	}
+
+	@Override
+	public void setSpeedChartStatusForKey(String key, Label label) {
+		// null check / length
+		if (key == null || key.length() != 10) {
+			label.setText("Invalid length");
+			getView().setSpeedTypeColor(Constants.COLOR_RED);
+			return;
+		}
+		// TODO: numeric characters
+		
+		setSpeedChartStatusForKeyOnWidget(key, getView().getSpeedTypeWidget());
+	}
 }

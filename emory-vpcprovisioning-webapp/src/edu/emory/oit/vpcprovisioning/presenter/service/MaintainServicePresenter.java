@@ -182,6 +182,16 @@ public class MaintainServicePresenter implements MaintainServiceView.Presenter {
 	@Override
 	public void saveService() {
 		getView().showPleaseWaitDialog();
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
 		AsyncCallback<AWSServicePojo> callback = new AsyncCallback<AWSServicePojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

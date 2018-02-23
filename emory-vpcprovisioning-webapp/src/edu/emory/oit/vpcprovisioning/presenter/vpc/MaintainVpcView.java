@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
@@ -32,6 +34,8 @@ public interface MaintainVpcView extends Editor<VpcPojo>, IsWidget, View {
 		public boolean isValidVpcId(String value);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
+		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
+		public void setSpeedChartStatusForKey(String key, Label label);
 	}
 
 	/**
@@ -74,5 +78,7 @@ public interface MaintainVpcView extends Editor<VpcPojo>, IsWidget, View {
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
 	void setVpcTypeItems(List<String> vpcTypes);
-
+	void setSpeedTypeStatus(String status);
+	void setSpeedTypeColor(String color);
+	Widget getSpeedTypeWidget();
 }

@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
+import java.util.List;
+
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -161,6 +163,16 @@ public class MaintainNotificationPresenter implements MaintainNotificationView.P
 	@Override
 	public void saveNotification() {
 		getView().showPleaseWaitDialog();
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
 		AsyncCallback<NotificationPojo> callback = new AsyncCallback<NotificationPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

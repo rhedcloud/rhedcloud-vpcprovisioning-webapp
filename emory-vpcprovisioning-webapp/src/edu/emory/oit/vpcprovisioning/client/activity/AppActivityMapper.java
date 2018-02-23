@@ -24,6 +24,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
@@ -49,6 +51,22 @@ public class AppActivityMapper implements ActivityMapper {
 
 	@Override
 	public Activity getActivity(final Place place) {
+		if (place instanceof ListFirewallRulePlace) {
+			// The list of services
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListFirewallRulePresenter presenter = new ListFirewallRulePresenter(clientFactory, (ListFirewallRulePlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+
+				/*
+				 * Note no call to presenter.stop(). The CaseRecordListViews do that
+				 * themselves as a side effect of setPresenter.
+				 */
+			};
+		}
 		if (place instanceof ListNotificationPlace) {
 			// The list of services
 			return new AbstractActivity() {

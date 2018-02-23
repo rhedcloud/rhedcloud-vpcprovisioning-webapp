@@ -28,6 +28,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
@@ -132,6 +133,13 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
 				placeController.goTo(new ListAccountPlace(false));
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_FIREWALL_RULE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				// TODO need pass filter...
+				placeController.goTo(new ListFirewallRulePlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPC, new ActionEvent.Handler() {
@@ -324,6 +332,34 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(new ListAccountPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_FIREWALL_RULE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+//				placeController.goTo(MaintainFirewallRulePlace.getMaintainFirewallPlace());
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_FIREWALL_RULE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+//				placeController.goTo(MaintainFirewallRulePlace.createMaintainFirewallRulePlace(event.getFirewallRule()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.FIREWALL_RULE_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListFirewallRulePlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.FIREWALL_RULE_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListFirewallRulePlace(false));
 			}
 		});
 

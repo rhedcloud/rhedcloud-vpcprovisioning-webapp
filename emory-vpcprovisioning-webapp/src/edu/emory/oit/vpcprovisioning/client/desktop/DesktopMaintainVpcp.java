@@ -35,6 +35,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 
 public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpView {
 	Presenter presenter;
@@ -47,6 +48,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	int netIdRowNum = 0;
 	int netIdColumnNum = 0;
 	int removeButtonColumnNum = 1;
+	String speedTypeBeingTyped=null;
 
 	private static DesktopMaintainVpcpUiBinder uiBinder = GWT.create(DesktopMaintainVpcpUiBinder.class);
 
@@ -68,19 +70,54 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField TextBox vpcpReqTicketIdTB;
 	@UiField TextBox vpcpReqRequestorNetIdTB;
 	@UiField TextBox vpcpReqOwnerNetIdTB;
-	@UiField TextBox vpcpReqFinancialAcctNumberTB;
+	@UiField TextBox vpcpReqSpeedTypeTB;
 	@UiField ListBox vpcpReqTypeLB;
 	@UiField ListBox vpcpReqComplianceClassLB;
 	@UiField CheckBox vpcpReqNotifyAdminsCB;
 	@UiField ListBox accountLB;
 	@UiField CaptionPanel accountCP;
 //	@UiField HTML accountInfoHTML;
+	@UiField Label speedTypeLabel;
 
 	// admins (net ids)
 	@UiField VerticalPanel netIdVP;
 	@UiField TextBox addNetIdTF;
 	@UiField Button addNetIdButton;
 	@UiField FlexTable netIdTable;
+
+	@UiHandler ("vpcpReqSpeedTypeTB")
+	void speedTypeMouseOver(MouseOverEvent e) {
+		String acct = vpcpReqSpeedTypeTB.getText();
+		presenter.setSpeedChartStatusForKeyOnWidget(acct, vpcpReqSpeedTypeTB);
+	}
+	@UiHandler ("vpcpReqSpeedTypeTB")
+	void speedTypeKeyPressed(KeyPressEvent e) {
+		GWT.log("SpeedType key pressed...");
+		int keyCode = e.getNativeEvent().getKeyCode();
+		char ccode = e.getCharCode();
+
+		if (keyCode == KeyCodes.KEY_BACKSPACE) {
+			if (speedTypeBeingTyped.length() > 0) {
+				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
+			}
+			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+			return;
+		}
+		
+		if (keyCode == KeyCodes.KEY_TAB) {
+			presenter.setSpeedChartStatusForKey(vpcpReqSpeedTypeTB.getText(), speedTypeLabel);
+			return;
+		}
+
+		if (!isValidKey(keyCode)) {
+			return;
+		}
+		else {
+			speedTypeBeingTyped += ccode;
+		}
+
+		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+	}
 
 	@UiHandler ("addNetIdTF")
 	void addUserTFKeyPressed(KeyPressEvent e) {
@@ -111,7 +148,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				presenter.getVpcRequisition().setTicketId(vpcpReqTicketIdTB.getText());
 				presenter.getVpcRequisition().setAuthenticatedRequestorNetId(vpcpReqRequestorNetIdTB.getText());
 				presenter.getVpcRequisition().setAccountOwnerNetId(vpcpReqOwnerNetIdTB.getText());
-				presenter.getVpcRequisition().setFinancialAccountNumber(vpcpReqFinancialAcctNumberTB.getText());
+				presenter.getVpcRequisition().setSpeedType(vpcpReqSpeedTypeTB.getText());
 				presenter.getVpcRequisition().setComplianceClass(vpcpReqComplianceClassLB.getSelectedValue());
 				presenter.getVpcRequisition().setNotifyAdmins(vpcpReqNotifyAdminsCB.getValue());
 				presenter.getVpcRequisition().setAccountId(accountLB.getSelectedValue());
@@ -294,7 +331,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			maintainVpcpGrid.setVisible(false);
 			generateVpcpPanel.setVisible(true);
 			vpcpReqOwnerNetIdTB.setText("");
-			vpcpReqFinancialAcctNumberTB.setText("");
+			vpcpReqSpeedTypeTB.setText("");
 			vpcpReqTicketIdTB.setText("");
 			vpcpReqRequestorNetIdTB.setText("");
 			
@@ -386,5 +423,52 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			}
 		}
 		
+	}
+	@Override
+	public void setSpeedTypeStatus(String status) {
+		speedTypeLabel.setText(status);
+	}
+	@Override
+	public void setSpeedTypeColor(String color) {
+		speedTypeLabel.getElement().getStyle().setColor(color);
+	}
+	@Override
+	public Widget getSpeedTypeWidget() {
+		return vpcpReqSpeedTypeTB;
+	}
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		VpcRequisitionPojo vpcr = presenter.getVpcRequisition();
+		if (vpcr.getAuthenticatedRequestorNetId() == null || vpcr.getAuthenticatedRequestorNetId().length() == 0) {
+			fields.add(vpcpReqRequestorNetIdTB);
+		}
+		if (vpcr.getAccountOwnerNetId() == null || vpcr.getAccountOwnerNetId().length() == 0) {
+			fields.add(vpcpReqOwnerNetIdTB);
+		}
+		if (vpcr.getSpeedType() == null || vpcr.getSpeedType().length() == 0) {
+			fields.add(vpcpReqSpeedTypeTB);
+		}
+		if (vpcr.getCustomerAdminNetIdList() == null || vpcr.getCustomerAdminNetIdList().size() == 0) {
+			fields.add(addNetIdTF);
+		}
+		if (vpcr.getType() == null || vpcr.getType().length() == 0) {
+			fields.add(vpcTypeLB);
+		}
+		if (vpcr.getComplianceClass() == null || vpcr.getComplianceClass().length() == 0) {
+			fields.add(vpcpReqComplianceClassLB);
+		}
+		return fields;
+	}
+	@Override
+	public void resetFieldStyles() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(vpcpReqRequestorNetIdTB);
+		fields.add(vpcpReqOwnerNetIdTB);
+		fields.add(vpcpReqSpeedTypeTB);
+		fields.add(addNetIdTF);
+		fields.add(vpcTypeLB);
+		fields.add(vpcpReqComplianceClassLB);
+		this.resetFieldStyles(fields);
 	}
 }

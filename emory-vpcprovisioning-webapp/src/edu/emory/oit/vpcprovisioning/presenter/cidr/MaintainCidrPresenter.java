@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.cidr;
 
+import java.util.List;
+
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -183,8 +185,18 @@ public class MaintainCidrPresenter implements MaintainCidrView.Presenter {
 
 	@Override
 	public void saveCidr() {
-		// TODO this will be fired after the CIDR has been saved on server
+		// save on server
 		getView().showPleaseWaitDialog();
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
 		AsyncCallback<CidrPojo> callback = new AsyncCallback<CidrPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

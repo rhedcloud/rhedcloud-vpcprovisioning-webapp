@@ -48,11 +48,9 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	/*** FIELDS ***/
 	@UiField SimplePager accountListPager;
 	@UiField Button addAccountButton;
-//	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>();
 	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel accountListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
-//	@UiField Button refreshPropertyButton;
 
 	private static DesktopListAccountUiBinder uiBinder = GWT.create(DesktopListAccountUiBinder.class);
 
@@ -438,5 +436,17 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		addAccountButton.setEnabled(false);
 		// disable Delete button in table (handled in initAccountListTableColumns)
 		// change text of button to View (handled in initAccountListTableColumns)
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -199,6 +199,16 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 	@Override
 	public void saveCidrAssignment() {
 		getView().showPleaseWaitDialog();
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
 		AsyncCallback<CidrAssignmentPojo> callback = new AsyncCallback<CidrAssignmentPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

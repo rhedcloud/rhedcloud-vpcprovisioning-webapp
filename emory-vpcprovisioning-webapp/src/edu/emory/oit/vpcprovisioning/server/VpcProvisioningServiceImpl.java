@@ -116,6 +116,9 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.LineItemPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
@@ -971,7 +974,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setAccountId(pojo.getAccountId());
 		}
 		moa.setAccountOwnerNetId(pojo.getAccountOwnerNetId());
-		moa.setFinancialAccountNumber(pojo.getFinancialAccountNumber());
+		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setType(pojo.getType());
 		// admin net ids
         for (String p : pojo.getCustomerAdminNetIdList()) {
@@ -993,7 +996,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setAccountOwnerNetId(moa.getAccountOwnerNetId());
-		pojo.setFinancialAccountNumber(moa.getFinancialAccountNumber());
+		pojo.setSpeedType(moa.getFinancialAccountNumber());
 		pojo.setType(moa.getType());
 		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
 			pojo.getCustomerAdminNetIdList().add(netId);
@@ -1019,7 +1022,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setAccountName(pojo.getAccountName());
 		moa.setPasswordLocation(pojo.getPasswordLocation());
 		moa.setAccountOwnerNetId(pojo.getAccountOwnerDirectoryMetaData().getNetId());
-		moa.setFinancialAccountNumber(pojo.getFinancialAccountNumber());
+		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		// email
         for (EmailPojo p : pojo.getEmailList()) {
             EmailAddress email = moa.newEmailAddress();
@@ -1058,7 +1061,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		pojo.setAccountOwnerDirectoryMetaData(ownerDmdp);
 		pojo.setPasswordLocation(moa.getPasswordLocation());
-		pojo.setFinancialAccountNumber(moa.getFinancialAccountNumber());
+		pojo.setSpeedType(moa.getFinancialAccountNumber());
 		for (EmailAddress email : (List<EmailAddress>) moa.getEmailAddress()) {
 			EmailPojo emp = new EmailPojo();
 			emp.setType(email.getType());
@@ -2061,7 +2064,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					queryObject.setEmailAddress(emailMoa);
 				}
 				queryObject.setAccountOwnerNetId(filter.getAccountOwnerNetId());
-				queryObject.setFinancialAccountNumber(filter.getFinancialAccountNumber());
+				queryObject.setFinancialAccountNumber(filter.getSpeedType());
 				queryObject.setCreateUser(filter.getCreateUser());
 				queryObject.setLastUpdateUser(filter.getLastUpdateUser());
 			}
@@ -3587,11 +3590,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			keys.add(accountNumber);
 			filter.setSpeedChartKeys(keys);
 			SpeedChartQueryResultPojo result = this.getSpeedChartsForFilter(filter);
-			SpeedChartPojo scp = result.getResults().get(0);
-			cachedScp.setLastUpdated(new Date());
-			cachedScp.setSpeedChartKey(accountNumber);
-			cachedScp.setSpeedChart(scp);
-			SpeedChartCache.getCache().put(accountNumber, cachedScp);
+			if (result.getResults().size() > 0) {
+				SpeedChartPojo scp = result.getResults().get(0);
+				cachedScp.setLastUpdated(new Date());
+				cachedScp.setSpeedChartKey(accountNumber);
+				cachedScp.setSpeedChart(scp);
+				SpeedChartCache.getCache().put(accountNumber, cachedScp);
+			}
+			else {
+				return null;
+			}
 		}
 		else {
 			info("returning SpeedChart from cache");
@@ -3713,5 +3721,33 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@Override
+	public FirewallRuleQueryResultPojo getFirewallRulesForFilter(FirewallRuleQueryFilterPojo filter)
+			throws RpcException {
+
+		FirewallRuleQueryResultPojo result = new FirewallRuleQueryResultPojo();
+		result.setResults((Collections.<FirewallRulePojo> emptyList()));
+
+		return result;
+	}
+
+	@Override
+	public FirewallRulePojo createFirewallRule(FirewallRulePojo rule) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public FirewallRulePojo updateFirewallRule(FirewallRulePojo rule) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteFirewallRule(FirewallRulePojo rule) throws RpcException {
+		// TODO Auto-generated method stub
+		
 	}
 }

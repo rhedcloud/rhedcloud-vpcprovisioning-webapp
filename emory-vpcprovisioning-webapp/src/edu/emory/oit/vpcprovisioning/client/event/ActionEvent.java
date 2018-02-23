@@ -30,6 +30,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
@@ -64,6 +65,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private ElasticIpAssignmentSummaryPojo elasticIpAssignmentSummary;
 	private AWSServicePojo awsService;
 	private NotificationPojo notification;
+	private FirewallRulePojo firewallRule;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -130,6 +132,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(notification), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, FirewallRulePojo rule) {
+		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
+	}
+
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
 		
@@ -140,6 +146,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	 * {@link #fire(EventBus, String)}.
 	 */
 	protected ActionEvent() {
+	}
+
+	public ActionEvent(FirewallRulePojo rule) {
+		this.firewallRule = rule;
 	}
 
 	public ActionEvent(NotificationPojo notification) {
@@ -211,6 +221,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(ElasticIpAssignmentSummaryPojo summary, Place nextPlace) {
 		this.elasticIpAssignmentSummary = summary;
+		this.setNextPlace(nextPlace);
+	}
+
+	public ActionEvent(FirewallRulePojo rule, Place nextPlace) {
+		this.firewallRule = rule;
 		this.setNextPlace(nextPlace);
 	}
 
@@ -302,5 +317,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setNotification(NotificationPojo notification) {
 		this.notification = notification;
+	}
+
+	public FirewallRulePojo getFirewallRule() {
+		return firewallRule;
+	}
+
+	public void setFirewallRule(FirewallRulePojo firewallRule) {
+		this.firewallRule = firewallRule;
 	}
 }

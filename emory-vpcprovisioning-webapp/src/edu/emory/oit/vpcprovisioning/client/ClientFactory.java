@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
@@ -78,4 +79,5 @@ public interface ClientFactory {
 	MaintainServiceView getMaintainServiceView();
 	ListNotificationView getListNotificationView();
 	MaintainNotificationView getMaintainNotificationView();
+	ListFirewallRuleView getListFirewallRuleView();
 }

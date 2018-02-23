@@ -13,7 +13,7 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 	List<EmailPojo> emailList = new java.util.ArrayList<EmailPojo>();
 //	String accountOwnerNetId;
 	DirectoryMetaDataPojo accountOwnerDirectoryMetaData;
-	String financialAccountNumber;
+	String speedType;
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 	AccountPojo baseline;
 	
@@ -65,12 +65,12 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 //		this.accountOwnerNetId = accountOwnerNetId;
 //	}
 
-	public String getFinancialAccountNumber() {
-		return financialAccountNumber;
+	public String getSpeedType() {
+		return speedType;
 	}
 
-	public void setFinancialAccountNumber(String financialAccountNumber) {
-		this.financialAccountNumber = financialAccountNumber;
+	public void setSpeedType(String speedType) {
+		this.speedType = speedType;
 	}
 
 	public String getPasswordLocation() {

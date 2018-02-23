@@ -82,11 +82,14 @@
 			    	</g:row>
 				<g:row>
 				    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
+						<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="financialAccountNumberTB" />
+							ui:field="speedTypeTB" />
+				    	</g:customCell>
+				    	<g:customCell>
+						<g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">SpeedType status</g:Label>
 				    	</g:customCell>
 			    	</g:row>
 			</g:Grid>

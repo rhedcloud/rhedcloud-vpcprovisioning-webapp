@@ -1,5 +1,9 @@
 package edu.emory.oit.vpcprovisioning.presenter;
 
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
@@ -14,6 +18,18 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 public abstract class ViewImplBase extends Composite {
 	protected final DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
 	PopupPanel pleaseWaitDialog;
+	
+	public void applyStyleToMissingFields(List<Widget> fields) {
+		for (Widget w : fields) {
+			w.getElement().getStyle().setBackgroundColor("#efbebe");
+		}
+	}
+	public void resetFieldStyles(List<Widget> fields) {
+		for (Widget w : fields) {
+			w.getElement().getStyle().setBackgroundColor(null);
+		}
+	}
+	
 	public void showPleaseWaitDialog() {
 		pleaseWaitDialog = new PopupPanel(true);
 		Image img = new Image();
@@ -56,5 +72,48 @@ public abstract class ViewImplBase extends Composite {
 			// odd
 			theGrid.getRowFormatter().addStyleName(gridRow, "gridRow-odd");
 		}
+	}
+
+	public boolean isValidKey(int keyCode) {
+
+		GWT.log("KeyCode: " + keyCode);
+		switch (keyCode) {
+			case KeyCodes.KEY_WIN_KEY_FF_LINUX:
+				return false;
+			case KeyCodes.KEY_ALT:
+				return false;
+//			case KeyCodes.KEY_BACKSPACE:
+//				return false;
+			case KeyCodes.KEY_CTRL:
+				return false;
+			case KeyCodes.KEY_DELETE:
+				return false;
+			case KeyCodes.KEY_DOWN:
+				return false;
+			case KeyCodes.KEY_END:
+				return false;
+			case KeyCodes.KEY_ENTER:
+				return false;
+			case KeyCodes.KEY_ESCAPE:
+				return false;
+			case KeyCodes.KEY_HOME:
+				return false;
+			case KeyCodes.KEY_LEFT:
+				return false;
+			case KeyCodes.KEY_PAGEDOWN:
+				return false;
+			case KeyCodes.KEY_PAGEUP:
+				return false;
+			case KeyCodes.KEY_RIGHT:
+				return false;
+			case KeyCodes.KEY_SHIFT:
+				return false;
+			case KeyCodes.KEY_TAB:
+				return false;
+			case KeyCodes.KEY_UP:
+				return false;
+		}
+		
+		return true;
 	}
 }

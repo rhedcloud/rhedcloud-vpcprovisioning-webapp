@@ -24,6 +24,8 @@ public interface ActionNames {
 	final String VPCP_EDITING_CANCELED = "vpcpEditingCanceled";
 	final String GENERATE_VPC = "generateVpc";
 	
+	final String CREATE_FIREWALL_RULE = "createFirewallRule";
+	final String MAINTAIN_FIREWALL_RULE = "maintainFirewallRule";
 	final String MAINTAIN_NOTIFICATION = "viewNotification";
 	final String CREATE_NOTIFICATION = "createNotification";
 	final String MAINTAIN_SERVICE = "maintainSvc";
@@ -42,6 +44,7 @@ public interface ActionNames {
 	final String CREATE_ELASTIC_IP_ASSIGNMENT = "createElasticIpAssignment";
 	final String MAINTAIN_ELASTIC_IP_ASSIGNMENT = "maintainElasticIpAssignment";
 
+	final String FIREWALL_RULE_EDITING_CANCELED = "firewallRuleEditingCanceled";
 	final String VPC_EDITING_CANCELED = "vpcEditingCanceled";
 	final String VPC_REGISTRATION_CANCELED = "vpcRegistrationCanceled";
 	final String ACCOUNT_EDITING_CANCELED = "accountEditingCanceled";
@@ -53,6 +56,8 @@ public interface ActionNames {
 	final String SERVICE_EDITING_CANCELED = "svcEditingCanceled";
 	final String NOTIFICATION_EDITING_CANCELED = "notificationEditingCanceled";
 
+	final String GO_HOME_FIREWALL_RULE = "goHomeFirewallRule";
+	final String GO_BACK_FIREWALL_RULE = "goBackFirewallRule";
 	final String GO_HOME_VPCP = "goHomeVpcp";
 	final String GO_BACK_VPCP = "goBackVpcp";
 	final String GO_HOME_VPC = "goHomeVpc";
@@ -78,6 +83,7 @@ public interface ActionNames {
 	final String ELASTIC_IP_CACHED = "elasticIpCached";
 	final String ELASTIC_IP_ASSIGNMENT_CACHED = "elasticIpAssignmentCached";
 	
+	final String FIREWALL_RULE_DELETED = "firewallRuleDeleted";
 	final String VPC_DELETED = "vpcDeleted";
 	final String ACCOUNT_DELETED = "accountDeleted";
 	final String CIDR_DELETED = "cidrDeleted";
@@ -85,6 +91,7 @@ public interface ActionNames {
 	final String ELASTIC_IP_DELETED = "elasticIpDeleted";
 	final String ELASTIC_IP_ASSIGNMENT_DELETED = "elasticIpAssignmentDeleted";
 	
+	final String FIREWALL_RULE_SAVED = "firewallRuleSaved";
 	final String VPCP_GENERATED = "vpcpGenerated";
 	final String VPCP_SAVED = "vpcpSaved";
 	final String VPC_SAVED = "vpcSaved";

@@ -102,10 +102,10 @@
 							<g:Label ui:field="ownerNetIdLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Financial Account Number:</g:Label>
+							<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-							<g:Label ui:field="financialAccountLabel" addStyleNames="{style.statusLabel}"/>
+							<g:Label ui:field="speedTypeLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 					</g:row>
 					<g:row>

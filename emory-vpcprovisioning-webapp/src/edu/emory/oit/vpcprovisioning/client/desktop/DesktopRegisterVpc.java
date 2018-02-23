@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView {
 	Presenter presenter;
@@ -213,6 +214,35 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 				i++;
 			}
 		}
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		VpcPojo vpc = presenter.getVpc();
+		if (vpc.getVpcId() == null || vpc.getVpcId().length() == 0) {
+			fields.add(vpcIdTB);
+		}
+		if (vpc.getAccountId() == null || vpc.getAccountId().length() == 0) {
+			fields.add(accountLB);
+		}
+		if (vpc.getType() == null || vpc.getType().length() == 0) {
+			fields.add(vpcTypeLB);
+		}
+		if (vpc.getComplianceClass() == null || vpc.getComplianceClass().length() == 0) {
+			fields.add(complianceClassLB);
+		}
+		return fields;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(vpcIdTB);
+		fields.add(accountLB);
+		fields.add(vpcTypeLB);
+		fields.add(complianceClassLB);
+		this.resetFieldStyles(fields);
 	}
 
 }

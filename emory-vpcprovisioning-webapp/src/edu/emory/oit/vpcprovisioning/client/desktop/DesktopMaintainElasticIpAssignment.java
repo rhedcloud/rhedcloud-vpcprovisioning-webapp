@@ -142,4 +142,16 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 		
 	}
 
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

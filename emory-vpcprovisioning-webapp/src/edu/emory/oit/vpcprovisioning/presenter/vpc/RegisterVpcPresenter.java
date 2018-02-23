@@ -206,6 +206,16 @@ public class RegisterVpcPresenter implements RegisterVpcView.Presenter {
 	@Override
 	public void registerVpc() {
 		getView().showPleaseWaitDialog();
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
 		AsyncCallback<VpcPojo> callback = new AsyncCallback<VpcPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

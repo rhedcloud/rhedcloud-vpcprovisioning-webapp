@@ -307,4 +307,16 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		dataProvider.getList().remove(vpcp);
 	}
 
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

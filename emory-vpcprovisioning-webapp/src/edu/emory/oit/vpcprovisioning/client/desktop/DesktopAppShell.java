@@ -51,6 +51,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
@@ -426,15 +428,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("need to get Firewall Maintentenance content.");
 				firstFirewallContentWidget = true;
 				firewallContentContainer.clear();
-				HTMLPanel hp2 = new HTMLPanel("<div>Firewall list Maintentenance content here</div>");
-				hp2.addStyleName("content");
-				firewallContentContainer.setWidget(hp2);
-//				ListFirewallView listFwView = clientFactory.getListFirewallView();
+//				HTMLPanel hp2 = new HTMLPanel("<div>Firewall list Maintentenance content here</div>");
+//				hp2.addStyleName("content");
+//				firewallContentContainer.setWidget(hp2);
+				ListFirewallRuleView listFwView = clientFactory.getListFirewallRuleView();
 //				MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
-//				firewallContentContainer.add(listFwView);
+				firewallContentContainer.add(listFwView);
 //				firewallContentContainer.add(maintainFwView);
-//				firewallContentContainer.setAnimationDuration(500);
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_FIREWALL);
+				firewallContentContainer.setAnimationDuration(500);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_FIREWALL_RULE);
 				break;
 		}
 	}
@@ -514,15 +516,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-//		if (w instanceof ListElasticIpAssignmentPresenter || w instanceof MaintainElasticIpAssignmentPresenter) {
-//			elasticIpAssignmentContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstElasticIpAssignmentContentWidget) {
-//				firstElasticIpAssignmentContentWidget = false;
-//				elasticIpAssignmentContentContainer.animate(0);
-//			}
-//			return;
-//		}
+		if (w instanceof ListFirewallRulePresenter) {
+			firewallContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstFirewallContentWidget) {
+				firstFirewallContentWidget = false;
+				firewallContentContainer.animate(0);
+			}
+			return;
+		}
 		
 		// TODO: MaintainNotificationPresenter
 		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {

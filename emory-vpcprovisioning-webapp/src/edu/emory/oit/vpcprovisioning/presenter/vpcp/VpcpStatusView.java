@@ -2,6 +2,7 @@ package edu.emory.oit.vpcprovisioning.presenter.vpcp;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -31,6 +32,8 @@ public interface VpcpStatusView extends Editor<VpcpPojo>, IsWidget, View {
 		public ClientFactory getClientFactory();
 		public void refreshVpcpStatusForId(String provisioningId);
 		public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w);
+//		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
+//		public void setSpeedChartStatusForKey(String key, Label label);
 	}
 
 	/**
@@ -74,6 +77,7 @@ public interface VpcpStatusView extends Editor<VpcpPojo>, IsWidget, View {
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
 	void refreshVpcpStatusInformation();
-
-
+//	void setSpeedTypeStatus(String status);
+//	void setSpeedTypeColor(String color);
+//	Widget getSpeedTypeWidget();
 }

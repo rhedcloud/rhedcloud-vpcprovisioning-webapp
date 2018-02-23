@@ -17,6 +17,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainService extends ViewImplBase implements MaintainServiceView {
@@ -163,5 +164,38 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 				i++;
 			}
 		}
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		AWSServicePojo svc = presenter.getService();
+		if (svc.getServiceId() == null || svc.getServiceId().length() == 0) {
+			fields.add(serviceIdTB);
+		}
+		if (svc.getCode() == null || svc.getCode().length() == 0) {
+			fields.add(serviceCodeTB);
+		}
+		if (svc.getName() == null || svc.getName().length() == 0) {
+			fields.add(serviceNameTB);
+		}
+		if (svc.getStatus() == null || svc.getStatus().length() == 0) {
+			fields.add(statusLB);
+		}
+		if (svc.getLandingPage() == null || svc.getLandingPage().length() == 0) {
+			fields.add(landingPageURLTB);
+		}
+		return fields;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(serviceIdTB);
+		fields.add(serviceCodeTB);
+		fields.add(serviceNameTB);
+		fields.add(statusLB);
+		fields.add(landingPageURLTB);
+		this.resetFieldStyles(fields);
 	}
 }

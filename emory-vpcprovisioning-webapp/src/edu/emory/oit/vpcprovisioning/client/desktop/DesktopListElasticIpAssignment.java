@@ -154,4 +154,16 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 		dataProvider.getList().remove(summary);
 	}
 
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

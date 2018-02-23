@@ -376,4 +376,16 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	public void setUserLoggedIn(UserAccountPojo user) {
 		this.userLoggedIn = user;
 	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
+	}
 }

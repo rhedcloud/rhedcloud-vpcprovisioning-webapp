@@ -17,6 +17,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIpAssignment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListFirewallRule;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
@@ -43,6 +44,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
@@ -89,6 +91,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainServiceView maintainServiceView;
 	private ListNotificationView listNotificationView;
 	private MaintainNotificationView maintainNotificationView;
+	private ListFirewallRuleView listFirewallRuleView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -367,5 +370,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainNotificationView createMaintainNotificationView() {
 		return new DesktopMaintainNotification();
+	}
+	@Override
+	public ListFirewallRuleView getListFirewallRuleView() {
+        if (listFirewallRuleView == null) {
+        	listFirewallRuleView = createFirewallRuleListView();
+        }
+        return listFirewallRuleView;
+	}
+	protected ListFirewallRuleView createFirewallRuleListView() {
+		return new DesktopListFirewallRule();
 	}
 }

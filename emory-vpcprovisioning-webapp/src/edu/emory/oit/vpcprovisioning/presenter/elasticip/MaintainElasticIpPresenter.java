@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.elasticip;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -158,7 +160,17 @@ public class MaintainElasticIpPresenter implements MaintainElasticIpView.Present
 	@Override
 	public void saveElasticIp() {
 		// TODO Auto-generated method stub
-		
+		getView().showPleaseWaitDialog();
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
 	}
 	@Override
 	public ElasticIpPojo getElasticIp() {

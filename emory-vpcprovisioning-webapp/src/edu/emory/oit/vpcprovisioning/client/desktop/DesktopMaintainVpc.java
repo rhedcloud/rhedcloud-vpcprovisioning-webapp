@@ -6,10 +6,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,6 +31,7 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 	boolean locked;
 	List<String> vpcTypes;
 	UserAccountPojo userLoggedIn;
+	String speedTypeBeingTyped=null;
 	
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
@@ -40,27 +46,9 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 	@UiField Grid generateVpcGrid;
 	@UiField TextBox vpcReqOwnerNetIdTB;
 	@UiField TextBox vpcReqAccountIdTB;
-	@UiField TextBox vpcReqFinancialAcctNumberTB;
+	@UiField TextBox vpcReqSpeedTypeTB;
 	@UiField ListBox vpcReqTypeLB;
-
-	// used for both generating and maintaining
-//	@UiField VerticalPanel netIdVP;
-//	@UiField TextBox addNetIdTF;
-//	@UiField Button addNetIdButton;
-//	@UiField FlexTable netIdTable;
-//
-//	@UiHandler ("addNetIdTF")
-//	void addUserTFKeyPressed(KeyPressEvent e) {
-//        int keyCode = e.getNativeEvent().getKeyCode();
-//        if (keyCode == KeyCodes.KEY_ENTER) {
-//    		addNetIdToVpc(addNetIdTF.getText());
-//        }
-//	}
-//	@UiHandler ("addNetIdButton")
-//	void addUserButtonClick(ClickEvent e) {
-//		addNetIdToVpc(addNetIdTF.getText());
-//	}
-
+	@UiField Label speedTypeLabel;
 
 	private static DesktopMaintainVpcUiBinder uiBinder = GWT.create(DesktopMaintainVpcUiBinder.class);
 
@@ -89,7 +77,7 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 				else {
 					presenter.getVpcRequisition().setAccountId(vpcReqAccountIdTB.getText());
 					presenter.getVpcRequisition().setAccountOwnerNetId(vpcReqOwnerNetIdTB.getText());
-					presenter.getVpcRequisition().setFinancialAccountNumber(vpcReqFinancialAcctNumberTB.getText());
+					presenter.getVpcRequisition().setSpeedType(vpcReqSpeedTypeTB.getText());
 					presenter.getVpcRequisition().setType(vpcReqTypeLB.getSelectedValue());
 					// admin net ids are added as they're added in the interface
 				}
@@ -98,71 +86,39 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 		}, ClickEvent.getType());
 	}
 
-//	private void addNetIdToVpc(String netId) {
-//		if (netId != null && netId.trim().length() > 0) {
-//			final String trimmedNetId = netId.trim().toLowerCase();
-//			if (editing) {
-//				if (presenter.getVpc().getCustomerAdminNetIdList().contains(trimmedNetId)) {
-//					showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
-//				}
-//				else {
-//					presenter.getVpc().getCustomerAdminNetIdList().add(trimmedNetId);
-//					addNetIdToPanel(trimmedNetId);
-//				}
-//			}
-//			else {
-//				if (presenter.getVpcRequisition().getCustomerAdminNetIdList().contains(trimmedNetId)) {
-//					showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
-//				}
-//				else {
-//					presenter.getVpcRequisition().getCustomerAdminNetIdList().add(trimmedNetId);
-//					addNetIdToPanel(trimmedNetId);
-//				}
-//			}
-//		}
-//		else {
-//			showStatus(addNetIdButton, "Please enter a valid net id.");
-//		}
-//	}
-	
-//	private void addNetIdToPanel(final String netId) {
-//		final int numRows = netIdTable.getRowCount();
-//		final Label netIdLabel = new Label(netId);
-//		netIdLabel.addStyleName("emailLabel");
-//		final Button removeNetIdButton = new Button("Remove");
-//		removeNetIdButton.addStyleName("glowing-border");
-//		removeNetIdButton.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				presenter.getVpc().getCustomerAdminNetIdList().remove(netId);
-//				netIdTable.remove(netIdLabel);
-//				netIdTable.remove(removeNetIdButton);
-//			}
-//		});
-//		addNetIdTF.setText("");
-//		netIdTable.setWidget(numRows, 0, netIdLabel);
-//		netIdTable.setWidget(numRows, 1, removeNetIdButton);
-//	}
+	@UiHandler ("vpcReqSpeedTypeTB")
+	void speedTypeMouseOver(MouseOverEvent e) {
+		String acct = vpcReqSpeedTypeTB.getText();
+		presenter.setSpeedChartStatusForKeyOnWidget(acct, vpcReqSpeedTypeTB);
+	}
+	@UiHandler ("vpcReqSpeedTypeTB")
+	void speedTypeKeyPressed(KeyPressEvent e) {
+		GWT.log("SpeedType key pressed...");
+		int keyCode = e.getNativeEvent().getKeyCode();
+		char ccode = e.getCharCode();
 
-//	void initializeNetIdPanel() {
-//		netIdTable.removeAllRows();
-//		if (editing) {
-//			if (presenter.getVpc() != null) {
-//				GWT.log("Adding " + presenter.getVpc().getCustomerAdminNetIdList().size() + " net ids to the panel (update).");
-//				for (String netId : presenter.getVpc().getCustomerAdminNetIdList()) {
-//					addNetIdToPanel(netId);
-//				}
-//			}
-//		}
-//		else {
-//			if (presenter.getVpcRequisition() != null) {
-//				GWT.log("Adding " + presenter.getVpcRequisition().getCustomerAdminNetIdList().size() + " net ids to the panel (generate).");
-//				for (String netId : presenter.getVpcRequisition().getCustomerAdminNetIdList()) {
-//					addNetIdToPanel(netId);
-//				}
-//			}
-//		}
-//	}
+		if (keyCode == KeyCodes.KEY_BACKSPACE) {
+			if (speedTypeBeingTyped.length() > 0) {
+				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
+			}
+			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+			return;
+		}
+		
+		if (keyCode == KeyCodes.KEY_TAB) {
+			presenter.setSpeedChartStatusForKey(vpcReqSpeedTypeTB.getText(), speedTypeLabel);
+			return;
+		}
+
+		if (!isValidKey(keyCode)) {
+			return;
+		}
+		else {
+			speedTypeBeingTyped += ccode;
+		}
+
+		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+	}
 
 	@Override
 	public void setEditing(boolean isEditing) {
@@ -204,7 +160,7 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 			generateVpcGrid.setVisible(true);
 			vpcReqOwnerNetIdTB.setText("");
 			vpcReqAccountIdTB.setText("");
-			vpcReqFinancialAcctNumberTB.setText("");
+			vpcReqSpeedTypeTB.setText("");
 			vpcReqTypeLB.setSelectedIndex(0);
 		}
 		
@@ -315,5 +271,32 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {
 		this.userLoggedIn = user;
+	}
+
+	@Override
+	public void setSpeedTypeStatus(String status) {
+		speedTypeLabel.setText(status);
+	}
+
+	@Override
+	public void setSpeedTypeColor(String color) {
+		speedTypeLabel.getElement().getStyle().setColor(color);
+	}
+
+	@Override
+	public Widget getSpeedTypeWidget() {
+		return vpcReqSpeedTypeTB;
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -49,6 +49,9 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
@@ -184,6 +187,12 @@ public interface VpcProvisioningService extends RemoteService {
 	// Speed Chart
 	SpeedChartQueryResultPojo getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter) throws RpcException;
 	SpeedChartPojo getSpeedChartForFinancialAccountNumber(String accountNumber) throws RpcException;
+
+	// FirewallRule
+	FirewallRuleQueryResultPojo getFirewallRulesForFilter(FirewallRuleQueryFilterPojo filter) throws RpcException;
+	FirewallRulePojo createFirewallRule(FirewallRulePojo rule) throws RpcException;
+	FirewallRulePojo updateFirewallRule(FirewallRulePojo rule) throws RpcException;
+	void deleteFirewallRule(FirewallRulePojo rule) throws RpcException;
 
 	// caching methods
 	CidrPojo storeCidrInCacheForUser(String eppn, CidrPojo cidr);

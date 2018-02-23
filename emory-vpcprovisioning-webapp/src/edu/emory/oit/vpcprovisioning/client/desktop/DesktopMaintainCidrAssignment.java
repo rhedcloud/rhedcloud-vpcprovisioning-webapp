@@ -23,6 +23,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -274,6 +275,35 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {
 		this.userLoggedIn = user;
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		CidrAssignmentPojo ca = presenter.getCidrAssignmentSummary().getCidrAssignment();
+		if (ca.getOwnerId() == null || ca.getOwnerId().length() == 0) {
+			fields.add(ownerIdTB);
+		}
+		if (ca.getDescription() == null || ca.getDescription().length() == 0) {
+			fields.add(descriptionTB);
+		}
+		if (ca.getPurpose() == null || ca.getPurpose().length() == 0) {
+			fields.add(purposeTB);
+		}
+		if (ca.getCidr() == null) {
+			fields.add(cidrLB);
+		}
+		return fields;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(ownerIdTB);
+		fields.add(descriptionTB);
+		fields.add(purposeTB);
+		fields.add(cidrLB);
+		this.resetFieldStyles(fields);
 	}
 
 }

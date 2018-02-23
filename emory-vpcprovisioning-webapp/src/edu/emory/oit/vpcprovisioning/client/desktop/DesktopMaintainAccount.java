@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -27,6 +26,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
@@ -40,6 +40,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	int netIdRowNum = 0;
 	int netIdColumnNum = 0;
 	int removeButtonColumnNum = 1;
+	String speedTypeBeingTyped=null;
 	
 	@UiField Button billSummaryButton;
 	@UiField Button okayButton;
@@ -48,7 +49,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField TextBox accountNameTB;
 	@UiField TextBox ownerNetIdTB;
 	@UiField TextBox passwordLocationTB;
-	@UiField TextBox financialAccountNumberTB;
+	@UiField TextBox speedTypeTB;
 
 	// AWS Account associated emails
 	@UiField VerticalPanel emailsVP;
@@ -65,25 +66,40 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField FlexTable netIdTable;
 	
 	@UiField HTML accountInfoHTML;
+	@UiField Label speedTypeLabel;
 
-	@UiHandler ("financialAccountNumberTB")
-	void finacctMouseOver(MouseOverEvent e) {
-		String acct = financialAccountNumberTB.getText();
-//		if (acct != null && acct.length() == 10) {
-			presenter.setSpeedChartStatusForKeyOnWidget(acct, financialAccountNumberTB);
-//		}
+	@UiHandler ("speedTypeTB")
+	void speedTypeMouseOver(MouseOverEvent e) {
+		String acct = speedTypeTB.getText();
+		presenter.setSpeedChartStatusForKeyOnWidget(acct, speedTypeTB);
 	}
-	@UiHandler ("financialAccountNumberTB")
-	void finacctBlur(BlurEvent e) {
-		GWT.log("financial account blur...");
-	}
-	@UiHandler ("financialAccountNumberTB")
-	void finacctKeyPressed(KeyPressEvent e) {
-		GWT.log("financial account key pressed...");
-		String acct = financialAccountNumberTB.getText(); 
-		if (acct.length() >= 9) {
-			GWT.log("time to validate...");
+	@UiHandler ("speedTypeTB")
+	void speedTypeKeyPressed(KeyPressEvent e) {
+		GWT.log("SpeedType key pressed...");
+		int keyCode = e.getNativeEvent().getKeyCode();
+		char ccode = e.getCharCode();
+
+		if (keyCode == KeyCodes.KEY_BACKSPACE) {
+			if (speedTypeBeingTyped.length() > 0) {
+				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
+			}
+			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+			return;
 		}
+		
+		if (keyCode == KeyCodes.KEY_TAB) {
+			presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeLabel);
+			return;
+		}
+
+		if (!isValidKey(keyCode)) {
+			return;
+		}
+		else {
+			speedTypeBeingTyped += ccode;
+		}
+
+		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
 	}
 	
 	@UiHandler ("billSummaryButton")
@@ -153,7 +169,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				}
 				presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerNetIdTB.getText());
 				presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
-				presenter.getAccount().setFinancialAccountNumber(financialAccountNumberTB.getText());
+				presenter.getAccount().setSpeedType(speedTypeTB.getText());
 				// emails are added as they're added in the interface
 				presenter.saveAccount();
 			}
@@ -254,7 +270,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				emailPojo.setEmail(trimmedEmail);
 				emailPojo.setType(trimmedEmailType);
 				if (presenter.getAccount().containsEmail(emailPojo)) {
-					showStatus(addEmailButton, "That e-mail is alreay in the list, please enter a unique e-mail address.");
+					showStatus(addEmailButton, "That e-mail is already in the list, please enter a unique e-mail address.");
 				}
 				else {
 					presenter.getAccount().getEmailList().add(emailPojo);
@@ -335,6 +351,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public void initPage() {
 		// clear the page
+		speedTypeBeingTyped = "";
+		speedTypeLabel.setText("");
 		netIdRowNum = 0;
 		netIdColumnNum = 0;
 		removeButtonColumnNum = 1;
@@ -342,7 +360,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		accountNameTB.setText("");
 		ownerNetIdTB.setText("");
 		passwordLocationTB.setText("");
-		financialAccountNumberTB.setText("");
+		speedTypeTB.setText("");
 		addEmailTF.setText("");
 		addEmailTypeLB.setSelectedIndex(0);
 
@@ -362,7 +380,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			}
 			// TODO: add a static text object to show person's name from the meta data pojo
 			passwordLocationTB.setText(presenter.getAccount().getPasswordLocation());
-			financialAccountNumberTB.setText(presenter.getAccount().getFinancialAccountNumber());
+			speedTypeTB.setText(presenter.getAccount().getSpeedType());
 		}
 		// populate associated emails if appropriate
 		initializeEmailPanel();
@@ -418,7 +436,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		accountNameTB.setEnabled(true);
 		ownerNetIdTB.setEnabled(true);
 		passwordLocationTB.setEnabled(true);
-		financialAccountNumberTB.setEnabled(true);
+		speedTypeTB.setEnabled(true);
 		addEmailTF.setEnabled(true);
 		addEmailTypeLB.setEnabled(true);
 		addEmailButton.setEnabled(true);
@@ -432,7 +450,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		accountNameTB.setEnabled(false);
 		ownerNetIdTB.setEnabled(false);
 		passwordLocationTB.setEnabled(false);
-		financialAccountNumberTB.setEnabled(false);
+		speedTypeTB.setEnabled(false);
 		addEmailTF.setEnabled(false);
 		addEmailTypeLB.setEnabled(false);
 		addEmailButton.setEnabled(false);
@@ -452,6 +470,45 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void setAwsBillingManagementURL(String awsBillingManagementURL) {
 		String acctInfo = accountInfoHTML.getHTML();
 		accountInfoHTML.setHTML(acctInfo.replaceAll("AWS_BILLING_MANAGEMENT_URL", awsBillingManagementURL));
+	}
+	@Override
+	public void setSpeedTypeStatus(String status) {
+		speedTypeLabel.setText(status);
+	}
+	@Override
+	public void setSpeedTypeColor(String color) {
+		speedTypeLabel.getElement().getStyle().setColor(color);
+	}
+	@Override
+	public Widget getSpeedTypeWidget() {
+		return speedTypeTB;
+	}
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		AccountPojo acct = presenter.getAccount(); 
+		if (acct.getAccountId() == null || acct.getAccountId().length() == 0) {
+			fields.add(accountIdTB);
+		}
+		if (acct.getAccountName() == null || acct.getAccountName().length() == 0) {
+			fields.add(accountNameTB);
+		}
+		if (acct.getPasswordLocation() == null || acct.getPasswordLocation().length() == 0) {
+			fields.add(passwordLocationTB);
+		}
+		if (acct.getEmailList() == null|| acct.getEmailList().size() == 0) {
+			fields.add(addEmailTF);
+		}
+		return fields;
+	}
+	@Override
+	public void resetFieldStyles() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(accountIdTB);
+		fields.add(accountNameTB);
+		fields.add(passwordLocationTB);
+		fields.add(addEmailTF);
+		this.resetFieldStyles(fields);
 	}
 
 }

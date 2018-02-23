@@ -348,4 +348,16 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		
 	}
 
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

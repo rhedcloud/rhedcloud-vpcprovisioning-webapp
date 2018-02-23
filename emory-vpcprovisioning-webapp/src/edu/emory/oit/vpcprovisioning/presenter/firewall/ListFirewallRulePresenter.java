@@ -1,4 +1,4 @@
-package edu.emory.oit.vpcprovisioning.presenter.account;
+package edu.emory.oit.vpcprovisioning.presenter.firewall;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,24 +13,24 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
-import edu.emory.oit.vpcprovisioning.client.event.AccountListUpdateEvent;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListAccountPresenter implements ListAccountView.Presenter {
-	private static final Logger log = Logger.getLogger(ListAccountPresenter.class.getName());
+public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter {
+	private static final Logger log = Logger.getLogger(ListFirewallRulePresenter.class.getName());
 	/**
-	 * The delay in milliseconds between calls to refresh the account list.
+	 * The delay in milliseconds between calls to refresh the firewallRule list.
 	 */
 	//	  private static final int REFRESH_DELAY = 5000;
 	private static final int SESSION_REFRESH_DELAY = 900000;	// 15 minutes
 
 	/**
-	 * A boolean indicating that we should clear the account list when started.
+	 * A boolean indicating that we should clear the firewallRule list when started.
 	 */
 	private final boolean clearList;
 
@@ -38,11 +38,11 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 
 	private EventBus eventBus;
 	
-	AccountQueryFilterPojo filter;
-	AccountPojo account;
+	FirewallRuleQueryFilterPojo filter;
+	FirewallRulePojo firewallRule;
 
 	/**
-	 * The refresh timer used to periodically refresh the account list.
+	 * The refresh timer used to periodically refresh the firewallRule list.
 	 */
 	//	  private Timer refreshTimer;
 
@@ -51,24 +51,24 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 	 */
 	//	  private Timer sessionTimer;
 
-	public ListAccountPresenter(ClientFactory clientFactory, boolean clearList, AccountQueryFilterPojo filter) {
+	public ListFirewallRulePresenter(ClientFactory clientFactory, boolean clearList, FirewallRuleQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
-		clientFactory.getListAccountView().setPresenter(this);
+		clientFactory.getListFirewallRuleView().setPresenter(this);
 	}
 
 	/**
-	 * Construct a new {@link ListAccountPresenter}.
+	 * Construct a new {@link ListFirewallRulePresenter}.
 	 * 
 	 * @param clientFactory the {@link ClientFactory} of shared resources
 	 * @param place configuration for this activity
 	 */
-	public ListAccountPresenter(ClientFactory clientFactory, ListAccountPlace place) {
+	public ListFirewallRulePresenter(ClientFactory clientFactory, ListFirewallRulePlace place) {
 		this(clientFactory, place.isListStale(), place.getFilter());
 	}
 
-	private ListAccountView getView() {
-		return clientFactory.getListAccountView();
+	private ListFirewallRuleView getView() {
+		return clientFactory.getListFirewallRuleView();
 	}
 
 	@Override
@@ -87,40 +87,27 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
-//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-//					log.log(Level.SEVERE, 
-//							"Exception getting user logged in on server", 
-//							caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving information about the user logged " +
-//							"in.  Message from server is: " + caught.getMessage());
-//					
-//					// TODO try to account for shib session timeout
-//					// caught.getMessage() from server returns "0"
-//				}
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
 				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
-				clientFactory.getShell().setSubTitle("Accounts");
+				clientFactory.getShell().setSubTitle("FirewallRules");
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 				ReleaseInfo ri = new ReleaseInfo();
 				clientFactory.getShell().setReleaseInfo(ri.toString());
 
-				// Clear the account list and display it.
+				// Clear the firewallRule list and display it.
 				if (clearList) {
 					getView().clearList();
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setAccountList(Collections.<AccountPojo> emptyList());
+				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
 
-				// Request the account list now.
+				// Request the firewallRule list now.
 				refreshList(userLoggedIn);
 			}
 		};
@@ -132,21 +119,21 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 	 * Refresh the CIDR list.
 	 */
 	private void refreshList(final UserAccountPojo user) {
-		// use RPC to get all accounts for the current filter being used
-		AsyncCallback<AccountQueryResultPojo> callback = new AsyncCallback<AccountQueryResultPojo>() {
+		// use RPC to get all firewallRules for the current filter being used
+		AsyncCallback<FirewallRuleQueryResultPojo> callback = new AsyncCallback<FirewallRuleQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
-				log.log(Level.SEVERE, "Exception Retrieving Accounts", caught);
+				log.log(Level.SEVERE, "Exception Retrieving FirewallRules", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of accounts.  " +
+						"server retrieving your list of firewallRules.  " +
 						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(AccountQueryResultPojo result) {
-				GWT.log("Got " + result.getResults().size() + " accounts for " + result.getFilterUsed());
-				setAccountList(result.getResults());
+			public void onSuccess(FirewallRuleQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " firewallRules for " + result.getFilterUsed());
+				setFirewallRuleList(result.getResults());
 				// apply authorization mask
 				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
 					getView().applyEmoryAWSAdminMask();
@@ -161,16 +148,16 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 			}
 		};
 
-		GWT.log("refreshing Account list...");
-		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, callback);
+		GWT.log("refreshing FirewallRule list...");
+		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(filter, callback);
 	}
 
 	/**
-	 * Set the list of accounts.
+	 * Set the list of firewallRules.
 	 */
-	private void setAccountList(List<AccountPojo> accounts) {
-		getView().setAccounts(accounts);
-		eventBus.fireEventFromSource(new AccountListUpdateEvent(accounts), this);
+	private void setFirewallRuleList(List<FirewallRulePojo> firewallRules) {
+		getView().setFirewallRules(firewallRules);
+		eventBus.fireEventFromSource(new FirewallRuleListUpdateEvent(firewallRules), this);
 	}
 
 	@Override
@@ -190,9 +177,9 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 	}
 
 	@Override
-	public void selectAccount(AccountPojo selected) {
-		this.account = selected;
-		// TODO fire view/edit account action maybe
+	public void selectFirewallRule(FirewallRulePojo selected) {
+		this.firewallRule = selected;
+		// TODO fire view/edit firewallRule action maybe
 	}
 
 	public EventBus getEventBus() {
@@ -203,11 +190,11 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 		this.eventBus = eventBus;
 	}
 
-	public AccountQueryFilterPojo getFilter() {
+	public FirewallRuleQueryFilterPojo getFilter() {
 		return filter;
 	}
 
-	public void setFilter(AccountQueryFilterPojo filter) {
+	public void setFilter(FirewallRuleQueryFilterPojo filter) {
 		this.filter = filter;
 	}
 
@@ -216,15 +203,15 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 	}
 
 	@Override
-	public void deleteAccount(final AccountPojo account) {
-		if (Window.confirm("Delete the AWS Account " + account.getAccountId() + "/" + account.getAccountName() + "?")) {
+	public void deleteFirewallRule(final FirewallRulePojo firewallRule) {
+		if (Window.confirm("Delete the AWS FirewallRule " + firewallRule.getName() + "?")) {
 			getView().showPleaseWaitDialog();
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
 					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Account.  Message " +
+							"server deleting the FirewallRule.  Message " +
 							"from server is: " + caught.getMessage());
 					getView().hidePleaseWaitDialog();
 				}
@@ -232,15 +219,15 @@ public class ListAccountPresenter implements ListAccountView.Presenter {
 				@Override
 				public void onSuccess(Void result) {
 					// remove from dataprovider
-					getView().removeAccountFromView(account);
+					getView().removeFirewallRuleFromView(firewallRule);
 					getView().hidePleaseWaitDialog();
 					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Account was deleted.");
+					getView().showStatus(getView().getStatusMessageSource(), "FirewallRule was deleted.");
 					
-					// TODO fire list accounts event...
+					// TODO fire list firewallRules event...
 				}
 			};
-			VpcProvisioningService.Util.getInstance().deleteAccount(account, callback);
+			VpcProvisioningService.Util.getInstance().deleteFirewallRule(firewallRule, callback);
 		}
 	}
 }

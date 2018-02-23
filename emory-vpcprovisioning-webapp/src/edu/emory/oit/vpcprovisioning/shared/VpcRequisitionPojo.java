@@ -11,7 +11,7 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 	String ticketId;
 	String authenticatedRequestorNetId;
 	String accountOwnerNetId;
-	String financialAccountNumber;
+	String speedType;
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 	String type;
 	String complianceClass;
@@ -69,12 +69,12 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 		this.accountOwnerNetId = accountOwnerNetId;
 	}
 
-	public String getFinancialAccountNumber() {
-		return financialAccountNumber;
+	public String getSpeedType() {
+		return speedType;
 	}
 
-	public void setFinancialAccountNumber(String financialAccountNumber) {
-		this.financialAccountNumber = financialAccountNumber;
+	public void setSpeedType(String speedType) {
+		this.speedType = speedType;
 	}
 
 	public List<String> getCustomerAdminNetIdList() {

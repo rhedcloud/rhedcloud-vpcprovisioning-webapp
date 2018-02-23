@@ -47,6 +47,9 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
@@ -176,4 +179,11 @@ public interface VpcProvisioningServiceAsync {
 	void createNotification(NotificationPojo notification, AsyncCallback<NotificationPojo> callback);
 	void updateNotification(NotificationPojo notification, AsyncCallback<NotificationPojo> callback);
 	void deleteNotification(NotificationPojo notification, AsyncCallback<Void> callback);
+	
+	// FirewallRule
+	void getFirewallRulesForFilter(FirewallRuleQueryFilterPojo filter, AsyncCallback<FirewallRuleQueryResultPojo> callback);
+	void createFirewallRule(FirewallRulePojo rule, AsyncCallback<FirewallRulePojo> callback);
+	void updateFirewallRule(FirewallRulePojo rule, AsyncCallback<FirewallRulePojo> callback);
+	void deleteFirewallRule(FirewallRulePojo rule, AsyncCallback<Void> callback);
+
 }

@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
@@ -103,6 +105,18 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public void showPleaseWaitPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
 		
 	}

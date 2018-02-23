@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,6 +17,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
+import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrView {
@@ -161,6 +164,27 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {
 		this.userLoggedIn = user;
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		CidrPojo cidr = presenter.getCidr();
+		if (cidr.getNetwork() == null || cidr.getNetwork().length() == 0) {
+			fields.add(networkTB);
+		}
+		if (cidr.getBits() == null || cidr.getBits().length() == 0) {
+			fields.add(bitsTB);
+		}
+		return fields;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(networkTB);
+		fields.add(bitsTB);
+		this.resetFieldStyles(fields);
 	}
 
 }

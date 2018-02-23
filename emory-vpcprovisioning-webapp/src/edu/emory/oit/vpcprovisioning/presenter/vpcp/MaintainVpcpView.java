@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -36,6 +37,8 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 //		public void getVpcpForId(String provisioningId);
+		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
+		public void setSpeedChartStatusForKey(String key, Label label);
 	}
 
 	/**
@@ -80,4 +83,7 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 	void setVpcTypeItems(List<String> vpcTypes);
 	void setAccountItems(List<AccountPojo> accounts);
 	void setComplianceClassItems(List<String> complianceClassTypes);
+	void setSpeedTypeStatus(String status);
+	void setSpeedTypeColor(String color);
+	Widget getSpeedTypeWidget();
 }

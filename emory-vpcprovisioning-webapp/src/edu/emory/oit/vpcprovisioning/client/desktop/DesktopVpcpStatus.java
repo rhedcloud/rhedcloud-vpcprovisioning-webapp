@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Iterator;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -50,7 +51,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	@UiField Label actualTimeLabel;
 	@UiField Label requestorNetIdLabel;
 	@UiField Label ownerNetIdLabel;
-	@UiField Label financialAccountLabel;
+	@UiField Label speedTypeLabel;
 	@UiField Label vpcTypeLabel;
 	@UiField Label complianceClassLabel;
 	@UiField Label notifyAdminsLabel;
@@ -203,7 +204,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		actualTimeLabel.setText(presenter.getVpcp().getActualTime());
 		requestorNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAuthenticatedRequestorNetId());
 		ownerNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAccountOwnerNetId());
-		financialAccountLabel.setText(presenter.getVpcp().getVpcRequisition().getFinancialAccountNumber());
+		speedTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getSpeedType());
 		vpcTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getType());
 		complianceClassLabel.setText(presenter.getVpcp().getVpcRequisition().getComplianceClass());
 		notifyAdminsLabel.setText(Boolean.toString(presenter.getVpcp().getVpcRequisition().isNotifyAdmins()));
@@ -329,5 +330,16 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	public void stopTimer() {
 		startTimer = false;
 	}
-	
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
+	}
 }
