@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 
 public class MaintainCidrAssignmentPlace extends Place {
 	/**
@@ -17,7 +18,7 @@ public class MaintainCidrAssignmentPlace extends Place {
 
 		public MaintainCidrAssignmentPlace getPlace(String token) {
 			if (token != null) {
-				return new MaintainCidrAssignmentPlace(token, null);
+				return new MaintainCidrAssignmentPlace(token, null, null);
 			}
 			else {
 				// If the ID cannot be parsed, assume we are creating a caseRecord.
@@ -45,10 +46,20 @@ public class MaintainCidrAssignmentPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static MaintainCidrAssignmentPlace createMaintainCidrAssignmentPlace(String assignmentId, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
-		return new MaintainCidrAssignmentPlace(assignmentId, cidrAssignmentSummary);
+//	public static MaintainCidrAssignmentPlace createMaintainCidrAssignmentPlace(String assignmentId, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
+//		return new MaintainCidrAssignmentPlace(assignmentId, null, cidrAssignmentSummary);
+//	}
+	public static MaintainCidrAssignmentPlace createMaintainCidrAssignmentPlace(String assignmentId, CidrPojo cidr, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
+		return new MaintainCidrAssignmentPlace(assignmentId, cidr, cidrAssignmentSummary);
 	}
 
+	public static MaintainCidrAssignmentPlace getMaintainCidrAssignmentPlace(CidrPojo cidr) {
+		if (singleton == null) {
+			singleton = new MaintainCidrAssignmentPlace(null, cidr, null);
+			singleton.setRegisteringVpc(false);
+		}
+		return singleton;
+	}
 	/**
 	 * Get the singleton instance of the {@link AddCaseRecordPlace} used to create a new
 	 * caseRecord.
@@ -57,7 +68,7 @@ public class MaintainCidrAssignmentPlace extends Place {
 	 */
 	public static MaintainCidrAssignmentPlace getMaintainCidrAssignmentPlace() {
 		if (singleton == null) {
-			singleton = new MaintainCidrAssignmentPlace(null, null);
+			singleton = new MaintainCidrAssignmentPlace(null, null, null);
 			singleton.setRegisteringVpc(false);
 		}
 		return singleton;
@@ -71,12 +82,13 @@ public class MaintainCidrAssignmentPlace extends Place {
 	 */
 	public static MaintainCidrAssignmentPlace getMaintainCidrAssignmentPlace(boolean registeringVpc) {
 		if (singleton == null) {
-			singleton = new MaintainCidrAssignmentPlace(null, null);
+			singleton = new MaintainCidrAssignmentPlace(null, null, null);
 			singleton.setRegisteringVpc(registeringVpc);
 		}
 		return singleton;
 	}
 
+	private final CidrPojo cidr;
 	private final CidrAssignmentSummaryPojo cidrAssignmentSummary;
 	private final String assignmentId;
 	public String getAssignmentId() {
@@ -89,9 +101,16 @@ public class MaintainCidrAssignmentPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private MaintainCidrAssignmentPlace(String assignmentId, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
+	private MaintainCidrAssignmentPlace(String assignmentId, CidrPojo cidr, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
 		this.assignmentId = assignmentId;
 		this.cidrAssignmentSummary = cidrAssignmentSummary;
+		this.cidr = cidr;
+	}
+
+	private MaintainCidrAssignmentPlace(CidrPojo cidr) {
+		this.assignmentId = null;
+		this.cidrAssignmentSummary = null;
+		this.cidr = cidr;
 	}
 
 	/**
@@ -109,5 +128,9 @@ public class MaintainCidrAssignmentPlace extends Place {
 
 	public void setRegisteringVpc(boolean registeringVpc) {
 		this.registeringVpc = registeringVpc;
+	}
+
+	public CidrPojo getCidr() {
+		return cidr;
 	}
 }

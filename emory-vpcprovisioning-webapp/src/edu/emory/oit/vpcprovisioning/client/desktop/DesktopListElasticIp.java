@@ -8,15 +8,23 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -26,6 +34,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -36,10 +45,12 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	private SingleSelectionModel<ElasticIpPojo> selectionModel;
 	List<ElasticIpPojo> elasticIpList = new java.util.ArrayList<ElasticIpPojo>();
 	UserAccountPojo userLoggedIn;
+    PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
 	@UiField SimplePager elasticIpListPager;
 	@UiField Button allocateAddressButton;
+	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<ElasticIpPojo> elasticIpListTable = new CellTable<ElasticIpPojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 
@@ -50,6 +61,73 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 	public DesktopListElasticIp() {
 		initWidget(uiBinder.createAndBindUi(this));
+	}
+	
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    
+	    Grid grid = new Grid(3, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+
+		Anchor releaseAddressesAnchor = new Anchor("Release Addresses");
+		releaseAddressesAnchor.addStyleName("productAnchor");
+		releaseAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		releaseAddressesAnchor.setTitle("Release selected addresses");
+		releaseAddressesAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				ElasticIpPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					showMessageToUser("Will release address");
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, releaseAddressesAnchor);
+		
+		Anchor associateAddressesAnchor = new Anchor("Associate Addresses");
+		associateAddressesAnchor.addStyleName("productAnchor");
+		associateAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		associateAddressesAnchor.setTitle("Associate selected addresses");
+		associateAddressesAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+			}
+		});
+		associateAddressesAnchor.setEnabled(false);
+		grid.setWidget(1, 0, associateAddressesAnchor);
+		
+		Anchor disassociateAddressesAnchor = new Anchor("Disassociate Addresses");
+		disassociateAddressesAnchor.addStyleName("productAnchor");
+		disassociateAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		disassociateAddressesAnchor.setTitle("Disassociate selected addresses");
+		disassociateAddressesAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				ElasticIpPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					showMessageToUser("Will associate address");
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, disassociateAddressesAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
 	}
 
 	@Override
@@ -360,4 +438,13 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return null;
+	}
 }

@@ -9,6 +9,8 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -17,8 +19,11 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -29,6 +34,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView.Presenter;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -39,7 +45,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	private SingleSelectionModel<NotificationPojo> selectionModel;
 	List<NotificationPojo> serviceList = new java.util.ArrayList<NotificationPojo>();
 	UserAccountPojo userLoggedIn;
-
+    PopupPanel actionsPopup = new PopupPanel(true);
 
 	private static DesktopListNotificationUiBinder uiBinder = GWT.create(DesktopListNotificationUiBinder.class);
 
@@ -60,6 +66,42 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
 	@UiField Button createNotificationButton;
+	@UiField Button actionsButton;
+
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    
+	    Grid grid = new Grid(1, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+	    
+		Anchor assignAnchor = new Anchor("View Status");
+		assignAnchor.addStyleName("productAnchor");
+		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		assignAnchor.setTitle("View status of selected VPCP");
+		assignAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				NotificationPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					// just use a popup here and not try to show the "normal" CidrAssignment
+					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, assignAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
+	}
 
 	@UiHandler ("createNotificationButton")
 	void createButtonClicked(ClickEvent e) {
@@ -277,5 +319,14 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return null;
 	}
 }

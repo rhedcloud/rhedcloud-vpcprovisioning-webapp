@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.paloaltonetworks.moa.objects.resources.v1_0.FirewallRuleQuerySpecification;
 
 public class Constants implements IsSerializable {
 	public static final String CIDR_ASSIGNMENT = "CidrAssignment";
@@ -24,8 +25,11 @@ public class Constants implements IsSerializable {
 		PERMISSION_VIEW_EVERYTHING
 	};
 
+	public static final String COLOR_INVALID_FIELD = "#efbebe";
+	public static final String COLOR_FIELD_WARNING = "#ffa07a";
 	public static final String COLOR_RED = "red";
 	public static final String COLOR_GREEN = "green";
+	public static final String COLOR_ORANGE = "orange";
 	public static final String MOA_SPEEDCHART_QUERY_SPEC = "SPEEDCHART_QUERY.v1_0";
 	public static final String MOA_SPEEDCHART = "SPEEDCHART.v1_0";
 	public static final String MOA_VPC_QUERY_SPEC = "VirtualPrivateCloudQuerySpecification.v1_0";
@@ -47,6 +51,8 @@ public class Constants implements IsSerializable {
 	public static final String MOA_FULL_PERSON_QUERY_SPEC = "FullPersonQuerySpecification.v2_0";
 	public static final String MOA_BILL_QUERY_SPEC = "BillQuerySpecification.v1_0";
 	public static final String MOA_BILL = "Bill.v1_0";
+	public static final String MOA_FIREWALL_RULE_QUERY_SPEC = "FirewallRuleQuerySpecification.v1_0";
+	public static final String MOA_FIREWALL_RULE = "FirewallRule.v1_0";
 
     public static final String STYLE_INFO_POPUP_MESSAGE = "informationalPopupMessage";
     
@@ -62,4 +68,8 @@ public class Constants implements IsSerializable {
 	
 	public static final String LINEITEM_RECORD_TYPE_PAYER = "PayerLineItem";
 	public static final String LINEITEM_RECORD_TYPE_LINKED = "LinkedLineItem";
+	
+	public static final String SPEED_TYPE_VALID = "Y";
+	public static final String SPEED_TYPE_WARNING = "W";
+	public static final String SPEED_TYPE_INVALID = "N";
 }

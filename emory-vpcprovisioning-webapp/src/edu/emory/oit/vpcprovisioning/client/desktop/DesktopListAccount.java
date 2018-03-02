@@ -11,18 +11,23 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -36,6 +41,7 @@ import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListAccount extends ViewImplBase implements ListAccountView {
@@ -44,10 +50,12 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	private SingleSelectionModel<AccountPojo> selectionModel;
 	List<AccountPojo> accountList = new java.util.ArrayList<AccountPojo>();
 	UserAccountPojo userLoggedIn;
+    PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
 	@UiField SimplePager accountListPager;
 	@UiField Button addAccountButton;
+	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel accountListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -96,9 +104,90 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		}, ClickEvent.getType());
 	}
 
-	@Override
-	public void showMessageToUser(String message) {
-		Window.alert(message);
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    
+	    Grid grid = new Grid(3, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+	    
+	    // anchors for:
+	    // - view/edit
+	    // - delete
+	    // - view bill summaries?
+	    String anchorText = "View Account";
+		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+			anchorText = "Maintain Account";
+		}
+
+		Anchor maintainAnchor = new Anchor(anchorText);
+		maintainAnchor.addStyleName("productAnchor");
+		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		maintainAnchor.setTitle("View/Maintain selected Account");
+		maintainAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AccountPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					// just use a popup here and not try to show the "normal" CidrAssignment
+					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_FIREWALL_RULE, m, null);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, maintainAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Account");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Remove selected Account");
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AccountPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					// just use a popup here and not try to show the "normal" CidrAssignment
+					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
+
+		Anchor billSummaryAnchor = new Anchor("View Bill Summary");
+		billSummaryAnchor.addStyleName("productAnchor");
+		billSummaryAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		billSummaryAnchor.setTitle("View bill summary for selected Account");
+		billSummaryAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AccountPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					// just use a popup here and not try to show the "normal" CidrAssignment
+					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, billSummaryAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
 	}
 
 	@Override
@@ -448,5 +537,15 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return null;
 	}
 }

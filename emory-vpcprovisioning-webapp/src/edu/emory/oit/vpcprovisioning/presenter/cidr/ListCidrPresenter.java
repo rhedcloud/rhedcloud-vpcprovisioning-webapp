@@ -14,11 +14,11 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.CidrListUpdateEvent;
-import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentStatus;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -83,11 +83,13 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 		this.eventBus = eventBus;
 
 		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitPanel();
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					log.log(Level.SEVERE, 
 //							"Exception getting user logged in on server", 
@@ -116,7 +118,7 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 
 				getView().setUserLoggedIn(userLoggedIn);
 
-				setCidrList(Collections.<CidrPojo> emptyList());
+				setCidrSummaryList(Collections.<CidrSummaryPojo> emptyList());
 
 				// Request the CIDR list now.
 				refreshList(userLoggedIn);
@@ -135,6 +137,7 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving Case Records", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of CIDRs.  " +
@@ -144,7 +147,7 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 			@Override
 			public void onSuccess(CidrQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " CIDRs for " + result.getFilterUsed());
-				setCidrList(result.getResults());
+				setCidrSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
 					getView().applyEmoryAWSAdminMask();
@@ -156,19 +159,21 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 					// ??
 				}
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 			}
 		};
 
 		GWT.log("refreshing CIDR list...");
+		// TODO: setup filter
 		VpcProvisioningService.Util.getInstance().getCidrsForFilter(filter, callback);
 	}
 
 	/**
 	 * Set the list of CIDRs.
 	 */
-	private void setCidrList(List<CidrPojo> cidrs) {
-		getView().setCidrs(cidrs);
-		eventBus.fireEventFromSource(new CidrListUpdateEvent(cidrs), this);
+	private void setCidrSummaryList(List<CidrSummaryPojo> cidrSummaries) {
+		getView().setCidrSummaries(cidrSummaries);
+		eventBus.fireEventFromSource(new CidrListUpdateEvent(cidrSummaries), this);
 	}
 
 	@Override
@@ -215,7 +220,7 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 	}
 
 	@Override
-	public void deleteCidr(final CidrPojo cidr) {
+	public void deleteCidrSummary(final CidrSummaryPojo cidrSummary) {
 		// check to see if the selected cidr is already assigned.
 		// if it is, display an error.  An assigned CIDR cannot be deleted
 		
@@ -245,8 +250,8 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 				}
 				else {
 					// confirm and delete
-					if (Window.confirm("Delete the CIDR " + cidr.getNetwork() + 
-						"/" + cidr.getBits() + "?")) {
+					if (Window.confirm("Delete the CIDR " + cidrSummary.getCidr().getNetwork() + 
+						"/" + cidrSummary.getCidr().getBits() + "?")) {
 						
 						getView().showPleaseWaitDialog();
 						AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -262,7 +267,7 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 							@Override
 							public void onSuccess(Void result) {
 								// remove from dataprovider
-								getView().removeCidrFromView(cidr);
+								getView().removeCidrSummaryFromView(cidrSummary);
 								getView().hidePleaseWaitDialog();
 								// status message
 								getView().showStatus(getView().getStatusMessageSource(), "Cidr was deleted.");
@@ -270,12 +275,12 @@ public class ListCidrPresenter implements ListCidrView.Presenter {
 								// TODO fire list cidrs event...
 							}
 						};
-						VpcProvisioningService.Util.getInstance().deleteCidr(cidr, callback);
+						VpcProvisioningService.Util.getInstance().deleteCidrSummary(cidrSummary, callback);
 					}
 				}
 			}
 			
 		};
-		VpcProvisioningService.Util.getInstance().getCidrAssignmentStatusForCidr(cidr, isAssignedCB);
+		VpcProvisioningService.Util.getInstance().getCidrAssignmentStatusForCidr(cidrSummary.getCidr(), isAssignedCB);
 	}
 }

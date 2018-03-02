@@ -7,6 +7,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -118,12 +119,14 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 	void getUnassignedCidrs() {
 		String accountId = accountLB.getSelectedValue();
 		String vpcId = vpcLB.getSelectedValue();
-		presenter.getUnassigedCidrs();
-	}
-
-	@Override
-	public void showMessageToUser(String message) {
-		Window.alert(message);
+		// only refresh the CIDR list if we weren't passed a CIDR to begin with
+		if (presenter.getCidr() == null) {
+			GWT.log("maintain assignment, null cidr in presenter, getting all unassigned cidrs");
+			presenter.getUnassigedCidrs();
+		}
+		else {
+			GWT.log("maintain assignment, presenter has a cidr, no need to retrieve unassigned cidrs");
+		}
 	}
 
 	@Override
@@ -164,6 +167,7 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 
 	@Override
 	public void initPage() {
+		this.setFieldViolations(false);
 		// clear the page
 		purposeTB.setText("");
 		descriptionTB.setText("");
@@ -234,6 +238,7 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 
 	@Override
 	public void setCidrItems(List<CidrPojo> cidrs) {
+		// if Presenter.cidr is not null, select that Cidr from the list
 		this.cidrs = cidrs;
 		cidrLB.clear();
 		if (cidrs != null) {
@@ -282,15 +287,19 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		CidrAssignmentPojo ca = presenter.getCidrAssignmentSummary().getCidrAssignment();
 		if (ca.getOwnerId() == null || ca.getOwnerId().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(ownerIdTB);
 		}
 		if (ca.getDescription() == null || ca.getDescription().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(descriptionTB);
 		}
 		if (ca.getPurpose() == null || ca.getPurpose().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(purposeTB);
 		}
 		if (ca.getCidr() == null) {
+			this.setFieldViolations(true);
 			fields.add(cidrLB);
 		}
 		return fields;
@@ -304,6 +313,16 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 		fields.add(purposeTB);
 		fields.add(cidrLB);
 		this.resetFieldStyles(fields);
+	}
+
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return cancelButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return okayButton;
 	}
 
 }

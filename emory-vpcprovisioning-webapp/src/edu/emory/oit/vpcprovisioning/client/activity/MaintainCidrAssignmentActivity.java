@@ -68,13 +68,13 @@ public class MaintainCidrAssignmentActivity extends AbstractActivity {
 	}
 
 	private PresentsWidgets startCreate() {
-		PresentsWidgets rtn = new MaintainCidrAssignmentPresenter(clientFactory, place.isRegisteringVpc());
+		PresentsWidgets rtn = new MaintainCidrAssignmentPresenter(clientFactory, place.isRegisteringVpc(), place.getCidr());
 		rtn.start(childEventBus);
 		return rtn;
 	}
 
 	private PresentsWidgets startEdit(CidrAssignmentSummaryPojo cidrAssignmentSummary) {
-		PresentsWidgets rtn = new MaintainCidrAssignmentPresenter(clientFactory, cidrAssignmentSummary);
+		PresentsWidgets rtn = new MaintainCidrAssignmentPresenter(clientFactory, place.getCidr(), cidrAssignmentSummary);
 		rtn.start(childEventBus);
 		return rtn;
 	}

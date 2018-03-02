@@ -2,6 +2,7 @@ package edu.emory.oit.vpcprovisioning.presenter;
 
 import java.util.List;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -22,4 +23,8 @@ public interface View extends IsWidget {
 	public List<Widget> getMissingRequiredFields();
 	public void resetFieldStyles();
 	public void applyStyleToMissingFields(List<Widget> fields);
+	public void setFieldViolations(boolean fieldViolations);
+	public boolean hasFieldViolations();
+	HasClickHandlers getCancelWidget();
+	HasClickHandlers getOkayWidget();
 }

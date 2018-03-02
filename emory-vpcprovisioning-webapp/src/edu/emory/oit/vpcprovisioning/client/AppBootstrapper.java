@@ -6,10 +6,13 @@ import java.util.logging.Logger;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.UmbrellaException;
@@ -24,6 +27,7 @@ import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
@@ -69,8 +73,11 @@ public class AppBootstrapper {
 	private final AppPlaceHistoryMapper historyMapper;
 
 	private final PlaceHistoryHandler historyHandler;
+	
+	private final ClientFactory clientFactory;
 
 	public AppBootstrapper( 
+			ClientFactory clientFactory,
 			EventBus eventBus, 
 			PlaceController placeController,
 			ActivityManager activityManager, 
@@ -78,6 +85,7 @@ public class AppBootstrapper {
 			PlaceHistoryHandler historyHandler,
 			AppShell shell) {
 
+		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		this.placeController = placeController;
 		this.activityManager = activityManager;
@@ -231,7 +239,39 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.CREATE_CIDR_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(MaintainCidrAssignmentPlace.getMaintainCidrAssignmentPlace());
+				if (event.getCidr() != null) {
+					// pass the CIDR we're assigning (from Cidr list view)
+					GWT.log("bootstrap, passing a cidr to create cidr assignment");
+//					placeController.goTo(MaintainCidrAssignmentPlace.getMaintainCidrAssignmentPlace(event.getCidr()));
+					
+					final DialogBox db = new DialogBox();
+					db.setText("Create CIDR Assignment");
+					db.setGlassEnabled(true);
+					db.center();
+					final MaintainCidrAssignmentPresenter presenter = new MaintainCidrAssignmentPresenter(clientFactory, event.getCidr());
+					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							db.hide();
+						}
+					});
+					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							if (!presenter.getView().hasFieldViolations()) {
+								db.hide();
+							}
+						}
+					});
+					presenter.start(eventBus);
+					db.setWidget(presenter);
+					db.show();
+					db.center();
+				}
+				else {
+					GWT.log("bootstrap, NOT passing a cidr to create cidr assignment");
+					placeController.goTo(MaintainCidrAssignmentPlace.getMaintainCidrAssignmentPlace());
+				}
 			}
 		});
 
@@ -245,7 +285,7 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_CIDR_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(MaintainCidrAssignmentPlace.createMaintainCidrAssignmentPlace(event.getCidrAssignmentSummary().getCidrAssignment().getCidrAssignmentId(), event.getCidrAssignmentSummary()));
+				placeController.goTo(MaintainCidrAssignmentPlace.createMaintainCidrAssignmentPlace(event.getCidrAssignmentSummary().getCidrAssignment().getCidrAssignmentId(), event.getCidr(), event.getCidrAssignmentSummary()));
 			}
 		});
 

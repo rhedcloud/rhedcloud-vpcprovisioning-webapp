@@ -7,7 +7,11 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @SuppressWarnings("serial")
 public class CidrQueryResultPojo extends SharedObject implements IsSerializable {
 	CidrQueryFilterPojo filterUsed;
-	List<CidrPojo> results;
+	// unassigned cidrs
+//	List<CidrPojo> results = new java.util.ArrayList<CidrPojo>();
+	// cidr assignments
+//	List<CidrAssignmentSummaryPojo> assignmentSummaries = new java.util.ArrayList<CidrAssignmentSummaryPojo>();
+	List<CidrSummaryPojo> results = new java.util.ArrayList<CidrSummaryPojo>();
 
 	public CidrQueryResultPojo() {
 		// TODO Auto-generated constructor stub
@@ -21,12 +25,20 @@ public class CidrQueryResultPojo extends SharedObject implements IsSerializable 
 		this.filterUsed = filterUsed;
 	}
 
-	public List<CidrPojo> getResults() {
+	public List<CidrSummaryPojo> getResults() {
 		return results;
 	}
 
-	public void setResults(List<CidrPojo> results) {
+	public void setResults(List<CidrSummaryPojo> results) {
 		this.results = results;
 	}
+
+//	public List<CidrAssignmentSummaryPojo> getAssignmentSummaries() {
+//		return assignmentSummaries;
+//	}
+//
+//	public void setAssignmentSummaries(List<CidrAssignmentSummaryPojo> assignmentSummaries) {
+//		this.assignmentSummaries = assignmentSummaries;
+//	}
 
 }

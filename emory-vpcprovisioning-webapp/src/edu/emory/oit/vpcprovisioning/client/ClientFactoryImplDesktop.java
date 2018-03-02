@@ -129,7 +129,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 
 	@Override
 	public AppBootstrapper getApp() {
-		return new AppBootstrapper(eventBus, getPlaceController(),
+		return new AppBootstrapper(this, eventBus, getPlaceController(),
 				getActivityManager(), historyMapper, historyHandler, 
 				getShell());
 	}

@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -311,6 +312,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 
 	@Override
 	public void initPage() {
+		this.setFieldViolations(false);
 		if (editing) {
 			GWT.log("maintain VPCP view initPage.  editing");
 			// hide generate grid, show maintain grid
@@ -441,21 +443,27 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		VpcRequisitionPojo vpcr = presenter.getVpcRequisition();
 		if (vpcr.getAuthenticatedRequestorNetId() == null || vpcr.getAuthenticatedRequestorNetId().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(vpcpReqRequestorNetIdTB);
 		}
 		if (vpcr.getAccountOwnerNetId() == null || vpcr.getAccountOwnerNetId().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(vpcpReqOwnerNetIdTB);
 		}
 		if (vpcr.getSpeedType() == null || vpcr.getSpeedType().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(vpcpReqSpeedTypeTB);
 		}
 		if (vpcr.getCustomerAdminNetIdList() == null || vpcr.getCustomerAdminNetIdList().size() == 0) {
+			this.setFieldViolations(true);
 			fields.add(addNetIdTF);
 		}
 		if (vpcr.getType() == null || vpcr.getType().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(vpcTypeLB);
 		}
 		if (vpcr.getComplianceClass() == null || vpcr.getComplianceClass().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(vpcpReqComplianceClassLB);
 		}
 		return fields;
@@ -470,5 +478,15 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		fields.add(vpcTypeLB);
 		fields.add(vpcpReqComplianceClassLB);
 		this.resetFieldStyles(fields);
+	}
+
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return cancelButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return okayButton;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -229,5 +230,15 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return null;
 	}
 }

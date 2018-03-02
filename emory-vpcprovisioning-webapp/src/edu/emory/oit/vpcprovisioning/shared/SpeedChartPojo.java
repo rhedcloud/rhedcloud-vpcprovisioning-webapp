@@ -9,7 +9,7 @@ public class SpeedChartPojo extends SharedObject implements IsSerializable, Comp
 
 	String speedChartKey;
 	String description;
-	boolean validCode;
+	String validCode;
 	String euValidityDescription;
 	String businessUnitGL;
 	String businessDescription;
@@ -53,11 +53,11 @@ public class SpeedChartPojo extends SharedObject implements IsSerializable, Comp
 		this.description = description;
 	}
 
-	public boolean isValidCode() {
+	public String getValidCode() {
 		return validCode;
 	}
 
-	public void setValidCode(boolean validCode) {
+	public void setValidCode(String validCode) {
 		this.validCode = validCode;
 	}
 

@@ -60,11 +60,6 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
-
-				/*
-				 * Note no call to presenter.stop(). The CaseRecordListViews do that
-				 * themselves as a side effect of setPresenter.
-				 */
 			};
 		}
 		if (place instanceof ListNotificationPlace) {
@@ -76,11 +71,6 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
-
-				/*
-				 * Note no call to presenter.stop(). The CaseRecordListViews do that
-				 * themselves as a side effect of setPresenter.
-				 */
 			};
 		}
 		if (place instanceof ListServicePlace) {
@@ -92,11 +82,6 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
-
-				/*
-				 * Note no call to presenter.stop(). The CaseRecordListViews do that
-				 * themselves as a side effect of setPresenter.
-				 */
 			};
 		}
 		if (place instanceof ListVpcPlace) {
@@ -108,11 +93,6 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
-
-				/*
-				 * Note no call to presenter.stop(). The CaseRecordListViews do that
-				 * themselves as a side effect of setPresenter.
-				 */
 			};
 		}
 		if (place instanceof ListAccountPlace) {
@@ -124,11 +104,6 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
-
-				/*
-				 * Note no call to presenter.stop(). The CaseRecordListViews do that
-				 * themselves as a side effect of setPresenter.
-				 */
 			};
 		}
 		if (place instanceof ListCidrPlace) {
@@ -190,11 +165,6 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
-
-				/*
-				 * Note no call to presenter.stop(). The CaseRecordListViews do that
-				 * themselves as a side effect of setPresenter.
-				 */
 			};
 		}
 
@@ -207,11 +177,6 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
-
-				/*
-				 * Note no call to presenter.stop(). The CaseRecordListViews do that
-				 * themselves as a side effect of setPresenter.
-				 */
 			};
 		}
 
@@ -276,6 +241,11 @@ public class AppActivityMapper implements ActivityMapper {
 		}
 
 		return null;
+	}
+
+
+	public ClientFactory getClientFactory() {
+		return clientFactory;
 	}
 
 }

@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -245,4 +246,13 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		this.resetFieldStyles(fields);
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return cancelButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return okayButton;
+	}
 }

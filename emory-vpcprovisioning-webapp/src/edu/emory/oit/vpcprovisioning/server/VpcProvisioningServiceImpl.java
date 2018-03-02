@@ -76,6 +76,19 @@ import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
+import com.paloaltonetworks.moa.jmsobjects.firewall.v1_0.FirewallRule;
+import com.paloaltonetworks.moa.objects.resources.v1_0.Application;
+import com.paloaltonetworks.moa.objects.resources.v1_0.Category;
+import com.paloaltonetworks.moa.objects.resources.v1_0.FirewallRuleQuerySpecification;
+import com.paloaltonetworks.moa.objects.resources.v1_0.From;
+import com.paloaltonetworks.moa.objects.resources.v1_0.Group;
+import com.paloaltonetworks.moa.objects.resources.v1_0.HipProfiles;
+import com.paloaltonetworks.moa.objects.resources.v1_0.ProfileSetting;
+import com.paloaltonetworks.moa.objects.resources.v1_0.Service;
+import com.paloaltonetworks.moa.objects.resources.v1_0.Source;
+import com.paloaltonetworks.moa.objects.resources.v1_0.SourceUser;
+import com.paloaltonetworks.moa.objects.resources.v1_0.Tag;
+import com.paloaltonetworks.moa.objects.resources.v1_0.To;
 
 import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
 import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
@@ -104,6 +117,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryResultPojo
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
@@ -150,6 +164,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
 	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
 	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
+	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
 	private static String LOGTAG = "[" + VpcProvisioningServiceImpl.class.getSimpleName()
@@ -167,6 +182,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool awsPeopleSoftProducerPool = null;
 	private ProducerPool cidrProducerPool = null;
 	private ProducerPool authzProducerPool = null;
+	private ProducerPool firewallProducerPool = null;
 	private Object lock = new Object();
 	static SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -268,6 +284,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					CIDR_SERVICE_NAME);
 			authzProducerPool = (ProducerPool) getAppConfig().getObject(
 					AUTHZ_SERVICE_NAME);
+			firewallProducerPool = (ProducerPool) getAppConfig().getObject(
+					FIREWALL_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			
 //			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
@@ -1169,7 +1187,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public CidrQueryResultPojo getCidrsForFilter(CidrQueryFilterPojo filter) throws RpcException {
 		CidrQueryResultPojo result = new CidrQueryResultPojo();
-		List<CidrPojo> pojos = new java.util.ArrayList<CidrPojo>();
+		List<CidrSummaryPojo> summaries = new java.util.ArrayList<CidrSummaryPojo>();
+//		List<CidrPojo> cidrs = new java.util.ArrayList<CidrPojo>();
+//		List<CidrAssignmentSummaryPojo> summaries = new java.util.ArrayList<CidrAssignmentSummaryPojo>();
 		try {
 			CidrQuerySpecification queryObject = (CidrQuerySpecification) getObject(Constants.MOA_CIDR_QUERY_SPEC);
 			Cidr actionable = (Cidr) getObject(Constants.MOA_CIDR);
@@ -1190,16 +1210,37 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<Cidr> moas = actionable.query(queryObject,
 					this.getCidrRequestService());
 			for (Cidr moa : moas) {
+				CidrSummaryPojo summary = new CidrSummaryPojo();
 				CidrPojo pojo = new CidrPojo();
-				CidrPojo baseline = new CidrPojo();
 				this.populateCidrPojo(moa, pojo);
-				this.populateCidrPojo(moa, baseline);
-				pojo.setBaseline(baseline);
-				pojos.add(pojo);
+				// see if there's a cidr assignment summary for this cidr,
+				// if there is, add that to the result, otherwise add the unassigned cidr to the result
+				CidrAssignmentSummaryQueryFilterPojo casFilter = new CidrAssignmentSummaryQueryFilterPojo();
+				casFilter.setCidr(pojo);
+				CidrAssignmentSummaryQueryResultPojo casResult = this.getCidrAssignmentSummaryForCidr(casFilter);
+				if (casResult != null && casResult.getResults().size() > 0) {
+					info("found an assignment for cidr " + moa.getBits() + "/" + moa.getNetwork());
+					// there is a cidr assignment associated to this cidr, add that to what's returned
+					summary.setAssignmentSummary(casResult.getResults().get(0));
+					if (summary.getAssignmentSummary() == null) {
+						info("I just added a NULL assignment summary.  how is this possible?");
+					}
+				}
+				else {
+					// there are no cidr assignments associated to this cidr, just add the unassigned cidr
+					info("no assignments for cidr " + moa.getBits() + "/" + moa.getNetwork());
+					CidrPojo baseline = new CidrPojo();
+					this.populateCidrPojo(moa, baseline);
+					pojo.setBaseline(baseline);
+					summary.setCidr(pojo);
+				}
+				summaries.add(summary);
 			}
 
-			Collections.sort(pojos);
-			result.setResults(pojos);
+			Collections.sort(summaries);
+//			Collections.sort(cidrs);
+			result.setResults(summaries);
+//			result.setAssignmentSummaries(summaries);
 			result.setFilterUsed(filter);
 			return result;
 		} 
@@ -1668,6 +1709,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+	private RequestService getFirewallRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) firewallProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
 
     private java.util.Date toDateFromDate(org.openeai.moa.objects.resources.Date moa) {
         if (moa == null) {
@@ -1876,16 +1923,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public void deleteCidr(CidrPojo cidr) throws RpcException {
+	public void deleteCidrSummary(CidrSummaryPojo cidrSummary) throws RpcException {
 		if (!useEsbService) {
 			return;
 		} 
 		else {
 			try {
+				// TODO: need to see if there are any assignments in this summary and if so, delete those too
 				info("deleting CIDR record on the server...");
 				Cidr moa = (Cidr) getObject(Constants.MOA_CIDR);
 				info("populating moa");
-				this.populateCidrMoa(cidr, moa);
+				this.populateCidrMoa(cidrSummary.getCidr(), moa);
 
 				
 				info("doing the Cidr.delete...");
@@ -2630,6 +2678,57 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
+	public CidrAssignmentSummaryQueryResultPojo getCidrAssignmentSummaryForCidr(CidrAssignmentSummaryQueryFilterPojo filter) {
+		CidrAssignmentSummaryQueryResultPojo result = new CidrAssignmentSummaryQueryResultPojo();
+		result.setFilterUsed(filter);
+		result.setResults(new java.util.ArrayList<CidrAssignmentSummaryPojo>());
+
+		CidrAssignmentQueryResultPojo cidrAssignmentResult;
+		if (filter != null) {
+			CidrAssignmentQueryFilterPojo cidrAssignmentFilter = new CidrAssignmentQueryFilterPojo();
+			cidrAssignmentFilter.setCidrAssignmentId(filter.getCidrAssignmentId());
+			cidrAssignmentFilter.setOwnerId(filter.getOwnerId());
+			cidrAssignmentResult = this.getCidrAssignmentsForFilter(cidrAssignmentFilter);
+		}
+		else {
+			cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
+		}
+		info("getCidrAssignmentSummaryForCidr: There were " + cidrAssignmentResult.getResults().size() + " CidrAssignments returned from the ESB service.");
+
+		for (CidrAssignmentPojo cidrAssignment : cidrAssignmentResult.getResults()) {
+			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(filter.getCidr().getNetwork()) && 
+					cidrAssignment.getCidr().getBits().equalsIgnoreCase(filter.getCidr().getBits())) {
+				
+				CidrAssignmentSummaryPojo casp = new CidrAssignmentSummaryPojo();
+				casp.setCidrAssignment(cidrAssignment);
+				
+				VpcQueryFilterPojo vpcFilter = new VpcQueryFilterPojo();
+				vpcFilter.setVpcId(cidrAssignment.getOwnerId());
+				// should only be one
+				VpcQueryResultPojo vpcResult = this.getVpcsForFilter(vpcFilter);
+				info("getCidrAssignmentSummaryForCidr: There were " + vpcResult.getResults().size() + " VPCs returned "
+						+ "from the ESB service for CidrAssignemtn.ownerId:  '" + 
+						cidrAssignment.getOwnerId() + "'");
+				for (VpcPojo vpc : vpcResult.getResults()) {
+					casp.setVpc(vpc);
+					
+					AccountQueryFilterPojo acctFilter = new AccountQueryFilterPojo();
+					acctFilter.setAccountId(vpc.getAccountId());
+					// should only be one
+					AccountQueryResultPojo acctResult = this.getAccountsForFilter(acctFilter);
+					info("getCidrAssignmentSummaryForCidr: There were " + acctResult.getResults().size() + " Accounts returned "
+							+ "from the ESB service for VPC.accountId:  '" + 
+							cidrAssignment.getOwnerId() + "'");
+					for (AccountPojo acct : acctResult.getResults()) {
+						casp.setAccount(acct);
+					}
+				}
+				result.getResults().add(casp);
+			}
+		}
+		info("getCidrAssignmentSummaryForCidr: Returning " + result.getResults().size() + " CidrAssignmentSummary objects.");
+		return result;
+	}
 	@Override
 	public CidrAssignmentSummaryQueryResultPojo getCidrAssignmentSummariesForFilter(
 			CidrAssignmentSummaryQueryFilterPojo filter) throws RpcException {
@@ -2709,9 +2808,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		CidrQueryResultPojo cidrResult = this.getCidrsForFilter(null);
 		CidrAssignmentQueryResultPojo cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
 		
-		for (CidrPojo cidr : cidrResult.getResults()) {
-			if (!hasAssignment(cidr, cidrAssignmentResult.getResults())) {
-				unassignedCidrs.add(cidr);
+		for (CidrSummaryPojo cidrSummary : cidrResult.getResults()) {
+			if (cidrSummary.getCidr() != null) {
+//				if (!hasAssignment(cidr, cidrAssignmentResult.getResults())) {
+//					unassignedCidrs.add(cidr);
+//				}
+				unassignedCidrs.add(cidrSummary.getCidr());
 			}
 		}
 		return unassignedCidrs;
@@ -2812,6 +2914,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public CidrAssignmentStatus getCidrAssignmentStatusForCidr(CidrPojo cidr) throws RpcException {
 		CidrAssignmentStatus cas = new CidrAssignmentStatus();
 		cas.setAssigned(false);
+		if (cidr == null) {
+			return cas;
+		}
 		CidrAssignmentQueryResultPojo cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
 		for (CidrAssignmentPojo cidrAssignment : cidrAssignmentResult.getResults()) {
 			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(cidr.getNetwork()) && 
@@ -3677,7 +3782,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 		}
 		moa.setDESCR(pojo.getDescription());
-		moa.setVALID_CODE(this.toStringFromBoolean(pojo.isValidCode()));
+		moa.setVALID_CODE(pojo.getValidCode());
 
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
@@ -3697,7 +3802,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setDescription(moa.getDESCR());
 		if (moa.getVALID_CODE() != null) {
 			info("VALID_CODE: " + moa.getVALID_CODE());
-			pojo.setValidCode(moa.getVALID_CODE().equalsIgnoreCase("Y") ? true : false);
+			pojo.setValidCode(moa.getVALID_CODE());
 		}
 		pojo.setEuValidityDescription(moa.getEU_VALIDITY_DESCR());
 		pojo.setBusinessUnitGL(moa.getBUSINESS_UNIT_GL());
@@ -3723,14 +3828,216 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	private void populateFirewallRuleMoa(FirewallRulePojo pojo,
+			FirewallRule moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setName(pojo.getName());
+		moa.setAction(pojo.getAction());
+		moa.setDescription(pojo.getDescription());
+		moa.setLogSetting(pojo.getLogSetting());
+		if (pojo.getProfileSettings().size() > 0) {
+			ProfileSetting ps = moa.newProfileSetting();
+			Group container = ps.newGroup();
+			for (String member : pojo.getProfileSettings()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getTos().size() > 0) {
+			To container = moa.newTo();
+			for (String member : pojo.getTos()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getFroms().size() > 0) {
+			From container = moa.newFrom();
+			for (String member : pojo.getFroms()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getSources().size() > 0) {
+			Source container = moa.newSource();
+			for (String member : pojo.getSources()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getSourceUsers().size() > 0) {
+			SourceUser container = moa.newSourceUser();
+			for (String member : pojo.getSourceUsers()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getCategories().size() > 0) {
+			Category container = moa.newCategory();
+			for (String member : pojo.getCategories()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getApplications().size() > 0) {
+			Application container = moa.newApplication();
+			for (String member : pojo.getApplications()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getServices().size() > 0) {
+			Service container = moa.newService();
+			for (String member : pojo.getServices()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getHipProfiles().size() > 0) {
+			HipProfiles container = moa.newHipProfiles();
+			for (String member : pojo.getHipProfiles()) {
+				container.addMember(member);
+			}
+		}
+		if (pojo.getTags().size() > 0) {
+			Tag container = moa.newTag();
+			for (String member : pojo.getTags()) {
+				container.addMember(member);
+			}
+		}
+		
+//		this.setMoaCreateInfo(moa, pojo);
+//		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateFirewallRulePojo(FirewallRule moa,
+			FirewallRulePojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	
+		pojo.setName(moa.getName());
+		pojo.setAction(moa.getAction());
+		pojo.setDescription(moa.getDescription());
+		pojo.setLogSetting(moa.getLogSetting());
+		if (moa.getProfileSetting() != null) {
+			if (moa.getProfileSetting().getGroup() != null) {
+				for (String member : (List<String>)moa.getProfileSetting().getGroup().getMember()) {
+					pojo.getProfileSettings().add(member);
+				}
+			}
+		}
+		if (moa.getTo() != null) {
+			for (String member : (List<String>)moa.getTo().getMember()) {
+				pojo.getTos().add(member);
+			}
+		}
+		if (moa.getFrom() != null) {
+			for (String member : (List<String>)moa.getFrom().getMember()) {
+				pojo.getFroms().add(member);
+			}
+		}
+		if (moa.getSource() != null) {
+			for (String member : (List<String>)moa.getSource().getMember()) {
+				pojo.getSources().add(member);
+			}
+		}
+		if (moa.getDestination() != null) {
+			for (String member : (List<String>)moa.getDestination().getMember()) {
+				pojo.getDestinations().add(member);
+			}
+		}
+		if (moa.getSourceUser() != null) {
+			for (String member : (List<String>)moa.getSourceUser().getMember()) {
+				pojo.getSourceUsers().add(member);
+			}
+		}
+		if (moa.getCategory() != null) {
+			for (String member : (List<String>)moa.getCategory().getMember()) {
+				pojo.getCategories().add(member);
+			}
+		}
+		if (moa.getApplication() != null) {
+			for (String member : (List<String>)moa.getApplication().getMember()) {
+				pojo.getApplications().add(member);
+			}
+		}
+		if (moa.getService() != null) {
+			for (String member : (List<String>)moa.getService().getMember()) {
+				pojo.getServices().add(member);
+			}
+		}
+		if (moa.getHipProfiles() != null) {
+			for (String member : (List<String>)moa.getHipProfiles().getMember()) {
+				pojo.getHipProfiles().add(member);
+			}
+		}
+		if (moa.getTag() != null) {
+			for (String member : (List<String>)moa.getTag().getMember()) {
+				pojo.getTags().add(member);
+			}
+		}
+	}
+	
 	@Override
 	public FirewallRuleQueryResultPojo getFirewallRulesForFilter(FirewallRuleQueryFilterPojo filter)
 			throws RpcException {
 
 		FirewallRuleQueryResultPojo result = new FirewallRuleQueryResultPojo();
-		result.setResults((Collections.<FirewallRulePojo> emptyList()));
+		result.setResults(Collections.<FirewallRulePojo> emptyList());
+		if (true) {
+			return result;
+		}
+		
+		List<FirewallRulePojo> pojos = new java.util.ArrayList<FirewallRulePojo>();
+		try {
+			FirewallRuleQuerySpecification queryObject = (FirewallRuleQuerySpecification) getObject(Constants.MOA_FIREWALL_RULE_QUERY_SPEC);
+			FirewallRule actionable = (FirewallRule) getObject(Constants.MOA_FIREWALL_RULE);
 
-		return result;
+			if (filter != null) {
+				if (filter.getTags().size() > 0) {
+					Tag queryTag = queryObject.newTag();
+					for (String tag : filter.getTags()) {
+						queryTag.addMember(tag);
+					}
+					queryObject.setTag(queryTag);
+				}
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getAccountsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<FirewallRule> moas = actionable.query(queryObject,
+					this.getFirewallRequestService());
+			for (FirewallRule moa : moas) {
+				FirewallRulePojo pojo = new FirewallRulePojo();
+				FirewallRulePojo baseline = new FirewallRulePojo();
+				this.populateFirewallRulePojo(moa, pojo);
+				this.populateFirewallRulePojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override

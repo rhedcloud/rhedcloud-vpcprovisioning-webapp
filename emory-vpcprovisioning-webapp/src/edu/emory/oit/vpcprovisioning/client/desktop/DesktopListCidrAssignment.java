@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -62,11 +63,6 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_CIDR_ASSIGNMENT);
 			}
 		}, ClickEvent.getType());
-	}
-
-	@Override
-	public void showMessageToUser(String message) {
-		Window.alert(message);
 	}
 
 	@Override
@@ -369,7 +365,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 					String value) {
 				
 				// fire MAINTAIN_CIDR_ASSIGNMENT event passing the CidrAssignment to be maintained
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR_ASSIGNMENT, cidrAssignmentSummary);
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR_ASSIGNMENT, null, cidrAssignmentSummary);
 			}
 		});
 	}
@@ -435,4 +431,13 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 		
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return null;
+	}
 }

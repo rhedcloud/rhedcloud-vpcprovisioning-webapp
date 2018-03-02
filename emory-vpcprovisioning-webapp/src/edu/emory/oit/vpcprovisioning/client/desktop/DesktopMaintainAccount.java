@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -66,7 +67,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField FlexTable netIdTable;
 	
 	@UiField HTML accountInfoHTML;
-	@UiField Label speedTypeLabel;
+	@UiField HTML speedTypeHTML;
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -83,12 +84,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			if (speedTypeBeingTyped.length() > 0) {
 				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
 			}
-			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML);
 			return;
 		}
 		
 		if (keyCode == KeyCodes.KEY_TAB) {
-			presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeLabel);
+			presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeHTML);
 			return;
 		}
 
@@ -99,7 +100,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			speedTypeBeingTyped += ccode;
 		}
 
-		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML);
 	}
 	
 	@UiHandler ("billSummaryButton")
@@ -351,8 +352,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public void initPage() {
 		// clear the page
+		this.setFieldViolations(false);
 		speedTypeBeingTyped = "";
-		speedTypeLabel.setText("");
+		speedTypeHTML.setHTML("");
 		netIdRowNum = 0;
 		netIdColumnNum = 0;
 		removeButtonColumnNum = 1;
@@ -381,6 +383,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			// TODO: add a static text object to show person's name from the meta data pojo
 			passwordLocationTB.setText(presenter.getAccount().getPasswordLocation());
 			speedTypeTB.setText(presenter.getAccount().getSpeedType());
+			presenter.setSpeedChartStatusForKey(presenter.getAccount().getSpeedType(), speedTypeHTML);
 		}
 		// populate associated emails if appropriate
 		initializeEmailPanel();
@@ -473,11 +476,11 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void setSpeedTypeStatus(String status) {
-		speedTypeLabel.setText(status);
+		speedTypeHTML.setHTML(status);
 	}
 	@Override
 	public void setSpeedTypeColor(String color) {
-		speedTypeLabel.getElement().getStyle().setColor(color);
+		speedTypeHTML.getElement().getStyle().setColor(color);
 	}
 	@Override
 	public Widget getSpeedTypeWidget() {
@@ -488,15 +491,19 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		AccountPojo acct = presenter.getAccount(); 
 		if (acct.getAccountId() == null || acct.getAccountId().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(accountIdTB);
 		}
 		if (acct.getAccountName() == null || acct.getAccountName().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(accountNameTB);
 		}
 		if (acct.getPasswordLocation() == null || acct.getPasswordLocation().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(passwordLocationTB);
 		}
 		if (acct.getEmailList() == null|| acct.getEmailList().size() == 0) {
+			this.setFieldViolations(true);
 			fields.add(addEmailTF);
 		}
 		return fields;
@@ -511,4 +518,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		this.resetFieldStyles(fields);
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return okayButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return cancelButton;
+	}
 }

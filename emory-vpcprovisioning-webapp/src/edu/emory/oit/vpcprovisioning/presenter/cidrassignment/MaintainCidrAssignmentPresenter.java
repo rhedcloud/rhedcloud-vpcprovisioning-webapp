@@ -24,6 +24,7 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String assignmentId;
+	private CidrPojo cidr;
 	private CidrAssignmentSummaryPojo cidrAssignmentSummary;
 	private boolean isRegisteringVpc=false;
 
@@ -39,6 +40,7 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 	public MaintainCidrAssignmentPresenter(ClientFactory clientFactory) {
 		this.assignmentId = null;
 		this.cidrAssignmentSummary = null;
+		this.cidr = null;
 		this.clientFactory = clientFactory;
 		this.isRegisteringVpc = false;
 		clientFactory.getMaintainCidrAssignmentView().setPresenter(this);
@@ -47,17 +49,18 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 	/**
 	 * For creating a new case cidr assignment after VPC registration
 	 */
-	public MaintainCidrAssignmentPresenter(ClientFactory clientFactory, boolean isRegisteringVpc) {
+	public MaintainCidrAssignmentPresenter(ClientFactory clientFactory, boolean isRegisteringVpc, CidrPojo cidr) {
 		this.assignmentId = null;
 		this.cidrAssignmentSummary = null;
+		this.cidr = cidr;
 		this.clientFactory = clientFactory;
 		this.isRegisteringVpc = isRegisteringVpc;
 		clientFactory.getMaintainCidrAssignmentView().setPresenter(this);
 	}
 	/**
-	 * For editing an existing case record.
+	 * For editing an existing cidr assignment.
 	 */
-	public MaintainCidrAssignmentPresenter(ClientFactory clientFactory, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
+	public MaintainCidrAssignmentPresenter(ClientFactory clientFactory, CidrPojo cidr, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
 		/*
 		 * TODO surely we can find a way to show the read-only values while waiting
 		 * for the async fetch
@@ -65,7 +68,18 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 		this.assignmentId = cidrAssignmentSummary.getCidrAssignment().getCidrAssignmentId();
 		this.clientFactory = clientFactory;
 		this.cidrAssignmentSummary = cidrAssignmentSummary;
+		this.cidr = cidr;
 		this.isRegisteringVpc = false;
+		clientFactory.getMaintainCidrAssignmentView().setPresenter(this);
+	}
+	
+	/**
+	 * constructor for adding assignment to selected cidr (from cidr list view) 
+	 */
+	public MaintainCidrAssignmentPresenter(ClientFactory clientFactory, CidrPojo cidr) {
+		this.clientFactory = clientFactory;
+		this.isRegisteringVpc = false;
+		this.cidr = cidr;
 		clientFactory.getMaintainCidrAssignmentView().setPresenter(this);
 	}
 
@@ -128,6 +142,15 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 						}
 						else {
 							// ??
+						}
+						
+						// do this so the CIDR we're working with will be added to the list of 
+						// available CIDRs and we don't have to go get the entire list of 
+						// all unassigned CIDRs
+						if (cidr != null) {
+							List<CidrPojo> cidrs = new java.util.ArrayList<CidrPojo>();
+							cidrs.add(cidr);
+							getView().setCidrItems(cidrs);
 						}
 						getView().hidePleaseWaitDialog();
 						getView().hidePleaseWaitPanel();
@@ -221,8 +244,6 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 
 			@Override
 			public void onSuccess(CidrAssignmentPojo result) {
-				// TODO Auto-generated method stub
-				
 				getView().hidePleaseWaitDialog();
 				if (!isRegisteringVpc) {
 					ActionEvent.fire(eventBus, ActionNames.CIDR_ASSIGNMENT_SAVED, result);
@@ -248,7 +269,7 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 		return false;
 	}
 
-	private MaintainCidrAssignmentView getView() {
+	public MaintainCidrAssignmentView getView() {
 		return clientFactory.getMaintainCidrAssignmentView();
 	}
 
@@ -335,5 +356,13 @@ public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentVi
 	@Override
 	public void setRegisteringVpc(boolean isRegistering) {
 		isRegisteringVpc = isRegistering;		
+	}
+
+	public CidrPojo getCidr() {
+		return cidr;
+	}
+
+	public void setCidr(CidrPojo cidr) {
+		this.cidr = cidr;
 	}
 }

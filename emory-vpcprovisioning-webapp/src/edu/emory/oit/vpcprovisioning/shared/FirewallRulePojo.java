@@ -30,6 +30,9 @@ public class FirewallRulePojo extends SharedObject implements IsSerializable, Co
 	 */
 	
 	String name;
+	String action;
+	String description;
+	String logSetting;
 	List<String> profileSettings = new java.util.ArrayList<String>();
 	List<String> tos = new java.util.ArrayList<String>();
 	List<String> froms = new java.util.ArrayList<String>();
@@ -41,7 +44,8 @@ public class FirewallRulePojo extends SharedObject implements IsSerializable, Co
 	List<String> services = new java.util.ArrayList<String>();
 	List<String> hipProfiles = new java.util.ArrayList<String>();
 	List<String> tags = new java.util.ArrayList<String>();
-	
+	FirewallRulePojo baseline;
+
 	
 	public static final ProvidesKey<FirewallRulePojo> KEY_PROVIDER = new ProvidesKey<FirewallRulePojo>() {
 		@Override
@@ -178,6 +182,46 @@ public class FirewallRulePojo extends SharedObject implements IsSerializable, Co
 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
+	}
+
+
+	public String getAction() {
+		return action;
+	}
+
+
+	public void setAction(String action) {
+		this.action = action;
+	}
+
+
+	public String getDescription() {
+		return description;
+	}
+
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+	public String getLogSetting() {
+		return logSetting;
+	}
+
+
+	public void setLogSetting(String logSetting) {
+		this.logSetting = logSetting;
+	}
+
+
+	public FirewallRulePojo getBaseline() {
+		return baseline;
+	}
+
+
+	public void setBaseline(FirewallRulePojo baseline) {
+		this.baseline = baseline;
 	}
 
 }

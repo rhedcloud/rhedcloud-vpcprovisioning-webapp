@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -55,11 +56,6 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	}
 
 	@Override
-	public void showMessageToUser(String message) {
-		Window.alert(message);
-	}
-
-	@Override
 	public void showPleaseWaitDialog() {
 		// TODO Auto-generated method stub
 		
@@ -104,6 +100,7 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 
 	@Override
 	public void initPage() {
+		this.setFieldViolations(false);
 		// clear the page
 		networkTB.setText("");
 		bitsTB.setText("");
@@ -171,9 +168,11 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		CidrPojo cidr = presenter.getCidr();
 		if (cidr.getNetwork() == null || cidr.getNetwork().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(networkTB);
 		}
 		if (cidr.getBits() == null || cidr.getBits().length() == 0) {
+			this.setFieldViolations(true);
 			fields.add(bitsTB);
 		}
 		return fields;
@@ -187,4 +186,13 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		this.resetFieldStyles(fields);
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return okayButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return cancelButton;
+	}
 }

@@ -4,6 +4,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 public class CidrAssignmentSummaryQueryFilterPojo extends SharedObject {
 	String cidrAssignmentId;
 	String ownerId;
+	CidrPojo cidr;
 
 	public CidrAssignmentSummaryQueryFilterPojo() {
 	}
@@ -22,5 +23,13 @@ public class CidrAssignmentSummaryQueryFilterPojo extends SharedObject {
 
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
+	}
+
+	public CidrPojo getCidr() {
+		return cidr;
+	}
+
+	public void setCidr(CidrPojo cidr) {
+		this.cidr = cidr;
 	}
 }

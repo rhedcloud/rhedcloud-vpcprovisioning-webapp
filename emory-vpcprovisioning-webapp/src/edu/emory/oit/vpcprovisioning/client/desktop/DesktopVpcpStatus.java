@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -341,5 +342,14 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return doneButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return doneButton;
 	}
 }

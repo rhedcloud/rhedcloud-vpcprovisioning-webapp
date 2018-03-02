@@ -8,7 +8,6 @@
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:HorizontalPanel spacing="8">
-					<g:Label text="Please wait..."/>
 					<g:Image url="images/ajax-loader.gif"/>
 				</g:HorizontalPanel>
 			</g:cell>
@@ -20,6 +19,18 @@
 		AWS FirewallRule and VirtualPrivateCloud objects and allows applications like this one 
 		to query, create, update and delete those objects.<br/><br/>
 		Click the 'Add' button to go to the FirewallRule maintenance page where you can create an AWS FirewallRule.</g:HTML>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="8">
+				<g:row>
+					<g:customCell>
+						<g:Button ui:field="addFirewallRuleButton" text="Request Firewall Rule" addStyleNames="{style.glowing-border} {style.actionButton}"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
 		<g:VerticalPanel ui:field="firewallRuleListPanel" width="100%">
 			<g:Grid>
 				<g:row>
@@ -30,11 +41,6 @@
 				<g:row>
 					<g:customCell>
 						<c:SimplePager ui:field="firewallRuleListPager" location="CENTER"/>
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell>
-						<g:Button ui:field="addFirewallRuleButton" text="Add FirewallRule" addStyleNames="{style.glowing-border} {style.actionButton}"/>
 					</g:customCell>
 				</g:row>
 				<!-- 

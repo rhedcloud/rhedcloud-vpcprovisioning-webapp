@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
@@ -154,4 +155,13 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 		
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return okayButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return cancelButton;
+	}
 }

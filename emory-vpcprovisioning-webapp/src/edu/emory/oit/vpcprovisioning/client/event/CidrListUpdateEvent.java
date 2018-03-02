@@ -20,7 +20,7 @@ import java.util.List;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 
 /**
  * Event fired when the case record list is updated.
@@ -40,10 +40,10 @@ public class CidrListUpdateEvent extends GwtEvent<CidrListUpdateEvent.Handler> {
 
   public static final Type<CidrListUpdateEvent.Handler> TYPE = new Type<CidrListUpdateEvent.Handler>();
 
-  private final List<CidrPojo> cidrs;
+  private final List<CidrSummaryPojo> cidrSummaries;
 
-  public CidrListUpdateEvent(List<CidrPojo> cidrs) {
-    this.cidrs = cidrs;
+  public CidrListUpdateEvent(List<CidrSummaryPojo> cidrs) {
+    this.cidrSummaries = cidrs;
   }
 
   @Override
@@ -51,8 +51,8 @@ public class CidrListUpdateEvent extends GwtEvent<CidrListUpdateEvent.Handler> {
     return TYPE;
   }
 
-  public List<CidrPojo> getCidrs() {
-    return cidrs;
+  public List<CidrSummaryPojo> getCidrSummaries() {
+    return cidrSummaries;
   }
 
   @Override

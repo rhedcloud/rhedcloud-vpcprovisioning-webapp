@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.mobile;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -104,6 +105,18 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

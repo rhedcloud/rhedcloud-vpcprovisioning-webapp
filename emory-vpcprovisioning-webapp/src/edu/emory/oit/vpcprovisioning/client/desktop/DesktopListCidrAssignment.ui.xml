@@ -8,7 +8,6 @@
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:HorizontalPanel spacing="8">
-					<g:Label text="Please wait..."/>
 					<g:Image url="images/ajax-loader.gif"/>
 				</g:HorizontalPanel>
 			</g:cell>

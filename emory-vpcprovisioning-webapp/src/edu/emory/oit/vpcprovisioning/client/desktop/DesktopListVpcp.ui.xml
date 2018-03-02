@@ -8,7 +8,6 @@
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:HorizontalPanel spacing="8">
-					<g:Label text="Please wait..."/>
 					<g:Image url="images/ajax-loader.gif"/>
 				</g:HorizontalPanel>
 			</g:cell>
@@ -22,6 +21,18 @@
 		Click the 'Generate' button to go to the VPC Provisioning maintenance 
 		page where you can request the provisioning of a new AWS VPC.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="8">
+				<g:row>
+					<g:customCell>
+						<g:Button ui:field="generateVpcButton" text="Generate VPC" addStyleNames="{style.glowing-border} {style.actionButton}" title="Provision a new AWS VPC"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
@@ -31,15 +42,6 @@
 				<g:row>
 					<g:customCell>
 						<c:SimplePager ui:field="vpcpListPager" location="CENTER"/>
-					</g:customCell>
-				</g:row>
-			</g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
-			<g:Grid cellSpacing="12">
-				<g:row>
-					<g:customCell>
-						<g:Button ui:field="generateVpcButton" text="Generate VPC" addStyleNames="{style.glowing-border} {style.actionButton}" title="Provision a new AWS VPC"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

@@ -18,10 +18,11 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 public abstract class ViewImplBase extends Composite {
 	protected final DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
 	PopupPanel pleaseWaitDialog;
+	protected boolean fieldViolations = false;
 	
 	public void applyStyleToMissingFields(List<Widget> fields) {
 		for (Widget w : fields) {
-			w.getElement().getStyle().setBackgroundColor("#efbebe");
+			w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);
 		}
 	}
 	public void resetFieldStyles(List<Widget> fields) {
@@ -115,5 +116,11 @@ public abstract class ViewImplBase extends Composite {
 		}
 		
 		return true;
+	}
+	public boolean hasFieldViolations() {
+		return fieldViolations;
+	}
+	public void setFieldViolations(boolean fieldViolations) {
+		this.fieldViolations = fieldViolations;
 	}
 }

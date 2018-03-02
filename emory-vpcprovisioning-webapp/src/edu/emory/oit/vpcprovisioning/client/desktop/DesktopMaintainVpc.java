@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -137,6 +138,7 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 
 	@Override
 	public void initPage() {
+		this.setFieldViolations(false);
 		if (editing) {
 			GWT.log("maintain VPC view initPage.  editing");
 			// hide generate grid, show maintain grid
@@ -298,5 +300,14 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return cancelButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return okayButton;
 	}
 }

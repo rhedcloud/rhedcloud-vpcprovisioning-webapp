@@ -133,6 +133,7 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 						getView().initPage();
 						getView().setEmailTypeItems(result);
 						getView().hidePleaseWaitDialog();
+						getView().setFieldViolations(false);
 						getView().setInitialFocus();
 						// apply authorization mask
 						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
@@ -226,10 +227,6 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 		}
 		else {
 			getView().resetFieldStyles();
-//			if (true) {
-//				// temporary
-//				return;
-//			}
 		}
 		AsyncCallback<AccountPojo> callback = new AsyncCallback<AccountPojo>() {
 			@Override
@@ -332,7 +329,7 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 			public void onFailure(Throwable caught) {
 				GWT.log("Server exception validating speedtype", caught);
 				w.setTitle("Server exception validating speedtype");
-				getView().setSpeedTypeStatus("Invalid account");
+				getView().setSpeedTypeStatus("Server exception validating speedtype");
 				getView().setSpeedTypeColor(Constants.COLOR_RED);
 			}
 
@@ -340,16 +337,38 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 			public void onSuccess(SpeedChartPojo scp) {
 				if (scp == null) {
 					w.setTitle("Invalid account number, can't validate this number");
-					getView().setSpeedTypeStatus("Invalid account");
+					w.getElement().getStyle().setBackgroundColor("#efbebe");
+					getView().setSpeedTypeStatus("<b>Invalid account</b>");
 					getView().setSpeedTypeColor(Constants.COLOR_RED);
 				}
 				else {
-				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
-				    String status = scp.getEuValidityDescription() + 
-							"  End date: " + dateFormat.format(scp.getEuProjectEndDate()); 
-					w.setTitle(status);
-					getView().setSpeedTypeStatus(status);
-					getView().setSpeedTypeColor(Constants.COLOR_GREEN);
+//				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+					String deptId = scp.getDepartmentId();
+					String deptDesc = scp.getDepartmentDescription();
+					String desc = scp.getDescription();
+				    String euValidityDesc = scp.getEuValidityDescription();
+				    String statusDescString = euValidityDesc + "\n" + 
+				    		deptId + " | " + deptDesc + "\n" +
+				    		desc;
+				    String statusDescHTML = "<b>" + euValidityDesc + "<br>" + 
+				    		deptId + " | " + deptDesc + "<br>" +
+				    		desc + "<b>";
+					w.setTitle(statusDescString);
+					getView().setSpeedTypeStatus(statusDescHTML);
+					if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
+						getView().setSpeedTypeColor(Constants.COLOR_GREEN);
+						w.getElement().getStyle().setBackgroundColor(null);
+						getView().setFieldViolations(false);
+					}
+					else if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_INVALID)) {
+						getView().setSpeedTypeColor(Constants.COLOR_RED);
+						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);
+						getView().setFieldViolations(true);
+					}
+					else {
+						getView().setSpeedTypeColor(Constants.COLOR_ORANGE);
+						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_FIELD_WARNING);
+					}
 				}
 			}
 		};

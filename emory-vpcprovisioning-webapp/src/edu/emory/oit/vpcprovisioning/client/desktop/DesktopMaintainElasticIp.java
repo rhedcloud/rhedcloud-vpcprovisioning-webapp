@@ -3,7 +3,10 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
@@ -24,6 +27,9 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	public DesktopMaintainElasticIp() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
+
+	@UiField Button okayButton;
+	@UiField Button cancelButton;
 
 	@Override
 	public void setInitialFocus() {
@@ -121,4 +127,13 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 		
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return cancelButton;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return okayButton;
+	}
 }

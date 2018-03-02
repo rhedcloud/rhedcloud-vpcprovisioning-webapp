@@ -7,9 +7,9 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListCidrView extends IsWidget, View {
@@ -26,7 +26,7 @@ public interface ListCidrView extends IsWidget, View {
 		public EventBus getEventBus();
 		public CidrQueryFilterPojo getFilter();
 		public ClientFactory getClientFactory();
-		void deleteCidr(CidrPojo cidr);
+		void deleteCidrSummary(CidrSummaryPojo cidrSummary);
 	}
 
 	/**
@@ -45,10 +45,10 @@ public interface ListCidrView extends IsWidget, View {
 	 * 
 	 * @param cidrs the list of caseRecords
 	 */
-	void setCidrs(List<CidrPojo> cidrs);
+	void setCidrSummaries(List<CidrSummaryPojo> cidrSummaries);
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
-	void removeCidrFromView(CidrPojo cidr);
+	void removeCidrSummaryFromView(CidrSummaryPojo cidrSummary);
 }

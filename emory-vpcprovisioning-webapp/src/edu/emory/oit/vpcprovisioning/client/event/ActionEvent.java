@@ -27,6 +27,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
@@ -66,6 +67,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private AWSServicePojo awsService;
 	private NotificationPojo notification;
 	private FirewallRulePojo firewallRule;
+	private CidrSummaryPojo cidrSummary;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -93,6 +95,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(cidr), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, CidrSummaryPojo cidrSummary) {
+		eventBus.fireEventFromSource(new ActionEvent(cidrSummary), sourceName);
+	}
+
 	public static void fire(EventBus eventBus, String sourceName, ElasticIpPojo elasticIp) {
 		eventBus.fireEventFromSource(new ActionEvent(elasticIp), sourceName);
 	}
@@ -104,8 +110,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 
-   	public static void fire(EventBus eventBus, String sourceName, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
-		eventBus.fireEventFromSource(new ActionEvent(cidrAssignmentSummary), sourceName);
+   	public static void fire(EventBus eventBus, String sourceName, CidrPojo cidr, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
+		eventBus.fireEventFromSource(new ActionEvent(cidr, cidrAssignmentSummary), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, CidrAssignmentPojo cidrAssignment) {
 		eventBus.fireEventFromSource(new ActionEvent(cidrAssignment), sourceName);
@@ -180,12 +186,17 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.elasticIpAssignment = pojo;
 	}
 	
+	public ActionEvent(CidrSummaryPojo cidrSummary) {
+		this.cidrSummary = cidrSummary;
+	}
+	
 	public ActionEvent(CidrPojo cidr) {
 		this.cidr = cidr;
 	}
 	
-	public ActionEvent(CidrAssignmentSummaryPojo cidrAssignmentSummary) {
+	public ActionEvent(CidrPojo cidr, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
 		this.cidrAssignmentSummary = cidrAssignmentSummary;
+		this.cidr = cidr;
 	}
 	
 	public ActionEvent(CidrAssignmentPojo cidrAssignment) {
@@ -197,8 +208,9 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.setNextPlace(nextPlace);
 	}
 
-	public ActionEvent(CidrAssignmentSummaryPojo cidrAssignmentSummary, Place nextPlace) {
+	public ActionEvent(CidrPojo cidr, CidrAssignmentSummaryPojo cidrAssignmentSummary, Place nextPlace) {
 		this.cidrAssignmentSummary = cidrAssignmentSummary;
+		this.cidr = cidr;
 		this.setNextPlace(nextPlace);
 	}
 
@@ -325,5 +337,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setFirewallRule(FirewallRulePojo firewallRule) {
 		this.firewallRule = firewallRule;
+	}
+
+	public CidrSummaryPojo getCidrSummary() {
+		return cidrSummary;
+	}
+
+	public void setCidrSummary(CidrSummaryPojo cidrSummary) {
+		this.cidrSummary = cidrSummary;
 	}
 }

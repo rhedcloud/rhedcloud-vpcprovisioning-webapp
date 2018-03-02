@@ -37,6 +37,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryResultPojo
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
@@ -98,7 +99,7 @@ public interface VpcProvisioningServiceAsync {
 	void getCidrsForFilter(CidrQueryFilterPojo filter, AsyncCallback<CidrQueryResultPojo> callback);
 	void createCidr(CidrPojo cidr, AsyncCallback<CidrPojo> callback);
 	void updateCidr(CidrPojo cidr, AsyncCallback<CidrPojo> callback);
-	void deleteCidr(CidrPojo cidr, AsyncCallback<Void> callback);
+	void deleteCidrSummary(CidrSummaryPojo cidr, AsyncCallback<Void> callback);
 	void isCidrAssigned(CidrPojo cidr, AsyncCallback<Boolean> callback);
 	void getCidrAssignmentStatusForCidr(CidrPojo cidr, AsyncCallback<CidrAssignmentStatus> callback);
 

@@ -89,7 +89,8 @@
 							ui:field="speedTypeTB" />
 				    	</g:customCell>
 				    	<g:customCell>
-						<g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">SpeedType status</g:Label>
+						<!-- <g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">SpeedType status</g:Label> -->
+						<g:HTML ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
 				    	</g:customCell>
 			    	</g:row>
 			</g:Grid>

@@ -39,6 +39,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryResultPojo
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
@@ -115,7 +116,7 @@ public interface VpcProvisioningService extends RemoteService {
 	CidrQueryResultPojo getCidrsForFilter(CidrQueryFilterPojo filter) throws RpcException;
 	CidrPojo createCidr(CidrPojo cidr) throws RpcException;
 	CidrPojo updateCidr(CidrPojo cidr) throws RpcException;
-	void deleteCidr(CidrPojo cidr) throws RpcException;
+	void deleteCidrSummary(CidrSummaryPojo cidrSummary) throws RpcException;
 	boolean isCidrAssigned(CidrPojo cidr) throws RpcException;
 	CidrAssignmentStatus getCidrAssignmentStatusForCidr(CidrPojo cidr) throws RpcException;
 

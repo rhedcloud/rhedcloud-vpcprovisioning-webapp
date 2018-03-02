@@ -149,7 +149,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField VerticalPanel otherFeaturesPanel;
 //	@UiField DeckLayoutPanel otherFeaturesContentContainer;
 	@UiField TabLayoutPanel mainTabPanel;
-	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
+//	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
 	@UiField DeckLayoutPanel cidrContentContainer;
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
@@ -364,18 +364,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				cidrContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
 				break;
+//			case 2:
+//				GWT.log("need to get CIDR Assignment Maintentance Content.");
+//				firstCidrAssignmentContentWidget = true;
+//				cidrAssignmentContentContainer.clear();
+//				ListCidrAssignmentView listCidrAssignmentView = clientFactory.getListCidrAssignmentView();
+////				MaintainCidrAssignmentView maintainCidrAssignmentView = clientFactory.getMaintainCidrAssignmentView();
+//				cidrAssignmentContentContainer.add(listCidrAssignmentView);
+////				cidrAssignmentContentContainer.add(maintainCidrView);
+//				cidrAssignmentContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR_ASSIGNMENT);
+//				break;
 			case 2:
-				GWT.log("need to get CIDR Assignment Maintentance Content.");
-				firstCidrAssignmentContentWidget = true;
-				cidrAssignmentContentContainer.clear();
-				ListCidrAssignmentView listCidrAssignmentView = clientFactory.getListCidrAssignmentView();
-//				MaintainCidrAssignmentView maintainCidrAssignmentView = clientFactory.getMaintainCidrAssignmentView();
-				cidrAssignmentContentContainer.add(listCidrAssignmentView);
-//				cidrAssignmentContentContainer.add(maintainCidrView);
-				cidrAssignmentContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR_ASSIGNMENT);
-				break;
-			case 3:
 				GWT.log("need to get VPC Maintentenance content.");
 				firstVpcContentWidget = true;
 				vpcContentContainer.clear();
@@ -386,7 +386,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
 				break;
-			case 4:
+			case 3:
 				GWT.log("need to get VPCP Maintentenance content.");
 				firstVpcpContentWidget = true;
 				vpcpContentContainer.clear();
@@ -399,7 +399,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
 				break;
-			case 5:
+			case 4:
 				GWT.log("need to get Elastic IP Maintentenance content.");
 				firstElasticIpContentWidget = true;
 				elasticIpContentContainer.clear();
@@ -424,7 +424,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //				elasticIpAssignmentContentContainer.setAnimationDuration(500);
 //				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT);
 //				break;
-			case 6:
+			case 5:
 				GWT.log("need to get Firewall Maintentenance content.");
 				firstFirewallContentWidget = true;
 				firewallContentContainer.clear();
@@ -456,7 +456,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-		if (w instanceof ListCidrPresenter || w instanceof MaintainCidrPresenter) {
+		if (w instanceof ListCidrPresenter || w instanceof MaintainCidrPresenter || 
+			w instanceof MaintainCidrAssignmentPresenter) {
 			cidrContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstCidrContentWidget) {
@@ -466,21 +467,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
-			boolean isRegisteringVpc = false;
-			if (w instanceof MaintainCidrAssignmentPresenter) {
-				isRegisteringVpc = ((MaintainCidrAssignmentPresenter) w).isRegisteringVpc();
-			}
-			if (!isRegisteringVpc) {
-				cidrAssignmentContentContainer.setWidget(w);
-				// Do not animate the first time we show a widget.
-				if (firstCidrAssignmentContentWidget) {
-					firstCidrAssignmentContentWidget = false;
-					cidrAssignmentContentContainer.animate(0);
-				}
-			}
-			return;
-		}
+//		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
+//			boolean isRegisteringVpc = false;
+//			if (w instanceof MaintainCidrAssignmentPresenter) {
+//				isRegisteringVpc = ((MaintainCidrAssignmentPresenter) w).isRegisteringVpc();
+//			}
+//			if (!isRegisteringVpc) {
+//				cidrAssignmentContentContainer.setWidget(w);
+//				// Do not animate the first time we show a widget.
+//				if (firstCidrAssignmentContentWidget) {
+//					firstCidrAssignmentContentWidget = false;
+//					cidrAssignmentContentContainer.animate(0);
+//				}
+//			}
+//			return;
+//		}
 
 		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
 				|| w instanceof RegisterVpcPresenter

@@ -135,10 +135,12 @@
 							<g:header>CIDR Maintenance</g:header>
 							<g:DeckLayoutPanel ui:field="cidrContentContainer" width="100%" height="100%"/>
 						</g:tab>
+						<!-- 
 						<g:tab>
 							<g:header>CIDR Assignments</g:header>
 							<g:DeckLayoutPanel ui:field="cidrAssignmentContentContainer" width="100%" height="100%"/>
 						</g:tab>
+						 -->
 						<g:tab>
 							<g:header>VPC Maintenance</g:header>
 							<g:DeckLayoutPanel ui:field="vpcContentContainer" width="100%" height="100%"/>

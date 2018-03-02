@@ -11,16 +11,22 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -32,6 +38,7 @@ import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
@@ -41,10 +48,12 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	private SingleSelectionModel<VpcpPojo> selectionModel;
 	List<VpcpPojo> vpcpList = new java.util.ArrayList<VpcpPojo>();
 	UserAccountPojo userLoggedIn;
+    PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
 	@UiField SimplePager vpcpListPager;
 	@UiField Button generateVpcButton;
+	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<VpcpPojo> vpcpListTable = new CellTable<VpcpPojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 
@@ -63,6 +72,41 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPCP);
 			}
 		}, ClickEvent.getType());
+	}
+
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    
+	    Grid grid = new Grid(1, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+	    
+		Anchor assignAnchor = new Anchor("View Status");
+		assignAnchor.addStyleName("productAnchor");
+		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		assignAnchor.setTitle("View status of selected VPCP");
+		assignAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				VpcpPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					// just use a popup here and not try to show the "normal" CidrAssignment
+					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, assignAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
 	}
 
 	@Override
@@ -319,4 +363,13 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		
 	}
 
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		return null;
+	}
 }

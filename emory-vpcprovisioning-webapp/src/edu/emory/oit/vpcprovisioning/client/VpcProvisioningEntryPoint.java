@@ -27,18 +27,4 @@ public class VpcProvisioningEntryPoint implements EntryPoint {
 		ClientFactory clientFactory = GWT.create(ClientFactory.class);
 		clientFactory.getApp().run(RootLayoutPanel.get());
 	}
-	
-//	private Button clickMeButton;
-//	public void onModuleLoad() {
-//		RootPanel rootPanel = RootPanel.get();
-//
-//		clickMeButton = new Button();
-//		rootPanel.add(clickMeButton);
-//		clickMeButton.setText("Click me!");
-//		clickMeButton.addClickHandler(new ClickHandler(){
-//			public void onClick(ClickEvent event) {
-//				Window.alert("Hello, GWT World!");
-//			}
-//		});
-//	}
 }
