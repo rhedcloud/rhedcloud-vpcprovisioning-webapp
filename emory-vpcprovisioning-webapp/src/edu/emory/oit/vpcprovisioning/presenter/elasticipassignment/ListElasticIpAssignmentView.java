@@ -29,6 +29,7 @@ public interface ListElasticIpAssignmentView extends IsWidget, View {
 		 * Delete the current account or cancel the creation of a account.
 		 */
 		void deleteElasticIpAssignment(ElasticIpAssignmentSummaryPojo selected);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

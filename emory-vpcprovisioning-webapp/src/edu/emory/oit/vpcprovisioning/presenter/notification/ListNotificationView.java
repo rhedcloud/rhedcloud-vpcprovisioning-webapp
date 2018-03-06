@@ -29,6 +29,7 @@ public interface ListNotificationView extends IsWidget, View {
 		 * Delete the current Vpc or cancel the creation of a Vpc.
 		 */
 		void deleteNotification(NotificationPojo service);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

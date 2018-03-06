@@ -20,7 +20,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListElasticIpAssignmentPresenter implements ListElasticIpAssignmentView.Presenter {
+public class ListElasticIpAssignmentPresenter extends PresenterBase implements ListElasticIpAssignmentView.Presenter {
 
 	private static final int SESSION_REFRESH_DELAY = 900000;	// 15 minutes
 

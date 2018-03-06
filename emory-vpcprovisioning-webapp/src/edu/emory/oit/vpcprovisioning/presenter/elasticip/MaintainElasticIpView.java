@@ -27,6 +27,7 @@ public interface MaintainElasticIpView extends Editor<ElasticIpPojo>, IsWidget, 
 		ElasticIpPojo getElasticIp();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

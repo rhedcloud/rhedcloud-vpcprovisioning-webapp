@@ -3,14 +3,12 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -19,12 +17,12 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -35,26 +33,34 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
-import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListFirewallRule extends ViewImplBase implements ListFirewallRuleView {
 	Presenter presenter;
-	private ListDataProvider<FirewallRulePojo> dataProvider = new ListDataProvider<FirewallRulePojo>();
-	private SingleSelectionModel<FirewallRulePojo> selectionModel;
+	private ListDataProvider<FirewallRulePojo> fw_dataProvider = new ListDataProvider<FirewallRulePojo>();
+	private SingleSelectionModel<FirewallRulePojo> fw_selectionModel;
 	List<FirewallRulePojo> firewallRuleList = new java.util.ArrayList<FirewallRulePojo>();
+
+	private ListDataProvider<FirewallRuleExceptionRequestPojo> fwer_dataProvider = new ListDataProvider<FirewallRuleExceptionRequestPojo>();
+	private SingleSelectionModel<FirewallRuleExceptionRequestPojo> fwer_selectionModel;
+	List<FirewallRuleExceptionRequestPojo> fwerRuleList = new java.util.ArrayList<FirewallRuleExceptionRequestPojo>();
+
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
 	@UiField SimplePager firewallRuleListPager;
-	@UiField Button addFirewallRuleButton;
+	@UiField SimplePager firewallRuleRequestListPager;
+	@UiField Button requestFirewallRuleButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<FirewallRulePojo> firewallRuleListTable = new CellTable<FirewallRulePojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<FirewallRuleExceptionRequestPojo> firewallRuleRequestListTable = new CellTable<FirewallRuleExceptionRequestPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel firewallRuleListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
+	@UiField TabLayoutPanel firewallRuleTabPanel;
 
 	private static DesktopListFirewallRuleUiBinder uiBinder = GWT.create(DesktopListFirewallRuleUiBinder.class);
 
@@ -64,7 +70,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	public DesktopListFirewallRule() {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		addFirewallRuleButton.addDomHandler(new ClickHandler() {
+		requestFirewallRuleButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				GWT.log("Should go to maintain firewallRule here...");
@@ -79,6 +85,17 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	     public CellTable.Style cellTableStyle();
 	 }
 	
+	@UiHandler ("firewallRuleTabPanel") 
+	void tabSelected(SelectionEvent<Integer> e) {
+		switch (e.getSelectedItem()) {
+			case 0:
+				presenter.refreshFirewallRuleList(userLoggedIn);
+				break;
+			case 1:
+				presenter.refreshFirewallRuleExceptionRequestList(userLoggedIn);
+				break;
+		}
+	}
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
@@ -86,28 +103,27 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(3, 1);
+	    Grid grid = new Grid(2, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
 	    // anchors for:
 	    // - view/edit
 	    // - delete
-	    // - show history/status?
-	    String anchorText = "View Firewall Rule";
+	    String anchorText = "View Firewall Rule Request";
 		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-			anchorText = "Maintain Firewall Rule";
+			anchorText = "Maintain Firewall Rule Request";
 		}
 
 		Anchor maintainAnchor = new Anchor(anchorText);
 		maintainAnchor.addStyleName("productAnchor");
 		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		maintainAnchor.setTitle("Remove selected Firewall Rule");
+		maintainAnchor.setTitle("View/edit selected Firewall Rule");
 		maintainAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				FirewallRulePojo m = selectionModel.getSelectedObject();
+				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
@@ -120,7 +136,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		grid.setWidget(0, 0, maintainAnchor);
 
-		Anchor deleteAnchor = new Anchor("Remove Firewall Rule");
+		Anchor deleteAnchor = new Anchor("Remove Firewall Rule Request");
 		deleteAnchor.addStyleName("productAnchor");
 		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		deleteAnchor.setTitle("Remove selected Firewall Rule");
@@ -128,7 +144,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				FirewallRulePojo m = selectionModel.getSelectedObject();
+				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
@@ -141,26 +157,26 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		grid.setWidget(1, 0, deleteAnchor);
 
-		Anchor historyAnchor = new Anchor("View your Firewall Rule History");
-		historyAnchor.addStyleName("productAnchor");
-		historyAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		historyAnchor.setTitle("View firewall rule history");
-		historyAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				FirewallRulePojo m = selectionModel.getSelectedObject();
-				if (m != null) {
-					// just use a popup here and not try to show the "normal" CidrAssignment
-					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
-				}
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
-			}
-		});
-		grid.setWidget(2, 0, historyAnchor);
+//		Anchor historyAnchor = new Anchor("View your Firewall Rule History");
+//		historyAnchor.addStyleName("productAnchor");
+//		historyAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		historyAnchor.setTitle("View firewall rule history");
+//		historyAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+//				if (m != null) {
+//					// just use a popup here and not try to show the "normal" CidrAssignment
+//					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+////					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+//				}
+//				else {
+//					showMessageToUser("Please select an item from the list");
+//				}
+//			}
+//		});
+//		grid.setWidget(2, 0, historyAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -176,7 +192,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	}
 
 	@Override
-	public void clearList() {
+	public void clearFirewallRuleList() {
 		firewallRuleListTable.setVisibleRangeAndClearData(firewallRuleListTable.getVisibleRange(), true);
 	}
 
@@ -193,7 +209,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    firewallRuleListPager.setDisplay(firewallRuleListTable);
 	}
 	private Widget initializeFirewallRuleListTable() {
-		GWT.log("initializing ACCOUNT list table...");
+		GWT.log("initializing Firewall Rule list table...");
 		firewallRuleListTable.setTableLayoutFixed(false);
 		firewallRuleListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
@@ -201,25 +217,25 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		firewallRuleListTable.setVisibleRange(0, 5);
 		
 		// create dataprovider
-		dataProvider = new ListDataProvider<FirewallRulePojo>();
-		dataProvider.addDataDisplay(firewallRuleListTable);
-		dataProvider.getList().clear();
-		dataProvider.getList().addAll(this.firewallRuleList);
+		fw_dataProvider = new ListDataProvider<FirewallRulePojo>();
+		fw_dataProvider.addDataDisplay(firewallRuleListTable);
+		fw_dataProvider.getList().clear();
+		fw_dataProvider.getList().addAll(this.firewallRuleList);
 		
-		selectionModel = 
+		fw_selectionModel = 
 	    	new SingleSelectionModel<FirewallRulePojo>(FirewallRulePojo.KEY_PROVIDER);
-		firewallRuleListTable.setSelectionModel(selectionModel);
+		firewallRuleListTable.setSelectionModel(fw_selectionModel);
 	    
-	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    fw_selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		FirewallRulePojo m = selectionModel.getSelectedObject();
+	    		FirewallRulePojo m = fw_selectionModel.getSelectedObject();
 	    		GWT.log("Selected firewallRule is: " + m.getName());
 	    	}
 	    });
 
 	    ListHandler<FirewallRulePojo> sortHandler = 
-	    	new ListHandler<FirewallRulePojo>(dataProvider.getList());
+	    	new ListHandler<FirewallRulePojo>(fw_dataProvider.getList());
 	    firewallRuleListTable.addColumnSortHandler(sortHandler);
 
 	    if (firewallRuleListTable.getColumnCount() == 0) {
@@ -405,12 +421,12 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 
 	@Override
 	public void removeFirewallRuleFromView(FirewallRulePojo firewallRule) {
-		dataProvider.getList().remove(firewallRule);
+		fw_dataProvider.getList().remove(firewallRule);
 	}
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return addFirewallRuleButton;
+		return requestFirewallRuleButton;
 	}
 
 	@Override
@@ -422,7 +438,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@Override
 	public void applyEmoryAWSAdminMask() {
 		// enable add firewallRule button
-		addFirewallRuleButton.setEnabled(true);
+		requestFirewallRuleButton.setEnabled(true);
 		// enable Delete button in table (handled in initFirewallRuleListTableColumns)
 		// change text of button to Edit (handled in initFirewallRuleListTableColumns)
 	}
@@ -430,7 +446,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@Override
 	public void applyEmoryAWSAuditorMask() {
 		// disable add firewallRule button
-		addFirewallRuleButton.setEnabled(false);
+		requestFirewallRuleButton.setEnabled(false);
 		// disable Delete button in table (handled in initFirewallRuleListTableColumns)
 		// change text of button to View (handled in initFirewallRuleListTableColumns)
 	}
@@ -454,5 +470,72 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@Override
 	public HasClickHandlers getOkayWidget() {
 		return null;
+	}
+
+	@Override
+	public void setFirewallRuleRequests(List<FirewallRuleExceptionRequestPojo> firewallRequests) {
+		this.fwerRuleList = firewallRequests;
+		this.initializeFirewallRuleRequestListTable();
+	    firewallRuleRequestListPager.setDisplay(firewallRuleRequestListTable);
+	}
+
+	private Widget initializeFirewallRuleRequestListTable() {
+		GWT.log("initializing Firewall Rule Exception Request list table...");
+		firewallRuleRequestListTable.setTableLayoutFixed(false);
+		firewallRuleRequestListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		
+		// set range to display
+		firewallRuleRequestListTable.setVisibleRange(0, 5);
+		
+		// create dataprovider
+		fwer_dataProvider = new ListDataProvider<FirewallRuleExceptionRequestPojo>();
+		fwer_dataProvider.addDataDisplay(firewallRuleRequestListTable);
+		fwer_dataProvider.getList().clear();
+		fwer_dataProvider.getList().addAll(this.fwerRuleList);
+		
+		fwer_selectionModel = 
+	    	new SingleSelectionModel<FirewallRuleExceptionRequestPojo>(FirewallRuleExceptionRequestPojo.KEY_PROVIDER);
+		firewallRuleRequestListTable.setSelectionModel(fwer_selectionModel);
+	    
+	    fwer_selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	@Override
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+	    		FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+	    		GWT.log("Selected firewallRule is: " + m.getName());
+	    	}
+	    });
+
+	    ListHandler<FirewallRuleExceptionRequestPojo> sortHandler = 
+	    	new ListHandler<FirewallRuleExceptionRequestPojo>(fwer_dataProvider.getList());
+	    firewallRuleRequestListTable.addColumnSortHandler(sortHandler);
+
+	    if (firewallRuleRequestListTable.getColumnCount() == 0) {
+		    initFirewallRuleRequestListTableColumns(sortHandler);
+	    }
+		
+		return firewallRuleRequestListTable;
+	}
+
+	private void initFirewallRuleRequestListTableColumns(ListHandler<FirewallRuleExceptionRequestPojo> sortHandler) {
+		Column<FirewallRuleExceptionRequestPojo, String> nameColumn = 
+			new Column<FirewallRuleExceptionRequestPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(FirewallRuleExceptionRequestPojo object) {
+				return object.getName();
+			}
+		};
+		nameColumn.setSortable(true);
+		nameColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(nameColumn, new Comparator<FirewallRuleExceptionRequestPojo>() {
+			public int compare(FirewallRuleExceptionRequestPojo o1, FirewallRuleExceptionRequestPojo o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		firewallRuleRequestListTable.addColumn(nameColumn, "Name");
+	}
+	@Override
+	public void clearFirewallRuleExceptionRequestList() {
+		firewallRuleRequestListTable.setVisibleRangeAndClearData(firewallRuleRequestListTable.getVisibleRange(), true);
 	}
 }

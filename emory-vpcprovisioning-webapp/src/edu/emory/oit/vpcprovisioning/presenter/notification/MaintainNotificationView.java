@@ -33,6 +33,7 @@ public interface MaintainNotificationView extends Editor<NotificationPojo>, IsWi
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

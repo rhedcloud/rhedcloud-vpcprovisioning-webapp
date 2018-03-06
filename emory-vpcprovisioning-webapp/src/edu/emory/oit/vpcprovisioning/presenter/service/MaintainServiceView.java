@@ -33,6 +33,7 @@ public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, V
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

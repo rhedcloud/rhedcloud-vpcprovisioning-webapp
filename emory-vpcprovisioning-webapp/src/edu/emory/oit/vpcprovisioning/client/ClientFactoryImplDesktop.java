@@ -27,6 +27,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIpAssignment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainFirewallRule;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
@@ -45,6 +46,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
@@ -92,6 +94,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListNotificationView listNotificationView;
 	private MaintainNotificationView maintainNotificationView;
 	private ListFirewallRuleView listFirewallRuleView;
+	private MaintainFirewallRuleView maintainFirewallRuleView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -380,5 +383,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected ListFirewallRuleView createFirewallRuleListView() {
 		return new DesktopListFirewallRule();
+	}
+	@Override
+	public MaintainFirewallRuleView getMaintainFirewallRuleView() {
+        if (maintainFirewallRuleView == null) {
+        	maintainFirewallRuleView = createMaintainFirewallRuleView();
+        }
+        return maintainFirewallRuleView;
+	}
+	protected MaintainFirewallRuleView createMaintainFirewallRuleView() {
+		return new DesktopMaintainFirewallRule();
 	}
 }

@@ -91,6 +91,9 @@ public interface VpcProvisioningService extends RemoteService {
 	
 //	String getLoginURL() throws RpcException;
 	
+	// logging
+	void logMessage(String message) throws RpcException;
+	
 	// Identity services
 	DirectoryMetaDataPojo getDirectoryMetaDataForNetId(String netId) throws RpcException;
 

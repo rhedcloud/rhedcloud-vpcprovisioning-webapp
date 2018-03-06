@@ -22,7 +22,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
 
-public class ListVpcPresenter implements ListVpcView.Presenter {
+public class ListVpcPresenter extends PresenterBase implements ListVpcView.Presenter {
 	private static final Logger log = Logger.getLogger(ListVpcPresenter.class.getName());
 	/**
 	 * The delay in milliseconds between calls to refresh the Vpc list.

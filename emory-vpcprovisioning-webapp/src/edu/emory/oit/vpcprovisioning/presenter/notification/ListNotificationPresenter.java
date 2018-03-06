@@ -14,6 +14,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
@@ -22,7 +23,7 @@ import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListNotificationPresenter implements ListNotificationView.Presenter {
+public class ListNotificationPresenter extends PresenterBase implements ListNotificationView.Presenter {
 	private static final Logger log = Logger.getLogger(ListNotificationPresenter.class.getName());
 	/**
 	 * The delay in milliseconds between calls to refresh the Vpc list.

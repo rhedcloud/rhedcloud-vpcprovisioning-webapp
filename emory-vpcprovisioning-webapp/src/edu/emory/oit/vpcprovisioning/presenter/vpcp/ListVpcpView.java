@@ -29,6 +29,7 @@ public interface ListVpcpView extends IsWidget, View {
 		 * Delete the current Vpc or cancel the creation of a Vpc.
 		 */
 		void deleteVpcp(VpcpPojo vpcp);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

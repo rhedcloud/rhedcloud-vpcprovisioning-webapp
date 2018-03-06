@@ -31,6 +31,7 @@ public interface RegisterVpcView  extends Editor<VpcPojo>, IsWidget, View {
 		public boolean isValidVpcId(String value);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

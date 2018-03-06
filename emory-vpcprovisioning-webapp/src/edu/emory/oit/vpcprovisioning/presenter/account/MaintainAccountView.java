@@ -11,6 +11,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View {
@@ -34,8 +36,11 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
-		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
-		public void setSpeedChartStatusForKey(String key, Label label);
+		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w, boolean confirmSpeedType);
+		public void setSpeedChartStatusForKey(String key, Label label, boolean confirmSpeedType);
+		public boolean didConfirmSpeedType();
+		public SpeedChartPojo getSpeedType();
+		public void logMessageOnServer(final String message);
 	}
 
 	/**
@@ -84,4 +89,6 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void setSpeedTypeStatus(String status);
 	void setSpeedTypeColor(String color);
 	Widget getSpeedTypeWidget();
+	void setSpeedTypeConfirmed(boolean confirmed);
+	boolean isSpeedTypeConfirmed();
 }

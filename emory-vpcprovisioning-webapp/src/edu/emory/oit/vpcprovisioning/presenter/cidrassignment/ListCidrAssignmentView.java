@@ -29,6 +29,7 @@ public interface ListCidrAssignmentView extends IsWidget, View {
 		 * Delete the current account or cancel the creation of a account.
 		 */
 		void deleteCidrAssignment(CidrAssignmentSummaryPojo cidrAssignment);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

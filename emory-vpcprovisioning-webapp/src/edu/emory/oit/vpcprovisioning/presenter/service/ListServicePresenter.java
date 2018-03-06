@@ -14,6 +14,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
@@ -22,7 +23,7 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListServicePresenter implements ListServiceView.Presenter {
+public class ListServicePresenter extends PresenterBase implements ListServiceView.Presenter {
 	private static final Logger log = Logger.getLogger(ListServicePresenter.class.getName());
 	/**
 	 * The delay in milliseconds between calls to refresh the Vpc list.

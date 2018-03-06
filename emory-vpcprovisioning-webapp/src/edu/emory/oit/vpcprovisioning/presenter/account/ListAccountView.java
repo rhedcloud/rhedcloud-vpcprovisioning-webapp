@@ -29,6 +29,7 @@ public interface ListAccountView extends IsWidget, View {
 		 * Delete the current account or cancel the creation of a account.
 		 */
 		void deleteAccount(AccountPojo account);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

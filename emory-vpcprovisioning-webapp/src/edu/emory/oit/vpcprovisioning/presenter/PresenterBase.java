@@ -2,6 +2,10 @@ package edu.emory.oit.vpcprovisioning.presenter;
 
 import java.util.logging.Logger;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+
 public abstract class PresenterBase {
 	private static final Logger log = Logger.getLogger(PresenterBase.class.getName());
 //	public static boolean isTimeoutException(final View view, Throwable caught) {
@@ -35,4 +39,22 @@ public abstract class PresenterBase {
 //			return false;
 //		}
 //	}
+	
+	public void logMessageOnServer(final String message) {
+		// TODO: log the message passed in in the server's log
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		VpcProvisioningService.Util.getInstance().logMessage(message, callback);
+	}
 }

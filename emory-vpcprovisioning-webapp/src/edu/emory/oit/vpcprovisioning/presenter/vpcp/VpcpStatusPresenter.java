@@ -1,9 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.vpcp;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -11,17 +9,16 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
 
-public class VpcpStatusPresenter implements VpcpStatusView.Presenter {
+public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String provisioningId;

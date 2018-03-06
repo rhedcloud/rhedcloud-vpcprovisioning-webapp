@@ -42,6 +42,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	int netIdColumnNum = 0;
 	int removeButtonColumnNum = 1;
 	String speedTypeBeingTyped=null;
+	boolean speedTypeConfirmed = false;
 	
 	@UiField Button billSummaryButton;
 	@UiField Button okayButton;
@@ -72,10 +73,11 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
 		String acct = speedTypeTB.getText();
-		presenter.setSpeedChartStatusForKeyOnWidget(acct, speedTypeTB);
+		presenter.setSpeedChartStatusForKeyOnWidget(acct, speedTypeTB, false);
 	}
 	@UiHandler ("speedTypeTB")
 	void speedTypeKeyPressed(KeyPressEvent e) {
+		this.setSpeedTypeConfirmed(false);
 		GWT.log("SpeedType key pressed...");
 		int keyCode = e.getNativeEvent().getKeyCode();
 		char ccode = e.getCharCode();
@@ -84,12 +86,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			if (speedTypeBeingTyped.length() > 0) {
 				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
 			}
-			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML);
+			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
 			return;
 		}
 		
 		if (keyCode == KeyCodes.KEY_TAB) {
-			presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeHTML);
+			presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeHTML, true);
 			return;
 		}
 
@@ -100,7 +102,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			speedTypeBeingTyped += ccode;
 		}
 
-		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML);
+		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
 	}
 	
 	@UiHandler ("billSummaryButton")
@@ -144,6 +146,37 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	void addEmailButtonClick(ClickEvent e) {
 		addEmailToAccount(addEmailTF.getText(), addEmailTypeLB.getSelectedValue());
 	}
+	@UiHandler ("okayButton")
+	void okayButtonClick(ClickEvent e) {
+		if (this.hasFieldViolations() == false) {
+			presenter.getAccount().setAccountId(accountIdTB.getText());
+			presenter.getAccount().setAccountName(accountNameTB.getText());
+			if (presenter.getAccount().getAccountOwnerDirectoryMetaData() == null) {
+				presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
+			}
+			presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerNetIdTB.getText());
+			presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
+			presenter.getAccount().setSpeedType(speedTypeTB.getText());
+			// emails are added as they're added in the interface
+			
+			if (this.isSpeedTypeConfirmed()) {
+				presenter.saveAccount();
+			}
+			else {
+				if (presenter.didConfirmSpeedType()) {
+					presenter.saveAccount();
+				}
+				else {
+					this.showMessageToUser("SpeedType has not been confirmed.  Can't save the account "
+							+ "until the SpeedType is confirmed.");
+					GWT.log("SpeedType has not been confirmed. Can't save account until SpeedType is confirmed.");
+				}
+			}
+		}
+		else {
+			showMessageToUser("Please correct any field violations.");
+		}
+	}
 
 	private static DesktopMaintainAccountUiBinder uiBinder = GWT.create(DesktopMaintainAccountUiBinder.class);
 
@@ -160,21 +193,21 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			}
 		}, ClickEvent.getType());
 
-		okayButton.addDomHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				presenter.getAccount().setAccountId(accountIdTB.getText());
-				presenter.getAccount().setAccountName(accountNameTB.getText());
-				if (presenter.getAccount().getAccountOwnerDirectoryMetaData() == null) {
-					presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
-				}
-				presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerNetIdTB.getText());
-				presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
-				presenter.getAccount().setSpeedType(speedTypeTB.getText());
-				// emails are added as they're added in the interface
-				presenter.saveAccount();
-			}
-		}, ClickEvent.getType());
+//		okayButton.addDomHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				presenter.getAccount().setAccountId(accountIdTB.getText());
+//				presenter.getAccount().setAccountName(accountNameTB.getText());
+//				if (presenter.getAccount().getAccountOwnerDirectoryMetaData() == null) {
+//					presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
+//				}
+//				presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerNetIdTB.getText());
+//				presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
+//				presenter.getAccount().setSpeedType(speedTypeTB.getText());
+//				// emails are added as they're added in the interface
+//				presenter.saveAccount();
+//			}
+//		}, ClickEvent.getType());
 	}
 
 	/*
@@ -383,7 +416,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			// TODO: add a static text object to show person's name from the meta data pojo
 			passwordLocationTB.setText(presenter.getAccount().getPasswordLocation());
 			speedTypeTB.setText(presenter.getAccount().getSpeedType());
-			presenter.setSpeedChartStatusForKey(presenter.getAccount().getSpeedType(), speedTypeHTML);
+			presenter.setSpeedChartStatusForKey(presenter.getAccount().getSpeedType(), speedTypeHTML, false);
 		}
 		// populate associated emails if appropriate
 		initializeEmailPanel();
@@ -526,5 +559,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public HasClickHandlers getOkayWidget() {
 		return cancelButton;
+	}
+	@Override
+	public void setSpeedTypeConfirmed(boolean confirmed) {
+		this.speedTypeConfirmed = confirmed;
+	}
+	@Override
+	public boolean isSpeedTypeConfirmed() {
+		return this.speedTypeConfirmed;
 	}
 }

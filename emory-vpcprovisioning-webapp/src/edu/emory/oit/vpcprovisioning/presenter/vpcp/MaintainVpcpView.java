@@ -39,6 +39,7 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 //		public void getVpcpForId(String provisioningId);
 		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
 		public void setSpeedChartStatusForKey(String key, Label label);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

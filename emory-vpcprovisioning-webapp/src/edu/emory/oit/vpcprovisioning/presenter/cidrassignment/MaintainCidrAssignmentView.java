@@ -40,6 +40,7 @@ public interface MaintainCidrAssignmentView extends Editor<CidrAssignmentPojo>, 
 		public void setRegisteringVpc(boolean isRegistering);
 		public CidrPojo getCidr();
 		public MaintainCidrAssignmentView getView();
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

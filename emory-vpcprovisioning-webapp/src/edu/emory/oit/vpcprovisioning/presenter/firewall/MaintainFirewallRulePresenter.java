@@ -1,4 +1,4 @@
-package edu.emory.oit.vpcprovisioning.presenter.cidr;
+package edu.emory.oit.vpcprovisioning.presenter.firewall;
 
 import java.util.List;
 
@@ -12,17 +12,15 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentStatus;
-import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class MaintainCidrPresenter extends PresenterBase implements MaintainCidrView.Presenter {
+public class MaintainFirewallRulePresenter extends PresenterBase implements MaintainFirewallRuleView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
-	private String cidrId;
-	private CidrPojo cidr;
+	private String name;
+	private FirewallRulePojo firewallRule;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -33,23 +31,23 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 	/**
 	 * For creating a new CIDR.
 	 */
-	public MaintainCidrPresenter(ClientFactory clientFactory) {
+	public MaintainFirewallRulePresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
-		this.cidr = null;
-		this.cidrId = null;
+		this.firewallRule = null;
+		this.name = null;
 		this.clientFactory = clientFactory;
-		clientFactory.getMaintainCidrView().setPresenter(this);
+		clientFactory.getMaintainFirewallRuleView().setPresenter(this);
 	}
 
 	/**
 	 * For editing an existing CIDR.
 	 */
-	public MaintainCidrPresenter(ClientFactory clientFactory, CidrPojo cidr) {
+	public MaintainFirewallRulePresenter(ClientFactory clientFactory, FirewallRulePojo firewallRule) {
 		this.isEditing = true;
-		this.cidrId = cidr.getCidrId();
+		this.name = firewallRule.getName();
 		this.clientFactory = clientFactory;
-		this.cidr = cidr;
-		clientFactory.getMaintainCidrView().setPresenter(this);
+		this.firewallRule = firewallRule;
+		clientFactory.getMaintainFirewallRuleView().setPresenter(this);
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 
 		ReleaseInfo ri = new ReleaseInfo();
 		clientFactory.getShell().setReleaseInfo(ri.toString());
-		if (cidrId == null) {
+		if (name == null) {
 			clientFactory.getShell().setSubTitle("Create CIDR");
 			startCreate();
 		} else {
@@ -86,43 +84,7 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 				getView().initPage();
 				getView().setInitialFocus();
 				
-				// if selected CIDR is assigned, disable all fields (except cancel button)
-				// an assigned CIDR cannot be edited 
-				AsyncCallback<CidrAssignmentStatus> isAssignedCB = new AsyncCallback<CidrAssignmentStatus>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().showMessageToUser("There was an exception on the " +
-								"server determining the Cidr's assignment status.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(CidrAssignmentStatus assignmentStatus) {
-						if (assignmentStatus != null && assignmentStatus.isAssigned()) {
-							clientFactory.getShell().setSubTitle("View CIDR (assigned to VPC: " + 
-								assignmentStatus.getCidrAssignment().getOwnerId() + ")");
-							getView().setLocked(true);
-						}
-						else {
-							// apply authorization mask
-							if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-								getView().applyEmoryAWSAdminMask();
-							}
-							else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-								clientFactory.getShell().setSubTitle("View CIDR");
-								getView().applyEmoryAWSAuditorMask();
-							}
-							else {
-								// ??
-							}
-						}
-					}
-					
-				};
-				VpcProvisioningService.Util.getInstance().getCidrAssignmentStatusForCidr(cidr, isAssignedCB);
-
+				// TODO: get firewall rules for filter
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
@@ -131,20 +93,20 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 	private void startCreate() {
 		isEditing = false;
 		getView().setEditing(false);
-		cidr = new CidrPojo();
+		firewallRule = new FirewallRulePojo();
 	}
 
 	private void startEdit() {
 		isEditing = true;
 		getView().setEditing(true);
-		// Lock the display until the cidr is loaded.
+		// Lock the display until the firewallRule is loaded.
 		getView().setLocked(true);
 	}
 
 	@Override
 	public void stop() {
 		eventBus = null;
-		clientFactory.getMaintainCidrView().setLocked(false);
+		clientFactory.getMaintainFirewallRuleView().setLocked(false);
 	}
 
 	@Override
@@ -158,34 +120,34 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 	}
 
 	@Override
-	public void deleteCidr() {
+	public void deleteFirewallRule() {
 		if (isEditing) {
-			doDeleteCidr();
+			doDeleteFirewallRule();
 		} else {
-			doCancelCidr();
+			doCancelFirewallRule();
 		}
 	}
 
 	/**
 	 * Cancel the current case record.
 	 */
-	private void doCancelCidr() {
+	private void doCancelFirewallRule() {
 		ActionEvent.fire(eventBus, ActionNames.CIDR_EDITING_CANCELED);
 	}
 
 	/**
 	 * Delete the current case record.
 	 */
-	private void doDeleteCidr() {
-		if (cidr == null) {
+	private void doDeleteFirewallRule() {
+		if (firewallRule == null) {
 			return;
 		}
 
-		// TODO Delete the CIDR on the server then fire onCidrDeleted();
+		// TODO Delete the CIDR on the server then fire onFirewallRuleDeleted();
 	}
 
 	@Override
-	public void saveCidr() {
+	public void saveFirewallRule() {
 		// save on server
 		getView().showPleaseWaitDialog();
 		List<Widget> fields = getView().getMissingRequiredFields();
@@ -198,18 +160,18 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 		else {
 			getView().resetFieldStyles();
 		}
-		AsyncCallback<CidrPojo> callback = new AsyncCallback<CidrPojo>() {
+		AsyncCallback<FirewallRulePojo> callback = new AsyncCallback<FirewallRulePojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception saving the Cidr", caught);
+				GWT.log("Exception saving the FirewallRule", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the CIDR.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(CidrPojo result) {
+			public void onSuccess(FirewallRulePojo result) {
 				// TODO Auto-generated method stub
 				
 				getView().hidePleaseWaitDialog();
@@ -218,33 +180,21 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 		};
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().createCidr(cidr, callback);
+			VpcProvisioningService.Util.getInstance().createFirewallRule(firewallRule, callback);
 		}
 		else {
 			// it's an update
-			VpcProvisioningService.Util.getInstance().updateCidr(cidr, callback);
+			VpcProvisioningService.Util.getInstance().updateFirewallRule(firewallRule, callback);
 		}
 	}
 
 	@Override
-	public CidrPojo getCidr() {
-		return this.cidr;
+	public FirewallRulePojo getFirewallRule() {
+		return this.firewallRule;
 	}
 
-	@Override
-	public boolean isValidNetwork(String value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isValidBits(String value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	private MaintainCidrView getView() {
-		return clientFactory.getMaintainCidrView();
+	private MaintainFirewallRuleView getView() {
+		return clientFactory.getMaintainFirewallRuleView();
 	}
 
 	public EventBus getEventBus() {
@@ -255,19 +205,31 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 		this.eventBus = eventBus;
 	}
 
-	public String getCidrId() {
-		return cidrId;
+	public String getFirewallRuleId() {
+		return name;
 	}
 
-	public void setCidrId(String cidrId) {
-		this.cidrId = cidrId;
+	public void setFirewallRuleId(String name) {
+		this.name = name;
 	}
 
 	public ClientFactory getClientFactory() {
 		return clientFactory;
 	}
 
-	public void setCidr(CidrPojo cidr) {
-		this.cidr = cidr;
+	public void setFirewallRule(FirewallRulePojo firewallRule) {
+		this.firewallRule = firewallRule;
+	}
+
+	@Override
+	public boolean isValidFirewallRuleName(String value) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
+		// TODO Auto-generated method stub
+		
 	}
 }

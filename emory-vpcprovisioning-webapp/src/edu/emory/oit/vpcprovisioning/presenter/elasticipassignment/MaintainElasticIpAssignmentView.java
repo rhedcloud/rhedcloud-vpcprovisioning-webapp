@@ -38,6 +38,7 @@ public interface MaintainElasticIpAssignmentView extends Editor<ElasticIpAssignm
 		public void getUnassigedElasticIps();
 		public boolean isRegisteringVpc();
 		public void setRegisteringVpc(boolean isRegistering);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

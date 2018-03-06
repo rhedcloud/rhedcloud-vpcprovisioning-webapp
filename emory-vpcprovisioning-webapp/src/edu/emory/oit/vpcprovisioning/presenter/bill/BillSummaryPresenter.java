@@ -11,6 +11,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillPojo;
@@ -22,7 +23,7 @@ import edu.emory.oit.vpcprovisioning.shared.LineItemSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class BillSummaryPresenter implements BillSummaryView.Presenter {
+public class BillSummaryPresenter extends PresenterBase implements BillSummaryView.Presenter {
 	private static final Logger log = Logger.getLogger(BillSummaryPresenter.class.getName());
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;

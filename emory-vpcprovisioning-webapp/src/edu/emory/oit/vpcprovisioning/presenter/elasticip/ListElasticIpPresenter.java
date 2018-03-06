@@ -21,9 +21,8 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
-public class ListElasticIpPresenter implements ListElasticIpView.Presenter {
+public class ListElasticIpPresenter extends PresenterBase implements ListElasticIpView.Presenter {
 	private static final Logger log = Logger.getLogger(ListElasticIpPresenter.class.getName());
 	/**
 	 * The delay in milliseconds between calls to refresh the Vpc list.

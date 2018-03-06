@@ -14,6 +14,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.CidrListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentStatus;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
@@ -23,7 +24,7 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListCidrPresenter implements ListCidrView.Presenter {
+public class ListCidrPresenter extends PresenterBase implements ListCidrView.Presenter {
 	private static final Logger log = Logger.getLogger(ListCidrPresenter.class.getName());
 	/**
 	 * The delay in milliseconds between calls to refresh the CIDR list.

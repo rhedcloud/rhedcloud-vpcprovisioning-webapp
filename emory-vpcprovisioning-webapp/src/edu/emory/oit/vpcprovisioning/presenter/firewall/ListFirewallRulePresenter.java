@@ -14,14 +14,18 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleRequestListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter {
+public class ListFirewallRulePresenter extends PresenterBase implements ListFirewallRuleView.Presenter {
 	private static final Logger log = Logger.getLogger(ListFirewallRulePresenter.class.getName());
 	/**
 	 * The delay in milliseconds between calls to refresh the firewallRule list.
@@ -38,7 +42,8 @@ public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter
 
 	private EventBus eventBus;
 	
-	FirewallRuleQueryFilterPojo filter;
+	FirewallRuleQueryFilterPojo fw_filter;
+	FirewallRuleExceptionRequestQueryFilterPojo fwer_filter;
 	FirewallRulePojo firewallRule;
 
 	/**
@@ -101,14 +106,17 @@ public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter
 
 				// Clear the firewallRule list and display it.
 				if (clearList) {
-					getView().clearList();
+					getView().clearFirewallRuleList();
+					getView().clearFirewallRuleExceptionRequestList();
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
 				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
+				setFirewallRuleExceptionRequestList(Collections.<FirewallRuleExceptionRequestPojo> emptyList());
 
 				// Request the firewallRule list now.
-				refreshList(userLoggedIn);
+				refreshFirewallRuleList(userLoggedIn);
+				refreshFirewallRuleExceptionRequestList(userLoggedIn);
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -118,7 +126,8 @@ public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter
 	/**
 	 * Refresh the CIDR list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	@Override
+	public void refreshFirewallRuleList(final UserAccountPojo user) {
 		// use RPC to get all firewallRules for the current filter being used
 		AsyncCallback<FirewallRuleQueryResultPojo> callback = new AsyncCallback<FirewallRuleQueryResultPojo>() {
 			@Override
@@ -149,7 +158,7 @@ public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter
 		};
 
 		GWT.log("refreshing FirewallRule list...");
-		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(filter, callback);
+		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(fw_filter, callback);
 	}
 
 	/**
@@ -158,6 +167,11 @@ public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter
 	private void setFirewallRuleList(List<FirewallRulePojo> firewallRules) {
 		getView().setFirewallRules(firewallRules);
 		eventBus.fireEventFromSource(new FirewallRuleListUpdateEvent(firewallRules), this);
+	}
+
+	private void setFirewallRuleExceptionRequestList(List<FirewallRuleExceptionRequestPojo> firewallRules) {
+		getView().setFirewallRuleRequests(firewallRules);
+		eventBus.fireEventFromSource(new FirewallRuleRequestListUpdateEvent(firewallRules), this);
 	}
 
 	@Override
@@ -190,12 +204,12 @@ public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter
 		this.eventBus = eventBus;
 	}
 
-	public FirewallRuleQueryFilterPojo getFilter() {
-		return filter;
+	public FirewallRuleQueryFilterPojo getFirewallRuleFilter() {
+		return fw_filter;
 	}
 
 	public void setFilter(FirewallRuleQueryFilterPojo filter) {
-		this.filter = filter;
+		this.fw_filter = filter;
 	}
 
 	public ClientFactory getClientFactory() {
@@ -229,5 +243,16 @@ public class ListFirewallRulePresenter implements ListFirewallRuleView.Presenter
 			};
 			VpcProvisioningService.Util.getInstance().deleteFirewallRule(firewallRule, callback);
 		}
+	}
+
+	@Override
+	public void refreshFirewallRuleExceptionRequestList(final UserAccountPojo user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public FirewallRuleExceptionRequestQueryFilterPojo getFirewallRuleExceptionRequestFilter() {
+		return fwer_filter;
 	}
 }

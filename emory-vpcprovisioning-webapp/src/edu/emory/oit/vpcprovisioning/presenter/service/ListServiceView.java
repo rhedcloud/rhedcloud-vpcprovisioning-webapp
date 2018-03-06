@@ -29,6 +29,7 @@ public interface ListServiceView extends IsWidget, View {
 		 * Delete the current Vpc or cancel the creation of a Vpc.
 		 */
 		void deleteService(AWSServicePojo service);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

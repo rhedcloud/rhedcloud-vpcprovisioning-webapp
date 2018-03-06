@@ -13,6 +13,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
@@ -23,7 +24,7 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
-public class MaintainVpcpPresenter implements MaintainVpcpView.Presenter {
+public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcpView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String provisioningId;

@@ -14,6 +14,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.AccountListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -21,7 +22,7 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListAccountPresenter implements ListAccountView.Presenter {
+public class ListAccountPresenter extends PresenterBase implements ListAccountView.Presenter {
 	private static final Logger log = Logger.getLogger(ListAccountPresenter.class.getName());
 	/**
 	 * The delay in milliseconds between calls to refresh the account list.

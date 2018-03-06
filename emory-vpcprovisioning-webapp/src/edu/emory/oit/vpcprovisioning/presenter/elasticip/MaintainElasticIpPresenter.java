@@ -8,13 +8,14 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentStatusPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class MaintainElasticIpPresenter implements MaintainElasticIpView.Presenter {
+public class MaintainElasticIpPresenter extends PresenterBase implements MaintainElasticIpView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String elasticIpId;

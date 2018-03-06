@@ -1,9 +1,10 @@
 package edu.emory.oit.vpcprovisioning.presenter.account;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -13,22 +14,24 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
+public class MaintainAccountPresenter extends PresenterBase implements MaintainAccountView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String accountId;
 	private AccountPojo account;
 	private String awsAccountsURL = "Cannot retrieve AWS Accounts URL";
 	private String awsBillingManagementURL = "Cannot retrieve AWS Billing Management URL";
+	private SpeedChartPojo speedType;
+	private UserAccountPojo userLoggedIn;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -117,6 +120,7 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override
@@ -323,7 +327,7 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 	}
 
 	@Override
-	public void setSpeedChartStatusForKeyOnWidget(String key, final Widget w) {
+	public void setSpeedChartStatusForKeyOnWidget(final String key, final Widget w, final boolean confirmSpeedType) {
 		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -336,13 +340,15 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 			@Override
 			public void onSuccess(SpeedChartPojo scp) {
 				if (scp == null) {
-					w.setTitle("Invalid account number, can't validate this number");
+					w.setTitle("Invalid account number (" + key + "), can't validate this number");
 					w.getElement().getStyle().setBackgroundColor("#efbebe");
 					getView().setSpeedTypeStatus("<b>Invalid account</b>");
 					getView().setSpeedTypeColor(Constants.COLOR_RED);
+					getView().setFieldViolations(true);
 				}
 				else {
 //				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+					speedType = scp;
 					String deptId = scp.getDepartmentId();
 					String deptDesc = scp.getDepartmentDescription();
 					String desc = scp.getDescription();
@@ -359,6 +365,9 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 						getView().setSpeedTypeColor(Constants.COLOR_GREEN);
 						w.getElement().getStyle().setBackgroundColor(null);
 						getView().setFieldViolations(false);
+						if (confirmSpeedType) {
+							didConfirmSpeedType();
+						}
 					}
 					else if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_INVALID)) {
 						getView().setSpeedTypeColor(Constants.COLOR_RED);
@@ -368,6 +377,9 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 					else {
 						getView().setSpeedTypeColor(Constants.COLOR_ORANGE);
 						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_FIELD_WARNING);
+						if (confirmSpeedType) {
+							didConfirmSpeedType();
+						}
 					}
 				}
 			}
@@ -383,15 +395,43 @@ public class MaintainAccountPresenter implements MaintainAccountView.Presenter {
 	}
 
 	@Override
-	public void setSpeedChartStatusForKey(String key, Label label) {
+	public void setSpeedChartStatusForKey(String key, Label label, boolean confirmSpeedType) {
 		// null check / length
 		if (key == null || key.length() != 10) {
 			label.setText("Invalid length");
 			getView().setSpeedTypeColor(Constants.COLOR_RED);
+			getView().setFieldViolations(true);
 			return;
 		}
 		// TODO: numeric characters
 		
-		setSpeedChartStatusForKeyOnWidget(key, getView().getSpeedTypeWidget());
+		setSpeedChartStatusForKeyOnWidget(key, getView().getSpeedTypeWidget(), confirmSpeedType);
+	}
+
+	@Override
+	public boolean didConfirmSpeedType() {
+		boolean confirmed = Window.confirm("Are you sure you want to use this SpeedType?  "
+				+ "NOTE:  Using an invalid SpeedType is a violoation of Emory's Terms of Use.");
+		if (confirmed) {
+			// TODO: log that the user acknowldged the speed type (on the server)
+			this.logMessageOnServer("User " + this.userLoggedIn.getEppn() + " acknowledged "
+					+ "the SpeedType " + this.account.getSpeedType()
+					+ "is the correct SpeedType for this account at: " + new Date());
+			getView().showMessageToUser("Logged that [user] acknowledged the SpeedType [SpeedType] "
+					+ "is the correct SpeedType for this account at [time].");
+			getView().setSpeedTypeConfirmed(true);
+			return true;
+		}
+//		else {
+//			getView().showMessageToUser("Please enter a valid SpeedType.");
+//		}
+		// user decided they didn't want to use this speed type, what now?
+		getView().setSpeedTypeConfirmed(false);
+		return false;
+	}
+
+	@Override
+	public SpeedChartPojo getSpeedType() {
+		return speedType;
 	}
 }

@@ -11,8 +11,8 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
@@ -20,7 +20,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class MaintainElasticIpAssignmentPresenter implements MaintainElasticIpAssignmentView.Presenter {
+public class MaintainElasticIpAssignmentPresenter extends PresenterBase implements MaintainElasticIpAssignmentView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String assignmentId;

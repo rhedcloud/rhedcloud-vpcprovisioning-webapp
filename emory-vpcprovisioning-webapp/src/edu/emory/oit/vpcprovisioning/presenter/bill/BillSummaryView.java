@@ -32,6 +32,7 @@ public interface BillSummaryView extends IsWidget, View {
 		void setAccount(AccountPojo account);
 		
 		public BillSummaryPojo generateBillSummaryForBill(BillPojo bill);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

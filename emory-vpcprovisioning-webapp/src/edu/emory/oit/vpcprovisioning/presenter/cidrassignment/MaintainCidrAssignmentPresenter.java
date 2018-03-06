@@ -11,6 +11,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
@@ -20,7 +21,7 @@ import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
-public class MaintainCidrAssignmentPresenter implements MaintainCidrAssignmentView.Presenter {
+public class MaintainCidrAssignmentPresenter extends PresenterBase implements MaintainCidrAssignmentView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String assignmentId;

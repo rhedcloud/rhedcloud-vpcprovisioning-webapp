@@ -29,6 +29,7 @@ public interface ListElasticIpView extends IsWidget, View {
 		 * Delete the current Vpc or cancel the creation of a Vpc.
 		 */
 		void deleteElasticIp(ElasticIpPojo vpcp);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

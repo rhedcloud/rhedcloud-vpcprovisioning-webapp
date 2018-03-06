@@ -27,6 +27,7 @@ public interface ListCidrView extends IsWidget, View {
 		public CidrQueryFilterPojo getFilter();
 		public ClientFactory getClientFactory();
 		void deleteCidrSummary(CidrSummaryPojo cidrSummary);
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

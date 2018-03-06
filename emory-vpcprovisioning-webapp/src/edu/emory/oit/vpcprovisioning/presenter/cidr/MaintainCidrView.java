@@ -34,6 +34,7 @@ public interface MaintainCidrView extends Editor<CidrPojo>, IsWidget, View {
 		public boolean isValidBits(String value);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
+		public void logMessageOnServer(final String message);
 	}
 
 	/**

@@ -159,6 +159,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
+	private static final String SERVICE_NOW_SERVICE_NAME = "ServiceNowRequestService";
 	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
 	private static final String AWS_PEOPLE_SOFT_SERVICE_NAME = "AWSPeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
@@ -183,6 +184,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool cidrProducerPool = null;
 	private ProducerPool authzProducerPool = null;
 	private ProducerPool firewallProducerPool = null;
+	private ProducerPool serviceNowProducerPool = null;
 	private Object lock = new Object();
 	static SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -286,6 +288,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					AUTHZ_SERVICE_NAME);
 			firewallProducerPool = (ProducerPool) getAppConfig().getObject(
 					FIREWALL_SERVICE_NAME);
+			serviceNowProducerPool = (ProducerPool) getAppConfig().getObject(
+					SERVICE_NOW_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			
 //			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
@@ -1711,6 +1715,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 	private RequestService getFirewallRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) firewallProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
+	private RequestService getServiceNowRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) serviceNowProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
@@ -4043,12 +4053,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public FirewallRulePojo createFirewallRule(FirewallRulePojo rule) throws RpcException {
 		// TODO Auto-generated method stub
+		
+		// this will be a request sent to service now
 		return null;
 	}
 
 	@Override
 	public FirewallRulePojo updateFirewallRule(FirewallRulePojo rule) throws RpcException {
 		// TODO Auto-generated method stub
+		
+		// this will be a request sent to service now
 		return null;
 	}
 
@@ -4056,5 +4070,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteFirewallRule(FirewallRulePojo rule) throws RpcException {
 		// TODO Auto-generated method stub
 		
+		// this will be a request to service now
+	}
+
+	@Override
+	public void logMessage(String message) throws RpcException {
+		info("[FromClient] " + message);
 	}
 }

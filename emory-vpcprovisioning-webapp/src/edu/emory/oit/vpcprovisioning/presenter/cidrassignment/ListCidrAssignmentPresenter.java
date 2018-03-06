@@ -20,7 +20,7 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class ListCidrAssignmentPresenter implements ListCidrAssignmentView.Presenter {
+public class ListCidrAssignmentPresenter extends PresenterBase implements ListCidrAssignmentView.Presenter {
 	/**
 	 * The delay in milliseconds between calls to refresh the case record list.
 	 */
