@@ -3,12 +3,15 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -21,8 +24,10 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -37,6 +42,7 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class DesktopListFirewallRule extends ViewImplBase implements ListFirewallRuleView {
 	Presenter presenter;
@@ -48,6 +54,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	private SingleSelectionModel<FirewallRuleExceptionRequestPojo> fwer_selectionModel;
 	List<FirewallRuleExceptionRequestPojo> fwerRuleList = new java.util.ArrayList<FirewallRuleExceptionRequestPojo>();
 
+	List<VpcPojo> vpcs;
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
 
@@ -61,6 +68,22 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@UiField VerticalPanel firewallRuleListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField TabLayoutPanel firewallRuleTabPanel;
+
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
+
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		// TODO: filter list by account id typed in accountIdTB
+		presenter.filterByVPCId(filterTB.getText());
+	}
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		// clear filter
+		filterTB.setText("");
+		presenter.clearFilter();
+	}
 
 	private static DesktopListFirewallRuleUiBinder uiBinder = GWT.create(DesktopListFirewallRuleUiBinder.class);
 
@@ -285,6 +308,49 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		<!ELEMENT Tag (Member+)>
 		<!ELEMENT FirewallRuleQuerySpecification (Tag?)>
 		
+<FirewallRule>
+			<Name>In AWS Web Traffic Allow</Name>
+			<ProfileSetting>
+				<Group>
+					<Member>Alert-Only</Member>
+				</Group>
+			</ProfileSetting>
+			<To>
+				<Member>trust</Member>
+			</To>
+			<From>
+				<Member>untrust</Member>
+			</From>
+			<Source>
+				<Member>any</Member>
+			</Source>
+			<Destination>
+				<Member>AWS10.64.63.52</Member>
+				<Member>AWS10.64.63.85</Member>
+			</Destination>
+			<SourceUser>
+				<Member>any</Member>
+			</SourceUser>
+			<Category>
+				<Member>any</Member>
+			</Category>
+			<Application>
+				<Member>any</Member>
+			</Application>
+			<Service>
+				<Member>HTTP</Member>
+			</Service>
+			<HipProfiles>
+				<Member>any</Member>
+			</HipProfiles>
+			<Action>allow</Action>
+			<Description>CDT: 17Jan2018 MOD: 17Jan2018 OWN: SWHEAT RFTASK64516 JST: Testing AWS
+				inbound NAT Web</Description>
+			<LogSetting>All to Syslog</LogSetting>
+			<Tag>
+				<Member>vpc-5ac8ce22</Member>
+			</Tag>
+		</FirewallRule>		
 		 */
 
 		Column<FirewallRulePojo, String> nameColumn = 
@@ -304,23 +370,6 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		firewallRuleListTable.addColumn(nameColumn, "Name");
 		
-		Column<FirewallRulePojo, String> actionColumn = 
-				new Column<FirewallRulePojo, String> (new TextCell()) {
-				
-				@Override
-				public String getValue(FirewallRulePojo object) {
-					return object.getAction();
-				}
-		};
-		actionColumn.setSortable(true);
-		actionColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(actionColumn, new Comparator<FirewallRulePojo>() {
-			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
-				return o1.getAction().compareTo(o2.getAction());
-			}
-		});
-		firewallRuleListTable.addColumn(actionColumn, "Action");
-
 		Column<FirewallRulePojo, String> descColumn = 
 				new Column<FirewallRulePojo, String> (new TextCell()) {
 				
@@ -337,6 +386,90 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			}
 		});
 		firewallRuleListTable.addColumn(descColumn, "Description");
+
+		Column<FirewallRulePojo, SafeHtml> destinationColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getDestinations()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		destinationColumn.setSortable(true);
+		destinationColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(destinationColumn, new Comparator<FirewallRulePojo>() {
+			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
+				return o1.getAction().compareTo(o2.getAction());
+			}
+		});
+		firewallRuleListTable.addColumn(destinationColumn, "Destination(s)");
+
+		Column<FirewallRulePojo, SafeHtml> vpcColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getTags()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		vpcColumn.setSortable(true);
+		vpcColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(vpcColumn, new Comparator<FirewallRulePojo>() {
+			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
+				return o1.getAction().compareTo(o2.getAction());
+			}
+		});
+		firewallRuleListTable.addColumn(vpcColumn, "VPC ID");
+
+		Column<FirewallRulePojo, SafeHtml> serviceColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getServices()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		serviceColumn.setSortable(true);
+		serviceColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(serviceColumn, new Comparator<FirewallRulePojo>() {
+			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
+				return o1.getAction().compareTo(o2.getAction());
+			}
+		});
+		firewallRuleListTable.addColumn(serviceColumn, "Service(s)");
 
 //		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
 //			GWT.log(userLoggedIn.getEppn() + " is an admin");
@@ -537,5 +670,24 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@Override
 	public void clearFirewallRuleExceptionRequestList() {
 		firewallRuleRequestListTable.setVisibleRangeAndClearData(firewallRuleRequestListTable.getVisibleRange(), true);
+	}
+
+//	@Override
+//	public void setVpcItems(List<VpcPojo> vpcs) {
+//		this.vpcs = vpcs;
+//		vpcLB.clear();
+//		if (vpcs != null) {
+//			for (int i=0; i<vpcs.size(); i++) {
+//				VpcPojo vpc = vpcs.get(i);
+//				vpcLB.addItem(vpc.getAccountId() + "/" + 
+//						vpc.getVpcId() + "/" + vpc.getType(), vpc.getVpcId());
+//			}
+//		}
+//	}
+
+	@Override
+	public void initPage() {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter VPC id");
 	}
 }

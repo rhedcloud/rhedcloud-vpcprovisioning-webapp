@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -58,6 +59,22 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	@UiField(provided=true) CellTable<CidrSummaryPojo> cidrListTable = new CellTable<CidrSummaryPojo>();
 	@UiField VerticalPanel cidrListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
+
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
+
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		// TODO: filter list by account id typed in accountIdTB
+		presenter.filterByVPCId(filterTB.getText());
+	}
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		// clear filter
+		filterTB.setText("");
+		presenter.clearFilter();
+	}
 
 	private static DesktopListCidrUiBinder uiBinder = GWT.create(DesktopListCidrUiBinder.class);
 
@@ -461,11 +478,11 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		cidrListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
 		editRowColumn.setFieldUpdater(new FieldUpdater<CidrSummaryPojo, String>() {
 			@Override
-			public void update(int index, final CidrSummaryPojo cidr,
+			public void update(int index, final CidrSummaryPojo cidrSummary,
 					String value) {
 				
 				// fire MAINTAIN_CIDR event passing the cidr to be maintained
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR, cidr);
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR, cidrSummary);
 			}
 		});
 	}
@@ -543,5 +560,11 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	@Override
 	public HasClickHandlers getOkayWidget() {
 		return null;
+	}
+
+	@Override
+	public void initPage() {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter VPC id");
 	}
 }

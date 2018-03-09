@@ -13,9 +13,12 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.CidrListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleRequestListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestQueryFilterPojo;
@@ -24,6 +27,7 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListFirewallRulePresenter extends PresenterBase implements ListFirewallRuleView.Presenter {
 	private static final Logger log = Logger.getLogger(ListFirewallRulePresenter.class.getName());
@@ -113,6 +117,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				getView().setUserLoggedIn(userLoggedIn);
 				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
 				setFirewallRuleExceptionRequestList(Collections.<FirewallRuleExceptionRequestPojo> emptyList());
+				getView().initPage();
 
 				// Request the firewallRule list now.
 				refreshFirewallRuleList(userLoggedIn);
@@ -254,5 +259,37 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	@Override
 	public FirewallRuleExceptionRequestQueryFilterPojo getFirewallRuleExceptionRequestFilter() {
 		return fwer_filter;
+	}
+
+	@Override
+	public void filterByVPCId(String vpcId) {
+		getView().showPleaseWaitDialog();
+		fw_filter = new FirewallRuleQueryFilterPojo();
+		fw_filter.getTags().add(vpcId);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void clearFilter() {
+		getView().showPleaseWaitDialog();
+		fw_filter = null;
+		this.getUserAndRefreshList();
+	}
+
+	private void getUserAndRefreshList() {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				refreshFirewallRuleList(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 }

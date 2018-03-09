@@ -119,4 +119,10 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 		return null;
 	}
 
+	@Override
+	public void initPage() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

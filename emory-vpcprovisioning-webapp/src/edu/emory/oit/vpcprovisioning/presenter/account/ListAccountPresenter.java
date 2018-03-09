@@ -119,6 +119,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
+				getView().initPage();
 				setAccountList(Collections.<AccountPojo> emptyList());
 
 				// Request the account list now.
@@ -243,5 +244,36 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 			};
 			VpcProvisioningService.Util.getInstance().deleteAccount(account, callback);
 		}
+	}
+
+	@Override
+	public void filterByAccountId(String accountId) {
+		getView().showPleaseWaitDialog();
+		filter = new AccountQueryFilterPojo();
+		filter.setAccountId(accountId);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void clearFilter() {
+		getView().showPleaseWaitDialog();
+		filter = null;
+		this.getUserAndRefreshList();
+	}
+	private void getUserAndRefreshList() {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				refreshList(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 }

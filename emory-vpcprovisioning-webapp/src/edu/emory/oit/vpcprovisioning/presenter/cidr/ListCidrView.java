@@ -28,6 +28,9 @@ public interface ListCidrView extends IsWidget, View {
 		public ClientFactory getClientFactory();
 		void deleteCidrSummary(CidrSummaryPojo cidrSummary);
 		public void logMessageOnServer(final String message);
+		
+		void filterByVPCId(String vpcId);
+		void clearFilter();
 	}
 
 	/**
@@ -52,4 +55,5 @@ public interface ListCidrView extends IsWidget, View {
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
 	void removeCidrSummaryFromView(CidrSummaryPojo cidrSummary);
+	void initPage();
 }

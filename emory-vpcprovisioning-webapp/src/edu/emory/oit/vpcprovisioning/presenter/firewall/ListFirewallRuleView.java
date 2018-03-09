@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestQueryFil
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListFirewallRuleView extends IsWidget, View {
@@ -37,6 +38,8 @@ public interface ListFirewallRuleView extends IsWidget, View {
 		public void refreshFirewallRuleList(final UserAccountPojo user);
 		public void refreshFirewallRuleExceptionRequestList(final UserAccountPojo user);
 		
+		void filterByVPCId(String vpcId);
+		void clearFilter();
 	}
 
 	/**
@@ -63,6 +66,8 @@ public interface ListFirewallRuleView extends IsWidget, View {
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
 	void removeFirewallRuleFromView(FirewallRulePojo firewallRule);
+//	void setVpcItems(List<VpcPojo> vpcs);
+	void initPage();
 
 
 }

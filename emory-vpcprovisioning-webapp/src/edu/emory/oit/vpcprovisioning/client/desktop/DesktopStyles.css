@@ -879,6 +879,7 @@ a:active {
 	padding-left: 10px;
 	padding-right: 10px;
 	border-radius: 5px;
+	width: 100px;
 }
 .actionButton {
 	display: inline-block;

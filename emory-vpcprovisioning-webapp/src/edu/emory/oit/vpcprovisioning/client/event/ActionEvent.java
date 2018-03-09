@@ -188,6 +188,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	
 	public ActionEvent(CidrSummaryPojo cidrSummary) {
 		this.cidrSummary = cidrSummary;
+		if (cidrSummary.getCidr() != null) {
+			this.cidr = cidrSummary.getCidr();
+		}
+		else {
+			this.cidr = cidrSummary.getAssignmentSummary().getCidrAssignment().getCidr();
+		}
 	}
 	
 	public ActionEvent(CidrPojo cidr) {

@@ -30,6 +30,9 @@ public interface ListAccountView extends IsWidget, View {
 		 */
 		void deleteAccount(AccountPojo account);
 		public void logMessageOnServer(final String message);
+		
+		void filterByAccountId(String accountId);
+		void clearFilter();
 	}
 
 	/**
@@ -54,4 +57,5 @@ public interface ListAccountView extends IsWidget, View {
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
 	void removeAccountFromView(AccountPojo account);
+	void initPage();
 }

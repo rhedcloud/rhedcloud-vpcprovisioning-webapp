@@ -22,12 +22,12 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -41,7 +41,6 @@ import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
-import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListAccount extends ViewImplBase implements ListAccountView {
@@ -59,6 +58,10 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel accountListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
+
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox accountIdTB;
 
 	private static DesktopListAccountUiBinder uiBinder = GWT.create(DesktopListAccountUiBinder.class);
 
@@ -104,6 +107,17 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		}, ClickEvent.getType());
 	}
 
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		// filter list by account id typed in accountIdTB
+		presenter.filterByAccountId(accountIdTB.getText());
+	}
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		// clear filter
+		accountIdTB.setText("");
+		presenter.clearFilter();
+	}
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
@@ -547,5 +561,11 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	@Override
 	public HasClickHandlers getOkayWidget() {
 		return null;
+	}
+
+	@Override
+	public void initPage() {
+		accountIdTB.setText("");
+		accountIdTB.getElement().setPropertyString("placeholder", "enter account id");
 	}
 }

@@ -23,6 +23,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListCidrPresenter extends PresenterBase implements ListCidrView.Presenter {
 	private static final Logger log = Logger.getLogger(ListCidrPresenter.class.getName());
@@ -42,6 +43,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 	private EventBus eventBus;
 	
 	CidrQueryFilterPojo filter;
+	List<CidrSummaryPojo> cidrSummaryList = new java.util.ArrayList<CidrSummaryPojo>();
 
 	/**
 	 * The refresh timer used to periodically refresh the CIDR list.
@@ -118,6 +120,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
+				getView().initPage();
 
 				setCidrSummaryList(Collections.<CidrSummaryPojo> emptyList());
 
@@ -173,6 +176,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 	 * Set the list of CIDRs.
 	 */
 	private void setCidrSummaryList(List<CidrSummaryPojo> cidrSummaries) {
+		this.cidrSummaryList = cidrSummaries;
 		getView().setCidrSummaries(cidrSummaries);
 		eventBus.fireEventFromSource(new CidrListUpdateEvent(cidrSummaries), this);
 	}
@@ -283,5 +287,47 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 			
 		};
 		VpcProvisioningService.Util.getInstance().getCidrAssignmentStatusForCidr(cidrSummary.getCidr(), isAssignedCB);
+	}
+
+	@Override
+	public void filterByVPCId(String vpcId) {
+		getView().showPleaseWaitDialog();
+		List<CidrSummaryPojo> filteredList = new java.util.ArrayList<CidrSummaryPojo>();
+		for (CidrSummaryPojo pojo : this.cidrSummaryList) {
+			if (pojo.getAssignmentSummary() != null) {
+				VpcPojo vpc = pojo.getAssignmentSummary().getVpc();
+				if (vpc.getVpcId().equalsIgnoreCase(vpcId)) {
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getView().setCidrSummaries(filteredList);
+		eventBus.fireEventFromSource(new CidrListUpdateEvent(filteredList), this);
+        getView().hidePleaseWaitPanel();
+        getView().hidePleaseWaitDialog();
+	}
+
+	@Override
+	public void clearFilter() {
+		getView().showPleaseWaitDialog();
+		filter = null;
+		this.getUserAndRefreshList();
+	}
+
+	private void getUserAndRefreshList() {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				refreshList(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 }
