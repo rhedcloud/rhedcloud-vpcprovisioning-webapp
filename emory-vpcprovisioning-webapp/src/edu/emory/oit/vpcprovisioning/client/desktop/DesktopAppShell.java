@@ -106,11 +106,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		};
 		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 
-		ListAccountView listAccountView = clientFactory.getListAccountView();
-		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
-		accountContentContainer.add(listAccountView);
-		accountContentContainer.add(maintainAccountView);
-		accountContentContainer.setAnimationDuration(500);
+		HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
+		hp2.addStyleName("content");
+		homeContentContainer.setWidget(hp2);
+
+//		ListAccountView listAccountView = clientFactory.getListAccountView();
+//		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
+//		accountContentContainer.add(listAccountView);
+//		accountContentContainer.add(maintainAccountView);
+//		accountContentContainer.setAnimationDuration(500);
 		
 		mainTabPanel.addStyleName("tab-style-content");
 
@@ -144,23 +148,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	/*** FIELDS ***/
 	@UiField VerticalPanel appShellPanel;
-	// for services, notifications and other stuff
-	// temporary, will be a DeckLayoutPanel
 	@UiField VerticalPanel otherFeaturesPanel;
-//	@UiField DeckLayoutPanel otherFeaturesContentContainer;
 	@UiField TabLayoutPanel mainTabPanel;
-//	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
 	@UiField DeckLayoutPanel cidrContentContainer;
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
 	@UiField DeckLayoutPanel elasticIpContentContainer;
-//	@UiField DeckLayoutPanel elasticIpAssignmentContentContainer;
 	@UiField DeckLayoutPanel firewallContentContainer;
+	@UiField DeckLayoutPanel homeContentContainer;
 
-//	@UiField Element titleElem;
-//    @UiField Element subTitleElem;
-//    @UiField Element releaseInfoElem;
 	@UiField Element userNameElem;
 
     PopupPanel productsPopup = new PopupPanel(true);
@@ -169,16 +166,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField Element logoElem;
 	@UiField HorizontalPanel generalInfoPanel;
 	@UiField HorizontalPanel linksPanel;
-//	@UiField Button closeOtherFeaturesButton;
 	@UiField HTMLPanel notificationsHTML;
 	
-	// temporary
-//	@UiHandler ("closeOtherFeaturesButton")
-//	void closeOtherFeaturesButtonClicked(ClickEvent e) {
-//		hideOtherFeaturesPanel();
-//		showMainTabPanel();
-//	}
-
     /**
 	 * A boolean indicating that we have not yet seen the first content widget.
 	 */
@@ -193,6 +182,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstNotificationContentWidget = true;
 	private boolean firstServicesContentWidget = true;
 	private boolean firstNotificationsContentWidget = true;
+	private boolean firstHomeContentWidget = true;
 
 	private void registerEvents() {
 	    Event.sinkEvents(logoElem, Event.ONCLICK);
@@ -341,6 +331,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
 			case 0:
+				HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
+				hp2.addStyleName("content");
+				homeContentContainer.setWidget(hp2);
+				break;
+			case 1:
 				GWT.log("need to get Account Maintenance Content.");
 				firstAccountContentWidget = true;
 				accountContentContainer.clear();
@@ -353,7 +348,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				accountContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
 				break;
-			case 1:
+			case 2:
 				GWT.log("need to get CIDR Maintentance Content.");
 				firstCidrContentWidget = true;
 				cidrContentContainer.clear();
@@ -364,18 +359,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				cidrContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
 				break;
-//			case 2:
-//				GWT.log("need to get CIDR Assignment Maintentance Content.");
-//				firstCidrAssignmentContentWidget = true;
-//				cidrAssignmentContentContainer.clear();
-//				ListCidrAssignmentView listCidrAssignmentView = clientFactory.getListCidrAssignmentView();
-////				MaintainCidrAssignmentView maintainCidrAssignmentView = clientFactory.getMaintainCidrAssignmentView();
-//				cidrAssignmentContentContainer.add(listCidrAssignmentView);
-////				cidrAssignmentContentContainer.add(maintainCidrView);
-//				cidrAssignmentContentContainer.setAnimationDuration(500);
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR_ASSIGNMENT);
-//				break;
-			case 2:
+			case 3:
 				GWT.log("need to get VPC Maintentenance content.");
 				firstVpcContentWidget = true;
 				vpcContentContainer.clear();
@@ -386,7 +370,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
 				break;
-			case 3:
+			case 4:
 				GWT.log("need to get VPCP Maintentenance content.");
 				firstVpcpContentWidget = true;
 				vpcpContentContainer.clear();
@@ -399,7 +383,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
 				break;
-			case 4:
+			case 5:
 				GWT.log("need to get Elastic IP Maintentenance content.");
 				firstElasticIpContentWidget = true;
 				elasticIpContentContainer.clear();
@@ -410,27 +394,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				elasticIpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
 				break;
-//			case 6:
-//				GWT.log("need to get Elastic IP Assignment Maintentenance content.");
-//				firstElasticIpAssignmentContentWidget = true;
-//				elasticIpAssignmentContentContainer.clear();
-//				HTMLPanel hp = new HTMLPanel("<div>Elastic IP Assignment list Maintentenance content here</div>");
-//				hp.addStyleName("content");
-//				elasticIpAssignmentContentContainer.setWidget(hp);
-//				ListElasticIpAssignmentView listEipaView = clientFactory.getListElasticIpAssignmentView();
-//				MaintainElasticIpAssignmentView maintainEipaView = clientFactory.getMaintainElasticIpAssignmentView();
-//				elasticIpAssignmentContentContainer.add(listEipaView);
-//				elasticIpAssignmentContentContainer.add(maintainEipaView);
-//				elasticIpAssignmentContentContainer.setAnimationDuration(500);
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT);
-//				break;
-			case 5:
+			case 6:
 				GWT.log("need to get Firewall Maintentenance content.");
 				firstFirewallContentWidget = true;
 				firewallContentContainer.clear();
-//				HTMLPanel hp2 = new HTMLPanel("<div>Firewall list Maintentenance content here</div>");
-//				hp2.addStyleName("content");
-//				firewallContentContainer.setWidget(hp2);
 				ListFirewallRuleView listFwView = clientFactory.getListFirewallRuleView();
 //				MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
 				firewallContentContainer.add(listFwView);
@@ -443,7 +410,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void setWidget(IsWidget w) {
-		// TODO may need to find a better way to do this...
 		if (w instanceof ListAccountPresenter || 
 			w instanceof MaintainAccountPresenter ||
 			w instanceof BillSummaryPresenter) {
@@ -466,22 +432,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
-
-//		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
-//			boolean isRegisteringVpc = false;
-//			if (w instanceof MaintainCidrAssignmentPresenter) {
-//				isRegisteringVpc = ((MaintainCidrAssignmentPresenter) w).isRegisteringVpc();
-//			}
-//			if (!isRegisteringVpc) {
-//				cidrAssignmentContentContainer.setWidget(w);
-//				// Do not animate the first time we show a widget.
-//				if (firstCidrAssignmentContentWidget) {
-//					firstCidrAssignmentContentWidget = false;
-//					cidrAssignmentContentContainer.animate(0);
-//				}
-//			}
-//			return;
-//		}
 
 		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
 				|| w instanceof RegisterVpcPresenter
@@ -527,7 +477,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-		// TODO: MaintainNotificationPresenter
 		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
 			GWT.log("It's the notifications presenter...");
 			otherFeaturesPanel.clear();
@@ -547,6 +496,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //			}
 			return;
 		}
+		
+		// if we get here, it's the home tab, just set the widget to what's passed in for now
+		homeContentContainer.setWidget(w);
+		// Do not animate the first time we show a widget.
+		if (firstHomeContentWidget) {
+			firstHomeContentWidget = false;
+			homeContentContainer.animate(0);
+		}
+		
 	}
 
 	@Override

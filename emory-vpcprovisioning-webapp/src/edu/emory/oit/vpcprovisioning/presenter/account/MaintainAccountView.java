@@ -11,8 +11,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View {
@@ -41,6 +41,8 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public boolean didConfirmSpeedType();
 		public SpeedChartPojo getSpeedType();
 		public void logMessageOnServer(final String message);
+		public void setDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getDirectoryPerson();
 	}
 
 	/**

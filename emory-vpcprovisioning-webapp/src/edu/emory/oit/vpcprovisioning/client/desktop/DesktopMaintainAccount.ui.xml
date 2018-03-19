@@ -109,6 +109,9 @@
 										<g:Button ui:field="addNetIdButton"
 											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
 									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:SuggestBox ui:field="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
+									</g:cell>
 								</g:HorizontalPanel>
 								<g:VerticalPanel spacing="8">
 									<g:Label addStyleNames="{style.heading_label}">Admin Net Ids associated to this AWS Account:</g:Label>

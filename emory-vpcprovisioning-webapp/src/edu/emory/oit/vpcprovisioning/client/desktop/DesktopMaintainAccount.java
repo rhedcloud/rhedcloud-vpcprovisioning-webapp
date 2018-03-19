@@ -11,6 +11,8 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -19,10 +21,14 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
@@ -43,7 +49,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	int removeButtonColumnNum = 1;
 	String speedTypeBeingTyped=null;
 	boolean speedTypeConfirmed = false;
-	
+	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
+
 	@UiField Button billSummaryButton;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
@@ -69,6 +76,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	
 	@UiField HTML accountInfoHTML;
 	@UiField HTML speedTypeHTML;
+
+	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -301,7 +310,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				final String trimmedEmail = email.trim().toLowerCase();
 				final String trimmedEmailType = type.trim().toLowerCase();
 				EmailPojo emailPojo = new EmailPojo();
-				emailPojo.setEmail(trimmedEmail);
+				emailPojo.setEmailAddress(trimmedEmail);
 				emailPojo.setType(trimmedEmailType);
 				if (presenter.getAccount().containsEmail(emailPojo)) {
 					showStatus(addEmailButton, "That e-mail is already in the list, please enter a unique e-mail address.");
@@ -322,7 +331,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	
 	private void addEmailToEmailPanel(final EmailPojo email) {
 		final int numRows = emailTable.getRowCount();
-		final Label emailLabel = new Label(email.getEmail() + "/" + email.getType());
+		final Label emailLabel = new Label(email.getEmailAddress() + "/" + email.getType());
 		emailLabel.addStyleName("emailLabel");
 		final Button removeEmailButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
@@ -404,7 +413,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 		addEmailTF.getElement().setPropertyString("placeholder", "enter e-mail");
 		addEmailTypeLB.getElement().setPropertyString("placeholder", "select e-mail type");
-		
+
+		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
+
 		// populate fields if appropriate
 		if (presenter.getAccount() != null) {
 			accountIdTB.setText(presenter.getAccount().getAccountId());
@@ -418,10 +429,43 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			speedTypeTB.setText(presenter.getAccount().getSpeedType());
 			presenter.setSpeedChartStatusForKey(presenter.getAccount().getSpeedType(), speedTypeHTML, false);
 		}
+		
+		registerHandlers();
+		
 		// populate associated emails if appropriate
 		initializeEmailPanel();
+		
 		// populate admin net id fields if appropriate
 		initializeNetIdPanel();
+	}
+	
+	private void registerHandlers() {
+		directoryLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				final String suggestion = event.getSelectedItem().getDisplayString();
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
+//				AsyncCallback<DirectoryPersonQueryResultPojo> callback = new AsyncCallback<DirectoryPersonQueryResultPojo>() {
+//					@Override
+//					public void onFailure(Throwable caught) {
+//					}
+//
+//					@Override
+//					public void onSuccess(DirectoryPersonQueryResultPojo result) {
+//						if (result != null) {
+//							GWT.log("directoryLookupSB: got a directory person back for: '" + suggestion + "'");
+//						}
+//						else {
+//							GWT.log("directoryLookupSB: no directory person found for: '" + suggestion + "'");
+//						}
+//					}
+//				};
+//				DirectoryPersonQueryFilterPojo filter = new DirectoryPersonQueryFilterPojo();
+//				filter.setSearchString(suggestion);
+//				VpcProvisioningService.Util.getInstance().getDirectoryPersonsForFilter(filter, callback);
+			}
+		});
 	}
 
 	@Override

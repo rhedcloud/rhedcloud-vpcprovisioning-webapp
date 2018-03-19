@@ -374,11 +374,11 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				if (object.getEmailList().size() > 0) {
 					for (EmailPojo email : object.getEmailList()) {
 						if (cntr == object.getEmailList().size()) {
-							emails.append(email.getEmail() + "/" + email.getType());
+							emails.append(email.getEmailAddress() + "/" + email.getType());
 						}
 						else {
 							cntr++;
-							emails.append(email.getEmail() + "/" + email.getType() + "</br>");
+							emails.append(email.getEmailAddress() + "/" + email.getType() + "</br>");
 						}
 					}
 					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(emails.toString());

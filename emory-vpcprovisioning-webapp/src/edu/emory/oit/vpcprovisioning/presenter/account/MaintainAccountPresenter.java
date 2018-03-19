@@ -18,6 +18,9 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
@@ -32,6 +35,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	private String awsBillingManagementURL = "Cannot retrieve AWS Billing Management URL";
 	private SpeedChartPojo speedType;
 	private UserAccountPojo userLoggedIn;
+	private DirectoryPersonPojo directoryPerson;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -434,4 +438,39 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	public SpeedChartPojo getSpeedType() {
 		return speedType;
 	}
+
+//	@Override
+//	public void getDirectoryPerson(final String suggestion) {
+//		AsyncCallback<DirectoryPersonQueryResultPojo> callback = new AsyncCallback<DirectoryPersonQueryResultPojo>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//
+//			@Override
+//			public void onSuccess(DirectoryPersonQueryResultPojo result) {
+//				if (result != null) {
+//					GWT.log("directoryLookupSB: got a directory person back for: '" + suggestion + "'");
+//					setDirectoryPerson(result.getResults().get(0));
+//				}
+//				else {
+//					GWT.log("directoryLookupSB: no directory person found for: '" + suggestion + "'");
+//				}
+//			}
+//		};
+//		DirectoryPersonQueryFilterPojo filter = new DirectoryPersonQueryFilterPojo();
+//		filter.setSearchString(suggestion);
+//		VpcProvisioningService.Util.getInstance().getDirectoryPersonsForFilter(filter, callback);
+//	}
+
+	@Override
+	public DirectoryPersonPojo getDirectoryPerson() {
+		return directoryPerson;
+	}
+
+	@Override
+	public void setDirectoryPerson(DirectoryPersonPojo directoryPerson) {
+		GWT.log("[presenter] setting directory person to: " + directoryPerson.toString());
+		this.directoryPerson = directoryPerson;
+	}
+
 }
