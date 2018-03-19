@@ -6,18 +6,14 @@ import com.google.gwt.view.client.ProvidesKey;
 @SuppressWarnings("serial")
 public class ElasticIpPojo extends SharedObject implements IsSerializable, Comparable<ElasticIpPojo> {
 	String elasticIpId;
-	String elasticIp;
-	String allocationId;
-	String instance;
-	String privateIpAddress;
-	String scope;
-	String associationId;
-	String networkInterfaceId;
+	String elasticIpAddress;
+	String associatedIpAddress;
+	ElasticIpPojo baseline;
 
 	public static final ProvidesKey<ElasticIpPojo> KEY_PROVIDER = new ProvidesKey<ElasticIpPojo>() {
 		@Override
 		public Object getKey(ElasticIpPojo item) {
-			return item == null ? null : item.getElasticIp();
+			return item == null ? null : item.getElasticIpId();
 		}
 	};
 	public ElasticIpPojo() {
@@ -38,60 +34,29 @@ public class ElasticIpPojo extends SharedObject implements IsSerializable, Compa
 		this.elasticIpId = elasticIpId;
 	}
 
-	public String getAllocationId() {
-		return allocationId;
+	public String getElasticIpAddress() {
+		return elasticIpAddress;
 	}
 
-	public void setAllocationId(String allocationId) {
-		this.allocationId = allocationId;
+	public void setElasticIpAddress(String elasticIpAddress) {
+		this.elasticIpAddress = elasticIpAddress;
 	}
 
-	public String getInstance() {
-		return instance;
+	public String getAssociatedIpAddress() {
+		return associatedIpAddress;
 	}
 
-	public void setInstance(String instance) {
-		this.instance = instance;
+	public void setAssociatedIpAddress(String associatedIpAddress) {
+		this.associatedIpAddress = associatedIpAddress;
 	}
 
-	public String getPrivateIpAddress() {
-		return privateIpAddress;
+	public ElasticIpPojo getBaseline() {
+		return baseline;
 	}
 
-	public void setPrivateIpAddress(String privateIpAddress) {
-		this.privateIpAddress = privateIpAddress;
+	public void setBaseline(ElasticIpPojo baseline) {
+		this.baseline = baseline;
 	}
 
-	public String getScope() {
-		return scope;
-	}
-
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
-
-	public String getAssociationId() {
-		return associationId;
-	}
-
-	public void setAssociationId(String associationId) {
-		this.associationId = associationId;
-	}
-
-	public String getNetworkInterfaceId() {
-		return networkInterfaceId;
-	}
-
-	public void setNetworkInterfaceId(String networkInterfaceId) {
-		this.networkInterfaceId = networkInterfaceId;
-	}
-
-	public String getElasticIp() {
-		return elasticIp;
-	}
-
-	public void setElasticIp(String elasticIp) {
-		this.elasticIp = elasticIp;
-	}
 
 }

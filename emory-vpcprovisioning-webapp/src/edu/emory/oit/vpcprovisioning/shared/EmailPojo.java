@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class EmailPojo extends SharedObject implements IsSerializable {
 
 	String type;
-	String email;
+	String emailAddress;
 	
 	public EmailPojo() {
 		// TODO Auto-generated constructor stub
@@ -20,12 +20,12 @@ public class EmailPojo extends SharedObject implements IsSerializable {
 		this.type = type;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getEmailAddress() {
+		return emailAddress;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setEmailAddress(String email) {
+		this.emailAddress = email;
 	}
 
 }

@@ -19,6 +19,7 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -105,7 +106,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setElasticIpList(Collections.<ElasticIpPojo> emptyList());
+				setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);
@@ -161,7 +162,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	}
 
 	@Override
-	public void deleteElasticIp(ElasticIpPojo vpcp) {
+	public void deleteElasticIpSummary(ElasticIpSummaryPojo summary) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -186,11 +187,11 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			public void onSuccess(ElasticIpQueryResultPojo result) {
 				if (result != null && result.getResults() != null) {
 					GWT.log("Got " + result.getResults().size() + " ElasticIPs for " + result.getFilterUsed());
-					setElasticIpList(result.getResults());
+					setElasticIpSummaryList(result.getResults());
 				}
 				else {
 					GWT.log("null elastic ip results returned.");
-					setElasticIpList(Collections.<ElasticIpPojo> emptyList());
+					setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
 				}
 				// apply authorization mask
 				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
@@ -211,8 +212,8 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		VpcProvisioningService.Util.getInstance().getElasticIpsForFilter(filter, callback);
 	}
 
-	private void setElasticIpList(List<ElasticIpPojo> list) {
-		getView().setElasticIps(list);
+	private void setElasticIpSummaryList(List<ElasticIpSummaryPojo> list) {
+		getView().setElasticIpSummaries(list);
 		eventBus.fireEventFromSource(new ElasticIpListUpdateEvent(list), this);
 	}
 

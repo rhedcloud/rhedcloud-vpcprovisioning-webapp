@@ -99,7 +99,7 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 
 	public boolean containsEmail(EmailPojo email) {
 		for (EmailPojo pojo : this.emailList) {
-			if (pojo.getEmail().equalsIgnoreCase(email.getEmail()) && 
+			if (pojo.getEmailAddress().equalsIgnoreCase(email.getEmailAddress()) && 
 				pojo.getType().equalsIgnoreCase(email.getType())) {
 				
 				return true;

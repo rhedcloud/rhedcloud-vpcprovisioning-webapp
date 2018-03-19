@@ -20,7 +20,7 @@ import java.util.List;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 
 /**
  * Event fired when the case record list is updated.
@@ -40,10 +40,10 @@ public class ElasticIpListUpdateEvent extends GwtEvent<ElasticIpListUpdateEvent.
 
   public static final Type<ElasticIpListUpdateEvent.Handler> TYPE = new Type<ElasticIpListUpdateEvent.Handler>();
 
-  private final List<ElasticIpPojo> elasticIps;
+  private final List<ElasticIpSummaryPojo> elasticIpSummaries;
 
-  public ElasticIpListUpdateEvent(List<ElasticIpPojo> elasticIps) {
-    this.elasticIps = elasticIps;
+  public ElasticIpListUpdateEvent(List<ElasticIpSummaryPojo> summaries) {
+    this.elasticIpSummaries = summaries;
   }
 
   @Override
@@ -51,8 +51,8 @@ public class ElasticIpListUpdateEvent extends GwtEvent<ElasticIpListUpdateEvent.
     return TYPE;
   }
 
-  public List<ElasticIpPojo> getElasticIps() {
-    return this.elasticIps;
+  public List<ElasticIpSummaryPojo> getElasticIps() {
+    return this.elasticIpSummaries;
   }
 
   @Override

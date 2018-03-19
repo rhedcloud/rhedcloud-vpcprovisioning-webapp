@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @SuppressWarnings("serial")
 public class ElasticIpQueryResultPojo extends SharedObject implements IsSerializable {
 	ElasticIpQueryFilterPojo filterUsed;
-	List<ElasticIpPojo> results;
+	List<ElasticIpSummaryPojo> results;
 
 	public ElasticIpQueryResultPojo() {
 		// TODO Auto-generated constructor stub
@@ -21,11 +21,11 @@ public class ElasticIpQueryResultPojo extends SharedObject implements IsSerializ
 		this.filterUsed = filterUsed;
 	}
 
-	public List<ElasticIpPojo> getResults() {
+	public List<ElasticIpSummaryPojo> getResults() {
 		return results;
 	}
 
-	public void setResults(List<ElasticIpPojo> results) {
+	public void setResults(List<ElasticIpSummaryPojo> results) {
 		this.results = results;
 	}
 

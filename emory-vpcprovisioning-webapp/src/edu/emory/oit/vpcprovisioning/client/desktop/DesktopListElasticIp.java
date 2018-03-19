@@ -24,7 +24,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -34,16 +33,16 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
-import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpView {
 	Presenter presenter;
-	private ListDataProvider<ElasticIpPojo> dataProvider = new ListDataProvider<ElasticIpPojo>();
-	private SingleSelectionModel<ElasticIpPojo> selectionModel;
-	List<ElasticIpPojo> elasticIpList = new java.util.ArrayList<ElasticIpPojo>();
+	private ListDataProvider<ElasticIpSummaryPojo> dataProvider = new ListDataProvider<ElasticIpSummaryPojo>();
+	private SingleSelectionModel<ElasticIpSummaryPojo> selectionModel;
+	List<ElasticIpSummaryPojo> elasticIpList = new java.util.ArrayList<ElasticIpSummaryPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
 
@@ -51,7 +50,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	@UiField SimplePager elasticIpListPager;
 	@UiField Button allocateAddressButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<ElasticIpPojo> elasticIpListTable = new CellTable<ElasticIpPojo>();
+	@UiField(provided=true) CellTable<ElasticIpSummaryPojo> elasticIpListTable = new CellTable<ElasticIpSummaryPojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 
 	private static DesktopListElasticIpUiBinder uiBinder = GWT.create(DesktopListElasticIpUiBinder.class);
@@ -82,7 +81,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				ElasticIpPojo m = selectionModel.getSelectedObject();
+				ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					showMessageToUser("Will release address");
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
@@ -115,7 +114,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				ElasticIpPojo m = selectionModel.getSelectedObject();
+				ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					showMessageToUser("Will associate address");
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
@@ -171,7 +170,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	}
 
 	@Override
-	public void setElasticIps(List<ElasticIpPojo> elasticIps) {
+	public void setElasticIpSummaries(List<ElasticIpSummaryPojo> elasticIps) {
 		this.elasticIpList = elasticIps;
 		this.initializeElasticIpListTable();
 	    elasticIpListPager.setDisplay(elasticIpListTable);
@@ -185,25 +184,25 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		elasticIpListTable.setVisibleRange(0, 5);
 		
 		// create dataprovider
-		dataProvider = new ListDataProvider<ElasticIpPojo>();
+		dataProvider = new ListDataProvider<ElasticIpSummaryPojo>();
 		dataProvider.addDataDisplay(elasticIpListTable);
 		dataProvider.getList().clear();
 		dataProvider.getList().addAll(this.elasticIpList);
 		
 		selectionModel = 
-	    	new SingleSelectionModel<ElasticIpPojo>(ElasticIpPojo.KEY_PROVIDER);
+	    	new SingleSelectionModel<ElasticIpSummaryPojo>(ElasticIpSummaryPojo.KEY_PROVIDER);
 		elasticIpListTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		ElasticIpPojo m = selectionModel.getSelectedObject();
+	    		ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
 	    		GWT.log("Selected elsticIp is: " + m.getClass().getName());
 	    	}
 	    });
 
-	    ListHandler<ElasticIpPojo> sortHandler = 
-	    	new ListHandler<ElasticIpPojo>(dataProvider.getList());
+	    ListHandler<ElasticIpSummaryPojo> sortHandler = 
+	    	new ListHandler<ElasticIpSummaryPojo>(dataProvider.getList());
 	    elasticIpListTable.addColumnSortHandler(sortHandler);
 
 	    if (elasticIpListTable.getColumnCount() == 0) {
@@ -212,139 +211,106 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		
 		return elasticIpListTable;
 	}
-	private void initElasticIpListTableColumns(ListHandler<ElasticIpPojo> sortHandler) {
-		GWT.log("initializing VPC list table columns...");
+	private void initElasticIpListTableColumns(ListHandler<ElasticIpSummaryPojo> sortHandler) {
+		GWT.log("initializing ElasticIpSummary list table columns...");
+		
 		// Account id column
-		Column<ElasticIpPojo, String> acctIdColumn = 
-			new Column<ElasticIpPojo, String> (new TextCell()) {
+		Column<ElasticIpSummaryPojo, String> elasticIpColumn = 
+			new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 			
 			@Override
-			public String getValue(ElasticIpPojo object) {
-				return object.getElasticIp();
+			public String getValue(ElasticIpSummaryPojo object) {
+				return object.getElasticIp().getElasticIpAddress();
 			}
 		};
-		acctIdColumn.setSortable(true);
-		sortHandler.setComparator(acctIdColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
+		elasticIpColumn.setSortable(true);
+		sortHandler.setComparator(elasticIpColumn, new Comparator<ElasticIpSummaryPojo>() {
+			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
 				return o1.getElasticIp().compareTo(o2.getElasticIp());
 			}
 		});
-		elasticIpListTable.addColumn(acctIdColumn, "Elastic IP");
+		elasticIpListTable.addColumn(elasticIpColumn, "Elastic IP");
 
 		// VPC id column
-		Column<ElasticIpPojo, String> vpcIdColumn = 
-			new Column<ElasticIpPojo, String> (new TextCell()) {
+		Column<ElasticIpSummaryPojo, String> associatedIpColumn = 
+			new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 			
 			@Override
-			public String getValue(ElasticIpPojo object) {
-				return object.getAllocationId();
+			public String getValue(ElasticIpSummaryPojo object) {
+				return object.getElasticIp().getAssociatedIpAddress();
 			}
 		};
-		vpcIdColumn.setSortable(true);
-		sortHandler.setComparator(vpcIdColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
-				return o1.getAllocationId().compareTo(o2.getAllocationId());
+		associatedIpColumn.setSortable(true);
+		sortHandler.setComparator(associatedIpColumn, new Comparator<ElasticIpSummaryPojo>() {
+			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
+				return o1.getElasticIp().getAssociatedIpAddress().compareTo(o2.getElasticIp().getAssociatedIpAddress());
 			}
 		});
-		elasticIpListTable.addColumn(vpcIdColumn, "Allocation ID");
-		
-		// type
-		Column<ElasticIpPojo, String> vpcTypeColumn = 
-			new Column<ElasticIpPojo, String> (new TextCell()) {
-			
-			@Override
-			public String getValue(ElasticIpPojo object) {
-				return object.getInstance();
-			}
-		};
-		vpcTypeColumn.setSortable(true);
-		sortHandler.setComparator(vpcTypeColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
-				return o1.getInstance().compareTo(o2.getInstance());
-			}
-		});
-		elasticIpListTable.addColumn(vpcTypeColumn, "Instance");
-		
-		// compliance class
-		Column<ElasticIpPojo, String> complianceClassColumn = 
-			new Column<ElasticIpPojo, String> (new TextCell()) {
-			
-			@Override
-			public String getValue(ElasticIpPojo object) {
-				return object.getPrivateIpAddress();
-			}
-		};
-		complianceClassColumn.setSortable(true);
-		sortHandler.setComparator(complianceClassColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
-				return o1.getPrivateIpAddress().compareTo(o2.getPrivateIpAddress());
-			}
-		});
-		elasticIpListTable.addColumn(complianceClassColumn, "Private IP");
+		elasticIpListTable.addColumn(associatedIpColumn, "Associated Private IP");
 		
 		// create user
-		Column<ElasticIpPojo, String> createUserColumn = 
-				new Column<ElasticIpPojo, String> (new TextCell()) {
+		Column<ElasticIpSummaryPojo, String> createUserColumn = 
+				new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ElasticIpPojo object) {
+			public String getValue(ElasticIpSummaryPojo object) {
 				return object.getCreateUser();
 			}
 		};
 		createUserColumn.setSortable(true);
-		sortHandler.setComparator(createUserColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
+		sortHandler.setComparator(createUserColumn, new Comparator<ElasticIpSummaryPojo>() {
+			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
 				return o1.getCreateUser().compareTo(o2.getCreateUser());
 			}
 		});
 		elasticIpListTable.addColumn(createUserColumn, "Create User");
 		
 		// create time
-		Column<ElasticIpPojo, String> createTimeColumn = 
-				new Column<ElasticIpPojo, String> (new TextCell()) {
+		Column<ElasticIpSummaryPojo, String> createTimeColumn = 
+				new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ElasticIpPojo object) {
+			public String getValue(ElasticIpSummaryPojo object) {
 				return dateFormat.format(object.getCreateTime());
 			}
 		};
 		createTimeColumn.setSortable(true);
-		sortHandler.setComparator(createTimeColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
+		sortHandler.setComparator(createTimeColumn, new Comparator<ElasticIpSummaryPojo>() {
+			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
 				return o1.getCreateTime().compareTo(o2.getCreateTime());
 			}
 		});
 		elasticIpListTable.addColumn(createTimeColumn, "Create Time");
 
 		// last update user
-		Column<ElasticIpPojo, String> lastUpdateUserColumn = 
-				new Column<ElasticIpPojo, String> (new TextCell()) {
+		Column<ElasticIpSummaryPojo, String> lastUpdateUserColumn = 
+				new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ElasticIpPojo object) {
+			public String getValue(ElasticIpSummaryPojo object) {
 				return object.getUpdateUser();
 			}
 		};
 		lastUpdateUserColumn.setSortable(true);
-		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
+		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<ElasticIpSummaryPojo>() {
+			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
 				return o1.getUpdateUser().compareTo(o2.getUpdateUser());
 			}
 		});
 		elasticIpListTable.addColumn(lastUpdateUserColumn, "Update User");
 		
 		// update time
-		Column<ElasticIpPojo, String> updateTimeColumn = 
-				new Column<ElasticIpPojo, String> (new TextCell()) {
+		Column<ElasticIpSummaryPojo, String> updateTimeColumn = 
+				new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ElasticIpPojo object) {
+			public String getValue(ElasticIpSummaryPojo object) {
 				return dateFormat.format(object.getUpdateTime());
 			}
 		};
 		updateTimeColumn.setSortable(true);
-		sortHandler.setComparator(updateTimeColumn, new Comparator<ElasticIpPojo>() {
-			public int compare(ElasticIpPojo o1, ElasticIpPojo o2) {
+		sortHandler.setComparator(updateTimeColumn, new Comparator<ElasticIpSummaryPojo>() {
+			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
 				return o1.getUpdateTime().compareTo(o2.getUpdateTime());
 			}
 		});
@@ -353,10 +319,10 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
 			GWT.log(userLoggedIn.getEppn() + " is an admin");
 			// delete row column
-			Column<ElasticIpPojo, String> deleteRowColumn = new Column<ElasticIpPojo, String>(
+			Column<ElasticIpSummaryPojo, String> deleteRowColumn = new Column<ElasticIpSummaryPojo, String>(
 					new ButtonCell()) {
 				@Override
-				public String getValue(ElasticIpPojo object) {
+				public String getValue(ElasticIpSummaryPojo object) {
 					return "Delete";
 				}
 			};
@@ -364,9 +330,9 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 			elasticIpListTable.addColumn(deleteRowColumn, "");
 			elasticIpListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
 			deleteRowColumn
-			.setFieldUpdater(new FieldUpdater<ElasticIpPojo, String>() {
+			.setFieldUpdater(new FieldUpdater<ElasticIpSummaryPojo, String>() {
 				@Override
-				public void update(int index, final ElasticIpPojo vpc,
+				public void update(int index, final ElasticIpSummaryPojo vpc,
 						String value) {
 	
 //					presenter.deleteVpc(vpc);
@@ -375,10 +341,10 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		}
 
 		// edit row column
-		Column<ElasticIpPojo, String> editRowColumn = new Column<ElasticIpPojo, String>(
+		Column<ElasticIpSummaryPojo, String> editRowColumn = new Column<ElasticIpSummaryPojo, String>(
 				new ButtonCell()) {
 			@Override
-			public String getValue(ElasticIpPojo object) {
+			public String getValue(ElasticIpSummaryPojo object) {
 				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					return "Edit";
@@ -392,9 +358,9 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		editRowColumn.setCellStyleNames("glowing-border");
 		elasticIpListTable.addColumn(editRowColumn, "");
 		elasticIpListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
-		editRowColumn.setFieldUpdater(new FieldUpdater<ElasticIpPojo, String>() {
+		editRowColumn.setFieldUpdater(new FieldUpdater<ElasticIpSummaryPojo, String>() {
 			@Override
-			public void update(int index, final ElasticIpPojo vpc,
+			public void update(int index, final ElasticIpSummaryPojo vpc,
 					String value) {
 				
 				// fire MAINTAIN_VPC event passing the vpc to be maintained
@@ -421,7 +387,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	}
 
 	@Override
-	public void removeElasticIpFromView(ElasticIpPojo elasticIp) {
+	public void removeElasticIpSummaryFromView(ElasticIpSummaryPojo elasticIp) {
 		// TODO Auto-generated method stub
 		
 	}
