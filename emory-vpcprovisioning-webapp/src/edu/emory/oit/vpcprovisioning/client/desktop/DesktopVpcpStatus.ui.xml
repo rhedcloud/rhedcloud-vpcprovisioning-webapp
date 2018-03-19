@@ -120,14 +120,12 @@
 				    	<g:customCell>
 							<g:Label ui:field="complianceClassLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
-				    	<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:Label ui:field="purposeLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
-					</g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
 				    	</g:customCell>
