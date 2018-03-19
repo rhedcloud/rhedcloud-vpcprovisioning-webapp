@@ -53,6 +53,8 @@ public class Constants implements IsSerializable {
 	public static final String MOA_BILL = "Bill.v1_0";
 	public static final String MOA_FIREWALL_RULE_QUERY_SPEC = "FirewallRuleQuerySpecification.v1_0";
 	public static final String MOA_FIREWALL_RULE = "FirewallRule.v1_0";
+	public static final String MOA_DIRECTORY_PERSON_QUERY_SPEC = "DirectoryPersonQuerySpecification.v1_0";
+	public static final String MOA_DIRECTORY_PERSON = "DirectoryPerson.v1_0";
 
     public static final String STYLE_INFO_POPUP_MESSAGE = "informationalPopupMessage";
     
@@ -72,4 +74,6 @@ public class Constants implements IsSerializable {
 	public static final String SPEED_TYPE_VALID = "Y";
 	public static final String SPEED_TYPE_WARNING = "W";
 	public static final String SPEED_TYPE_INVALID = "N";
+	
+	public static final String SUGGESTION_TYPE_DIRECTORY_PERSON_NAME = "DirectoryPerson-Name";
 }

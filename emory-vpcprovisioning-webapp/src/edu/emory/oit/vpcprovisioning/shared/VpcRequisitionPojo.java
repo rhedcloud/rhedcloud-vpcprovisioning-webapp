@@ -15,6 +15,7 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 	String type;
 	String complianceClass;
+	String purpose;
 	boolean notifyAdmins;
 	
 	public VpcRequisitionPojo() {
@@ -91,6 +92,14 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
 	}
 
 }

@@ -65,15 +65,11 @@
 			<!-- hide this one when maintaining -->
 			<g:VerticalPanel ui:field="generateVpcpPanel">
 			<!-- NEEDS these (when generating):
-			<!ELEMENT VirtualPrivateCloudRequisition (AccountId?, 
-				TicketId?, 
-				AuthenticatedRequestorNetId, 
-				AccountOwnerNetId, 
-				FinancialAccountNumber, 
-				CustomerAdminNetId+, 
-				Type, 
-				ComplianceClass, 
-				NotifyAdmins)>
+			<!ELEMENT VirtualPrivateCloudRequisition (
+				AccountId?, TicketId?, AuthenticatedRequestorNetId, 
+				AccountOwnerNetId, FinancialAccountNumber, 
+				CustomerAdminNetId+, Type, ComplianceClass, 
+				SensitiveDataType*, Purpose, NotifyAdmins)>
 			 -->
 			<g:Grid cellSpacing="8">
 				<g:row>
@@ -146,6 +142,15 @@
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
 							ui:field="vpcpReqComplianceClassLB" />
+			    	</g:customCell>
+				</g:row>
+			    	<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="vpcpReqPurposeTA" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>

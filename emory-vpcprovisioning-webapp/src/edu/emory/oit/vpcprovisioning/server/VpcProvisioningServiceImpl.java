@@ -90,11 +90,16 @@ import com.paloaltonetworks.moa.objects.resources.v1_0.SourceUser;
 import com.paloaltonetworks.moa.objects.resources.v1_0.Tag;
 import com.paloaltonetworks.moa.objects.resources.v1_0.To;
 
+import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
+import edu.emory.moa.jmsobjects.identity.v1_0.Role;
+import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
 import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
 import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.Email;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
@@ -120,6 +125,9 @@ import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
@@ -133,12 +141,17 @@ import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.LineItemPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.RolePojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SharedObject;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartCache;
@@ -159,6 +172,8 @@ import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
+	private static final String IDM_SERVICE_NAME = "IDMRequestService";
+	private static final String DIRECTORY_SERVICE_NAME = "DirectoryRequestService";
 	private static final String SERVICE_NOW_SERVICE_NAME = "ServiceNowRequestService";
 	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
 	private static final String AWS_PEOPLE_SOFT_SERVICE_NAME = "AWSPeopleSoftRequestService";
@@ -179,6 +194,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private String configDocPath = null;
 	private String appId = null;
 	private ProducerPool identityServiceProducerPool = null;
+	private ProducerPool idmProducerPool = null;
+	private ProducerPool directoryProducerPool = null;
 	private ProducerPool awsProducerPool = null;
 	private ProducerPool awsPeopleSoftProducerPool = null;
 	private ProducerPool cidrProducerPool = null;
@@ -290,6 +307,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					FIREWALL_SERVICE_NAME);
 			serviceNowProducerPool = (ProducerPool) getAppConfig().getObject(
 					SERVICE_NOW_SERVICE_NAME);
+			directoryProducerPool = (ProducerPool) getAppConfig().getObject(
+					DIRECTORY_SERVICE_NAME);
+			idmProducerPool = (ProducerPool) getAppConfig().getObject(
+					IDM_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			
 //			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
@@ -1006,6 +1027,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
         moa.setAuthenticatedRequestorNetId(pojo.getAuthenticatedRequestorNetId());
         moa.setComplianceClass(pojo.getComplianceClass());
         moa.setNotifyAdmins(this.toStringFromBoolean(pojo.isNotifyAdmins()));
+        moa.setPurpose(pojo.getPurpose());
 
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
@@ -1027,6 +1049,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setAuthenticatedRequestorNetId(moa.getAuthenticatedRequestorNetId());
 		pojo.setComplianceClass(moa.getComplianceClass());
 		pojo.setNotifyAdmins(this.toBooleanFromString(moa.getNotifyAdmins()));
+		pojo.setPurpose(moa.getPurpose());
 		
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
@@ -1049,7 +1072,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
         for (EmailPojo p : pojo.getEmailList()) {
             EmailAddress email = moa.newEmailAddress();
             email.setType(p.getType());
-            email.setEmail(p.getEmail());
+            email.setEmail(p.getEmailAddress());
             moa.addEmailAddress(email);
         }
 
@@ -1087,7 +1110,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		for (EmailAddress email : (List<EmailAddress>) moa.getEmailAddress()) {
 			EmailPojo emp = new EmailPojo();
 			emp.setType(email.getType());
-			emp.setEmail(email.getEmail());
+			emp.setEmailAddress(email.getEmail());
 			pojo.getEmailList().add(emp);
 		}
 		
@@ -1725,6 +1748,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+	private RequestService getDirectoryRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) directoryProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
+	private RequestService getIDMRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) idmProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
 
     private java.util.Date toDateFromDate(org.openeai.moa.objects.resources.Date moa) {
         if (moa == null) {
@@ -2118,7 +2153,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (filter.getEmail() != null) {
 					EmailAddress emailMoa = actionable.newEmailAddress();
 					emailMoa.setType(filter.getEmail().getType());
-					emailMoa.setEmail(filter.getEmail().getEmail());
+					emailMoa.setEmail(filter.getEmail().getEmailAddress());
 					queryObject.setEmailAddress(emailMoa);
 				}
 				queryObject.setAccountOwnerNetId(filter.getAccountOwnerNetId());
@@ -3545,7 +3580,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException {
 		int svcCnt = 0;
@@ -3591,6 +3625,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.awsServicesMap = awsServicesMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException {
 		AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
@@ -3987,10 +4022,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		FirewallRuleQueryResultPojo result = new FirewallRuleQueryResultPojo();
+		
+		// TEMPORARY
 		result.setResults(Collections.<FirewallRulePojo> emptyList());
 		if (true) {
 			return result;
 		}
+		// END TEMPORARY
 		
 		List<FirewallRulePojo> pojos = new java.util.ArrayList<FirewallRulePojo>();
 		try {
@@ -4016,10 +4054,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					this.getFirewallRequestService());
 			for (FirewallRule moa : moas) {
 				FirewallRulePojo pojo = new FirewallRulePojo();
-				FirewallRulePojo baseline = new FirewallRulePojo();
+//				FirewallRulePojo baseline = new FirewallRulePojo();
 				this.populateFirewallRulePojo(moa, pojo);
-				this.populateFirewallRulePojo(moa, baseline);
-				pojo.setBaseline(baseline);
+//				this.populateFirewallRulePojo(moa, baseline);
+//				pojo.setBaseline(baseline);
 				pojos.add(pojo);
 			}
 
@@ -4076,5 +4114,246 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public void logMessage(String message) throws RpcException {
 		info("[FromClient] " + message);
+	}
+
+	private void populateRoleMoa(RolePojo pojo,
+			Role moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	private void populateRolePojo(Role moa,
+			RolePojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
+		
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	private void populateRoleAssignmentMoa(RoleAssignmentPojo pojo,
+			RoleAssignment moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	private void populateRoleAssignmentPojo(RoleAssignment moa,
+			RoleAssignmentPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
+		
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	private void populateDirectoryPersonMoa(DirectoryPersonPojo pojo,
+			DirectoryPerson moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+
+		//DepartmentName?, Email?, Fax?, FirstMiddle?, FullName, Key, LastName?, DirectoryLocation?, 
+		// MailStop?, DirectoryPhone?, SchoolDivision?, StudentPhone?, Suffix?, Title?, Type)>
+		moa.setDepartmentName(pojo.getDepartmentName());
+		if (pojo.getEmail() != null) {
+			Email email = moa.newEmail();
+			email.setType(pojo.getEmail().getType());
+			email.setEmailAddress(pojo.getEmail().getEmailAddress());
+			moa.setEmail(email);
+		}
+		moa.setFax(pojo.getFax());
+		moa.setFirstMiddle(pojo.getFirstMiddle());
+		moa.setFullName(pojo.getFullName());
+		moa.setKey(pojo.getKey());
+		moa.setLastName(pojo.getLastName());
+		moa.setDirectoryLocation(pojo.getDirectoryLocation());
+		moa.setMailStop(pojo.getMailStop());
+		moa.setDirectoryPhone(pojo.getDirectoryPhone());
+		moa.setSchoolDivision(pojo.getSchoolDivision());
+		moa.setStudentPhone(pojo.getStudentPhone());
+		moa.setSuffix(pojo.getSuffix());
+		moa.setTitle(pojo.getTitle());
+		moa.setType(pojo.getType());
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	private void populateDirectoryPersonPojo(DirectoryPerson moa,
+			DirectoryPersonPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
+		//DepartmentName?, Email?, Fax?, FirstMiddle?, FullName, Key, LastName?, DirectoryLocation?, 
+		// MailStop?, DirectoryPhone?, SchoolDivision?, StudentPhone?, Suffix?, Title?, Type)>
+		pojo.setDepartmentName(moa.getDepartmentName());
+		if (moa.getEmail() != null) {
+			EmailPojo emailPojo = new EmailPojo();
+			emailPojo.setType(moa.getEmail().getType());
+			emailPojo.setEmailAddress(moa.getEmail().getEmailAddress());
+			pojo.setEmail(emailPojo);
+		}
+		pojo.setFax(moa.getFax());
+		pojo.setFirstMiddle(moa.getFirstMiddle());
+		pojo.setFullName(moa.getFullName());
+		pojo.setKey(moa.getKey());
+		pojo.setLastName(moa.getLastName());
+		pojo.setDirectoryLocation(moa.getDirectoryLocation());
+		pojo.setMailStop(moa.getMailStop());
+		pojo.setDirectoryPhone(moa.getDirectoryPhone());
+		pojo.setSchoolDivision(moa.getSchoolDivision());
+		pojo.setStudentPhone(moa.getStudentPhone());
+		pojo.setSuffix(moa.getSuffix());
+		pojo.setTitle(moa.getTitle());
+		pojo.setType(moa.getType());
+//		this.setPojoCreateInfo(pojo, moa);
+//		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@Override
+	public DirectoryPersonQueryResultPojo getDirectoryPersonsForFilter(DirectoryPersonQueryFilterPojo filter)
+			throws RpcException {
+
+		DirectoryPersonQueryResultPojo result = new DirectoryPersonQueryResultPojo();
+		List<DirectoryPersonPojo> pojos = new java.util.ArrayList<DirectoryPersonPojo>();
+		try {
+			DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
+			DirectoryPerson actionable = (DirectoryPerson) getObject(Constants.MOA_DIRECTORY_PERSON);
+
+			if (filter != null) {
+				queryObject.setKey(filter.getKey());
+				queryObject.setSearchString(filter.getSearchString());
+				queryObject.setTestRequest(filter.getTestRequest());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getDirectoryPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<DirectoryPerson> moas = actionable.query(queryObject,
+					this.getDirectoryRequestService());
+			if (moas != null) {
+				info("[service layer] got " + moas.size() + " DirectoryPerson objects back from ESB.");
+			}
+			for (DirectoryPerson moa : moas) {
+				DirectoryPersonPojo pojo = new DirectoryPersonPojo();
+//				DirectoryPersonPojo baseline = new DirectoryPersonPojo();
+				this.populateDirectoryPersonPojo(moa, pojo);
+//				this.populateDirectoryPersonPojo(moa, baseline);
+//				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public FullPersonQueryResultPojo getFullPersonsForFilter(FullPersonQueryFilterPojo filter) throws RpcException {
+		FullPersonQueryResultPojo result = new FullPersonQueryResultPojo();
+		List<FullPersonPojo> pojos = new java.util.ArrayList<FullPersonPojo>();
+		try {
+			FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
+			FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
+
+			if (filter != null) {
+				queryObject.setPublicId(filter.getPublicId());
+				queryObject.setNetId(filter.getNetId());
+				queryObject.setEmplId(filter.getEmplId());
+				queryObject.setPrsni(filter.getPrsni());
+				queryObject.setCode(filter.getCode());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getFullPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<FullPerson> moas = actionable.query(queryObject,
+					this.getDirectoryRequestService());
+			if (moas != null) {
+				info("[service layer] got " + moas.size() + " FullPerson objects back from ESB.");
+			}
+			for (FullPerson moa : moas) {
+				FullPersonPojo pojo = new FullPersonPojo();
+//				FullPersonPojo baseline = new FullPersonPojo();
+				this.populateFullPersonPojo(moa, pojo);
+//				this.populateFullPersonPojo(moa, baseline);
+//				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+//			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	private void populateFullPersonPojo(FullPerson moa,
+			FullPersonPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
 	}
 }

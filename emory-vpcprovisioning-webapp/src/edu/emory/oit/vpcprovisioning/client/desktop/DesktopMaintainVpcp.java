@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -79,6 +80,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField CaptionPanel accountCP;
 //	@UiField HTML accountInfoHTML;
 	@UiField Label speedTypeLabel;
+	@UiField TextArea vpcpReqPurposeTA;
 
 	// admins (net ids)
 	@UiField VerticalPanel netIdVP;

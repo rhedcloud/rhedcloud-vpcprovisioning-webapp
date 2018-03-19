@@ -41,6 +41,8 @@ import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
@@ -53,6 +55,8 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
@@ -203,6 +207,12 @@ public interface VpcProvisioningService extends RemoteService {
 	CidrPojo getCidrFromCacheForUser(String eppn);
 	CidrAssignmentPojo storeCidrAssignmentInCacheForUser(String eppn, CidrAssignmentPojo cidrAssignment);
 	CidrAssignmentPojo getCidrAssignmentFromCacheForUser(String eppn);
+	
+	// DirectoryPerson
+	DirectoryPersonQueryResultPojo getDirectoryPersonsForFilter(DirectoryPersonQueryFilterPojo filter) throws RpcException;
+	
+	// FullPerson
+	FullPersonQueryResultPojo getFullPersonsForFilter(FullPersonQueryFilterPojo filter) throws RpcException;
 	
 	HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException;
 

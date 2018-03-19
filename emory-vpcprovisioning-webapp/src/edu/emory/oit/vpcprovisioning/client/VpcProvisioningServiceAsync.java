@@ -39,6 +39,8 @@ import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
@@ -51,6 +53,8 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
@@ -188,4 +192,9 @@ public interface VpcProvisioningServiceAsync {
 	void updateFirewallRule(FirewallRulePojo rule, AsyncCallback<FirewallRulePojo> callback);
 	void deleteFirewallRule(FirewallRulePojo rule, AsyncCallback<Void> callback);
 
+	// DirectoryPerson
+	void getDirectoryPersonsForFilter(DirectoryPersonQueryFilterPojo filter, AsyncCallback<DirectoryPersonQueryResultPojo> callback);
+	
+	// FullPerson
+	void getFullPersonsForFilter(FullPersonQueryFilterPojo filter, AsyncCallback<FullPersonQueryResultPojo> callback);
 }

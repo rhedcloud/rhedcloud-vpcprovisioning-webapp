@@ -56,6 +56,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	@UiField Label vpcTypeLabel;
 	@UiField Label complianceClassLabel;
 	@UiField Label notifyAdminsLabel;
+	@UiField Label purposeLabel;
 	
 	@UiField VerticalPanel netIdVP;
 	@UiField FlexTable netIdTable;
@@ -209,6 +210,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		vpcTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getType());
 		complianceClassLabel.setText(presenter.getVpcp().getVpcRequisition().getComplianceClass());
 		notifyAdminsLabel.setText(Boolean.toString(presenter.getVpcp().getVpcRequisition().isNotifyAdmins()));
+		purposeLabel.setText(presenter.getVpcp().getVpcRequisition().getPurpose());
 		
 		setVpcpProgress();
 		
