@@ -55,6 +55,9 @@ public class Constants implements IsSerializable {
 	public static final String MOA_FIREWALL_RULE = "FirewallRule.v1_0";
 	public static final String MOA_DIRECTORY_PERSON_QUERY_SPEC = "DirectoryPersonQuerySpecification.v1_0";
 	public static final String MOA_DIRECTORY_PERSON = "DirectoryPerson.v1_0";
+	public static final String MOA_ROLE_ASSIGNMENT = "RoleAssignment.v1_0";
+	public static final String MOA_ROLE_ASSIGNMENT_REQUISITION = "RoleAssignmentRequisition.v1_0";
+	public static final String MOA_ROLE_ASSIGNMENT_QUERY = "RoleAssignmentQuerySpecification.v1_0";
 
     public static final String STYLE_INFO_POPUP_MESSAGE = "informationalPopupMessage";
     
@@ -76,4 +79,8 @@ public class Constants implements IsSerializable {
 	public static final String SPEED_TYPE_INVALID = "N";
 	
 	public static final String SUGGESTION_TYPE_DIRECTORY_PERSON_NAME = "DirectoryPerson-Name";
+	
+	public static final String REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER = "AWS_ACCOUNT_NUMBER";
+	public static final String REPLACEMENT_VAR_EMORY_ROLE_NAME = "EMORY_ROLE_NAME";
+	public static final String REPLACEMENT_VAR_PUBLIC_ID = "PUBLIC_ID";
 }

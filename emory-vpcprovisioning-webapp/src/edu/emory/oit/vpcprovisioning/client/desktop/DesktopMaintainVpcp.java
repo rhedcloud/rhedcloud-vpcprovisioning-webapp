@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -30,12 +31,15 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 
@@ -51,6 +55,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	int netIdColumnNum = 0;
 	int removeButtonColumnNum = 1;
 	String speedTypeBeingTyped=null;
+	boolean speedTypeConfirmed = false;
 
 	private static DesktopMaintainVpcpUiBinder uiBinder = GWT.create(DesktopMaintainVpcpUiBinder.class);
 
@@ -79,7 +84,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField ListBox accountLB;
 	@UiField CaptionPanel accountCP;
 //	@UiField HTML accountInfoHTML;
-	@UiField Label speedTypeLabel;
+	@UiField HTML speedTypeHTML;
 	@UiField TextArea vpcpReqPurposeTA;
 
 	// admins (net ids)
@@ -91,7 +96,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiHandler ("vpcpReqSpeedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
 		String acct = vpcpReqSpeedTypeTB.getText();
-		presenter.setSpeedChartStatusForKeyOnWidget(acct, vpcpReqSpeedTypeTB);
+		presenter.setSpeedChartStatusForKeyOnWidget(acct, vpcpReqSpeedTypeTB, false);
 	}
 	@UiHandler ("vpcpReqSpeedTypeTB")
 	void speedTypeKeyPressed(KeyPressEvent e) {
@@ -103,12 +108,12 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			if (speedTypeBeingTyped.length() > 0) {
 				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
 			}
-			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
 			return;
 		}
 		
 		if (keyCode == KeyCodes.KEY_TAB) {
-			presenter.setSpeedChartStatusForKey(vpcpReqSpeedTypeTB.getText(), speedTypeLabel);
+			presenter.setSpeedChartStatusForKey(vpcpReqSpeedTypeTB.getText(), speedTypeHTML, true);
 			return;
 		}
 
@@ -119,7 +124,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			speedTypeBeingTyped += ccode;
 		}
 
-		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
+		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
 	}
 
 	@UiHandler ("addNetIdTF")
@@ -156,7 +161,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				presenter.getVpcRequisition().setNotifyAdmins(vpcpReqNotifyAdminsCB.getValue());
 				presenter.getVpcRequisition().setAccountId(accountLB.getSelectedValue());
 				presenter.getVpcRequisition().setType(vpcpReqTypeLB.getSelectedValue());
-				
+				presenter.getVpcRequisition().setPurpose(vpcpReqPurposeTA.getText());
 				// customer admin net id list is already maintained as they add/remove them
 				
 				presenter.saveVpcp();
@@ -170,6 +175,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				accountCP.clear();
 				if (index >= 0) {
 					AccountPojo acct = accounts.get(index);
+					presenter.setSelectedAccount(acct);
 					GWT.log("selected account is: " + acct.getAccountName());
 					accountCP.add(new HTML("Account Name: " + acct.getAccountName()));
 				}
@@ -338,6 +344,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			vpcpReqSpeedTypeTB.setText("");
 			vpcpReqTicketIdTB.setText("");
 			vpcpReqRequestorNetIdTB.setText("");
+			vpcpReqPurposeTA.setText("");
 			
 			vpcpReqTypeLB.setSelectedIndex(0);
 			accountLB.setSelectedIndex(0);
@@ -428,14 +435,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		}
 		
 	}
-	@Override
-	public void setSpeedTypeStatus(String status) {
-		speedTypeLabel.setText(status);
-	}
-	@Override
-	public void setSpeedTypeColor(String color) {
-		speedTypeLabel.getElement().getStyle().setColor(color);
-	}
+
 	@Override
 	public Widget getSpeedTypeWidget() {
 		return vpcpReqSpeedTypeTB;
@@ -490,5 +490,21 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@Override
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
+	}
+	@Override
+	public void setSpeedTypeStatus(String status) {
+		speedTypeHTML.setHTML(status);
+	}
+	@Override
+	public void setSpeedTypeColor(String color) {
+		speedTypeHTML.getElement().getStyle().setColor(color);
+	}
+	@Override
+	public void setSpeedTypeConfirmed(boolean confirmed) {
+		this.speedTypeConfirmed = confirmed;
+	}
+	@Override
+	public boolean isSpeedTypeConfirmed() {
+		return this.speedTypeConfirmed;
 	}
 }

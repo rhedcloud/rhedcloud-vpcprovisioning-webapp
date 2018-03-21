@@ -12,7 +12,8 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestQueryFil
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListFirewallRuleView extends IsWidget, View {
@@ -40,6 +41,7 @@ public interface ListFirewallRuleView extends IsWidget, View {
 		
 		void filterByVPCId(String vpcId);
 		void clearFilter();
+		public VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter);
 	}
 
 	/**

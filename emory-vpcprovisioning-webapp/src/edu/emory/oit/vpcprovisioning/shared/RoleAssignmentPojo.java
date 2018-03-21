@@ -130,4 +130,8 @@ public class RoleAssignmentPojo extends SharedObject implements IsSerializable, 
 		this.explicityIdentitiyDNs = explicityIdentitiyDNs;
 	}
 
+	public void setRoleDNs(RoleDNsPojo roleDNs) {
+		this.roleDNs = roleDNs;
+	}
+
 }

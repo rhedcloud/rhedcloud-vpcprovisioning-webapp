@@ -19,9 +19,11 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -130,6 +132,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					@Override
 					public void onFailure(Throwable caught) {
 						getView().hidePleaseWaitDialog();
+						getView().hidePleaseWaitPanel();
 						GWT.log("Exception retrieving e-mail types", caught);
 						getView().showMessageToUser("There was an exception on the " +
 								"server retrieving e-mail types.  Message " +
@@ -141,6 +144,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						getView().initPage();
 						getView().setEmailTypeItems(result);
 						getView().hidePleaseWaitDialog();
+						getView().hidePleaseWaitPanel();
 						getView().setFieldViolations(false);
 						getView().setInitialFocus();
 						// apply authorization mask
@@ -230,6 +234,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);
 			getView().hidePleaseWaitDialog();
+			getView().hidePleaseWaitPanel();
 			getView().showMessageToUser("Please provide data for the required fields.");
 			return;
 		}
@@ -240,6 +245,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 				GWT.log("Exception saving the Account", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the Account.  Message " +
@@ -249,6 +255,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			@Override
 			public void onSuccess(AccountPojo result) {
 				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 				ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, account);
 			}
 		};
@@ -473,4 +480,60 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		this.directoryPerson = directoryPerson;
 	}
 
+	@Override
+	public void addAdminDirectoryPersonToAccount() {
+		// get fullperson for current directory person
+		// get net id from fullperson
+		// create role assignment
+
+		final FullPersonQueryFilterPojo filter = new FullPersonQueryFilterPojo();
+		filter.setPublicId(this.directoryPerson.getKey());
+		AsyncCallback<FullPersonQueryResultPojo> callback = new AsyncCallback<FullPersonQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+			}
+
+			@Override
+			public void onSuccess(FullPersonQueryResultPojo result) {
+				if (result.getResults().size() == 1) {
+					final FullPersonPojo fp = result.getResults().get(0);
+					GWT.log("Got 1 FullPerson back for public id " + filter.getPublicId());
+//					GWT.log("FullPerson has " + fp.getNetworkIdentities().size() + " Network identities");
+//					for (NetworkIdentityPojo nip : fp.getNetworkIdentities()) {
+//						GWT.log(nip.toString());
+//					}
+					AsyncCallback<RoleAssignmentPojo> raCallback = new AsyncCallback<RoleAssignmentPojo>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						@Override
+						public void onSuccess(final RoleAssignmentPojo result) {
+							// then, tell the view to refresh it's role list
+							account.getRoleAssignments().add(result);
+							getView().addRoleAssignment(directoryPerson.getFullName(), 
+									fp.getNetworkIdentities().get(0).getValue(), 
+									directoryPerson.toString());
+						}
+					};
+					// now, create the role assignment and add the role assignment to the account
+					VpcProvisioningService.Util.getInstance().createAdminRoleAssignmentForPersonInAccount(fp, account.getAccountId(), raCallback);
+				}
+				else {
+					GWT.log("Expected exactly 1 FullPerson, got " + result.getResults().size() + " this shouldn't happen.");
+					// TODO: error
+					return;
+				}
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+			}
+		};
+		getView().showPleaseWaitDialog();
+		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, callback);
+	}
 }

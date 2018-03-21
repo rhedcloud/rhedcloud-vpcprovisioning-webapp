@@ -90,16 +90,23 @@ import com.paloaltonetworks.moa.objects.resources.v1_0.SourceUser;
 import com.paloaltonetworks.moa.objects.resources.v1_0.Tag;
 import com.paloaltonetworks.moa.objects.resources.v1_0.To;
 
+import edu.emory.moa.jmsobjects.email.v1_0.Email;
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
+import edu.emory.moa.jmsobjects.identity.v2_0.Employee;
 import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
+import edu.emory.moa.jmsobjects.identity.v2_0.NetworkIdentity;
+import edu.emory.moa.jmsobjects.identity.v2_0.Person;
+import edu.emory.moa.jmsobjects.identity.v2_0.SponsoredPerson;
+import edu.emory.moa.jmsobjects.identity.v2_0.Student;
 import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
 import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
-import edu.emory.moa.objects.resources.v1_0.Email;
+import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
+import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
@@ -138,6 +145,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
+import edu.emory.oit.vpcprovisioning.shared.EmployeePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -145,12 +153,15 @@ import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.LineItemPojo;
+import edu.emory.oit.vpcprovisioning.shared.NetworkIdentityPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.PersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleDNsPojo;
 import edu.emory.oit.vpcprovisioning.shared.RolePojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SharedObject;
@@ -159,6 +170,8 @@ import edu.emory.oit.vpcprovisioning.shared.SpeedChartCachedItem;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.SponsoredPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.StudentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UUID;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -183,6 +196,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
+	private static final String ROLE_ASSIGNMENT_PROPERTIES = "RoleAssignmentProperties";
 	private static String LOGTAG = "[" + VpcProvisioningServiceImpl.class.getSimpleName()
 			+ "]";
 	private Logger log = Logger.getLogger(getClass().getName());
@@ -190,6 +204,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private boolean useShibboleth = true;
 	private boolean useAuthzService = true;
 	private AppConfig appConfig = null;
+	Properties roleAssignmentProps = null;
 	Properties generalProps = null;
 	private String configDocPath = null;
 	private String appId = null;
@@ -312,6 +327,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			idmProducerPool = (ProducerPool) getAppConfig().getObject(
 					IDM_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
 //			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
 //			if (baseLoginURL == null) {
@@ -4024,10 +4040,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		FirewallRuleQueryResultPojo result = new FirewallRuleQueryResultPojo();
 		
 		// TEMPORARY
-		result.setResults(Collections.<FirewallRulePojo> emptyList());
-		if (true) {
-			return result;
-		}
+//		result.setResults(Collections.<FirewallRulePojo> emptyList());
+//		if (true) {
+//			return result;
+//		}
 		// END TEMPORARY
 		
 		List<FirewallRulePojo> pojos = new java.util.ArrayList<FirewallRulePojo>();
@@ -4141,19 +4157,56 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			IllegalArgumentException, SecurityException,
 			IllegalAccessException, InvocationTargetException,
 			NoSuchMethodException, EnterpriseConfigurationObjectException {
+		
+		/*
+		<!ELEMENT RoleAssignment (RoleAssignmentActionType?, RoleAssignmentType?, 
+			CorrelationId?, CauseIdentities?, EffectiveDatetime?, ExpirationDatetime?,
+			IdentityDN?,OriginatorDN?,Reason?,RoleDNs?,SodJustification*,
+			ExplicitIdentityDNs?, RoleDN?)>
 
+		<RoleAssignment>
+			<RoleAssignmentActionType>grant</RoleAssignmentActionType>
+			<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+			<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+			<Reason>For Testing</Reason>
+			<RoleDNs>
+				<DistinguishedName>cn=RGR_AWS-158058157672-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+			</RoleDNs>
+		</RoleAssignment>
+		 */
 
-		this.setMoaCreateInfo(moa, pojo);
-		this.setMoaUpdateInfo(moa, pojo);
+		moa.setRoleAssignmentActionType(pojo.getActionType());
+		moa.setRoleAssignmentType(pojo.getType());
+		moa.setIdentityDN(pojo.getIdentityDN());
+		moa.setReason(pojo.getReason());
+		RoleDNs roleDns = moa.newRoleDNs();
+		for (String dn : pojo.getRoleDNs().getDistinguishedNames()) {
+			roleDns.addDistinguishedName(dn);
+		}
+		moa.setRoleDNs(roleDns);
+		
+
+//		this.setMoaCreateInfo(moa, pojo);
+//		this.setMoaUpdateInfo(moa, pojo);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void populateRoleAssignmentPojo(RoleAssignment moa,
 			RoleAssignmentPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
 		
+		pojo.setActionType(moa.getRoleAssignmentActionType());
+		pojo.setType(moa.getRoleAssignmentType());
+		pojo.setIdentityDN(moa.getIdentityDN());
+		pojo.setReason(moa.getReason());
+		RoleDNsPojo rdns = new RoleDNsPojo();
+		for (String dn : (List<String>)moa.getRoleDNs().getDistinguishedName()) {
+			rdns.getDistinguishedNames().add(dn);
+		}
+		pojo.setRoleDNs(rdns);
 		
-		this.setPojoCreateInfo(pojo, moa);
-		this.setPojoUpdateInfo(pojo, moa);
+//		this.setPojoCreateInfo(pojo, moa);
+//		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	private void populateDirectoryPersonMoa(DirectoryPersonPojo pojo,
@@ -4307,7 +4360,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			@SuppressWarnings("unchecked")
 			List<FullPerson> moas = actionable.query(queryObject,
-					this.getDirectoryRequestService());
+					this.getIdentityServiceRequestService());
 			if (moas != null) {
 				info("[service layer] got " + moas.size() + " FullPerson objects back from ESB.");
 			}
@@ -4351,9 +4404,178 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void populateFullPersonPojo(FullPerson moa,
 			FullPersonPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
 		
+		/*
+	String publicId;
+	PersonPojo person;
+	List<NetworkIdentityPojo> networkIdentities = new ArrayList<NetworkIdentityPojo>();
+	EmployeePojo employee;
+	StudentPojo student;
+	List<SponsoredPersonPojo> sponsoredPersons = new ArrayList<SponsoredPersonPojo>();
+		 */
+		pojo.setPublicId(moa.getPublicId());
+		
+		if (moa.getPerson() != null) {
+			PersonPojo personPojo = new PersonPojo();
+			this.populatePersonPojo(moa.getPerson(), personPojo);
+			pojo.setPerson(personPojo);
+		}
+
+		if (moa.getEmployee() != null) {
+			EmployeePojo employeePojo = new EmployeePojo();
+			this.populateEmployeePojo(moa.getEmployee(), employeePojo);
+			pojo.setEmployee(employeePojo);
+		}
+
+		if (moa.getStudent() != null) {
+			StudentPojo studentPojo = new StudentPojo();
+			this.populateStudentPojo(moa.getStudent(), studentPojo);
+			pojo.setStudent(studentPojo);
+		}
+		
+		if (moa.getNetworkIdentity() != null & moa.getNetworkIdentityLength() > 0) {
+			for (NetworkIdentity niMoa : (List<NetworkIdentity>) moa.getNetworkIdentity()) {
+				NetworkIdentityPojo niPojo = new NetworkIdentityPojo();
+				this.populateNetworkIdentityPojo(niMoa, niPojo);
+				pojo.getNetworkIdentities().add(niPojo);
+			}
+		}
+		
+		if (moa.getSponsoredPerson() != null & moa.getSponsoredPersonLength() > 0) {
+			for (SponsoredPerson spMoa : (List<SponsoredPerson>) moa.getSponsoredPerson()) {
+				SponsoredPersonPojo spPojo = new SponsoredPersonPojo();
+				this.populateSponsoredPersonPojo(spMoa, spPojo);
+				pojo.getSponsoredPersons().add(spPojo);
+			}
+		}
+	}
+	private void populatePersonPojo(Person moa,
+			PersonPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	}
+	private void populateNetworkIdentityPojo(NetworkIdentity moa,
+			NetworkIdentityPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		/*
+		<!ELEMENT NetworkIdentity (Value, PublicId?, CreateDate, EndDate?, Domain?, Tag*, InitialPassword?)>
+		<!ATTLIST NetworkIdentity
+			type CDATA #REQUIRED
+			status (reserved | active | inactive) #REQUIRED
+			ancillary (true | false) "false"
+		>
+		 */
+		pojo.setValue(moa.getValue());
+		pojo.setPublicId(moa.getPublicId());
+		pojo.setDomain(moa.getDomain());
+		pojo.setType(moa.getType());
+		pojo.setStatus(moa.getStatus());
+		pojo.setAncillary(this.toBooleanFromString(moa.getAncillary()));
+	}
+	private void populateEmployeePojo(Employee moa,
+			EmployeePojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	}
+	private void populateStudentPojo(Student moa,
+			StudentPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	}
+	private void populateSponsoredPersonPojo(SponsoredPerson moa,
+			SponsoredPersonPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	}
+
+	public Properties getRoleAssignmentProps() {
+		return roleAssignmentProps;
+	}
+
+	public void setRoleAssignmentProps(Properties roleAssignmentProps) {
+		this.roleAssignmentProps = roleAssignmentProps;
+	}
+
+	@Override
+	public RoleAssignmentPojo createAdminRoleAssignmentForPersonInAccount(FullPersonPojo person, String accountId)
+			throws RpcException {
+
+		/*
+		<RoleAssignment>
+			<RoleAssignmentActionType>grant</RoleAssignmentActionType>
+			<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+			<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+			<Reason>For Testing</Reason>
+			<RoleDNs>
+				<DistinguishedName>cn=RGR_AWS-158058157672-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+			</RoleDNs>
+		</RoleAssignment>
+		 */
+		if (!useEsbService) {
+			return null;
+		} 
+		else {
+			try {
+				roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+				RoleAssignmentRequisition requisition = (RoleAssignmentRequisition) getObject(Constants.MOA_ROLE_ASSIGNMENT_REQUISITION);
+				requisition.setRoleAssignmentActionType("grant");
+				requisition.setRoleAssignmentType("USER_TO_ROLE");
+				requisition.setReason("AWS Admin");
+				
+				String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
+				idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, person.getPublicId());
+				requisition.setIdentityDN(idDn);
+				
+				String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
+				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, "Administrator");
+				RoleDNs roleDns = requisition.newRoleDNs();
+				roleDns.addDistinguishedName(distName);
+				requisition.setRoleDNs(roleDns);
+
+				RoleAssignment moa = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
+//				this.populateRoleAssignmentMoa(roleAssignment, moa);
+
+//				this.doCreate(moa, getIDMRequestService());
+				info("generating ROLE Assignment record on the server...");
+				this.doGenerate(moa, requisition, getIDMRequestService());
+
+				RoleAssignmentPojo roleAssignment = new RoleAssignmentPojo();
+				info("populating pojo");
+				this.populateRoleAssignmentPojo(moa, roleAssignment);
+				info("RoleAssignment.generate is complete...");
+
+				return roleAssignment;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (EnterpriseObjectGenerateException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (XmlEnterpriseObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
 	}
 }

@@ -53,11 +53,13 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
@@ -197,4 +199,7 @@ public interface VpcProvisioningServiceAsync {
 	
 	// FullPerson
 	void getFullPersonsForFilter(FullPersonQueryFilterPojo filter, AsyncCallback<FullPersonQueryResultPojo> callback);
+	
+	// RoleAssignment
+	void createAdminRoleAssignmentForPersonInAccount(FullPersonPojo person, String accountId, AsyncCallback<RoleAssignmentPojo> callback);
 }

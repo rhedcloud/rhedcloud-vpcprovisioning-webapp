@@ -1,9 +1,10 @@
 package edu.emory.oit.vpcprovisioning.presenter.vpcp;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -14,6 +15,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
@@ -30,6 +32,9 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	private String provisioningId;
 	private VpcpPojo vpcp;
 	private VpcRequisitionPojo vpcRequisition;
+	private SpeedChartPojo speedType;
+	private AccountPojo selectedAccount;
+	private UserAccountPojo userLoggedIn;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -93,6 +98,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
 				getView().setUserLoggedIn(user);
+				userLoggedIn = user;
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -352,6 +358,131 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForNetId(netId, callback);
 	}
 
+	@Override
+	public void setSpeedChartStatusForKeyOnWidget(final String key, final Widget w, final boolean confirmSpeedType) {
+		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Server exception validating speedtype", caught);
+				w.setTitle("Server exception validating speedtype");
+				getView().setSpeedTypeStatus("Server exception validating speedtype");
+				getView().setSpeedTypeColor(Constants.COLOR_RED);
+			}
+
+			@Override
+			public void onSuccess(SpeedChartPojo scp) {
+				if (scp == null) {
+					w.setTitle("Invalid account number (" + key + "), can't validate this number");
+					w.getElement().getStyle().setBackgroundColor("#efbebe");
+					getView().setSpeedTypeStatus("<b>Invalid account</b>");
+					getView().setSpeedTypeColor(Constants.COLOR_RED);
+					getView().setFieldViolations(true);
+				}
+				else {
+//				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+					speedType = scp;
+					String deptId = scp.getDepartmentId();
+					String deptDesc = scp.getDepartmentDescription();
+					String desc = scp.getDescription();
+				    String euValidityDesc = scp.getEuValidityDescription();
+				    String statusDescString = euValidityDesc + "\n" + 
+				    		deptId + " | " + deptDesc + "\n" +
+				    		desc;
+				    String statusDescHTML = "<b>" + euValidityDesc + "<br>" + 
+				    		deptId + " | " + deptDesc + "<br>" +
+				    		desc + "<b>";
+					w.setTitle(statusDescString);
+					getView().setSpeedTypeStatus(statusDescHTML);
+					if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
+						getView().setSpeedTypeColor(Constants.COLOR_GREEN);
+						w.getElement().getStyle().setBackgroundColor(null);
+						getView().setFieldViolations(false);
+						if (confirmSpeedType) {
+							didConfirmSpeedType();
+						}
+					}
+					else if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_INVALID)) {
+						getView().setSpeedTypeColor(Constants.COLOR_RED);
+						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);
+						getView().setFieldViolations(true);
+					}
+					else {
+						getView().setSpeedTypeColor(Constants.COLOR_ORANGE);
+						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_FIELD_WARNING);
+						if (confirmSpeedType) {
+							didConfirmSpeedType();
+						}
+					}
+				}
+			}
+		};
+		if (key != null && key.length() > 0) {
+			SpeedChartQueryFilterPojo filter = new SpeedChartQueryFilterPojo();
+			filter.getSpeedChartKeys().add(key);
+			VpcProvisioningService.Util.getInstance().getSpeedChartForFinancialAccountNumber(key, callback);
+		}
+		else {
+			GWT.log("null key, can't validate yet");
+		}
+	}
+
+	@Override
+	public void setSpeedChartStatusForKey(String key, Label label, boolean confirmSpeedType) {
+		// null check / length
+		if (key == null || key.length() != 10) {
+			label.setText("Invalid length");
+			getView().setSpeedTypeColor(Constants.COLOR_RED);
+			getView().setFieldViolations(true);
+			return;
+		}
+		// TODO: numeric characters
+		
+		setSpeedChartStatusForKeyOnWidget(key, getView().getSpeedTypeWidget(), confirmSpeedType);
+	}
+
+	@Override
+	public boolean didConfirmSpeedType() {
+		boolean confirmed = Window.confirm("Are you sure you want to use this SpeedType?  "
+				+ "NOTE:  Using an invalid SpeedType is a violoation of Emory's Terms of Use.");
+		if (confirmed) {
+			// TODO: log that the user acknowldged the speed type (on the server)
+			this.logMessageOnServer("User " + this.userLoggedIn.getEppn() + " acknowledged "
+					+ "the SpeedType " + this.selectedAccount.getSpeedType()
+					+ "is the correct SpeedType for this account at: " + new Date());
+			getView().showMessageToUser("Logged that [user] acknowledged the SpeedType [SpeedType] "
+					+ "is the correct SpeedType for this account at [time].");
+			getView().setSpeedTypeConfirmed(true);
+			return true;
+		}
+//		else {
+//			getView().showMessageToUser("Please enter a valid SpeedType.");
+//		}
+		// user decided they didn't want to use this speed type, what now?
+		getView().setSpeedTypeConfirmed(false);
+		return false;
+	}
+
+	@Override
+	public SpeedChartPojo getSpeedType() {
+		return speedType;
+	}
+
+	public AccountPojo getSelectedAccount() {
+		return selectedAccount;
+	}
+
+	public void setSelectedAccount(AccountPojo selectedAccount) {
+		this.selectedAccount = selectedAccount;
+	}
+
+	public void setVpcRequisition(VpcRequisitionPojo vpcRequisition) {
+		this.vpcRequisition = vpcRequisition;
+	}
+
+	public void setSpeedType(SpeedChartPojo speedType) {
+		this.speedType = speedType;
+	}
+
 //	@Override
 //	public void getVpcpForId(String provisioningId) {
 //		AsyncCallback<VpcpQueryResultPojo> callback = new AsyncCallback<VpcpQueryResultPojo>() {
@@ -384,54 +515,4 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 //		VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, callback);
 //	}
 
-	@Override
-	public void setSpeedChartStatusForKeyOnWidget(String key, final Widget w) {
-		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log("Server exception validating speedtype", caught);
-				w.setTitle("Server exception validating speedtype");
-				getView().setSpeedTypeStatus("Invalid account");
-				getView().setSpeedTypeColor(Constants.COLOR_RED);
-			}
-
-			@Override
-			public void onSuccess(SpeedChartPojo scp) {
-				if (scp == null) {
-					w.setTitle("Invalid account number, can't validate this number");
-					getView().setSpeedTypeStatus("Invalid account");
-					getView().setSpeedTypeColor(Constants.COLOR_RED);
-				}
-				else {
-				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
-				    String status = scp.getEuValidityDescription() + 
-							"  End date: " + dateFormat.format(scp.getEuProjectEndDate()); 
-					w.setTitle(status);
-					getView().setSpeedTypeStatus(status);
-					getView().setSpeedTypeColor(Constants.COLOR_GREEN);
-				}
-			}
-		};
-		if (key != null && key.length() > 0) {
-			SpeedChartQueryFilterPojo filter = new SpeedChartQueryFilterPojo();
-			filter.getSpeedChartKeys().add(key);
-			VpcProvisioningService.Util.getInstance().getSpeedChartForFinancialAccountNumber(key, callback);
-		}
-		else {
-			GWT.log("null key, can't validate yet");
-		}
-	}
-
-	@Override
-	public void setSpeedChartStatusForKey(String key, Label label) {
-		// null check / length
-		if (key == null || key.length() != 10) {
-			label.setText("Invalid length");
-			getView().setSpeedTypeColor(Constants.COLOR_RED);
-			return;
-		}
-		// TODO: numeric characters
-		
-		setSpeedChartStatusForKeyOnWidget(key, getView().getSpeedTypeWidget());
-	}
 }

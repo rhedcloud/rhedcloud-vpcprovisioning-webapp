@@ -154,7 +154,7 @@ public class DirectoryPersonPojo extends SharedObject implements IsSerializable,
 
 	@Override
 	public String toString() {
-		return this.key + ": " + this.fullName + ": " + this.departmentName + ": " + 
+		return "PublicID: " + this.key + ": " + this.fullName + ": " + this.departmentName + ": " + 
 			this.directoryLocation + ": " + this.directoryPhone + ": " +
 			this.mailStop + ": " + this.schoolDivision + ": " + this.title;
 				

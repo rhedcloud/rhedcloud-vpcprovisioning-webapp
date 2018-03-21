@@ -43,6 +43,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public void logMessageOnServer(final String message);
 		public void setDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getDirectoryPerson();
+		public void addAdminDirectoryPersonToAccount();
 	}
 
 	/**
@@ -93,4 +94,5 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	Widget getSpeedTypeWidget();
 	void setSpeedTypeConfirmed(boolean confirmed);
 	boolean isSpeedTypeConfirmed();
+	void addRoleAssignment(String name, String netId, String title);
 }

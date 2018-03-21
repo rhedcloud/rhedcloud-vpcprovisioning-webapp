@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -15,6 +16,7 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 	DirectoryMetaDataPojo accountOwnerDirectoryMetaData;
 	String speedType;
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
+	List<RoleAssignmentPojo> roleAssignments = new ArrayList<RoleAssignmentPojo>();
 	AccountPojo baseline;
 	
 	public static final ProvidesKey<AccountPojo> KEY_PROVIDER = new ProvidesKey<AccountPojo>() {
@@ -114,5 +116,13 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 
 	public void setAccountOwnerDirectoryMetaData(DirectoryMetaDataPojo accountOwnerDirectoryMetaData) {
 		this.accountOwnerDirectoryMetaData = accountOwnerDirectoryMetaData;
+	}
+
+	public List<RoleAssignmentPojo> getRoleAssignments() {
+		return roleAssignments;
+	}
+
+	public void setRoleAssignments(List<RoleAssignmentPojo> roleAssignments) {
+		this.roleAssignments = roleAssignments;
 	}
 }
