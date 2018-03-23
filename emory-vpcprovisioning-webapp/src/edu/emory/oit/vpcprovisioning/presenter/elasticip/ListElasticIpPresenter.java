@@ -208,7 +208,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			}
 		};
 
-		GWT.log("refreshing Vpcp list...");
+		GWT.log("refreshing ElasticIP list...");
 		VpcProvisioningService.Util.getInstance().getElasticIpsForFilter(filter, callback);
 	}
 

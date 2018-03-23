@@ -52,6 +52,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -160,7 +161,7 @@ public interface VpcProvisioningService extends RemoteService {
 	// Elastic IP
 	ElasticIpQueryResultPojo getElasticIpsForFilter(ElasticIpQueryFilterPojo filter) throws RpcException;
 	ElasticIpPojo createElasticIp(ElasticIpPojo elasticIp) throws RpcException;
-	void deleteElasticIp(ElasticIpPojo vpc) throws RpcException;
+	void deleteElasticIpSummary(ElasticIpSummaryPojo elasticIpSummary) throws RpcException;
 	ElasticIpPojo updateElasticIp(ElasticIpPojo vpc) throws RpcException;
 	boolean isElasticIpAssigned(ElasticIpPojo elasticIp) throws RpcException;
 	ElasticIpAssignmentStatusPojo getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo elasticIp) throws RpcException;

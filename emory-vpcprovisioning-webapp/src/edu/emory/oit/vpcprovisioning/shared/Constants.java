@@ -58,6 +58,11 @@ public class Constants implements IsSerializable {
 	public static final String MOA_ROLE_ASSIGNMENT = "RoleAssignment.v1_0";
 	public static final String MOA_ROLE_ASSIGNMENT_REQUISITION = "RoleAssignmentRequisition.v1_0";
 	public static final String MOA_ROLE_ASSIGNMENT_QUERY = "RoleAssignmentQuerySpecification.v1_0";
+	public static final String MOA_ELASTIC_IP_ASSIGNMENT_QUERY_SPEC = "ElasticIpAssignmentQuerySpecification.v1_0";
+	public static final String MOA_ELASTIC_IP_ASSIGNMENT = "ElasticIpAssignment.v1_0";
+	public static final String MOA_ELASTIC_IP_QUERY_SPEC = "ElasticIpQuerySpecification.v1_0";
+	public static final String MOA_ELASTIC_IP = "ElasticIp.v1_0";
+	public static final String MOA_ELASTIC_IP_REQUISITION = "ElasticIpRequisition.v1_0";
 
     public static final String STYLE_INFO_POPUP_MESSAGE = "informationalPopupMessage";
     

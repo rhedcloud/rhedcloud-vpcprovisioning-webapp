@@ -3,20 +3,11 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class ElasticIpAssignmentQueryFilterPojo extends SharedObject implements IsSerializable {
-	String assignmentId;
+public class ElasticIpRequisition extends SharedObject implements IsSerializable {
 	String ownerId;
 
-	public ElasticIpAssignmentQueryFilterPojo() {
+	public ElasticIpRequisition() {
 		// TODO Auto-generated constructor stub
-	}
-
-	public String getAssignmentId() {
-		return assignmentId;
-	}
-
-	public void setAssignmentId(String assignmentId) {
-		this.assignmentId = assignmentId;
 	}
 
 	public String getOwnerId() {

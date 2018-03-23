@@ -2,13 +2,17 @@ package edu.emory.oit.vpcprovisioning.presenter.elasticip;
 
 import java.util.List;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentStatusPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
@@ -83,43 +87,17 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 				getView().initPage();
 				getView().setInitialFocus();
 				
-				// if selected CIDR is assigned, disable all fields (except cancel button)
-				// an assigned CIDR cannot be edited 
-				AsyncCallback<ElasticIpAssignmentStatusPojo> isAssignedCB = new AsyncCallback<ElasticIpAssignmentStatusPojo>() {
-
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().showMessageToUser("There was an exception on the " +
-								"server determining the Cidr's assignment status.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(ElasticIpAssignmentStatusPojo assignmentStatus) {
-						if (assignmentStatus != null && assignmentStatus.isAssigned()) {
-							clientFactory.getShell().setSubTitle("View Elastic IP (assigned to VPC: " + 
-								assignmentStatus.getElasticIpAssignment().getOwnerId() + ")");
-							getView().setLocked(true);
-						}
-						else {
-							// apply authorization mask
-							if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-								getView().applyEmoryAWSAdminMask();
-							}
-							else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-								clientFactory.getShell().setSubTitle("View Elastic IP");
-								getView().applyEmoryAWSAuditorMask();
-							}
-							else {
-								// ??
-							}
-						}
-					}
-					
-				};
-				VpcProvisioningService.Util.getInstance().getElasticIpAssignmentStatusForElasticIp(elasticIp, isAssignedCB);
-
+				// apply authorization mask
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+					clientFactory.getShell().setSubTitle("View Elastic IP");
+					getView().applyEmoryAWSAuditorMask();
+				}
+				else {
+					// ??
+				}
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
@@ -160,7 +138,6 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	}
 	@Override
 	public void saveElasticIp() {
-		// TODO Auto-generated method stub
 		getView().showPleaseWaitDialog();
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields.size() > 0) {
@@ -171,6 +148,30 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		}
 		else {
 			getView().resetFieldStyles();
+		}
+		AsyncCallback<ElasticIpPojo> callback = new AsyncCallback<ElasticIpPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception saving the ElasticIp", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the ElasticIp.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(ElasticIpPojo result) {
+				getView().hidePleaseWaitDialog();
+				ActionEvent.fire(eventBus, ActionNames.ELASTIC_IP_SAVED, result);
+			}
+		};
+		if (!this.isEditing) {
+			// it's a create
+			VpcProvisioningService.Util.getInstance().createElasticIp(elasticIp, callback);
+		}
+		else {
+			// it's an update
+			VpcProvisioningService.Util.getInstance().updateElasticIp(elasticIp, callback);
 		}
 	}
 	@Override

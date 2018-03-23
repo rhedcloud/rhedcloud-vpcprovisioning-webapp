@@ -9,7 +9,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -53,18 +52,6 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 				presenter.saveCidr();
 			}
 		}, ClickEvent.getType());
-	}
-
-	@Override
-	public void showPleaseWaitDialog() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void hidePleaseWaitDialog() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

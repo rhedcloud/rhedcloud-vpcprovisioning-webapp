@@ -102,9 +102,13 @@ import edu.emory.moa.jmsobjects.identity.v2_0.SponsoredPerson;
 import edu.emory.moa.jmsobjects.identity.v2_0.Student;
 import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
 import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
+import edu.emory.moa.jmsobjects.network.v1_0.ElasticIp;
+import edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.ElasticIpAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.ElasticIpQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
@@ -144,6 +148,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmployeePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
@@ -185,6 +190,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
+	private static final String ELASTIC_IP_SERVICE_NAME = "ElasticIpRequestService";
 	private static final String IDM_SERVICE_NAME = "IDMRequestService";
 	private static final String DIRECTORY_SERVICE_NAME = "DirectoryRequestService";
 	private static final String SERVICE_NOW_SERVICE_NAME = "ServiceNowRequestService";
@@ -217,6 +223,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool authzProducerPool = null;
 	private ProducerPool firewallProducerPool = null;
 	private ProducerPool serviceNowProducerPool = null;
+	private ProducerPool elasticIpProducerPool = null;
 	private Object lock = new Object();
 	static SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -326,6 +333,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					DIRECTORY_SERVICE_NAME);
 			idmProducerPool = (ProducerPool) getAppConfig().getObject(
 					IDM_SERVICE_NAME);
+			elasticIpProducerPool = (ProducerPool) getAppConfig().getObject(
+					ELASTIC_IP_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
@@ -392,7 +401,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		String authUserId = this.getAuthUserIdForHALS();
 		aeo.getAuthentication().setAuthUserId(authUserId);
-		info("[doCreate] AuthUserId is: " + aeo.getAuthentication().getAuthUserId());
+		info("[doGenerate] AuthUserId is: " + aeo.getAuthentication().getAuthUserId());
 
 		List<ActionableEnterpriseObject> result = aeo.generate(seedXeo, reqSvc);
 		return result;
@@ -1138,6 +1147,78 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	private void populateElasticIpMoa(ElasticIpPojo pojo,
+			ElasticIp moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		if (pojo.getElasticIpId() != null) {
+			moa.setElasticIpId(pojo.getElasticIpId());
+		}
+//		else {
+//			moa.setElasticIpId(UUID.uuid());
+//			pojo.setElasticIpId(moa.getElasticIpId());
+//		}
+		moa.setElasticIpAddress(pojo.getElasticIpAddress());
+		moa.setAssociatedIpAddress(pojo.getAssociatedIpAddress());
+
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	private void populateElasticIpPojo(ElasticIp moa,
+			ElasticIpPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
+		pojo.setElasticIpId(moa.getElasticIpId());
+		pojo.setElasticIpAddress(moa.getElasticIpAddress());
+		pojo.setAssociatedIpAddress(moa.getAssociatedIpAddress());
+		
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	private void populateElasticIpAssignmentMoa(ElasticIpAssignmentPojo pojo,
+			ElasticIpAssignment moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		if (pojo.getAssignmentId() != null) {
+			moa.setElasticIpAssignmentId(pojo.getAssignmentId());
+		}
+		else {
+			moa.setElasticIpAssignmentId(UUID.uuid());
+			pojo.setAssignmentId(moa.getElasticIpAssignmentId());
+		}
+		moa.setOwnerId(pojo.getOwnerId());
+		moa.setDecription(pojo.getDescription());
+		moa.setPurpose(pojo.getPurpose());
+		ElasticIp eip = moa.newElasticIp();
+		this.populateElasticIpMoa(pojo.getElasticIp(), eip);
+		moa.setElasticIp(eip);
+
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	private void populateElasticIpAssignmentPojo(ElasticIpAssignment moa,
+			ElasticIpAssignmentPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
+		pojo.setAssignmentId(moa.getElasticIpAssignmentId());
+		pojo.setOwnerId(moa.getOwnerId());
+		pojo.setDescription(moa.getDecription());
+		pojo.setPurpose(moa.getPurpose());
+		ElasticIpPojo eip = new ElasticIpPojo();
+		this.populateElasticIpPojo(moa.getElasticIp(), eip);
+		pojo.setElasticIp(eip);
+		
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
 	private void populateCidrMoa(CidrPojo pojo,
 			Cidr moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -1231,8 +1312,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public CidrQueryResultPojo getCidrsForFilter(CidrQueryFilterPojo filter) throws RpcException {
 		CidrQueryResultPojo result = new CidrQueryResultPojo();
 		List<CidrSummaryPojo> summaries = new java.util.ArrayList<CidrSummaryPojo>();
-//		List<CidrPojo> cidrs = new java.util.ArrayList<CidrPojo>();
-//		List<CidrAssignmentSummaryPojo> summaries = new java.util.ArrayList<CidrAssignmentSummaryPojo>();
 		try {
 			CidrQuerySpecification queryObject = (CidrQuerySpecification) getObject(Constants.MOA_CIDR_QUERY_SPEC);
 			Cidr actionable = (Cidr) getObject(Constants.MOA_CIDR);
@@ -1722,6 +1801,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		this.baseLoginURL = baseLoginURL;
 //	}
 
+	private RequestService getElasticIpRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) elasticIpProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
 	private RequestService getIdentityServiceRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) identityServiceProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
@@ -3515,26 +3600,233 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public ElasticIpQueryResultPojo getElasticIpsForFilter(ElasticIpQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		ElasticIpQueryResultPojo result = new ElasticIpQueryResultPojo();
+		List<ElasticIpSummaryPojo> summaries = new java.util.ArrayList<ElasticIpSummaryPojo>();
+		try {
+			ElasticIpQuerySpecification queryObject = (ElasticIpQuerySpecification) getObject(Constants.MOA_ELASTIC_IP_QUERY_SPEC);
+			ElasticIp actionable = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
+
+			if (filter != null) {
+				queryObject.setElasticIpId(filter.getElasticIpId());
+				queryObject.setElasticIpAddress(filter.getElasticIpAddress());
+				queryObject.setAssociatedIpAddress(filter.getAssociatedIpAddress());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getCidrsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<ElasticIp> moas = actionable.query(queryObject,
+					this.getElasticIpRequestService());
+			for (ElasticIp moa : moas) {
+				ElasticIpSummaryPojo summary = new ElasticIpSummaryPojo();
+				ElasticIpPojo pojo = new ElasticIpPojo();
+				ElasticIpPojo baseline = new ElasticIpPojo();
+				this.populateElasticIpPojo(moa, pojo);
+				this.populateElasticIpPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				summary.setElasticIp(pojo);
+				// TODO: see if there's a elastic ip assignment for this elastic ip,
+				// if there is, add that to the result, otherwise add the unassigned elasticip to the result
+				
+//				CidrAssignmentSummaryQueryFilterPojo casFilter = new CidrAssignmentSummaryQueryFilterPojo();
+//				casFilter.setCidr(pojo);
+//				CidrAssignmentSummaryQueryResultPojo casResult = this.getCidrAssignmentSummaryForCidr(casFilter);
+//				if (casResult != null && casResult.getResults().size() > 0) {
+//					info("found an assignment for cidr " + moa.getBits() + "/" + moa.getNetwork());
+//					// there is a cidr assignment associated to this cidr, add that to what's returned
+//					summary.setAssignmentSummary(casResult.getResults().get(0));
+//					if (summary.getAssignmentSummary() == null) {
+//						info("I just added a NULL assignment summary.  how is this possible?");
+//					}
+//				}
+//				else {
+//					// there are no cidr assignments associated to this cidr, just add the unassigned cidr
+//					info("no assignments for cidr " + moa.getBits() + "/" + moa.getNetwork());
+//					CidrPojo baseline = new CidrPojo();
+//					this.populateCidrPojo(moa, baseline);
+//					pojo.setBaseline(baseline);
+//					summary.setCidr(pojo);
+//				}
+				summaries.add(summary);
+			}
+
+			Collections.sort(summaries);
+			result.setResults(summaries);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
 	public ElasticIpPojo createElasticIp(ElasticIpPojo elasticIp) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		elasticIp.setCreateInfo(this.getUserLoggedIn().getEppn(),
+				new java.util.Date());
+
+		if (!useEsbService) {
+			return null;
+		} 
+		else {
+			try {
+				info("creating ElasticIp record on the server...");
+				ElasticIp moa = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
+				info("populating moa");
+				this.populateElasticIpMoa(elasticIp, moa);
+
+				
+				info("doing the ElasticIp.create...");
+				this.doCreate(moa, getElasticIpRequestService());
+				info("ElasticIp.create is complete...");
+
+//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
+				return elasticIp;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseObjectCreateException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
 	}
 
 	@Override
-	public void deleteElasticIp(ElasticIpPojo vpc) throws RpcException {
-		// TODO Auto-generated method stub
-		
+	public void deleteElasticIpSummary(ElasticIpSummaryPojo summaryPojo) throws RpcException {
+		if (!useEsbService) {
+			return;
+		} 
+		else {
+			try {
+				// TODO: need to see if there are any assignments in this summary and if so, delete those too
+				info("deleting ElasticIp record on the server...");
+				ElasticIp moa = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
+				info("populating moa");
+				this.populateElasticIpMoa(summaryPojo.getElasticIp(), moa);
+
+				
+				info("doing the ElasticIp.delete...");
+				this.doDelete(moa, getElasticIpRequestService());
+				info("ElasticIp.delete is complete...");
+
+//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
+				return;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (EnterpriseObjectDeleteException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
 	}
 
 	@Override
-	public ElasticIpPojo updateElasticIp(ElasticIpPojo vpc) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+	public ElasticIpPojo updateElasticIp(ElasticIpPojo elasticIp) throws RpcException {
+		elasticIp.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+        try {
+            info("updating elasticIp on the server...");
+            ElasticIp newData = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
+            ElasticIp baselineData = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
+
+            info("populating newData...");
+            populateElasticIpMoa(elasticIp, newData);
+
+            info("populating baselineData...");
+            populateElasticIpMoa(elasticIp.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getElasticIpRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return elasticIp;
 	}
 
 	@Override
@@ -3559,8 +3851,60 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ElasticIpAssignmentQueryResultPojo getElasticIpAssignmentsForFilter(
 			ElasticIpAssignmentQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+
+		ElasticIpAssignmentQueryResultPojo result = new ElasticIpAssignmentQueryResultPojo();
+		List<ElasticIpAssignmentPojo> pojos = new java.util.ArrayList<ElasticIpAssignmentPojo>();
+		try {
+			ElasticIpAssignmentQuerySpecification queryObject = (ElasticIpAssignmentQuerySpecification) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT_QUERY_SPEC);
+			ElasticIpAssignment actionable = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
+
+			if (filter != null) {
+				queryObject.setElasticIpAssignmentId(filter.getAssignmentId());
+				queryObject.setOwnerId(filter.getOwnerId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getElasticIpAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<ElasticIpAssignment> moas = actionable.query(queryObject,
+					this.getElasticIpRequestService());
+			for (ElasticIpAssignment moa : moas) {
+				ElasticIpAssignmentPojo pojo = new ElasticIpAssignmentPojo();
+				this.populateElasticIpAssignmentPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
@@ -4520,7 +4864,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				RoleAssignmentRequisition requisition = (RoleAssignmentRequisition) getObject(Constants.MOA_ROLE_ASSIGNMENT_REQUISITION);
 				requisition.setRoleAssignmentActionType("grant");
 				requisition.setRoleAssignmentType("USER_TO_ROLE");
-				requisition.setReason("AWS Admin");
+				requisition.setReason("Added using VCPP by Name (" + getUserLoggedIn().getEppn() +")");
 				
 				String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
 				idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, person.getPublicId());
@@ -4528,7 +4872,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				
 				String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
-				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, "Administrator");
+				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, "EmoryAdministratorRole");
 				RoleDNs roleDns = requisition.newRoleDNs();
 				roleDns.addDistinguishedName(distName);
 				requisition.setRoleDNs(roleDns);
@@ -4536,8 +4880,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				RoleAssignment moa = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
 //				this.populateRoleAssignmentMoa(roleAssignment, moa);
 
-//				this.doCreate(moa, getIDMRequestService());
-				info("generating ROLE Assignment record on the server...");
+				info("generating ROLE Assignment record on the server:  " + requisition.toXmlString());
 				this.doGenerate(moa, requisition, getIDMRequestService());
 
 				RoleAssignmentPojo roleAssignment = new RoleAssignmentPojo();

@@ -9,20 +9,20 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Network:</g:Label>
+						<g:Label addStyleNames="{style.label}">Elastic IP Address:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="networkTB" />
+							ui:field="elasticIpTB" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Bits:</g:Label>
+						<g:Label addStyleNames="{style.label}">Associated IP Address:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="bitsTB" />
+							ui:field="associatedIpTB" />
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

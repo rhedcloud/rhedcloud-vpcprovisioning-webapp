@@ -13,7 +13,7 @@ public class MaintainElasticIpPlace extends Place {
 	@Prefix("maintainElasticIp")
 	public static class Tokenizer implements PlaceTokenizer<MaintainElasticIpPlace> {
 
-		private static final String NO_ID = "createCidr";
+		private static final String NO_ID = "createElasticIp";
 
 		public MaintainElasticIpPlace getPlace(String token) {
 			if (token != null) {

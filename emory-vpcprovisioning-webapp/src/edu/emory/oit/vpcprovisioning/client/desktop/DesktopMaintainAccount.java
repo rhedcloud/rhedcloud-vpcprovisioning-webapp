@@ -457,9 +457,11 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addNetIdTF.setText("");
 		addNetIdTF.getElement().setPropertyString("placeholder", "enter net id");
 
+		addEmailTF.setText("");
 		addEmailTF.getElement().setPropertyString("placeholder", "enter e-mail");
 		addEmailTypeLB.getElement().setPropertyString("placeholder", "select e-mail type");
 
+		directoryLookupSB.setText("");
 		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
 
 		// populate fields if appropriate
@@ -550,6 +552,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailButton.setEnabled(true);
 		addNetIdTF.setEnabled(true);
 		addNetIdButton.setEnabled(true);
+		directoryLookupSB.setEnabled(true);
+		addAdminButton.setEnabled(true);
 	}
 	@Override
 	public void applyEmoryAWSAuditorMask() {
@@ -564,6 +568,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailButton.setEnabled(false);
 		addNetIdTF.setEnabled(false);
 		addNetIdButton.setEnabled(false);
+		directoryLookupSB.setEnabled(false);
+		addAdminButton.setEnabled(false);
 	}
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {

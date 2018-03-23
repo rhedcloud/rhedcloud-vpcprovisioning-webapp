@@ -3,15 +3,21 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
-import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView.Presenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainElasticIpView {
@@ -28,13 +34,28 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
+	@UiField TextBox elasticIpTB;
+	@UiField TextBox associatedIpTB;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
 
+	@UiHandler("cancelButton")
+	void cancelButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.ELASTIC_IP_EDITING_CANCELED);
+	}
+	@UiHandler("okayButton")
+	void okayButtonClicked(ClickEvent e) {
+		presenter.getElasticIp().setElasticIpAddress(elasticIpTB.getText());
+		presenter.getElasticIp().setAssociatedIpAddress(associatedIpTB.getText());
+		presenter.saveElasticIp();
+	}
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
-		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	elasticIpTB.setFocus(true);
+	        }
+	    });
 	}
 
 	@Override
@@ -45,20 +66,21 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public void applyEmoryAWSAdminMask() {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(true);
+		elasticIpTB.setEnabled(true);
+		associatedIpTB.setEnabled(true);
 	}
 
 	@Override
 	public void applyEmoryAWSAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(false);
+		elasticIpTB.setEnabled(false);
+		associatedIpTB.setEnabled(false);
 	}
 
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {
-		// TODO Auto-generated method stub
-		
+		this.userLoggedIn = user;
 	}
 
 	@Override
@@ -69,8 +91,9 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(false);
+		elasticIpTB.setEnabled(false);
+		associatedIpTB.setEnabled(false);
 	}
 
 	@Override
@@ -87,14 +110,19 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public void setPresenter(Presenter presenter) {
-		// TODO Auto-generated method stub
-		
+		this.presenter = presenter;
 	}
 
 	@Override
 	public void initPage() {
-		// TODO Auto-generated method stub
-		
+		if (presenter.getElasticIp() != null) {
+			elasticIpTB.setText(presenter.getElasticIp().getElasticIpAddress());
+			associatedIpTB.setText(presenter.getElasticIp().getAssociatedIpAddress());
+		}
+		else {
+			elasticIpTB.setText("");
+			associatedIpTB.setText("");
+		}
 	}
 
 	@Override
@@ -117,14 +145,21 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		ElasticIpPojo pojo = presenter.getElasticIp();
+		if (pojo.getElasticIpAddress() == null || pojo.getElasticIpAddress().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(elasticIpTB);
+		}
+		return fields;
 	}
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
-		
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(elasticIpTB);
+		fields.add(associatedIpTB);
+		this.resetFieldStyles(fields);
 	}
 
 	@Override

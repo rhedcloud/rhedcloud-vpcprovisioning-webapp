@@ -50,6 +50,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -154,7 +155,7 @@ public interface VpcProvisioningServiceAsync {
 	void getElasticIpsForFilter(ElasticIpQueryFilterPojo filter, AsyncCallback<ElasticIpQueryResultPojo> callback);
 	void createElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpPojo> callback);
 	void updateElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpPojo> callback);
-	void deleteElasticIp(ElasticIpPojo cidr, AsyncCallback<Void> callback);
+	void deleteElasticIpSummary(ElasticIpSummaryPojo cidr, AsyncCallback<Void> callback);
 	void isElasticIpAssigned(ElasticIpPojo cidr, AsyncCallback<Boolean> callback);
 	void getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpAssignmentStatusPojo> callback);
 

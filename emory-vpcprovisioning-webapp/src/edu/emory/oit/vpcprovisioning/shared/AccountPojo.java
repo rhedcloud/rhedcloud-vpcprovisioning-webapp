@@ -17,6 +17,7 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 	String speedType;
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 	List<RoleAssignmentPojo> roleAssignments = new ArrayList<RoleAssignmentPojo>();
+	String complianceClass;
 	AccountPojo baseline;
 	
 	public static final ProvidesKey<AccountPojo> KEY_PROVIDER = new ProvidesKey<AccountPojo>() {
@@ -124,5 +125,13 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 
 	public void setRoleAssignments(List<RoleAssignmentPojo> roleAssignments) {
 		this.roleAssignments = roleAssignments;
+	}
+
+	public String getComplianceClass() {
+		return complianceClass;
+	}
+
+	public void setComplianceClass(String complianceClass) {
+		this.complianceClass = complianceClass;
 	}
 }
