@@ -306,7 +306,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 				new ButtonCell()) {
 			@Override
 			public String getValue(VpcpPojo object) {
-				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					return "View";
 				}

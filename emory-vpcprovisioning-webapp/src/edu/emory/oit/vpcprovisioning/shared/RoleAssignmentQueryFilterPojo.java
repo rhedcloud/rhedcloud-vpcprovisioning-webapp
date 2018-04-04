@@ -7,7 +7,7 @@ public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSer
 	//RoleDN?, IdentityType?, DirectAssignOnly?, UserDN?
 	String roleDN;
 	String identityType;
-	String directAssignOnly;
+	boolean directAssignOnly;
 	String userDN;
 
 	public RoleAssignmentQueryFilterPojo() {
@@ -30,20 +30,20 @@ public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSer
 		this.identityType = identityType;
 	}
 
-	public String getDirectAssignOnly() {
-		return directAssignOnly;
-	}
-
-	public void setDirectAssignOnly(String directAssignOnly) {
-		this.directAssignOnly = directAssignOnly;
-	}
-
 	public String getUserDN() {
 		return userDN;
 	}
 
 	public void setUserDN(String userDN) {
 		this.userDN = userDN;
+	}
+
+	public boolean isDirectAssignOnly() {
+		return directAssignOnly;
+	}
+
+	public void setDirectAssignOnly(boolean directAssignOnly) {
+		this.directAssignOnly = directAssignOnly;
 	}
 
 }

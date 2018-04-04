@@ -12,7 +12,7 @@
 				</g:HorizontalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">CIDR Assignments</g:HTML>
+		<g:HTML addStyleNames="{style.introHeading}">Elastic IP Assignments</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing ElasticIpAssignments that you can view or delete.<br/><br/>
 		These reside in the database associated to the Emory ElasticIp ESB Service.  
 		The Emory ElasticIp Service is authoritatative for 
@@ -26,24 +26,31 @@
 		you can delete a ElasticIpAssignent or you can select a 
 		row and view more details about the selected ElasticIpAssignment.
 		-->
-		<g:VerticalPanel ui:field="elasticIpAssignmentSummaryListPanel" width="100%">
-			<g:Grid>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="8">
 				<g:row>
 					<g:customCell>
-						<c:CellTable width="100%" ui:field="elasticIpAssignmentSummaryListTable"  title="Existing ElasticIpAssignments"/>
+						<g:Button ui:field="allocateAddressButton" text="Allocate new address" addStyleNames="{style.glowing-border} {style.actionButton}" title="Allowcate a new IP address"/>
 					</g:customCell>
-				</g:row>
-				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="elasticIpAssignmentSummaryListPager" location="CENTER"/>
-					</g:customCell>
-				</g:row>
-				<g:row>
-					<g:customCell>
-						<g:Button ui:field="addElasticIpAssignmentButton" text="Add ElasticIpAssignment" addStyleNames="{style.glowing-border} {style.actionButton}"/>
+						<g:Button ui:field="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Allowcate a new IP address"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>
-		</g:VerticalPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid>
+				<g:row>
+					<g:customCell>
+						<c:CellTable width="100%" ui:field="elasticIpAssignmentListTable"  title="Existing ElasticIpAssignments"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="elasticIpAssignmentListPager" location="CENTER"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
 	</g:VerticalPanel>
 </ui:UiBinder> 

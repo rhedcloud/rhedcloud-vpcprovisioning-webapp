@@ -38,11 +38,13 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainAccount extends ViewImplBase implements MaintainAccountView {
 	Presenter presenter;
 	List<String> emailTypes;
+	List<String> complianceClassTypes;
 	UserAccountPojo userLoggedIn;
 	boolean editing;
 	int adminRowNum = 0;
@@ -72,13 +74,14 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	
 	// AWS Account Administrator (net ids)
 	@UiField VerticalPanel netIdVP;
-	@UiField TextBox addNetIdTF;
-	@UiField Button addNetIdButton;
+//	@UiField TextBox addNetIdTF;
+//	@UiField Button addNetIdButton;
 	@UiField FlexTable adminTable;
 	@UiField Button addAdminButton;
 	
 	@UiField HTML accountInfoHTML;
 	@UiField HTML speedTypeHTML;
+	@UiField ListBox complianceClassLB;
 
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 
@@ -135,17 +138,17 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			ownerNetIdTB.setTitle("Owner NetID");
 		}
 	}
-	@UiHandler ("addNetIdTF")
-	void addUserTFKeyPressed(KeyPressEvent e) {
-        int keyCode = e.getNativeEvent().getKeyCode();
-        if (keyCode == KeyCodes.KEY_ENTER) {
-    		addNetIdToVpc(addNetIdTF.getText());
-        }
-	}
-	@UiHandler ("addNetIdButton")
-	void addUserButtonClick(ClickEvent e) {
-		addNetIdToVpc(addNetIdTF.getText());
-	}
+//	@UiHandler ("addNetIdTF")
+//	void addUserTFKeyPressed(KeyPressEvent e) {
+//        int keyCode = e.getNativeEvent().getKeyCode();
+//        if (keyCode == KeyCodes.KEY_ENTER) {
+//    		addNetIdToVpc(addNetIdTF.getText());
+//        }
+//	}
+//	@UiHandler ("addNetIdButton")
+//	void addUserButtonClick(ClickEvent e) {
+//		addNetIdToVpc(addNetIdTF.getText());
+//	}
 	@UiHandler ("addAdminButton")
 	void addAdminButtonClick(ClickEvent e) {
 		addAdminDirectoryPersonToAccount();
@@ -171,6 +174,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
 			}
 			presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerNetIdTB.getText());
+			presenter.getAccount().setComplianceClass(complianceClassLB.getSelectedValue());
 			presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
 			presenter.getAccount().setSpeedType(speedTypeTB.getText());
 			// emails are added as they're added in the interface
@@ -224,38 +228,38 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	/*
 	 * Admin net id helper methods
 	 */
-	private void addNetIdToVpc(String netId) {
-		if (netId != null && netId.trim().length() > 0) {
-			final String trimmedNetId = netId.trim().toLowerCase();
-//			if (editing) {
-				if (presenter.getAccount().getCustomerAdminNetIdList().contains(trimmedNetId)) {
-					showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
-				}
-				else {
-					presenter.getAccount().getCustomerAdminNetIdList().add(trimmedNetId);
-					addNetIdToPanel(trimmedNetId);
-				}
-//			}
-//			else {
-//				if (presenter.getVpcRequisition().getCustomerAdminNetIdList().contains(trimmedNetId)) {
+//	private void addNetIdToVpc(String netId) {
+//		if (netId != null && netId.trim().length() > 0) {
+//			final String trimmedNetId = netId.trim().toLowerCase();
+////			if (editing) {
+//				if (presenter.getAccount().getCustomerAdminNetIdList().contains(trimmedNetId)) {
 //					showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
 //				}
 //				else {
-//					presenter.getVpcRequisition().getCustomerAdminNetIdList().add(trimmedNetId);
+//					presenter.getAccount().getCustomerAdminNetIdList().add(trimmedNetId);
 //					addNetIdToPanel(trimmedNetId);
 //				}
-//			}
-		}
-		else {
-			showStatus(addNetIdButton, "Please enter a valid net id.");
-		}
-	}
+////			}
+////			else {
+////				if (presenter.getVpcRequisition().getCustomerAdminNetIdList().contains(trimmedNetId)) {
+////					showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
+////				}
+////				else {
+////					presenter.getVpcRequisition().getCustomerAdminNetIdList().add(trimmedNetId);
+////					addNetIdToPanel(trimmedNetId);
+////				}
+////			}
+//		}
+//		else {
+//			showStatus(addNetIdButton, "Please enter a valid net id.");
+//		}
+//	}
 	
 	@Override
-	public void addRoleAssignment(String name, final String netId, String title) {
+	public void addRoleAssignment(final int ra_summaryIndex, String name, final String netId, String widgetTitle) {
 		int numRows = adminTable.getRowCount();
 		final Label nameLabel = new Label(name + " (" + netId + ")");
-		nameLabel.setTitle(title);
+		nameLabel.setTitle(widgetTitle);
 		nameLabel.addStyleName("emailLabel");
 //		nameLabel.addMouseOverHandler(new MouseOverHandler() {
 //			@Override
@@ -265,7 +269,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 //		});
 		final Button removeAdminButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 			removeAdminButton.setEnabled(false);
 		}
 		removeAdminButton.addStyleName("glowing-border");
@@ -273,12 +277,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			@Override
 			public void onClick(ClickEvent event) {
 				// TODO: RoleAssignment.Delete
-				presenter.getAccount().getCustomerAdminNetIdList().remove(netId);
+				presenter.removeRoleAssignmentFromAccount(presenter.getAccount().getAccountId(), 
+						presenter.getRoleAssignmentSummaries().get(ra_summaryIndex));
 				adminTable.remove(nameLabel);
 				adminTable.remove(removeAdminButton);
 			}
 		});
-		addNetIdTF.setText("");
+		directoryLookupSB.setText("");
 		if (numRows > 6) {
 			if (adminRowNum > 5) {
 				adminRowNum = 0;
@@ -295,57 +300,57 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		adminTable.setWidget(adminRowNum, adminColumnNum, nameLabel);
 		adminTable.setWidget(adminRowNum, removeButtonColumnNum, removeAdminButton);
 	}
-	private void addNetIdToPanel(final String netId) {
-		int numRows = adminTable.getRowCount();
-		final Label netIdLabel = new Label(netId);
-		netIdLabel.addStyleName("emailLabel");
-		netIdLabel.addMouseOverHandler(new MouseOverHandler() {
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				presenter.setDirectoryMetaDataTitleOnWidget(netId, netIdLabel);
-			}
-		});
-		final Button removeNetIdButton = new Button("Remove");
-		// disable remove button if userLoggedIn is NOT an admin
-		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-			removeNetIdButton.setEnabled(false);
-		}
-		removeNetIdButton.addStyleName("glowing-border");
-		removeNetIdButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				presenter.getAccount().getCustomerAdminNetIdList().remove(netId);
-				adminTable.remove(netIdLabel);
-				adminTable.remove(removeNetIdButton);
-			}
-		});
-		addNetIdTF.setText("");
-		if (numRows > 6) {
-			if (adminRowNum > 5) {
-				adminRowNum = 0;
-				adminColumnNum = adminColumnNum + 2;
-				removeButtonColumnNum = removeButtonColumnNum + 2;
-			}
-			else {
-				adminRowNum ++;
-			}
-		}
-		else {
-			adminRowNum = numRows;
-		}
-		adminTable.setWidget(adminRowNum, adminColumnNum, netIdLabel);
-		adminTable.setWidget(adminRowNum, removeButtonColumnNum, removeNetIdButton);
-	}
+//	private void addNetIdToPanel(final String netId) {
+//		int numRows = adminTable.getRowCount();
+//		final Label netIdLabel = new Label(netId);
+//		netIdLabel.addStyleName("emailLabel");
+//		netIdLabel.addMouseOverHandler(new MouseOverHandler() {
+//			@Override
+//			public void onMouseOver(MouseOverEvent event) {
+//				presenter.setDirectoryMetaDataTitleOnWidget(netId, netIdLabel);
+//			}
+//		});
+//		final Button removeNetIdButton = new Button("Remove");
+//		// disable remove button if userLoggedIn is NOT an admin
+//		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+//			removeNetIdButton.setEnabled(false);
+//		}
+//		removeNetIdButton.addStyleName("glowing-border");
+//		removeNetIdButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				presenter.getAccount().getCustomerAdminNetIdList().remove(netId);
+//				adminTable.remove(netIdLabel);
+//				adminTable.remove(removeNetIdButton);
+//			}
+//		});
+//		addNetIdTF.setText("");
+//		if (numRows > 6) {
+//			if (adminRowNum > 5) {
+//				adminRowNum = 0;
+//				adminColumnNum = adminColumnNum + 2;
+//				removeButtonColumnNum = removeButtonColumnNum + 2;
+//			}
+//			else {
+//				adminRowNum ++;
+//			}
+//		}
+//		else {
+//			adminRowNum = numRows;
+//		}
+//		adminTable.setWidget(adminRowNum, adminColumnNum, netIdLabel);
+//		adminTable.setWidget(adminRowNum, removeButtonColumnNum, removeNetIdButton);
+//	}
 
-	void initializeNetIdPanel() {
-		adminTable.removeAllRows();
-		if (presenter.getAccount() != null) {
-			GWT.log("Adding " + presenter.getAccount().getCustomerAdminNetIdList().size() + " net ids to the panel (update).");
-			for (String netId : presenter.getAccount().getCustomerAdminNetIdList()) {
-				addNetIdToPanel(netId);
-			}
-		}
-	}
+//	void initializeNetIdPanel() {
+//		adminTable.removeAllRows();
+//		if (presenter.getAccount() != null) {
+//			GWT.log("Adding " + presenter.getAccount().getCustomerAdminNetIdList().size() + " net ids to the panel (update).");
+//			for (String netId : presenter.getAccount().getCustomerAdminNetIdList()) {
+//				addNetIdToPanel(netId);
+//			}
+//		}
+//	}
 
 	/*
 	 *	associated email helper methods
@@ -381,7 +386,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		emailLabel.addStyleName("emailLabel");
 		final Button removeEmailButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 			removeEmailButton.setEnabled(false);
 		}
 		removeEmailButton.addStyleName("glowing-border");
@@ -454,8 +459,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailTF.setText("");
 		addEmailTypeLB.setSelectedIndex(0);
 
-		addNetIdTF.setText("");
-		addNetIdTF.getElement().setPropertyString("placeholder", "enter net id");
+//		addNetIdTF.setText("");
+//		addNetIdTF.getElement().setPropertyString("placeholder", "enter net id");
 
 		addEmailTF.setText("");
 		addEmailTF.getElement().setPropertyString("placeholder", "enter e-mail");
@@ -484,7 +489,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		initializeEmailPanel();
 		
 		// populate admin net id fields if appropriate
-		initializeNetIdPanel();
+		adminTable.clear();
+//		initializeNetIdPanel();
 	}
 	
 	private void registerHandlers() {
@@ -550,8 +556,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailTF.setEnabled(true);
 		addEmailTypeLB.setEnabled(true);
 		addEmailButton.setEnabled(true);
-		addNetIdTF.setEnabled(true);
-		addNetIdButton.setEnabled(true);
+//		addNetIdTF.setEnabled(true);
+//		addNetIdButton.setEnabled(true);
 		directoryLookupSB.setEnabled(true);
 		addAdminButton.setEnabled(true);
 	}
@@ -566,8 +572,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailTF.setEnabled(false);
 		addEmailTypeLB.setEnabled(false);
 		addEmailButton.setEnabled(false);
-		addNetIdTF.setEnabled(false);
-		addNetIdButton.setEnabled(false);
+//		addNetIdTF.setEnabled(false);
+//		addNetIdButton.setEnabled(false);
 		directoryLookupSB.setEnabled(false);
 		addAdminButton.setEnabled(false);
 	}
@@ -617,6 +623,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			this.setFieldViolations(true);
 			fields.add(addEmailTF);
 		}
+		if (acct.getComplianceClass() == null || acct.getComplianceClass().length() == 0) {
+			fields.add(complianceClassLB);
+		}
 		return fields;
 	}
 	@Override
@@ -624,6 +633,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		fields.add(accountIdTB);
 		fields.add(accountNameTB);
+		fields.add(complianceClassLB);
 		fields.add(passwordLocationTB);
 		fields.add(addEmailTF);
 		this.resetFieldStyles(fields);
@@ -645,5 +655,30 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public boolean isSpeedTypeConfirmed() {
 		return this.speedTypeConfirmed;
+	}
+	@Override
+	public void setRoleAssignmentSummaries(List<RoleAssignmentSummaryPojo> summaries) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void setComplianceClassItems(List<String> complianceClassTypes) {
+		this.complianceClassTypes = complianceClassTypes;
+		complianceClassLB.clear();
+		complianceClassLB.addItem("-- Select --");
+		if (complianceClassLB != null) {
+			int i=1;
+			for (String type : complianceClassTypes) {
+				complianceClassLB.addItem(type, type);
+				if (presenter.getAccount() != null) {
+					if (presenter.getAccount().getComplianceClass() != null) {
+						if (presenter.getAccount().getComplianceClass().equals(type)) {
+							complianceClassLB.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
+		}
 	}
 }

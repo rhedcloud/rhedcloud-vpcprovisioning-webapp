@@ -11,14 +11,16 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
-import edu.emory.oit.vpcprovisioning.client.event.ElasticIpAssignmentSummaryListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ElasticIpAssignmentListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListElasticIpAssignmentPresenter extends PresenterBase implements ListElasticIpAssignmentView.Presenter {
 
@@ -33,8 +35,9 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	private EventBus eventBus;
 
-	ElasticIpAssignmentSummaryQueryFilterPojo filter;
-	ElasticIpAssignmentSummaryPojo summary;
+	ElasticIpAssignmentQueryFilterPojo filter;
+	ElasticIpAssignmentPojo elasticIpAssignment;
+	VpcPojo vpc;
 
 	public ListElasticIpAssignmentPresenter(ClientFactory clientFactory, boolean clearList) {
 		this.clientFactory = clientFactory;
@@ -89,7 +92,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 				getView().setUserLoggedIn(userLoggedIn);
 				GWT.log("presenter, emptying Elastic IP Assignment list.");
-				setElasticIpAssignmentSummaryList(Collections.<ElasticIpAssignmentSummaryPojo> emptyList());
+				setElasticIpAssignmentList(Collections.<ElasticIpAssignmentPojo> emptyList());
 
 				// Request the cidr assignment list now.
 				refreshList(userLoggedIn);
@@ -102,10 +105,10 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	/**
 	 * Set the list of CidrAssignments
 	 */
-	private void setElasticIpAssignmentSummaryList(List<ElasticIpAssignmentSummaryPojo> summaries) {
-		getView().setElasticIpAssignmentSummaries(summaries);
+	private void setElasticIpAssignmentList(List<ElasticIpAssignmentPojo> summaries) {
+		getView().setElasticIpAssignments(summaries);
 		GWT.log("back to presenter, firing Elastic IP Assignemt list update event...");
-		eventBus.fireEventFromSource(new ElasticIpAssignmentSummaryListUpdateEvent(summaries), this);
+		eventBus.fireEventFromSource(new ElasticIpAssignmentListUpdateEvent(summaries), this);
 	}
 	
 	/**
@@ -113,7 +116,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	 */
 	private void refreshList(final UserAccountPojo user) {
 		// use RPC to get all accounts for the current filter being used
-		AsyncCallback<ElasticIpAssignmentSummaryQueryResultPojo> callback = new AsyncCallback<ElasticIpAssignmentSummaryQueryResultPojo>() {
+		AsyncCallback<ElasticIpAssignmentQueryResultPojo> callback = new AsyncCallback<ElasticIpAssignmentQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
@@ -123,13 +126,13 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 			}
 
 			@Override
-			public void onSuccess(ElasticIpAssignmentSummaryQueryResultPojo result) {
-				GWT.log("Got " + result.getResults().size() + " ElasticIpAssignmentSummaries for " + result.getFilterUsed());
+			public void onSuccess(ElasticIpAssignmentQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " ElasticIpAssignments for " + result.getFilterUsed());
 				GWT.log("presenter, initializing Elastic IP Assignment list with " + result.getResults().size() + " Elastic IP Assignments.");
-				setElasticIpAssignmentSummaryList(result.getResults());
+				setElasticIpAssignmentList(result.getResults());
 				// apply authorization mask
 				GWT.log("back to presenter, applying authorization masks...");
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -146,7 +149,10 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 		GWT.log("refreshing Elastic IP AssignmentSummary list...");
 		// getCidrAssignmentSummariesForFilter
-		VpcProvisioningService.Util.getInstance().getElasticIpAssignmentSummariesForFilter(filter, callback);
+		if (filter == null) {
+			filter = new ElasticIpAssignmentQueryFilterPojo();
+		}
+		VpcProvisioningService.Util.getInstance().getElasticIpAssignmentsForFilter(filter, callback);
 	}
 
 	@Override
@@ -166,8 +172,8 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	}
 
 	@Override
-	public void selectElasticIpAssignmentSummary(ElasticIpAssignmentSummaryPojo selected) {
-		this.summary = selected;
+	public void selectElasticIpAssignment(ElasticIpAssignmentPojo selected) {
+		this.elasticIpAssignment = selected;
 	}
 
 	@Override
@@ -176,7 +182,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	}
 
 	@Override
-	public ElasticIpAssignmentSummaryQueryFilterPojo getFilter() {
+	public ElasticIpAssignmentQueryFilterPojo getFilter() {
 		return this.filter;
 	}
 
@@ -186,10 +192,10 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	}
 
 	@Override
-	public void deleteElasticIpAssignment(ElasticIpAssignmentSummaryPojo selected) {
+	public void deleteElasticIpAssignment(ElasticIpAssignmentPojo selected) {
 		if (Window.confirm("Delete the Elastic IP Assignment " + 
-				summary.getElasticIpAssignment().getAssignmentId() + "/" + 
-				summary.getElasticIpAssignment().getPurpose() + "?")) {
+				selected.getAssignmentId() + "/" + 
+				selected.getPurpose() + "?")) {
 			
 			getView().showPleaseWaitDialog();
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -205,7 +211,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				@Override
 				public void onSuccess(Void result) {
 					// remove from dataprovider
-					getView().removeElasticIpAssignmentSummaryFromView(summary);
+					getView().removeElasticIpAssignmentFromView(elasticIpAssignment);
 					getView().hidePleaseWaitDialog();
 					// status message
 					getView().showStatus(getView().getStatusMessageSource(), "Elastic IP Assignment was deleted.");
@@ -213,8 +219,54 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 					// TODO fire list accounts event...
 				}
 			};
-			VpcProvisioningService.Util.getInstance().deleteElasticIpAssignment(summary.getElasticIpAssignment(), callback);
+			VpcProvisioningService.Util.getInstance().deleteElasticIpAssignment(elasticIpAssignment, callback);
 		}
+	}
+
+	public VpcPojo getVpc() {
+		return vpc;
+	}
+
+	public void setVpc(VpcPojo vpc) {
+		this.vpc = vpc;
+	}
+
+	@Override
+	public void generateElasticIpAssignment() {
+        getView().showPleaseWaitPanel();
+
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+			}
+
+			@Override
+			public void onSuccess(final UserAccountPojo userLoggedIn) {
+
+				getView().setUserLoggedIn(userLoggedIn);
+				
+				AsyncCallback<ElasticIpAssignmentPojo> callback = new AsyncCallback<ElasticIpAssignmentPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						getView().showMessageToUser("There was an exception on the " +
+								"server generating the Elastic IP Assignment.  Message " +
+								"from server is: " + caught.getMessage());
+		                getView().hidePleaseWaitPanel();
+					}
+
+					@Override
+					public void onSuccess(ElasticIpAssignmentPojo result) {
+						refreshList(userLoggedIn);
+					}
+				};
+				ElasticIpAssignmentRequisitionPojo req = new ElasticIpAssignmentRequisitionPojo();
+				req.setOwnerId(vpc.getVpcId());
+				VpcProvisioningService.Util.getInstance().generateElasticIpAssignment(req, callback);
+			}
+		};
+		GWT.log("getting user logged in from server...");
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 
 }

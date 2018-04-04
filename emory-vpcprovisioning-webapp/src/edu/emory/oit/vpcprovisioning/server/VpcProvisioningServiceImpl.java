@@ -90,7 +90,6 @@ import com.paloaltonetworks.moa.objects.resources.v1_0.SourceUser;
 import com.paloaltonetworks.moa.objects.resources.v1_0.Tag;
 import com.paloaltonetworks.moa.objects.resources.v1_0.To;
 
-import edu.emory.moa.jmsobjects.email.v1_0.Email;
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
@@ -109,6 +108,10 @@ import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.ElasticIpAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.ElasticIpQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.ElasticIpRequisition;
+import edu.emory.moa.objects.resources.v1_0.Email;
+import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
+import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
@@ -119,6 +122,7 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
 import edu.emory.oit.vpcprovisioning.shared.BillPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillQueryResultPojo;
@@ -142,6 +146,7 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentStatusPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResultPojo;
@@ -151,6 +156,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmployeePojo;
+import edu.emory.oit.vpcprovisioning.shared.ExplicitIdentityDNsPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -166,6 +172,9 @@ import edu.emory.oit.vpcprovisioning.shared.PersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleDNsPojo;
 import edu.emory.oit.vpcprovisioning.shared.RolePojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
@@ -477,8 +486,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (useAuthzService) {
 					// get permissions for user so they can be checked against later
 					// only do this once per session.
-					this.getPermissionsForUser(user);
-					if (user.getPermissions().size() == 0) {
+//					this.getPermissionsForUser(user);
+					this.getRolesForUser(user);
+					if (user.getAccountRoles().size() == 0) {
 						// ERROR, user does not have any required permissions to use
 						// this app
 						info("user " + user.getEppn() + " is not authorized to use this application.");
@@ -487,6 +497,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							"Please contact your support representative to " +
 							"gain access to this application.");
 					}
+//					if (user.getPermissions().size() == 0) {
+//						// ERROR, user does not have any required permissions to use
+//						// this app
+//						info("user " + user.getEppn() + " is not authorized to use this application.");
+//						throw new RpcException("The user id being used to log " +
+//							"in is not authorized to use this application.  " +
+//							"Please contact your support representative to " +
+//							"gain access to this application.");
+//					}
 				}
 				else {
 					info("not configured to use authorization service, anyone "
@@ -547,16 +566,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (useAuthzService) {
 					// get permissions for user so they can be checked against later
 					// only do this once per session.
-					this.getPermissionsForUser(user);
-					if (user.getPermissions().size() == 0) {
+//					this.getPermissionsForUser(user);
+					this.getRolesForUser(user);
+					if (user.getAccountRoles().size() == 0) {
 						// ERROR, user does not have any required permissions to use
 						// this app
-						info("user " + eppn + " is not authorized to use this application.");
+						info("user " + user.getEppn() + " is not authorized to use this application.");
 						throw new RpcException("The user id being used to log " +
 							"in is not authorized to use this application.  " +
 							"Please contact your support representative to " +
 							"gain access to this application.");
 					}
+//					if (user.getPermissions().size() == 0) {
+//						// ERROR, user does not have any required permissions to use
+//						// this app
+//						info("user " + eppn + " is not authorized to use this application.");
+//						throw new RpcException("The user id being used to log " +
+//							"in is not authorized to use this application.  " +
+//							"Please contact your support representative to " +
+//							"gain access to this application.");
+//					}
 				}
 				else {
 					info("not configured to use authorization service, anyone "
@@ -632,7 +661,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 					if (useAuthzService) {
 						// get permissions
-						this.getPermissionsForUser(user);
+//						this.getPermissionsForUser(user);
+						this.getRolesForUser(user);
 					}
 					else {
 						// give them all permissions
@@ -651,13 +681,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 								"gain access to this application.");
 					}
 					else {
-						if (user.getPermissions().size() == 0) {
-							info("user " + eppn + " is not authorized to use this application.");
+						if (user.getAccountRoles().size() == 0) {
+							// ERROR, user does not have any required permissions to use
+							// this app
+							info("user " + user.getEppn() + " is not authorized to use this application.");
 							throw new RpcException("The user id being used to log " +
 								"in is not authorized to use this application.  " +
 								"Please contact your support representative to " +
 								"gain access to this application.");
 						}
+//						if (user.getPermissions().size() == 0) {
+//							info("user " + eppn + " is not authorized to use this application.");
+//							throw new RpcException("The user id being used to log " +
+//								"in is not authorized to use this application.  " +
+//								"Please contact your support representative to " +
+//								"gain access to this application.");
+//						}
 					}
 					
 					if (userCnt == 0) {
@@ -780,6 +819,101 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		getThreadLocalRequest().getSession().invalidate();
 	}
 
+	protected void getRolesForUser(UserAccountPojo user) throws RpcException {
+		// TODO: get the fullperson object for the user.principal
+		// TODO: set the user's publicId
+		// TODO: get the roleassignments for the user.publicId
+		// TODO: for each roleassignment:
+		//	- get the aws account id
+		//	- get the role name associated to that account for this user
+		//	- create a new AccountRolePojo, populate it with account id and role name
+		//	- add the AccountRolePojo to the user passed in
+		
+		FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
+		fp_filter.setNetId(user.getPrincipal());
+		FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
+		if (fp_result != null) {
+			info("[getRolesForUser] got " + fp_result.getResults().size() + 
+				" FullPerson objects back for net id: " + fp_filter.getNetId());
+		}
+		else {
+			// error
+			info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
+			return;
+		}
+		FullPersonPojo fullPerson = fp_result.getResults().get(0);
+		user.setPublicId(fullPerson.getPublicId());
+		
+		try {
+			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
+			
+			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
+			idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, user.getPublicId());
+			ra_filter.setUserDN(idDn);
+			ra_filter.setIdentityType("USER");
+			ra_filter.setDirectAssignOnly(true);
+
+			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
+			if (ra_result != null) {
+				info("[getRolesForUser] got " + ra_result.getResults().size() + 
+					" RoleAssignment objects back for userDN: " + ra_filter.getUserDN());
+			}
+			else {
+				// error
+				info("[getRolesForUser] null RoleAssignmentQueryResultPojo.  This is bad.");
+				return;
+			}
+			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				/*
+				<RoleAssignment>
+					<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+					<CauseIdentities/>
+					<EffectiveDatetime>
+						<Year>2015</Year>
+						<Month>02</Month>
+						<Day>01</Day>
+						<Hour>11</Hour>
+						<Minute>12</Minute>
+						<Second>13</Second>
+						<SubSecond>0</SubSecond>
+						<Timezone>America/New_York</Timezone>
+					</EffectiveDatetime>
+					<ExplicitIdentityDNs>
+						<DistinguishedName>cn=P1021609,ou=Users,ou=Data,o=EmoryDev</DistinguishedName>
+					</ExplicitIdentityDNs>
+					<RoleDN>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</RoleDN>
+				</RoleAssignment>
+				 */
+				String roleDn = roleAssignment.getRoleDN();
+				if (roleDn.indexOf("RGR_AWS") >= 0) {
+					info("[getRolesForUser] roleDn: " + roleDn);
+					String[] cns = roleDn.split(",");
+					String acctCn = cns[0];
+					String[] idRoles = acctCn.split("-");
+					String acctId = idRoles[1];
+					String roleName = idRoles[2];
+					AccountRolePojo arp = new AccountRolePojo();
+					arp.setAccountId(acctId);
+					arp.setRoleName(roleName);
+					info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+					user.getAccountRoles().add(arp);
+				}
+			}
+			
+			// to make the user a LITS admin (temporary)
+			AccountRolePojo arp = new AccountRolePojo();
+			arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMIN);
+			user.getAccountRoles().add(arp);
+
+			info("[getRoleForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	protected void getPermissionsForUser(UserAccountPojo user) throws RpcException {
 		info("getting permissions for " + user.getEppn());
@@ -1004,7 +1138,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setVpcId(UUID.uuid());
 			pojo.setVpcId(moa.getVpcId());
 		}
-		moa.setComplianceClass(pojo.getComplianceClass());
+//		moa.setComplianceClass(pojo.getComplianceClass());
 		moa.setType(pojo.getType());
 		// owner net ids
 //        for (String p : pojo.getCustomerAdminNetIdList()) {
@@ -1022,7 +1156,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setVpcId(moa.getVpcId());
 		pojo.setType(moa.getType());
-		pojo.setComplianceClass(moa.getComplianceClass());
+//		pojo.setComplianceClass(moa.getComplianceClass());
 
 //		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
 //			pojo.getCustomerAdminNetIdList().add(netId);
@@ -1093,6 +1227,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setPasswordLocation(pojo.getPasswordLocation());
 		moa.setAccountOwnerNetId(pojo.getAccountOwnerDirectoryMetaData().getNetId());
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
+		moa.setComplianceClass(pojo.getComplianceClass());
 		// email
         for (EmailPojo p : pojo.getEmailList()) {
             EmailAddress email = moa.newEmailAddress();
@@ -1102,9 +1237,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
         }
 
 		// owner net ids
-        for (String p : pojo.getCustomerAdminNetIdList()) {
-            moa.addCustomerAdminNetId(p);
-        }
+//        for (String p : pojo.getCustomerAdminNetIdList()) {
+//            moa.addCustomerAdminNetId(p);
+//        }
 
         this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
@@ -1132,6 +1267,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setAccountOwnerDirectoryMetaData(ownerDmdp);
 		pojo.setPasswordLocation(moa.getPasswordLocation());
 		pojo.setSpeedType(moa.getFinancialAccountNumber());
+		pojo.setComplianceClass(moa.getComplianceClass());
 		for (EmailAddress email : (List<EmailAddress>) moa.getEmailAddress()) {
 			EmailPojo emp = new EmailPojo();
 			emp.setType(email.getType());
@@ -1139,9 +1275,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			pojo.getEmailList().add(emp);
 		}
 		
-		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
-			pojo.getCustomerAdminNetIdList().add(netId);
-		}
+//		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
+//			pojo.getCustomerAdminNetIdList().add(netId);
+//		}
 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
@@ -1339,6 +1475,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// if there is, add that to the result, otherwise add the unassigned cidr to the result
 				CidrAssignmentSummaryQueryFilterPojo casFilter = new CidrAssignmentSummaryQueryFilterPojo();
 				casFilter.setCidr(pojo);
+				if (filter.getUserLoggedIn() != null) {
+					casFilter.setUserLoggedIn(filter.getUserLoggedIn());
+				}
 				CidrAssignmentSummaryQueryResultPojo casResult = this.getCidrAssignmentSummaryForCidr(casFilter);
 				if (casResult != null && casResult.getResults().size() > 0) {
 					info("found an assignment for cidr " + moa.getBits() + "/" + moa.getNetwork());
@@ -2239,10 +2378,95 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return null;
 	}
 
+	private AccountPojo getAccountById(String accountId) throws RpcException {
+		
+		try {
+			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
+			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
+	
+			queryObject.setAccountId(accountId);
+			
+			@SuppressWarnings("unchecked")
+			List<Account> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			
+			info("[getAccountById] got " + moas.size() + " accounts from ESB service");
+			// there should only ever be one returned
+			if (moas.size() != 1) {
+				// error
+				String errorMsg = "[getAccountById] got " + moas.size() + " accounts from ESB service, "
+						+ "expected only 1.  This is an issue."; 
+				info(errorMsg);
+				throw new RpcException(errorMsg);
+			}
+			else {
+				for (Account moa : moas) {
+					AccountPojo pojo = new AccountPojo();
+					AccountPojo baseline = new AccountPojo();
+					this.populateAccountPojo(moa, pojo);
+					this.populateAccountPojo(moa, baseline);
+					pojo.setBaseline(baseline);
+					return pojo;
+				}
+			}
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		return null;
+	}
 	@Override
 	public AccountQueryResultPojo getAccountsForFilter(AccountQueryFilterPojo filter) throws RpcException {
 		AccountQueryResultPojo result = new AccountQueryResultPojo();
 		List<AccountPojo> pojos = new java.util.ArrayList<AccountPojo>();
+		if (filter != null) {
+			if (filter.getUserLoggedIn() != null) {
+				if (!filter.getUserLoggedIn().isLitsAdmin()) {
+					// iterate over all filter.AccountRoles and do a query for each account 
+					// in the list.  Then, need to add each account to the result 
+					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
+						AccountPojo acct = this.getAccountById(arp.getAccountId());
+						if (acct != null) {
+							info("[getAccountsForFilter] adding account " + acct.getAccountId() + 
+								" to list of accounts for the user logged in" );
+							pojos.add(acct);
+						}
+						else {
+							String errorMsg = "[getAccountsForFilter] null result from getAccountById, this is an issue.";
+							info(errorMsg);
+							throw new RpcException(errorMsg);
+						}
+					}
+					Collections.sort(pojos);
+					result.setResults(pojos);
+					result.setFilterUsed(filter);
+					info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
+					return result;
+				}
+			}
+		}
+		
+		// if filter.userLoggedIn isn't null and the user isn't a LITS admin, we won't get this far
 		try {
 			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
@@ -2270,6 +2494,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			@SuppressWarnings("unchecked")
 			List<Account> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
+			info("[getAccountsForFilter] got " + moas.size() + " accounts from ESB service");
 			for (Account moa : moas) {
 				AccountPojo pojo = new AccountPojo();
 				AccountPojo baseline = new AccountPojo();
@@ -2460,10 +2685,86 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return null;
 	}
 
+	private List<VpcPojo> getVpcsForAccountId(String accountId) throws RpcException {
+		List<VpcPojo> pojos = new java.util.ArrayList<VpcPojo>();
+
+		try {
+			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(Constants.MOA_VPC_QUERY_SPEC);
+			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
+	
+			queryObject.setAccountId(accountId);
+			
+			@SuppressWarnings("unchecked")
+			List<VirtualPrivateCloud> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			
+			info("[getVpcForAccountId] got " + moas.size() + " VPCs from ESB service");
+			for (VirtualPrivateCloud moa : moas) {
+				VpcPojo pojo = new VpcPojo();
+				VpcPojo baseline = new VpcPojo();
+				this.populateVpcPojo(moa, pojo);
+				this.populateVpcPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		return pojos;
+	}
 	@Override
 	public VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter) throws RpcException {
 		VpcQueryResultPojo result = new VpcQueryResultPojo();
 		List<VpcPojo> pojos = new java.util.ArrayList<VpcPojo>();
+		
+		if (filter != null) {
+			if (filter.getUserLoggedIn() != null) {
+				if (!filter.getUserLoggedIn().isLitsAdmin()) {
+					// iterate over all filter.AccountRoles and do a query for each account 
+					// in the list.  Then, need to add each account to the result 
+					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
+						List<VpcPojo> vpcs = this.getVpcsForAccountId(arp.getAccountId());
+						if (vpcs != null) {
+							info("[getVpcsForFilter] adding account " + arp.getAccountId() + 
+								" to list of accounts for the user logged in" );
+							pojos.addAll(vpcs);
+						}
+						else {
+							String errorMsg = "[getAccountsForFilter] null result from getAccountById, this is an issue.";
+							info(errorMsg);
+							throw new RpcException(errorMsg);
+						}
+					}
+					Collections.sort(pojos);
+					result.setResults(pojos);
+					result.setFilterUsed(filter);
+					info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
+					return result;
+				}
+			}
+		}
+
 		try {
 			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(Constants.MOA_VPC_QUERY_SPEC);
 			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
@@ -2952,7 +3253,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<CidrPojo> getUnassignedCidrs() throws RpcException {
 		List<CidrPojo> unassignedCidrs = new java.util.ArrayList<CidrPojo>();
 		CidrQueryResultPojo cidrResult = this.getCidrsForFilter(null);
-		CidrAssignmentQueryResultPojo cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
+//		CidrAssignmentQueryResultPojo cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
 		
 		for (CidrSummaryPojo cidrSummary : cidrResult.getResults()) {
 			if (cidrSummary.getCidr() != null) {
@@ -3908,10 +4209,59 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public ElasticIpAssignmentPojo createElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment)
+	public ElasticIpAssignmentPojo generateElasticIpAssignment(ElasticIpAssignmentRequisitionPojo req)
 			throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+
+		if (!useEsbService) {
+			return null;
+		} 
+		else {
+			try {
+				ElasticIpRequisition requisition = (ElasticIpRequisition) getObject(Constants.MOA_ELASTIC_IP_REQUISITION);
+				requisition.setOwnerId(req.getOwnerId());
+
+				ElasticIpAssignment moa = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
+
+				info("generating elastic ip Assignment record on the server:  " + requisition.toXmlString());
+				this.doGenerate(moa, requisition, getElasticIpRequestService());
+
+				ElasticIpAssignmentPojo ipAssignment = new ElasticIpAssignmentPojo();
+				info("populating pojo");
+				this.populateElasticIpAssignmentPojo(moa, ipAssignment);
+				info("ElasticIpAssignment.generate is complete...");
+
+				return ipAssignment;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (EnterpriseObjectGenerateException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (XmlEnterpriseObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (ParseException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
 	}
 
 	@Override
@@ -4523,12 +4873,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setRoleAssignmentType(pojo.getType());
 		moa.setIdentityDN(pojo.getIdentityDN());
 		moa.setReason(pojo.getReason());
-		RoleDNs roleDns = moa.newRoleDNs();
-		for (String dn : pojo.getRoleDNs().getDistinguishedNames()) {
-			roleDns.addDistinguishedName(dn);
+		if (pojo.getRoleDNs() != null) {
+			RoleDNs roleDns = moa.newRoleDNs();
+			for (String dn : pojo.getRoleDNs().getDistinguishedNames()) {
+				roleDns.addDistinguishedName(dn);
+			}
+			moa.setRoleDNs(roleDns);
 		}
-		moa.setRoleDNs(roleDns);
-		
+		ExplicitIdentityDNs eid = moa.newExplicitIdentityDNs();
+		for (String eid_dn : pojo.getExplicityIdentitiyDNs().getDistinguishedNames()) {
+			eid.addDistinguishedName(eid_dn);
+		}
+		moa.setExplicitIdentityDNs(eid);
+		moa.setRoleDN(pojo.getRoleDN());
 
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
@@ -4544,10 +4901,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setIdentityDN(moa.getIdentityDN());
 		pojo.setReason(moa.getReason());
 		RoleDNsPojo rdns = new RoleDNsPojo();
-		for (String dn : (List<String>)moa.getRoleDNs().getDistinguishedName()) {
-			rdns.getDistinguishedNames().add(dn);
+		if (moa.getRoleDNs() != null) {
+			for (String dn : (List<String>)moa.getRoleDNs().getDistinguishedName()) {
+				rdns.getDistinguishedNames().add(dn);
+			}
+			pojo.setRoleDNs(rdns);
 		}
-		pojo.setRoleDNs(rdns);
+		pojo.setRoleDN(moa.getRoleDN());
+		
+		if (moa.getExplicitIdentityDNs() != null) {
+			info("RoleAssignment HAS ExplicityIdentityDNs field.  Need to add " + 
+				moa.getExplicitIdentityDNs().getDistinguishedNameLength() + " DNs to the pojo");
+			pojo.setExplicityIdentitiyDNs(new ExplicitIdentityDNsPojo());
+			for (String moa_dn : (List<String>)moa.getExplicitIdentityDNs().getDistinguishedName()) {
+				pojo.getExplicityIdentitiyDNs().getDistinguishedNames().add(moa_dn);
+				info("Added the DN " + moa_dn + " To the RoleAssignmentPojo");
+			}
+		}
+		else {
+			info("RoleAssignment DOES NOT HAVE ExplicityIdentityDNs field.");
+		}
 		
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
@@ -4616,6 +4989,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public DirectoryPersonQueryResultPojo getDirectoryPersonsForFilter(DirectoryPersonQueryFilterPojo filter)
 			throws RpcException {
@@ -4637,18 +5011,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getDirectoryPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
 			@SuppressWarnings("unchecked")
-			List<DirectoryPerson> moas = actionable.query(queryObject,
-					this.getDirectoryRequestService());
+			List<DirectoryPerson> moas = null;
+			try {
+				moas = actionable.query(queryObject,
+						this.getDirectoryRequestService());
+			} catch (EnterpriseObjectQueryException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			if (moas != null) {
 				info("[service layer] got " + moas.size() + " DirectoryPerson objects back from ESB.");
-			}
-			for (DirectoryPerson moa : moas) {
-				DirectoryPersonPojo pojo = new DirectoryPersonPojo();
-//				DirectoryPersonPojo baseline = new DirectoryPersonPojo();
-				this.populateDirectoryPersonPojo(moa, pojo);
-//				this.populateDirectoryPersonPojo(moa, baseline);
-//				pojo.setBaseline(baseline);
-				pojos.add(pojo);
+				for (DirectoryPerson moa : moas) {
+					DirectoryPersonPojo pojo = new DirectoryPersonPojo();
+	//				DirectoryPersonPojo baseline = new DirectoryPersonPojo();
+					this.populateDirectoryPersonPojo(moa, pojo);
+	//				this.populateDirectoryPersonPojo(moa, baseline);
+	//				pojo.setBaseline(baseline);
+					pojos.add(pojo);
+				}
 			}
 
 			Collections.sort(pojos);
@@ -4661,10 +5041,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		} 
 		catch (EnterpriseFieldException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 
@@ -4698,9 +5074,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setCode(filter.getCode());
 			}
 
-			String authUserId = this.getAuthUserIdForHALS();
-			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getFullPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			// TODO: need to figure out how to do this without going back to getUserLoggedIn
+			// because that creates an endless loop when/if getFullPersonsForFilter is called to get
+			// roles for a user via the getRolesForUser method
+//			String authUserId = this.getAuthUserIdForHALS();
+//			actionable.getAuthentication().setAuthUserId(authUserId);
+//			info("[getFullPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
 			@SuppressWarnings("unchecked")
 			List<FullPerson> moas = actionable.query(queryObject,
@@ -4864,7 +5243,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				RoleAssignmentRequisition requisition = (RoleAssignmentRequisition) getObject(Constants.MOA_ROLE_ASSIGNMENT_REQUISITION);
 				requisition.setRoleAssignmentActionType("grant");
 				requisition.setRoleAssignmentType("USER_TO_ROLE");
-				requisition.setReason("Added using VCPP by Name (" + getUserLoggedIn().getEppn() +")");
+				requisition.setReason("Added using VPCP by (" + getUserLoggedIn().getEppn() +")");
 				
 				String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
 				idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, person.getPublicId());
@@ -4916,6 +5295,217 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				e.printStackTrace();
 				throw new RpcException(e);
 			} catch (ParseException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
+	}
+
+	@Override
+	public RoleAssignmentQueryResultPojo getRoleAssignmentsForFilter(RoleAssignmentQueryFilterPojo filter)
+			throws RpcException {
+
+		RoleAssignmentQueryResultPojo result = new RoleAssignmentQueryResultPojo();
+		List<RoleAssignmentPojo> pojos = new java.util.ArrayList<RoleAssignmentPojo>();
+		try {
+			RoleAssignmentQuerySpecification queryObject = (RoleAssignmentQuerySpecification) getObject(Constants.MOA_ROLE_ASSIGNMENT_QUERY_SPEC);
+			RoleAssignment actionable = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
+
+			if (filter != null) {
+				queryObject.setRoleDN(filter.getRoleDN());
+				queryObject.setIdentityType(filter.getIdentityType());
+				queryObject.setDirectAssignOnly(this.toStringFromBoolean(filter.isDirectAssignOnly()));
+				queryObject.setUserDN(filter.getUserDN());
+				info("[getRoleAssignmentsForFilter] query spec: " + queryObject.toXmlString());
+			}
+
+			// TODO: need to figure out how to do this without going back to getUserLoggedIn
+			// because that creates an endless loop when/if getRoleAssignmentsForFilter is called to get
+			// roles for a user via the getRolesForUser method
+//			String authUserId = this.getAuthUserIdForHALS();
+//			actionable.getAuthentication().setAuthUserId(authUserId);
+//			info("[getRoleAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<RoleAssignment> moas = actionable.query(queryObject,
+					this.getIDMRequestService());
+			info("[getRoleAssignmentsForFilter] got " + moas.size() + " RoleAssignments back from ESB service.");
+			for (RoleAssignment moa : moas) {
+				info("[getRoleAssignmentsForFilter] RoleAssignment.toXmlString: " + moa.toXmlString());
+				RoleAssignmentPojo pojo = new RoleAssignmentPojo();
+				this.populateRoleAssignmentPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public List<RoleAssignmentSummaryPojo> getAdminRoleAssignmentsForAccount(String accountId) throws RpcException {
+
+		// get admin role assignments for this account
+		// for each role assignment
+		//	- get the public id from the ExplicitIdentitiesDN/distinguishedname
+		//	- get directoryperson for the public id
+		//	- create a RoleAssignmentSummaryPojo using the roleassignment and directory person
+		//	- add that to the results list
+
+		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
+		try {
+			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+			roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
+			roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, "EmoryAdministratorRole");
+			RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
+			info("[getAdminRoleAssignmentsForAccount] filter.roleDN: " + roleDN);
+			filter.setRoleDN(roleDN);
+			filter.setIdentityType("USER");
+			filter.setDirectAssignOnly(true);
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(filter);
+			if (ra_result != null) {
+				if (ra_result.getResults().size() > 0) {
+					for (RoleAssignmentPojo ra : ra_result.getResults()) {
+						if (ra.getExplicityIdentitiyDNs() != null) {
+							for (String dn : ra.getExplicityIdentitiyDNs().getDistinguishedNames()) {
+								info("[getAdminRoleAssignmentsForAccount] dn: " + dn);
+								String[] cns = dn.split(",");
+								info("[getAdminRoleAssignmentsForAccount] cns: " + cns);
+								String publicIdCn = cns[0];
+								info("[getAdminRoleAssignmentsForAccount] publicIdCn: " + publicIdCn);
+								String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
+								info("[getAdminRoleAssignmentsForAccount] publicId: " + publicId);
+								
+								// get directoryperson for publicid
+								DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+								dp_filter.setKey(publicId);
+								DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+								
+								// create RoleAssignmentSummaryPojo and add it to the results
+								if (dp_result.getResults().size() > 0) {
+									RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
+									ra_summary.setDirectoryPerson(dp_result.getResults().get(0));
+									ra_summary.setRoleAssignment(ra);
+									info("[getAdminRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
+									results.add(ra_summary);
+								}
+							}
+						}
+					}
+				}
+				else {
+					// error
+				}
+			}
+			else {
+				// error
+			}
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		info("[getAdminRoleAssignmentsForAccount] returning " + results.size() + " RoleAssignmentSummary objects "
+				+ "for account: " + accountId);
+		return results;
+	}
+
+	@Override
+	public void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment)
+			throws RpcException {
+
+		if (!useEsbService) {
+			return;
+		} 
+		else {
+			try {
+				info("deleting ROLE Assignment record on the server...");
+				RoleAssignment moa = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
+				info("populating moa");
+				this.populateRoleAssignmentMoa(roleAssignment, moa);
+				
+				/*
+				<DeleteData>
+					<DeleteAction type="Delete"/>
+					<RoleAssignment>
+						<RoleAssignmentActionType>revoke</RoleAssignmentActionType>
+						<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+						<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
+						<Reason>For Testing</Reason>
+						<RoleDNs>
+							<DistinguishedName>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
+						</RoleDNs>
+					</RoleAssignment>
+				</DeleteData>
+				 */
+				moa.setRoleAssignmentActionType("revoke");
+				moa.setReason("Removed using VPCP App by (" + getUserLoggedIn().getEppn() +")");
+
+				info("doing the RoleAssignment.delete...");
+				this.doDelete(moa, getIDMRequestService());
+				info("RoleAssignment.delete is complete...");
+
+				return;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}

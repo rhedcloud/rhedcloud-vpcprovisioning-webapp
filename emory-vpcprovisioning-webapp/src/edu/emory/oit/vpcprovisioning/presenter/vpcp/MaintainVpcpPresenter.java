@@ -145,7 +145,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 										getView().initPage();
 										getView().setInitialFocus();
 										// apply authorization mask
-										if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+										if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 											getView().applyEmoryAWSAdminMask();
 										}
 										else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {

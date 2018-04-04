@@ -15,6 +15,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.VpcListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -144,7 +145,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 				GWT.log("Got " + result.getResults().size() + " Vpcs for " + result.getFilterUsed());
 				setVpcList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -158,6 +159,10 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 		};
 
 		GWT.log("refreshing Vpc list...");
+		if (filter == null) {
+			filter = new VpcQueryFilterPojo();
+		}
+		filter.setUserLoggedIn(user);
 		VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, callback);
 	}
 

@@ -9,6 +9,7 @@ public class CidrQueryFilterPojo extends SharedObject implements IsSerializable 
 	String requestorNetId;
 	String purpose;
 	String description;
+	UserAccountPojo userLoggedIn;
 	
 	public CidrQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -52,6 +53,14 @@ public class CidrQueryFilterPojo extends SharedObject implements IsSerializable 
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 
 }

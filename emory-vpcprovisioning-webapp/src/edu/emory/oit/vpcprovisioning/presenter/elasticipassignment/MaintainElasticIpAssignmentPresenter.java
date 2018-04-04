@@ -114,7 +114,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 						getView().initPage();
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 							getView().applyEmoryAWSAdminMask();
 						}
 						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -228,7 +228,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 		};
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().createElasticIpAssignment(summary.getElasticIpAssignment(), callback);
+//			VpcProvisioningService.Util.getInstance().generateElasticIpAssignment(summary.getElasticIpAssignment(), callback);
 		}
 		else {
 			// it's an update

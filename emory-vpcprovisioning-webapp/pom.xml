@@ -43,6 +43,13 @@
     </dependency>
     
 	<dependency>
+		<groupId>com.service_now</groupId>
+		<artifactId>com.service_now</artifactId>
+		<version>1.0</version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/servicenow-moa.jar</systemPath>
+	</dependency>		
+	<dependency>
 		<groupId>com.paloaltonetworks</groupId>
 		<artifactId>com.paloaltonetworks</artifactId>
 		<version>1.0</version>
@@ -133,7 +140,7 @@
 		<artifactId>aws-moa</artifactId>
 		<version>1</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-moa-master-55.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-moa-master-57.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>edu.emory</groupId>

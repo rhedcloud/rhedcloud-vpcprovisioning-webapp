@@ -46,6 +46,7 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentStatusPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResultPojo;
@@ -63,6 +64,9 @@ import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
@@ -169,7 +173,7 @@ public interface VpcProvisioningService extends RemoteService {
 	// ElasticIpAssignment
 	List<ElasticIpAssignmentPojo>getElasticIpAssignmentsForUserLoggedIn() throws RpcException;
 	ElasticIpAssignmentQueryResultPojo getElasticIpAssignmentsForFilter(ElasticIpAssignmentQueryFilterPojo filter) throws RpcException;
-	ElasticIpAssignmentPojo createElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment) throws RpcException;
+	ElasticIpAssignmentPojo generateElasticIpAssignment(ElasticIpAssignmentRequisitionPojo elasticIpAssignment) throws RpcException;
 	ElasticIpAssignmentPojo updateElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment) throws RpcException;
 	void deleteElasticIpAssignment(ElasticIpAssignmentPojo cidr) throws RpcException;
 	List<ElasticIpPojo> getUnassignedElasticIps() throws RpcException;
@@ -218,7 +222,10 @@ public interface VpcProvisioningService extends RemoteService {
 	FullPersonQueryResultPojo getFullPersonsForFilter(FullPersonQueryFilterPojo filter) throws RpcException;
 	
 	// RoleAssignments
+	RoleAssignmentQueryResultPojo getRoleAssignmentsForFilter(RoleAssignmentQueryFilterPojo filter) throws RpcException;
 	RoleAssignmentPojo createAdminRoleAssignmentForPersonInAccount(FullPersonPojo person, String accountId) throws RpcException;
+	List<RoleAssignmentSummaryPojo> getAdminRoleAssignmentsForAccount(String accountId) throws RpcException;
+	void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment) throws RpcException;
 	
 	HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException;
 

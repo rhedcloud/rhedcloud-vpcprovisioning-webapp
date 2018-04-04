@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class ElasticIpAssignmentPojo extends SharedObject implements IsSerializable, Comparable<ElasticIpAssignmentPojo> {
@@ -11,6 +12,13 @@ public class ElasticIpAssignmentPojo extends SharedObject implements IsSerializa
 	ElasticIpPojo elasticIp;
 	ElasticIpAssignmentPojo baseline;
 	
+	public static final ProvidesKey<ElasticIpAssignmentPojo> KEY_PROVIDER = new ProvidesKey<ElasticIpAssignmentPojo>() {
+		@Override
+		public Object getKey(ElasticIpAssignmentPojo item) {
+			return item == null ? null : item.getAssignmentId();
+		}
+	};
+
 	public ElasticIpAssignmentPojo() {
 		super();
 	}

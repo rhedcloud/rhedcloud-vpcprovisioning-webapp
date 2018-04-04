@@ -34,7 +34,7 @@ public class ListElasticIpPlace extends Place {
 	 * @param case recordListStale true if the case record list is stale and should be cleared
 	 */
 	public ListElasticIpPlace(boolean listStale) {
-		GWT.log("VPCP place");
+		GWT.log("List ElasicIP place");
 		this.listStale = listStale;
 	}
 

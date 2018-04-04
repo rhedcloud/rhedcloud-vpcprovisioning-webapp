@@ -10,6 +10,7 @@ import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListElasticIpView extends IsWidget, View {
@@ -31,6 +32,7 @@ public interface ListElasticIpView extends IsWidget, View {
 		 */
 		void deleteElasticIpSummary(ElasticIpSummaryPojo summary);
 		public void logMessageOnServer(final String message);
+		public VpcPojo getVpc();
 	}
 
 	/**

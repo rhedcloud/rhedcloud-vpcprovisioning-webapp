@@ -75,5 +75,4 @@ public interface RegisterVpcView  extends Editor<VpcPojo>, IsWidget, View {
 	void showPleaseWaitPanel();
 	void setVpcTypeItems(List<String> vpcTypes);
 	void setAccountItems(List<AccountPojo> accounts);
-	void setComplianceClassItems(List<String> complianceClassTypes);
 }

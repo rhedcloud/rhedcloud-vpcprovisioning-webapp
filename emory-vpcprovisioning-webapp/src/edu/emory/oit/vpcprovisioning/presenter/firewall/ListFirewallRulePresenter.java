@@ -17,13 +17,14 @@ import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleRequestListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestPojo;
-import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
 
@@ -45,8 +46,9 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	private EventBus eventBus;
 	
 	FirewallRuleQueryFilterPojo fw_filter;
-	FirewallRuleExceptionRequestQueryFilterPojo fwer_filter;
+	FirewallExceptionRequestQueryFilterPojo fwer_filter;
 	FirewallRulePojo firewallRule;
+	VpcPojo vpc;
 
 	/**
 	 * The refresh timer used to periodically refresh the firewallRule list.
@@ -94,6 +96,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 			}
 
 			@Override
@@ -114,14 +117,13 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 				getView().setUserLoggedIn(userLoggedIn);
 				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
-				setFirewallRuleExceptionRequestList(Collections.<FirewallRuleExceptionRequestPojo> emptyList());
+				setFirewallRuleExceptionRequestList(Collections.<FirewallExceptionRequestPojo> emptyList());
 				getView().initPage();
 
 				// Request the firewallRule list now.
 				// TODO: this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
 				// the user enter a VPC id in order to filter the list down.
-                getView().hidePleaseWaitPanel();
-//				refreshFirewallRuleList(userLoggedIn);
+				refreshFirewallRuleList(userLoggedIn);
 //				refreshFirewallRuleExceptionRequestList(userLoggedIn);
 			}
 		};
@@ -130,7 +132,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	}
 
 	/**
-	 * Refresh the CIDR list.
+	 * Refresh the Firewall Rule list.
 	 */
 	@Override
 	public void refreshFirewallRuleList(final UserAccountPojo user) {
@@ -139,6 +141,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving FirewallRules", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of firewallRules.  " +
@@ -150,7 +153,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				GWT.log("Got " + result.getResults().size() + " firewallRules for " + result.getFilterUsed());
 				setFirewallRuleList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -160,19 +163,20 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 					// ??
 				}
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 			}
 		};
 
 		GWT.log("refreshing FirewallRule list...");
 		if (fw_filter == null) {
-			getView().setUserLoggedIn(user);
-			setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
-			getView().initPage();
-            getView().hidePleaseWaitPanel();
+//			getView().setUserLoggedIn(user);
+			fw_filter = new FirewallRuleQueryFilterPojo();
+			fw_filter.getTags().add(vpc.getVpcId());
+//			setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
+//			getView().initPage();
+//            getView().hidePleaseWaitPanel();
 		}
-		else {
-			VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(fw_filter, callback);
-		}
+		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(fw_filter, callback);
 	}
 
 	/**
@@ -183,7 +187,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 		eventBus.fireEventFromSource(new FirewallRuleListUpdateEvent(firewallRules), this);
 	}
 
-	private void setFirewallRuleExceptionRequestList(List<FirewallRuleExceptionRequestPojo> firewallRules) {
+	private void setFirewallRuleExceptionRequestList(List<FirewallExceptionRequestPojo> firewallRules) {
 		getView().setFirewallRuleRequests(firewallRules);
 		eventBus.fireEventFromSource(new FirewallRuleRequestListUpdateEvent(firewallRules), this);
 	}
@@ -266,7 +270,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	}
 
 	@Override
-	public FirewallRuleExceptionRequestQueryFilterPojo getFirewallRuleExceptionRequestFilter() {
+	public FirewallExceptionRequestQueryFilterPojo getFirewallRuleExceptionRequestFilter() {
 		return fwer_filter;
 	}
 
@@ -306,5 +310,13 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	public VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public VpcPojo getVpc() {
+		return vpc;
+	}
+
+	public void setVpc(VpcPojo vpc) {
+		this.vpc = vpc;
 	}
 }

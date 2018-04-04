@@ -22,6 +22,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListElasticIpPresenter extends PresenterBase implements ListElasticIpView.Presenter {
 	private static final Logger log = Logger.getLogger(ListElasticIpPresenter.class.getName());
@@ -41,11 +42,12 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	private EventBus eventBus;
 	
 	ElasticIpQueryFilterPojo filter;
-
+	VpcPojo vpc; 
 
 	public ListElasticIpPresenter(ClientFactory clientFactory, boolean clearList, ElasticIpQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
+		this.filter = filter;
 		clientFactory.getListElasticIpView().setPresenter(this);
 	}
 
@@ -194,7 +196,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 					setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
 				}
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -209,12 +211,24 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		};
 
 		GWT.log("refreshing ElasticIP list...");
+		if (filter == null) {
+			filter = new ElasticIpQueryFilterPojo();
+		}
+		filter.setOwnerId(vpc.getVpcId());
 		VpcProvisioningService.Util.getInstance().getElasticIpsForFilter(filter, callback);
 	}
 
 	private void setElasticIpSummaryList(List<ElasticIpSummaryPojo> list) {
 		getView().setElasticIpSummaries(list);
 		eventBus.fireEventFromSource(new ElasticIpListUpdateEvent(list), this);
+	}
+
+	public VpcPojo getVpc() {
+		return vpc;
+	}
+
+	public void setVpc(VpcPojo vpc) {
+		this.vpc = vpc;
 	}
 
 }

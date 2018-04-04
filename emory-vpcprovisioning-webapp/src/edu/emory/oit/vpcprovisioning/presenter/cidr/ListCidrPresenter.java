@@ -153,7 +153,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				GWT.log("Got " + result.getResults().size() + " CIDRs for " + result.getFilterUsed());
 				setCidrSummaryList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -169,6 +169,10 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 		GWT.log("refreshing CIDR list...");
 		// TODO: setup filter
+		if (filter == null) {
+			filter = new CidrQueryFilterPojo();
+		}
+		filter.setUserLoggedIn(user);
 		VpcProvisioningService.Util.getInstance().getCidrsForFilter(filter, callback);
 	}
 

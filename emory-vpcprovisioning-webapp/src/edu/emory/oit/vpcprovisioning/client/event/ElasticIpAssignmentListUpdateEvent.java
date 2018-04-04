@@ -20,43 +20,43 @@ import java.util.List;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 
 /**
  * Event fired when the case record list is updated.
  */
-public class FirewallRuleRequestListUpdateEvent extends GwtEvent<FirewallRuleRequestListUpdateEvent.Handler> {
+public class ElasticIpAssignmentListUpdateEvent extends GwtEvent<ElasticIpAssignmentListUpdateEvent.Handler> {
 
   /**
-   * Handler for {@link FirewallRuleRequestListUpdateEvent}.
+   * Handler for {@link ElasticIpAssignmentListUpdateEvent}.
    */
   public interface Handler extends EventHandler {
   
     /**
      * Called when the case record list is updated.
      */
-    void onFirewallRuleListUpdated(FirewallRuleRequestListUpdateEvent event);
+    void onElasticIpAssignmentListUpdated(ElasticIpAssignmentListUpdateEvent event);
   }
 
-  public static final Type<FirewallRuleRequestListUpdateEvent.Handler> TYPE = new Type<FirewallRuleRequestListUpdateEvent.Handler>();
+  public static final Type<ElasticIpAssignmentListUpdateEvent.Handler> TYPE = new Type<ElasticIpAssignmentListUpdateEvent.Handler>();
 
-  private final List<FirewallExceptionRequestPojo> firewallRules;
+  private final List<ElasticIpAssignmentPojo> summaries;
 
-  public FirewallRuleRequestListUpdateEvent(List<FirewallExceptionRequestPojo> firewallRules) {
-    this.firewallRules = firewallRules;
+  public ElasticIpAssignmentListUpdateEvent(List<ElasticIpAssignmentPojo> summaries) {
+    this.summaries = summaries;
   }
 
   @Override
-  public Type<FirewallRuleRequestListUpdateEvent.Handler> getAssociatedType() {
+  public Type<ElasticIpAssignmentListUpdateEvent.Handler> getAssociatedType() {
     return TYPE;
   }
 
-  public List<FirewallExceptionRequestPojo> getFirewallRules() {
-    return firewallRules;
+  public List<ElasticIpAssignmentPojo> getElasticIpAssignmentSummaries() {
+    return summaries;
   }
 
   @Override
-  protected void dispatch(FirewallRuleRequestListUpdateEvent.Handler handler) {
-    handler.onFirewallRuleListUpdated(this);
+  protected void dispatch(ElasticIpAssignmentListUpdateEvent.Handler handler) {
+    handler.onElasticIpAssignmentListUpdated(this);
   }
 }

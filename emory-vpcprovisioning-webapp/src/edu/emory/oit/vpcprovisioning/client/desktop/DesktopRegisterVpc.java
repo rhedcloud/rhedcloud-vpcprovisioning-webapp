@@ -31,7 +31,6 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	Presenter presenter;
 	boolean locked;
 	List<String> vpcTypes;
-	List<String> complianceClassTypes;
 	List<AccountPojo> accounts;
 	UserAccountPojo userLoggedIn;
 
@@ -44,7 +43,6 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	@UiField CaptionPanel accountCP;
 	@UiField TextBox vpcIdTB;
 	@UiField ListBox vpcTypeLB;
-	@UiField ListBox complianceClassLB;
 	
 	private static DesktopRegisterVpcUiBinder uiBinder = GWT.create(DesktopRegisterVpcUiBinder.class);
 
@@ -66,7 +64,6 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 				presenter.getVpc().setAccountId(accountLB.getSelectedValue());
 				presenter.getVpc().setVpcId(vpcIdTB.getText());
 				presenter.getVpc().setType(vpcTypeLB.getSelectedValue());
-				presenter.getVpc().setComplianceClass(complianceClassLB.getSelectedValue());
 				presenter.registerVpc();
 			}
 		}, ClickEvent.getType());
@@ -197,27 +194,6 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	}
 
 	@Override
-	public void setComplianceClassItems(List<String> complianceClassTypes) {
-		this.complianceClassTypes = complianceClassTypes;
-		complianceClassLB.clear();
-		complianceClassLB.addItem("-- Select --");
-		if (complianceClassLB != null) {
-			int i=1;
-			for (String type : complianceClassTypes) {
-				complianceClassLB.addItem(type, type);
-				if (presenter.getVpc() != null) {
-					if (presenter.getVpc().getComplianceClass() != null) {
-						if (presenter.getVpc().getComplianceClass().equals(type)) {
-							complianceClassLB.setSelectedIndex(i);
-						}
-					}
-				}
-				i++;
-			}
-		}
-	}
-
-	@Override
 	public List<Widget> getMissingRequiredFields() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		VpcPojo vpc = presenter.getVpc();
@@ -230,9 +206,6 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		if (vpc.getType() == null || vpc.getType().length() == 0) {
 			fields.add(vpcTypeLB);
 		}
-		if (vpc.getComplianceClass() == null || vpc.getComplianceClass().length() == 0) {
-			fields.add(complianceClassLB);
-		}
 		return fields;
 	}
 
@@ -242,7 +215,6 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		fields.add(vpcIdTB);
 		fields.add(accountLB);
 		fields.add(vpcTypeLB);
-		fields.add(complianceClassLB);
 		this.resetFieldStyles(fields);
 	}
 

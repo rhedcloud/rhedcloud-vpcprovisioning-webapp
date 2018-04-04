@@ -12,6 +12,7 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 	String speedType;
 	String createUser;
 	String lastUpdateUser;
+	UserAccountPojo userLoggedIn;
 	
 	public AccountQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -71,6 +72,14 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 
 	public void setLastUpdateUser(String lastUpdateUser) {
 		this.lastUpdateUser = lastUpdateUser;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 
 }

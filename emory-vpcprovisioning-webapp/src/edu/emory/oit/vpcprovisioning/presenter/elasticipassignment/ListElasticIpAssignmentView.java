@@ -7,8 +7,9 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListElasticIpAssignmentView extends IsWidget, View {
@@ -21,15 +22,17 @@ public interface ListElasticIpAssignmentView extends IsWidget, View {
 		 * 
 		 * @param selected the selected caseRecord
 		 */
-		void selectElasticIpAssignmentSummary(ElasticIpAssignmentSummaryPojo selected);
+		void selectElasticIpAssignment(ElasticIpAssignmentPojo selected);
 		public EventBus getEventBus();
-		public ElasticIpAssignmentSummaryQueryFilterPojo getFilter();
+		public ElasticIpAssignmentQueryFilterPojo getFilter();
 		public ClientFactory getClientFactory();
 		/**
 		 * Delete the current account or cancel the creation of a account.
 		 */
-		void deleteElasticIpAssignment(ElasticIpAssignmentSummaryPojo selected);
+		void deleteElasticIpAssignment(ElasticIpAssignmentPojo selected);
 		public void logMessageOnServer(final String message);
+		public void setVpc(VpcPojo vpc);
+		public void generateElasticIpAssignment();
 	}
 
 	/**
@@ -48,12 +51,12 @@ public interface ListElasticIpAssignmentView extends IsWidget, View {
 	 * 
 	 * @param caseRecords the list of caseRecords
 	 */
-	void setElasticIpAssignmentSummaries(List<ElasticIpAssignmentSummaryPojo> summaries);
+	void setElasticIpAssignments(List<ElasticIpAssignmentPojo> pojos);
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
-	void removeElasticIpAssignmentSummaryFromView(ElasticIpAssignmentSummaryPojo summary);
+	void removeElasticIpAssignmentFromView(ElasticIpAssignmentPojo summary);
 
 
 }

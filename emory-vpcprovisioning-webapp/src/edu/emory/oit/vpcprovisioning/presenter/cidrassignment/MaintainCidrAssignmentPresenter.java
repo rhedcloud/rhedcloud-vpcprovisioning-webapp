@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
@@ -134,7 +135,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 						getView().initPage();
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 							getView().applyEmoryAWSAdminMask();
 						}
 						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -157,7 +158,9 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 						getView().hidePleaseWaitPanel();
 					}
 				};
-				VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, callback);
+				AccountQueryFilterPojo acct_filter = new AccountQueryFilterPojo();
+				acct_filter.setUserLoggedIn(user);
+				VpcProvisioningService.Util.getInstance().getAccountsForFilter(acct_filter, callback);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);

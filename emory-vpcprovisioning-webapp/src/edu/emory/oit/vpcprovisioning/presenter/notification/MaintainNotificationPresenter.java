@@ -88,7 +88,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 				getView().hidePleaseWaitDialog();
 				getView().setInitialFocus();
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {

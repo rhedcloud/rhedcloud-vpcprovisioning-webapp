@@ -15,8 +15,8 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 //	String accountOwnerNetId;
 	DirectoryMetaDataPojo accountOwnerDirectoryMetaData;
 	String speedType;
-	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
-	List<RoleAssignmentPojo> roleAssignments = new ArrayList<RoleAssignmentPojo>();
+//	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
+//	List<RoleAssignmentPojo> roleAssignments = new ArrayList<RoleAssignmentPojo>();
 	String complianceClass;
 	AccountPojo baseline;
 	
@@ -92,13 +92,13 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 		this.baseline = baseline;
 	}
 
-	public List<String> getCustomerAdminNetIdList() {
-		return customerAdminNetIdList;
-	}
-
-	public void setCustomerAdminNetIdList(List<String> customerAdminNetIdList) {
-		this.customerAdminNetIdList = customerAdminNetIdList;
-	}
+//	public List<String> getCustomerAdminNetIdList() {
+//		return customerAdminNetIdList;
+//	}
+//
+//	public void setCustomerAdminNetIdList(List<String> customerAdminNetIdList) {
+//		this.customerAdminNetIdList = customerAdminNetIdList;
+//	}
 
 	public boolean containsEmail(EmailPojo email) {
 		for (EmailPojo pojo : this.emailList) {
@@ -119,13 +119,13 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 		this.accountOwnerDirectoryMetaData = accountOwnerDirectoryMetaData;
 	}
 
-	public List<RoleAssignmentPojo> getRoleAssignments() {
-		return roleAssignments;
-	}
-
-	public void setRoleAssignments(List<RoleAssignmentPojo> roleAssignments) {
-		this.roleAssignments = roleAssignments;
-	}
+//	public List<RoleAssignmentPojo> getRoleAssignments() {
+//		return roleAssignments;
+//	}
+//
+//	public void setRoleAssignments(List<RoleAssignmentPojo> roleAssignments) {
+//		this.roleAssignments = roleAssignments;
+//	}
 
 	public String getComplianceClass() {
 		return complianceClass;

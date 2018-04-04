@@ -6,6 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class CidrAssignmentQueryFilterPojo extends SharedObject implements IsSerializable {
 	String cidrAssignmentId;
 	String ownerId;
+	UserAccountPojo userLoggedIn;
 	
 	public CidrAssignmentQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -25,6 +26,14 @@ public class CidrAssignmentQueryFilterPojo extends SharedObject implements IsSer
 
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 
 }

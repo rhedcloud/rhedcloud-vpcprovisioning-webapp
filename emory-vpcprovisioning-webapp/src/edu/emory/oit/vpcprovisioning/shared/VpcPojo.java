@@ -14,7 +14,7 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 	String accountId;
 	String vpcId;
 	String type;
-	String complianceClass;
+//	String complianceClass;
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 	VpcPojo baseline;
 	
@@ -74,12 +74,12 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 		this.baseline = baseline;
 	}
 
-	public String getComplianceClass() {
-		return complianceClass;
-	}
-
-	public void setComplianceClass(String complianceClass) {
-		this.complianceClass = complianceClass;
-	}
+//	public String getComplianceClass() {
+//		return complianceClass;
+//	}
+//
+//	public void setComplianceClass(String complianceClass) {
+//		this.complianceClass = complianceClass;
+//	}
 
 }

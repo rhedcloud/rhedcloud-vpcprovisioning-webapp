@@ -23,6 +23,7 @@ public class RoleAssignmentPojo extends SharedObject implements IsSerializable, 
 	CauseIdentitiesPojo causeIdentities;
 	List<SodJustificationPojo> sodJustifications = new java.util.ArrayList<SodJustificationPojo>();
 	ExplicitIdentityDNsPojo explicityIdentitiyDNs;
+	String roleDN;
 
 	public RoleAssignmentPojo() {
 		// TODO Auto-generated constructor stub
@@ -132,6 +133,14 @@ public class RoleAssignmentPojo extends SharedObject implements IsSerializable, 
 
 	public void setRoleDNs(RoleDNsPojo roleDNs) {
 		this.roleDNs = roleDNs;
+	}
+
+	public String getRoleDN() {
+		return roleDN;
+	}
+
+	public void setRoleDN(String roleDN) {
+		this.roleDN = roleDN;
 	}
 
 }

@@ -11,17 +11,22 @@ public class Constants implements IsSerializable {
 	public static final String SESSION_TIMEOUT = "SessionTimeout";
 
 	// these will need to be specific for this app's functionality
-//	public static final String PERMISSION_MAINTAIN_CIDR = "edu.emory.vpcp.maintainCidr";
-//	public static final String PERMISSION_MAINTAIN_CIDR_ASSIGNMENT = "edu.emory.vpcp.maintainCidrAssignment";
 	// Emory AWS Admins
-	public static final String PERMISSION_MAINTAIN_EVERYTHING = "edu.emory.vpcp.maintainEverything";
+//	public static final String PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT = "EmoryAdministratorRole";
+	public static final String PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT = "edu.emory.vpcp.maintainEverything";
 	// Emory AWS Auditors
+//	public static final String PERMISSION_VIEW_EVERYTHING = "EmoryAuditorRole";
 	public static final String PERMISSION_VIEW_EVERYTHING = "edu.emory.vpcp.viewEverything";
+	// LITS AWS Admings
+	public static final String PERMISSION_MAINTAIN_EVERYTHING = "EmoryCentralAdministratorRole";
+	
+	public static final String ROLE_NAME_EMORY_AWS_CENTRAL_ADMIN = "EmoryCentralAdministratorRole";
+	public static final String ROLE_NAME_EMORY_AWS_ADMIN = "EmoryAdministratorRole";
+	public static final String ROLE_NAME_EMORY_AUDITOR = "EmoryAuditorRole";
 
 	public static final String[] PERMISSIONS = new String[] {
-//		PERMISSION_MAINTAIN_CIDR,
-//		PERMISSION_MAINTAIN_CIDR_ASSIGNMENT,
-		PERMISSION_MAINTAIN_EVERYTHING,
+//		PERMISSION_MAINTAIN_EVERYTHING,
+		PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT,
 		PERMISSION_VIEW_EVERYTHING
 	};
 
@@ -57,7 +62,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_DIRECTORY_PERSON = "DirectoryPerson.v1_0";
 	public static final String MOA_ROLE_ASSIGNMENT = "RoleAssignment.v1_0";
 	public static final String MOA_ROLE_ASSIGNMENT_REQUISITION = "RoleAssignmentRequisition.v1_0";
-	public static final String MOA_ROLE_ASSIGNMENT_QUERY = "RoleAssignmentQuerySpecification.v1_0";
+	public static final String MOA_ROLE_ASSIGNMENT_QUERY_SPEC = "RoleAssignmentQuerySpecification.v1_0";
 	public static final String MOA_ELASTIC_IP_ASSIGNMENT_QUERY_SPEC = "ElasticIpAssignmentQuerySpecification.v1_0";
 	public static final String MOA_ELASTIC_IP_ASSIGNMENT = "ElasticIpAssignment.v1_0";
 	public static final String MOA_ELASTIC_IP_QUERY_SPEC = "ElasticIpQuerySpecification.v1_0";

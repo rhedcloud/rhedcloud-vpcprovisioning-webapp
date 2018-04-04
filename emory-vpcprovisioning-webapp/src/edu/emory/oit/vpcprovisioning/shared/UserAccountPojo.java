@@ -9,6 +9,8 @@ public class UserAccountPojo implements IsSerializable {
 	String eppn;
 	String principal;
 	private List<String> permissions = new ArrayList<String>();
+	String publicId;
+	List<AccountRolePojo> accountRoles = new ArrayList<AccountRolePojo>();
 
 	public UserAccountPojo() {
 		// TODO Auto-generated constructor stub
@@ -48,5 +50,62 @@ public class UserAccountPojo implements IsSerializable {
 
 	public void setPrincipal(String principal) {
 		this.principal = principal;
+	}
+
+	public String getPublicId() {
+		return publicId;
+	}
+
+	public void setPublicId(String publicId) {
+		this.publicId = publicId;
+	}
+
+	public List<AccountRolePojo> getAccountRoles() {
+		return accountRoles;
+	}
+
+	public void setAccountRoles(List<AccountRolePojo> accountRoles) {
+		this.accountRoles = accountRoles;
+	}
+	
+	public boolean isAuditorForAccount(String accountId) {
+		for (AccountRolePojo arp : accountRoles) {
+			if (arp.getAccountId() != null && 
+					arp.getAccountId().equalsIgnoreCase(accountId)) {
+				if (arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AUDITOR)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public boolean isAdminForAccount(String accountId) {
+		for (AccountRolePojo arp : accountRoles) {
+			if (arp.getAccountId() != null && 
+					arp.getAccountId().equalsIgnoreCase(accountId)) {
+				if (arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AWS_ADMIN)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public boolean isLitsAdmin() {
+		for (AccountRolePojo arp : accountRoles) {
+			if (arp.getRoleName() != null && 
+					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMIN)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public boolean isAuditor() {
+		for (AccountRolePojo arp : accountRoles) {
+			if (arp.getRoleName() != null && 
+					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AUDITOR)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

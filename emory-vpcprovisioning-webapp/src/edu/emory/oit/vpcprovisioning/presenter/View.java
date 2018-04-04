@@ -13,10 +13,10 @@ public interface View extends IsWidget {
 	void showPleaseWaitDialog();
 	void hidePleaseWaitDialog();
 	void setInitialFocus();
-//	void initPage();
 	public void showStatus(Widget source, String message);
 	public Widget getStatusMessageSource();
-//	public void applyAuthorizationMask();
+//	public void applyLITSAdminMask();
+//	public void applyLITSAuditorMask();
 	public void applyEmoryAWSAdminMask();
 	public void applyEmoryAWSAuditorMask();
 	public void setUserLoggedIn(UserAccountPojo user);

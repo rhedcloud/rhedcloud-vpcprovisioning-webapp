@@ -7,6 +7,7 @@ public class ElasticIpQueryFilterPojo extends SharedObject implements IsSerializ
 	String elasticIpId;
 	String elasticIpAddress;
 	String associatedIpAddress;
+	String ownerId;
 
 	public ElasticIpQueryFilterPojo() {
 		super();
@@ -35,6 +36,14 @@ public class ElasticIpQueryFilterPojo extends SharedObject implements IsSerializ
 
 	public void setAssociatedIpAddress(String associatedIpAddress) {
 		this.associatedIpAddress = associatedIpAddress;
+	}
+
+	public String getOwnerId() {
+		return ownerId;
+	}
+
+	public void setOwnerId(String ownerId) {
+		this.ownerId = ownerId;
 	}
 
 }

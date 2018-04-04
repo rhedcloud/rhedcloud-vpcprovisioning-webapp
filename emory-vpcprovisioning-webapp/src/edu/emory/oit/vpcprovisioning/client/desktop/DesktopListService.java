@@ -367,7 +367,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		});
 		serviceListTable.addColumn(updateTimeColumn, "Update Time");
 
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 			GWT.log(userLoggedIn.getEppn() + " is an admin");
 			// delete row column
 			Column<AWSServicePojo, String> deleteRowColumn = new Column<AWSServicePojo, String>(
@@ -396,7 +396,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				new ButtonCell()) {
 			@Override
 			public String getValue(AWSServicePojo object) {
-				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					return "Edit";
 				}

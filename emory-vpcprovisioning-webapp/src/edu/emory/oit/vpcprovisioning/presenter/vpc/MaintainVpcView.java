@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.presenter.vpc;
 import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -14,7 +15,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface MaintainVpcView extends Editor<VpcPojo>, IsWidget, View {
+public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */

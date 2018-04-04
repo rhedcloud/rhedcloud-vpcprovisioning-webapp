@@ -44,8 +44,6 @@ import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
@@ -154,8 +152,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
-	@UiField DeckLayoutPanel elasticIpContentContainer;
-	@UiField DeckLayoutPanel firewallContentContainer;
+//	@UiField DeckLayoutPanel elasticIpContentContainer;
+//	@UiField DeckLayoutPanel firewallContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
 
 	@UiField Element userNameElem;
@@ -176,9 +174,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstAccountContentWidget = true;
 	private boolean firstVpcContentWidget = true;
 	private boolean firstVpcpContentWidget = true;
-	private boolean firstElasticIpContentWidget = true;
-	private boolean firstElasticIpAssignmentContentWidget = true;
-	private boolean firstFirewallContentWidget = true;
+//	private boolean firstElasticIpContentWidget = true;
+//	private boolean firstFirewallContentWidget = true;
 	private boolean firstNotificationContentWidget = true;
 	private boolean firstServicesContentWidget = true;
 	private boolean firstNotificationsContentWidget = true;
@@ -383,28 +380,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
 				break;
-			case 5:
-				GWT.log("need to get Elastic IP Maintentenance content.");
-				firstElasticIpContentWidget = true;
-				elasticIpContentContainer.clear();
-				ListElasticIpView listEipView = clientFactory.getListElasticIpView();
-				MaintainElasticIpView maintainEipView = clientFactory.getMaintainElasticIpView();
-				elasticIpContentContainer.add(listEipView);
-				elasticIpContentContainer.add(maintainEipView);
-				elasticIpContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
-				break;
-			case 6:
-				GWT.log("need to get Firewall Maintentenance content.");
-				firstFirewallContentWidget = true;
-				firewallContentContainer.clear();
-				ListFirewallRuleView listFwView = clientFactory.getListFirewallRuleView();
-//				MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
-				firewallContentContainer.add(listFwView);
-//				firewallContentContainer.add(maintainFwView);
-				firewallContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_FIREWALL_RULE);
-				break;
+//			case 5:
+//				GWT.log("need to get Elastic IP Maintentenance content.");
+//				firstElasticIpContentWidget = true;
+//				elasticIpContentContainer.clear();
+//				ListElasticIpView listEipView = clientFactory.getListElasticIpView();
+//				MaintainElasticIpView maintainEipView = clientFactory.getMaintainElasticIpView();
+//				elasticIpContentContainer.add(listEipView);
+//				elasticIpContentContainer.add(maintainEipView);
+//				elasticIpContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
+//				break;
+//			case 6:
+//				GWT.log("need to get Firewall Maintentenance content.");
+//				firstFirewallContentWidget = true;
+//				firewallContentContainer.clear();
+//				ListFirewallRuleView listFwView = clientFactory.getListFirewallRuleView();
+////				MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
+//				firewallContentContainer.add(listFwView);
+////				firewallContentContainer.add(maintainFwView);
+//				firewallContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_FIREWALL_RULE);
+//				break;
 		}
 	}
 
@@ -457,25 +454,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
-			elasticIpContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstElasticIpContentWidget) {
-				firstElasticIpContentWidget = false;
-				elasticIpContentContainer.animate(0);
-			}
-			return;
-		}
-
-		if (w instanceof ListFirewallRulePresenter) {
-			firewallContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstFirewallContentWidget) {
-				firstFirewallContentWidget = false;
-				firewallContentContainer.animate(0);
-			}
-			return;
-		}
+//		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
+//			elasticIpContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstElasticIpContentWidget) {
+//				firstElasticIpContentWidget = false;
+//				elasticIpContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//
+//		if (w instanceof ListFirewallRulePresenter) {
+//			firewallContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstFirewallContentWidget) {
+//				firstFirewallContentWidget = false;
+//				firewallContentContainer.animate(0);
+//			}
+//			return;
+//		}
 		
 		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
 			GWT.log("It's the notifications presenter...");

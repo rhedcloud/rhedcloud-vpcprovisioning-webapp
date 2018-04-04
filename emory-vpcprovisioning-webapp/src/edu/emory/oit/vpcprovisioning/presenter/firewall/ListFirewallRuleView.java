@@ -7,11 +7,12 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestPojo;
-import edu.emory.oit.vpcprovisioning.shared.FirewallRuleExceptionRequestQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -29,7 +30,7 @@ public interface ListFirewallRuleView extends IsWidget, View {
 		void selectFirewallRule(FirewallRulePojo selected);
 		public EventBus getEventBus();
 		public FirewallRuleQueryFilterPojo getFirewallRuleFilter();
-		public FirewallRuleExceptionRequestQueryFilterPojo getFirewallRuleExceptionRequestFilter();
+		public FirewallExceptionRequestQueryFilterPojo getFirewallRuleExceptionRequestFilter();
 		public ClientFactory getClientFactory();
 		/**
 		 * Delete the current firewallRule or cancel the creation of a firewallRule.
@@ -42,6 +43,7 @@ public interface ListFirewallRuleView extends IsWidget, View {
 		void filterByVPCId(String vpcId);
 		void clearFilter();
 		public VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter);
+		public VpcPojo getVpc();
 	}
 
 	/**
@@ -62,7 +64,7 @@ public interface ListFirewallRuleView extends IsWidget, View {
 	 * @param cidrs the list of caseRecords
 	 */
 	void setFirewallRules(List<FirewallRulePojo> firewallRules);
-	void setFirewallRuleRequests(List<FirewallRuleExceptionRequestPojo> firewallRequests);
+	void setFirewallRuleRequests(List<FirewallExceptionRequestPojo> firewallRequests);
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void hidePleaseWaitPanel();

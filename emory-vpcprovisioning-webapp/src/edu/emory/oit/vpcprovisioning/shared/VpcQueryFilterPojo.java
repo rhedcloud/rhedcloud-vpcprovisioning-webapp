@@ -9,6 +9,7 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable {
 	String vpcId;
 	String type;
 	String customerAdminNetId;
+	UserAccountPojo userLoggedIn;
 //	String createUser;
 //	String lastUpdateUser;
 
@@ -46,6 +47,14 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable {
 
 	public void setCustomerAdminNetId(String customerNetId) {
 		this.customerAdminNetId = customerNetId;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 
 }

@@ -10,23 +10,33 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
+import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView {
+public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView {
 	Presenter presenter;
 	boolean editing;
 	boolean locked;
@@ -50,6 +60,14 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 	@UiField TextBox vpcReqSpeedTypeTB;
 	@UiField ListBox vpcReqTypeLB;
 	@UiField Label speedTypeLabel;
+	
+	// firewall rules and elasticip tabs
+	@UiField TabLayoutPanel vpcTabPanel;
+	@UiField DeckLayoutPanel firewallContainer;
+	@UiField DeckLayoutPanel elasticIpAssignmentContainer;
+
+	private boolean firstElasticIpWidget = true;
+	private boolean firstFirewallWidget = true;
 
 	private static DesktopMaintainVpcUiBinder uiBinder = GWT.create(DesktopMaintainVpcUiBinder.class);
 
@@ -120,6 +138,62 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 
 		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeLabel);
 	}
+	
+	@UiHandler ("vpcTabPanel") 
+	void tabSelected(SelectionEvent<Integer> e) {
+		switch (e.getSelectedItem()) {
+		case 0:
+			GWT.log("need to get Firewall Maintentenance content.");
+			firstFirewallWidget = true;
+			firewallContainer.clear();
+			ListFirewallRuleView listFwView = presenter.getClientFactory().getListFirewallRuleView();
+//			MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
+			firewallContainer.add(listFwView);
+//			firewallContentContainer.add(maintainFwView);
+			firewallContainer.setAnimationDuration(500);
+			GWT.log("FirewallRule tab: Presenters eventbus is: " + presenter.getEventBus());
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_FIREWALL_RULE, presenter.getVpc());
+			break;
+		case 1:
+			GWT.log("need to get Elastic IP Maintentenance content.");
+			firstElasticIpWidget = true;
+			elasticIpAssignmentContainer.clear();
+			ListElasticIpAssignmentView listEipView = presenter.getClientFactory().getListElasticIpAssignmentView();
+			MaintainElasticIpAssignmentView maintainEipView = presenter.getClientFactory().getMaintainElasticIpAssignmentView();
+			elasticIpAssignmentContainer.add(listEipView);
+			elasticIpAssignmentContainer.add(maintainEipView);
+			elasticIpAssignmentContainer.setAnimationDuration(500);
+			GWT.log("ElasticIpAssigment tab: Presenters eventbus is: " + presenter.getEventBus());
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT, presenter.getVpc());
+			break;
+		}
+	}
+
+	@Override
+	public void setWidget(IsWidget w) {
+		GWT.log("Maintain VPC, setWidget");
+		if (w instanceof ListElasticIpAssignmentPresenter || w instanceof MaintainElasticIpAssignmentPresenter) {
+			GWT.log("Maintain VPC, setWidget: elastic IP");
+			elasticIpAssignmentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstElasticIpWidget) {
+				firstElasticIpWidget = false;
+				elasticIpAssignmentContainer.animate(0);
+			}
+			return;
+		}
+
+		if (w instanceof ListFirewallRulePresenter) {
+			GWT.log("Maintain VPC, setWidget: firewall");
+			firewallContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstFirewallWidget) {
+				firstFirewallWidget = false;
+				firewallContainer.animate(0);
+			}
+				return;
+		}
+	}
 
 	@Override
 	public void setEditing(boolean isEditing) {
@@ -154,6 +228,11 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 				accountIdTB.setText(presenter.getVpc().getAccountId());
 				vpcIdTB.setText(presenter.getVpc().getVpcId());
 			}
+			
+			ListFirewallRuleView listAccountView = presenter.getClientFactory().getListFirewallRuleView();
+			firewallContainer.add(listAccountView);
+			firewallContainer.setAnimationDuration(500);
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_FIREWALL_RULE, presenter.getVpc());
 		}
 		else {
 			GWT.log("maintain VPC view initPage.  create");
@@ -310,4 +389,11 @@ public class DesktopMaintainVpc  extends ViewImplBase implements MaintainVpcView
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
 	}
+
+	@Override
+	public void showMessageToUser(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

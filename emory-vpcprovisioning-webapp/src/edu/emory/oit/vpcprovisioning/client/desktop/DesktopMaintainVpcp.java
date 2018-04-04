@@ -231,7 +231,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		});
 		final Button removeNetIdButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 			removeNetIdButton.setEnabled(false);
 		}
 		removeNetIdButton.addStyleName("glowing-border");

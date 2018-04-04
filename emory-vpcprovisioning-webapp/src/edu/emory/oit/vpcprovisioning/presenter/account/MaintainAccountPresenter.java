@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -38,6 +39,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	private SpeedChartPojo speedType;
 	private UserAccountPojo userLoggedIn;
 	private DirectoryPersonPojo directoryPerson;
+	private List<RoleAssignmentSummaryPojo> accountRoleAssignmentSummaries = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -78,7 +80,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		this.eventBus = eventBus;
 
 		
-		// TODO: get awsAccountsURL and awsBillingManagementURL in parallel
+		// get awsAccountsURL and awsBillingManagementURL in parallel
 		AsyncCallback<String> accountsUrlCB = new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -88,6 +90,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			public void onSuccess(String result) {
 				GWT.log("accounts URL from server: " + result);
 				awsAccountsURL = result;
+				getView().setAwsAccountsURL(awsAccountsURL);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getAwsAccountsURL(accountsUrlCB);
@@ -101,6 +104,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			public void onSuccess(String result) {
 				GWT.log("billing URL from server: " + result);
 				awsBillingManagementURL = result;
+				getView().setAwsBillingManagementURL(awsBillingManagementURL);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getAwsBillingManagementURL(billingUrlCB);
@@ -141,26 +145,44 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 					@Override
 					public void onSuccess(List<String> result) {
-						getView().initPage();
 						getView().setEmailTypeItems(result);
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
+						List<String> complianceClassTypes = new java.util.ArrayList<String>();
+						complianceClassTypes.add("HIPAA");
+						complianceClassTypes.add("Standard");
+						getView().setComplianceClassItems(complianceClassTypes);
+
+						getView().initPage();
+//						getView().hidePleaseWaitDialog();
+//						getView().hidePleaseWaitPanel();
 						getView().setFieldViolations(false);
 						getView().setInitialFocus();
-						// apply authorization mask
-						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-							getView().applyEmoryAWSAdminMask();
-						}
-						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-							clientFactory.getShell().setSubTitle("View Account");
-							getView().applyEmoryAWSAuditorMask();
-						}
-						else {
-							// ??
+						
+						if (isEditing) {
+							getAdminsForAccount();
 						}
 						
-						getView().setAwsAccountsURL(awsAccountsURL);
-						getView().setAwsBillingManagementURL(awsBillingManagementURL);
+						// apply authorization mask
+						if (user.isLitsAdmin()) {
+							getView().applyEmoryAWSAdminMask();
+						}
+						else if (account != null) {
+							if (user.isAdminForAccount(account.getAccountId())) {
+								getView().applyEmoryAWSAdminMask();
+							}
+							else if (user.isAuditorForAccount(account.getAccountId())) {
+								getView().applyEmoryAWSAuditorMask();
+							}
+						}
+//						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+//							getView().applyEmoryAWSAdminMask();
+//						}
+//						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+//							clientFactory.getShell().setSubTitle("View Account");
+//							getView().applyEmoryAWSAuditorMask();
+//						}
+//						else {
+//							// ??
+//						}
 					}
 				};
 				VpcProvisioningService.Util.getInstance().getEmailTypeItems(callback);
@@ -501,10 +523,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				if (result.getResults().size() == 1) {
 					final FullPersonPojo fp = result.getResults().get(0);
 					GWT.log("Got 1 FullPerson back for public id " + filter.getPublicId());
-//					GWT.log("FullPerson has " + fp.getNetworkIdentities().size() + " Network identities");
-//					for (NetworkIdentityPojo nip : fp.getNetworkIdentities()) {
-//						GWT.log(nip.toString());
-//					}
 					AsyncCallback<RoleAssignmentPojo> raCallback = new AsyncCallback<RoleAssignmentPojo>() {
 						@Override
 						public void onFailure(Throwable caught) {
@@ -513,11 +531,15 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						}
 
 						@Override
-						public void onSuccess(final RoleAssignmentPojo result) {
+						public void onSuccess(final RoleAssignmentPojo roleAssignment) {
 							// then, tell the view to refresh it's role list
-							account.getRoleAssignments().add(result);
-							getView().addRoleAssignment(directoryPerson.getFullName(), 
-									fp.getNetworkIdentities().get(0).getValue(), 
+//							account.getRoleAssignments().add(roleAssignment);
+							RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
+							ra_summary.setDirectoryPerson(directoryPerson);
+							ra_summary.setRoleAssignment(roleAssignment);
+							accountRoleAssignmentSummaries.add(ra_summary);
+							getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
+									directoryPerson.getEmail().getEmailAddress(), 
 									directoryPerson.toString());
 						}
 					};
@@ -535,5 +557,61 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		};
 		getView().showPleaseWaitDialog();
 		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, callback);
+	}
+
+	@Override
+	public void getAdminsForAccount() {
+		
+		AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				GWT.log("Exception retrieving Administrators", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving Administrators.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
+				accountRoleAssignmentSummaries = result;
+				// add each role assignment summary to the view
+				for (int i=0; i<result.size(); i++) {
+					RoleAssignmentSummaryPojo ra_summary = result.get(i);
+					getView().addRoleAssignment(i, ra_summary.getDirectoryPerson().getFullName(), 
+							ra_summary.getDirectoryPerson().getEmail().getEmailAddress(), 
+							ra_summary.getDirectoryPerson().toString());
+				}
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+			}
+		};
+		getView().showPleaseWaitDialog();
+		VpcProvisioningService.Util.getInstance().getAdminRoleAssignmentsForAccount(account.getAccountId(), callback);
+	}
+
+	@Override
+	public List<RoleAssignmentSummaryPojo> getRoleAssignmentSummaries() {
+		return accountRoleAssignmentSummaries;
+	}
+
+	@Override
+	public void removeRoleAssignmentFromAccount(String accountId, final RoleAssignmentSummaryPojo roleAssignmentSummary) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				accountRoleAssignmentSummaries.remove(roleAssignmentSummary);
+				getView().hidePleaseWaitDialog();
+			}
+		};
+		getView().showPleaseWaitDialog();
+		VpcProvisioningService.Util.getInstance().removeRoleAssignmentFromAccount(accountId, 
+				roleAssignmentSummary.getRoleAssignment(), callback);
 	}
 }

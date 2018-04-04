@@ -115,14 +115,10 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 								GWT.log("got " + accountItems.getResults().size() + " accounts.");
 								getView().setVpcTypeItems(vpcItems);
 								getView().setAccountItems(accountItems.getResults());
-								List<String> complianceClassTypes = new java.util.ArrayList<String>();
-								complianceClassTypes.add("HIPAA");
-								complianceClassTypes.add("Standard");
-								getView().setComplianceClassItems(complianceClassTypes);
 								getView().initPage();
 								getView().setInitialFocus();
 								// apply authorization mask
-								if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+								if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 									getView().applyEmoryAWSAdminMask();
 								}
 								else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {

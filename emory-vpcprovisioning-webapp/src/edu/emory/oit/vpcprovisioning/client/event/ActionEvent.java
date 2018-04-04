@@ -18,6 +18,7 @@ package edu.emory.oit.vpcprovisioning.client.event;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
@@ -80,6 +81,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName) {
 		GWT.log("Firing event: " + sourceName);
+		GWT.log("ActionEvent: EventBus passed in is is: " + eventBus);
 		eventBus.fireEventFromSource(new ActionEvent(), sourceName);
 	}
 

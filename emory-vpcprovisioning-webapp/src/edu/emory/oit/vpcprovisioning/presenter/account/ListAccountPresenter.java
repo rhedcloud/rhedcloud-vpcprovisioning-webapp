@@ -150,7 +150,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				GWT.log("Got " + result.getResults().size() + " accounts for " + result.getFilterUsed());
 				setAccountList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
@@ -164,6 +164,10 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		};
 
 		GWT.log("refreshing Account list...");
+		if (filter == null) {
+			filter = new AccountQueryFilterPojo();
+		}
+		filter.setUserLoggedIn(user);
 		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, callback);
 	}
 

@@ -42,6 +42,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class DesktopListAccount extends ViewImplBase implements ListAccountView {
 	Presenter presenter;
@@ -134,7 +135,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	    // - delete
 	    // - view bill summaries?
 	    String anchorText = "View Account";
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 			anchorText = "Maintain Account";
 		}
 
@@ -345,6 +346,23 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		accountListTable.addColumn(ownerNetIdColumn, "Owner's NetID");
 		
+		// compliance class
+		Column<AccountPojo, String> complianceClassColumn = 
+			new Column<AccountPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(AccountPojo object) {
+				return object.getComplianceClass();
+			}
+		};
+		complianceClassColumn.setSortable(true);
+		sortHandler.setComparator(complianceClassColumn, new Comparator<AccountPojo>() {
+			public int compare(AccountPojo o1, AccountPojo o2) {
+				return o1.getComplianceClass().compareTo(o2.getComplianceClass());
+			}
+		});
+		accountListTable.addColumn(complianceClassColumn, "Compliance Class");
+		
 		// password location
 		Column<AccountPojo, String> pwLocColumn = 
 				new Column<AccountPojo, String> (new TextCell()) {
@@ -402,8 +420,8 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		// TODO last update user/time?
 		
 		// button to view billing information for this account
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-			GWT.log(userLoggedIn.getEppn() + " is an admin");
+//		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+//			GWT.log(userLoggedIn.getEppn() + " is an admin");
 			Column<AccountPojo, String> viewBillsColumn = new Column<AccountPojo, String>(
 					new ButtonCell()) {
 				@Override
@@ -419,17 +437,22 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				public void update(int index, final AccountPojo account,
 						String value) {
 
-					// show billing information for this account
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, account);
+					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(account.getAccountId())) {
+						// show billing information for this account
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, account);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
 				}
 			});
-		}
-		else {
-			GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-		}
+//		}
+//		else {
+//			GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
+//		}
 
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-			GWT.log(userLoggedIn.getEppn() + " is an admin");
+//		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+//			GWT.log(userLoggedIn.getEppn() + " is an admin");
 			// delete row column
 			Column<AccountPojo, String> deleteRowColumn = new Column<AccountPojo, String>(
 					new ButtonCell()) {
@@ -446,21 +469,26 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				public void update(int index, final AccountPojo account,
 						String value) {
 
-					presenter.deleteAccount(account);
-					
+					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(account.getAccountId())) {
+						presenter.deleteAccount(account);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
 				}
 			});
-		}
-		else {
-			GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-		}
+//		}
+//		else {
+//			GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
+//		}
 
 		// view/edit row column
 		Column<AccountPojo, String> editRowColumn = new Column<AccountPojo, String>(
 				new ButtonCell()) {
 			@Override
 			public String getValue(AccountPojo object) {
-				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+//				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(object.getAccountId())) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					return "Edit";
 				}

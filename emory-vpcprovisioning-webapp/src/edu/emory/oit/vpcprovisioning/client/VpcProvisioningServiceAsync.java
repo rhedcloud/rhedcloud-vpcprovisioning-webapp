@@ -44,6 +44,7 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentStatusPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResultPojo;
@@ -61,6 +62,9 @@ import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
@@ -162,7 +166,7 @@ public interface VpcProvisioningServiceAsync {
 	// ElasticIpAssignment
 	void getElasticIpAssignmentsForUserLoggedIn(AsyncCallback<List<ElasticIpAssignmentPojo>> callback);
 	void getElasticIpAssignmentsForFilter(ElasticIpAssignmentQueryFilterPojo filter, AsyncCallback<ElasticIpAssignmentQueryResultPojo> callback);
-	void createElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment, AsyncCallback<ElasticIpAssignmentPojo> callback);
+	void generateElasticIpAssignment(ElasticIpAssignmentRequisitionPojo elasticIpAssignment, AsyncCallback<ElasticIpAssignmentPojo> callback);
 	void updateElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment, AsyncCallback<ElasticIpAssignmentPojo> callback);
 	void deleteElasticIpAssignment(ElasticIpAssignmentPojo cidr, AsyncCallback<Void> callback);
 	void getUnassignedElasticIps(AsyncCallback<List<ElasticIpPojo>> callback);
@@ -203,4 +207,7 @@ public interface VpcProvisioningServiceAsync {
 	
 	// RoleAssignment
 	void createAdminRoleAssignmentForPersonInAccount(FullPersonPojo person, String accountId, AsyncCallback<RoleAssignmentPojo> callback);
+	void getRoleAssignmentsForFilter(RoleAssignmentQueryFilterPojo filter, AsyncCallback<RoleAssignmentQueryResultPojo> callback);
+	void getAdminRoleAssignmentsForAccount(String accountId, AsyncCallback<List<RoleAssignmentSummaryPojo>> callback) throws RpcException;
+	void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment, AsyncCallback<Void> callback) throws RpcException;
 }

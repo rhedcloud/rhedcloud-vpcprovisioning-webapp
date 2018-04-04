@@ -31,14 +31,17 @@ import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssign
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
@@ -112,13 +115,20 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
-				placeController.goTo(new ListElasticIpAssignmentPlace(false));
+				GWT.log("Bootstrapper, GO_HOME_ELASTIC_IP.onAction");
+				final ListElasticIpAssignmentPresenter presenter = new ListElasticIpAssignmentPresenter(clientFactory, new ListElasticIpAssignmentPlace(false));
+				presenter.setVpc(event.getVpc());
+				presenter.start(eventBus);
+				MaintainVpcView parent = clientFactory.getMaintainVpcView();
+				parent.setWidget(presenter);
+//				placeController.goTo(new ListElasticIpAssignmentPlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_ELASTIC_IP, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				// TODO via dialog box (only for LITS admins)
 				placeController.goTo(new ListElasticIpPlace(false));
 			}
 		});
@@ -147,7 +157,13 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
-				placeController.goTo(new ListFirewallRulePlace(false));
+				GWT.log("Bootstrapper, GO_HOME_FIREWALL_RULE.onAction");
+				final ListFirewallRulePresenter presenter = new ListFirewallRulePresenter(clientFactory, new ListFirewallRulePlace(false));
+				presenter.setVpc(event.getVpc());
+				presenter.start(eventBus);
+				MaintainVpcView parent = clientFactory.getMaintainVpcView();
+				parent.setWidget(presenter);
+//				placeController.goTo(new ListFirewallRulePlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPC, new ActionEvent.Handler() {

@@ -5,6 +5,7 @@ public class CidrAssignmentSummaryQueryFilterPojo extends SharedObject {
 	String cidrAssignmentId;
 	String ownerId;
 	CidrPojo cidr;
+	UserAccountPojo userLoggedIn;
 
 	public CidrAssignmentSummaryQueryFilterPojo() {
 	}
@@ -31,5 +32,13 @@ public class CidrAssignmentSummaryQueryFilterPojo extends SharedObject {
 
 	public void setCidr(CidrPojo cidr) {
 		this.cidr = cidr;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 }

@@ -221,23 +221,6 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		});
 		vpcListTable.addColumn(vpcTypeColumn, "VPC Type");
 		
-		// compliance class
-		Column<VpcPojo, String> complianceClassColumn = 
-			new Column<VpcPojo, String> (new TextCell()) {
-			
-			@Override
-			public String getValue(VpcPojo object) {
-				return object.getComplianceClass();
-			}
-		};
-		complianceClassColumn.setSortable(true);
-		sortHandler.setComparator(complianceClassColumn, new Comparator<VpcPojo>() {
-			public int compare(VpcPojo o1, VpcPojo o2) {
-				return o1.getComplianceClass().compareTo(o2.getComplianceClass());
-			}
-		});
-		vpcListTable.addColumn(complianceClassColumn, "Compliance Class");
-		
 		// create user
 		Column<VpcPojo, String> createUserColumn = 
 				new Column<VpcPojo, String> (new TextCell()) {
@@ -306,36 +289,42 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		});
 		vpcListTable.addColumn(updateTimeColumn, "Update Time");
 
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
-			GWT.log(userLoggedIn.getEppn() + " is an admin");
-			// delete row column
-			Column<VpcPojo, String> deleteRowColumn = new Column<VpcPojo, String>(
-					new ButtonCell()) {
-				@Override
-				public String getValue(VpcPojo object) {
-					return "Delete";
-				}
-			};
-			deleteRowColumn.setCellStyleNames("glowing-border");
-			vpcListTable.addColumn(deleteRowColumn, "");
-			vpcListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
-			deleteRowColumn
-			.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
-				@Override
-				public void update(int index, final VpcPojo vpc,
-						String value) {
-	
+		// delete row column
+		Column<VpcPojo, String> deleteRowColumn = new Column<VpcPojo, String>(
+				new ButtonCell()) {
+			@Override
+			public String getValue(VpcPojo object) {
+				return "Delete";
+			}
+		};
+		deleteRowColumn.setCellStyleNames("glowing-border");
+		vpcListTable.addColumn(deleteRowColumn, "");
+		vpcListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
+		deleteRowColumn
+		.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
+			@Override
+			public void update(int index, final VpcPojo vpc,
+					String value) {
+
+				if (userLoggedIn.isAdminForAccount(vpc.getAccountId()) ||
+					userLoggedIn.isLitsAdmin()) {
+					
+					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					presenter.deleteVpc(vpc);
 				}
-			});
-		}
+				else {
+					showMessageToUser("You are not authorized to perform this action for this VPC.");
+				}
+			}
+		});
 
 		// edit row column
 		Column<VpcPojo, String> editRowColumn = new Column<VpcPojo, String>(
 				new ButtonCell()) {
 			@Override
-			public String getValue(VpcPojo object) {
-				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+			public String getValue(final VpcPojo object) {
+				if (userLoggedIn.isAdminForAccount(object.getAccountId()) ||
+						userLoggedIn.isLitsAdmin()) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					return "Edit";
 				}

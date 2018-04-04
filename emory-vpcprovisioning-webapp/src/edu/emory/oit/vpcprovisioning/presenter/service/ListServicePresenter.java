@@ -140,7 +140,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				GWT.log("Got " + result.getResults().size() + " Services for " + result.getFilterUsed());
 				setServiceList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING)) {
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 					getView().applyEmoryAWSAdminMask();
 				}
 				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
