@@ -46,8 +46,8 @@ public class Constants implements IsSerializable {
 	public static final String MOA_VPCP_GENERATE = "GenerateVirtualPrivateCloudProvisioning.v1_0";
 	public static final String MOA_ACCOUNT_QUERY_SPEC = "AccountQuerySpecification.v1_0";
 	public static final String MOA_ACCOUNT = "Account.v1_0";
-	public static final String MOA_AUTHORIZATION = "Authorization.v2_0";
-	public static final String MOA_AUTHORIZATION_QUERY_SPEC = "AuthorizationQuerySpecification.v2_0";
+//	public static final String MOA_AUTHORIZATION = "Authorization.v2_0";
+//	public static final String MOA_AUTHORIZATION_QUERY_SPEC = "AuthorizationQuerySpecification.v2_0";
 	public static final String MOA_CIDR_QUERY_SPEC = "CidrQuerySpecification.v1_0";
 	public static final String MOA_CIDR = "Cidr.v1_0";
 	public static final String MOA_CIDR_ASSIGNMENT_QUERY_SPEC = "CidrAssignmentQuerySpecification.v1_0";
@@ -68,6 +68,8 @@ public class Constants implements IsSerializable {
 	public static final String MOA_ELASTIC_IP_QUERY_SPEC = "ElasticIpQuerySpecification.v1_0";
 	public static final String MOA_ELASTIC_IP = "ElasticIp.v1_0";
 	public static final String MOA_ELASTIC_IP_REQUISITION = "ElasticIpRequisition.v1_0";
+	public static final String MOA_FIREWALL_EXCEPTION_REQUEST_QUERY_SPEC = "FirewallExceptionRequestQuerySpecification.v1_0";
+	public static final String MOA_FIREWALL_EXCEPTION_REQUEST = "FirewallExceptionRequest.v1_0";
 
     public static final String STYLE_INFO_POPUP_MESSAGE = "informationalPopupMessage";
     

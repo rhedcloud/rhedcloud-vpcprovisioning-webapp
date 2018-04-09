@@ -54,6 +54,9 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -208,6 +211,12 @@ public interface VpcProvisioningService extends RemoteService {
 	FirewallRulePojo createFirewallRule(FirewallRulePojo rule) throws RpcException;
 	FirewallRulePojo updateFirewallRule(FirewallRulePojo rule) throws RpcException;
 	void deleteFirewallRule(FirewallRulePojo rule) throws RpcException;
+	
+	// FirewallExceptionRequest
+	FirewallExceptionRequestQueryResultPojo getFirewallExceptionRequestsForFilter(FirewallExceptionRequestQueryFilterPojo filter) throws RpcException;
+	FirewallExceptionRequestPojo createFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException;
+	FirewallExceptionRequestPojo updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException;
+	void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException;
 
 	// caching methods
 	CidrPojo storeCidrInCacheForUser(String eppn, CidrPojo cidr);

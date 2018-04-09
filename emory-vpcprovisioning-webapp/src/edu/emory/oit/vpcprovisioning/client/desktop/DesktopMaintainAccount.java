@@ -608,19 +608,15 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		AccountPojo acct = presenter.getAccount(); 
 		if (acct.getAccountId() == null || acct.getAccountId().length() == 0) {
-			this.setFieldViolations(true);
 			fields.add(accountIdTB);
 		}
 		if (acct.getAccountName() == null || acct.getAccountName().length() == 0) {
-			this.setFieldViolations(true);
 			fields.add(accountNameTB);
 		}
 		if (acct.getPasswordLocation() == null || acct.getPasswordLocation().length() == 0) {
-			this.setFieldViolations(true);
 			fields.add(passwordLocationTB);
 		}
 		if (acct.getEmailList() == null|| acct.getEmailList().size() == 0) {
-			this.setFieldViolations(true);
 			fields.add(addEmailTF);
 		}
 		if (acct.getComplianceClass() == null || acct.getComplianceClass().length() == 0) {

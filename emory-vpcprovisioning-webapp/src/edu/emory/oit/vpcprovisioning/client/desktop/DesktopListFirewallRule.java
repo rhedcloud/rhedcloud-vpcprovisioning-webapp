@@ -58,12 +58,12 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 
 	/*** FIELDS ***/
 	@UiField SimplePager firewallRuleListPager;
-	@UiField SimplePager firewallRuleRequestListPager;
-	@UiField Button requestFirewallRuleButton;
-	@UiField Button requestActionsButton;
+	@UiField SimplePager firewallExceptionRequestListPager;
+	@UiField Button firewallExceptionRequestButton;
+	@UiField Button firewallExceptionRequestActionsButton;
 	@UiField Button firewallRuleActionsButton;
 	@UiField(provided=true) CellTable<FirewallRulePojo> firewallRuleListTable = new CellTable<FirewallRulePojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
-	@UiField(provided=true) CellTable<FirewallExceptionRequestPojo> firewallRuleRequestListTable = new CellTable<FirewallExceptionRequestPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<FirewallExceptionRequestPojo> firewallExceptionRequestListTable = new CellTable<FirewallExceptionRequestPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel firewallRuleListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField TabLayoutPanel firewallRuleTabPanel;
@@ -92,13 +92,13 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	public DesktopListFirewallRule() {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		requestFirewallRuleButton.addDomHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				GWT.log("Should go to maintain firewallRule here...");
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE);
-			}
-		}, ClickEvent.getType());
+//		firewallExceptionRequestButton.addDomHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				GWT.log("Should go to maintain firewallexceptionrequest here...");
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST);
+//			}
+//		}, ClickEvent.getType());
 	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -118,8 +118,83 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				break;
 		}
 	}
-	@UiHandler("requestActionsButton")
-	void actionsButtonClicked(ClickEvent e) {
+	@UiHandler("firewallRuleActionsButton")
+	void firewallRuleActionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    
+		if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) || 
+				userLoggedIn.isLitsAdmin()) {
+
+		    Grid grid = new Grid(2, 1);
+		    grid.setCellSpacing(8);
+		    actionsPopup.add(grid);
+		    
+		    // anchors for:
+		    // - view/edit
+		    // - delete
+			String anchorText = "Create Firewall Exception Request Like This";
+
+			Anchor maintainAnchor = new Anchor(anchorText);
+			maintainAnchor.addStyleName("productAnchor");
+			maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			maintainAnchor.setTitle("View/edit selected Firewall Exception Request");
+			maintainAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					actionsPopup.hide();
+					FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+					if (m != null) {
+						// just use a popup here and not try to show the "normal" CidrAssignment
+						// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_FIREWALL_RULE, m, null);
+					}
+					else {
+						showMessageToUser("Please select an item from the list");
+					}
+				}
+			});
+			grid.setWidget(0, 0, maintainAnchor);
+
+			Anchor deleteAnchor = new Anchor("Remove Firewall Rule");
+			deleteAnchor.addStyleName("productAnchor");
+			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			deleteAnchor.setTitle("Remove selected Firewall Rule");
+			deleteAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					actionsPopup.hide();
+					FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+					if (m != null) {
+						// just use a popup here and not try to show the "normal" CidrAssignment
+						// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					}
+					else {
+						showMessageToUser("Please select an item from the list");
+					}
+				}
+			});
+			grid.setWidget(1, 0, deleteAnchor);
+			actionsPopup.showRelativeTo(firewallRuleActionsButton);
+		}
+		else {
+			// user not authorized to perform any actions on selected item...
+			showMessageToUser("You are not authorized to perform any actions on Firewall Rules.");
+		}
+	}
+	
+	@UiHandler("firewallExceptionRequestButton")
+	void fer_addButtonClicked(ClickEvent e) {
+		GWT.log("Should go to maintain firewallexceptionrequest here...");
+		GWT.log("[firewallExceptionRequestButton] presenter.getVpc() is: " + presenter.getVpc());
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, presenter.getVpc());
+	}
+	
+	@UiHandler("firewallExceptionRequestActionsButton")
+	void fer_actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
 	    actionsPopup.setAutoHideEnabled(true);
 	    actionsPopup.setAnimationEnabled(true);
@@ -132,20 +207,20 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    // anchors for:
 	    // - view/edit
 	    // - delete
-	    String anchorText = "View Firewall Rule Request";
+	    String anchorText = "View Firewall Exception Request";
 		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-			anchorText = "Maintain Firewall Rule Request";
+			anchorText = "Maintain Firewall Exception Request";
 		}
 
 		Anchor maintainAnchor = new Anchor(anchorText);
 		maintainAnchor.addStyleName("productAnchor");
 		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		maintainAnchor.setTitle("View/edit selected Firewall Rule");
+		maintainAnchor.setTitle("View/edit selected Firewall Exception Request");
 		maintainAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+				FirewallExceptionRequestPojo m = fwer_selectionModel.getSelectedObject();
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
@@ -158,15 +233,15 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		grid.setWidget(0, 0, maintainAnchor);
 
-		Anchor deleteAnchor = new Anchor("Remove Firewall Rule Request");
+		Anchor deleteAnchor = new Anchor("Remove Firewall Exception Request");
 		deleteAnchor.addStyleName("productAnchor");
 		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deleteAnchor.setTitle("Remove selected Firewall Rule");
+		deleteAnchor.setTitle("Remove selected Firewall Exception Request");
 		deleteAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+				FirewallExceptionRequestPojo m = fwer_selectionModel.getSelectedObject();
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
@@ -200,7 +275,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 //		});
 //		grid.setWidget(2, 0, historyAnchor);
 
-		actionsPopup.showRelativeTo(requestActionsButton);
+		actionsPopup.showRelativeTo(firewallExceptionRequestActionsButton);
 	}
 
 	@Override
@@ -437,7 +512,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return requestFirewallRuleButton;
+		return firewallExceptionRequestButton;
 	}
 
 	@Override
@@ -449,7 +524,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@Override
 	public void applyEmoryAWSAdminMask() {
 		// enable add firewallRule button
-		requestFirewallRuleButton.setEnabled(true);
+		firewallExceptionRequestButton.setEnabled(true);
 		// enable Delete button in table (handled in initFirewallRuleListTableColumns)
 		// change text of button to Edit (handled in initFirewallRuleListTableColumns)
 	}
@@ -457,7 +532,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@Override
 	public void applyEmoryAWSAuditorMask() {
 		// disable add firewallRule button
-		requestFirewallRuleButton.setEnabled(false);
+		firewallExceptionRequestButton.setEnabled(false);
 		// disable Delete button in table (handled in initFirewallRuleListTableColumns)
 		// change text of button to View (handled in initFirewallRuleListTableColumns)
 	}
@@ -487,26 +562,26 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	public void setFirewallRuleRequests(List<FirewallExceptionRequestPojo> firewallRequests) {
 		this.fwerRuleList = firewallRequests;
 		this.initializeFirewallRuleRequestListTable();
-	    firewallRuleRequestListPager.setDisplay(firewallRuleRequestListTable);
+	    firewallExceptionRequestListPager.setDisplay(firewallExceptionRequestListTable);
 	}
 
 	private Widget initializeFirewallRuleRequestListTable() {
 		GWT.log("initializing Firewall Rule Exception Request list table...");
-		firewallRuleRequestListTable.setTableLayoutFixed(false);
-		firewallRuleRequestListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		firewallExceptionRequestListTable.setTableLayoutFixed(false);
+		firewallExceptionRequestListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		firewallRuleRequestListTable.setVisibleRange(0, 5);
+		firewallExceptionRequestListTable.setVisibleRange(0, 5);
 		
 		// create dataprovider
 		fwer_dataProvider = new ListDataProvider<FirewallExceptionRequestPojo>();
-		fwer_dataProvider.addDataDisplay(firewallRuleRequestListTable);
+		fwer_dataProvider.addDataDisplay(firewallExceptionRequestListTable);
 		fwer_dataProvider.getList().clear();
 		fwer_dataProvider.getList().addAll(this.fwerRuleList);
 		
 		fwer_selectionModel = 
 	    	new SingleSelectionModel<FirewallExceptionRequestPojo>(FirewallExceptionRequestPojo.KEY_PROVIDER);
-		firewallRuleRequestListTable.setSelectionModel(fwer_selectionModel);
+		firewallExceptionRequestListTable.setSelectionModel(fwer_selectionModel);
 	    
 	    fwer_selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
@@ -518,13 +593,13 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 
 	    ListHandler<FirewallExceptionRequestPojo> sortHandler = 
 	    	new ListHandler<FirewallExceptionRequestPojo>(fwer_dataProvider.getList());
-	    firewallRuleRequestListTable.addColumnSortHandler(sortHandler);
+	    firewallExceptionRequestListTable.addColumnSortHandler(sortHandler);
 
-	    if (firewallRuleRequestListTable.getColumnCount() == 0) {
+	    if (firewallExceptionRequestListTable.getColumnCount() == 0) {
 		    initFirewallRuleRequestListTableColumns(sortHandler);
 	    }
 		
-		return firewallRuleRequestListTable;
+		return firewallExceptionRequestListTable;
 	}
 
 	private void initFirewallRuleRequestListTableColumns(ListHandler<FirewallExceptionRequestPojo> sortHandler) {
@@ -568,7 +643,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return o1.getRequestNumber().compareTo(o2.getRequestNumber());
 			}
 		});
-		firewallRuleRequestListTable.addColumn(reqNumberColumn, "Request Number");
+		firewallExceptionRequestListTable.addColumn(reqNumberColumn, "Request Number");
 
 		Column<FirewallExceptionRequestPojo, String> reqStateColumn = 
 				new Column<FirewallExceptionRequestPojo, String> (new TextCell()) {
@@ -585,7 +660,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return o1.getRequestState().compareTo(o2.getRequestState());
 			}
 		});
-		firewallRuleRequestListTable.addColumn(reqStateColumn, "Request State");
+		firewallExceptionRequestListTable.addColumn(reqStateColumn, "Request State");
 
 		Column<FirewallExceptionRequestPojo, String> netIdColumn = 
 				new Column<FirewallExceptionRequestPojo, String> (new TextCell()) {
@@ -602,7 +677,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return o1.getUserNetId().compareTo(o2.getUserNetId());
 			}
 		});
-		firewallRuleRequestListTable.addColumn(netIdColumn, "Requestor NetID");
+		firewallExceptionRequestListTable.addColumn(netIdColumn, "Requestor NetID");
 
 		Column<FirewallExceptionRequestPojo, String> appNameColumn = 
 				new Column<FirewallExceptionRequestPojo, String> (new TextCell()) {
@@ -619,7 +694,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return o1.getApplicationName().compareTo(o2.getApplicationName());
 			}
 		});
-		firewallRuleRequestListTable.addColumn(appNameColumn, "Application Name");
+		firewallExceptionRequestListTable.addColumn(appNameColumn, "Application Name");
 
 		Column<FirewallExceptionRequestPojo, String> sourceIpColumn = 
 				new Column<FirewallExceptionRequestPojo, String> (new TextCell()) {
@@ -636,7 +711,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return o1.getSourceIp().compareTo(o2.getSourceIp());
 			}
 		});
-		firewallRuleRequestListTable.addColumn(sourceIpColumn, "Source IP(s)");
+		firewallExceptionRequestListTable.addColumn(sourceIpColumn, "Source IP(s)");
 
 		Column<FirewallExceptionRequestPojo, String> destIpColumn = 
 				new Column<FirewallExceptionRequestPojo, String> (new TextCell()) {
@@ -653,7 +728,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return o1.getDestinationIp().compareTo(o2.getDestinationIp());
 			}
 		});
-		firewallRuleRequestListTable.addColumn(destIpColumn, "Destination IP(s)");
+		firewallExceptionRequestListTable.addColumn(destIpColumn, "Destination IP(s)");
 
 		Column<FirewallExceptionRequestPojo, String> portsColumn = 
 				new Column<FirewallExceptionRequestPojo, String> (new TextCell()) {
@@ -670,7 +745,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return o1.getPorts().compareTo(o2.getPorts());
 			}
 		});
-		firewallRuleRequestListTable.addColumn(portsColumn, "Port(s)");
+		firewallExceptionRequestListTable.addColumn(portsColumn, "Port(s)");
 
 		Column<FirewallExceptionRequestPojo, SafeHtml> tagsColumn = 
 				new Column<FirewallExceptionRequestPojo, SafeHtml> (new SafeHtmlCell()) {
@@ -698,12 +773,12 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 //				return o1.getTags().compareTo(o2.getTags());
 //			}
 //		});
-		firewallRuleRequestListTable.addColumn(tagsColumn, "Tag(s)");
+		firewallExceptionRequestListTable.addColumn(tagsColumn, "Tag(s)");
 	}
 	
 	@Override
 	public void clearFirewallRuleExceptionRequestList() {
-		firewallRuleRequestListTable.setVisibleRangeAndClearData(firewallRuleRequestListTable.getVisibleRange(), true);
+		firewallExceptionRequestListTable.setVisibleRangeAndClearData(firewallExceptionRequestListTable.getVisibleRange(), true);
 	}
 
 	@Override

@@ -33,6 +33,7 @@ public class FirewallExceptionRequestPojo extends SharedObject implements IsSeri
 	String requestState;
 	String requestItemNumber;
 	String requestItemState;
+	FirewallExceptionRequestPojo baseline;
 	
 	/*
 	(SystemId?, UserNetID, ApplicationName, 
@@ -310,6 +311,14 @@ public class FirewallExceptionRequestPojo extends SharedObject implements IsSeri
 
 	public void setRequestItemState(String requestItemState) {
 		this.requestItemState = requestItemState;
+	}
+
+	public FirewallExceptionRequestPojo getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(FirewallExceptionRequestPojo baseline) {
+		this.baseline = baseline;
 	}
 
 }

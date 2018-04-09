@@ -35,6 +35,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIp
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPlace;
+import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
@@ -258,8 +260,6 @@ public class AppBootstrapper {
 				if (event.getCidr() != null) {
 					// pass the CIDR we're assigning (from Cidr list view)
 					GWT.log("bootstrap, passing a cidr to create cidr assignment");
-//					placeController.goTo(MaintainCidrAssignmentPlace.getMaintainCidrAssignmentPlace(event.getCidr()));
-					
 					final DialogBox db = new DialogBox();
 					db.setText("Create CIDR Assignment");
 					db.setGlassEnabled(true);
@@ -391,28 +391,93 @@ public class AppBootstrapper {
 			}
 		});
 
-		ActionEvent.register(eventBus, ActionNames.CREATE_FIREWALL_RULE, new ActionEvent.Handler() {
+		ActionEvent.register(eventBus, ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-//				placeController.goTo(MaintainFirewallRulePlace.getMaintainFirewallPlace());
+				
+				if (event.getFirewallExceptionRequest() != null) {
+					// pass the CIDR we're assigning (from Cidr list view)
+					GWT.log("bootstrap, passing a FirewallExceptionRequest (edit)");
+					final DialogBox db = new DialogBox();
+					db.setText("Maintain Firewall Exception Request");
+					db.setGlassEnabled(true);
+					db.center();
+					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.getFirewallExceptionRequest());
+					GWT.log("CREATE_FIREWALL_EXCEPTION_REQUEST event's VPC is: " + event.getVpc());
+					presenter.setVpc(event.getVpc());
+					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							db.hide();
+						}
+					});
+					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							if (!presenter.getView().hasFieldViolations()) {
+								db.hide();
+							}
+						}
+					});
+					presenter.start(eventBus);
+					db.setWidget(presenter);
+					db.show();
+					db.center();
+				}
+				else {
+					GWT.log("bootstrap, NOT passing a FirewallExceptionRequest (create)");
+					final DialogBox db = new DialogBox();
+					db.setText("Create Firewall Exception Request");
+					db.setGlassEnabled(true);
+					db.center();
+					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory);
+					presenter.setVpc(event.getVpc());
+					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							db.hide();
+						}
+					});
+					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							if (!presenter.getView().hasFieldViolations()) {
+								db.hide();
+							}
+						}
+					});
+					presenter.start(eventBus);
+					db.setWidget(presenter);
+					db.show();
+					db.center();
+				}
+
+				
+//				GWT.log("Bootstrapper, CREATE_FIREWALL_EXCEPTION_REQUEST.onAction");
+//				final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory);
+//				presenter.setVpc(event.getVpc());
+//				presenter.start(eventBus);
+//				MaintainVpcView parent = clientFactory.getMaintainVpcView();
+//				parent.setWidget(presenter);
+////				placeController.goTo(MaintainFirewallExceptionRequestPlace.getMaintainFirewallExceptionRequestPlace());
 			}
 		});
 
-		ActionEvent.register(eventBus, ActionNames.MAINTAIN_FIREWALL_RULE, new ActionEvent.Handler() {
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_FIREWALL_EXCEPTION_REQUEST, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-//				placeController.goTo(MaintainFirewallRulePlace.createMaintainFirewallRulePlace(event.getFirewallRule()));
+				placeController.goTo(MaintainFirewallExceptionRequestPlace.createMaintainFirewallExceptionRequestPlace(event.getFirewallExceptionRequest()));
 			}
 		});
 
-		ActionEvent.register(eventBus, ActionNames.FIREWALL_RULE_EDITING_CANCELED, new ActionEvent.Handler() {
+		ActionEvent.register(eventBus, ActionNames.FIREWALL_EXCEPTION_REQUEST_EDITING_CANCELED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(new ListFirewallRulePlace(false));
 			}
 		});
 
-		ActionEvent.register(eventBus, ActionNames.FIREWALL_RULE_SAVED, new ActionEvent.Handler() {
+		ActionEvent.register(eventBus, ActionNames.FIREWALL_EXCEPTION_REQUEST_SAVED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(new ListFirewallRulePlace(false));

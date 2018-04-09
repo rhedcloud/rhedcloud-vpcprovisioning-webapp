@@ -254,6 +254,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		getView().showPleaseWaitDialog();
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
+			getView().setFieldViolations(true);
 			getView().applyStyleToMissingFields(fields);
 			getView().hidePleaseWaitDialog();
 			getView().hidePleaseWaitPanel();
@@ -261,6 +262,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			return;
 		}
 		else {
+			getView().setFieldViolations(false);
 			getView().resetFieldStyles();
 		}
 		AsyncCallback<AccountPojo> callback = new AsyncCallback<AccountPojo>() {

@@ -19,41 +19,41 @@ package edu.emory.oit.vpcprovisioning.client.event;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 
 /**
  * Fired when the user wants to edit a case record.
  */
-public class EditFirewallRuleEvent extends GwtEvent<EditFirewallRuleEvent.Handler> {
+public class EditFirewallExceptionRequestEvent extends GwtEvent<EditFirewallExceptionRequestEvent.Handler> {
   /**
-   * Implemented by objects that handle {@link EditFirewallRuleEvent}.
+   * Implemented by objects that handle {@link EditFirewallExceptionRequestEvent}.
    */
   public interface Handler extends EventHandler {
-    void onFirewallRuleEdit(EditFirewallRuleEvent event);
+    void onFirewallExceptionRequestEdit(EditFirewallExceptionRequestEvent event);
   }
 
   /**
    * The event type.
    */
-  public static final Type<EditFirewallRuleEvent.Handler> TYPE = new Type<EditFirewallRuleEvent.Handler>();
+  public static final Type<EditFirewallExceptionRequestEvent.Handler> TYPE = new Type<EditFirewallExceptionRequestEvent.Handler>();
 
-  private final FirewallRulePojo firewallRule;
+  private final FirewallExceptionRequestPojo firewallRule;
 
-  public EditFirewallRuleEvent(FirewallRulePojo firewallRule) {
+  public EditFirewallExceptionRequestEvent(FirewallExceptionRequestPojo firewallRule) {
     this.firewallRule = firewallRule;
   }
 
   @Override
-  public final Type<EditFirewallRuleEvent.Handler> getAssociatedType() {
+  public final Type<EditFirewallExceptionRequestEvent.Handler> getAssociatedType() {
     return TYPE;
   }
 
-  public FirewallRulePojo getFirewallRule() {
+  public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
     return firewallRule;
   }
 
   @Override
-  protected void dispatch(EditFirewallRuleEvent.Handler handler) {
-    handler.onFirewallRuleEdit(this);
+  protected void dispatch(EditFirewallExceptionRequestEvent.Handler handler) {
+    handler.onFirewallExceptionRequestEdit(this);
   }
 }

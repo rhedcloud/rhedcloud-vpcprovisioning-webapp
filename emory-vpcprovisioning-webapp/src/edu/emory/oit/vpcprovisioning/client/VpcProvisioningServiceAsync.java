@@ -52,6 +52,9 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -198,6 +201,12 @@ public interface VpcProvisioningServiceAsync {
 	void createFirewallRule(FirewallRulePojo rule, AsyncCallback<FirewallRulePojo> callback);
 	void updateFirewallRule(FirewallRulePojo rule, AsyncCallback<FirewallRulePojo> callback);
 	void deleteFirewallRule(FirewallRulePojo rule, AsyncCallback<Void> callback);
+	
+	// FirewallExceptionRequest
+	void getFirewallExceptionRequestsForFilter(FirewallExceptionRequestQueryFilterPojo filter, AsyncCallback<FirewallExceptionRequestQueryResultPojo> callback);
+	void createFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
+	void updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
+	void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<Void> callback);
 
 	// DirectoryPerson
 	void getDirectoryPersonsForFilter(DirectoryPersonQueryFilterPojo filter, AsyncCallback<DirectoryPersonQueryResultPojo> callback);

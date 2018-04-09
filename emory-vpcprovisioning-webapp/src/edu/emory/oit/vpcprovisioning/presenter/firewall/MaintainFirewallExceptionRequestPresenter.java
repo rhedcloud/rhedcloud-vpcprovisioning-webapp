@@ -12,15 +12,19 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
-public class MaintainFirewallRulePresenter extends PresenterBase implements MaintainFirewallRuleView.Presenter {
+public class MaintainFirewallExceptionRequestPresenter extends PresenterBase implements MaintainFirewallExceptionRequestView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
-	private String name;
+	private String systemId;
+	private FirewallExceptionRequestPojo firewallExceptionRequest;
 	private FirewallRulePojo firewallRule;
+	VpcPojo vpc;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -31,23 +35,23 @@ public class MaintainFirewallRulePresenter extends PresenterBase implements Main
 	/**
 	 * For creating a new CIDR.
 	 */
-	public MaintainFirewallRulePresenter(ClientFactory clientFactory) {
+	public MaintainFirewallExceptionRequestPresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
-		this.firewallRule = null;
-		this.name = null;
+		this.firewallExceptionRequest = null;
+		this.systemId = null;
 		this.clientFactory = clientFactory;
-		clientFactory.getMaintainFirewallRuleView().setPresenter(this);
+		clientFactory.getMaintainFirewallExceptionRequestView().setPresenter(this);
 	}
 
 	/**
 	 * For editing an existing CIDR.
 	 */
-	public MaintainFirewallRulePresenter(ClientFactory clientFactory, FirewallRulePojo firewallRule) {
+	public MaintainFirewallExceptionRequestPresenter(ClientFactory clientFactory, FirewallExceptionRequestPojo firewallExceptionRequest) {
 		this.isEditing = true;
-		this.name = firewallRule.getName();
+		this.systemId = firewallExceptionRequest.getSystemId();
 		this.clientFactory = clientFactory;
-		this.firewallRule = firewallRule;
-		clientFactory.getMaintainFirewallRuleView().setPresenter(this);
+		this.firewallExceptionRequest = firewallExceptionRequest;
+		clientFactory.getMaintainFirewallExceptionRequestView().setPresenter(this);
 	}
 
 	@Override
@@ -59,10 +63,12 @@ public class MaintainFirewallRulePresenter extends PresenterBase implements Main
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		ReleaseInfo ri = new ReleaseInfo();
 		clientFactory.getShell().setReleaseInfo(ri.toString());
-		if (name == null) {
+		if (systemId == null) {
 			clientFactory.getShell().setSubTitle("Create CIDR");
 			startCreate();
 		} else {
@@ -93,20 +99,20 @@ public class MaintainFirewallRulePresenter extends PresenterBase implements Main
 	private void startCreate() {
 		isEditing = false;
 		getView().setEditing(false);
-		firewallRule = new FirewallRulePojo();
+		firewallExceptionRequest = new FirewallExceptionRequestPojo();
 	}
 
 	private void startEdit() {
 		isEditing = true;
 		getView().setEditing(true);
-		// Lock the display until the firewallRule is loaded.
+		// Lock the display until the firewallExceptionRequest is loaded.
 		getView().setLocked(true);
 	}
 
 	@Override
 	public void stop() {
 		eventBus = null;
-		clientFactory.getMaintainFirewallRuleView().setLocked(false);
+		clientFactory.getMaintainFirewallExceptionRequestView().setLocked(false);
 	}
 
 	@Override
@@ -120,81 +126,83 @@ public class MaintainFirewallRulePresenter extends PresenterBase implements Main
 	}
 
 	@Override
-	public void deleteFirewallRule() {
+	public void deleteFirewallExceptionRequest() {
 		if (isEditing) {
-			doDeleteFirewallRule();
+			doDeleteFirewallExceptionRequest();
 		} else {
-			doCancelFirewallRule();
+			doCancelFirewallExceptionRequest();
 		}
 	}
 
 	/**
 	 * Cancel the current case record.
 	 */
-	private void doCancelFirewallRule() {
+	private void doCancelFirewallExceptionRequest() {
 		ActionEvent.fire(eventBus, ActionNames.CIDR_EDITING_CANCELED);
 	}
 
 	/**
 	 * Delete the current case record.
 	 */
-	private void doDeleteFirewallRule() {
-		if (firewallRule == null) {
+	private void doDeleteFirewallExceptionRequest() {
+		if (firewallExceptionRequest == null) {
 			return;
 		}
 
-		// TODO Delete the CIDR on the server then fire onFirewallRuleDeleted();
+		// TODO Delete the CIDR on the server then fire onFirewallExceptionRequestDeleted();
 	}
 
 	@Override
-	public void saveFirewallRule() {
+	public void saveFirewallExceptionRequest() {
 		// save on server
 		getView().showPleaseWaitDialog();
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
+			getView().setFieldViolations(true);
 			getView().applyStyleToMissingFields(fields);
 			getView().hidePleaseWaitDialog();
 			getView().showMessageToUser("Please provide data for the required fields.");
 			return;
 		}
 		else {
+			getView().setFieldViolations(false);
 			getView().resetFieldStyles();
 		}
-		AsyncCallback<FirewallRulePojo> callback = new AsyncCallback<FirewallRulePojo>() {
+		AsyncCallback<FirewallExceptionRequestPojo> callback = new AsyncCallback<FirewallExceptionRequestPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception saving the FirewallRule", caught);
+				GWT.log("Exception saving the FirewallExceptionRequest", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the CIDR.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(FirewallRulePojo result) {
+			public void onSuccess(FirewallExceptionRequestPojo result) {
 				// TODO Auto-generated method stub
 				
 				getView().hidePleaseWaitDialog();
 				ActionEvent.fire(eventBus, ActionNames.CIDR_SAVED, result);
 			}
 		};
-		if (!this.isEditing) {
-			// it's a create
-			VpcProvisioningService.Util.getInstance().createFirewallRule(firewallRule, callback);
-		}
-		else {
-			// it's an update
-			VpcProvisioningService.Util.getInstance().updateFirewallRule(firewallRule, callback);
-		}
+//		if (!this.isEditing) {
+//			// it's a create
+//			VpcProvisioningService.Util.getInstance().createFirewallExceptionRequest(firewallExceptionRequest, callback);
+//		}
+//		else {
+//			// it's an update
+//			VpcProvisioningService.Util.getInstance().updateFirewallExceptionRequest(firewallExceptionRequest, callback);
+//		}
 	}
 
 	@Override
-	public FirewallRulePojo getFirewallRule() {
-		return this.firewallRule;
+	public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
+		return this.firewallExceptionRequest;
 	}
 
-	private MaintainFirewallRuleView getView() {
-		return clientFactory.getMaintainFirewallRuleView();
+	public MaintainFirewallExceptionRequestView getView() {
+		return clientFactory.getMaintainFirewallExceptionRequestView();
 	}
 
 	public EventBus getEventBus() {
@@ -205,24 +213,24 @@ public class MaintainFirewallRulePresenter extends PresenterBase implements Main
 		this.eventBus = eventBus;
 	}
 
-	public String getFirewallRuleId() {
-		return name;
+	public String getFirewallExceptionRequestId() {
+		return systemId;
 	}
 
-	public void setFirewallRuleId(String name) {
-		this.name = name;
+	public void setFirewallExceptionRequestId(String name) {
+		this.systemId = name;
 	}
 
 	public ClientFactory getClientFactory() {
 		return clientFactory;
 	}
 
-	public void setFirewallRule(FirewallRulePojo firewallRule) {
-		this.firewallRule = firewallRule;
+	public void setFirewallExceptionRequest(FirewallExceptionRequestPojo firewallExceptionRequest) {
+		this.firewallExceptionRequest = firewallExceptionRequest;
 	}
 
 	@Override
-	public boolean isValidFirewallRuleName(String value) {
+	public boolean isValidFirewallExceptionRequestName(String value) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -231,5 +239,21 @@ public class MaintainFirewallRulePresenter extends PresenterBase implements Main
 	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public VpcPojo getVpc() {
+		return vpc;
+	}
+
+	public void setVpc(VpcPojo vpc) {
+		this.vpc = vpc;
+	}
+
+	public FirewallRulePojo getFirewallRule() {
+		return firewallRule;
+	}
+
+	public void setFirewallRule(FirewallRulePojo firewallRule) {
+		this.firewallRule = firewallRule;
 	}
 }

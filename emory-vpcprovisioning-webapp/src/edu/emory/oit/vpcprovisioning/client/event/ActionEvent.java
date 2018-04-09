@@ -18,7 +18,6 @@ package edu.emory.oit.vpcprovisioning.client.event;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.Place;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
@@ -32,6 +31,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -68,6 +68,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private AWSServicePojo awsService;
 	private NotificationPojo notification;
 	private FirewallRulePojo firewallRule;
+	private FirewallExceptionRequestPojo firewallExceptionRequest;
 	private CidrSummaryPojo cidrSummary;
 	private Place nextPlace;
 
@@ -144,6 +145,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule) {
+		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
+	}
+
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
 		
@@ -154,6 +159,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	 * {@link #fire(EventBus, String)}.
 	 */
 	protected ActionEvent() {
+	}
+
+	public ActionEvent(FirewallExceptionRequestPojo rule) {
+		this.firewallExceptionRequest = rule;
 	}
 
 	public ActionEvent(FirewallRulePojo rule) {
@@ -246,6 +255,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(FirewallRulePojo rule, Place nextPlace) {
 		this.firewallRule = rule;
+		this.setNextPlace(nextPlace);
+	}
+
+	public ActionEvent(FirewallExceptionRequestPojo rule, Place nextPlace) {
+		this.firewallExceptionRequest = rule;
 		this.setNextPlace(nextPlace);
 	}
 
@@ -353,5 +367,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setCidrSummary(CidrSummaryPojo cidrSummary) {
 		this.cidrSummary = cidrSummary;
+	}
+
+	public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
+		return firewallExceptionRequest;
+	}
+
+	public void setFirewallExceptionRequest(FirewallExceptionRequestPojo firewallExceptionRequest) {
+		this.firewallExceptionRequest = firewallExceptionRequest;
 	}
 }

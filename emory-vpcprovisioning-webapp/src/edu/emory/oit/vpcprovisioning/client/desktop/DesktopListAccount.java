@@ -487,7 +487,6 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				new ButtonCell()) {
 			@Override
 			public String getValue(AccountPojo object) {
-//				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
 				if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(object.getAccountId())) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					return "Edit";

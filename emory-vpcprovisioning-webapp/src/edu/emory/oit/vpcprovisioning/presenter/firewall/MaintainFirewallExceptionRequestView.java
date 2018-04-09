@@ -7,10 +7,12 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface MaintainFirewallRuleView extends Editor<FirewallRulePojo>, IsWidget, View {
+public interface MaintainFirewallExceptionRequestView extends Editor<FirewallExceptionRequestPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
@@ -18,19 +20,23 @@ public interface MaintainFirewallRuleView extends Editor<FirewallRulePojo>, IsWi
 		/**
 		 * Delete the current account or cancel the creation of a account.
 		 */
-		void deleteFirewallRule();
+		void deleteFirewallExceptionRequest();
 
 		/**
 		 * Create a new account or save the current account based on the values in the
 		 * inputs.
 		 */
-		void saveFirewallRule();
-		FirewallRulePojo getFirewallRule();
-		public boolean isValidFirewallRuleName(String value);
+		void saveFirewallExceptionRequest();
+		FirewallExceptionRequestPojo getFirewallExceptionRequest();
+		public boolean isValidFirewallExceptionRequestName(String value);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 		public void logMessageOnServer(final String message);
+		public void setVpc(VpcPojo vpc);
+		public VpcPojo getVpc();
+		public MaintainFirewallExceptionRequestView getView();
+		public FirewallRulePojo getFirewallRule();
 	}
 
 	/**
@@ -59,7 +65,7 @@ public interface MaintainFirewallRuleView extends Editor<FirewallRulePojo>, IsWi
 	 * 
 	 * @param message the message to show, or null if no violation
 	 */
-	void setFirewallRuleNameViolation(String message);
+	void setFirewallExceptionRequestNameViolation(String message);
 
 	/**
 	 * Set the {@link Presenter} for this view.

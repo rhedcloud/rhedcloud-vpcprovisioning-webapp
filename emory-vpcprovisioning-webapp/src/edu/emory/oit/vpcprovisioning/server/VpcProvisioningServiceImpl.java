@@ -34,8 +34,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.any_openeai_enterprise.moa.jmsobjects.services.v2_0.Authorization;
-import org.any_openeai_enterprise.moa.objects.resources.v2_0.AuthorizationQuerySpecification;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.openeai.config.AppConfig;
@@ -89,6 +87,8 @@ import com.paloaltonetworks.moa.objects.resources.v1_0.Source;
 import com.paloaltonetworks.moa.objects.resources.v1_0.SourceUser;
 import com.paloaltonetworks.moa.objects.resources.v1_0.Tag;
 import com.paloaltonetworks.moa.objects.resources.v1_0.To;
+import com.service_now.moa.jmsobjects.customrequests.v1_0.FirewallExceptionRequest;
+import com.service_now.moa.objects.resources.v1_0.FirewallExceptionRequestQuerySpecification;
 
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
@@ -157,6 +157,9 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmployeePojo;
 import edu.emory.oit.vpcprovisioning.shared.ExplicitIdentityDNsPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -207,7 +210,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String AWS_PEOPLE_SOFT_SERVICE_NAME = "AWSPeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
 	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
-	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
+//	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
@@ -229,7 +232,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool awsProducerPool = null;
 	private ProducerPool awsPeopleSoftProducerPool = null;
 	private ProducerPool cidrProducerPool = null;
-	private ProducerPool authzProducerPool = null;
+//	private ProducerPool authzProducerPool = null;
 	private ProducerPool firewallProducerPool = null;
 	private ProducerPool serviceNowProducerPool = null;
 	private ProducerPool elasticIpProducerPool = null;
@@ -332,8 +335,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					AWS_SERVICE_NAME);
 			cidrProducerPool = (ProducerPool) getAppConfig().getObject(
 					CIDR_SERVICE_NAME);
-			authzProducerPool = (ProducerPool) getAppConfig().getObject(
-					AUTHZ_SERVICE_NAME);
+//			authzProducerPool = (ProducerPool) getAppConfig().getObject(
+//					AUTHZ_SERVICE_NAME);
 			firewallProducerPool = (ProducerPool) getAppConfig().getObject(
 					FIREWALL_SERVICE_NAME);
 			serviceNowProducerPool = (ProducerPool) getAppConfig().getObject(
@@ -914,12 +917,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	protected void getPermissionsForUser(UserAccountPojo user) throws RpcException {
-		info("getting permissions for " + user.getEppn());
-		user.getPermissions().clear();
-		try {
-			// preferred approach (1 query)...
+//	@SuppressWarnings("unchecked")
+//	protected void getPermissionsForUser(UserAccountPojo user) throws RpcException {
+//		info("getting permissions for " + user.getEppn());
+//		user.getPermissions().clear();
+//		try {
+//			// preferred approach (1 query)...
 //			AuthorizationQuerySpecification queryObject = (AuthorizationQuerySpecification) getAppConfig().getObject(Constants.MOA_AUTHORIZATION_QUERY_SPEC);
 //			Authorization actionable = (Authorization) getAppConfig().getObject(Constants.MOA_AUTHORIZATION);
 //			queryObject.setPrincipal(user.getEppn());
@@ -952,42 +955,42 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				}
 //			}
 
-			// work around (multiple queries, one for each permission)...
-			for (String permission : Constants.PERMISSIONS) {
-				AuthorizationQuerySpecification queryObject = (AuthorizationQuerySpecification) getAppConfig().getObject(Constants.MOA_AUTHORIZATION_QUERY_SPEC);
-				Authorization actionable = (Authorization) getAppConfig().getObject(Constants.MOA_AUTHORIZATION);
-				queryObject.setPrincipal(user.getEppn());
-				queryObject.addPermission(permission);
-				
-//				info("queryObject.toXmlString: " + queryObject.toXmlString());
-				List<Authorization> list = actionable.query(queryObject, getAuthzRequestService());
-//				info("there were " + list.size() + " Authorization objects returned.");
-
-				if (list.size() > 0) {
-					for (Authorization authorization : (List<Authorization>) list) {
-//						info("authorization has " + authorization.getPermissionLength() + " permissions in it.");
-//						info("isAuthorized = " + authorization.getIsAuthorized());
-//						info("Authorization.toXmlString: " + authorization.toXmlString());
-						if (authorization.getIsAuthorized().equals("true")) {
-							for (String perm : (List<String>)authorization.getPermission()) {
-								info("adding permission " + perm + " to UserAccountPojo...");
-								user.getPermissions().add(perm);
-							}
-						}
-						else {
-							for (String perm : (List<String>)authorization.getPermission()) {
-								info(user.getEppn() + " is NOT authorized for permission " + perm);
-							}
-						}
-					}
-				}
-			}
-		} 
-		catch (Throwable t) {
-			t.printStackTrace();
-			throw new RpcException(t);
-		}
-	}
+//			// work around (multiple queries, one for each permission)...
+//			for (String permission : Constants.PERMISSIONS) {
+//				AuthorizationQuerySpecification queryObject = (AuthorizationQuerySpecification) getAppConfig().getObject(Constants.MOA_AUTHORIZATION_QUERY_SPEC);
+//				Authorization actionable = (Authorization) getAppConfig().getObject(Constants.MOA_AUTHORIZATION);
+//				queryObject.setPrincipal(user.getEppn());
+//				queryObject.addPermission(permission);
+//				
+////				info("queryObject.toXmlString: " + queryObject.toXmlString());
+//				List<Authorization> list = actionable.query(queryObject, getAuthzRequestService());
+////				info("there were " + list.size() + " Authorization objects returned.");
+//
+//				if (list.size() > 0) {
+//					for (Authorization authorization : (List<Authorization>) list) {
+////						info("authorization has " + authorization.getPermissionLength() + " permissions in it.");
+////						info("isAuthorized = " + authorization.getIsAuthorized());
+////						info("Authorization.toXmlString: " + authorization.toXmlString());
+//						if (authorization.getIsAuthorized().equals("true")) {
+//							for (String perm : (List<String>)authorization.getPermission()) {
+//								info("adding permission " + perm + " to UserAccountPojo...");
+//								user.getPermissions().add(perm);
+//							}
+//						}
+//						else {
+//							for (String perm : (List<String>)authorization.getPermission()) {
+//								info(user.getEppn() + " is NOT authorized for permission " + perm);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		} 
+//		catch (Throwable t) {
+//			t.printStackTrace();
+//			throw new RpcException(t);
+//		}
+//	}
 
 	private void populateBillMoa(BillPojo pojo, Bill moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 		/*
@@ -1884,13 +1887,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.cidrProducerPool = cidrProducerPool;
 	}
 
-	public ProducerPool getAuthzProducerPool() {
-		return authzProducerPool;
-	}
-
-	public void setAuthzProducerPool(ProducerPool authzProducerPool) {
-		this.authzProducerPool = authzProducerPool;
-	}
+//	public ProducerPool getAuthzProducerPool() {
+//		return authzProducerPool;
+//	}
+//
+//	public void setAuthzProducerPool(ProducerPool authzProducerPool) {
+//		this.authzProducerPool = authzProducerPool;
+//	}
 
 	public Object getLock() {
 		return lock;
@@ -1970,12 +1973,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
-	private RequestService getAuthzRequestService() throws JMSException {
-		RequestService reqSvc = (RequestService) authzProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
-		return reqSvc;
-	}
+//	private RequestService getAuthzRequestService() throws JMSException {
+//		RequestService reqSvc = (RequestService) authzProducerPool.getProducer();
+//		((PointToPointProducer) reqSvc)
+//				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+//		return reqSvc;
+//	}
 	private RequestService getFirewallRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) firewallProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
@@ -5471,6 +5474,329 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("doing the RoleAssignment.delete...");
 				this.doDelete(moa, getIDMRequestService());
 				info("RoleAssignment.delete is complete...");
+
+				return;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (EnterpriseObjectDeleteException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
+	}
+
+	private void populateFirewallExceptionRequestMoa(FirewallExceptionRequestPojo pojo,
+			FirewallExceptionRequest moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setSystemId(pojo.getSystemId());
+		moa.setUserNetID(pojo.getUserNetId());
+		moa.setApplicationName(pojo.getApplicationName());
+		moa.setIsSourceOutsideEmory(pojo.getIsSourceOutsideEmory());
+		moa.setTimeRule(pojo.getTimeRule());
+		org.openeai.moa.objects.resources.Date validUntilDate = moa.newValidUntilDate();
+		this.populateDate(validUntilDate, pojo.getValidUntilDate());
+		moa.setValidUntilDate(validUntilDate);
+		moa.setSourceIpAddresses(pojo.getSourceIp());
+		moa.setDestinationIpAddresses(pojo.getDestinationIp());
+		moa.setPorts(pojo.getPorts());
+		moa.setBusinessReason(pojo.getBusinessReason());
+		moa.setIsPatched(pojo.getIsPatched());
+		moa.setIsDefaultPasswdChanged(pojo.getIsDefaultPasswdChanged());
+		moa.setIsAppConsoleACLed(pojo.getIsAppConsoleACLed());
+		moa.setIsHardened(pojo.getIsHardened());
+		moa.setPatchingPlan(pojo.getPatchingPlan());
+		if (pojo.getCompliance().size() > 0) {
+			for (String compliance : pojo.getCompliance()) {
+				moa.addCompliance(compliance);
+			}
+		}
+		moa.setOtherCompliance(pojo.getOtherCompliance());
+		moa.setSensitiveDataDesc(pojo.getSensitiveDataDesc());
+		moa.setLocalFirewallRules(pojo.getLocalFirewallRules());
+		moa.setIsDefaultDenyZone(pojo.getIsDefaultDenyZone());
+		for (String tag : pojo.getTags()) {
+			moa.addTag(tag);
+		}
+		moa.setRequestNumber(pojo.getRequestNumber());
+		moa.setRequestState(pojo.getRequestState());
+		moa.setRequestItemNumber(pojo.getRequestItemNumber());
+		moa.setRequestItemState(pojo.getRequestItemState());
+//		this.setMoaCreateInfo(moa, pojo);
+//		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateFirewallExceptionRequestPojo(FirewallExceptionRequest moa,
+			FirewallExceptionRequestPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	
+		pojo.setSystemId(moa.getSystemId());
+		pojo.setUserNetId(moa.getUserNetID());
+		pojo.setApplicationName(moa.getApplicationName());
+		pojo.setIsSourceOutsideEmory(moa.getIsSourceOutsideEmory());
+		pojo.setTimeRule(moa.getTimeRule());
+		pojo.setValidUntilDate(this.toDateFromDate(moa.getValidUntilDate()));
+		pojo.setSourceIp(moa.getSourceIpAddresses());
+		pojo.setDestinationIp(moa.getDestinationIpAddresses());
+		pojo.setPorts(moa.getPorts());
+		pojo.setBusinessReason(moa.getBusinessReason());
+		pojo.setIsPatched(moa.getIsPatched());
+		pojo.setIsDefaultPasswdChanged(moa.getIsDefaultPasswdChanged());
+		pojo.setIsAppConsoleACLed(moa.getIsAppConsoleACLed());
+		pojo.setIsHardened(moa.getIsHardened());
+		pojo.setPatchingPlan(moa.getPatchingPlan());
+		for (String compliance : (List<String>) moa.getCompliance()) {
+			pojo.getCompliance().add(compliance);
+		}
+		pojo.setOtherCompliance(moa.getOtherCompliance());
+		pojo.setSensitiveDataDesc(moa.getSensitiveDataDesc());
+		pojo.setLocalFirewallRules(moa.getLocalFirewallRules());
+		pojo.setIsDefaultDenyZone(moa.getIsDefaultDenyZone());
+		for (String tag : (List<String>) moa.getTag()) {
+			pojo.getTags().add(tag);
+		}
+		pojo.setRequestNumber(moa.getRequestNumber());
+		pojo.setRequestState(moa.getRequestState());
+		pojo.setRequestItemNumber(moa.getRequestItemNumber());
+		pojo.setRequestItemState(moa.getRequestItemState());
+	}
+
+	@Override
+	public FirewallExceptionRequestQueryResultPojo getFirewallExceptionRequestsForFilter(
+			FirewallExceptionRequestQueryFilterPojo filter) throws RpcException {
+
+		FirewallExceptionRequestQueryResultPojo result = new FirewallExceptionRequestQueryResultPojo();
+		List<FirewallExceptionRequestPojo> pojos = new java.util.ArrayList<FirewallExceptionRequestPojo>();
+		try {
+			FirewallExceptionRequestQuerySpecification queryObject = (FirewallExceptionRequestQuerySpecification) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST_QUERY_SPEC);
+			FirewallExceptionRequest actionable = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+
+			if (filter != null) {
+				queryObject.setSystemId(filter.getSystemId());
+				queryObject.setUserNetID(filter.getUserNetId());
+				queryObject.setApplicationName(filter.getApplicationName());
+				queryObject.setIsSourceOutsideEmory(filter.getIsSourceOutsideEmory());
+				queryObject.setTimeRule(filter.getTimeRule());
+				org.openeai.moa.objects.resources.Date validUntilDate = queryObject.newValidUntilDate();
+				this.populateDate(validUntilDate, filter.getValidUntilDate());
+				queryObject.setValidUntilDate(validUntilDate);
+				queryObject.setSourceIpAddresses(filter.getSourceIp());
+				queryObject.setDestinationIpAddresses(filter.getDestinationIp());
+				queryObject.setPorts(filter.getPorts());
+				queryObject.setBusinessReason(filter.getBusinessReason());
+				queryObject.setIsPatched(filter.getIsPatched());
+				queryObject.setIsDefaultPasswdChanged(filter.getIsDefaultPasswdChanged());
+				queryObject.setIsAppConsoleACLed(filter.getIsAppConsoleACLed());
+				queryObject.setIsHardened(filter.getIsHardened());
+				queryObject.setPatchingPlan(filter.getPatchingPlan());
+				if (filter.getCompliance().size() > 0) {
+					for (String compliance : filter.getCompliance()) {
+						queryObject.addCompliance(compliance);
+					}
+				}
+				queryObject.setOtherCompliance(filter.getOtherCompliance());
+				queryObject.setSensitiveDataDesc(filter.getSensitiveDataDesc());
+				queryObject.setLocalFirewallRules(filter.getLocalFirewallRules());
+				queryObject.setIsDefaultDenyZone(filter.getIsDefaultDenyZone());
+				for (String tag : filter.getTags()) {
+					queryObject.addTag(tag);
+				}
+				queryObject.setRequestNumber(filter.getRequestNumber());
+				queryObject.setRequestState(filter.getRequestState());
+				queryObject.setRequestItemNumber(filter.getRequestItemNumber());
+				queryObject.setRequestItemState(filter.getRequestItemState());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getFirewallExceptionRequestsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<FirewallExceptionRequest> moas = actionable.query(queryObject,
+					this.getServiceNowRequestService());
+			if (moas != null) {
+				info("[getFirewallExceptionRequestsForFilter] got " + moas.size() + " FirewallExceptionRequest objects back from ESB.");
+			}
+			for (FirewallExceptionRequest moa : moas) {
+				FirewallExceptionRequestPojo pojo = new FirewallExceptionRequestPojo();
+				FirewallExceptionRequestPojo baseline = new FirewallExceptionRequestPojo();
+				this.populateFirewallExceptionRequestPojo(moa, pojo);
+				this.populateFirewallExceptionRequestPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public FirewallExceptionRequestPojo createFirewallExceptionRequest(FirewallExceptionRequestPojo rule)
+			throws RpcException {
+
+		rule.setCreateInfo(this.getUserLoggedIn().getEppn(),
+				new java.util.Date());
+
+		if (!useEsbService) {
+			return null;
+		} 
+		else {
+			try {
+				info("creating FirewallExceptionRequest record on the server...");
+				FirewallExceptionRequest moa = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+				info("populating moa");
+				this.populateFirewallExceptionRequestMoa(rule, moa);
+
+				
+				info("doing the FirewallExceptionRequest.create...");
+				this.doCreate(moa, getServiceNowRequestService());
+				info("FirewallExceptionRequest.create is complete...");
+
+//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
+				return rule;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseObjectCreateException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
+	}
+
+	@Override
+	public FirewallExceptionRequestPojo updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule)
+			throws RpcException {
+
+		rule.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+        try {
+            info("updating Cidr on the server...");
+            FirewallExceptionRequest newData = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+            FirewallExceptionRequest baselineData = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+
+            info("populating newData...");
+            populateFirewallExceptionRequestMoa(rule, newData);
+
+            info("populating baselineData...");
+            populateFirewallExceptionRequestMoa(rule.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getServiceNowRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return rule;
+	}
+
+	@Override
+	public void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException {
+		if (!useEsbService) {
+			return;
+		} 
+		else {
+			try {
+				info("deleting FirewallExceptionRequest record on the server...");
+				FirewallExceptionRequest moa = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+				info("populating moa");
+				this.populateFirewallExceptionRequestMoa(rule, moa);
+
+				
+				info("doing the FirewallExceptionRequest.delete...");
+				this.doDelete(moa, getServiceNowRequestService());
+				info("FirewallExceptionRequest.delete is complete...");
 
 				return;
 			} 
