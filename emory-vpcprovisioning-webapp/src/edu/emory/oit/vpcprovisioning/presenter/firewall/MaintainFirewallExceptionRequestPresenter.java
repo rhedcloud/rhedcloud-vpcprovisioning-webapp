@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
@@ -69,10 +70,10 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 		ReleaseInfo ri = new ReleaseInfo();
 		clientFactory.getShell().setReleaseInfo(ri.toString());
 		if (systemId == null) {
-			clientFactory.getShell().setSubTitle("Create CIDR");
+			clientFactory.getShell().setSubTitle("Create Firewall Exception Request");
 			startCreate();
 		} else {
-			clientFactory.getShell().setSubTitle("Edit CIDR");
+			clientFactory.getShell().setSubTitle("Edit Firewall Exception Request");
 			startEdit();
 		}
 
@@ -86,11 +87,30 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				if (!isEditing) {
+					firewallExceptionRequest.setUserNetId(user.getPrincipal());
+				}
+
 				getView().setUserLoggedIn(user);
+				List<String> complianceClassTypes = new java.util.ArrayList<String>();
+				complianceClassTypes.add("ePHI");
+//				complianceClassTypes.add("FERPA");
+//				complianceClassTypes.add("FISMA");
+				complianceClassTypes.add("HIPAA");
+//				complianceClassTypes.add("PCI");
+
+				getView().setComplianceClassItems(complianceClassTypes);
+				
+				List<String> timeRules = new java.util.ArrayList<String>();
+				timeRules.add(Constants.TIME_RULE_INDEFINITELY);
+				timeRules.add(Constants.TIME_RULE_SPECIFIC_DATE);
+				getView().setTimeRuleItems(timeRules);
+				
 				getView().initPage();
 				getView().setInitialFocus();
 				
-				// TODO: get firewall rules for filter
+				// TODO: get firewall exception requests for filter
+				
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
@@ -100,6 +120,7 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 		isEditing = false;
 		getView().setEditing(false);
 		firewallExceptionRequest = new FirewallExceptionRequestPojo();
+		firewallExceptionRequest.getTags().add(this.getVpc().getVpcId());
 	}
 
 	private void startEdit() {

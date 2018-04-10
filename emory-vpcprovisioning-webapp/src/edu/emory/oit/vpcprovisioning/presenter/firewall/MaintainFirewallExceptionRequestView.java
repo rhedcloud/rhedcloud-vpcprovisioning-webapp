@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.firewall;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -78,4 +80,6 @@ public interface MaintainFirewallExceptionRequestView extends Editor<FirewallExc
 	void setReleaseInfo(String releaseInfoHTML);
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
+	void setComplianceClassItems(List<String> complianceClassTypes);
+	void setTimeRuleItems(List<String> timeRules);
 }

@@ -10,7 +10,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -138,17 +137,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			ownerNetIdTB.setTitle("Owner NetID");
 		}
 	}
-//	@UiHandler ("addNetIdTF")
-//	void addUserTFKeyPressed(KeyPressEvent e) {
-//        int keyCode = e.getNativeEvent().getKeyCode();
-//        if (keyCode == KeyCodes.KEY_ENTER) {
-//    		addNetIdToVpc(addNetIdTF.getText());
-//        }
-//	}
-//	@UiHandler ("addNetIdButton")
-//	void addUserButtonClick(ClickEvent e) {
-//		addNetIdToVpc(addNetIdTF.getText());
-//	}
 	@UiHandler ("addAdminButton")
 	void addAdminButtonClick(ClickEvent e) {
 		addAdminDirectoryPersonToAccount();
@@ -226,34 +214,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	
 	/*
-	 * Admin net id helper methods
+	 * Admin helper methods
 	 */
-//	private void addNetIdToVpc(String netId) {
-//		if (netId != null && netId.trim().length() > 0) {
-//			final String trimmedNetId = netId.trim().toLowerCase();
-////			if (editing) {
-//				if (presenter.getAccount().getCustomerAdminNetIdList().contains(trimmedNetId)) {
-//					showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
-//				}
-//				else {
-//					presenter.getAccount().getCustomerAdminNetIdList().add(trimmedNetId);
-//					addNetIdToPanel(trimmedNetId);
-//				}
-////			}
-////			else {
-////				if (presenter.getVpcRequisition().getCustomerAdminNetIdList().contains(trimmedNetId)) {
-////					showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
-////				}
-////				else {
-////					presenter.getVpcRequisition().getCustomerAdminNetIdList().add(trimmedNetId);
-////					addNetIdToPanel(trimmedNetId);
-////				}
-////			}
-//		}
-//		else {
-//			showStatus(addNetIdButton, "Please enter a valid net id.");
-//		}
-//	}
 	
 	@Override
 	public void addRoleAssignment(final int ra_summaryIndex, String name, final String netId, String widgetTitle) {
@@ -300,57 +262,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		adminTable.setWidget(adminRowNum, adminColumnNum, nameLabel);
 		adminTable.setWidget(adminRowNum, removeButtonColumnNum, removeAdminButton);
 	}
-//	private void addNetIdToPanel(final String netId) {
-//		int numRows = adminTable.getRowCount();
-//		final Label netIdLabel = new Label(netId);
-//		netIdLabel.addStyleName("emailLabel");
-//		netIdLabel.addMouseOverHandler(new MouseOverHandler() {
-//			@Override
-//			public void onMouseOver(MouseOverEvent event) {
-//				presenter.setDirectoryMetaDataTitleOnWidget(netId, netIdLabel);
-//			}
-//		});
-//		final Button removeNetIdButton = new Button("Remove");
-//		// disable remove button if userLoggedIn is NOT an admin
-//		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-//			removeNetIdButton.setEnabled(false);
-//		}
-//		removeNetIdButton.addStyleName("glowing-border");
-//		removeNetIdButton.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				presenter.getAccount().getCustomerAdminNetIdList().remove(netId);
-//				adminTable.remove(netIdLabel);
-//				adminTable.remove(removeNetIdButton);
-//			}
-//		});
-//		addNetIdTF.setText("");
-//		if (numRows > 6) {
-//			if (adminRowNum > 5) {
-//				adminRowNum = 0;
-//				adminColumnNum = adminColumnNum + 2;
-//				removeButtonColumnNum = removeButtonColumnNum + 2;
-//			}
-//			else {
-//				adminRowNum ++;
-//			}
-//		}
-//		else {
-//			adminRowNum = numRows;
-//		}
-//		adminTable.setWidget(adminRowNum, adminColumnNum, netIdLabel);
-//		adminTable.setWidget(adminRowNum, removeButtonColumnNum, removeNetIdButton);
-//	}
-
-//	void initializeNetIdPanel() {
-//		adminTable.removeAllRows();
-//		if (presenter.getAccount() != null) {
-//			GWT.log("Adding " + presenter.getAccount().getCustomerAdminNetIdList().size() + " net ids to the panel (update).");
-//			for (String netId : presenter.getAccount().getCustomerAdminNetIdList()) {
-//				addNetIdToPanel(netId);
-//			}
-//		}
-//	}
 
 	/*
 	 *	associated email helper methods

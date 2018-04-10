@@ -3,6 +3,8 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -17,6 +19,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -28,6 +31,7 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -36,6 +40,8 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
 	boolean editing;
+	List<String> complianceClassTypes;
+	List<String> timeRules;
 
 	private static DesktopMaintainFirewallRuleUiBinder uiBinder = GWT.create(DesktopMaintainFirewallRuleUiBinder.class);
 
@@ -44,6 +50,20 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	public DesktopMaintainFirewallExceptionRequest() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		timeRuleLB.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				String rule = timeRuleLB.getSelectedValue();
+				GWT.log("selected timeRule is: " + rule);
+				if (rule.trim().equalsIgnoreCase(Constants.TIME_RULE_INDEFINITELY)) {
+					hideValidUntilDB();
+				}
+				else {
+					showValidUntilDB();
+				}
+			}
+		});
 	}
 
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -55,6 +75,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	@UiField CheckBox isSourceOutsideEmoryCB;
 	@UiField ListBox timeRuleLB;
 	@UiField DateBox validUntilDB;
+	@UiField Label validUntilLabel;
 	@UiField TextArea sourceIpAddressesTA;
 	@UiField TextArea destinationIpAddressesTA;
 	@UiField TextArea portsTA;
@@ -283,23 +304,34 @@ Tag+, - tags for this request.  wsdl: u_tag
 	public void initPage() {
 //		this.resetFieldStyles();
 //		this.setFieldViolations(false);
-		netIdTB.setText(userLoggedIn.getPrincipal());
+		if (presenter.getFirewallExceptionRequest() != null && presenter.getFirewallExceptionRequest().getUserNetId() != null) {
+			netIdTB.setText(presenter.getFirewallExceptionRequest().getUserNetId());
+		}
+		else {
+			netIdTB.setText(userLoggedIn.getPrincipal());
+		}
 		addTagTF.setText("");
 		addTagTF.getElement().setPropertyString("placeholder", "enter a tag");
-//		complianceClassLB.getElement().setPropertyString("placeholder", "select compliance class");
-		// temporary:  FERPA, FISMA, HIPAA, PCI, Other, Unsure
-		complianceClassLB.addItem("FERPA", "FERPA");
-		complianceClassLB.addItem("FISMA", "FISMA");
-		complianceClassLB.addItem("HIPAA", "HIPAA");
-		complianceClassLB.addItem("PCI", "PCI");
-		complianceClassLB.addItem("Other", "Other");
-		complianceClassLB.addItem("Unsure", "Unsure");
-		complianceClassLB.addItem("Standard/None", "Standard/None");
-		complianceClassLB.addItem("-- Please Select --", "");
 		
 		DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
 	    validUntilDB.setFormat(new DateBox.DefaultFormat(dateFormat));
-	    validUntilDB.getDatePicker().setYearArrowsVisible(true);	}
+	    validUntilDB.getDatePicker().setYearArrowsVisible(true);
+	    
+	    String timeRule = timeRuleLB.getSelectedValue();
+	    if (timeRule != null) {
+			if (timeRule.trim().equalsIgnoreCase(Constants.TIME_RULE_INDEFINITELY)) {
+				hideValidUntilDB();
+			}
+			else {
+				showValidUntilDB();
+			}
+	    }
+	    else {
+	    	hideValidUntilDB();
+	    }
+	    
+	    initializeTagsPanel();
+	}
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
@@ -386,5 +418,57 @@ Tag+, - tags for this request.  wsdl: u_tag
 				addTagToPanel(tag);
 			}
 		}
+	}
+
+	@Override
+	public void setComplianceClassItems(List<String> complianceClassTypes) {
+		this.complianceClassTypes = complianceClassTypes;
+		complianceClassLB.clear();
+		if (complianceClassTypes != null) {
+			int i=0;
+			for (String type : complianceClassTypes) {
+				complianceClassLB.addItem(type, type);
+				if (presenter.getFirewallExceptionRequest() != null) {
+					if (presenter.getFirewallExceptionRequest().getCompliance() != null) {
+						for (String pojo_type : presenter.getFirewallExceptionRequest().getCompliance()) {
+							if (pojo_type.equals(type)) {
+								complianceClassLB.setItemSelected(i, true);
+							}
+						}
+					}
+				}
+				i++;
+			}
+		}
+	}
+
+	@Override
+	public void setTimeRuleItems(List<String> timeRules) {
+		this.timeRules = timeRules;
+		timeRuleLB.clear();
+		timeRuleLB.addItem("-- Select --");
+		if (timeRules != null) {
+			int i=1;
+			for (String type : timeRules) {
+				timeRuleLB.addItem(type, type);
+				if (presenter.getFirewallExceptionRequest() != null) {
+					if (presenter.getFirewallExceptionRequest().getTimeRule() != null) {
+						if (presenter.getFirewallExceptionRequest().getTimeRule().equals(type)) {
+							timeRuleLB.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
+		}
+	}
+	
+	private void showValidUntilDB() {
+		validUntilLabel.setVisible(true);
+		validUntilDB.setVisible(true);
+	}
+	private void hideValidUntilDB() {
+		validUntilLabel.setVisible(false);
+		validUntilDB.setVisible(false);
 	}
 }

@@ -30,6 +30,8 @@ public class Constants implements IsSerializable {
 		PERMISSION_VIEW_EVERYTHING
 	};
 
+	public static final String TIME_RULE_INDEFINITELY = "Indefinitely";
+	public static final String TIME_RULE_SPECIFIC_DATE = "Specific Date";
 	public static final String COLOR_INVALID_FIELD = "#efbebe";
 	public static final String COLOR_FIELD_WARNING = "#ffa07a";
 	public static final String COLOR_RED = "red";

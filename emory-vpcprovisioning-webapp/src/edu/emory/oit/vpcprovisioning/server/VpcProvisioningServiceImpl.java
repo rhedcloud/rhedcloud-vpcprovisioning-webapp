@@ -4346,6 +4346,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		XmlDocumentReader xmlReader = new XmlDocumentReader();
 		try {
+			// TODO: Temporary
 			Document provideDoc = xmlReader.initializeDocument("configs/messaging/Environments/Examples/InputFiles/VpcProvisioningWebApp/Provide-Replies.xml", false);
 			info("Read document.  Root element is: " + provideDoc.getRootElement().getName());
 			Element dataArea = provideDoc.getRootElement().getChild("DataArea");
