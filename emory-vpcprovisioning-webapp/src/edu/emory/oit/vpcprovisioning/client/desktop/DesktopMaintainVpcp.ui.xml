@@ -37,7 +37,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="provisioningIdTB" />
+							ui:field="provisioningIdTB" debugId="provisioningIdTB" />
 			    	</g:customCell>
 				</g:row>
 			    	<g:row>
@@ -46,7 +46,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="statusTB" />
+							ui:field="statusTB" debugId="statusTB" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -55,7 +55,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="vpcTypeLB" />
+							ui:field="vpcTypeLB"  debugId="vpcTypeLB" />
 			    	</g:customCell>
 				</g:row>
 				<!-- TODO create/update user/time read only -->
@@ -78,10 +78,10 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="accountLB" />
+							ui:field="accountLB" debugId="accountLB" />
 			    	</g:customCell>
 			    	<g:customCell>
-			    		<g:CaptionPanel ui:field="accountCP" captionHTML="Account Info" addStyleNames="{style.light-captionpanel}">
+			    		<g:CaptionPanel ui:field="accountCP" debugId="accountCP" captionHTML="Account Info" addStyleNames="{style.light-captionpanel}">
 			    		</g:CaptionPanel>
 			    	</g:customCell>
 			    </g:row>
@@ -93,7 +93,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqOwnerNetIdTB" />
+							ui:field="vpcpReqOwnerNetIdTB" debugId="vpcpReqOwnerNetIdTB" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -102,7 +102,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqTicketIdTB" />
+							ui:field="vpcpReqTicketIdTB" debugId="vpcpReqTicketIdTB" />
 			    	</g:customCell>
 			    	</g:row>
 			    	<g:row>
@@ -111,7 +111,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqRequestorNetIdTB" />
+							ui:field="vpcpReqRequestorNetIdTB" debugId="vpcpReqRequestorNetIdTB" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -120,7 +120,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqSpeedTypeTB" />
+							ui:field="vpcpReqSpeedTypeTB" debugId="vpcpReqSpeedTypeTB" />
 			    	</g:customCell>
 			    	<g:customCell>
 					<g:HTML ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
@@ -132,7 +132,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="vpcpReqTypeLB" />
+							ui:field="vpcpReqTypeLB" debugId="vpcpReqTypeLB" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -141,7 +141,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="vpcpReqComplianceClassLB" />
+							ui:field="vpcpReqComplianceClassLB" debugId="vpcpReqComplianceClassLB" />
 			    	</g:customCell>
 				</g:row>
 			    	<g:row>
@@ -150,7 +150,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqPurposeTA" />
+							ui:field="vpcpReqPurposeTA" debugId="vpcpReqPurposeTA" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -158,7 +158,7 @@
 						<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-			    		<g:CheckBox ui:field="vpcpReqNotifyAdminsCB" title="Check if you want to notify admins when this VPCP is generated."/>
+			    		<g:CheckBox ui:field="vpcpReqNotifyAdminsCB" debugId="vpcpReqNotifyAdminsCB" title="Check if you want to notify admins when this VPCP is generated."/>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>
@@ -172,16 +172,16 @@
 								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
 								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:TextBox ui:field="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+										<g:TextBox ui:field="addNetIdTF" debugId="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
 									</g:cell>
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:Button ui:field="addNetIdButton"
+										<g:Button ui:field="addNetIdButton" debugId="addNetIdButton"
 											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
 									</g:cell>
 								</g:HorizontalPanel>
 								<g:VerticalPanel spacing="8">
 									<g:Label addStyleNames="{style.heading_label}">Admin Net Ids associated to this VPC:</g:Label>
-									<g:FlexTable ui:field="netIdTable" cellSpacing="3" cellPadding="3"/>
+									<g:FlexTable ui:field="netIdTable" debugId="netIdTable" cellSpacing="3" cellPadding="3"/>
 								</g:VerticalPanel>
 							</g:VerticalPanel>
 						</g:ScrollPanel>
@@ -194,11 +194,11 @@
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton">Okay</g:Button>
+							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

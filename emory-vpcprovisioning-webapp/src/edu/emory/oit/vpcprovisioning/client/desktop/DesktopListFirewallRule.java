@@ -208,9 +208,11 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    // - view/edit
 	    // - delete
 	    String anchorText = "View Firewall Exception Request";
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+	    if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) ||
+	    	userLoggedIn.isLitsAdmin()) {
+	    	
 			anchorText = "Maintain Firewall Exception Request";
-		}
+	    }
 
 		Anchor maintainAnchor = new Anchor(anchorText);
 		maintainAnchor.addStyleName("productAnchor");
@@ -222,9 +224,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				actionsPopup.hide();
 				FirewallExceptionRequestPojo m = fwer_selectionModel.getSelectedObject();
 				if (m != null) {
-					// just use a popup here and not try to show the "normal" CidrAssignment
-					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_FIREWALL_RULE, m, null);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -241,11 +241,19 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
+			    if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) &&
+				    	!userLoggedIn.isLitsAdmin()) {
+			    	
+			    	showMessageToUser("User are not authorized to perform this action on this item.");
+			    	return;
+			    }
 				FirewallExceptionRequestPojo m = fwer_selectionModel.getSelectedObject();
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					// TODO: this may actually be a "create" in that we're creating a SN request to remove
+					// the firewall exception request
 				}
 				else {
 					showMessageToUser("Please select an item from the list");

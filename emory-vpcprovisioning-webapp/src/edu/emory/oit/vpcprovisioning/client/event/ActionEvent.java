@@ -149,6 +149,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule, VpcPojo vpc) {
+		eventBus.fireEventFromSource(new ActionEvent(rule, vpc), sourceName);
+	}
+
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
 		
@@ -159,6 +163,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	 * {@link #fire(EventBus, String)}.
 	 */
 	protected ActionEvent() {
+	}
+
+	public ActionEvent(FirewallExceptionRequestPojo rule, VpcPojo vpc) {
+		this.firewallExceptionRequest = rule;
+		this.vpc = vpc;
 	}
 
 	public ActionEvent(FirewallExceptionRequestPojo rule) {

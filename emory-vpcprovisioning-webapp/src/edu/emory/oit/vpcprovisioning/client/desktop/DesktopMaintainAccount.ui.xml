@@ -53,29 +53,29 @@
 			<g:Grid cellSpacing="8">
 				<g:row>
 				    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="accountIdTB" />
-				    	</g:customCell>
-			    	</g:row>
-				<g:row>
-				    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account Name:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="accountNameTB" />
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="accountIdTB" debugId="accountIdTB" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
 				    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Owner Net Id:</g:Label>
+							<g:Label addStyleNames="{style.label}">Account Name:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="ownerNetIdTB" />
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="accountNameTB" debugId="accountNameTB" />
+				    	</g:customCell>
+			    	</g:row>
+				<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Owner Net Id:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="ownerNetIdTB" debugId="ownerNetIdTB" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
@@ -84,29 +84,28 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="complianceClassLB" />
+							ui:field="complianceClassLB" debugId="complianceClassLB" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
 				    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Password Location:</g:Label>
+							<g:Label addStyleNames="{style.label}">Password Location:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="passwordLocationTB" />
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="passwordLocationTB" debugId="passwordLocationTB" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
 				    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
+							<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="speedTypeTB" />
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="speedTypeTB" debugId="speedTypeTB" />
 				    	</g:customCell>
 				    	<g:customCell>
-						<!-- <g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">SpeedType status</g:Label> -->
-						<g:HTML ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
+							<g:HTML ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
 				    	</g:customCell>
 			    	</g:row>
 			</g:Grid>
@@ -118,20 +117,11 @@
 							<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
 								<g:Label addStyleNames="{style.heading_label}">Add/remove Administrators:</g:Label>
 								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
-									<!-- 
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:TextBox ui:field="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+										<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
 									</g:cell>
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:Button ui:field="addNetIdButton"
-											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-									</g:cell>
-									 -->
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:SuggestBox ui:field="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
-									</g:cell>
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:Button ui:field="addAdminButton"
+										<g:Button ui:field="addAdminButton" debugId="addAdminButton"
 											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
 									</g:cell>
 								</g:HorizontalPanel>
@@ -148,20 +138,20 @@
 								<g:Label addStyleNames="{style.heading_label}">Add/remove email(s):</g:Label>
 								<g:HorizontalPanel ui:field="addEmailHP" spacing="16">
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:TextBox ui:field="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+										<g:TextBox ui:field="addEmailTF" debugId="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
 									</g:cell>
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 										<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-											ui:field="addEmailTypeLB" />
+											ui:field="addEmailTypeLB" debugId="addEmailTypeLB" />
 									</g:cell>
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:Button ui:field="addEmailButton"
+										<g:Button ui:field="addEmailButton" debugId="addEmailButton"
 											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
 									</g:cell>
 								</g:HorizontalPanel>
 								<g:VerticalPanel spacing="8">
 									<g:Label addStyleNames="{style.heading_label}">e-mail addresses associated to this account:</g:Label>
-									<g:FlexTable ui:field="emailTable" cellSpacing="3" cellPadding="3"/>
+									<g:FlexTable ui:field="emailTable" debugId="emailTable" cellSpacing="3" cellPadding="3"/>
 								</g:VerticalPanel>
 							</g:VerticalPanel>
 						</g:ScrollPanel>
@@ -173,15 +163,15 @@
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton">Okay</g:Button>
+							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
-							ui:field="billSummaryButton">View Bills</g:Button>
+							ui:field="billSummaryButton" debugId="billSummaryButton">View Bills</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

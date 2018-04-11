@@ -20,7 +20,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="ownerIdTB" enabled="false"/>
+							ui:field="ownerIdTB" debugId="ownerIdTB" enabled="false"/>
 			    	</g:customCell>
 			    </g:row>
 				<g:row>
@@ -29,7 +29,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="purposeTB" />
+							ui:field="purposeTB" debugId="purposeTB" />
 			    	</g:customCell>
 			    </g:row>
 				<g:row>
@@ -38,7 +38,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="descriptionTB" />
+							ui:field="descriptionTB" debugId="descriptionTB" />
 			    	</g:customCell>
 			    </g:row>
 			</g:Grid>
@@ -51,7 +51,7 @@
 								<g:Label addStyleNames="{style.heading_label}">Step 1:  Select an Account</g:Label>
 								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 									<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-										ui:field="accountLB" />
+										ui:field="accountLB" debugId="accountLB" />
 								</g:cell>
 							</g:VerticalPanel>
 						</g:ScrollPanel>
@@ -62,7 +62,7 @@
 								<g:Label addStyleNames="{style.heading_label}">Step 2:  Select a VPC</g:Label>
 								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 									<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-										ui:field="vpcLB" />
+										ui:field="vpcLB" debugId="vpcLB" />
 								</g:cell>
 							</g:VerticalPanel>
 						</g:ScrollPanel>
@@ -73,7 +73,7 @@
 								<g:Label addStyleNames="{style.heading_label}">Step 3:  Select a CIDR</g:Label>
 								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 									<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-										ui:field="elasticIpLB" />
+										ui:field="elasticIpLB" debugId="elasticIpLB" />
 								</g:cell>
 							</g:VerticalPanel>
 						</g:ScrollPanel>
@@ -85,11 +85,11 @@
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton">Assign</g:Button>
+							ui:field="okayButton" debugId="okayButton">Assign</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

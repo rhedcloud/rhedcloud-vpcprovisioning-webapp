@@ -35,7 +35,6 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIp
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
-import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
@@ -48,6 +47,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 
 public class AppBootstrapper {
 
@@ -301,7 +301,30 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_CIDR_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(MaintainCidrAssignmentPlace.createMaintainCidrAssignmentPlace(event.getCidrAssignmentSummary().getCidrAssignment().getCidrAssignmentId(), event.getCidr(), event.getCidrAssignmentSummary()));
+				final DialogBox db = new DialogBox();
+				db.setText("Maintain CIDR Assignment");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainCidrAssignmentPresenter presenter = new MaintainCidrAssignmentPresenter(clientFactory, event.getCidr(), event.getCidrAssignmentSummary());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+//				placeController.goTo(MaintainCidrAssignmentPlace.createMaintainCidrAssignmentPlace(event.getCidrAssignmentSummary().getCidrAssignment().getCidrAssignmentId(), event.getCidr(), event.getCidrAssignmentSummary()));
 			}
 		});
 
@@ -396,7 +419,7 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				
 				if (event.getFirewallExceptionRequest() != null) {
-					// pass the CIDR we're assigning (from Cidr list view)
+					// pass the exception we're working with
 					GWT.log("bootstrap, passing a FirewallExceptionRequest (edit)");
 					final DialogBox db = new DialogBox();
 					db.setText("Maintain Firewall Exception Request");
@@ -451,22 +474,44 @@ public class AppBootstrapper {
 					db.show();
 					db.center();
 				}
-
-				
-//				GWT.log("Bootstrapper, CREATE_FIREWALL_EXCEPTION_REQUEST.onAction");
-//				final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory);
-//				presenter.setVpc(event.getVpc());
-//				presenter.start(eventBus);
-//				MaintainVpcView parent = clientFactory.getMaintainVpcView();
-//				parent.setWidget(presenter);
-////				placeController.goTo(MaintainFirewallExceptionRequestPlace.getMaintainFirewallExceptionRequestPlace());
 			}
 		});
 
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_FIREWALL_EXCEPTION_REQUEST, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(MaintainFirewallExceptionRequestPlace.createMaintainFirewallExceptionRequestPlace(event.getFirewallExceptionRequest()));
+				if (event.getFirewallExceptionRequest() != null) {
+					// pass the exception we're working with
+					GWT.log("bootstrap, passing a FirewallExceptionRequest (edit)");
+					final DialogBox db = new DialogBox();
+					db.setText("Maintain Firewall Exception Request");
+					db.setGlassEnabled(true);
+					db.center();
+					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.getFirewallExceptionRequest());
+					GWT.log("MAINTAIN_FIREWALL_EXCEPTION_REQUEST event's VPC is: " + event.getVpc());
+					presenter.setVpc(event.getVpc());
+					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							db.hide();
+						}
+					});
+					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							if (!presenter.getView().hasFieldViolations()) {
+								db.hide();
+							}
+						}
+					});
+					presenter.start(eventBus);
+					db.setWidget(presenter);
+					db.show();
+					db.center();
+				}
+				else {
+					// error, shouldn't happen
+				}
 			}
 		});
 

@@ -166,23 +166,13 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 							getView().applyEmoryAWSAdminMask();
 						}
 						else if (account != null) {
-							if (user.isAdminForAccount(account.getAccountId())) {
+							if (user.isAdminForAccount(account.getAccountId()) || user.isLitsAdmin()) {
 								getView().applyEmoryAWSAdminMask();
 							}
 							else if (user.isAuditorForAccount(account.getAccountId())) {
 								getView().applyEmoryAWSAuditorMask();
 							}
 						}
-//						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-//							getView().applyEmoryAWSAdminMask();
-//						}
-//						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-//							clientFactory.getShell().setSubTitle("View Account");
-//							getView().applyEmoryAWSAuditorMask();
-//						}
-//						else {
-//							// ??
-//						}
 					}
 				};
 				VpcProvisioningService.Util.getInstance().getEmailTypeItems(callback);

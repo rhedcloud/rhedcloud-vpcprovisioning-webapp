@@ -27,7 +27,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="accountIdTB" />
+								ui:field="accountIdTB" debugId="accountIdTB"/>
 				    	</g:customCell>
 			    	</g:row>
 			    	
@@ -38,7 +38,7 @@
 				    	<g:customCell>
 							<!-- <g:TextBox enabled="false" addStyleNames="{style.field} {style.glowing-border}" -->
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcIdTB" />
+								ui:field="vpcIdTB" debugId="vpcIdTB" />
 				    	</g:customCell>
 				</g:row>
 				
@@ -48,7 +48,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcTypeLB" />
+								ui:field="vpcTypeLB" debugId="vpcTypeLB" />
 				    	</g:customCell>
 				</g:row>
 				<!-- TODO create/update user/time read only -->
@@ -71,7 +71,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqAccountIdTB" />
+								ui:field="vpcReqAccountIdTB" debugId="vpcReqAccountIdTB" />
 				    	</g:customCell>
 			    	</g:row>
 			    	
@@ -81,7 +81,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqOwnerNetIdTB" />
+								ui:field="vpcReqOwnerNetIdTB" debugId="vpcReqOwnerNetIdTB" />
 				    	</g:customCell>
 				</g:row>
 				
@@ -91,7 +91,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqSpeedTypeTB" />
+								ui:field="vpcReqSpeedTypeTB" debugId="vpcReqSpeedTypeTB" />
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">SpeedType status</g:Label>
@@ -103,51 +103,21 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqTypeLB" />
+								ui:field="vpcReqTypeLB" debugId="vpcReqTypeLB" />
 				    	</g:customCell>
 				</g:row>
 			</g:Grid>
 		</g:cell>
-		<!-- this should be visible for both but the target object will vary 
-		based on what we're doing (VpcPojo vs. VpcRequisitionPojo) -->
-		<!-- 
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
-			<g:Grid cellSpacing="12">
-				<g:row>
-			    	<g:customCell>
-						<g:ScrollPanel>
-							<g:VerticalPanel spacing="8" ui:field="netIdVP">
-								<g:Label addStyleNames="{style.label}">Add/remove Admin NetId(s):</g:Label>
-								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:TextBox ui:field="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-									</g:cell>
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:Button ui:field="addNetIdButton"
-											addStyleNames="{style.glowing-border} {style.addButton}">Add</g:Button>
-									</g:cell>
-								</g:HorizontalPanel>
-								<g:VerticalPanel spacing="8">
-									<g:Label addStyleNames="{style.label}">Admin Net Ids associated to this AWS Account:</g:Label>
-									<g:FlexTable ui:field="netIdTable" cellSpacing="3" cellPadding="3"/>
-								</g:VerticalPanel>
-							</g:VerticalPanel>
-						</g:ScrollPanel>
-			    	</g:customCell>
-				</g:row>
-			</g:Grid>
-		</g:cell>
-		 -->
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton">Okay</g:Button>
+							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>
@@ -161,15 +131,16 @@
 				animationDuration="500" 
 				animationVertical="false" 
 				ui:field="vpcTabPanel"
+				debugId="vpcTabPanel"
 				addStyleNames="gwt-TabLayoutPanel">
 
 				<g:tab>
 					<g:header>Firewall Rules</g:header>
-					<g:DeckLayoutPanel ui:field="firewallContainer" width="100%" height="100%"/>
+					<g:DeckLayoutPanel ui:field="firewallContainer" debugId="firewallContainer" width="100%" height="100%"/>
 				</g:tab>
 				<g:tab>
 					<g:header>Elastic IPs</g:header>
-					<g:DeckLayoutPanel ui:field="elasticIpAssignmentContainer" width="100%" height="100%"/>
+					<g:DeckLayoutPanel ui:field="elasticIpAssignmentContainer" debugId="elasticIpAssignmentContainer" width="100%" height="100%"/>
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:VerticalPanel>

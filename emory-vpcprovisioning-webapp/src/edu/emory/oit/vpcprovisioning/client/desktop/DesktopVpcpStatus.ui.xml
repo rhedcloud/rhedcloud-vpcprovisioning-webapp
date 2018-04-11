@@ -38,11 +38,11 @@
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="doneButton">Done</g:Button>
+							ui:field="doneButton" debugId="doneButton">Done</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
-							ui:field="refreshButton">Refresh</g:Button>
+							ui:field="refreshButton" debugId="refreshButton">Refresh</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>
@@ -151,7 +151,7 @@
     	</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
     		<g:CaptionPanel ui:field="vpcpStepStatusCP" captionHTML="Provisioing Step Status" addStyleNames="{style.light-captionpanel}" width="95%">
-    			<g:VerticalPanel ui:field="vpcpStepsPanel">
+    			<g:VerticalPanel ui:field="vpcpStepsPanel" debugId="vpcpStepsPanel">
 					<g:Label addStyleNames="{style.label}">VPCP Step Status Table/List goes here</g:Label>
     			</g:VerticalPanel>
 			</g:CaptionPanel>

@@ -259,7 +259,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				}
 				else {
 					// confirm and delete
-					if (Window.confirm("Delete the CIDR " + cidrSummary.getCidr().getNetwork() + 
+					if (Window.confirm("Delete the CIDR Assignment for " + cidrSummary.getCidr().getNetwork() + 
 						"/" + cidrSummary.getCidr().getBits() + "?")) {
 						
 						getView().showPleaseWaitDialog();
@@ -269,7 +269,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 							public void onFailure(Throwable caught) {
 								getView().hidePleaseWaitDialog();
 								getView().showMessageToUser("There was an exception on the " +
-										"server deleting the Cidr.  Message " +
+										"server deleting the CidrAsignment.  Message " +
 										"from server is: " + caught.getMessage());
 							}
 
@@ -279,7 +279,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 								getView().removeCidrSummaryFromView(cidrSummary);
 								getView().hidePleaseWaitDialog();
 								// status message
-								getView().showStatus(getView().getStatusMessageSource(), "Cidr was deleted.");
+								getView().showStatus(getView().getStatusMessageSource(), "Cidr Assignment was deleted.");
 
 								// TODO fire list cidrs event...
 							}

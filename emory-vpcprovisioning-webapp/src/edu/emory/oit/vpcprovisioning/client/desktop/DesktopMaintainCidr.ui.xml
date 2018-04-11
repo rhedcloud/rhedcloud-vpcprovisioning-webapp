@@ -13,7 +13,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="networkTB" />
+							ui:field="networkTB" debugId="networkTB" />
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -22,7 +22,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="bitsTB" />
+							ui:field="bitsTB" debugId="bitsTB" />
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>
@@ -32,11 +32,11 @@
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton">Okay</g:Button>
+							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

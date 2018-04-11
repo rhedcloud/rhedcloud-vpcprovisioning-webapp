@@ -107,10 +107,16 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 				getView().setTimeRuleItems(timeRules);
 				
 				getView().initPage();
+			    if (user.isAdminForAccount(getVpc().getAccountId()) ||
+			    		user.isLitsAdmin()) {
+			    	
+			    	getView().applyEmoryAWSAdminMask();
+			    }
+			    else {
+			    	getView().applyEmoryAWSAuditorMask();
+			    }
+
 				getView().setInitialFocus();
-				
-				// TODO: get firewall exception requests for filter
-				
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);

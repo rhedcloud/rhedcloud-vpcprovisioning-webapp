@@ -25,7 +25,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="serviceIdTB" />
+							ui:field="serviceIdTB" debugId="serviceTB" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
@@ -34,7 +34,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="serviceCodeTB" />
+							ui:field="serviceCodeTB" debugId="serviceCodeTB" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
@@ -43,7 +43,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="serviceNameTB" />
+							ui:field="serviceNameTB" debugId="serviceNameTB" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
@@ -52,7 +52,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="statusLB" />
+							ui:field="statusLB" debugId="statusLB" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
@@ -61,7 +61,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="descriptionTA" />
+							ui:field="descriptionTA" debugId="descriptionTA" />
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>
@@ -70,11 +70,11 @@
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="landingPageURLTB" />
+							ui:field="landingPageURLTB" debugId="landingPageUTLTB" />
 				    	</g:customCell>
 				    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="testURLButton">Test URL</g:Button>
+							ui:field="testURLButton" debugId="testURLButton">Test URL</g:Button>
 				    	</g:customCell>
 			    	</g:row>
 		 		<!-- TODO: categories, console categories, hipaa eligible, tags -->
@@ -85,11 +85,11 @@
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton">Okay</g:Button>
+							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

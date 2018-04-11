@@ -24,10 +24,10 @@
 			<g:Grid cellSpacing="8">
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="generateVpcButton" text="Generate VPC" addStyleNames="{style.glowing-border} {style.actionButton}" title="Provision a new AWS VPC"/>
+						<g:Button ui:field="generateVpcButton" debugId="generateVpcButton" text="Generate VPC" addStyleNames="{style.glowing-border} {style.actionButton}" title="Provision a new AWS VPC"/>
 					</g:customCell>
 					<g:customCell>
-						<g:Button ui:field="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>
@@ -41,7 +41,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="vpcpListPager" location="CENTER"/>
+						<c:SimplePager ui:field="vpcpListPager" debugId="vpcpListPager" location="CENTER"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

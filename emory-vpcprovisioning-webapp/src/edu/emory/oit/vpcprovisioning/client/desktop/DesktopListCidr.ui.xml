@@ -23,20 +23,20 @@
 			<g:Grid cellSpacing="8">
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="addCidrButton" text="Add Cidr" addStyleNames="{style.glowing-border} {style.actionButton}"/>
+						<g:Button ui:field="addCidrButton" debugId="addCidrButton" text="Add Cidr" addStyleNames="{style.glowing-border} {style.actionButton}"/>
 					</g:customCell>
 					<g:customCell>
-						<g:Button ui:field="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Allowcate a new IP address"/>
+						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Allowcate a new IP address"/>
 					</g:customCell>
 				    	<g:customCell>
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="filterTB"/>
+								ui:field="filterTB" debugId="filterTB"/>
 				    	</g:customCell>
 					<g:customCell>
-						<g:Button ui:field="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by VPC id"/>
+						<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by VPC id"/>
 					</g:customCell>
 					<g:customCell>
-						<g:Button ui:field="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Clear the filter"/>
+						<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Clear the filter"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>
@@ -50,16 +50,9 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="cidrListPager" location="CENTER"/>
+						<c:SimplePager ui:field="cidrListPager" debugId="cidrListPager" location="CENTER"/>
 					</g:customCell>
 				</g:row>
-				<!-- 
-				<g:row>
-					<g:customCell>
-						<g:Button ui:field="addCidrButton" text="Add Cidr" addStyleNames="{style.glowing-border} {style.actionButton}"/>
-					</g:customCell>
-				</g:row>
-				 -->
 			</g:Grid>
 		</g:VerticalPanel>
 	</g:VerticalPanel>

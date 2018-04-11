@@ -52,7 +52,7 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="netIdTB" />
+							ui:field="netIdTB" debugId="netIdTB" />
 				    </g:customCell>
 		    	</g:row>
 				<g:row>
@@ -61,7 +61,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="applicationNameTB" title="For what application is this firewall exception needed."/>
+							ui:field="applicationNameTB" debugId="applicationNameTB" 
+							title="For what application is this firewall exception needed."/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -69,7 +70,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 						<g:Label addStyleNames="{style.label}">Source Outside Emory:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-				    	<g:CheckBox ui:field="isSourceOutsideEmoryCB" addStyleNames="{style.label}"
+				    	<g:CheckBox ui:field="isSourceOutsideEmoryCB" debugId="isSourceOutsideEmoryCB" 
+				    		addStyleNames="{style.label}"
 				    		title="Is the source outside of Emory's network and the destination inside?"/>
 			    	</g:customCell>
 		    	</g:row>
@@ -79,7 +81,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="timeRuleLB" title="how long the firewall exception will be valid."/>
+							ui:field="timeRuleLB" debugId="timeRuleLB" 
+							title="how long the firewall exception will be valid."/>
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -88,7 +91,7 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<d:DateBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="validUntilDB" />
+							ui:field="validUntilDB"  debugId="validUntilDB"/>
 				    </g:customCell>
 		    	</g:row>
 				<g:row>
@@ -97,7 +100,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="sourceIpAddressesTA" title="Source IP addresses AND fully qualified domain names of the system(s) that need to access the destination(s)."/>
+							ui:field="sourceIpAddressesTA" debugId="sourceIpAddressesTA" 
+							title="Source IP addresses AND fully qualified domain names of the system(s) that need to access the destination(s)."/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -106,7 +110,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="destinationIpAddressesTA" title="Destination IP address(es) AND fully qualified domain name(s) of the system(s) that needs to be accessible through the firewall."/>
+							ui:field="destinationIpAddressesTA" debugId="destinationIpAddressesTA" 
+							title="Destination IP address(es) AND fully qualified domain name(s) of the system(s) that needs to be accessible through the firewall."/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -115,7 +120,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="portsTA" title="Destination ports, applications, or services that need to be accessible. Indicate TCP or UDP for each, or ICMP type, along with the underlying protocol or application."/>
+							ui:field="portsTA" debugId="portsTA" 
+							title="Destination ports, applications, or services that need to be accessible. Indicate TCP or UDP for each, or ICMP type, along with the underlying protocol or application."/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -124,7 +130,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="businessReasonTA" title="Describe the business justification for this exception."/>
+							ui:field="businessReasonTA" debugId="businessReasonTA" 
+							title="Describe the business justification for this exception."/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -132,7 +139,7 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 						<g:Label addStyleNames="{style.label}">Patched:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-				    	<g:CheckBox ui:field="isPatchedCB" addStyleNames="{style.label}"
+				    	<g:CheckBox ui:field="isPatchedCB" debugId="isPatchedCB" addStyleNames="{style.label}"
 				    		title="Are Server/Service/Application components fully patched at the time of this request?"/>
 			    	</g:customCell>
 		    	</g:row>
@@ -141,7 +148,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 						<g:Label addStyleNames="{style.label}">Default Password Changed:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-				    	<g:CheckBox ui:field="isDefaultPasswordChangedCB" addStyleNames="{style.label}"
+				    	<g:CheckBox ui:field="isDefaultPasswordChangedCB" debugId="isDefaultPasswordChangedCB" 
+				    		addStyleNames="{style.label}"
 				    		title="Have all default application or server passwords been changed?"/>
 			    	</g:customCell>
 		    	</g:row>
@@ -150,7 +158,7 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 						<g:Label addStyleNames="{style.label}">Consoles ACL'd:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-				    	<g:CheckBox ui:field="isAppConsoleACLedCB" addStyleNames="{style.label}"
+				    	<g:CheckBox ui:field="isAppConsoleACLedCB" debugId="isAppConsoleACLedCB" addStyleNames="{style.label}"
 				    		title="Have all administrative/management consoles for the application, as well as any underlying technology administrative/management consoles (such as ColdFusion, Jboss, Tomcat, phpmyadmin) been properly ACL'd."/>
 			    	</g:customCell>
 		    	</g:row>
@@ -159,7 +167,7 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 						<g:Label addStyleNames="{style.label}">Hardened:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-				    	<g:CheckBox ui:field="isHardenedCB" addStyleNames="{style.label}"
+				    	<g:CheckBox ui:field="isHardenedCB" debugId="isHardenedCB" addStyleNames="{style.label}"
 				    		title="Have hardening guidelines for the application/service and underlying technologies been followed and implemented?"/>
 			    	</g:customCell>
 		    	</g:row>
@@ -169,16 +177,18 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="patchingPlanTA" title="Describe your plan for keeping this application/service and underlying technologies patched in a timely manner."/>
+							ui:field="patchingPlanTA" debugId="patchingPlanTA" 
+							title="Describe your plan for keeping this application/service and underlying technologies patched in a timely manner."/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Compliance Class (select all):</g:Label>
+						<g:HTML addStyleNames="{style.label}">Compliance Class<br></br>(select all):</g:HTML>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox multipleSelect="true" addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="complianceClassLB" title="Is this application/service in scope of any of the following compliance regimes?"/>
+							ui:field="complianceClassLB" debugId="complianceClassLB" 
+							title="Is this application/service in scope of any of the following compliance regimes?"/>
 			    	</g:customCell>
 				</g:row>
 				<!-- TODO: if compliance is 'Other' need to prompt for the value -->
@@ -188,7 +198,8 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="sensitiveDataDescriptionTA" title="Describe any sensitive data that will be stored or processed on this system."/>
+							ui:field="sensitiveDataDescriptionTA" debugId="sensitiveDataDescriptionTA" 
+							title="Describe any sensitive data that will be stored or processed on this system."/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -197,7 +208,7 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="localFirewallRulesDescriptionTA" 
+							ui:field="localFirewallRulesDescriptionTA" debugId="localFirewallRulesDescriptionTA" 
 							title="Describe any local (host-based) firewall rules that are currently configured on the system."/>
 			    	</g:customCell>
 		    	</g:row>
@@ -206,7 +217,7 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 						<g:Label addStyleNames="{style.label}">Default Deny Zone:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-				    	<g:CheckBox ui:field="isDefaultDenyZoneCB" addStyleNames="{style.label}"
+				    	<g:CheckBox ui:field="isDefaultDenyZoneCB" debugId="isDefaultDenyZoneCB" addStyleNames="{style.label}"
 				    		title="Could this system be placed into a subnet that blocks all outbound Internet traffic by default."/>
 			    	</g:customCell>
 		    	</g:row>
@@ -223,16 +234,16 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 											<g:Label addStyleNames="{style.heading_label}">Add/remove Tags:</g:Label>
 											<g:HorizontalPanel ui:field="addTagHP" spacing="16">
 												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:TextBox ui:field="addTagTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+													<g:TextBox ui:field="addTagTF" debugId="addTagTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
 												</g:cell>
 												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:Button ui:field="addTagButton"
+													<g:Button ui:field="addTagButton" debugId="addTagButton"
 														addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
 												</g:cell>
 											</g:HorizontalPanel>
 											<g:VerticalPanel spacing="8">
 												<g:Label addStyleNames="{style.heading_label}">Tags associated to this Firewall Exception Request:</g:Label>
-												<g:FlexTable ui:field="tagsTable" cellSpacing="3" cellPadding="3" title="Tags for this request."/>
+												<g:FlexTable ui:field="tagsTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Tags for this request."/>
 											</g:VerticalPanel>
 										</g:VerticalPanel>
 									</g:ScrollPanel>
@@ -243,42 +254,16 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 		    </g:Grid>
 		</g:cell>
 		</g:HorizontalPanel>
-		<!-- 
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
-			<g:HorizontalPanel>
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-						<g:ScrollPanel>
-							<g:VerticalPanel spacing="8" ui:field="tagsVP" height="100%">
-								<g:Label addStyleNames="{style.heading_label}">Add/remove Tags:</g:Label>
-								<g:HorizontalPanel ui:field="addTagHP" spacing="16">
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:TextBox ui:field="addTagTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-									</g:cell>
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:Button ui:field="addTagButton"
-											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-									</g:cell>
-								</g:HorizontalPanel>
-								<g:VerticalPanel spacing="8">
-									<g:Label addStyleNames="{style.heading_label}">Tags associated to this Firewall Exception Request:</g:Label>
-									<g:FlexTable ui:field="tagsTable" cellSpacing="3" cellPadding="3"/>
-								</g:VerticalPanel>
-							</g:VerticalPanel>
-						</g:ScrollPanel>
-				</g:cell>
-			</g:HorizontalPanel>
-		</g:cell>
-		 -->
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
 				<g:row>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton">Okay</g:Button>
+							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

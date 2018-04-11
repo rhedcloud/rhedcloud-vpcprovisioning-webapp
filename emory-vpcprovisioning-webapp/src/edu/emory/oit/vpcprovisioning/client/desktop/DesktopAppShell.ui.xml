@@ -38,8 +38,8 @@
 					<g:MenuBar ui:field="documentationMenuBar" autoOpen="false" animationEnabled="true" styleName="{style.linksMenu}">
 						<g:MenuItem ui:field="documentationMenu" styleName="{style.linksMenuHeader}">Documentation  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>
 							<g:MenuBar vertical="true">
-								<g:MenuItem ui:field="emoryKbItem" title="Search Emory Research Service Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://emory.service-now.com/sp?id=kb_view2">Emory Knowledge Base</a></g:MenuItem>
-								<g:MenuItem ui:field="awsDocumentationItem" title="AWS Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/documentation/">AWS Documentation</a></g:MenuItem>
+								<g:MenuItem ui:field="emoryKbItem" debugId="emoryKbItem" title="Search Emory Research Service Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://emory.service-now.com/sp?id=kb_view2">Emory Knowledge Base</a></g:MenuItem>
+								<g:MenuItem ui:field="awsDocumentationItem" debugId="awsDocumentationItem" title="AWS Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/documentation/">AWS Documentation</a></g:MenuItem>
 							</g:MenuBar>
 						</g:MenuItem>
 					</g:MenuBar>
@@ -57,15 +57,15 @@
 					<g:MenuBar ui:field="supportMenuBar" autoOpen="false" animationEnabled="true" styleName="{style.linksMenu}">
 						<g:MenuItem ui:field="resourcesMenu" styleName="{style.linksMenuHeader}">Support  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>
 							<g:MenuBar vertical="true">
-								<g:MenuItem ui:field="awsItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">AWS Enterprise Support</a></g:MenuItem>
-								<g:MenuItem ui:field="emoryAwsItem" title="Emory AWS Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://emory.service-now.com/sp?id=sc_cat_item&amp;sys_id=58e901fd983a4500593bf372f0e9a92e">Emory AWS Support</a></g:MenuItem>
+								<g:MenuItem ui:field="awsItem" debugId="awsItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">AWS Enterprise Support</a></g:MenuItem>
+								<g:MenuItem ui:field="emoryAwsItem" debugId="emoryAwsItem" title="Emory AWS Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://emory.service-now.com/sp?id=sc_cat_item&amp;sys_id=58e901fd983a4500593bf372f0e9a92e">Emory AWS Support</a></g:MenuItem>
 								<g:MenuItem styleName="{style.menuItemSeparator}">
 									<div class="menuSeparatorInner"></div>
 								</g:MenuItem> 
 								<g:MenuItem ui:field="reportProblemItem" title="Report a Problem" styleName="{style.linksMenuItem}"> Report a Problem
 									<g:MenuBar vertical="true">
-										<g:MenuItem ui:field="haveAnAccountItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">I have an account</a></g:MenuItem>
-										<g:MenuItem ui:field="doNotHaveAnAccountItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">I DO NOT have an account</a></g:MenuItem>
+										<g:MenuItem ui:field="haveAnAccountItem" debugId="haveAnAccountItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">I have an account</a></g:MenuItem>
+										<g:MenuItem ui:field="doNotHaveAnAccountItem" debugId="doNotHaveAnAccountItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">I DO NOT have an account</a></g:MenuItem>
 									</g:MenuBar>
 								</g:MenuItem>
 							</g:MenuBar>
@@ -74,24 +74,6 @@
 				</g:cell>
 			</g:HorizontalPanel>
 			</g:cell>
-			<!-- 
-			<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-				<g:HorizontalPanel>
-					<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-						<g:Button width="150px" addStyleNames="{style.awsButton}"
-							ui:field="awsConsoleButton">AWS Console</g:Button>
-					</g:cell>
-					<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-						<g:Button width="150px" addStyleNames="{style.awsButton}"
-							ui:field="emoryConsoleButton">VPCP Console</g:Button>
-					</g:cell>
-					<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-						<g:Button width="150px" addStyleNames="{style.awsButton}"
-							ui:field="serviceNowButton">Create Account/VPC</g:Button>
-					</g:cell>
-				</g:HorizontalPanel>
-			</g:cell>
-			 -->
 			</g:HorizontalPanel>
 		</g:layer>
 		

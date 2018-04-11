@@ -3,12 +3,9 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -42,7 +39,6 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class DesktopListAccount extends ViewImplBase implements ListAccountView {
 	Presenter presenter;
@@ -151,7 +147,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_FIREWALL_RULE, m, null);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -170,9 +166,12 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				actionsPopup.hide();
 				AccountPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					// just use a popup here and not try to show the "normal" CidrAssignment
-					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+						presenter.deleteAccount(m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -193,7 +192,13 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+						// show billing information for this account
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -420,98 +425,86 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		// TODO last update user/time?
 		
 		// button to view billing information for this account
-//		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-//			GWT.log(userLoggedIn.getEppn() + " is an admin");
-			Column<AccountPojo, String> viewBillsColumn = new Column<AccountPojo, String>(
-					new ButtonCell()) {
-				@Override
-				public String getValue(AccountPojo object) {
-					return "Bills";
-				}
-			};
-			accountListTable.addColumn(viewBillsColumn, "");
-			accountListTable.setColumnWidth(viewBillsColumn, 50.0, Unit.PX);
-			viewBillsColumn
-			.setFieldUpdater(new FieldUpdater<AccountPojo, String>() {
-				@Override
-				public void update(int index, final AccountPojo account,
-						String value) {
+//		Column<AccountPojo, String> viewBillsColumn = new Column<AccountPojo, String>(
+//				new ButtonCell()) {
+//			@Override
+//			public String getValue(AccountPojo object) {
+//				return "Bills";
+//			}
+//		};
+//		accountListTable.addColumn(viewBillsColumn, "");
+//		accountListTable.setColumnWidth(viewBillsColumn, 50.0, Unit.PX);
+//		viewBillsColumn
+//		.setFieldUpdater(new FieldUpdater<AccountPojo, String>() {
+//			@Override
+//			public void update(int index, final AccountPojo account,
+//					String value) {
+//
+//				if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(account.getAccountId())) {
+//					// show billing information for this account
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, account);
+//				}
+//				else {
+//					showMessageToUser("You are not authorized to perform this function for this account.");
+//				}
+//			}
+//		});
 
-					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(account.getAccountId())) {
-						// show billing information for this account
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, account);
-					}
-					else {
-						showMessageToUser("You are not authorized to perform this function for this account.");
-					}
-				}
-			});
-//		}
-//		else {
-//			GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-//		}
-
-//		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-//			GWT.log(userLoggedIn.getEppn() + " is an admin");
-			// delete row column
-			Column<AccountPojo, String> deleteRowColumn = new Column<AccountPojo, String>(
-					new ButtonCell()) {
-				@Override
-				public String getValue(AccountPojo object) {
-					return "Delete";
-				}
-			};
-			accountListTable.addColumn(deleteRowColumn, "");
-			accountListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
-			deleteRowColumn
-			.setFieldUpdater(new FieldUpdater<AccountPojo, String>() {
-				@Override
-				public void update(int index, final AccountPojo account,
-						String value) {
-
-					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(account.getAccountId())) {
-						presenter.deleteAccount(account);
-					}
-					else {
-						showMessageToUser("You are not authorized to perform this function for this account.");
-					}
-				}
-			});
-//		}
-//		else {
-//			GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-//		}
+//		// delete row column
+//		Column<AccountPojo, String> deleteRowColumn = new Column<AccountPojo, String>(
+//				new ButtonCell()) {
+//			@Override
+//			public String getValue(AccountPojo object) {
+//				return "Delete";
+//			}
+//		};
+//		accountListTable.addColumn(deleteRowColumn, "");
+//		accountListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
+//		deleteRowColumn
+//		.setFieldUpdater(new FieldUpdater<AccountPojo, String>() {
+//			@Override
+//			public void update(int index, final AccountPojo account,
+//					String value) {
+//
+//				if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(account.getAccountId())) {
+//					presenter.deleteAccount(account);
+//				}
+//				else {
+//					showMessageToUser("You are not authorized to perform this function for this account.");
+//				}
+//			}
+//		});
 
 		// view/edit row column
-		Column<AccountPojo, String> editRowColumn = new Column<AccountPojo, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(AccountPojo object) {
-				if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(object.getAccountId())) {
-					GWT.log(userLoggedIn.getEppn() + " is an admin");
-					return "Edit";
-				}
-				else {
-					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-					return "View";
-				}
-			}
-		};
-		accountListTable.addColumn(editRowColumn, "");
-		accountListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
-		editRowColumn.setFieldUpdater(new FieldUpdater<AccountPojo, String>() {
-			@Override
-			public void update(int index, final AccountPojo account,
-					String value) {
-				
-				// fire MAINTAIN_ACCOUNT event passing the account to be maintained
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, account);
-				// TODO: add a maintainAccount method to the presenter so this is done there
-				// and not here.  This way, the mobile views will also get this 
-				// functionality even though they present the list of accounts 
-				// differently
-			}
-		});
+//		Column<AccountPojo, String> editRowColumn = new Column<AccountPojo, String>(
+//				new ButtonCell()) {
+//			@Override
+//			public String getValue(AccountPojo object) {
+//				if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(object.getAccountId())) {
+//					GWT.log(userLoggedIn.getEppn() + " is an admin");
+//					return "Edit";
+//				}
+//				else {
+//					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
+//					return "View";
+//				}
+//			}
+//		};
+//		accountListTable.addColumn(editRowColumn, "");
+//		accountListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
+//		editRowColumn.setFieldUpdater(new FieldUpdater<AccountPojo, String>() {
+//			@Override
+//			public void update(int index, final AccountPojo account,
+//					String value) {
+//				
+//				// fire MAINTAIN_ACCOUNT event passing the account to be maintained
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, account);
+//				// TODO: add a maintainAccount method to the presenter so this is done there
+//				// and not here.  This way, the mobile views will also get this 
+//				// functionality even though they present the list of accounts 
+//				// differently
+//			}
+//		});
 	}
 
 	@Override

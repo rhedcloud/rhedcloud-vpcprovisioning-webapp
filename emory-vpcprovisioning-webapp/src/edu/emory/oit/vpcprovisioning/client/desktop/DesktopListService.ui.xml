@@ -15,7 +15,7 @@
 		</g:HorizontalPanel>
 		<g:VerticalPanel>
 			<g:Button width="150px" addStyleNames="{style.awsButton}"
-				ui:field="closeOtherFeaturesButton">Close</g:Button>
+				ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton">Close</g:Button>
 		</g:VerticalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">Service List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing Emory AWS Services that you can view or edit.<br/><br/>
@@ -30,10 +30,10 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="createServiceButton" text="Add Service" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Service"/>
+						<g:Button ui:field="createServiceButton" debugId="createServiceButton" text="Add Service" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Service"/>
 					</g:customCell>
 					<g:customCell>
-						<g:Button ui:field="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>
@@ -47,7 +47,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="listPager" location="CENTER"/>
+						<c:SimplePager ui:field="serviceListPager" debugId="" location="CENTER"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>
