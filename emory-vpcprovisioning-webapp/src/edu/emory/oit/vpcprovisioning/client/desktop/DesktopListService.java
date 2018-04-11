@@ -36,7 +36,6 @@ import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
 public class DesktopListService extends ViewImplBase implements ListServiceView {
 	Presenter presenter;
@@ -57,7 +56,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	}
 
 	/*** FIELDS ***/
-	@UiField SimplePager listPager;
+	@UiField SimplePager serviceListPager;
 	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
@@ -166,7 +165,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	public void setServices(List<AWSServicePojo> services) {
 		this.serviceList = services;
 		this.initializeServiceListTable();
-	    listPager.setDisplay(serviceListTable);
+		serviceListPager.setDisplay(serviceListTable);
 	}
 
 	@Override

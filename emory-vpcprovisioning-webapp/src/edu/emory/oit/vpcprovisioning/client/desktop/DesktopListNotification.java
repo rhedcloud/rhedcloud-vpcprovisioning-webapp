@@ -61,7 +61,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	}
 
 	/*** FIELDS ***/
-	@UiField SimplePager listPager;
+	@UiField SimplePager notificationsListPager;
 	@UiField(provided=true) CellTable<NotificationPojo> notificationListTable = new CellTable<NotificationPojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
@@ -168,7 +168,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	public void setNotifications(List<NotificationPojo> services) {
 		this.serviceList = services;
 		this.initializeNotificationListTable();
-	    listPager.setDisplay(notificationListTable);
+		notificationsListPager.setDisplay(notificationListTable);
 	}
 
 	@Override
