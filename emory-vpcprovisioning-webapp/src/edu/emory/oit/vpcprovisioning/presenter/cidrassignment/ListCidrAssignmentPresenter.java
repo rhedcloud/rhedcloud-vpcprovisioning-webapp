@@ -19,6 +19,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryResultPojo
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListCidrAssignmentPresenter extends PresenterBase implements ListCidrAssignmentView.Presenter {
 	/**
@@ -38,7 +39,8 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 
 	CidrAssignmentSummaryQueryFilterPojo filter;
 	CidrAssignmentSummaryPojo cidrAssignmentSummary;
-	
+	VpcPojo vpc;
+
 	/**
 	 * The refresh timer used to periodically refresh the case record list.
 	 */
@@ -255,5 +257,13 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 
 	public ClientFactory getClientFactory() {
 		return clientFactory;
+	}
+
+	public VpcPojo getVpc() {
+		return vpc;
+	}
+
+	public void setVpc(VpcPojo vpc) {
+		this.vpc = vpc;
 	}
 }

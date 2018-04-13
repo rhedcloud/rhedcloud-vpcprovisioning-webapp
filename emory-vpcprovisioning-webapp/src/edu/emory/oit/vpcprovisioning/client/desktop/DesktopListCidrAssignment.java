@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -11,16 +12,20 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -41,10 +46,12 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 	private SingleSelectionModel<CidrAssignmentSummaryPojo> selectionModel;
 	List<CidrAssignmentSummaryPojo> cidrAssignmentSummaryList = new java.util.ArrayList<CidrAssignmentSummaryPojo>();
 	UserAccountPojo userLoggedIn;
+    PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
 	@UiField SimplePager cidrAssignmentSummaryListPager;
 	@UiField Button addCidrAssignmentButton;
+	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<CidrAssignmentSummaryPojo> cidrAssignmentSummaryListTable = new CellTable<CidrAssignmentSummaryPojo>();
 	@UiField VerticalPanel cidrAssignmentSummaryListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -63,6 +70,100 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_CIDR_ASSIGNMENT);
 			}
 		}, ClickEvent.getType());
+	}
+
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    
+	    Grid grid = new Grid(2, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+	    
+//		Anchor assignAnchor = new Anchor("Assign CIDR(s)");
+//		assignAnchor.addStyleName("productAnchor");
+//		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		assignAnchor.setTitle("Assign selected CIDR");
+//		assignAnchor.ensureDebugId(assignAnchor.getText());
+//		assignAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				CidrAssignmentSummaryPojo m = selectionModel.getSelectedObject();
+//				if (m != null) {
+//					// just use a popup here and not try to show the "normal" CidrAssignment
+//					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//					if (m.getCidrAssignment() != null) {
+////						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_CIDR_ASSIGNMENT, m.getCidr(), null);
+//					}
+//					else {
+//						showMessageToUser("Please select an UNASSIGNED CIDR from the list");
+//					}
+//				}
+//				else {
+//					showMessageToUser("Please select a CIDR Assignment from the list");
+//				}
+//			}
+//		});
+//		grid.setWidget(0, 0, assignAnchor);
+		
+		Anchor unassignAnchor = new Anchor("Unassign CIDR(s)");
+		unassignAnchor.addStyleName("productAnchor");
+		unassignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		unassignAnchor.setTitle("Unassign selected CIDR");
+		unassignAnchor.ensureDebugId(unassignAnchor.getText());
+		unassignAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				CidrAssignmentSummaryPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (m.getCidrAssignment() != null) {
+						showMessageToUser("Will un-assign CIDR assignment: " + m.getCidrAssignment().getCidrAssignmentId());
+						// TODO: CidrAssignment.Delete-Request ????
+//						presenter.deleteCidrAssignment(m);
+					}
+					else {
+						showMessageToUser("Please select an ASSIGNED CIDR from the list");
+					}
+				}
+				else {
+					showMessageToUser("Please select a CIDR from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, unassignAnchor);
+		
+		Anchor editAssignmentAnchor = new Anchor("Edit CIDR assignment");
+		editAssignmentAnchor.addStyleName("productAnchor");
+		editAssignmentAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editAssignmentAnchor.setTitle("Edit selected CIDR");
+		editAssignmentAnchor.ensureDebugId(editAssignmentAnchor.getText());
+		editAssignmentAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				CidrAssignmentSummaryPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (m.getCidrAssignment() != null) {
+						showMessageToUser("Will edit CIDR assignment: " + m.getCidrAssignment().getCidrAssignmentId());
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR_ASSIGNMENT, m);
+					}
+					else {
+						showMessageToUser("Please select an ASSIGNED CIDR from the list");
+					}
+				}
+				else {
+					showMessageToUser("Please select a CIDR from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, editAssignmentAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
 	}
 
 	@Override
@@ -132,6 +233,17 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 	}
 	private void initcidrAssignmentSummaryListTableColumns(ListHandler<CidrAssignmentSummaryPojo> sortHandler) {
 		GWT.log("initializing CIDR_ASSIGNMENT list table columns...");
+	    Column<CidrAssignmentSummaryPojo, Boolean> checkColumn = new Column<CidrAssignmentSummaryPojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(CidrAssignmentSummaryPojo object) {
+		        // Get the value from the selection model.
+		        return selectionModel.isSelected(object);
+		      }
+		    };
+		    cidrAssignmentSummaryListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		    cidrAssignmentSummaryListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
 		/*
 <!ELEMENT CidrAssignment (CidrAssignmentId?, OwnerId, Decription, Purpose, Cidr,CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?) >
 		 */

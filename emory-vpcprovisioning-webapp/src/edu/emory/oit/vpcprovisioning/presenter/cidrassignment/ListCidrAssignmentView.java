@@ -9,6 +9,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListCidrAssignmentView extends IsWidget, View {
@@ -30,6 +31,8 @@ public interface ListCidrAssignmentView extends IsWidget, View {
 		 */
 		void deleteCidrAssignment(CidrAssignmentSummaryPojo cidrAssignment);
 		public void logMessageOnServer(final String message);
+		public VpcPojo getVpc();
+		public void setVpc(VpcPojo vpc);
 	}
 
 	/**

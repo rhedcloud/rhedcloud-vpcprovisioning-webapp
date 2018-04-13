@@ -57,6 +57,15 @@ UpdateDateTime? - the date and time when the request is updated, either by reque
 		    	</g:row>
 				<g:row>
 			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Technical Contact:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="technicalContactTB" debugId="technicalContactTB" />
+				    </g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Application Name:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>

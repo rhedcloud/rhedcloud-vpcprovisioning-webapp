@@ -213,14 +213,14 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 				ActionEvent.fire(eventBus, ActionNames.CIDR_SAVED, result);
 			}
 		};
-//		if (!this.isEditing) {
-//			// it's a create
-//			VpcProvisioningService.Util.getInstance().createFirewallExceptionRequest(firewallExceptionRequest, callback);
-//		}
-//		else {
-//			// it's an update
-//			VpcProvisioningService.Util.getInstance().updateFirewallExceptionRequest(firewallExceptionRequest, callback);
-//		}
+		if (!this.isEditing) {
+			// it's a create
+			VpcProvisioningService.Util.getInstance().createFirewallExceptionRequest(firewallExceptionRequest, callback);
+		}
+		else {
+			// it's an update
+			VpcProvisioningService.Util.getInstance().updateFirewallExceptionRequest(firewallExceptionRequest, callback);
+		}
 	}
 
 	@Override

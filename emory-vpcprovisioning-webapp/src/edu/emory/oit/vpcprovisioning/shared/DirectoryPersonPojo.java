@@ -1,5 +1,8 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
@@ -159,5 +162,4 @@ public class DirectoryPersonPojo extends SharedObject implements IsSerializable,
 			this.mailStop + ": " + this.schoolDivision + ": " + this.title;
 				
 	}
-
 }

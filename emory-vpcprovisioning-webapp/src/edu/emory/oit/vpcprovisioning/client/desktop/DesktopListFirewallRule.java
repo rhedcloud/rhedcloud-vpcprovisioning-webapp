@@ -3,15 +3,18 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,7 +39,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -141,6 +144,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			maintainAnchor.addStyleName("productAnchor");
 			maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 			maintainAnchor.setTitle("View/edit selected Firewall Exception Request");
+			maintainAnchor.ensureDebugId(anchorText);
 			maintainAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -162,6 +166,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			deleteAnchor.addStyleName("productAnchor");
 			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 			deleteAnchor.setTitle("Remove selected Firewall Rule");
+			deleteAnchor.ensureDebugId(deleteAnchor.getText());
 			deleteAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -218,6 +223,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		maintainAnchor.addStyleName("productAnchor");
 		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		maintainAnchor.setTitle("View/edit selected Firewall Exception Request");
+		maintainAnchor.ensureDebugId(anchorText);
 		maintainAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -237,6 +243,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		deleteAnchor.addStyleName("productAnchor");
 		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		deleteAnchor.setTitle("Remove selected Firewall Exception Request");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
 		deleteAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -371,7 +378,18 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	private void initFirewallRuleListTableColumns(ListHandler<FirewallRulePojo> sortHandler) {
 		GWT.log("initializing Firewall Rule list table columns...");
 
-		Column<FirewallRulePojo, String> nameColumn = 
+	    Column<FirewallRulePojo, Boolean> checkColumn = new Column<FirewallRulePojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(FirewallRulePojo object) {
+		        // Get the value from the selection model.
+		        return fw_selectionModel.isSelected(object);
+		      }
+		    };
+		    firewallRuleListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		    firewallRuleListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		    Column<FirewallRulePojo, String> nameColumn = 
 			new Column<FirewallRulePojo, String> (new TextCell()) {
 			
 			@Override
@@ -636,6 +654,17 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
              <Tag>SOM</Tag>
              <Tag>Emory</Tag>
 		 */
+	    Column<FirewallExceptionRequestPojo, Boolean> checkColumn = new Column<FirewallExceptionRequestPojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(FirewallExceptionRequestPojo object) {
+		        // Get the value from the selection model.
+		        return fwer_selectionModel.isSelected(object);
+		      }
+		    };
+		    firewallExceptionRequestListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		    firewallExceptionRequestListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
 		Column<FirewallExceptionRequestPojo, String> reqNumberColumn = 
 				new Column<FirewallExceptionRequestPojo, String> (new TextCell()) {
 

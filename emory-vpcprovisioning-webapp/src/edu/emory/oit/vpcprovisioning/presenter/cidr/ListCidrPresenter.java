@@ -169,10 +169,12 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 		GWT.log("refreshing CIDR list...");
 		// TODO: setup filter
-		if (filter == null) {
-			filter = new CidrQueryFilterPojo();
-		}
-		filter.setUserLoggedIn(user);
+//		if (filter == null) {
+//			filter = new CidrQueryFilterPojo();
+//		}
+//		if (!user.isLitsAdmin()) {
+//			filter.setUserLoggedIn(user);
+//		}
 		VpcProvisioningService.Util.getInstance().getCidrsForFilter(filter, callback);
 	}
 

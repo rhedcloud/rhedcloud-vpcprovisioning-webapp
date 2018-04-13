@@ -1,0 +1,113 @@
+package edu.emory.oit.vpcprovisioning.client.desktop;
+
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
+import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+
+public class DesktopHome extends ViewImplBase implements HomeView {
+	Presenter presenter;
+	UserAccountPojo userLoggedIn;
+
+	@UiField HorizontalPanel pleaseWaitPanel;
+
+	private static DesktopHomeUiBinder uiBinder = GWT.create(DesktopHomeUiBinder.class);
+
+	interface DesktopHomeUiBinder extends UiBinder<Widget, DesktopHome> {
+	}
+
+	public DesktopHome() {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+
+	@Override
+	public void setInitialFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Widget getStatusMessageSource() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void applyEmoryAWSAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void applyEmoryAWSAuditorMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUserLoggedIn(UserAccountPojo user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPresenter(Presenter presenter) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initPage() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setReleaseInfo(String releaseInfoHTML) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hidePleaseWaitPanel() {
+		pleaseWaitPanel.setVisible(false);
+	}
+
+	@Override
+	public void showPleaseWaitPanel() {
+		pleaseWaitPanel.setVisible(true);
+	}
+
+}

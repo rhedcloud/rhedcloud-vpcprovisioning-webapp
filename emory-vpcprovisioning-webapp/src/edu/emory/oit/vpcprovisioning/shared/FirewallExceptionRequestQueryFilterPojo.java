@@ -32,6 +32,8 @@ public class FirewallExceptionRequestQueryFilterPojo extends SharedObject implem
 	String requestState;
 	String requestItemNumber;
 	String requestItemState;
+	String technicalContact;
+
 	/*
 	(SystemId?, UserNetID?, ApplicationName?, 
 	IsSourceOutsideEmory?, TimeRule?, ValidUntilDate?, SourceIpAddresses?, DestinationIpAddresses?, 
@@ -243,6 +245,14 @@ public class FirewallExceptionRequestQueryFilterPojo extends SharedObject implem
 
 	public void setRequestItemState(String requestItemState) {
 		this.requestItemState = requestItemState;
+	}
+
+	public String getTechnicalContact() {
+		return technicalContact;
+	}
+
+	public void setTechnicalContact(String technicalContact) {
+		this.technicalContact = technicalContact;
 	}
 
 	

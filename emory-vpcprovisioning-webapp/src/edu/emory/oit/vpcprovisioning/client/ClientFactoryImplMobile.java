@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIp
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
+import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
@@ -70,6 +71,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainNotificationView maintainNotificationView;
 	private ListFirewallRuleView listFirewallRuleView;
 	private MaintainFirewallExceptionRequestView maintainFirewallRule;
+	private HomeView homeView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -230,6 +232,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainFirewallExceptionRequestView getMaintainFirewallExceptionRequestView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public HomeView getHomeView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

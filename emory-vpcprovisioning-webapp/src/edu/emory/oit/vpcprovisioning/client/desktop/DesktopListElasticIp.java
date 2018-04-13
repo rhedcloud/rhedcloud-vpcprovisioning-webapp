@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
@@ -14,6 +15,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,7 +38,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
-import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -85,6 +87,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		releaseAddressesAnchor.addStyleName("productAnchor");
 		releaseAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		releaseAddressesAnchor.setTitle("Release selected addresses");
+		releaseAddressesAnchor.ensureDebugId(releaseAddressesAnchor.getText());
 		releaseAddressesAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -105,6 +108,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		associateAddressesAnchor.addStyleName("productAnchor");
 		associateAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		associateAddressesAnchor.setTitle("Associate selected addresses");
+		associateAddressesAnchor.ensureDebugId(associateAddressesAnchor.getText());
 		associateAddressesAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -118,6 +122,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		disassociateAddressesAnchor.addStyleName("productAnchor");
 		disassociateAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		disassociateAddressesAnchor.setTitle("Disassociate selected addresses");
+		disassociateAddressesAnchor.ensureDebugId(disassociateAddressesAnchor.getText());
 		disassociateAddressesAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -222,7 +227,18 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	private void initElasticIpListTableColumns(ListHandler<ElasticIpSummaryPojo> sortHandler) {
 		GWT.log("initializing ElasticIpSummary list table columns...");
 		
-		// Account id column
+	    Column<ElasticIpSummaryPojo, Boolean> checkColumn = new Column<ElasticIpSummaryPojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(ElasticIpSummaryPojo object) {
+		        // Get the value from the selection model.
+		        return selectionModel.isSelected(object);
+		      }
+		    };
+		    elasticIpListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		    elasticIpListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		    // Account id column
 		Column<ElasticIpSummaryPojo, String> elasticIpColumn = 
 			new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 			

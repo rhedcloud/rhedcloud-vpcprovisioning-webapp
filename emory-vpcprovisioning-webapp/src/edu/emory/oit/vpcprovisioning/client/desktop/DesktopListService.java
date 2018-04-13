@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -11,6 +12,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,6 +36,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -78,6 +81,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		assignAnchor.addStyleName("productAnchor");
 		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		assignAnchor.setTitle("View status of selected VPCP");
+		assignAnchor.ensureDebugId(assignAnchor.getText());
 		assignAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -211,6 +215,18 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	}
 	private void initServiceListTableColumns(ListHandler<AWSServicePojo> sortHandler) {
 		GWT.log("initializing VPC list table columns...");
+		
+	    Column<AWSServicePojo, Boolean> checkColumn = new Column<AWSServicePojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(AWSServicePojo object) {
+		        // Get the value from the selection model.
+		        return selectionModel.isSelected(object);
+		      }
+		    };
+		    serviceListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		    serviceListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
 		// Account id column
 		Column<AWSServicePojo, String> acctIdColumn = 
 			new Column<AWSServicePojo, String> (new TextCell()) {

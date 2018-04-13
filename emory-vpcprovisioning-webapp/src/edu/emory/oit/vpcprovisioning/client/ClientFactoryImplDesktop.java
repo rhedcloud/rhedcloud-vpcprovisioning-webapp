@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.activity.AppActivityMapper;
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopAppShell;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopBillSummary;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopHome;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListAccount;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidrAssignment;
@@ -47,6 +48,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIp
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
+import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
@@ -95,6 +97,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainNotificationView maintainNotificationView;
 	private ListFirewallRuleView listFirewallRuleView;
 	private MaintainFirewallExceptionRequestView maintainFirewallRuleView;
+	private HomeView homeView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -393,5 +396,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainFirewallExceptionRequestView createMaintainFirewallRuleView() {
 		return new DesktopMaintainFirewallExceptionRequest();
+	}
+	@Override
+	public HomeView getHomeView() {
+		if (homeView == null) {
+			homeView = createHomeView();
+		}
+		return homeView;
+	}
+	protected HomeView createHomeView() {
+		return new DesktopHome();
 	}
 }

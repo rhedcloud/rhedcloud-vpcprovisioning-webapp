@@ -26,6 +26,7 @@ import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
@@ -36,6 +37,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElast
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
@@ -47,7 +49,6 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
-import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 
 public class AppBootstrapper {
 
@@ -113,6 +114,12 @@ public class AppBootstrapper {
 		// implementations.  if we don't use the same flow for desktop views
 		// this code may be moved to the appropriate view implementation and implemented
 		// via @UiHandlers
+		ActionEvent.register(eventBus, ActionNames.GO_HOME, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new HomePlace());
+			}
+		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
@@ -145,7 +152,13 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
-				placeController.goTo(new ListCidrAssignmentPlace(false));
+				GWT.log("Bootstrapper, GO_HOME_FIREWALL_RULE.onAction");
+				final ListCidrAssignmentPresenter presenter = new ListCidrAssignmentPresenter(clientFactory, new ListCidrAssignmentPlace(false));
+				presenter.setVpc(event.getVpc());
+				presenter.start(eventBus);
+				MaintainVpcView parent = clientFactory.getMaintainVpcView();
+				parent.setWidget(presenter);
+//				placeController.goTo(new ListCidrAssignmentPlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_ACCOUNT, new ActionEvent.Handler() {
@@ -728,7 +741,7 @@ public class AppBootstrapper {
 		});
 
 		// TODO: change to HomePlace once we have it
-		initBrowserHistory(historyMapper, historyHandler, new ListAccountPlace(true));
+		initBrowserHistory(historyMapper, historyHandler, new HomePlace());
 	}
 
 	/**
@@ -736,7 +749,7 @@ public class AppBootstrapper {
 	 * it to make the user's default location in the app the last one seen.
 	 */
 	private void initBrowserHistory(final AppPlaceHistoryMapper historyMapper,
-			PlaceHistoryHandler historyHandler, ListAccountPlace defaultPlace) {
+			PlaceHistoryHandler historyHandler, HomePlace defaultPlace) {
 
 		Place savedPlace = null;
 //		if (storage != null) {

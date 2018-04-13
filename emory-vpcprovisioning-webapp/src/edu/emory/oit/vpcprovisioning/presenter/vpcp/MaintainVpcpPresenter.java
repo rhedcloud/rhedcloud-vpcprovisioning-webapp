@@ -19,6 +19,11 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.NetworkIdentityPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
@@ -35,6 +40,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	private SpeedChartPojo speedType;
 	private AccountPojo selectedAccount;
 	private UserAccountPojo userLoggedIn;
+	private DirectoryPersonPojo directoryPerson;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -483,36 +489,155 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 		this.speedType = speedType;
 	}
 
+	@Override
+	public DirectoryPersonPojo getDirectoryPerson() {
+		return directoryPerson;
+	}
+
+	@Override
+	public void setDirectoryPerson(DirectoryPersonPojo directoryPerson) {
+		GWT.log("[presenter] setting directory person to: " + directoryPerson.toString());
+		this.directoryPerson = directoryPerson;
+	}
+
+	@Override
+	public void addAdminDirectoryPersonToVpcp() {
+		final FullPersonQueryFilterPojo filter = new FullPersonQueryFilterPojo();
+		filter.setPublicId(this.directoryPerson.getKey());
+		AsyncCallback<FullPersonQueryResultPojo> callback = new AsyncCallback<FullPersonQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+			}
+
+			@Override
+			public void onSuccess(FullPersonQueryResultPojo result) {
+				if (result.getResults().size() == 1) {
+					final FullPersonPojo fp = result.getResults().get(0);
+					GWT.log("Got 1 FullPerson back for public id " + filter.getPublicId());
+					List<NetworkIdentityPojo> networkIds = fp.getNetworkIdentities();
+					if (networkIds != null) {
+						if (networkIds.size() == 1) {
+							String principal = networkIds.get(0).getValue();
+							vpcRequisition.getCustomerAdminNetIdList().add(principal);
+							getView().addAdminNetId(principal);
+						}
+						else {
+							networkIdLoop: for (NetworkIdentityPojo networkId : networkIds) {
+								String domain = networkId.getDomain();
+								GWT.log("NetworkId.domain: " + domain);
+								String principal = networkId.getValue();
+								GWT.log("NetworkId.value: " + principal);
+								if (domain.equalsIgnoreCase("EMORYUNIVAD")) {
+									vpcRequisition.getCustomerAdminNetIdList().add(principal);
+									getView().addAdminNetId(principal);
+									break networkIdLoop;
+								}
+							}
+						}
+					}
+					else {
+						// TODO: error?
+					}
+				}
+				else {
+					// TODO: error
+				}
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+			}
+		};
+		getView().showPleaseWaitDialog();
+		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, callback);
+	}
+
 //	@Override
-//	public void getVpcpForId(String provisioningId) {
-//		AsyncCallback<VpcpQueryResultPojo> callback = new AsyncCallback<VpcpQueryResultPojo>() {
+//	public void addAdminDirectoryPersonToAccount() {
+//		// get fullperson for current directory person
+//		// get net id from fullperson
+//		// create role assignment
+//
+//		final FullPersonQueryFilterPojo filter = new FullPersonQueryFilterPojo();
+//		filter.setPublicId(this.directoryPerson.getKey());
+//		AsyncCallback<FullPersonQueryResultPojo> callback = new AsyncCallback<FullPersonQueryResultPojo>() {
 //			@Override
 //			public void onFailure(Throwable caught) {
-//                getView().hidePleaseWaitPanel();
-//                getView().hidePleaseWaitDialog();
-//				GWT.log("Exception Retrieving Vpcs", caught);
-//				getView().showMessageToUser("There was an exception on the " +
-//						"server retrieving your list of Vpcs.  " +
-//						"Message from server is: " + caught.getMessage());
+//				// TODO Auto-generated method stub
+//				getView().hidePleaseWaitDialog();
+//				getView().hidePleaseWaitPanel();
 //			}
 //
 //			@Override
-//			public void onSuccess(VpcpQueryResultPojo result) {
-//				GWT.log("Got " + result.getResults().size() + " Vpcps for " + result.getFilterUsed());
-//				// TODO: error checking here (must be 1 and only 1 vpcps returned)
-//				
-//				// TODO: fire VPCP_GENERATED even which will show the VpcpStatusView
-////				setVpcp(result.getResults().get(0));
-////				getView().showVpcpStatusInformation();
-//                getView().hidePleaseWaitDialog();
-//                getView().hidePleaseWaitPanel();
+//			public void onSuccess(FullPersonQueryResultPojo result) {
+//				if (result.getResults().size() == 1) {
+//					final FullPersonPojo fp = result.getResults().get(0);
+//					GWT.log("Got 1 FullPerson back for public id " + filter.getPublicId());
+//					AsyncCallback<RoleAssignmentPojo> raCallback = new AsyncCallback<RoleAssignmentPojo>() {
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							// TODO Auto-generated method stub
+//							
+//						}
+//
+//						@Override
+//						public void onSuccess(final RoleAssignmentPojo roleAssignment) {
+//							// then, tell the view to refresh it's role list
+//							RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
+//							ra_summary.setDirectoryPerson(directoryPerson);
+//							ra_summary.setRoleAssignment(roleAssignment);
+//							accountRoleAssignmentSummaries.add(ra_summary);
+////							getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
+////									directoryPerson.getEmail().getEmailAddress(), 
+////									directoryPerson.toString());
+//						}
+//					};
+//					// now, create the role assignment and add the role assignment to the account
+//					VpcProvisioningService.Util.getInstance().createAdminRoleAssignmentForPersonInAccount(fp, vpcRequisition.getAccountId(), raCallback);
+//				}
+//				else {
+//					GWT.log("Expected exactly 1 FullPerson, got " + result.getResults().size() + " this shouldn't happen.");
+//					// TODO: error
+//					return;
+//				}
+//				getView().hidePleaseWaitDialog();
+//				getView().hidePleaseWaitPanel();
 //			}
 //		};
-//
-//		GWT.log("refreshing Vpcp object for provisioning id:  " + provisioningId);
-//		VpcpQueryFilterPojo filter = new VpcpQueryFilterPojo();
-//		filter.setProvisioningId(provisioningId);
-//		VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, callback);
+//		getView().showPleaseWaitDialog();
+//		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, callback);
 //	}
 
+//	@Override
+//	public void getAdminsForAccount() {
+//		
+//		AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				getView().hidePleaseWaitDialog();
+//				getView().hidePleaseWaitPanel();
+//				GWT.log("Exception retrieving Administrators", caught);
+//				getView().showMessageToUser("There was an exception on the " +
+//						"server retrieving Administrators.  Message " +
+//						"from server is: " + caught.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
+//				accountRoleAssignmentSummaries = result;
+//				// add each role assignment summary to the view
+//				for (int i=0; i<result.size(); i++) {
+//					RoleAssignmentSummaryPojo ra_summary = result.get(i);
+////					getView().addRoleAssignment(i, ra_summary.getDirectoryPerson().getFullName(), 
+////							ra_summary.getDirectoryPerson().getEmail().getEmailAddress(), 
+////							ra_summary.getDirectoryPerson().toString());
+//				}
+//				getView().hidePleaseWaitDialog();
+//				getView().hidePleaseWaitPanel();
+//			}
+//		};
+//		getView().showPleaseWaitDialog();
+//		VpcProvisioningService.Util.getInstance().getAdminRoleAssignmentsForAccount(vpcRequisition.getAccountId(), callback);
+//	}
 }

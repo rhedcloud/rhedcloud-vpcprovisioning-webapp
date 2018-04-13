@@ -214,7 +214,9 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		if (filter == null) {
 			filter = new ElasticIpQueryFilterPojo();
 		}
-		filter.setOwnerId(vpc.getVpcId());
+		if (vpc != null) {
+			filter.setOwnerId(vpc.getVpcId());
+		}
 		VpcProvisioningService.Util.getInstance().getElasticIpsForFilter(filter, callback);
 	}
 

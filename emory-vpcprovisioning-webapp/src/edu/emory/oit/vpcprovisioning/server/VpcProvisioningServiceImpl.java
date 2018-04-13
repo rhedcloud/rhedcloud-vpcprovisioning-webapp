@@ -1467,37 +1467,43 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getCidrsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
+			info("[getCidrsForFilter] query spec is: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
 			List<Cidr> moas = actionable.query(queryObject,
 					this.getCidrRequestService());
+			info("[getCidrsForFilter] got " + moas.size() + " CIDRs back from ESB");
 			for (Cidr moa : moas) {
 				CidrSummaryPojo summary = new CidrSummaryPojo();
 				CidrPojo pojo = new CidrPojo();
+				CidrPojo baseline = new CidrPojo();
 				this.populateCidrPojo(moa, pojo);
+				this.populateCidrPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				summary.setCidr(pojo);
 				// see if there's a cidr assignment summary for this cidr,
 				// if there is, add that to the result, otherwise add the unassigned cidr to the result
-				CidrAssignmentSummaryQueryFilterPojo casFilter = new CidrAssignmentSummaryQueryFilterPojo();
-				casFilter.setCidr(pojo);
-				if (filter.getUserLoggedIn() != null) {
-					casFilter.setUserLoggedIn(filter.getUserLoggedIn());
-				}
-				CidrAssignmentSummaryQueryResultPojo casResult = this.getCidrAssignmentSummaryForCidr(casFilter);
-				if (casResult != null && casResult.getResults().size() > 0) {
-					info("found an assignment for cidr " + moa.getBits() + "/" + moa.getNetwork());
-					// there is a cidr assignment associated to this cidr, add that to what's returned
-					summary.setAssignmentSummary(casResult.getResults().get(0));
-					if (summary.getAssignmentSummary() == null) {
-						info("I just added a NULL assignment summary.  how is this possible?");
-					}
-				}
-				else {
-					// there are no cidr assignments associated to this cidr, just add the unassigned cidr
-					info("no assignments for cidr " + moa.getBits() + "/" + moa.getNetwork());
-					CidrPojo baseline = new CidrPojo();
-					this.populateCidrPojo(moa, baseline);
-					pojo.setBaseline(baseline);
-					summary.setCidr(pojo);
-				}
+//				CidrAssignmentSummaryQueryFilterPojo casFilter = new CidrAssignmentSummaryQueryFilterPojo();
+//				casFilter.setCidr(pojo);
+//				if (filter.getUserLoggedIn() != null) {
+//					casFilter.setUserLoggedIn(filter.getUserLoggedIn());
+//				}
+//				CidrAssignmentSummaryQueryResultPojo casResult = this.getCidrAssignmentSummaryForCidr(casFilter);
+//				if (casResult != null && casResult.getResults().size() > 0) {
+//					info("found an assignment for cidr " + moa.getBits() + "/" + moa.getNetwork());
+//					// there is a cidr assignment associated to this cidr, add that to what's returned
+//					summary.setAssignmentSummary(casResult.getResults().get(0));
+//					if (summary.getAssignmentSummary() == null) {
+//						info("I just added a NULL assignment summary.  how is this possible?");
+//					}
+//				}
+//				else {
+//					// there are no cidr assignments associated to this cidr, just add the unassigned cidr
+//					info("no assignments for cidr " + moa.getBits() + "/" + moa.getNetwork());
+//					CidrPojo baseline = new CidrPojo();
+//					this.populateCidrPojo(moa, baseline);
+//					pojo.setBaseline(baseline);
+//					summary.setCidr(pojo);
+//				}
 				summaries.add(summary);
 			}
 
@@ -5525,19 +5531,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setSystemId(pojo.getSystemId());
 		moa.setUserNetID(pojo.getUserNetId());
 		moa.setApplicationName(pojo.getApplicationName());
-		moa.setIsSourceOutsideEmory(pojo.getIsSourceOutsideEmory());
+		moa.setSourceOutsideEmory(pojo.getIsSourceOutsideEmory());
 		moa.setTimeRule(pojo.getTimeRule());
-		org.openeai.moa.objects.resources.Date validUntilDate = moa.newValidUntilDate();
-		this.populateDate(validUntilDate, pojo.getValidUntilDate());
-		moa.setValidUntilDate(validUntilDate);
+		if (pojo.getValidUntilDate() != null) {
+			org.openeai.moa.objects.resources.Date validUntilDate = moa.newValidUntilDate();
+			this.populateDate(validUntilDate, pojo.getValidUntilDate());
+			moa.setValidUntilDate(validUntilDate);
+		}
 		moa.setSourceIpAddresses(pojo.getSourceIp());
 		moa.setDestinationIpAddresses(pojo.getDestinationIp());
 		moa.setPorts(pojo.getPorts());
 		moa.setBusinessReason(pojo.getBusinessReason());
-		moa.setIsPatched(pojo.getIsPatched());
-		moa.setIsDefaultPasswdChanged(pojo.getIsDefaultPasswdChanged());
-		moa.setIsAppConsoleACLed(pojo.getIsAppConsoleACLed());
-		moa.setIsHardened(pojo.getIsHardened());
+		moa.setPatched(pojo.getIsPatched());
+		moa.setDefaultPasswdChanged(pojo.getIsDefaultPasswdChanged());
+		moa.setAppConsoleACLed(pojo.getIsAppConsoleACLed());
+		moa.setHardened(pojo.getIsHardened());
 		moa.setPatchingPlan(pojo.getPatchingPlan());
 		if (pojo.getCompliance().size() > 0) {
 			for (String compliance : pojo.getCompliance()) {
@@ -5547,7 +5555,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setOtherCompliance(pojo.getOtherCompliance());
 		moa.setSensitiveDataDesc(pojo.getSensitiveDataDesc());
 		moa.setLocalFirewallRules(pojo.getLocalFirewallRules());
-		moa.setIsDefaultDenyZone(pojo.getIsDefaultDenyZone());
+		moa.setDefaultDenyZone(pojo.getIsDefaultDenyZone());
 		for (String tag : pojo.getTags()) {
 			moa.addTag(tag);
 		}
@@ -5555,6 +5563,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setRequestState(pojo.getRequestState());
 		moa.setRequestItemNumber(pojo.getRequestItemNumber());
 		moa.setRequestItemState(pojo.getRequestItemState());
+		moa.setTechContact(pojo.getTechnicalContact());
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
 	}
@@ -5567,17 +5576,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setSystemId(moa.getSystemId());
 		pojo.setUserNetId(moa.getUserNetID());
 		pojo.setApplicationName(moa.getApplicationName());
-		pojo.setIsSourceOutsideEmory(moa.getIsSourceOutsideEmory());
+		pojo.setIsSourceOutsideEmory(moa.getSourceOutsideEmory());
 		pojo.setTimeRule(moa.getTimeRule());
-		pojo.setValidUntilDate(this.toDateFromDate(moa.getValidUntilDate()));
+		if (moa.getValidUntilDate() != null) {
+			pojo.setValidUntilDate(this.toDateFromDate(moa.getValidUntilDate()));
+		}
 		pojo.setSourceIp(moa.getSourceIpAddresses());
 		pojo.setDestinationIp(moa.getDestinationIpAddresses());
 		pojo.setPorts(moa.getPorts());
 		pojo.setBusinessReason(moa.getBusinessReason());
-		pojo.setIsPatched(moa.getIsPatched());
-		pojo.setIsDefaultPasswdChanged(moa.getIsDefaultPasswdChanged());
-		pojo.setIsAppConsoleACLed(moa.getIsAppConsoleACLed());
-		pojo.setIsHardened(moa.getIsHardened());
+		pojo.setIsPatched(moa.getPatched());
+		pojo.setIsDefaultPasswdChanged(moa.getDefaultPasswdChanged());
+		pojo.setIsAppConsoleACLed(moa.getAppConsoleACLed());
+		pojo.setIsHardened(moa.getHardened());
 		pojo.setPatchingPlan(moa.getPatchingPlan());
 		for (String compliance : (List<String>) moa.getCompliance()) {
 			pojo.getCompliance().add(compliance);
@@ -5585,7 +5596,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setOtherCompliance(moa.getOtherCompliance());
 		pojo.setSensitiveDataDesc(moa.getSensitiveDataDesc());
 		pojo.setLocalFirewallRules(moa.getLocalFirewallRules());
-		pojo.setIsDefaultDenyZone(moa.getIsDefaultDenyZone());
+		pojo.setIsDefaultDenyZone(moa.getDefaultDenyZone());
 		for (String tag : (List<String>) moa.getTag()) {
 			pojo.getTags().add(tag);
 		}
@@ -5593,6 +5604,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setRequestState(moa.getRequestState());
 		pojo.setRequestItemNumber(moa.getRequestItemNumber());
 		pojo.setRequestItemState(moa.getRequestItemState());
+		pojo.setTechnicalContact(moa.getTechContact());
 	}
 
 	@Override
@@ -5609,19 +5621,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setSystemId(filter.getSystemId());
 				queryObject.setUserNetID(filter.getUserNetId());
 				queryObject.setApplicationName(filter.getApplicationName());
-				queryObject.setIsSourceOutsideEmory(filter.getIsSourceOutsideEmory());
+				queryObject.setSourceOutsideEmory(filter.getIsSourceOutsideEmory());
 				queryObject.setTimeRule(filter.getTimeRule());
-				org.openeai.moa.objects.resources.Date validUntilDate = queryObject.newValidUntilDate();
-				this.populateDate(validUntilDate, filter.getValidUntilDate());
-				queryObject.setValidUntilDate(validUntilDate);
+				if (filter.getValidUntilDate() != null) {
+					org.openeai.moa.objects.resources.Date validUntilDate = queryObject.newValidUntilDate();
+					this.populateDate(validUntilDate, filter.getValidUntilDate());
+					queryObject.setValidUntilDate(validUntilDate);
+				}
 				queryObject.setSourceIpAddresses(filter.getSourceIp());
 				queryObject.setDestinationIpAddresses(filter.getDestinationIp());
 				queryObject.setPorts(filter.getPorts());
 				queryObject.setBusinessReason(filter.getBusinessReason());
-				queryObject.setIsPatched(filter.getIsPatched());
-				queryObject.setIsDefaultPasswdChanged(filter.getIsDefaultPasswdChanged());
-				queryObject.setIsAppConsoleACLed(filter.getIsAppConsoleACLed());
-				queryObject.setIsHardened(filter.getIsHardened());
+				queryObject.setPatched(filter.getIsPatched());
+				queryObject.setDefaultPasswdChanged(filter.getIsDefaultPasswdChanged());
+				queryObject.setAppConsoleACLed(filter.getIsAppConsoleACLed());
+				queryObject.setHardened(filter.getIsHardened());
 				queryObject.setPatchingPlan(filter.getPatchingPlan());
 				if (filter.getCompliance().size() > 0) {
 					for (String compliance : filter.getCompliance()) {
@@ -5631,7 +5645,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setOtherCompliance(filter.getOtherCompliance());
 				queryObject.setSensitiveDataDesc(filter.getSensitiveDataDesc());
 				queryObject.setLocalFirewallRules(filter.getLocalFirewallRules());
-				queryObject.setIsDefaultDenyZone(filter.getIsDefaultDenyZone());
+				queryObject.setDefaultDenyZone(filter.getIsDefaultDenyZone());
 				for (String tag : filter.getTags()) {
 					queryObject.addTag(tag);
 				}
@@ -5639,6 +5653,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setRequestState(filter.getRequestState());
 				queryObject.setRequestItemNumber(filter.getRequestItemNumber());
 				queryObject.setRequestItemState(filter.getRequestItemState());
+				queryObject.setTechContact(filter.getTechnicalContact());
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();

@@ -33,6 +33,7 @@ public class FirewallExceptionRequestPojo extends SharedObject implements IsSeri
 	String requestState;
 	String requestItemNumber;
 	String requestItemState;
+	String technicalContact;
 	FirewallExceptionRequestPojo baseline;
 	
 	/*
@@ -319,6 +320,14 @@ public class FirewallExceptionRequestPojo extends SharedObject implements IsSeri
 
 	public void setBaseline(FirewallExceptionRequestPojo baseline) {
 		this.baseline = baseline;
+	}
+
+	public String getTechnicalContact() {
+		return technicalContact;
+	}
+
+	public void setTechnicalContact(String technicalContact) {
+		this.technicalContact = technicalContact;
 	}
 
 }

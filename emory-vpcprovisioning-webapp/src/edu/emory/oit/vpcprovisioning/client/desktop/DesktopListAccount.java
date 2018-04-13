@@ -3,14 +3,17 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,7 +39,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -130,15 +132,13 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	    // - view/edit
 	    // - delete
 	    // - view bill summaries?
-	    String anchorText = "View Account";
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-			anchorText = "Maintain Account";
-		}
+	    String anchorText = "View/Maintain Account";
 
 		Anchor maintainAnchor = new Anchor(anchorText);
 		maintainAnchor.addStyleName("productAnchor");
 		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		maintainAnchor.setTitle("View/Maintain selected Account");
+		maintainAnchor.ensureDebugId(anchorText);
 		maintainAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -160,6 +160,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		deleteAnchor.addStyleName("productAnchor");
 		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		deleteAnchor.setTitle("Remove selected Account");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
 		deleteAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -184,6 +185,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		billSummaryAnchor.addStyleName("productAnchor");
 		billSummaryAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		billSummaryAnchor.setTitle("View bill summary for selected Account");
+		billSummaryAnchor.ensureDebugId(billSummaryAnchor.getText());
 		billSummaryAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -294,6 +296,21 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	}
 	private void initAccountListTableColumns(ListHandler<AccountPojo> sortHandler) {
 		GWT.log("initializing ACCOUNT list table columns...");
+		
+		// Checkbox column. This table will uses a checkbox column for selection.
+	    // Alternatively, you can call cellTable.setSelectionEnabled(true) to enable
+	    // mouse selection.
+	    Column<AccountPojo, Boolean> checkColumn = new Column<AccountPojo, Boolean>(
+	        new CheckboxCell(true, false)) {
+	      @Override
+	      public Boolean getValue(AccountPojo object) {
+	        // Get the value from the selection model.
+	        return selectionModel.isSelected(object);
+	      }
+	    };
+	    accountListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+	    accountListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+	    
 		// ACCOUNT id column
 		Column<AccountPojo, String> acctIdColumn = 
 			new Column<AccountPojo, String> (new TextCell()) {

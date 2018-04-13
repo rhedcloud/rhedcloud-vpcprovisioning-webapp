@@ -19,6 +19,7 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -117,11 +118,11 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 				getView().setUserLoggedIn(userLoggedIn);
 				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
-				setFirewallRuleExceptionRequestList(Collections.<FirewallExceptionRequestPojo> emptyList());
+				setFirewallExceptionRequestList(Collections.<FirewallExceptionRequestPojo> emptyList());
 				getView().initPage();
 
 				// Request the firewallRule list now.
-				// TODO: this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
+				// this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
 				// the user enter a VPC id in order to filter the list down.
 				refreshFirewallRuleList(userLoggedIn);
 //				refreshFirewallRuleExceptionRequestList(userLoggedIn);
@@ -179,6 +180,46 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(fw_filter, callback);
 	}
 
+	@Override
+	public void refreshFirewallRuleExceptionRequestList(final UserAccountPojo user) {
+		AsyncCallback<FirewallExceptionRequestQueryResultPojo> callback = new AsyncCallback<FirewallExceptionRequestQueryResultPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+				log.log(Level.SEVERE, "Exception Retrieving FirewallExceptionRequests", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your list of firewall exception requests.  " +
+						"Message from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(FirewallExceptionRequestQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " firewall exception requests for " + result.getFilterUsed());
+				setFirewallExceptionRequestList(result.getResults());
+				// apply authorization mask
+				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+					getView().applyEmoryAWSAuditorMask();
+				}
+				else {
+					// ??
+				}
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+			}
+		};
+		GWT.log("refreshing FirewallExceptionRequest list...");
+		if (fwer_filter == null) {
+			fwer_filter = new FirewallExceptionRequestQueryFilterPojo();
+			fwer_filter.getTags().add(vpc.getVpcId());
+		}
+		VpcProvisioningService.Util.getInstance().getFirewallExceptionRequestsForFilter(fwer_filter, callback);
+	}
+
 	/**
 	 * Set the list of firewallRules.
 	 */
@@ -187,7 +228,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 		eventBus.fireEventFromSource(new FirewallRuleListUpdateEvent(firewallRules), this);
 	}
 
-	private void setFirewallRuleExceptionRequestList(List<FirewallExceptionRequestPojo> firewallRules) {
+	private void setFirewallExceptionRequestList(List<FirewallExceptionRequestPojo> firewallRules) {
 		getView().setFirewallRuleRequests(firewallRules);
 		eventBus.fireEventFromSource(new FirewallRuleRequestListUpdateEvent(firewallRules), this);
 	}
@@ -261,12 +302,6 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			};
 			VpcProvisioningService.Util.getInstance().deleteFirewallRule(firewallRule, callback);
 		}
-	}
-
-	@Override
-	public void refreshFirewallRuleExceptionRequestList(final UserAccountPojo user) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

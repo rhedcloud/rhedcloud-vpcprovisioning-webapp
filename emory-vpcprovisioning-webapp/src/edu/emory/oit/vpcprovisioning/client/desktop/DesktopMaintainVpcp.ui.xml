@@ -168,6 +168,27 @@
 			<g:HorizontalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 						<g:ScrollPanel>
+							<g:VerticalPanel spacing="8" ui:field="adminVP" height="100%">
+								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
+								<g:HorizontalPanel ui:field="addAdminHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addAdminButton" debugId="addAdminButton"
+											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.heading_label}">Administrators associated to this VPC:</g:Label>
+									<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+				</g:cell>
+				<!-- 
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+						<g:ScrollPanel>
 							<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
 								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
 								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
@@ -186,6 +207,7 @@
 							</g:VerticalPanel>
 						</g:ScrollPanel>
 				</g:cell>
+				 -->
 			</g:HorizontalPanel>
 		</g:cell>
 		</g:HorizontalPanel>

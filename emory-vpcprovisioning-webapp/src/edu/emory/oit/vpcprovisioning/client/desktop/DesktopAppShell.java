@@ -9,6 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -49,8 +51,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
-import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
-import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
+import edu.emory.oit.vpcprovisioning.presenter.home.HomePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
@@ -67,12 +69,14 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopAppShell extends ResizeComposite implements AppShell {
 
     Logger log=Logger.getLogger(DesktopAppShell.class.getName());
     ClientFactory clientFactory;
     EventBus eventBus;
+    UserAccountPojo userLoggedIn;
     HashMap<String, List<AWSServicePojo>> awsServices;
     private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -86,9 +90,47 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
+//		mainTabPanel.getTabWidget(4).setVisible(false);
+//		mainTabPanel.getTabWidget(5).setVisible(false);
+		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
+		
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				userLoggedIn = result;
+				if (!userLoggedIn.isLitsAdmin()) {
+//					mainTabPanel.getTabWidget(4).setVisible(false);
+//					mainTabPanel.getTabWidget(5).setVisible(false);
+					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+					mainTabPanel.getTabWidget(5).getParent().setVisible(false);
+					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+						@Override
+						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+							if (event.getItem() == 4 || event.getItem() == 5) {
+								event.cancel();
+							}
+						}
+					});
+				}
+				else {
+//					mainTabPanel.getTabWidget(4).setVisible(true);
+//					mainTabPanel.getTabWidget(5).setVisible(true);
+					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+					mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 		
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 			@Override
@@ -104,9 +146,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		};
 		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 
-		HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
-		hp2.addStyleName("content");
-		homeContentContainer.setWidget(hp2);
+//		HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
+//		hp2.addStyleName("content");
+//		homeContentContainer.setWidget(hp2);
+		HomeView homeView = clientFactory.getHomeView();
+		homeContentContainer.add(homeView);
 
 //		ListAccountView listAccountView = clientFactory.getListAccountView();
 //		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
@@ -152,7 +196,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
-//	@UiField DeckLayoutPanel elasticIpContentContainer;
+	@UiField DeckLayoutPanel elasticIpContentContainer;
 //	@UiField DeckLayoutPanel firewallContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
 
@@ -170,11 +214,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	 * A boolean indicating that we have not yet seen the first content widget.
 	 */
 	private boolean firstCidrContentWidget = true;
-	private boolean firstCidrAssignmentContentWidget = true;
+//	private boolean firstCidrAssignmentContentWidget = true;
 	private boolean firstAccountContentWidget = true;
 	private boolean firstVpcContentWidget = true;
 	private boolean firstVpcpContentWidget = true;
-//	private boolean firstElasticIpContentWidget = true;
+	private boolean firstElasticIpContentWidget = true;
 //	private boolean firstFirewallContentWidget = true;
 	private boolean firstNotificationContentWidget = true;
 	private boolean firstServicesContentWidget = true;
@@ -328,9 +372,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
 			case 0:
-				HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
-				hp2.addStyleName("content");
-				homeContentContainer.setWidget(hp2);
+//				HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
+//				hp2.addStyleName("content");
+//				homeContentContainer.setWidget(hp2);
+				firstHomeContentWidget = true;
+				homeContentContainer.clear();
+				HomeView view = clientFactory.getHomeView();
+				homeContentContainer.setWidget(view);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME);
 				break;
 			case 1:
 				GWT.log("need to get Account Maintenance Content.");
@@ -346,17 +395,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
 				break;
 			case 2:
-				GWT.log("need to get CIDR Maintentance Content.");
-				firstCidrContentWidget = true;
-				cidrContentContainer.clear();
-				ListCidrView listCidrView = clientFactory.getListCidrView();
-				MaintainCidrView maintainCidrView = clientFactory.getMaintainCidrView();
-				cidrContentContainer.add(listCidrView);
-				cidrContentContainer.add(maintainCidrView);
-				cidrContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
-				break;
-			case 3:
 				GWT.log("need to get VPC Maintentenance content.");
 				firstVpcContentWidget = true;
 				vpcContentContainer.clear();
@@ -367,7 +405,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
 				break;
-			case 4:
+			case 3:
 				GWT.log("need to get VPCP Maintentenance content.");
 				firstVpcpContentWidget = true;
 				vpcpContentContainer.clear();
@@ -380,17 +418,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
 				break;
-//			case 5:
-//				GWT.log("need to get Elastic IP Maintentenance content.");
-//				firstElasticIpContentWidget = true;
-//				elasticIpContentContainer.clear();
-//				ListElasticIpView listEipView = clientFactory.getListElasticIpView();
-//				MaintainElasticIpView maintainEipView = clientFactory.getMaintainElasticIpView();
-//				elasticIpContentContainer.add(listEipView);
-//				elasticIpContentContainer.add(maintainEipView);
-//				elasticIpContentContainer.setAnimationDuration(500);
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
-//				break;
+			case 4:
+				GWT.log("need to get CIDR Maintentance Content.");
+				firstCidrContentWidget = true;
+				cidrContentContainer.clear();
+				ListCidrView listCidrView = clientFactory.getListCidrView();
+				MaintainCidrView maintainCidrView = clientFactory.getMaintainCidrView();
+				cidrContentContainer.add(listCidrView);
+				cidrContentContainer.add(maintainCidrView);
+				cidrContentContainer.setAnimationDuration(500);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
+				break;
+			case 5:
+				GWT.log("need to get Elastic IP Maintentenance content.");
+				firstElasticIpContentWidget = true;
+				elasticIpContentContainer.clear();
+				ListElasticIpView listEipView = clientFactory.getListElasticIpView();
+				MaintainElasticIpView maintainEipView = clientFactory.getMaintainElasticIpView();
+				elasticIpContentContainer.add(listEipView);
+				elasticIpContentContainer.add(maintainEipView);
+				elasticIpContentContainer.setAnimationDuration(500);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
+				break;
 //			case 6:
 //				GWT.log("need to get Firewall Maintentenance content.");
 //				firstFirewallContentWidget = true;
@@ -407,6 +456,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void setWidget(IsWidget w) {
+		if (w instanceof HomePresenter) {
+			homeContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstHomeContentWidget) {
+				firstHomeContentWidget = false;
+				homeContentContainer.animate(0);
+			}
+			return;
+		}
+
 		if (w instanceof ListAccountPresenter || 
 			w instanceof MaintainAccountPresenter ||
 			w instanceof BillSummaryPresenter) {
@@ -454,16 +513,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-//		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
-//			elasticIpContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstElasticIpContentWidget) {
-//				firstElasticIpContentWidget = false;
-//				elasticIpContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//
+		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
+			elasticIpContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstElasticIpContentWidget) {
+				firstElasticIpContentWidget = false;
+				elasticIpContentContainer.animate(0);
+			}
+			return;
+		}
+
 //		if (w instanceof ListFirewallRulePresenter) {
 //			firewallContentContainer.setWidget(w);
 //			// Do not animate the first time we show a widget.

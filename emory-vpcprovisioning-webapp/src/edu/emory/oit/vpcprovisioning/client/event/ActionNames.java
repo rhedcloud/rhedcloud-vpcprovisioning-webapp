@@ -56,6 +56,7 @@ public interface ActionNames {
 	final String SERVICE_EDITING_CANCELED = "svcEditingCanceled";
 	final String NOTIFICATION_EDITING_CANCELED = "notificationEditingCanceled";
 
+	final String GO_HOME = "goHome";
 	final String GO_HOME_FIREWALL_RULE = "goHomeFirewallRule";
 	final String GO_BACK_FIREWALL_RULE = "goBackFirewallRule";
 	final String GO_HOME_VPCP = "goHomeVpcp";

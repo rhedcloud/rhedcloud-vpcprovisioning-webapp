@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -19,7 +20,6 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -31,7 +31,6 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -71,6 +70,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	@UiField Button cancelButton;
 	
 	@UiField TextBox netIdTB;
+	@UiField TextBox technicalContactTB;
 	@UiField TextBox applicationNameTB;
 	@UiField CheckBox isSourceOutsideEmoryCB;
 	@UiField ListBox timeRuleLB;
@@ -101,6 +101,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	@UiHandler("okayButton")
 	void okayButtonClicked(ClickEvent e) {
 		presenter.getFirewallExceptionRequest().setUserNetId(netIdTB.getText());
+		presenter.getFirewallExceptionRequest().setTechnicalContact(technicalContactTB.getText());
 		presenter.getFirewallExceptionRequest().setApplicationName(applicationNameTB.getText());
 		presenter.getFirewallExceptionRequest().setIsSourceOutsideEmory(isSourceOutsideEmoryCB.getValue() ? "Yes" : "No");
 		presenter.getFirewallExceptionRequest().setTimeRule(timeRuleLB.getSelectedValue());
@@ -118,7 +119,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		presenter.getFirewallExceptionRequest().setSensitiveDataDesc(sensitiveDataDescriptionTA.getText());
 		presenter.getFirewallExceptionRequest().setLocalFirewallRules(localFirewallRulesDescriptionTA.getText());
 		presenter.getFirewallExceptionRequest().setIsDefaultDenyZone(isHardenedCB.getValue() ? "Yes" : "No");
-		// TODO: tags
+		// tags are added to the FirewallExceptionRequest as they're added by the user
 		presenter.saveFirewallExceptionRequest();
 	}
 	
@@ -136,8 +137,11 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
-		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	netIdTB.setFocus(true);
+	        }
+	    });
 	}
 
 	@Override
@@ -192,6 +196,9 @@ Tag+, - tags for this request.  wsdl: u_tag
 		FirewallExceptionRequestPojo fer = presenter.getFirewallExceptionRequest();
 		if (fer.getUserNetId() == null || fer.getUserNetId().length() == 0) {
 			fields.add(netIdTB);
+		}
+		if (fer.getTechnicalContact() == null || fer.getTechnicalContact().length() == 0) {
+			fields.add(technicalContactTB);
 		}
 		if (fer.getApplicationName() == null || fer.getApplicationName().length() == 0) {
 			fields.add(applicationNameTB);
@@ -248,6 +255,7 @@ Tag+, - tags for this request.  wsdl: u_tag
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		fields.add(netIdTB);
+		fields.add(technicalContactTB);
 		fields.add(applicationNameTB);
 		fields.add(complianceClassLB);
 		fields.add(isSourceOutsideEmoryCB);

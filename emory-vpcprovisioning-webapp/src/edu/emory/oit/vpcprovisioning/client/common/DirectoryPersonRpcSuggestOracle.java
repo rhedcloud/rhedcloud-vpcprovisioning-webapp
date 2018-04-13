@@ -51,17 +51,7 @@ public class DirectoryPersonRpcSuggestOracle extends SuggestOracle {
 			DirectoryPersonQueryFilterPojo filter = new DirectoryPersonQueryFilterPojo();
 			filter.setSearchString(request.getQuery());
 			VpcProvisioningService.Util.getInstance().getDirectoryPersonsForFilter(filter, srvrCallback);
-//			WebEaseService.Util.getInstance().findSeizureDescriptions(request.getQuery(), srvrCallback);
 		}
-//		else if (type.equals(Constants.SUGGESTION_TYPE_MEDICATION_NAME)) {
-//			WebEaseService.Util.getInstance().findMedicationNames(request.getQuery(), srvrCallback);
-//		}
-//		else if (type.equals(Constants.SUGGESTION_TYPE_MEDICATION_PURPOSE)) {
-//			WebEaseService.Util.getInstance().findMedicationPurposes(request.getQuery(), srvrCallback);
-//		}
-//		else if (type.equals(Constants.SUGGESTION_TYPE_REFERRAL)) {
-//			WebEaseService.Util.getInstance().findReferrals(request.getQuery(), srvrCallback);
-//		}
 		else {
 			// invalid type...
 			log.info("Invalid suggestion type");

@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel width="100%" spacing="20">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:HorizontalPanel spacing="8">
+					<g:Image url="images/ajax-loader.gif"/>
+				</g:HorizontalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:HTML addStyleNames="{style.introHeading}">Virtual Private Cloud Provisioning (VPCP) Console Home</g:HTML>
+		<g:HTML addStyleNames="{style.body}">This is where we'll give a 
+		welcome to the user and show them some stats about the stuff 
+		they might be interested in.<br/><br/>
+		For example, a listing of their accounts with links to those or something....</g:HTML>
+	</g:VerticalPanel>
+</ui:UiBinder> 

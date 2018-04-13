@@ -11,6 +11,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
@@ -44,6 +45,10 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 		public SpeedChartPojo getSpeedType();
 		public void logMessageOnServer(final String message);
 		public void setSelectedAccount(AccountPojo account);
+		public void setDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getDirectoryPerson();
+		public void addAdminDirectoryPersonToVpcp();
+//		public void getAdminsForAccount();
 	}
 
 	/**
@@ -93,4 +98,5 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 	Widget getSpeedTypeWidget();
 	void setSpeedTypeConfirmed(boolean confirmed);
 	boolean isSpeedTypeConfirmed();
+	void addAdminNetId(String netId);
 }

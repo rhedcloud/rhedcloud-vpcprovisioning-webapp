@@ -13,10 +13,11 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -26,20 +27,21 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 
@@ -56,6 +58,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	int removeButtonColumnNum = 1;
 	String speedTypeBeingTyped=null;
 	boolean speedTypeConfirmed = false;
+	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 
 	private static DesktopMaintainVpcpUiBinder uiBinder = GWT.create(DesktopMaintainVpcpUiBinder.class);
 
@@ -88,10 +91,15 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField TextArea vpcpReqPurposeTA;
 
 	// admins (net ids)
-	@UiField VerticalPanel netIdVP;
-	@UiField TextBox addNetIdTF;
-	@UiField Button addNetIdButton;
-	@UiField FlexTable netIdTable;
+//	@UiField VerticalPanel netIdVP;
+//	@UiField TextBox addNetIdTF;
+//	@UiField Button addNetIdButton;
+//	@UiField FlexTable netIdTable;
+
+	@UiField VerticalPanel adminVP;
+	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
+	@UiField Button addAdminButton;
+	@UiField FlexTable adminTable;
 
 	@UiHandler ("vpcpReqSpeedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -127,16 +135,29 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
 	}
 
-	@UiHandler ("addNetIdTF")
-	void addUserTFKeyPressed(KeyPressEvent e) {
+//	@UiHandler ("addNetIdTF")
+//	void addUserTFKeyPressed(KeyPressEvent e) {
+//        int keyCode = e.getNativeEvent().getKeyCode();
+//        if (keyCode == KeyCodes.KEY_ENTER) {
+//    		addNetIdToVpcp(addNetIdTF.getText());
+//        }
+//	}
+//	@UiHandler ("addNetIdButton")
+//	void addUserButtonClick(ClickEvent e) {
+//		addNetIdToVpcp(addNetIdTF.getText());
+//	}
+	@UiHandler ("directoryLookupSB")
+	void directoryLookupSBKeyPressed(KeyPressEvent e) {
         int keyCode = e.getNativeEvent().getKeyCode();
         if (keyCode == KeyCodes.KEY_ENTER) {
-    		addNetIdToVpcp(addNetIdTF.getText());
+//    		addNetIdToVpcp(addNetIdTF.getText());
+    		presenter.addAdminDirectoryPersonToVpcp();
         }
 	}
-	@UiHandler ("addNetIdButton")
-	void addUserButtonClick(ClickEvent e) {
-		addNetIdToVpcp(addNetIdTF.getText());
+	@UiHandler ("addAdminButton")
+	void addAdminButtonClick(ClickEvent e) {
+		presenter.addAdminDirectoryPersonToVpcp();
+//		addNetIdToVpcp(addNetIdTF.getText());
 	}
 	@UiHandler ("cancelButton")
 	void cancelButtonClicked(ClickEvent e) {
@@ -183,6 +204,19 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		});
 	}
 
+	private void registerHandlers() {
+		directoryLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (dp_suggestion.getDirectoryPerson() != null) {
+					presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
+					directoryLookupSB.setTitle(presenter.getDirectoryPerson().toString());
+				}
+			}
+		});
+	}
+
 	@Override
 	public void setInitialFocus() {
 		if (editing) {
@@ -204,23 +238,23 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	/*
 	 * Admin net id helper methods
 	 */
-	private void addNetIdToVpcp(String netId) {
-		if (netId != null && netId.trim().length() > 0) {
-			final String trimmedNetId = netId.trim().toLowerCase();
-			if (presenter.getVpcRequisition().getCustomerAdminNetIdList().contains(trimmedNetId)) {
-				showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
-			}
-			else {
-				presenter.getVpcRequisition().getCustomerAdminNetIdList().add(trimmedNetId);
-				addNetIdToPanel(trimmedNetId);
-			}
-		}
-		else {
-			showStatus(addNetIdButton, "Please enter a valid net id.");
-		}
-	}
+//	private void addNetIdToVpcp(String netId) {
+//		if (netId != null && netId.trim().length() > 0) {
+//			final String trimmedNetId = netId.trim().toLowerCase();
+//			if (presenter.getVpcRequisition().getCustomerAdminNetIdList().contains(trimmedNetId)) {
+//				showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
+//			}
+//			else {
+//				presenter.getVpcRequisition().getCustomerAdminNetIdList().add(trimmedNetId);
+//				addNetIdToPanel(trimmedNetId);
+//			}
+//		}
+//		else {
+//			showStatus(addNetIdButton, "Please enter a valid net id.");
+//		}
+//	}
 	private void addNetIdToPanel(final String netId) {
-		int numRows = netIdTable.getRowCount();
+		int numRows = adminTable.getRowCount();
 		final Label netIdLabel = new Label(netId);
 		netIdLabel.addStyleName("emailLabel");
 		netIdLabel.addMouseOverHandler(new MouseOverHandler() {
@@ -239,11 +273,11 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			@Override
 			public void onClick(ClickEvent event) {
 				presenter.getVpcRequisition().getCustomerAdminNetIdList().remove(netId);
-				netIdTable.remove(netIdLabel);
-				netIdTable.remove(removeNetIdButton);
+				adminTable.remove(netIdLabel);
+				adminTable.remove(removeNetIdButton);
 			}
 		});
-		addNetIdTF.setText("");
+		directoryLookupSB.setText("");
 		if (numRows > 6) {
 			if (netIdRowNum > 5) {
 				netIdRowNum = 0;
@@ -257,12 +291,12 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		else {
 			netIdRowNum = numRows;
 		}
-		netIdTable.setWidget(netIdRowNum, netIdColumnNum, netIdLabel);
-		netIdTable.setWidget(netIdRowNum, removeButtonColumnNum, removeNetIdButton);
+		adminTable.setWidget(netIdRowNum, netIdColumnNum, netIdLabel);
+		adminTable.setWidget(netIdRowNum, removeButtonColumnNum, removeNetIdButton);
 	}
 
 	void initializeNetIdPanel() {
-		netIdTable.removeAllRows();
+		adminTable.removeAllRows();
 		if (presenter.getVpcRequisition() != null) {
 			GWT.log("Adding " + presenter.getVpcRequisition().getCustomerAdminNetIdList().size() + " net ids to the panel (update).");
 			for (String netId : presenter.getVpcRequisition().getCustomerAdminNetIdList()) {
@@ -321,6 +355,9 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@Override
 	public void initPage() {
 		this.setFieldViolations(false);
+		this.registerHandlers();
+		directoryLookupSB.setText("");
+		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
 		if (editing) {
 			GWT.log("maintain VPCP view initPage.  editing");
 			// hide generate grid, show maintain grid
@@ -458,7 +495,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		}
 		if (vpcr.getCustomerAdminNetIdList() == null || vpcr.getCustomerAdminNetIdList().size() == 0) {
 			this.setFieldViolations(true);
-			fields.add(addNetIdTF);
+			fields.add(directoryLookupSB);
 		}
 		if (vpcr.getType() == null || vpcr.getType().length() == 0) {
 			this.setFieldViolations(true);
@@ -476,7 +513,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		fields.add(vpcpReqRequestorNetIdTB);
 		fields.add(vpcpReqOwnerNetIdTB);
 		fields.add(vpcpReqSpeedTypeTB);
-		fields.add(addNetIdTF);
+		fields.add(directoryLookupSB);
 		fields.add(vpcTypeLB);
 		fields.add(vpcpReqComplianceClassLB);
 		this.resetFieldStyles(fields);
@@ -506,5 +543,9 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@Override
 	public boolean isSpeedTypeConfirmed() {
 		return this.speedTypeConfirmed;
+	}
+	@Override
+	public void addAdminNetId(String netId) {
+		this.addNetIdToPanel(netId);
 	}
 }

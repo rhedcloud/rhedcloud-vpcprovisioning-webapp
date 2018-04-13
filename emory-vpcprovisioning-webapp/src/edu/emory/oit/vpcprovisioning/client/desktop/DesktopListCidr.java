@@ -3,8 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
-import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -14,6 +13,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -22,7 +22,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -40,7 +39,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListCidr extends ViewImplBase implements ListCidrView {
@@ -107,6 +105,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		assignAnchor.addStyleName("productAnchor");
 		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		assignAnchor.setTitle("Assign selected CIDR");
+		assignAnchor.ensureDebugId(assignAnchor.getText());
 		assignAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -133,6 +132,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		unassignAnchor.addStyleName("productAnchor");
 		unassignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		unassignAnchor.setTitle("Unassign selected CIDR");
+		unassignAnchor.ensureDebugId(unassignAnchor.getText());
 		unassignAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -159,6 +159,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		editAssignmentAnchor.addStyleName("productAnchor");
 		editAssignmentAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		editAssignmentAnchor.setTitle("Edit selected CIDR");
+		editAssignmentAnchor.ensureDebugId(editAssignmentAnchor.getText());
 		editAssignmentAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -239,6 +240,17 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	}
 	private void initCidrListTableColumns(ListHandler<CidrSummaryPojo> sortHandler) {
 		GWT.log("initializing CIDR list table columns...");
+	    Column<CidrSummaryPojo, Boolean> checkColumn = new Column<CidrSummaryPojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(CidrSummaryPojo object) {
+		        // Get the value from the selection model.
+		        return cidrSelectionModel.isSelected(object);
+		      }
+		    };
+		    cidrListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		    cidrListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
 		// CIDR network column
 		Column<CidrSummaryPojo, String> networkColumn = 
 			new Column<CidrSummaryPojo, String> (new TextCell()) {

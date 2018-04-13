@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.ButtonCell;
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -11,6 +12,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -34,6 +36,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -78,30 +81,56 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(1, 1);
+	    Grid grid = new Grid(2, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
-		Anchor assignAnchor = new Anchor("Remove VPC");
-		assignAnchor.addStyleName("productAnchor");
-		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		assignAnchor.setTitle("Remove selected VPC");
-		assignAnchor.addClickHandler(new ClickHandler() {
+	    String anchorText = "View/Maintain VPC";
+
+		Anchor maintainAnchor = new Anchor(anchorText);
+		maintainAnchor.addStyleName("productAnchor");
+		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		maintainAnchor.setTitle("View/Maintain selected VPC");
+		maintainAnchor.ensureDebugId(anchorText);
+		maintainAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
 				VpcPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					// just use a popup here and not try to show the "normal" CidrAssignment
-					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
 				}
 			}
 		});
-		grid.setWidget(0, 0, assignAnchor);
+		grid.setWidget(0, 0, maintainAnchor);
+
+		Anchor deleteAnchor = new Anchor("Remove VPC");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Remove selected VPC");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				VpcPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+						presenter.deleteVpc(m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this vpc.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -170,6 +199,18 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	}
 	private void initVpcListTableColumns(ListHandler<VpcPojo> sortHandler) {
 		GWT.log("initializing VPC list table columns...");
+		
+	    Column<VpcPojo, Boolean> checkColumn = new Column<VpcPojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(VpcPojo object) {
+		        // Get the value from the selection model.
+		        return selectionModel.isSelected(object);
+		      }
+		    };
+		    vpcListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		    vpcListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
 		// Account id column
 		Column<VpcPojo, String> acctIdColumn = 
 			new Column<VpcPojo, String> (new TextCell()) {
@@ -290,63 +331,63 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		vpcListTable.addColumn(updateTimeColumn, "Update Time");
 
 		// delete row column
-		Column<VpcPojo, String> deleteRowColumn = new Column<VpcPojo, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(VpcPojo object) {
-				return "Delete";
-			}
-		};
-		deleteRowColumn.setCellStyleNames("glowing-border");
-		vpcListTable.addColumn(deleteRowColumn, "");
-		vpcListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
-		deleteRowColumn
-		.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
-			@Override
-			public void update(int index, final VpcPojo vpc,
-					String value) {
-
-				if (userLoggedIn.isAdminForAccount(vpc.getAccountId()) ||
-					userLoggedIn.isLitsAdmin()) {
-					
-					GWT.log(userLoggedIn.getEppn() + " is an admin");
-					presenter.deleteVpc(vpc);
-				}
-				else {
-					showMessageToUser("You are not authorized to perform this action for this VPC.");
-				}
-			}
-		});
+//		Column<VpcPojo, String> deleteRowColumn = new Column<VpcPojo, String>(
+//				new ButtonCell()) {
+//			@Override
+//			public String getValue(VpcPojo object) {
+//				return "Delete";
+//			}
+//		};
+//		deleteRowColumn.setCellStyleNames("glowing-border");
+//		vpcListTable.addColumn(deleteRowColumn, "");
+//		vpcListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
+//		deleteRowColumn
+//		.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
+//			@Override
+//			public void update(int index, final VpcPojo vpc,
+//					String value) {
+//
+//				if (userLoggedIn.isAdminForAccount(vpc.getAccountId()) ||
+//					userLoggedIn.isLitsAdmin()) {
+//					
+//					GWT.log(userLoggedIn.getEppn() + " is an admin");
+//					presenter.deleteVpc(vpc);
+//				}
+//				else {
+//					showMessageToUser("You are not authorized to perform this action for this VPC.");
+//				}
+//			}
+//		});
 
 		// edit row column
-		Column<VpcPojo, String> editRowColumn = new Column<VpcPojo, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(final VpcPojo object) {
-				if (userLoggedIn.isAdminForAccount(object.getAccountId()) ||
-						userLoggedIn.isLitsAdmin()) {
-					GWT.log(userLoggedIn.getEppn() + " is an admin");
-					return "Edit";
-				}
-				else {
-					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-					return "View";
-				}
-			}
-		};
-		editRowColumn.setCellStyleNames("glowing-border");
-		vpcListTable.addColumn(editRowColumn, "");
-		vpcListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
-		editRowColumn.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
-			@Override
-			public void update(int index, final VpcPojo vpc,
-					String value) {
-				
-				// fire MAINTAIN_VPC event passing the vpc to be maintained
-				GWT.log("[DesktopListVpc] editing VPC: " + vpc.getVpcId());
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, vpc);
-			}
-		});
+//		Column<VpcPojo, String> editRowColumn = new Column<VpcPojo, String>(
+//				new ButtonCell()) {
+//			@Override
+//			public String getValue(final VpcPojo object) {
+//				if (userLoggedIn.isAdminForAccount(object.getAccountId()) ||
+//						userLoggedIn.isLitsAdmin()) {
+//					GWT.log(userLoggedIn.getEppn() + " is an admin");
+//					return "Edit";
+//				}
+//				else {
+//					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
+//					return "View";
+//				}
+//			}
+//		};
+//		editRowColumn.setCellStyleNames("glowing-border");
+//		vpcListTable.addColumn(editRowColumn, "");
+//		vpcListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
+//		editRowColumn.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
+//			@Override
+//			public void update(int index, final VpcPojo vpc,
+//					String value) {
+//				
+//				// fire MAINTAIN_VPC event passing the vpc to be maintained
+//				GWT.log("[DesktopListVpc] editing VPC: " + vpc.getVpcId());
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, vpc);
+//			}
+//		});
 	}
 
 	@Override
