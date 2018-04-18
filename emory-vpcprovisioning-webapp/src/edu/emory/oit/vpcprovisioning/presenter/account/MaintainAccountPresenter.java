@@ -300,7 +300,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		return false;
 	}
 
-	private MaintainAccountView getView() {
+	public MaintainAccountView getView() {
 		return clientFactory.getMaintainAccountView();
 	}
 

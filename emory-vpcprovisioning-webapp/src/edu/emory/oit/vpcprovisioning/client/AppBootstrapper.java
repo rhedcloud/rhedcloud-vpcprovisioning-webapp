@@ -22,6 +22,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
+import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPlace;
@@ -299,7 +300,30 @@ public class AppBootstrapper {
 				}
 				else {
 					GWT.log("bootstrap, NOT passing a cidr to create cidr assignment");
-					placeController.goTo(MaintainCidrAssignmentPlace.getMaintainCidrAssignmentPlace());
+					final DialogBox db = new DialogBox();
+					db.setText("Create CIDR Assignment");
+					db.setGlassEnabled(true);
+					db.center();
+					final MaintainCidrAssignmentPresenter presenter = new MaintainCidrAssignmentPresenter(clientFactory);
+					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							db.hide();
+						}
+					});
+					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							if (!presenter.getView().hasFieldViolations()) {
+								db.hide();
+							}
+						}
+					});
+					presenter.start(eventBus);
+					db.setWidget(presenter);
+					db.show();
+					db.center();
+//					placeController.goTo(MaintainCidrAssignmentPlace.getMaintainCidrAssignmentPlace());
 				}
 			}
 		});
@@ -410,6 +434,39 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(MaintainAccountPlace.createMaintainAccountPlace(event.getAccount()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_ACCOUNT_FROM_HOME, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("bootstrap, passing a Account (edit)");
+				final DialogBox db = new DialogBox();
+				db.setText("Maintain Account");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainAccountPresenter presenter = new MaintainAccountPresenter(clientFactory, event.getAccount());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+						ActionEvent.fire(eventBus, ActionNames.GO_HOME);
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+							ActionEvent.fire(eventBus, ActionNames.GO_HOME);
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+//				placeController.goTo(MaintainAccountPlace.createMaintainAccountPlace(event.getAccount()));
 			}
 		});
 

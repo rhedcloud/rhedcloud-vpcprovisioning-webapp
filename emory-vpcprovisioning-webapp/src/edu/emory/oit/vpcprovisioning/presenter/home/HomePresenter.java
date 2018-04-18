@@ -6,7 +6,11 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class HomePresenter extends PresenterBase implements HomeView.Presenter {
@@ -32,8 +36,11 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your user information.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
@@ -41,6 +48,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
 				getView().initPage();
+				getView().setAccountRoleList(user.getAccountRoles());
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 				getView().setFieldViolations(false);
@@ -91,6 +99,40 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
 		this.userLoggedIn = userLoggedIn;
+	}
+
+	@Override
+	public void viewAccountForId(String accountId) {
+		AsyncCallback<AccountQueryResultPojo> callback = new AsyncCallback<AccountQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving account information.  " +
+						"Message from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(AccountQueryResultPojo result) {
+				getView().hidePleaseWaitPanel();
+				if (result != null) {
+					if (result.getResults().size() == 1) {
+						ActionEvent.fire(getEventBus(), ActionNames.MAINTAIN_ACCOUNT_FROM_HOME, result.getResults().get(0));
+					}
+					else {
+						// error, incorrect number of accounts returned
+					}
+				}
+				else {
+					// error
+				}
+			}
+		};
+		getView().showPleaseWaitPanel();
+		AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
+		filter.setAccountId(accountId);
+		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, callback);
 	}
 
 }

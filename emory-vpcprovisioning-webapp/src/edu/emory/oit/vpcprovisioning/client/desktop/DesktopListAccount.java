@@ -145,8 +145,6 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				actionsPopup.hide();
 				AccountPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					// just use a popup here and not try to show the "normal" CidrAssignment
-					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, m);
 				}
 				else {

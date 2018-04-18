@@ -172,6 +172,7 @@ import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.PersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.PersonalNamePojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
@@ -846,6 +847,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		FullPersonPojo fullPerson = fp_result.getResults().get(0);
 		user.setPublicId(fullPerson.getPublicId());
+		user.setPersonalName(fullPerson.getPerson().getPersonalName());
+		info("[getRolesForUser] first name is: " + user.getPersonalName().getFirstName());
+		info("[getRolesForUser] last name is: " + user.getPersonalName().getLastName());
+		info("[getRolesForUser] composite name is: " + user.getPersonalName().getCompositeName());
 		
 		try {
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
@@ -868,6 +873,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("[getRolesForUser] null RoleAssignmentQueryResultPojo.  This is bad.");
 				return;
 			}
+			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 				/*
 				<RoleAssignment>
@@ -5189,6 +5195,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private void populatePersonPojo(Person moa,
 			PersonPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
+
+		//PublicId, PersonalName, LocalizedNameList?, SSN?, BirthDay?, BirthMonth?, BirthYear?, 
+		// DriversLicense?, NationalIdCard*, Gender?, Association*, Eligibility*, Tag*, 
+		// FallbackContact*,Phone*,Email*, Prsni, Location?, DirectoryTitle?, EmailRestricted?, 
+		// PhoneRestricted?, LocationRestricted?)>
+
+		pojo.setPublicId(moa.getPublicId());
+		if (moa.getPersonalName() != null) {
+			/*
+			<!ELEMENT PersonalName (LastName, FirstName, MiddleName?, NameSuffix?, Prefix?, Suffix?, CompositeName?)>
+			<!ATTLIST PersonalName
+				type CDATA #REQUIRED
+				order (east | west) #IMPLIED
+				noFirstName (true | false) #IMPLIED
+			>
+			*/
+			PersonalNamePojo pn = new PersonalNamePojo();
+			pn.setLastName(moa.getPersonalName().getLastName());
+			pn.setFirstName(moa.getPersonalName().getFirstName());
+			pn.setCompositeName(moa.getPersonalName().getCompositeName());
+			pojo.setPersonalName(pn);
+		}
 	}
 	private void populateNetworkIdentityPojo(NetworkIdentity moa,
 			NetworkIdentityPojo pojo) throws XmlEnterpriseObjectException,

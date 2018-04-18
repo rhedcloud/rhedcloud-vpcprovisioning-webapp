@@ -13,9 +13,15 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">Virtual Private Cloud Provisioning (VPCP) Console Home</g:HTML>
-		<g:HTML addStyleNames="{style.body}">This is where we'll give a 
+		<g:HTML ui:field="introBodyHTML" addStyleNames="{style.body}">Welcome, FIRST_NAME, this is where we'll give a 
 		welcome to the user and show them some stats about the stuff 
 		they might be interested in.<br/><br/>
 		For example, a listing of their accounts with links to those or something....</g:HTML>
+		<g:VerticalPanel ui:field="accountRolePanel">
+		<!-- TODO: some sort of table to list the accounts and roles 
+			 they have for those accounts.  May be dynamically built in 
+			 the view
+		 -->
+		</g:VerticalPanel>
 	</g:VerticalPanel>
 </ui:UiBinder> 

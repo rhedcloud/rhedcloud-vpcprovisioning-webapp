@@ -26,8 +26,13 @@ public class CidrSummaryPojo extends SharedObject implements IsSerializable, Com
 
 	@Override
 	public int compareTo(CidrSummaryPojo o) {
-		if (this.getCidr() != null) {
-			return o.getCidr().getCreateTime().compareTo(this.getCidr().getCreateTime());
+		if (this.getCidr() != null && o.getCidr() != null) {
+			if (this.getCidr().getCreateTime() != null && o.getCidr().getCreateTime() != null) {
+				return o.getCidr().getCreateTime().compareTo(this.getCidr().getCreateTime());
+			}
+			else {
+				return 0;
+			}
 		}
 		else {
 			if (o.getAssignmentSummary() == null) {

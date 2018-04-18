@@ -12,7 +12,6 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -49,6 +48,8 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public void getAdminsForAccount();
 		public List<RoleAssignmentSummaryPojo> getRoleAssignmentSummaries();
 		public void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentSummaryPojo roleAssignmentSummary);
+		public MaintainAccountView getView();
+
 	}
 
 	/**

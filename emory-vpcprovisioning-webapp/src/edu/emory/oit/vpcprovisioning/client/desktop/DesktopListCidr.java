@@ -201,7 +201,6 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	    cidrListPager.setDisplay(cidrListTable);
 	}
 	private Widget initializeCidrListTable() {
-		GWT.log("initializing CIDR list table...");
 		cidrListTable.setTableLayoutFixed(false);
 		cidrListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
@@ -214,7 +213,6 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		cidrDataProvider.getList().clear();
 		cidrDataProvider.getList().addAll(this.cidrSummaryList);
 		
-//	    cidrMultiSelectionModel = new MultiSelectionModel<CidrPojo>(CidrPojo.KEY_PROVIDER);
 		cidrSelectionModel = new SingleSelectionModel<CidrSummaryPojo>(CidrSummaryPojo.KEY_PROVIDER);
 		cidrListTable.setSelectionModel(cidrSelectionModel);
 	    
@@ -222,9 +220,6 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
 	    		CidrSummaryPojo m = cidrSelectionModel.getSelectedObject();
-//	    		Set<CidrPojo> ms = cidrMultiSelectionModel.getSelectedSet();
-//	    		GWT.log("there are " + ms.size() + " cidrs selected");
-//	    		GWT.log("Selected cidr is: " + m.getCidrId());
 	    	}
 	    });
 	    
@@ -369,10 +364,20 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 			@Override
 			public String getValue(CidrSummaryPojo object) {
 				if (object.getCidr() != null) {
-					return dateFormat.format(object.getCidr().getCreateTime());
+					if (object.getCidr().getCreateTime() != null) {
+						return dateFormat.format(object.getCidr().getCreateTime());
+					}
+					else {
+						return "Unknown";
+					}
 				}
 				else {
-					return dateFormat.format(object.getAssignmentSummary().getCidrAssignment().getCreateTime());
+					if (object.getAssignmentSummary().getCidrAssignment().getCreateTime() != null) {
+						return dateFormat.format(object.getAssignmentSummary().getCidrAssignment().getCreateTime());
+					}
+					else {
+						return "Unknown";
+					}
 				}
 			}
 		};
@@ -426,10 +431,20 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 			@Override
 			public String getValue(CidrSummaryPojo object) {
 				if (object.getCidr() != null) {
-					return dateFormat.format(object.getCidr().getUpdateTime());
+					if (object.getCidr().getUpdateTime() != null) {
+						return dateFormat.format(object.getCidr().getUpdateTime());
+					}
+					else {
+						return "Uknown";
+					}
 				}
 				else {
-					return dateFormat.format(object.getAssignmentSummary().getCidrAssignment().getUpdateTime());
+					if (object.getAssignmentSummary().getCidrAssignment().getUpdateTime() != null) {
+						return dateFormat.format(object.getAssignmentSummary().getCidrAssignment().getUpdateTime());
+					}
+					else {
+						return "Unknown";
+					}
 				}
 			}
 		};

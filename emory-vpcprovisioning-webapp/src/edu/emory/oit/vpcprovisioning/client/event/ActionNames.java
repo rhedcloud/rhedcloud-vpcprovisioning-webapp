@@ -34,6 +34,7 @@ public interface ActionNames {
 	final String MAINTAIN_VPC = "maintainVpc";
 	final String CREATE_ACCOUNT = "createAccount";
 	final String MAINTAIN_ACCOUNT = "maintainAccount";
+	final String MAINTAIN_ACCOUNT_FROM_HOME = "maintainAccountFromHome";
 	final String CREATE_CIDR = "createCidr";
 	final String MAINTAIN_CIDR = "maintainCidr";
 	final String MAINTAIN_CIDR_ASSIGNMENT = "maintainCidrAssignment";
