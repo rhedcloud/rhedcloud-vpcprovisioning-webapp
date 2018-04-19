@@ -231,7 +231,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 //		});
 		final Button removeAdminButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+		if (this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId()) ||
+			this.userLoggedIn.isLitsAdmin()) {
+			
+			removeAdminButton.setEnabled(true);
+		}
+		else {
 			removeAdminButton.setEnabled(false);
 		}
 		removeAdminButton.addStyleName("glowing-border");
@@ -297,7 +302,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		emailLabel.addStyleName("emailLabel");
 		final Button removeEmailButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (!this.userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+		if (this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId()) ||
+			this.userLoggedIn.isLitsAdmin()) {
+				
+			removeEmailButton.setEnabled(true);
+		}
+		else {
 			removeEmailButton.setEnabled(false);
 		}
 		removeEmailButton.addStyleName("glowing-border");

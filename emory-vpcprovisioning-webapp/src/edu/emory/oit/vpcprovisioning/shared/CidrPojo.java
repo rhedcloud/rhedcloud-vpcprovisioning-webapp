@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -8,6 +10,8 @@ public class CidrPojo extends SharedObject implements IsSerializable, Comparable
 	String cidrId;
 	String network;
 	String bits;
+	List<AssociatedCidrPojo> associatedCidrs = new java.util.ArrayList<AssociatedCidrPojo>();
+	List<PropertyPojo> properties = new java.util.ArrayList<PropertyPojo>();
 	CidrPojo baseline;
 	
 	public static final ProvidesKey<CidrPojo> KEY_PROVIDER = new ProvidesKey<CidrPojo>() {
@@ -60,5 +64,52 @@ public class CidrPojo extends SharedObject implements IsSerializable, Comparable
 	@Override
 	public String toString() {
 		return network + "/" + bits; 
+	}
+
+	public List<AssociatedCidrPojo> getAssociatedCidrs() {
+		return associatedCidrs;
+	}
+
+	public void setAssociatedCidrs(List<AssociatedCidrPojo> associatedCidrs) {
+		this.associatedCidrs = associatedCidrs;
+	}
+
+	public List<PropertyPojo> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<PropertyPojo> properties) {
+		this.properties = properties;
+	}
+
+	public boolean containsAssociatedCidr(AssociatedCidrPojo acPojo) {
+		for (AssociatedCidrPojo ac : this.associatedCidrs) {
+			if (ac.getType().equalsIgnoreCase(acPojo.getType()) && 
+					ac.getNetwork().equalsIgnoreCase(acPojo.getNetwork()) && 
+					ac.getBits().equalsIgnoreCase(acPojo.getBits())) {
+				
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void removeAssociatedCidr(AssociatedCidrPojo acPojo) {
+		int indexToRemove=0;
+		boolean foundAc = false;
+		acLoop: for (int i=0; i<associatedCidrs.size(); i++) {
+			AssociatedCidrPojo ac = associatedCidrs.get(i);
+			if (ac.getType().equalsIgnoreCase(acPojo.getType()) && 
+					ac.getNetwork().equalsIgnoreCase(acPojo.getNetwork()) && 
+					ac.getBits().equalsIgnoreCase(acPojo.getBits())) {
+				
+				foundAc = true;
+				indexToRemove = i;
+				break acLoop;
+			}
+		}
+		if (foundAc) {
+			associatedCidrs.remove(indexToRemove);
+		}
 	}
 }

@@ -27,6 +27,62 @@
 				</g:row>
 			</g:Grid>
 		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+			<g:VerticalPanel spacing="8">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+						<g:ScrollPanel>
+				    		<g:CaptionPanel width="85%" ui:field="associatedCidrsCP" debugId="associatedCidrsCP" captionHTML="Add/remove Associated CIDR(s)">
+							<g:VerticalPanel spacing="8" ui:field="associatedCidrsVP" height="100%">
+								<g:HorizontalPanel ui:field="addAssociatedCidrHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+											ui:field="addCidrTypeLB" debugId="addCidrTypeLB" />
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="associatedNetworkTF" debugId="associatedNetworkTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="associatedBitsTF" debugId="associatedBitsTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addAssociatedCidrButton" debugId="addAddAssociatedCidrButton"
+											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.heading_label}">Associated CIDR(s):</g:Label>
+									<g:FlexTable ui:field="associatedCidrsTable" debugId="associatedCidrsTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+				    		</g:CaptionPanel>
+						</g:ScrollPanel>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+						<g:ScrollPanel>
+				    		<g:CaptionPanel width="85%" ui:field="propertiesCP" debugId="propertiesCP" captionHTML="Add/remove Properties">
+							<g:VerticalPanel spacing="8" ui:field="propertyVP" height="100%">
+								<g:HorizontalPanel ui:field="addPropertyHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="propertyNameTF" debugId="propertyNameTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="propertyValueTF" debugId="propertyValueTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addPropertyButton" debugId="addPropertyButton"
+											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.heading_label}">Properties associated to this CIDR:</g:Label>
+									<g:FlexTable ui:field="propertyTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+							</g:CaptionPanel>
+						</g:ScrollPanel>
+				</g:cell>
+			</g:VerticalPanel>
+		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
 				<g:row>

@@ -7,7 +7,7 @@
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:VerticalPanel spacing="8" width="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-				<g:CaptionPanel width="90%" captionHTML="Notice" styleName="{style.medium-captionpanel}">
+				<g:CaptionPanel width="90%" captionHTML="Notice">
 					<g:VerticalPanel width="100%" height="100%">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 						<g:HTML ui:field="infoHTML">Maintain Notification

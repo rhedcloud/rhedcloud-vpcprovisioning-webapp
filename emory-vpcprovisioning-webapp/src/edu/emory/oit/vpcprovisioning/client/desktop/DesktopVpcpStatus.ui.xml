@@ -14,7 +14,7 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
-    		<g:CaptionPanel ui:field="introPanel" captionHTML="Intro" addStyleNames="{style.light-captionpanel}" width="95%">
+    		<g:CaptionPanel ui:field="introPanel" captionHTML="Intro" width="95%">
     		<g:VerticalPanel>
 	   			<g:Grid cellSpacing ="8">
 					<g:row>
@@ -50,7 +50,7 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
 			<!-- EVERYTHING IS READ ONLY ON THIS PAGE -->
 			
-    		<g:CaptionPanel ui:field="vpcpStatusCP" captionHTML="Overall Status" addStyleNames="{style.light-captionpanel}" width="95%">
+    		<g:CaptionPanel ui:field="vpcpStatusCP" captionHTML="Overall Status" width="95%">
     			<g:VerticalPanel>
     			<g:Grid ui:field="vpcpGeneralStatusGrid" cellSpacing ="8">
 					<g:row>
@@ -150,7 +150,7 @@
     		</g:CaptionPanel>
     	</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
-    		<g:CaptionPanel ui:field="vpcpStepStatusCP" captionHTML="Provisioing Step Status" addStyleNames="{style.light-captionpanel}" width="95%">
+    		<g:CaptionPanel ui:field="vpcpStepStatusCP" captionHTML="Provisioing Step Status" width="95%">
     			<g:VerticalPanel ui:field="vpcpStepsPanel" debugId="vpcpStepsPanel">
 					<g:Label addStyleNames="{style.label}">VPCP Step Status Table/List goes here</g:Label>
     			</g:VerticalPanel>

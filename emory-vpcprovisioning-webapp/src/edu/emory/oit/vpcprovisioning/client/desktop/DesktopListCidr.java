@@ -38,7 +38,10 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
+import edu.emory.oit.vpcprovisioning.shared.AssociatedCidrPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListCidr extends ViewImplBase implements ListCidrView {
@@ -101,12 +104,12 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
-		Anchor assignAnchor = new Anchor("Assign CIDR(s)");
-		assignAnchor.addStyleName("productAnchor");
-		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		assignAnchor.setTitle("Assign selected CIDR");
-		assignAnchor.ensureDebugId(assignAnchor.getText());
-		assignAnchor.addClickHandler(new ClickHandler() {
+		Anchor editCidrAnchor = new Anchor("Edit CIDR");
+		editCidrAnchor.addStyleName("productAnchor");
+		editCidrAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editCidrAnchor.setTitle("Edit selected CIDR");
+		editCidrAnchor.ensureDebugId(editCidrAnchor.getText());
+		editCidrAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
@@ -115,7 +118,8 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
 					if (m.getCidr() != null) {
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_CIDR_ASSIGNMENT, m.getCidr(), null);
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_CIDR_ASSIGNMENT, m.getCidr(), null);
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR, m.getCidr(), null);
 					}
 					else {
 						showMessageToUser("Please select an UNASSIGNED CIDR from the list");
@@ -126,7 +130,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 				}
 			}
 		});
-		grid.setWidget(0, 0, assignAnchor);
+		grid.setWidget(0, 0, editCidrAnchor);
 		
 		Anchor unassignAnchor = new Anchor("Unassign CIDR(s)");
 		unassignAnchor.addStyleName("productAnchor");
@@ -304,30 +308,96 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		
 		// TODO: cidr assignement stuff if present
 		Column<CidrSummaryPojo, SafeHtml> assignmentStatusColumn = 
-				new Column<CidrSummaryPojo, SafeHtml> (new SafeHtmlCell()) {
-				
-				@Override
-				public SafeHtml getValue(CidrSummaryPojo object) {
-					if (object.getCidr() != null) {
-						return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("Unassigned");
-					}
-					else {
-						String s =
-							"<b>Assigned</b><br>" + 
-							"Account: " + object.getAssignmentSummary().getAccount().getAccountName() + "<br>" +
-							"VPC: " + object.getAssignmentSummary().getVpc().getVpcId();
-						return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(s);
-					}
+			new Column<CidrSummaryPojo, SafeHtml> (new SafeHtmlCell()) {
+			
+			@Override
+			public SafeHtml getValue(CidrSummaryPojo object) {
+				if (object.getCidr() != null) {
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("Unassigned");
 				}
-			};
-			assignmentStatusColumn.setSortable(true);
-			sortHandler.setComparator(assignmentStatusColumn, new Comparator<CidrSummaryPojo>() {
-				public int compare(CidrSummaryPojo o1, CidrSummaryPojo o2) {
-					return o1.getCidr() == null ? 0 : 1;
+				else {
+					String s =
+						"<b>Assigned</b><br>" + 
+						"Account: " + object.getAssignmentSummary().getAccount().getAccountName() + "<br>" +
+						"VPC: " + object.getAssignmentSummary().getVpc().getVpcId();
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(s);
 				}
-			});
-			cidrListTable.addColumn(assignmentStatusColumn, "Assignment Status");
+			}
+		};
+		assignmentStatusColumn.setSortable(true);
+		sortHandler.setComparator(assignmentStatusColumn, new Comparator<CidrSummaryPojo>() {
+			public int compare(CidrSummaryPojo o1, CidrSummaryPojo o2) {
+				return o1.getCidr() == null ? 0 : 1;
+			}
+		});
+		cidrListTable.addColumn(assignmentStatusColumn, "Assignment Status");
 
+		// associated cidr(s)
+		Column<CidrSummaryPojo, SafeHtml> associatedCidrsColumn = 
+				new Column<CidrSummaryPojo, SafeHtml> (new SafeHtmlCell()) {
+
+			@Override
+			public SafeHtml getValue(CidrSummaryPojo object) {
+				StringBuffer acps = new StringBuffer();
+				int cntr = 1;
+				CidrPojo cidr = null;
+				if (object.getCidr() != null) {
+					cidr = object.getCidr();
+				}
+				else {
+					// get them from the CidrAssignment.Cidr object
+					cidr = object.getAssignmentSummary().getCidrAssignment().getCidr();
+				}
+				if (cidr.getAssociatedCidrs().size() > 0) {
+					for (AssociatedCidrPojo acp : cidr.getAssociatedCidrs()) {
+						if (cntr == cidr.getAssociatedCidrs().size()) {
+							acps.append(acp.getType() + "-" + acp.getNetwork() + "/" + acp.getBits());
+						}
+						else {
+							cntr++;
+							acps.append(acp.getType() + "-" + acp.getNetwork() + "/" + acp.getBits() + "</br>");
+						}
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(acps.toString());
+				}
+				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No Associated CIDRs");
+			}
+		};
+		cidrListTable.addColumn(associatedCidrsColumn, "Associated CIDR(s)");
+		
+		// Property(s)
+		Column<CidrSummaryPojo, SafeHtml> propertiesColumn = 
+				new Column<CidrSummaryPojo, SafeHtml> (new SafeHtmlCell()) {
+
+			@Override
+			public SafeHtml getValue(CidrSummaryPojo object) {
+				StringBuffer acps = new StringBuffer();
+				int cntr = 1;
+				CidrPojo cidr = null;
+				if (object.getCidr() != null) {
+					cidr = object.getCidr();
+				}
+				else {
+					// get them from the CidrAssignment.Cidr object
+					cidr = object.getAssignmentSummary().getCidrAssignment().getCidr();
+				}
+				if (cidr.getProperties().size() > 0) {
+					for (PropertyPojo prop : cidr.getProperties()) {
+						if (cntr == cidr.getAssociatedCidrs().size()) {
+							acps.append(prop.getName() + "=" + prop.getValue());
+						}
+						else {
+							cntr++;
+							acps.append(prop.getName() + "=" + prop.getValue() + "</br>");
+						}
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(acps.toString());
+				}
+				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No Properties");
+			}
+		};
+		cidrListTable.addColumn(propertiesColumn, "Property(s)");
+			
 		// create user
 		Column<CidrSummaryPojo, String> createUserColumn = 
 				new Column<CidrSummaryPojo, String> (new TextCell()) {

@@ -10,6 +10,9 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -17,7 +20,9 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
+import edu.emory.oit.vpcprovisioning.shared.AssociatedCidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
+import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrView {
@@ -28,6 +33,19 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	@UiField Button cancelButton;
 	@UiField TextBox networkTB;
 	@UiField TextBox bitsTB;
+
+	// associated CIDRs
+	@UiField ListBox addCidrTypeLB;
+	@UiField TextBox associatedNetworkTF;
+	@UiField TextBox associatedBitsTF;
+	@UiField Button addAssociatedCidrButton;
+	@UiField FlexTable associatedCidrsTable;
+	
+	// properties
+	@UiField TextBox propertyNameTF;
+	@UiField TextBox propertyValueTF;
+	@UiField Button addPropertyButton;
+	@UiField FlexTable propertyTable;
 	
 	private static DesktopMaintainCidrUiBinder uiBinder = GWT.create(DesktopMaintainCidrUiBinder.class);
 
@@ -95,6 +113,87 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		if (presenter.getCidr() != null) {
 			networkTB.setText(presenter.getCidr().getNetwork());
 			bitsTB.setText(presenter.getCidr().getBits());
+		}
+		
+		associatedNetworkTF.getElement().setPropertyString("placeholder", "enter associated network");
+		associatedBitsTF.getElement().setPropertyString("placeholder", "enter associated bits");
+		propertyNameTF.getElement().setPropertyString("placeholder", "enter property name");
+		propertyValueTF.getElement().setPropertyString("placeholder", "enter property value");
+
+		initializeAssociatedCidrPanel();
+	}
+
+	/*
+	 *	associated CIDR helper methods
+	 */
+	private void addAssociatedCidrToCidr(String type, String network, String bits) {
+		if (network != null && network.trim().length() > 0) {
+			if (bits != null && bits.trim().length() > 0) {
+				if (type != null && type.trim().length() > 0) {
+					final String trimmedNetwork = network.trim().toLowerCase();
+					final String trimmedBits = bits.trim().toLowerCase();
+					final String trimmedCidrType = type.trim().toLowerCase();
+					AssociatedCidrPojo acPojo = new AssociatedCidrPojo();
+					acPojo.setType(trimmedCidrType);
+					acPojo.setNetwork(trimmedNetwork);
+					acPojo.setBits(trimmedBits);
+					if (presenter.getCidr().containsAssociatedCidr(acPojo)) {
+						showStatus(addAssociatedCidrButton, "That Associated CIDR is already in the list, please enter a unique associated CIDR.");
+					}
+					else {
+						presenter.getCidr().getAssociatedCidrs().add(acPojo);
+						addAssociatedCidrToAssociatedCidrPanel(acPojo);
+					}
+				}
+				else {
+					showStatus(addAssociatedCidrButton, "Please enter a valid Associated CIDR type.");
+				}
+			}
+			else {
+				showStatus(addAssociatedCidrButton, "Please enter a valid Bits value.");
+			}
+		}
+		else {
+			showStatus(addAssociatedCidrButton, "Please enter a valid Network value.");
+		}
+	}
+	
+	private void addAssociatedCidrToAssociatedCidrPanel(final AssociatedCidrPojo ac) {
+		final int numRows = associatedCidrsTable.getRowCount();
+		final Label associatedCidrLabel = new Label(ac.getType() + "-" + ac.getNetwork() + "/" + ac.getBits());
+		associatedCidrLabel.addStyleName("emailLabel");
+		final Button removeButton = new Button("Remove");
+		// disable remove button if userLoggedIn is NOT an admin
+		if (this.userLoggedIn.isLitsAdmin()) {
+				
+			removeButton.setEnabled(true);
+		}
+		else {
+			removeButton.setEnabled(false);
+		}
+		removeButton.addStyleName("glowing-border");
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.getCidr().removeAssociatedCidr(ac);
+				associatedCidrsTable.remove(associatedCidrLabel);
+				associatedCidrsTable.remove(removeButton);
+			}
+		});
+		associatedNetworkTF.setText("");
+		associatedBitsTF.setText("");
+		addCidrTypeLB.setSelectedIndex(0);
+		associatedCidrsTable.setWidget(numRows, 0, associatedCidrLabel);
+		associatedCidrsTable.setWidget(numRows, 1, removeButton);
+	}
+
+	void initializeAssociatedCidrPanel() {
+		associatedCidrsTable.removeAllRows();
+		if (presenter.getCidr() != null) {
+			GWT.log("Adding " + presenter.getCidr().getAssociatedCidrs().size() + " associated CIDRs to the email panel.");
+			for (AssociatedCidrPojo acPojo : presenter.getCidr().getAssociatedCidrs()) {
+				addAssociatedCidrToAssociatedCidrPanel(acPojo);
+			}
 		}
 	}
 

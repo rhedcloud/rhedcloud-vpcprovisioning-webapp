@@ -28,7 +28,7 @@
 							ui:field="accountLB" debugId="accountLB" />
 			    	</g:customCell>
 			    	<g:customCell>
-			    		<g:CaptionPanel ui:field="accountCP" captionHTML="Account Info" addStyleNames="{style.light-captionpanel}">
+			    		<g:CaptionPanel ui:field="accountCP" captionHTML="Account Info">
 			    		</g:CaptionPanel>
 			    	</g:customCell>
 				</g:row>

@@ -103,6 +103,7 @@ import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
 import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIp;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment;
+import edu.emory.moa.objects.resources.v1_0.AssociatedCidr;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
@@ -111,6 +112,7 @@ import edu.emory.moa.objects.resources.v1_0.ElasticIpQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.ElasticIpRequisition;
 import edu.emory.moa.objects.resources.v1_0.Email;
 import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
+import edu.emory.moa.objects.resources.v1_0.Property;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
@@ -123,6 +125,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.AssociatedCidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillQueryResultPojo;
@@ -173,6 +176,7 @@ import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.PersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.PersonalNamePojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
@@ -1379,11 +1383,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setNetwork(pojo.getNetwork());
 		moa.setBits(pojo.getBits());
+		
+		if (pojo.getAssociatedCidrs() != null && pojo.getAssociatedCidrs().size() > 0) {
+			for (AssociatedCidrPojo acp : pojo.getAssociatedCidrs()) {
+				AssociatedCidr ac = moa.newAssociatedCidr();
+				ac.setType(acp.getType());
+				ac.setBits(acp.getBits());
+				ac.setNetwork(acp.getNetwork());
+				moa.addAssociatedCidr(ac);
+			}
+		}
+		if (pojo.getProperties() != null && pojo.getProperties().size() > 0) {
+			for (PropertyPojo pp : pojo.getProperties()) {
+				Property p = moa.newProperty();
+				p.setPropertyName(pp.getName());
+				p.setPropertyValue(pp.getValue());
+				moa.addProperty(p);
+			}
+		}
 
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void populateCidrPojo(Cidr moa,
 			CidrPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
@@ -1391,6 +1414,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setCidrId(moa.getCidrId());
 		pojo.setNetwork(moa.getNetwork());
 		pojo.setBits(moa.getBits());
+		if (moa.getAssociatedCidr() != null && moa.getAssociatedCidrLength() > 0) {
+			for (AssociatedCidr ac : (List<AssociatedCidr>)moa.getAssociatedCidr()) {
+				AssociatedCidrPojo acp = new AssociatedCidrPojo();
+				acp.setType(ac.getType());
+				acp.setBits(ac.getBits());
+				acp.setNetwork(ac.getNetwork());
+				pojo.getAssociatedCidrs().add(acp);
+			}
+		}
+		if (moa.getProperty() != null && moa.getPropertyLength() > 0) {
+			for (Property p : (List<Property>)moa.getProperty()) {
+				PropertyPojo pp = new PropertyPojo();
+				pp.setName(p.getPropertyName());
+				pp.setValue(p.getPropertyValue());
+			}
+		}
 		
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
