@@ -83,6 +83,12 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
 				getView().setUserLoggedIn(user);
+				// set associated cidr type items
+				List<String> associatedCidrTypes = new java.util.ArrayList<String>();
+				associatedCidrTypes.add("VpnInsideIpCidr");
+				associatedCidrTypes.add("CustomerGatewayIpAddress");
+
+				getView().setAssociatedCidrTypeItems(associatedCidrTypes);
 				getView().initPage();
 				getView().setInitialFocus();
 				

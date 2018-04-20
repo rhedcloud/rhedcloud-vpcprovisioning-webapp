@@ -19,8 +19,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
@@ -52,6 +55,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	String speedTypeBeingTyped=null;
 	boolean speedTypeConfirmed = false;
 	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
+	PopupPanel adminPleaseWaitDialog;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button billSummaryButton;
@@ -72,11 +76,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField FlexTable emailTable;
 	
 	// AWS Account Administrator (net ids)
-	@UiField VerticalPanel netIdVP;
+	@UiField VerticalPanel adminVP;
 //	@UiField TextBox addNetIdTF;
 //	@UiField Button addNetIdButton;
 	@UiField FlexTable adminTable;
 	@UiField Button addAdminButton;
+	@UiField Label adminLabel;
 	
 	@UiField HTML accountInfoHTML;
 	@UiField HTML speedTypeHTML;
@@ -598,4 +603,30 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			}
 		}
 	}
+	@Override
+	public void showPleaseWaitDialog() {
+//		super.showPleaseWaitDialog();
+		adminPleaseWaitDialog = new PopupPanel(true);
+		Image img = new Image();
+		img.setUrl("images/ajax-loader.gif");
+		adminPleaseWaitDialog.setWidget(img);
+		adminPleaseWaitDialog.center();
+//		adminPleaseWaitDialog.showRelativeTo(adminLabel);
+		adminPleaseWaitDialog.setPopupPosition(adminLabel.getOffsetWidth() / 2, adminLabel.getAbsoluteTop() + 75);
+		adminPleaseWaitDialog.show();
+//		adminPleaseWaitDialog.setPopupPositionAndShow(new PositionCallback() {
+//			@Override
+//			public void setPosition(int offsetWidth, int offsetHeight) {
+//				adminLabel.getOffsetWidth() 
+//			}
+//		});
+	}
+	@Override
+	public void hidePleaseWaitDialog() {
+		super.hidePleaseWaitDialog();
+		if (adminPleaseWaitDialog != null) {
+			adminPleaseWaitDialog.hide();
+		}
+	}
+	
 }

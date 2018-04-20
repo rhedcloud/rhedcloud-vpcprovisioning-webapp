@@ -100,7 +100,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(3, 1);
+	    Grid grid = new Grid(2, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -132,58 +132,59 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		});
 		grid.setWidget(0, 0, editCidrAnchor);
 		
-		Anchor unassignAnchor = new Anchor("Unassign CIDR(s)");
-		unassignAnchor.addStyleName("productAnchor");
-		unassignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		unassignAnchor.setTitle("Unassign selected CIDR");
-		unassignAnchor.ensureDebugId(unassignAnchor.getText());
-		unassignAnchor.addClickHandler(new ClickHandler() {
+		Anchor deleteAnchor = new Anchor("Delete CIDR");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected CIDR");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
 				CidrSummaryPojo m = cidrSelectionModel.getSelectedObject();
 				if (m != null) {
-					if (m.getAssignmentSummary() != null) {
+//					if (m.getAssignmentSummary() != null) {
 //						showMessageToUser("Will un-assign CIDR assignment: " + m.getAssignmentSummary().getCidrAssignment().getCidrAssignmentId());
 						// TODO: CidrAssignment.Delete-Request ????
+						// TODO: confirm delete
 						presenter.deleteCidrSummary(m);
-					}
-					else {
-						showMessageToUser("Please select an ASSIGNED CIDR from the list");
-					}
+//					}
+//					else {
+//						showMessageToUser("Please select an ASSIGNED CIDR from the list");
+//					}
 				}
 				else {
 					showMessageToUser("Please select a CIDR from the list");
 				}
 			}
 		});
-		grid.setWidget(1, 0, unassignAnchor);
+		grid.setWidget(1, 0, deleteAnchor);
 		
-		Anchor editAssignmentAnchor = new Anchor("Edit CIDR assignment");
-		editAssignmentAnchor.addStyleName("productAnchor");
-		editAssignmentAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		editAssignmentAnchor.setTitle("Edit selected CIDR");
-		editAssignmentAnchor.ensureDebugId(editAssignmentAnchor.getText());
-		editAssignmentAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				CidrSummaryPojo m = cidrSelectionModel.getSelectedObject();
-				if (m != null) {
-					if (m.getAssignmentSummary() != null) {
-//						showMessageToUser("Will edit CIDR assignment: " + m.getAssignmentSummary().getCidrAssignment().getCidrAssignmentId());
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR_ASSIGNMENT, m);
-					}
-					else {
-						showMessageToUser("Please select an ASSIGNED CIDR from the list");
-					}
-				}
-				else {
-					showMessageToUser("Please select a CIDR from the list");
-				}
-			}
-		});
-		grid.setWidget(2, 0, editAssignmentAnchor);
+//		Anchor editAssignmentAnchor = new Anchor("Edit CIDR assignment");
+//		editAssignmentAnchor.addStyleName("productAnchor");
+//		editAssignmentAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		editAssignmentAnchor.setTitle("Edit selected CIDR");
+//		editAssignmentAnchor.ensureDebugId(editAssignmentAnchor.getText());
+//		editAssignmentAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				CidrSummaryPojo m = cidrSelectionModel.getSelectedObject();
+//				if (m != null) {
+//					if (m.getAssignmentSummary() != null) {
+////						showMessageToUser("Will edit CIDR assignment: " + m.getAssignmentSummary().getCidrAssignment().getCidrAssignmentId());
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR_ASSIGNMENT, m);
+//					}
+//					else {
+//						showMessageToUser("Please select an ASSIGNED CIDR from the list");
+//					}
+//				}
+//				else {
+//					showMessageToUser("Please select a CIDR from the list");
+//				}
+//			}
+//		});
+//		grid.setWidget(2, 0, editAssignmentAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}

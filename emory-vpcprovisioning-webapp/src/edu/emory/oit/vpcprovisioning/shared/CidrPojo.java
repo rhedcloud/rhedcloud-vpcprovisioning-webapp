@@ -112,4 +112,29 @@ public class CidrPojo extends SharedObject implements IsSerializable, Comparable
 			associatedCidrs.remove(indexToRemove);
 		}
 	}
+
+	public boolean containsProperty(PropertyPojo propPojo) {
+		for (PropertyPojo prop : this.properties) {
+			if (prop.getName().equalsIgnoreCase(propPojo.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void removeProperty(PropertyPojo prop) {
+		int indexToRemove=0;
+		boolean found = false;
+		propLoop: for (int i=0; i<properties.size(); i++) {
+			PropertyPojo pojo = properties.get(i);
+			if (pojo.getName().equalsIgnoreCase(prop.getName())) {
+				found = true;
+				indexToRemove = i;
+				break propLoop;
+			}
+		}
+		if (found) {
+			properties.remove(indexToRemove);
+		}
+	}
 }

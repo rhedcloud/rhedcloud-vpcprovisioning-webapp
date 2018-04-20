@@ -114,7 +114,7 @@
 			<g:HorizontalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 						<g:ScrollPanel>
-							<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
+							<g:VerticalPanel spacing="8" ui:field="adminVP" height="100%">
 								<g:Label addStyleNames="{style.heading_label}">Add/remove Administrators:</g:Label>
 								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -126,7 +126,7 @@
 									</g:cell>
 								</g:HorizontalPanel>
 								<g:VerticalPanel spacing="8">
-									<g:Label addStyleNames="{style.heading_label}">Administrators associated to this AWS Account:</g:Label>
+									<g:Label ui:field="adminLabel" addStyleNames="{style.heading_label}">Administrators associated to this AWS Account:</g:Label>
 									<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
 								</g:VerticalPanel>
 							</g:VerticalPanel>

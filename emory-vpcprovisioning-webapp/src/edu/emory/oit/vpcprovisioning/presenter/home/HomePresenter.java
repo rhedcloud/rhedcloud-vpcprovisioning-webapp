@@ -48,6 +48,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
 				getView().initPage();
+				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 				getView().setAccountRoleList(user.getAccountRoles());
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();

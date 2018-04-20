@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
@@ -22,12 +23,13 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
 import edu.emory.oit.vpcprovisioning.shared.AssociatedCidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
-import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrView {
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
+	List<String> associatedCidrTypes = new java.util.ArrayList<String>();
 
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
@@ -47,6 +49,19 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	@UiField Button addPropertyButton;
 	@UiField FlexTable propertyTable;
 	
+	@UiHandler ("addAssociatedCidrButton")
+	void addAssociatedCidrButtonClick(ClickEvent e) {
+		this.addAssociatedCidrToCidr(addCidrTypeLB.getSelectedValue(), 
+				associatedNetworkTF.getText(), 
+				associatedBitsTF.getText());
+	}
+
+	@UiHandler ("addPropertyButton")
+	void addPropertyButtonClick(ClickEvent e) {
+		this.addPropertyToCidr(propertyNameTF.getText(), 
+				propertyValueTF.getText());
+	}
+
 	private static DesktopMaintainCidrUiBinder uiBinder = GWT.create(DesktopMaintainCidrUiBinder.class);
 
 	interface DesktopMaintainCidrUiBinder extends UiBinder<Widget, DesktopMaintainCidr> {
@@ -121,8 +136,75 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		propertyValueTF.getElement().setPropertyString("placeholder", "enter property value");
 
 		initializeAssociatedCidrPanel();
+		initializeCidrPropertiesPanel();
 	}
 
+	/*
+	 *	CIDR properties helper methods
+	 */
+	private void addPropertyToCidr(String name, String value) {
+		if (name != null && name.trim().length() > 0) {
+			if (value != null && value.trim().length() > 0) {
+				final String trimmedName = name.trim();
+				final String trimmedValue = value.trim();
+				PropertyPojo propPojo = new PropertyPojo();
+				propPojo.setName(trimmedName);
+				propPojo.setValue(trimmedValue);
+				if (presenter.getCidr().containsProperty(propPojo)) {
+					showStatus(addPropertyButton, "That CIDR Property is already in the list, please enter a unique CIDR property.");
+				}
+				else {
+					presenter.getCidr().getProperties().add(propPojo);
+					addPropertyToPropertyPanel(propPojo);
+				}
+			}
+			else {
+				showStatus(addPropertyButton, "Please enter a property value.");
+			}
+		}
+		else {
+			showStatus(addPropertyButton, "Please enter a property name.");
+		}
+	}
+	
+	private void addPropertyToPropertyPanel(final PropertyPojo prop) {
+		final int numRows = propertyTable.getRowCount();
+		final Label cidrPropertyLabel = new Label(prop.getName() + "=" + prop.getValue());
+		cidrPropertyLabel.addStyleName("emailLabel");
+		final Button removeButton = new Button("Remove");
+		// disable remove button if userLoggedIn is NOT an admin
+		if (this.userLoggedIn.isLitsAdmin()) {
+				
+			removeButton.setEnabled(true);
+		}
+		else {
+			removeButton.setEnabled(false);
+		}
+		removeButton.addStyleName("glowing-border");
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.getCidr().removeProperty(prop);
+				propertyTable.remove(cidrPropertyLabel);
+				propertyTable.remove(removeButton);
+			}
+		});
+		propertyNameTF.setText("");
+		propertyValueTF.setText("");
+		propertyTable.setWidget(numRows, 0, cidrPropertyLabel);
+		propertyTable.setWidget(numRows, 1, removeButton);
+	}
+
+	void initializeCidrPropertiesPanel() {
+		propertyTable.removeAllRows();
+		if (presenter.getCidr() != null) {
+			GWT.log("Adding " + presenter.getCidr().getProperties().size() + " CIDR properties to the properties panel.");
+			for (PropertyPojo propPojo : presenter.getCidr().getProperties()) {
+				addPropertyToPropertyPanel(propPojo);
+			}
+		}
+	}
+	
 	/*
 	 *	associated CIDR helper methods
 	 */
@@ -130,9 +212,9 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		if (network != null && network.trim().length() > 0) {
 			if (bits != null && bits.trim().length() > 0) {
 				if (type != null && type.trim().length() > 0) {
-					final String trimmedNetwork = network.trim().toLowerCase();
-					final String trimmedBits = bits.trim().toLowerCase();
-					final String trimmedCidrType = type.trim().toLowerCase();
+					final String trimmedNetwork = network.trim();
+					final String trimmedBits = bits.trim();
+					final String trimmedCidrType = type.trim();
 					AssociatedCidrPojo acPojo = new AssociatedCidrPojo();
 					acPojo.setType(trimmedCidrType);
 					acPojo.setNetwork(trimmedNetwork);
@@ -235,6 +317,13 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		okayButton.setEnabled(true);
 		networkTB.setEnabled(true);
 		bitsTB.setEnabled(true);
+		addCidrTypeLB.setEnabled(true);
+		associatedNetworkTF.setEnabled(true);
+		associatedBitsTF.setEnabled(true);
+		addAssociatedCidrButton.setEnabled(true);
+		propertyNameTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
+		addPropertyButton.setEnabled(true);
 	}
 
 	@Override
@@ -242,6 +331,13 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		okayButton.setEnabled(false);
 		networkTB.setEnabled(false);
 		bitsTB.setEnabled(false);
+		addCidrTypeLB.setEnabled(false);
+		associatedNetworkTF.setEnabled(false);
+		associatedBitsTF.setEnabled(false);
+		addAssociatedCidrButton.setEnabled(false);
+		propertyNameTF.setEnabled(false);
+		propertyValueTF.setEnabled(false);
+		addPropertyButton.setEnabled(false);
 	}
 
 	@Override
@@ -280,5 +376,17 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	@Override
 	public HasClickHandlers getOkayWidget() {
 		return cancelButton;
+	}
+
+	@Override
+	public void setAssociatedCidrTypeItems(List<String> associatedCidrTypes) {
+		this.associatedCidrTypes = associatedCidrTypes;
+		addCidrTypeLB.clear();
+		addCidrTypeLB.addItem("-- Select --");
+		if (associatedCidrTypes != null) {
+			for (String type : associatedCidrTypes) {
+				addCidrTypeLB.addItem(type, type);
+			}
+		}
 	}
 }

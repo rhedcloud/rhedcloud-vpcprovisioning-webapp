@@ -94,10 +94,10 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 				getView().setUserLoggedIn(user);
 				List<String> complianceClassTypes = new java.util.ArrayList<String>();
 				complianceClassTypes.add("ePHI");
-//				complianceClassTypes.add("FERPA");
-//				complianceClassTypes.add("FISMA");
+				complianceClassTypes.add("FERPA");
+				complianceClassTypes.add("FISMA");
 				complianceClassTypes.add("HIPAA");
-//				complianceClassTypes.add("PCI");
+				complianceClassTypes.add("PCI");
 
 				getView().setComplianceClassItems(complianceClassTypes);
 				

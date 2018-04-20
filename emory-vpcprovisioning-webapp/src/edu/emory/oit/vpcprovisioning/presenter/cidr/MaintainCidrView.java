@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.cidr;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -77,5 +79,5 @@ public interface MaintainCidrView extends Editor<CidrPojo>, IsWidget, View {
 	void setReleaseInfo(String releaseInfoHTML);
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
-
+	void setAssociatedCidrTypeItems(List<String> associatedCidrTypes);
 }
