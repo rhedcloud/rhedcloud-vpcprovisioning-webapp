@@ -535,6 +535,151 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		firewallRuleListTable.addColumn(serviceColumn, "Service(s)");
 
+		Column<FirewallRulePojo, SafeHtml> toColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getTos()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		firewallRuleListTable.addColumn(toColumn, "To(s)");
+
+		Column<FirewallRulePojo, SafeHtml> fromColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getFroms()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		firewallRuleListTable.addColumn(fromColumn, "From(s)");
+
+		Column<FirewallRulePojo, SafeHtml> sourceUsersColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getSourceUsers()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		firewallRuleListTable.addColumn(sourceUsersColumn, "Source User(s)");
+		
+		Column<FirewallRulePojo, SafeHtml> categoriesColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getCategories()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		firewallRuleListTable.addColumn(categoriesColumn, "Category(s)");
+		
+		Column<FirewallRulePojo, SafeHtml> applicationsColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getApplications()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		firewallRuleListTable.addColumn(applicationsColumn, "Application(s)");
+		
+		Column<FirewallRulePojo, SafeHtml> hipProfilesColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getHipProfiles()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		firewallRuleListTable.addColumn(hipProfilesColumn, "HIP Profile(s)");
+
+		Column<FirewallRulePojo, SafeHtml> actionColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(object.getAction());
+				}
+		};
+		firewallRuleListTable.addColumn(actionColumn, "Action");
+
+		Column<FirewallRulePojo, SafeHtml> logSettingColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(object.getLogSetting());
+				}
+		};
+		firewallRuleListTable.addColumn(logSettingColumn, "Log Setting");
 	}
 
 	@Override

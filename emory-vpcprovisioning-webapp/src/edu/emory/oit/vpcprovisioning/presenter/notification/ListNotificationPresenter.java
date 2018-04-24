@@ -82,6 +82,8 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	public void start(EventBus eventBus) {
 		GWT.log("List notifications presenter...");
 		this.eventBus = eventBus;
+		ReleaseInfo ri = new ReleaseInfo();
+		clientFactory.getShell().setReleaseInfo(ri.toString());
 
 		getView().showPleaseWaitDialog();
 		
@@ -100,8 +102,6 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 //				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("AWS Notifications");
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the Vpc list and display it.
 				if (clearList) {

@@ -63,6 +63,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		this.eventBus = eventBus;
 
 		ReleaseInfo ri = new ReleaseInfo();
+		clientFactory.getShell().setReleaseInfo(ri.toString());
 		
 		clientFactory.getShell().setReleaseInfo(ri.toString());
 		if (notificationId == null) {

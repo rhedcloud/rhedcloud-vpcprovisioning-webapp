@@ -9,6 +9,7 @@ public class ReleaseInfo implements IsSerializable {
 	private static final long serialVersionUID = 1L;
 	String version = "1.0";
 	String build = "20";
+	
 	String productName = "VPC Provisioning App";
 	String applicationEnvironment = "APPLICATION_ENVIRONMENT";
 	String applicationName = "APPLICATION_NAME";
@@ -50,7 +51,7 @@ public class ReleaseInfo implements IsSerializable {
 
 	public String toString() {
 		return 
-				"Version: " + version + "  Build: " + build;
+				applicationEnvironment + "  Version: " + version + "  Build: " + buildNumber;
 	}
 
 	public String getApplicationEnvironment() {

@@ -81,6 +81,8 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		ReleaseInfo ri = new ReleaseInfo();
+		clientFactory.getShell().setReleaseInfo(ri.toString());
 
 		getView().showPleaseWaitDialog();
 		
@@ -110,8 +112,6 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Accounts");
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the account list and display it.
 				if (clearList) {

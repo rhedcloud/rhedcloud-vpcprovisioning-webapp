@@ -9,9 +9,9 @@ import com.google.gwt.view.client.ProvidesKey;
 public class FirewallRulePojo extends SharedObject implements IsSerializable, Comparable<FirewallRulePojo> {
 
 	/*
-	<!ELEMENT FirewallRule (Name?, ProfileSetting?, To?, From?, Source?, Destination?, 
-	SourceUser?, Category?, Application?, Service?, HipProfiles?, Action?, Description?, 
-	LogSetting?, Tag?)>
+	<!ELEMENT FirewallRule (ProfileSetting?,  
+	Action? 
+	LogSetting?)>
 	
 	<!ELEMENT ProfileSetting (Group)>
 	<!ELEMENT Group (Member+)>

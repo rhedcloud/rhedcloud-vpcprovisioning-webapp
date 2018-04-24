@@ -11,6 +11,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class HomePresenter extends PresenterBase implements HomeView.Presenter {
@@ -32,6 +33,8 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		ReleaseInfo ri = new ReleaseInfo();
+		clientFactory.getShell().setReleaseInfo(ri.toString());
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
 			@Override

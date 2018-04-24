@@ -203,6 +203,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField Element userNameElem;
 
     PopupPanel productsPopup = new PopupPanel(true);
+	@UiField Element releaseInfoElem;
 	@UiField Element productsElem;
 	@UiField Element notificationsElem;
 	@UiField Element logoElem;
@@ -579,7 +580,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void setReleaseInfo(String releaseInfo) {
 		super.setTitle(releaseInfo);
 		GWT.log("setting release info to " + releaseInfo);
-//        releaseInfoElem.setInnerHTML(releaseInfo);
+        releaseInfoElem.setInnerHTML(releaseInfo);
 		GWT.log("set release info to " + releaseInfo);
 	}
 
