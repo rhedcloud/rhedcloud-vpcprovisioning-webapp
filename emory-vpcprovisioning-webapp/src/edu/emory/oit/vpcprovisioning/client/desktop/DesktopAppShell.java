@@ -235,7 +235,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					productsPopup.hide();
 					hideOtherFeaturesPanel();
 					showMainTabPanel();
-					ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
+					ActionEvent.fire(eventBus, ActionNames.GO_HOME);
 				}
 			}
 	    });
