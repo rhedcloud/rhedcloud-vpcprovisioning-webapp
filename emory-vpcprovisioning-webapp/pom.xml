@@ -76,7 +76,8 @@
 		<version>1.1.2</version>
 		<scope>system</scope>
 		<systemPath>${project.basedir}/war/WEB-INF/lib/javax.json-api-1.1.2.jar</systemPath>
-	</dependency>		
+	</dependency>	
+	<!-- 
 	<dependency>
 		<groupId>org.gwtbootstrap3</groupId>
 		<artifactId>gwtbootstrap3</artifactId>
@@ -91,6 +92,7 @@
 		<scope>system</scope>
 		<systemPath>${project.basedir}/war/WEB-INF/lib/gwtbootstrap3-extras-0.9.4.jar</systemPath>
 	</dependency>		
+	 -->	
 	<dependency>
 		<groupId>edu.emory</groupId>
 		<artifactId>openeai</artifactId>

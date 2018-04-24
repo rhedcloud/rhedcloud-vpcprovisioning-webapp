@@ -469,6 +469,16 @@ a:visited {
     text-align: right;
     vertical-align: middle;
 }
+.label-left {
+    color: black;
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 14px;
+	font-weight: bold;
+    margin: 0 0 0;
+    padding: 0 0 0;
+    text-align: left;
+    vertical-align: middle;
+}
 .heading_label {
     color: black;
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;

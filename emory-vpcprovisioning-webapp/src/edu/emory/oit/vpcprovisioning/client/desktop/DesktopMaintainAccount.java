@@ -214,6 +214,10 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		// get fullperson for current directory person
 		// get net id from fullperson
 		// create role assignment
+		if (accountIdTB.getText() == null || accountIdTB.getText().trim().length() == 0) {
+			showMessageToUser("Please enter the name of an account admin.");
+			return;
+		}
 		presenter.getAccount().setAccountId(accountIdTB.getText());
 		presenter.addAdminDirectoryPersonToAccount();
 	}

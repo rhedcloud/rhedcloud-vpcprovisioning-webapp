@@ -1200,6 +1200,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
         moa.setComplianceClass(pojo.getComplianceClass());
         moa.setNotifyAdmins(this.toStringFromBoolean(pojo.isNotifyAdmins()));
         moa.setPurpose(pojo.getPurpose());
+        for (String s : pojo.getSensitiveDataList()) {
+        	moa.addSensitiveDataType(s);
+        }
 
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
@@ -1214,14 +1217,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setAccountOwnerNetId(moa.getAccountOwnerNetId());
 		pojo.setSpeedType(moa.getFinancialAccountNumber());
 		pojo.setType(moa.getType());
-		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
-			pojo.getCustomerAdminNetIdList().add(netId);
+		if (moa.getCustomerAdminNetId() != null) {
+			for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
+				pojo.getCustomerAdminNetIdList().add(netId);
+			}
 		}
 		pojo.setTicketId(moa.getTicketId());
 		pojo.setAuthenticatedRequestorNetId(moa.getAuthenticatedRequestorNetId());
 		pojo.setComplianceClass(moa.getComplianceClass());
 		pojo.setNotifyAdmins(this.toBooleanFromString(moa.getNotifyAdmins()));
 		pojo.setPurpose(moa.getPurpose());
+		if (moa.getSensitiveDataType() != null) {
+			for (String sensitiveDataType : (List<String>) moa.getSensitiveDataType()) {
+				pojo.getSensitiveDataList().add(sensitiveDataType);
+			}
+		}
 		
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
@@ -3747,8 +3757,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<String> getComplianceClassItems() throws RpcException {
 		List<String> types = new java.util.ArrayList<String>();
 		types.add("HIPAA");
-		types.add("ePHI");
-		types.add("none");
+		types.add("Standard");
 		return types;
 	}
 

@@ -17,6 +17,7 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 	String complianceClass;
 	String purpose;
 	boolean notifyAdmins;
+	List<String> sensitiveDataList = new java.util.ArrayList<String>();
 	
 	public VpcRequisitionPojo() {
 		// TODO Auto-generated constructor stub
@@ -100,6 +101,14 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 
 	public void setPurpose(String purpose) {
 		this.purpose = purpose;
+	}
+
+	public List<String> getSensitiveDataList() {
+		return sensitiveDataList;
+	}
+
+	public void setSensitiveDataList(List<String> sensitiveDataList) {
+		this.sensitiveDataList = sensitiveDataList;
 	}
 
 }

@@ -83,18 +83,13 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField TextBox vpcpReqSpeedTypeTB;
 	@UiField ListBox vpcpReqTypeLB;
 	@UiField ListBox vpcpReqComplianceClassLB;
+	@UiField CheckBox fismaCB;
+	@UiField CheckBox pciCB;
 	@UiField CheckBox vpcpReqNotifyAdminsCB;
 	@UiField ListBox accountLB;
 	@UiField CaptionPanel accountCP;
-//	@UiField HTML accountInfoHTML;
 	@UiField HTML speedTypeHTML;
 	@UiField TextArea vpcpReqPurposeTA;
-
-	// admins (net ids)
-//	@UiField VerticalPanel netIdVP;
-//	@UiField TextBox addNetIdTF;
-//	@UiField Button addNetIdButton;
-//	@UiField FlexTable netIdTable;
 
 	@UiField VerticalPanel adminVP;
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
@@ -135,29 +130,16 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
 	}
 
-//	@UiHandler ("addNetIdTF")
-//	void addUserTFKeyPressed(KeyPressEvent e) {
-//        int keyCode = e.getNativeEvent().getKeyCode();
-//        if (keyCode == KeyCodes.KEY_ENTER) {
-//    		addNetIdToVpcp(addNetIdTF.getText());
-//        }
-//	}
-//	@UiHandler ("addNetIdButton")
-//	void addUserButtonClick(ClickEvent e) {
-//		addNetIdToVpcp(addNetIdTF.getText());
-//	}
 	@UiHandler ("directoryLookupSB")
 	void directoryLookupSBKeyPressed(KeyPressEvent e) {
         int keyCode = e.getNativeEvent().getKeyCode();
         if (keyCode == KeyCodes.KEY_ENTER) {
-//    		addNetIdToVpcp(addNetIdTF.getText());
     		presenter.addAdminDirectoryPersonToVpcp();
         }
 	}
 	@UiHandler ("addAdminButton")
 	void addAdminButtonClick(ClickEvent e) {
 		presenter.addAdminDirectoryPersonToVpcp();
-//		addNetIdToVpcp(addNetIdTF.getText());
 	}
 	@UiHandler ("cancelButton")
 	void cancelButtonClicked(ClickEvent e) {
@@ -171,7 +153,10 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		okayButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				GWT.log("VPCP saved...");
+				if (fismaCB.getValue() || pciCB.getValue()) {
+					showMessageToUser("Please contact LITS Security.");
+					return;
+				}
 				// populate vpcrequisition that will be used as seed data
 				// for the vpcp.generate
 				presenter.getVpcRequisition().setTicketId(vpcpReqTicketIdTB.getText());
@@ -186,6 +171,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				// customer admin net id list is already maintained as they add/remove them
 				
 				presenter.saveVpcp();
+				GWT.log("VPCP saved...");
 			}
 		}, ClickEvent.getType());
 		

@@ -423,6 +423,34 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		firewallRuleListTable.addColumn(descColumn, "Description");
 
+		Column<FirewallRulePojo, SafeHtml> sourceColumn = 
+				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+				
+				@Override
+				public SafeHtml getValue(FirewallRulePojo object) {
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : object.getSources()) {
+						if (!isFirst) {
+							sbuf.append("<br>");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+		};
+		sourceColumn.setSortable(true);
+		sourceColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(sourceColumn, new Comparator<FirewallRulePojo>() {
+			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
+				return o1.getAction().compareTo(o2.getAction());
+			}
+		});
+		firewallRuleListTable.addColumn(sourceColumn, "Source(s)");
+
 		Column<FirewallRulePojo, SafeHtml> destinationColumn = 
 				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
 				

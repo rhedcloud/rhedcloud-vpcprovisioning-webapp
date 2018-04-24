@@ -144,7 +144,35 @@
 							ui:field="vpcpReqComplianceClassLB" debugId="vpcpReqComplianceClassLB" />
 			    	</g:customCell>
 				</g:row>
-			    	<g:row>
+				<g:row>
+					<g:customCell><g:HTML></g:HTML></g:customCell>
+			    	<g:customCell>
+			    		<g:CaptionPanel ui:field="sensitiveDataCP" debugId="sensitiveDataCP" captionHTML="Sensitive Data">
+			    			<g:VerticalPanel spacing="8">
+								<g:Label addStyleNames="{style.label-left}">Please select all sensitive data regimes that might be used by this VPC:</g:Label>
+								<g:Grid cellSpacing="12">
+								    <g:row>
+								    	<g:customCell>
+											<g:Label addStyleNames="{style.label}">FISMA:</g:Label>
+								    	</g:customCell>
+								    	<g:customCell>
+								    		<g:CheckBox ui:field="fismaCB" debugId="fismaCB" title="Will use FISMA"/>
+								    	</g:customCell>
+								    </g:row>
+								    <g:row>
+								    	<g:customCell>
+											<g:Label addStyleNames="{style.label}">PCI:</g:Label>
+								    	</g:customCell>
+								    	<g:customCell>
+								    		<g:CheckBox ui:field="pciCB" debugId="pciCB" title="Will use PCI"/>
+								    	</g:customCell>
+								    </g:row>
+								</g:Grid>
+			    			</g:VerticalPanel>
+			    		</g:CaptionPanel>
+			    	</g:customCell>
+				</g:row>
+		    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
 			    	</g:customCell>
