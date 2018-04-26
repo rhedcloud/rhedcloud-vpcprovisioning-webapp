@@ -251,6 +251,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private int userCnt=0;
 	private boolean manageSessionLocally=false;
 //	private String baseLoginURL = null;
+	private String applicationEnvironment=null;
 	
 	boolean fakeVpcpGen = false;
 	HashMap<String, VpcpPojo> vpcpMap = new HashMap<String, VpcpPojo>();
@@ -269,9 +270,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		initAppConfig();
 
-		ReleaseInfo ri = new ReleaseInfo();
-		info("VPC Provisioning WebApp Version: " + ri.getVersion() + " Build: " + ri.getBuild()
-				+ " initialization complete.");
+		ReleaseInfo ri = this.getReleaseInfo();
+		info(ri.toString() + " initialization complete.");
 	}
 
 	private void info(String msg) {
@@ -371,6 +371,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			useAuthzService = Boolean.parseBoolean(authz);
 			info("useAuthzService is: " + useAuthzService);
 			
+			applicationEnvironment = generalProps.getProperty("applicationEnvironment", "DEV");
 //			refreshMasterBillData();
 		} 
 		catch (EnterpriseConfigurationObjectException e) {
@@ -5736,6 +5737,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getFirewallExceptionRequestsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
+			info("[getFirewallExceptionRequestsForFilter] query spec is: " + queryObject.toXmlString());
+			
 			@SuppressWarnings("unchecked")
 			List<FirewallExceptionRequest> moas = actionable.query(queryObject,
 					this.getServiceNowRequestService());
@@ -5801,6 +5804,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 				
 				info("doing the FirewallExceptionRequest.create...");
+				info("FirewallRuleException moa is: " + moa.toXmlString());
 				this.doCreate(moa, getServiceNowRequestService());
 				info("FirewallExceptionRequest.create is complete...");
 
@@ -5840,6 +5844,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				throw new RpcException(e);
 			} 
 			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -5928,5 +5935,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				throw new RpcException(e);
 			}
 		}
+	}
+
+	@Override
+	public ReleaseInfo getReleaseInfo() throws RpcException {
+		ReleaseInfo ri = new ReleaseInfo();
+		ri.setApplicationEnvironment(applicationEnvironment);
+		return ri;
 	}
 }

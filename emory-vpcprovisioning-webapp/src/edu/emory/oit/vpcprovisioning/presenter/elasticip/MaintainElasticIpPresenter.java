@@ -63,8 +63,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 		if (elasticIpId == null) {
 			clientFactory.getShell().setSubTitle("Create Elastic IP");
 			startCreate();

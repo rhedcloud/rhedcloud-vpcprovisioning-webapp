@@ -91,6 +91,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog();
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -107,8 +108,6 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("FirewallRules");
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the firewallRule list and display it.
 				if (clearList) {
@@ -125,7 +124,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				// this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
 				// the user enter a VPC id in order to filter the list down.
 				refreshFirewallRuleList(userLoggedIn);
-//				refreshFirewallRuleExceptionRequestList(userLoggedIn);
+				refreshFirewallRuleExceptionRequestList(userLoggedIn);
 			}
 		};
 		GWT.log("getting user logged in from server...");

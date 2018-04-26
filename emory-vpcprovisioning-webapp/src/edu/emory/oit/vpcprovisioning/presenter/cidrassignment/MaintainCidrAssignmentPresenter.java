@@ -95,8 +95,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 		
 		if (assignmentId == null) {
 			clientFactory.getShell().setSubTitle("Create CIDR Assignment");

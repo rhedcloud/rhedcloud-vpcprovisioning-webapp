@@ -595,7 +595,8 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.FIREWALL_EXCEPTION_REQUEST_SAVED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(new ListFirewallRulePlace(false));
+//				placeController.goTo(new ListFirewallRulePlace(false));
+				placeController.goTo(MaintainVpcPlace.createMaintainVpcPlace(event.getVpc()));
 			}
 		});
 

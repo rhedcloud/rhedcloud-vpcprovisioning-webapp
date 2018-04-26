@@ -64,6 +64,7 @@ import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
@@ -88,6 +89,9 @@ public interface VpcProvisioningServiceAsync {
 	
 //	void getLoginURL(AsyncCallback<String> callback);
 	void logMessage(String message, AsyncCallback<Void> callback);
+	
+	// ReleaseInfo
+	void getReleaseInfo(AsyncCallback<ReleaseInfo> callback);
 	
 	// Identity services
 	void getDirectoryMetaDataForNetId(String netId, AsyncCallback<DirectoryMetaDataPojo> callback);

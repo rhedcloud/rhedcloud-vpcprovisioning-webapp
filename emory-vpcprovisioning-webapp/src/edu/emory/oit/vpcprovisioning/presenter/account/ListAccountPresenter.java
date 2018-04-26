@@ -81,9 +81,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
-
+		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog();
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {

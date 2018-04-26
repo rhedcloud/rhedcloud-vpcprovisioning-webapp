@@ -118,7 +118,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		// TODO: compliances
 		presenter.getFirewallExceptionRequest().setSensitiveDataDesc(sensitiveDataDescriptionTA.getText());
 		presenter.getFirewallExceptionRequest().setLocalFirewallRules(localFirewallRulesDescriptionTA.getText());
-		presenter.getFirewallExceptionRequest().setIsDefaultDenyZone(isHardenedCB.getValue() ? "Yes" : "No");
+		presenter.getFirewallExceptionRequest().setIsDefaultDenyZone(isDefaultDenyZoneCB.getValue() ? "Yes" : "No");
 		// tags are added to the FirewallExceptionRequest as they're added by the user
 		presenter.saveFirewallExceptionRequest();
 	}
@@ -139,7 +139,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	netIdTB.setFocus(true);
+	        	technicalContactTB.setFocus(true);
 	        }
 	    });
 	}
@@ -169,29 +169,6 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		/*
-SystemId?, ServiceNow internal id to uniquely identify a record in the custom table. Not required in create. Required for update/delete.  wsdl: sys_id
-UserNetID, Form: requestor userID; wsdl: u_requested_for
-ApplicationName,   Form: For what application is this firewall exception needed.  wsdl: u_common_name
-IsSourceOutsideEmory,  Form:Is the source outside of Emory's network and the destination inside?.  Valid values: Yes, No.  wsdl: u_internet_access
-TimeRule,  how long the firewall exception will be valid.  Valid values: Indefinitely, SpecificDate.  wsdl: u_how_long
-ValidUntilDate?,  if ValidUntil is SpecificDate, this field holds the date string, such as 2018-11-14. wsdl: u_specific_date 
-SourceIpAddresses,  Source IP addresses AND fully qualified domain names of the system(s) that need to access the destination(s).  wsdl: u_ip_address 
-DestinationIpAddresses, Destination IP address(es) AND fully qualified domain name(s) of the system(s) that needs to be accessible through the firewall.  wsdl: u_ip_address2 
-Ports,  Destination ports, applications, or services that need to be accessible. Indicate TCP or UDP for each, or ICMP type, along with the underlying protocol or application.  wsdl: u_ports 
-BusinessReason, - Describe the business justification for this exception.  wsdl: u_business_reason 
-IsPatched, - Are Server/Service/Application components fully patched at the time of this request?  valie values: Yes, No.  wsdl: u_patch_server 
-IsDefaultPasswdChanged, - Have all default application or server passwords been changed? valid values: Yes, No.  wsdl: u_app_pswd 
-IsAppConsoleACLed, - Have all administrative/management consoles for the application, as well as any underlying technology administrative/management consoles (such as ColdFusion, Jboss, Tomcat, phpmyadmin) been properly ACL'd. valid values: Yes, No. wsdl: u_mgmt_consol 
-IsHardened, - Have hardening guidelines for the application/service and underlying technologies been followed and implemented? Valid values: Yes, No.  wsdl:  u_guidelines 
-PatchingPlan, - Describe your plan for keeping this application/service and underlying technologies patched in a timely manner.  wsdl: u_plan 
-Compliance*, - Is this application/service in scope of any of the following compliance regimes? valid values: FERPA, FISMA, HIPAA, PCI, Other, Unsure. wsdl: u_comp_1 to u_comp_6 
-OtherCompliance?, - compliance description when the Compliance value is "Other".  wsdl: u_other_compliance 
-SensitiveDataDesc, - Describe any sensitive data that will be stored or processed on this system.  wsdl: u_sensitivity 
-LocalFirewallRules, - Describe any local (host-based) firewall rules that are currently configured on the system.  wsdl: u_firewall_rules 
-IsDefaultDenyZone, - Could this system be placed into a subnet that blocks all outbound Internet traffic by default.  valid values: Yes, No.  wsdl: u_subnet 
-Tag+, - tags for this request.  wsdl: u_tag
-		 */
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		FirewallExceptionRequestPojo fer = presenter.getFirewallExceptionRequest();
 		if (fer.getUserNetId() == null || fer.getUserNetId().length() == 0) {
@@ -321,6 +298,40 @@ Tag+, - tags for this request.  wsdl: u_tag
 		addTagTF.setText("");
 		addTagTF.getElement().setPropertyString("placeholder", "enter a tag");
 		
+		// TODO: initialize all fields with data from the presenter's FirewallExceptionRequest
+		FirewallExceptionRequestPojo fer = presenter.getFirewallExceptionRequest();
+		technicalContactTB.setText(fer.getTechnicalContact());
+		applicationNameTB.setText(fer.getApplicationName());
+		if (fer.getIsSourceOutsideEmory() != null) {
+			isSourceOutsideEmoryCB.setValue(fer.getIsSourceOutsideEmory().equalsIgnoreCase("Yes") ? true : false);
+		}
+		if (fer.getIsPatched() != null) {
+			isPatchedCB.setValue(fer.getIsPatched().equalsIgnoreCase("Yes") ? true : false);
+		}
+		if (fer.getIsDefaultPasswdChanged() != null) {
+			isDefaultPasswordChangedCB.setValue(fer.getIsDefaultPasswdChanged().equalsIgnoreCase("Yes") ? true : false);
+		}
+		if (fer.getIsAppConsoleACLed() != null) {
+			isAppConsoleACLedCB.setValue(fer.getIsAppConsoleACLed().equalsIgnoreCase("Yes") ? true : false);
+		}
+		if (fer.getIsHardened() != null) {
+			isHardenedCB.setValue(fer.getIsHardened().equalsIgnoreCase("Yes") ? true : false);
+		}
+		if (fer.getIsDefaultDenyZone() != null) {
+			isDefaultDenyZoneCB.setValue(fer.getIsDefaultDenyZone().equalsIgnoreCase("Yes") ? true : false);
+		}
+		
+		if (fer.getValidUntilDate() != null) {
+			validUntilDB.setValue(presenter.getFirewallExceptionRequest().getValidUntilDate());
+		}
+		sourceIpAddressesTA.setText(fer.getSourceIp());
+		destinationIpAddressesTA.setText(fer.getDestinationIp());
+		portsTA.setText(fer.getPorts());
+		businessReasonTA.setText(fer.getBusinessReason());
+		patchingPlanTA.setText(fer.getPatchingPlan());
+		sensitiveDataDescriptionTA.setText(fer.getSensitiveDataDesc());
+		localFirewallRulesDescriptionTA.setText(fer.getLocalFirewallRules());
+
 		DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
 	    validUntilDB.setFormat(new DateBox.DefaultFormat(dateFormat));
 	    validUntilDB.getDatePicker().setYearArrowsVisible(true);

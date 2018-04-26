@@ -82,8 +82,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 		
 		if (provisioningId == null) {
 			clientFactory.getShell().setSubTitle("Generate VPCP");

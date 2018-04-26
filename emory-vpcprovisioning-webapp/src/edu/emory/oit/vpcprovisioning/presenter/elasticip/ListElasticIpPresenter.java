@@ -75,6 +75,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitPanel();
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -99,8 +100,6 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 //				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Elastic IPs");
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the Vpc list and display it.
 				if (clearList) {

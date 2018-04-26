@@ -3,10 +3,10 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class ElasticIpRequisition extends SharedObject implements IsSerializable {
+public class ElasticIpRequisitionPojo extends SharedObject implements IsSerializable {
 	String ownerId;
 
-	public ElasticIpRequisition() {
+	public ElasticIpRequisitionPojo() {
 		// TODO Auto-generated constructor stub
 	}
 

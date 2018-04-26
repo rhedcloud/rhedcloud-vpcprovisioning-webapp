@@ -2,9 +2,12 @@ package edu.emory.oit.vpcprovisioning.presenter;
 
 import java.util.logging.Logger;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 
 public abstract class PresenterBase {
 	private static final Logger log = Logger.getLogger(PresenterBase.class.getName());
@@ -56,5 +59,21 @@ public abstract class PresenterBase {
 			}
 		};
 		VpcProvisioningService.Util.getInstance().logMessage(message, callback);
+	}
+	
+	public void setReleaseInfo(final ClientFactory clientFactory) {
+		AsyncCallback<ReleaseInfo> riCallback = new AsyncCallback<ReleaseInfo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Error getting release info", caught);
+				clientFactory.getShell().setReleaseInfo("Error getting release info");
+			}
+
+			@Override
+			public void onSuccess(ReleaseInfo result) {
+				clientFactory.getShell().setReleaseInfo(result.toString());
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getReleaseInfo(riCallback);
 	}
 }

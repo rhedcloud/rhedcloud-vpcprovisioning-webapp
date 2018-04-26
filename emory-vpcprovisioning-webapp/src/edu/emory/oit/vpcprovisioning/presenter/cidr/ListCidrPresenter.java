@@ -85,6 +85,8 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		setReleaseInfo(clientFactory);
+
 		getView().showPleaseWaitDialog();
 		getView().showPleaseWaitPanel();
 
@@ -111,8 +113,6 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 //				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("CIDRs");
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the CIDR list and display it.
 				if (clearList) {

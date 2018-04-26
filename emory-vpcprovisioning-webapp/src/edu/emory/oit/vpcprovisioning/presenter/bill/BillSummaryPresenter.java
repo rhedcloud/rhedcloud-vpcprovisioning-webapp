@@ -47,8 +47,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 		GWT.log("[presenter] Selected account is: " + this.account.getAccountId());
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override

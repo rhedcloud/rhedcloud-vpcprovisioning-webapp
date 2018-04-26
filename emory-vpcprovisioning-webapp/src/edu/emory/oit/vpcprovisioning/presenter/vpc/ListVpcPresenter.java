@@ -82,6 +82,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog();
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -106,8 +107,6 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 //				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPCs");
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the Vpc list and display it.
 				if (clearList) {

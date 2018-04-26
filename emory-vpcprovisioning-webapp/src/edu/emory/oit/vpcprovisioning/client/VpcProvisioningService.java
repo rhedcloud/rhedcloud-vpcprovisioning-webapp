@@ -66,6 +66,7 @@ import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
@@ -104,6 +105,9 @@ public interface VpcProvisioningService extends RemoteService {
 	// END TEMPORARY
 	
 //	String getLoginURL() throws RpcException;
+	
+	// ReleaseInfo
+	ReleaseInfo getReleaseInfo() throws RpcException;
 	
 	// logging
 	void logMessage(String message) throws RpcException;

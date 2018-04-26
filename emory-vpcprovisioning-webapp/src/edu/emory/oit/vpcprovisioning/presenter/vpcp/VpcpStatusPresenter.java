@@ -62,8 +62,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override

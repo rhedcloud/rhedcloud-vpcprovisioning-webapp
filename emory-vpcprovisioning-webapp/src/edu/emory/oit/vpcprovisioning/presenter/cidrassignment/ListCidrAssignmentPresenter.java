@@ -81,6 +81,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		setReleaseInfo(clientFactory);
         getView().showPleaseWaitPanel();
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -102,8 +103,6 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 //				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("CidrAssignments");
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the account list and display it.
 				if (clearList) {

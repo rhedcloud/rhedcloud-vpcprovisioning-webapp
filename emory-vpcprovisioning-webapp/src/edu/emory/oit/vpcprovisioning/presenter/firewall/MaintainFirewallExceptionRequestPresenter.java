@@ -64,11 +64,10 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		setReleaseInfo(clientFactory);
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
 		if (systemId == null) {
 			clientFactory.getShell().setSubTitle("Create Firewall Exception Request");
 			startCreate();
@@ -201,7 +200,7 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 				getView().hidePleaseWaitDialog();
 				GWT.log("Exception saving the FirewallExceptionRequest", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the CIDR.  Message " +
+						"server saving the Firewall Exception Request.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 
@@ -210,7 +209,7 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 				// TODO Auto-generated method stub
 				
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.CIDR_SAVED, result);
+				ActionEvent.fire(eventBus, ActionNames.FIREWALL_EXCEPTION_REQUEST_SAVED, result, vpc);
 			}
 		};
 		if (!this.isEditing) {

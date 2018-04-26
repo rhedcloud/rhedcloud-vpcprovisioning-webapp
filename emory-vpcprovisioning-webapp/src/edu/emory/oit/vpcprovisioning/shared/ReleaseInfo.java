@@ -12,6 +12,7 @@ public class ReleaseInfo implements IsSerializable {
 	
 	String productName = "VPC Provisioning App";
 	String applicationEnvironment = "APPLICATION_ENVIRONMENT";
+	String applicationEnvironmentBase = "APPLICATION_ENVIRONMENT_BASE";
 	String applicationName = "APPLICATION_NAME";
 	String awsDefaultRegion = "AWS_DEFAULT_REGION";
 	String gwtProjectName = "GWT_PROJECT_NAME";
@@ -51,7 +52,8 @@ public class ReleaseInfo implements IsSerializable {
 
 	public String toString() {
 		return 
-				applicationEnvironment + "  Version: " + version + "  Build: " + buildNumber;
+				applicationEnvironmentBase + "-" + applicationEnvironment + 
+				"  Version: " + version + "  Build: " + buildNumber;
 	}
 
 	public String getApplicationEnvironment() {
@@ -132,5 +134,13 @@ public class ReleaseInfo implements IsSerializable {
 
 	public void setBuildNumber(String buildNumber) {
 		this.buildNumber = buildNumber;
+	}
+
+	public String getApplicationEnvironmentBase() {
+		return applicationEnvironmentBase;
+	}
+
+	public void setApplicationEnvironmentBase(String applicationEnvironmentBase) {
+		this.applicationEnvironmentBase = applicationEnvironmentBase;
 	}
 }

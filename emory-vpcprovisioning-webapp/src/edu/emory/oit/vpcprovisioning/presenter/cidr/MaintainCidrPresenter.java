@@ -62,8 +62,8 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
+
 		if (cidrId == null) {
 			clientFactory.getShell().setSubTitle("Create CIDR");
 			startCreate();

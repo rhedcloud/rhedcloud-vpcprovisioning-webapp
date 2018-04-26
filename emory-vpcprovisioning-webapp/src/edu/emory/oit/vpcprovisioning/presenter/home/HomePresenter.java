@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.home;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -33,8 +34,9 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		
+		setReleaseInfo(clientFactory);
+		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
 			@Override

@@ -63,6 +63,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		setReleaseInfo(clientFactory);
         getView().showPleaseWaitPanel();
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -82,8 +83,6 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				// Add a handler to the 'add' button in the shell.
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Elastic IP Assignments");
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the account list and display it.
 				if (clearList) {

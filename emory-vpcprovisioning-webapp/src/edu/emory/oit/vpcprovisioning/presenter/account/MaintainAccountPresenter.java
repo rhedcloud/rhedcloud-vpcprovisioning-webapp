@@ -78,8 +78,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		setReleaseInfo(clientFactory);
 
-		
 		// get awsAccountsURL and awsBillingManagementURL in parallel
 		AsyncCallback<String> accountsUrlCB = new AsyncCallback<String>() {
 			@Override
@@ -109,9 +109,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		};
 		VpcProvisioningService.Util.getInstance().getAwsBillingManagementURL(billingUrlCB);
 		
-		ReleaseInfo ri = new ReleaseInfo();
-		
-		clientFactory.getShell().setReleaseInfo(ri.toString());
 		if (accountId == null) {
 			clientFactory.getShell().setSubTitle("Create Account");
 			startCreate();

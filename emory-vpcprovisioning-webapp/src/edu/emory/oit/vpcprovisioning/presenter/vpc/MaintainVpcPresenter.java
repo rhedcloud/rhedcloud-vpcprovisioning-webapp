@@ -67,9 +67,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
-		
+		setReleaseInfo(clientFactory);
 		if (vpcId == null) {
 			clientFactory.getShell().setSubTitle("Generate VPC");
 			startCreate();

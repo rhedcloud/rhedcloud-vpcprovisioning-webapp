@@ -82,8 +82,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	public void start(EventBus eventBus) {
 		GWT.log("List notifications presenter...");
 		this.eventBus = eventBus;
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 
 		getView().showPleaseWaitDialog();
 		

@@ -64,9 +64,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 		if (serviceId == null) {
 			clientFactory.getShell().setSubTitle("Create Service");
 			startCreate();

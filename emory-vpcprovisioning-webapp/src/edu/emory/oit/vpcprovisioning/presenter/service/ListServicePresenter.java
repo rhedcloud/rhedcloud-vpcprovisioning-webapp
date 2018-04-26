@@ -83,6 +83,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		GWT.log("List services presenter...");
 		this.eventBus = eventBus;
 
+		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog();
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -100,8 +101,6 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 //				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("AWS Services");
-				ReleaseInfo ri = new ReleaseInfo();
-				clientFactory.getShell().setReleaseInfo(ri.toString());
 
 				// Clear the Vpc list and display it.
 				if (clearList) {

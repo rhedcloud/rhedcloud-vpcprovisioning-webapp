@@ -74,8 +74,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
-		ReleaseInfo ri = new ReleaseInfo();
-		clientFactory.getShell().setReleaseInfo(ri.toString());
+		setReleaseInfo(clientFactory);
 		
 		if (assignmentId == null) {
 			clientFactory.getShell().setSubTitle("Create Elastic IP Assignment");
