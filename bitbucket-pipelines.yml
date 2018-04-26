@@ -3,7 +3,11 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: maven:3.3.9
+image:
+  name: emory/webapp-base-1.0:latest
+  username: $DOCKER_HUB_USERNAME
+  password: $DOCKER_HUB_PASSWORD
+  email: $DOCKER_HUB_EMAIL
 
 pipelines:
   default:
@@ -11,14 +15,7 @@ pipelines:
         caches:
           - maven
         script: # Modify the commands below to build your repository.
-          - apt-get update 
-          - apt-get install -y zip 
-          - apt-get install -y python3
-          - apt-get install -y python-pip python-dev build-essential 
-          - pip install --upgrade pip
-          - pip install --upgrade virtualenv 
-          - pip install boto3==1.3.0
-          - cd ${GWT_PROJECT_NAME}
+          - cd $GWT_PROJECT_NAME
           - sed -i 's/APPLICATION_ENVIRONMENT/'"$APPLICATION_ENVIRONMENT"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - sed -i 's/APPLICATION_NAME/'"$APPLICATION_NAME"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - sed -i 's/AWS_DEFAULT_REGION/'"$AWS_DEFAULT_REGION"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
@@ -32,4 +29,34 @@ pipelines:
           - mvn package
           - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING}"
           - cd ..
-          - python beanstalk_deploy.py
+          - python beanstalk_deploy.py DEV
+          - mv $GWT_PROJECT_NAME/target ./
+        artifacts:
+          - target/**
+          
+    - step:
+        name: Deploy to test
+        deployment: test
+        trigger: manual
+        script:
+          - mv target $GWT_PROJECT_NAME
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
+
+    - step:
+        name: Deploy to staging
+        deployment: staging
+        trigger: manual
+        script:
+          - mv target $GWT_PROJECT_NAME
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
+
+    - step:
+        name: Deploy to production
+        deployment: production
+        trigger: manual
+        script:
+          - mv target $GWT_PROJECT_NAME
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
