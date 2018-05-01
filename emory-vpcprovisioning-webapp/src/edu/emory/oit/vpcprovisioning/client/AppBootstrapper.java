@@ -124,14 +124,13 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_ELASTIC_IP.onAction");
 				final ListElasticIpAssignmentPresenter presenter = new ListElasticIpAssignmentPresenter(clientFactory, new ListElasticIpAssignmentPlace(false));
+				// this will let the presenter get all Elastic IP assignments for this VPC
 				presenter.setVpc(event.getVpc());
 				presenter.start(eventBus);
 				MaintainVpcView parent = clientFactory.getMaintainVpcView();
 				parent.setWidget(presenter);
-//				placeController.goTo(new ListElasticIpAssignmentPlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_ELASTIC_IP, new ActionEvent.Handler() {

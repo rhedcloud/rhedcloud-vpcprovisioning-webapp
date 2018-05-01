@@ -90,8 +90,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-//		mainTabPanel.getTabWidget(4).setVisible(false);
-//		mainTabPanel.getTabWidget(5).setVisible(false);
 		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
@@ -109,8 +107,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			public void onSuccess(UserAccountPojo result) {
 				userLoggedIn = result;
 				if (!userLoggedIn.isLitsAdmin()) {
-//					mainTabPanel.getTabWidget(4).setVisible(false);
-//					mainTabPanel.getTabWidget(5).setVisible(false);
 					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 					mainTabPanel.getTabWidget(5).getParent().setVisible(false);
 					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
@@ -123,8 +119,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					});
 				}
 				else {
-//					mainTabPanel.getTabWidget(4).setVisible(true);
-//					mainTabPanel.getTabWidget(5).setVisible(true);
 					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
 					mainTabPanel.getTabWidget(5).getParent().setVisible(true);
 				}
@@ -146,9 +140,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		};
 		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 
-//		HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
-//		hp2.addStyleName("content");
-//		homeContentContainer.setWidget(hp2);
 		HomeView homeView = clientFactory.getHomeView();
 		homeContentContainer.add(homeView);
 

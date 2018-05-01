@@ -3953,6 +3953,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
         	// interfaces need to do a bit more.
         	info("Refreshing bills by account map...");
         	refreshBillsByAccountMap();
+        	defaultRequestTimeoutInterval = 20000;
         	info("Done refreshing bills by account map.");
         }
     }

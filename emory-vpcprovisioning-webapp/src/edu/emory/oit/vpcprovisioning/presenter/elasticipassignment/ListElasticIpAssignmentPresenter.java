@@ -126,7 +126,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 			@Override
 			public void onSuccess(ElasticIpAssignmentQueryResultPojo result) {
-				GWT.log("Got " + result.getResults().size() + " ElasticIpAssignments for " + result.getFilterUsed());
+				GWT.log("Got " + result.getResults().size() + " ElasticIpAssignments for VPC: " + vpc.getVpcId());
 				GWT.log("presenter, initializing Elastic IP Assignment list with " + result.getResults().size() + " Elastic IP Assignments.");
 				setElasticIpAssignmentList(result.getResults());
 				// apply authorization mask
@@ -151,6 +151,10 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 		if (filter == null) {
 			filter = new ElasticIpAssignmentQueryFilterPojo();
 		}
+//		if (vpc != null) {
+//			
+//		}
+		filter.setOwnerId(vpc.getVpcId());
 		VpcProvisioningService.Util.getInstance().getElasticIpAssignmentsForFilter(filter, callback);
 	}
 

@@ -785,11 +785,11 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    fwer_selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		FirewallRulePojo m = fw_selectionModel.getSelectedObject();
-	    		GWT.log("Selected firewallRule is: " + m.getName());
+	    		FirewallExceptionRequestPojo m = fwer_selectionModel.getSelectedObject();
+	    		GWT.log("Selected firewallException (app Name) is: " + m.getApplicationName());
 	    	}
 	    });
-
+	    
 	    ListHandler<FirewallExceptionRequestPojo> sortHandler = 
 	    	new ListHandler<FirewallExceptionRequestPojo>(fwer_dataProvider.getList());
 	    firewallExceptionRequestListTable.addColumnSortHandler(sortHandler);

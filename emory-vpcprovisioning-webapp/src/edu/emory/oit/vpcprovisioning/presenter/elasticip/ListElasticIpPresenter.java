@@ -210,12 +210,12 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		};
 
 		GWT.log("refreshing ElasticIP list...");
-		if (filter == null) {
-			filter = new ElasticIpQueryFilterPojo();
-		}
-		if (vpc != null) {
-			filter.setOwnerId(vpc.getVpcId());
-		}
+//		if (filter == null) {
+//			filter = new ElasticIpQueryFilterPojo();
+//		}
+//		if (vpc != null) {
+//			filter.setOwnerId(vpc.getVpcId());
+//		}
 		VpcProvisioningService.Util.getInstance().getElasticIpsForFilter(filter, callback);
 	}
 
