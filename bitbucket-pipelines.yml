@@ -18,6 +18,7 @@ pipelines:
           - maven
         script: # Modify the commands below to build your repository.
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - source $HOME/.profile
           - cd $GWT_PROJECT_NAME
           - sed -i 's/APPLICATION_ENVIRONMENT_BASE/'"$APPLICATION_ENVIRONMENT_BASE"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - sed -i 's/APPLICATION_NAME/'"$APPLICATION_NAME"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
@@ -38,7 +39,6 @@ pipelines:
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
-          - source $HOME/.profile
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (DEV)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
