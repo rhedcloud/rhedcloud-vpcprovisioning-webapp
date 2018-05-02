@@ -8,6 +8,7 @@ image:
   username: $DOCKER_HUB_USERNAME
   password: $DOCKER_HUB_PASSWORD
   email: $DOCKER_HUB_EMAIL
+  run-as-user: 1000
 
 pipelines:
   default:
@@ -37,6 +38,7 @@ pipelines:
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - source $HOME/.profile
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (DEV)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
