@@ -8,6 +8,7 @@ image:
   username: $DOCKER_HUB_USERNAME
   password: $DOCKER_HUB_PASSWORD
   email: $DOCKER_HUB_EMAIL
+  run-as-user: 1000
 
 pipelines:
   default:
@@ -17,6 +18,7 @@ pipelines:
           - maven
         script: # Modify the commands below to build your repository.
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - source $HOME/.profile
           - cd $GWT_PROJECT_NAME
           - sed -i 's/APPLICATION_ENVIRONMENT_BASE/'"$APPLICATION_ENVIRONMENT_BASE"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - sed -i 's/APPLICATION_NAME/'"$APPLICATION_NAME"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
@@ -31,19 +33,35 @@ pipelines:
           - mvn package
           - curl -X POST "https://${BB_AUTH_STRING}@api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/downloads" --form files=@"target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING}"
           - cd ..
-          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
+          # begin for shibboleth (DEV)
+#          - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
+#          - export APPLICATION_URL=http://dev.vpcp.emory.edu
+#          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
+#          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+#          - jar -uf /tmp/ROOT.war .ebextensions
+          # end for shibboleth (DEV)
+#          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
           - mv $GWT_PROJECT_NAME/target ./
         artifacts:
           - target/**
           
-    - step:
-        name: Deploy to test
-        deployment: test
-        trigger: manual
-        script:
-          - mv target $GWT_PROJECT_NAME
-          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
-          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
+#    - step:
+#        name: Deploy to test
+#        deployment: test
+#        trigger: manual
+#        script:
+#          - mv target $GWT_PROJECT_NAME
+#          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+#          # begin for shibboleth (TEST)
+#          - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
+#          - export APPLICATION_URL=http://test.vpcp.emory.edu
+#          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
+#          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+#          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+#          - jar -uf /tmp/ROOT.war .ebextensions
+#          # end for shibboleth (TEST)
+#          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
 
     - step:
         name: Deploy to staging
@@ -52,6 +70,15 @@ pipelines:
         script:
           - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - source $HOME/.profile
+          # begin for shibboleth (stage)
+          - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
+          - export APPLICATION_URL=http://stage.vpcp.emory.edu
+          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - jar -uf /tmp/ROOT.war .ebextensions
+          # end for shibboleth (stage)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
 
     - step:
@@ -61,4 +88,12 @@ pipelines:
         script:
           - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          # begin for shibboleth (prod)
+          - export IDP_URL=https://login.emory.edu/idp/shibboleth
+          - export APPLICATION_URL=http://vpcp.emory.edu
+          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - jar -uf /tmp/ROOT.war .ebextensions
+          # end for shibboleth (prod)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
