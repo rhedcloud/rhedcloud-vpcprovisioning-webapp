@@ -1,0 +1,8 @@
+[shibboleth]
+name=Shibboleth (RHEL_6)
+# Please report any problems to https://issues.shibboleth.net
+type=rpm-md
+mirrorlist=https://shibboleth.net/cgi-bin/mirrorlist.cgi/RHEL_6
+gpgcheck=1
+gpgkey=https://downloadcontent.opensuse.org/repositories/security:/shibboleth/RHEL_6/repodata/repomd.xml.key
+enabled=1
