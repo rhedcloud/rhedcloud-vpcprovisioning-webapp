@@ -35,7 +35,7 @@ pipelines:
           - cd ..
           # begin for shibboleth (DEV)
           - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
-          - export APPLICATION_URL=http://dev.vpcp.emory.edu
+          - export APPLICATION_URL=https://dev.vpcp.emory.edu
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
@@ -55,7 +55,7 @@ pipelines:
 #          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
 #          # begin for shibboleth (TEST)
 #          - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
-#          - export APPLICATION_URL=http://test.vpcp.emory.edu
+#          - export APPLICATION_URL=https://test.vpcp.emory.edu
 #          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
 #          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
 #          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
@@ -73,7 +73,7 @@ pipelines:
           - source $HOME/.profile
           # begin for shibboleth (stage)
           - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
-          - export APPLICATION_URL=http://stage.vpcp.emory.edu
+          - export APPLICATION_URL=https://stage.vpcp.emory.edu
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
@@ -90,7 +90,7 @@ pipelines:
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
           # begin for shibboleth (prod)
           - export IDP_URL=https://login.emory.edu/idp/shibboleth
-          - export APPLICATION_URL=http://vpcp.emory.edu
+          - export APPLICATION_URL=https://vpcp.emory.edu
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
