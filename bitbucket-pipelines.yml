@@ -38,6 +38,8 @@ pipelines:
           - export APPLICATION_URL=https://dev.vpcp.emory.edu
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,SERVER_NAME,https://dev.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+          - sed -i 's,SERVER_ALIAS,dev.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (DEV)
@@ -58,6 +60,8 @@ pipelines:
 #          - export APPLICATION_URL=https://test.vpcp.emory.edu
 #          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
 #          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+#          - sed -i 's,SERVER_NAME,https://test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+#          - sed -i 's,SERVER_ALIAS,test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
 #          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
 #          - jar -uf /tmp/ROOT.war .ebextensions
 #          # end for shibboleth (TEST)
@@ -76,6 +80,8 @@ pipelines:
           - export APPLICATION_URL=https://stage.vpcp.emory.edu
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,SERVER_NAME,https://stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+          - sed -i 's,SERVER_ALIAS,stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (stage)
@@ -93,6 +99,8 @@ pipelines:
           - export APPLICATION_URL=https://vpcp.emory.edu
           - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,SERVER_NAME,https://vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
+          - sed -i 's,SERVER_ALIAS,vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (prod)
