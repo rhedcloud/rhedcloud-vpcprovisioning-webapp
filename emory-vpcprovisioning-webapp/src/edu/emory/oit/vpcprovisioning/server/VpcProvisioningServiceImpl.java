@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -556,7 +557,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("no user currently logged in, checking for Shibboleth information");
 			HttpServletRequest request = this.getThreadLocalRequest();
 
+			Enumeration<String> attrEnum = request.getAttributeNames();
+			while(attrEnum.hasMoreElements()) {
+				info("HTTP Attribute: " + request.getAttribute(attrEnum.nextElement()));
+			}
+			Enumeration<String> headerEnum = request.getHeaderNames();
+			while(headerEnum.hasMoreElements()) {
+				info("HTTP Header: " + request.getHeader(headerEnum.nextElement()));
+			}
 			String eppn = (String) request.getHeader("eduPersonPrincipalName");
+			if (eppn == null) {
+				eppn = (String) request.getAttribute("eduPersonPrincipalName");
+			}
 			
 			if (eppn != null) {
 				info("found eppn in Shibboleth attributes.  eppn is: '" + eppn + "'");
