@@ -96,7 +96,11 @@
         <MetadataProvider type="XML" uri="IDP_URL" backingFilePath="serviceforge-idp-metadata.xml" reloadInterval="180000"/>
 
         <!-- Map to extract attributes from SAML assertions. -->
-        <AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>
+        <!--<AttributeExtractor type="XML" validate="true" reloadChanges="false" path="attribute-map.xml"/>-->
+	<AttributeExtractor type="XML"
+          uri="https://login.emory.edu/client-config/attribute-map.xml"
+          backingFilePath="attribute-map.xml"
+          reloadInterval="21600"/>
 
         <!-- Use a SAML query if no attributes are supplied during SSO. -->
         <AttributeResolver type="Query" subjectMatch="true"/>
