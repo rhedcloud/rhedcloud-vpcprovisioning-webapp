@@ -48,24 +48,24 @@ pipelines:
         artifacts:
           - target/**
           
-#    - step:
-#        name: Deploy to test
-#        deployment: test
-#        trigger: manual
-#        script:
-#          - mv target $GWT_PROJECT_NAME
-#          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
-#          # begin for shibboleth (TEST)
-#          - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
-#          - export APPLICATION_URL=https://test.vpcp.emory.edu
-#          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
-#          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
-#          - sed -i 's,SERVER_NAME,https://test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-#          - sed -i 's,SERVER_ALIAS,test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-#          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
-#          - jar -uf /tmp/ROOT.war .ebextensions
-#          # end for shibboleth (TEST)
-#          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
+    - step:
+        name: Deploy to test
+        deployment: test
+        trigger: manual
+        script:
+          - mv target $GWT_PROJECT_NAME
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          # begin for shibboleth (TEST)
+          - export IDP_URL=https://login.emory.edu:4443/idp/shibboleth
+          - export APPLICATION_URL=https://test.vpcp.emory.edu
+          - sed -i 's,IDP_URL,'"$IDP_URL"',g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,APPLICATION_URL,'"$APPLICATION_URL"',g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,SERVER_NAME,https://test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+          - sed -i 's,SERVER_ALIAS,test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
+          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - jar -uf /tmp/ROOT.war .ebextensions
+          # end for shibboleth (TEST)
+          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
 
     - step:
         name: Deploy to staging
