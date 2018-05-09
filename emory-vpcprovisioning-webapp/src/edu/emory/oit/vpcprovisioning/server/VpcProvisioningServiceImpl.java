@@ -557,14 +557,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("no user currently logged in, checking for Shibboleth information");
 			HttpServletRequest request = this.getThreadLocalRequest();
 
-			Enumeration<String> attrEnum = request.getAttributeNames();
-			while(attrEnum.hasMoreElements()) {
-				info("HTTP Attribute: " + request.getAttribute(attrEnum.nextElement()));
-			}
-			Enumeration<String> headerEnum = request.getHeaderNames();
-			while(headerEnum.hasMoreElements()) {
-				info("HTTP Header: " + request.getHeader(headerEnum.nextElement()));
-			}
+//			Enumeration<String> attrEnum = request.getAttributeNames();
+//			while(attrEnum.hasMoreElements()) {
+//				info("HTTP Attribute: " + request.getAttribute(attrEnum.nextElement()));
+//			}
+//			Enumeration<String> headerEnum = request.getHeaderNames();
+//			while(headerEnum.hasMoreElements()) {
+//				info("HTTP Header: " + request.getHeader(headerEnum.nextElement()));
+//			}
 			String eppn = (String) request.getHeader("eduPersonPrincipalName");
 			if (eppn == null) {
 				eppn = (String) request.getAttribute("eduPersonPrincipalName");
