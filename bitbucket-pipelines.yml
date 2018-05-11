@@ -118,9 +118,13 @@ pipelines:
           # end for shibboleth (stage)
           # begin new (stage specific web.xml)
           - mkdir -p $BUILD_HOME/deploy/stage/libs/WEB-INF
-          - cp deploy/stage/configs/web.xml $BUILD_HOME/deploy/stage/libs/WEB-INF/.
-          - cat $BUILD_HOME/deploy/stage/libs/WEB-INF/web.xml
-          - jar uf /tmp/ROOT.war $BUILD_HOME/deploy/stage/libs/WEB-INF/web.xml
+          - cp deploy/stage/configs/web.xml $BUILD_HOME/deploy/stage/libs/WEB-INF
+          - cp /tmp/ROOT.war $BUILD_HOME/deploy/stage/libs
+          - cd $BUILD_HOME/deploy/stage/libs
+          - jar uf ROOT.war WEB-INF/web.xml
+          - rm -Rf WEB-INF
+          - cp ROOT.war /tmp
+          - cd $BUILD_HOME
           # end new
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
 
