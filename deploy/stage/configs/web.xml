@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app
+	PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+	"http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+	<servlet>
+		<servlet-name>VpcProvisioningService</servlet-name>
+		<servlet-class>edu.emory.oit.vpcprovisioning.server.VpcProvisioningServiceImpl</servlet-class>
+		<init-param>
+			<param-name>useEsbService</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>configDocPath</param-name>
+			<!-- Local testing -->
+			!-- <param-value>file:///Users/jtjacks/Development/oxygen-workspace/deployment-esb-dev/Deployments/VpcProvisioningWebApplication.xml</param-value>-->
+			
+			<!-- for ALL EAP environments (value is turned into a URL by start scripts on server) -->
+			<!-- Also used for AWS deployment and testing -->
+			<param-value>configs/messaging/Environments/Examples/Deployments/VpcProvisioningWebApplication.xml-STAGE</param-value>
+		</init-param>
+		<init-param>
+			<param-name>appId</param-name>
+			<param-value>edu.emory.lits.VpcProvisioningWebApplication</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>VpcProvisioningService</servlet-name>
+		<url-pattern>/edu.emory.oit.vpcprovisioning.VpcProvisioningEntryPoint/VpcProvisioningService</url-pattern>
+	</servlet-mapping>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>VpcProvisioningEntryPoint.html</welcome-file>
+	</welcome-file-list>
+</web-app>
