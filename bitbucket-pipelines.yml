@@ -18,7 +18,7 @@ pipelines:
           - maven
         script: # Modify the commands below to build your repository.
 #          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
-          - export BUILD_HOME='pwd'
+          - export BUILD_HOME=`pwd`
           - source $HOME/.profile
           - cd $GWT_PROJECT_NAME
           - sed -i 's/APPLICATION_ENVIRONMENT_BASE/'"$APPLICATION_ENVIRONMENT_BASE"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
