@@ -106,6 +106,7 @@ pipelines:
         script:
           - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - export BUILD_HOME=`pwd`
           - source $HOME/.profile
           # begin for shibboleth (stage)
           - sed -i 's,IDP_URL,https://login.emory.edu:4443/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
