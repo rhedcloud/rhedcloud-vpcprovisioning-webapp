@@ -148,14 +148,20 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				GWT.log("Got " + result.getResults().size() + " accounts for " + result.getFilterUsed());
 				setAccountList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+				else if (account != null && user.isAdminForAccount(account.getAccountId())) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (account != null && user.isAuditorForAccount(account.getAccountId())) {
 					getView().applyEmoryAWSAuditorMask();
 				}
 				else {
-					// ??
+					getView().showMessageToUser("An error has occurred.  The user logged in does not "
+							+ "appear to be associated to any valid roles for this account.");
+					getView().applyEmoryAWSAuditorMask();
+					// TODO: need to not show them the list of accounts???
 				}
                 getView().hidePleaseWaitPanel();
 			}

@@ -113,15 +113,19 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 						getView().initPage();
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+						if (user.isLitsAdmin()) {
 							getView().applyEmoryAWSAdminMask();
 						}
-						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-							clientFactory.getShell().setSubTitle("View Elastic IP Assignment");
+						else if (summary != null && user.isAdminForAccount(summary.getAccount().getAccountId())) {
+							getView().applyEmoryAWSAdminMask();
+						}
+						else if (summary != null && user.isAuditorForAccount(summary.getAccount().getAccountId())) {
 							getView().applyEmoryAWSAuditorMask();
 						}
 						else {
-							// ??
+							getView().applyEmoryAWSAuditorMask();
+							getView().showMessageToUser("An error has occurred.  The user logged in does not "
+									+ "appear to be associated to any valid roles for this page.");
 						}
 						getView().hidePleaseWaitDialog();
 						getView().hidePleaseWaitPanel();

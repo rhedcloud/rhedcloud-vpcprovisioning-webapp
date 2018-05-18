@@ -153,14 +153,14 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				GWT.log("Got " + result.getResults().size() + " CIDRs for " + result.getFilterUsed());
 				setCidrSummaryList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-					getView().applyEmoryAWSAuditorMask();
-				}
 				else {
-					// ??
+					getView().applyEmoryAWSAuditorMask();
+					getView().showMessageToUser("An error has occurred.  The user logged in does not "
+							+ "appear to be associated to any valid roles for this page.");
+					// TODO: need to not show them the list of items???
 				}
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();

@@ -523,6 +523,11 @@ public class AppBootstrapper {
 					db.setGlassEnabled(true);
 					db.center();
 					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory);
+					if (event.getFirewallRule() != null) {
+						GWT.log("bootstrap, creating a FirewallExceptionRequest like a FirewallRule");
+						presenter.setFirewallRule(event.getFirewallRule());
+						db.setText("Create Firewall Exception Request (from existing firewall rule)");
+					}
 					presenter.setVpc(event.getVpc());
 					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 						@Override

@@ -138,10 +138,12 @@
 					<g:header>Firewall Rules</g:header>
 					<g:DeckLayoutPanel ui:field="firewallContainer" debugId="firewallContainer" width="100%" height="100%"/>
 				</g:tab>
+				<!-- 
 				<g:tab>
 					<g:header>CIDR Assignments</g:header>
 					<g:DeckLayoutPanel ui:field="cidrAssignmentContainer" debugId="cidrAssignmentContainer" width="100%" height="100%"/>
 				</g:tab>
+				 -->
 				<g:tab>
 					<g:header>Elastic IP Assignments</g:header>
 					<g:DeckLayoutPanel ui:field="elasticIpAssignmentContainer" debugId="elasticIpAssignmentContainer" width="100%" height="100%"/>

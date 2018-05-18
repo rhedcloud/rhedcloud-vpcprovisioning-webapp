@@ -339,8 +339,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					IDENTITY_SERVICE_NAME);
 			awsProducerPool = (ProducerPool) getAppConfig().getObject(
 					AWS_SERVICE_NAME);
-			cidrProducerPool = (ProducerPool) getAppConfig().getObject(
-					CIDR_SERVICE_NAME);
+//			cidrProducerPool = (ProducerPool) getAppConfig().getObject(
+//					CIDR_SERVICE_NAME);
 //			authzProducerPool = (ProducerPool) getAppConfig().getObject(
 //					AUTHZ_SERVICE_NAME);
 			firewallProducerPool = (ProducerPool) getAppConfig().getObject(
@@ -394,24 +394,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void setDefaultRequestTimeoutInterval(
 			int defaultRequestTimeoutInterval) {
 		this.defaultRequestTimeoutInterval = defaultRequestTimeoutInterval;
-	}
-
-	@SuppressWarnings({ "unchecked", "unused" })
-	private List<ActionableEnterpriseObject> doQuery(
-			XmlEnterpriseObject queryObject, ActionableEnterpriseObject aeo)
-			throws EnterpriseObjectQueryException, JMSException {
-
-		RequestService reqSvc = (RequestService) cidrProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
-		
-		String authUserId = this.getAuthUserIdForHALS();
-		aeo.getAuthentication().setAuthUserId(authUserId);
-		info("[doQuery] AuthUserId is: " + aeo.getAuthentication().getAuthUserId());
-		
-		List<ActionableEnterpriseObject> results = aeo.query(queryObject,
-				reqSvc);
-		return results;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -662,6 +644,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					e.printStackTrace();
 				}
 				String shib = generalProps.getProperty("useShibboleth", "true");
+				info("useShibboleth from config doc: " + shib);
 				useShibboleth = Boolean.parseBoolean(shib);
 				String testUserEppn = generalProps.getProperty("testUserEppn", "jtjacks@emory.edu");
 
@@ -683,13 +666,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (useAuthzService) {
 						// get permissions
 //						this.getPermissionsForUser(user);
+						user.setSuperUser(false);
 						this.getRolesForUser(user);
 					}
 					else {
 						// give them all permissions
-						for (String permission : Constants.PERMISSIONS) {
-							user.getPermissions().add(permission);
-						}
+						user.setSuperUser(true);
 					}
 
 

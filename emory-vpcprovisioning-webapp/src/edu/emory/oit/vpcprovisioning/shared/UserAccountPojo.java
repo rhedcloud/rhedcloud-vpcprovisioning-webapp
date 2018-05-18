@@ -12,6 +12,7 @@ public class UserAccountPojo implements IsSerializable {
 	String publicId;
 	List<AccountRolePojo> accountRoles = new ArrayList<AccountRolePojo>();
 	PersonalNamePojo personalName = new PersonalNamePojo();
+	boolean superUser=false;
 
 	public UserAccountPojo() {
 		// TODO Auto-generated constructor stub
@@ -91,6 +92,15 @@ public class UserAccountPojo implements IsSerializable {
 		}
 		return false;
 	}
+	public boolean isEmoryAwsAdmin() {
+		for (AccountRolePojo arp : accountRoles) {
+			if (arp.getRoleName() != null && 
+					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AWS_ADMIN)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public boolean isLitsAdmin() {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getRoleName() != null && 
@@ -98,7 +108,7 @@ public class UserAccountPojo implements IsSerializable {
 				return true;
 			}
 		}
-		return false;
+		return isSuperUser();
 	}
 	public boolean isAuditor() {
 		for (AccountRolePojo arp : accountRoles) {
@@ -116,5 +126,13 @@ public class UserAccountPojo implements IsSerializable {
 
 	public void setPersonalName(PersonalNamePojo personalName) {
 		this.personalName = personalName;
+	}
+
+	public boolean isSuperUser() {
+		return superUser;
+	}
+
+	public void setSuperUser(boolean superUser) {
+		this.superUser = superUser;
 	}
 }

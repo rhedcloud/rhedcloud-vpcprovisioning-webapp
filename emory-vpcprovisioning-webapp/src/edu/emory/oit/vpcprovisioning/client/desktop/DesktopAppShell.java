@@ -91,7 +91,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
@@ -112,7 +112,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
 						@Override
 						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-							if (event.getItem() == 4 || event.getItem() == 5) {
+//							if (event.getItem() == 4 || event.getItem() == 5) {
+							if (event.getItem() == 4) {
 								event.cancel();
 							}
 						}
@@ -120,7 +121,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				}
 				else {
 					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-					mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+//					mainTabPanel.getTabWidget(5).getParent().setVisible(true);
 				}
 			}
 		};
@@ -183,7 +184,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField VerticalPanel appShellPanel;
 	@UiField VerticalPanel otherFeaturesPanel;
 	@UiField TabLayoutPanel mainTabPanel;
-	@UiField DeckLayoutPanel cidrContentContainer;
+//	@UiField DeckLayoutPanel cidrContentContainer;
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
@@ -330,7 +331,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	            				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 	            				for (AWSServicePojo svc : services) {
 	            					GWT.log("Adding service: " + svc.getName());
-	            					Anchor svcAnchor = new Anchor(svc.getName());
+	            					Anchor svcAnchor = new Anchor(svc.getName() + (svc.getCode() != null ? " (" + svc.getCode() + ")" : ""));
 		            				svcAnchor.addStyleName("productAnchor");
 		            				svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
 		            					"  DESCRIPTION: " + svc.getDescription());
@@ -410,18 +411,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
 				break;
+//			case 4:
+//				GWT.log("need to get CIDR Maintentance Content.");
+//				firstCidrContentWidget = true;
+//				cidrContentContainer.clear();
+//				ListCidrView listCidrView = clientFactory.getListCidrView();
+//				MaintainCidrView maintainCidrView = clientFactory.getMaintainCidrView();
+//				cidrContentContainer.add(listCidrView);
+//				cidrContentContainer.add(maintainCidrView);
+//				cidrContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
+//				break;
 			case 4:
-				GWT.log("need to get CIDR Maintentance Content.");
-				firstCidrContentWidget = true;
-				cidrContentContainer.clear();
-				ListCidrView listCidrView = clientFactory.getListCidrView();
-				MaintainCidrView maintainCidrView = clientFactory.getMaintainCidrView();
-				cidrContentContainer.add(listCidrView);
-				cidrContentContainer.add(maintainCidrView);
-				cidrContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
-				break;
-			case 5:
 				GWT.log("need to get Elastic IP Maintentenance content.");
 				firstElasticIpContentWidget = true;
 				elasticIpContentContainer.clear();
@@ -470,16 +471,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-		if (w instanceof ListCidrPresenter || w instanceof MaintainCidrPresenter || 
-			w instanceof MaintainCidrAssignmentPresenter) {
-			cidrContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstCidrContentWidget) {
-				firstCidrContentWidget = false;
-				cidrContentContainer.animate(0);
-			}
-			return;
-		}
+//		if (w instanceof ListCidrPresenter || w instanceof MaintainCidrPresenter || 
+//			w instanceof MaintainCidrAssignmentPresenter) {
+//			cidrContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstCidrContentWidget) {
+//				firstCidrContentWidget = false;
+//				cidrContentContainer.animate(0);
+//			}
+//			return;
+//		}
 
 		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
 				|| w instanceof RegisterVpcPresenter

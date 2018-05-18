@@ -408,7 +408,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		});
 		elasticIpListTable.addColumn(updateTimeColumn, "Update Time");
 
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+		if (userLoggedIn.isLitsAdmin()) {
 			GWT.log(userLoggedIn.getEppn() + " is an admin");
 			// delete row column
 			Column<ElasticIpSummaryPojo, String> deleteRowColumn = new Column<ElasticIpSummaryPojo, String>(
@@ -437,7 +437,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 				new ButtonCell()) {
 			@Override
 			public String getValue(ElasticIpSummaryPojo object) {
-				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (userLoggedIn.isLitsAdmin()) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin");
 					return "Edit";
 				}

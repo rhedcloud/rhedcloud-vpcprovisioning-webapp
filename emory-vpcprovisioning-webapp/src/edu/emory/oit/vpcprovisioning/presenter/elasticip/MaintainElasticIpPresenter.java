@@ -87,15 +87,11 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 				getView().setInitialFocus();
 				
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-					clientFactory.getShell().setSubTitle("View Elastic IP");
-					getView().applyEmoryAWSAuditorMask();
-				}
 				else {
-					// ??
+					getView().applyEmoryAWSAuditorMask();
 				}
 			}
 		};

@@ -6,11 +6,11 @@
 	
 	<g:LayoutPanel ui:field='layoutPanel' width="100%" height="100%">
 		<!-- header -->
-		<g:layer top='0px' height='5.0em' left='0px' right='0px'>
+		<g:layer top='0px' height='7.0em' left='0px' right='0px'>
 			<g:HorizontalPanel ui:field="linksPanel" addStyleNames="{style.linksPanel}" width="100%" height="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 			<g:VerticalPanel>
-				<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:HTMLPanel ui:field='logoTitleBar' title="Home">
 						<div ui:field='logoElem'><img src="images/emory-aws-logos.png"/></div>
 					</g:HTMLPanel>
@@ -30,7 +30,7 @@
 					</g:HTMLPanel>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel addStyleNames="{style.linksPanelLink}" ui:field='productsTitleBar' title="Emory AWS Services">
+					<g:HTMLPanel styleName="{style.productsMenuHeader}" ui:field='productsTitleBar' title="Emory AWS Services">
 						<div ui:field='productsElem'>Products  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/></div>
 					</g:HTMLPanel>
 				</g:cell>
@@ -136,10 +136,12 @@
 							<g:header>VPC Provisioning Maintenance</g:header>
 							<g:DeckLayoutPanel ui:field="vpcpContentContainer" width="100%" height="100%"/>
 						</g:tab>
+						<!-- 
 						<g:tab>
 							<g:header>CIDR Maintenance</g:header>
 							<g:DeckLayoutPanel ui:field="cidrContentContainer" width="100%" height="100%"/>
 						</g:tab>
+						 -->
 						<g:tab>
 							<g:header>Elastic IP Maintenance</g:header>
 							<g:DeckLayoutPanel ui:field="elasticIpContentContainer" width="100%" height="100%"/>

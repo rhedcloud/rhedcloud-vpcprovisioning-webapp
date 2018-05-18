@@ -753,6 +753,20 @@ a:visited {
 	color: orange !important;
 }
 
+.productsMenuHeader {
+	background: #232f3e;
+	color: #fff;
+	font-size: 14px;
+	text-align: center;
+	cursor: pointer;
+	padding-right: 15px;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+
+.productsMenuHeader:hover {
+	color: orange;
+}
+
 .menuItemSeparator {
 	width: 1px;
 		height: 1px;

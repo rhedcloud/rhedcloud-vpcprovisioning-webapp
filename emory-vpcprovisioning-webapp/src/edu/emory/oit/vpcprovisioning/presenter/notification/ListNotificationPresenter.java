@@ -139,14 +139,12 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 				GWT.log("Got " + result.getResults().size() + " Notifications for " + result.getFilterUsed());
 				setNotificationList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				// TODO: need to determine the Notification structure so we can apply authorization mask appropriately
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-					getView().applyEmoryAWSAuditorMask();
-				}
 				else {
-					// ??
+					getView().applyEmoryAWSAuditorMask();
 				}
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();

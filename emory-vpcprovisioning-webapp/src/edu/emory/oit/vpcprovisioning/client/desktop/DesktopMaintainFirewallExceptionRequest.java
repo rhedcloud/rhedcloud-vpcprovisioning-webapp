@@ -33,6 +33,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implements MaintainFirewallExceptionRequestView {
@@ -287,10 +288,10 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	@Override
 	public void initPage() {
-//		this.resetFieldStyles();
-//		this.setFieldViolations(false);
-		if (presenter.getFirewallExceptionRequest() != null && presenter.getFirewallExceptionRequest().getUserNetId() != null) {
-			netIdTB.setText(presenter.getFirewallExceptionRequest().getUserNetId());
+		FirewallRulePojo fr = presenter.getFirewallRule();
+		FirewallExceptionRequestPojo fer = presenter.getFirewallExceptionRequest();
+		if (fer != null && fer.getUserNetId() != null) {
+			netIdTB.setText(fer.getUserNetId());
 		}
 		else {
 			netIdTB.setText(userLoggedIn.getPrincipal());
@@ -298,56 +299,107 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		addTagTF.setText("");
 		addTagTF.getElement().setPropertyString("placeholder", "enter a tag");
 		
-		// TODO: initialize all fields with data from the presenter's FirewallExceptionRequest
-		FirewallExceptionRequestPojo fer = presenter.getFirewallExceptionRequest();
-		technicalContactTB.setText(fer.getTechnicalContact());
-		applicationNameTB.setText(fer.getApplicationName());
-		if (fer.getIsSourceOutsideEmory() != null) {
-			isSourceOutsideEmoryCB.setValue(fer.getIsSourceOutsideEmory().equalsIgnoreCase("Yes") ? true : false);
-		}
-		if (fer.getIsPatched() != null) {
-			isPatchedCB.setValue(fer.getIsPatched().equalsIgnoreCase("Yes") ? true : false);
-		}
-		if (fer.getIsDefaultPasswdChanged() != null) {
-			isDefaultPasswordChangedCB.setValue(fer.getIsDefaultPasswdChanged().equalsIgnoreCase("Yes") ? true : false);
-		}
-		if (fer.getIsAppConsoleACLed() != null) {
-			isAppConsoleACLedCB.setValue(fer.getIsAppConsoleACLed().equalsIgnoreCase("Yes") ? true : false);
-		}
-		if (fer.getIsHardened() != null) {
-			isHardenedCB.setValue(fer.getIsHardened().equalsIgnoreCase("Yes") ? true : false);
-		}
-		if (fer.getIsDefaultDenyZone() != null) {
-			isDefaultDenyZoneCB.setValue(fer.getIsDefaultDenyZone().equalsIgnoreCase("Yes") ? true : false);
-		}
 		
-		if (fer.getValidUntilDate() != null) {
-			validUntilDB.setValue(presenter.getFirewallExceptionRequest().getValidUntilDate());
+		// initialize all fields with data from the presenter's FirewallExceptionRequest
+		// or from the presenter's firewall rule if it exists
+		if (fr != null) {
+			applicationNameTB.setText(fr.getName());
+			StringBuffer sbuf = new StringBuffer();
+			boolean isFirst = true;
+			for (String s : fr.getSources()) {
+				if (!isFirst) {
+					sbuf.append("\n");
+				}
+				else {
+					isFirst = false;
+				}
+				sbuf.append(s);
+			}
+			sourceIpAddressesTA.setText(sbuf.toString());
+			
+			sbuf = new StringBuffer();
+			isFirst = true;
+			for (String s : fr.getDestinations()) {
+				if (!isFirst) {
+					sbuf.append("\n");
+				}
+				else {
+					isFirst = false;
+				}
+				sbuf.append(s);
+			}
+			destinationIpAddressesTA.setText(sbuf.toString());
+			
+			sbuf = new StringBuffer();
+			isFirst = true;
+			for (String s : fr.getServices()) {
+				if (!isFirst) {
+					sbuf.append("\n");
+				}
+				else {
+					isFirst = false;
+				}
+				sbuf.append(s);
+			}
+			portsTA.setText(sbuf.toString());
+			
+			isSourceOutsideEmoryCB.setValue(false);
+			isPatchedCB.setValue(true);
+			isDefaultPasswordChangedCB.setValue(true);
+			isAppConsoleACLedCB.setValue(true);
+			isHardenedCB.setValue(true);
+			isDefaultDenyZoneCB.setValue(true);
 		}
-		sourceIpAddressesTA.setText(fer.getSourceIp());
-		destinationIpAddressesTA.setText(fer.getDestinationIp());
-		portsTA.setText(fer.getPorts());
-		businessReasonTA.setText(fer.getBusinessReason());
-		patchingPlanTA.setText(fer.getPatchingPlan());
-		sensitiveDataDescriptionTA.setText(fer.getSensitiveDataDesc());
-		localFirewallRulesDescriptionTA.setText(fer.getLocalFirewallRules());
+		else {
+			technicalContactTB.setText(fer.getTechnicalContact());
+			applicationNameTB.setText(fer.getApplicationName());
+			if (fer.getIsSourceOutsideEmory() != null) {
+				isSourceOutsideEmoryCB.setValue(fer.getIsSourceOutsideEmory().equalsIgnoreCase("Yes") ? true : false);
+			}
+			if (fer.getIsPatched() != null) {
+				isPatchedCB.setValue(fer.getIsPatched().equalsIgnoreCase("Yes") ? true : false);
+			}
+			if (fer.getIsDefaultPasswdChanged() != null) {
+				isDefaultPasswordChangedCB.setValue(fer.getIsDefaultPasswdChanged().equalsIgnoreCase("Yes") ? true : false);
+			}
+			if (fer.getIsAppConsoleACLed() != null) {
+				isAppConsoleACLedCB.setValue(fer.getIsAppConsoleACLed().equalsIgnoreCase("Yes") ? true : false);
+			}
+			if (fer.getIsHardened() != null) {
+				isHardenedCB.setValue(fer.getIsHardened().equalsIgnoreCase("Yes") ? true : false);
+			}
+			if (fer.getIsDefaultDenyZone() != null) {
+				isDefaultDenyZoneCB.setValue(fer.getIsDefaultDenyZone().equalsIgnoreCase("Yes") ? true : false);
+			}
+			
+			if (fer.getValidUntilDate() != null) {
+				validUntilDB.setValue(presenter.getFirewallExceptionRequest().getValidUntilDate());
+			}
+			sourceIpAddressesTA.setText(fer.getSourceIp());
+			destinationIpAddressesTA.setText(fer.getDestinationIp());
+			portsTA.setText(fer.getPorts());
+			businessReasonTA.setText(fer.getBusinessReason());
+			patchingPlanTA.setText(fer.getPatchingPlan());
+			sensitiveDataDescriptionTA.setText(fer.getSensitiveDataDesc());
+			localFirewallRulesDescriptionTA.setText(fer.getLocalFirewallRules());
 
-		DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
-	    validUntilDB.setFormat(new DateBox.DefaultFormat(dateFormat));
-	    validUntilDB.getDatePicker().setYearArrowsVisible(true);
-	    
-	    String timeRule = timeRuleLB.getSelectedValue();
-	    if (timeRule != null) {
-			if (timeRule.trim().equalsIgnoreCase(Constants.TIME_RULE_INDEFINITELY)) {
-				hideValidUntilDB();
-			}
-			else {
-				showValidUntilDB();
-			}
-	    }
-	    else {
-	    	hideValidUntilDB();
-	    }
+			DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+		    validUntilDB.setFormat(new DateBox.DefaultFormat(dateFormat));
+		    validUntilDB.getDatePicker().setYearArrowsVisible(true);
+		    
+		    String timeRule = timeRuleLB.getSelectedValue();
+		    if (timeRule != null) {
+				if (timeRule.trim().equalsIgnoreCase(Constants.TIME_RULE_INDEFINITELY)) {
+					hideValidUntilDB();
+				}
+				else {
+					showValidUntilDB();
+				}
+		    }
+		    else {
+		    	hideValidUntilDB();
+		    }
+		}
 	    
 	    initializeTagsPanel();
 	}

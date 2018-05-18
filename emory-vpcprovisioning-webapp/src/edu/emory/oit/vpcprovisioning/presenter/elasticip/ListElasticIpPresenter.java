@@ -195,14 +195,11 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 					setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
 				}
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-					getView().applyEmoryAWSAuditorMask();
-				}
 				else {
-					// ??
+					getView().applyEmoryAWSAuditorMask();
 				}
                 getView().hidePleaseWaitDialog();
                 getView().hidePleaseWaitPanel();

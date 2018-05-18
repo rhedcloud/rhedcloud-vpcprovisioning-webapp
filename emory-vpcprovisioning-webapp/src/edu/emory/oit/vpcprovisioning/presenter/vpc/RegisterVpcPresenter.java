@@ -117,14 +117,24 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 								getView().initPage();
 								getView().setInitialFocus();
 								// apply authorization mask
-								if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+								if (user.isLitsAdmin()) {
 									getView().applyEmoryAWSAdminMask();
 								}
-								else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+								else if (vpc != null) {
+									if (user.isAdminForAccount(vpc.getAccountId())) {
+										getView().applyEmoryAWSAdminMask();
+									}
+									else if (user.isAuditorForAccount(vpc.getAccountId())) {
+										getView().applyEmoryAWSAuditorMask();
+									}
+								}
+								else if (user.isAuditor()) {
 									getView().applyEmoryAWSAuditorMask();
 								}
 								else {
-									// ??
+									getView().applyEmoryAWSAuditorMask();
+									getView().showMessageToUser("An error has occurred.  The user logged in does not "
+											+ "appear to be associated to any valid roles for this page.");
 								}
 								getView().hidePleaseWaitDialog();
 								getView().hidePleaseWaitPanel();

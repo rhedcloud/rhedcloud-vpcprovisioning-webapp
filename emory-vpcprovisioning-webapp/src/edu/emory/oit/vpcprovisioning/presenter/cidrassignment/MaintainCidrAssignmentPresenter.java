@@ -130,19 +130,30 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 
 					@Override
 					public void onSuccess(AccountQueryResultPojo result) {
+						GWT.log("presenter, got " + result.getResults().size() + " accounts back from server");
 						getView().setAccountItems(result.getResults());
 						getView().initPage();
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+						if (user.isLitsAdmin()) {
 							getView().applyEmoryAWSAdminMask();
 						}
-						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-							clientFactory.getShell().setSubTitle("View CIDR Assignment");
-							getView().applyEmoryAWSAuditorMask();
+						else if (cidrAssignmentSummary != null) {
+							if (cidrAssignmentSummary.getAccount() != null && user.isAdminForAccount(cidrAssignmentSummary.getAccount().getAccountId())) {
+								getView().applyEmoryAWSAdminMask();
+							}
+							else if (cidrAssignmentSummary.getAccount() != null && user.isAuditorForAccount(cidrAssignmentSummary.getAccount().getAccountId())) {
+								getView().applyEmoryAWSAuditorMask();
+							}
+							else {
+								getView().showMessageToUser("An error has occurred.  The user logged in does not "
+										+ "appear to be associated to any valid roles for this page.");
+								getView().applyEmoryAWSAuditorMask();
+								// TODO: need to not show them this page??
+							}
 						}
 						else {
-							// ??
+							
 						}
 						
 						// do this so the CIDR we're working with will be added to the list of 

@@ -150,14 +150,31 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 										getView().initPage();
 										getView().setInitialFocus();
 										// apply authorization mask
-										if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+										if (user.isLitsAdmin()) {
 											getView().applyEmoryAWSAdminMask();
 										}
-										else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+										else if (vpcp != null) {
+											if (vpcp.getVpcRequisition() != null) {
+												if (user.isAdminForAccount(vpcp.getVpcRequisition().getAccountId())) {
+													getView().applyEmoryAWSAdminMask();
+												}
+												else if (user.isAuditorForAccount(vpcp.getVpcRequisition().getAccountId())) {
+													getView().applyEmoryAWSAuditorMask();
+												}
+												else {
+													getView().showMessageToUser("An error has occurred.  The user logged in does not "
+															+ "appear to be associated to any valid roles for this page.");
+													getView().applyEmoryAWSAuditorMask();
+												}
+											}
+										}
+										else if (user.isAuditor()) {
 											getView().applyEmoryAWSAuditorMask();
 										}
 										else {
-											// ??
+											getView().showMessageToUser("An error has occurred.  The user logged in does not "
+													+ "appear to be associated to any valid roles for this page.");
+											getView().applyEmoryAWSAuditorMask();
 										}
 										getView().hidePleaseWaitDialog();
 										getView().hidePleaseWaitPanel();

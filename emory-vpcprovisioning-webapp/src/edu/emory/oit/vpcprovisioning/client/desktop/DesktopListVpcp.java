@@ -3,9 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -23,7 +21,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -39,9 +36,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
@@ -303,34 +297,6 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	        }
 	    };		 
 		vpcpListTable.addColumn(stepProgressCol, "Progress");
-		
-		// view/edit row column
-//		Column<VpcpPojo, String> viewStatusColumn = new Column<VpcpPojo, String>(
-//				new ButtonCell()) {
-//			@Override
-//			public String getValue(VpcpPojo object) {
-//				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-//					GWT.log(userLoggedIn.getEppn() + " is an admin");
-//					return "View";
-//				}
-//				else {
-//					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-//					return "View";
-//				}
-//			}
-//		};
-//		vpcpListTable.addColumn(viewStatusColumn, "");
-//		vpcpListTable.setColumnWidth(viewStatusColumn, 50.0, Unit.PX);
-//		viewStatusColumn.setFieldUpdater(new FieldUpdater<VpcpPojo, String>() {
-//			@Override
-//			public void update(int index, final VpcpPojo vpcp,
-//					String value) {
-//				
-//				// fire SHOW_VPCP_STATUS event passing the vpcp to be viewed
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_VPCP_STATUS, vpcp);
-//			}
-//		});
-
 	}
 	
 	@Override

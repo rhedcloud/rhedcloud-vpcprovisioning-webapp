@@ -11,24 +11,10 @@ public class Constants implements IsSerializable {
 	public static final String SESSION_TIMEOUT = "SessionTimeout";
 
 	// these will need to be specific for this app's functionality
-	// Emory AWS Admins
-//	public static final String PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT = "EmoryAdministratorRole";
-	public static final String PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT = "edu.emory.vpcp.maintainEverything";
-	// Emory AWS Auditors
-//	public static final String PERMISSION_VIEW_EVERYTHING = "EmoryAuditorRole";
-	public static final String PERMISSION_VIEW_EVERYTHING = "edu.emory.vpcp.viewEverything";
-	// LITS AWS Admings
-	public static final String PERMISSION_MAINTAIN_EVERYTHING = "EmoryCentralAdministratorRole";
 	
 	public static final String ROLE_NAME_EMORY_AWS_CENTRAL_ADMIN = "EmoryCentralAdministratorRole";
 	public static final String ROLE_NAME_EMORY_AWS_ADMIN = "EmoryAdministratorRole";
 	public static final String ROLE_NAME_EMORY_AUDITOR = "EmoryAuditorRole";
-
-	public static final String[] PERMISSIONS = new String[] {
-//		PERMISSION_MAINTAIN_EVERYTHING,
-		PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT,
-		PERMISSION_VIEW_EVERYTHING
-	};
 
 	public static final String TIME_RULE_INDEFINITELY = "Indefinitely";
 	public static final String TIME_RULE_SPECIFIC_DATE = "Specific Date";

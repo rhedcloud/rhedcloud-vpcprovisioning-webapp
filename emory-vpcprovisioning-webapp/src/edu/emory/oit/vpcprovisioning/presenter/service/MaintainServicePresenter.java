@@ -101,17 +101,13 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 						getView().hidePleaseWaitDialog();
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+						// TODO: need to determine the Service structure so we can apply authorization mask appropriately
+						if (user.isLitsAdmin()) {
 							getView().applyEmoryAWSAdminMask();
 						}
-						else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
-							clientFactory.getShell().setSubTitle("View Service");
+						else {
 							getView().applyEmoryAWSAuditorMask();
 						}
-						else {
-							// ??
-						}
-						
 					}
 				};
 				VpcProvisioningService.Util.getInstance().getServiceStatusItems(callback);

@@ -422,7 +422,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 		});
 		cidrAssignmentSummaryListTable.addColumn(updateTimeColumn, "Update Time");
 
-		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+		if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId())) {
 			GWT.log(userLoggedIn.getEppn() + " is an admin (delete)");
 			GWT.log("delete row column");
 			// delete row column
@@ -457,7 +457,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 				new ButtonCell()) {
 			@Override
 			public String getValue(CidrAssignmentSummaryPojo object) {
-				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId())) {
 					GWT.log(userLoggedIn.getEppn() + " is an admin (edit)");
 					return "Edit";
 				}

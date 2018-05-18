@@ -153,14 +153,19 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				GWT.log("Got " + result.getResults().size() + " firewallRules for " + result.getFilterUsed());
 				setFirewallRuleList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (vpc != null && user.isAuditorForAccount(vpc.getAccountId())) {
 					getView().applyEmoryAWSAuditorMask();
 				}
 				else {
-					// ??
+					getView().applyEmoryAWSAuditorMask();
+					getView().showMessageToUser("An error has occurred.  The user logged in does not "
+							+ "appear to be associated to any valid roles for this page.");
 				}
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
@@ -198,14 +203,19 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				GWT.log("Got " + result.getResults().size() + " firewall exception requests for " + result.getFilterUsed());
 				setFirewallExceptionRequestList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (vpc != null && user.isAuditorForAccount(vpc.getAccountId())) {
 					getView().applyEmoryAWSAuditorMask();
 				}
 				else {
-					// ??
+					getView().applyEmoryAWSAuditorMask();
+					getView().showMessageToUser("An error has occurred.  The user logged in does not "
+							+ "appear to be associated to any valid roles for this page.");
 				}
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();

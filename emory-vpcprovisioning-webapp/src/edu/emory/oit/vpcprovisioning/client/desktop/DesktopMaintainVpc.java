@@ -68,7 +68,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	// firewall rules and elasticip tabs
 	@UiField TabLayoutPanel vpcTabPanel;
 	@UiField DeckLayoutPanel firewallContainer;
-	@UiField DeckLayoutPanel cidrAssignmentContainer;
+//	@UiField DeckLayoutPanel cidrAssignmentContainer;
 	@UiField DeckLayoutPanel elasticIpAssignmentContainer;
 
 	private boolean firstCidrWidget = true;
@@ -159,18 +159,18 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			firewallContainer.setAnimationDuration(500);
 			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_FIREWALL_RULE, presenter.getVpc());
 			break;
+//		case 1:
+//			GWT.log("need to get CIDR Assignment Maintentenance content.");
+//			firstCidrWidget = true;
+//			cidrAssignmentContainer.clear();
+//			ListCidrAssignmentView listCidrView = presenter.getClientFactory().getListCidrAssignmentView();
+//			MaintainCidrAssignmentView maintainCidrView = presenter.getClientFactory().getMaintainCidrAssignmentView();
+//			cidrAssignmentContainer.add(listCidrView);
+//			cidrAssignmentContainer.add(maintainCidrView);
+//			cidrAssignmentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_CIDR_ASSIGNMENT, presenter.getVpc());
+//			break;
 		case 1:
-			GWT.log("need to get CIDR Assignment Maintentenance content.");
-			firstCidrWidget = true;
-			cidrAssignmentContainer.clear();
-			ListCidrAssignmentView listCidrView = presenter.getClientFactory().getListCidrAssignmentView();
-			MaintainCidrAssignmentView maintainCidrView = presenter.getClientFactory().getMaintainCidrAssignmentView();
-			cidrAssignmentContainer.add(listCidrView);
-			cidrAssignmentContainer.add(maintainCidrView);
-			cidrAssignmentContainer.setAnimationDuration(500);
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_CIDR_ASSIGNMENT, presenter.getVpc());
-			break;
-		case 2:
 			GWT.log("need to get Elastic IP Maintentenance content.");
 			firstElasticIpWidget = true;
 			elasticIpAssignmentContainer.clear();
@@ -187,16 +187,16 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void setWidget(IsWidget w) {
 		GWT.log("Maintain VPC, setWidget");
-		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
-			GWT.log("Maintain VPC, setWidget: cidr assignment");
-			cidrAssignmentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstCidrWidget) {
-				firstCidrWidget = false;
-				cidrAssignmentContainer.animate(0);
-			}
-			return;
-		}
+//		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
+//			GWT.log("Maintain VPC, setWidget: cidr assignment");
+//			cidrAssignmentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstCidrWidget) {
+//				firstCidrWidget = false;
+//				cidrAssignmentContainer.animate(0);
+//			}
+//			return;
+//		}
 
 		if (w instanceof ListElasticIpAssignmentPresenter || w instanceof MaintainElasticIpAssignmentPresenter) {
 			GWT.log("Maintain VPC, setWidget: elastic IP");

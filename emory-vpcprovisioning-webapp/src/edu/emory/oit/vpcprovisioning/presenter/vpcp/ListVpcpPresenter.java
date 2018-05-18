@@ -136,14 +136,20 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 				GWT.log("Got " + result.getResults().size() + " Vpcps for " + result.getFilterUsed());
 				setVpcpList(result.getResults());
 				// apply authorization mask
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+				else if (user.isEmoryAwsAdmin()) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (user.isAuditor()) {
 					getView().applyEmoryAWSAuditorMask();
 				}
 				else {
-					// ??
+					getView().showMessageToUser("An error has occurred.  The user logged in does not "
+							+ "appear to be associated to any valid roles for this page.");
+					getView().applyEmoryAWSAuditorMask();
+					// TODO: need to not show them the list???
 				}
                 getView().hidePleaseWaitDialog();
                 getView().hidePleaseWaitPanel();

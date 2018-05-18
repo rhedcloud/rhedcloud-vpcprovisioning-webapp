@@ -130,19 +130,19 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				GWT.log("presenter, initializing Elastic IP Assignment list with " + result.getResults().size() + " Elastic IP Assignments.");
 				setElasticIpAssignmentList(result.getResults());
 				// apply authorization mask
-				GWT.log("back to presenter, applying authorization masks...");
-				if (user.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
+				if (user.isLitsAdmin()) {
 					getView().applyEmoryAWSAdminMask();
 				}
-				else if (user.hasPermission(Constants.PERMISSION_VIEW_EVERYTHING)) {
+				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
+					getView().applyEmoryAWSAdminMask();
+				}
+				else if (vpc != null && user.isAuditorForAccount(vpc.getAccountId())) {
 					getView().applyEmoryAWSAuditorMask();
 				}
 				else {
-					// ??
+					getView().applyEmoryAWSAuditorMask();
 				}
-				GWT.log("back to presenter, masks applied...");
                 getView().hidePleaseWaitPanel();
-				GWT.log("back to presenter, please wait hidden...");
 			}
 		};
 

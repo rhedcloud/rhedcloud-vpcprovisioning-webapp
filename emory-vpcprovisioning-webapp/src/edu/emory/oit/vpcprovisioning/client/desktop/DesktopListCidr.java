@@ -532,60 +532,6 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 			}
 		});
 		cidrListTable.addColumn(updateTimeColumn, "Update Time");
-
-//		if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-//			GWT.log(userLoggedIn.getEppn() + " is an admin");
-//			// delete row column
-//			Column<CidrSummaryPojo, String> deleteRowColumn = new Column<CidrSummaryPojo, String>(
-//					new ButtonCell()) {
-//				@Override
-//				public String getValue(CidrSummaryPojo object) {
-//					return "Delete";
-//				}
-//			};
-//			deleteRowColumn.setCellStyleNames("glowing-border");
-//			cidrListTable.addColumn(deleteRowColumn, "");
-//			cidrListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
-//			deleteRowColumn
-//			.setFieldUpdater(new FieldUpdater<CidrSummaryPojo, String>() {
-//				@Override
-//				public void update(int index, final CidrSummaryPojo cidr,
-//						String value) {
-//					
-//					// Called when the user clicks the button
-//					// confirm action
-//					presenter.deleteCidrSummary(cidr);
-//				}
-//			});
-//		}
-//
-//		// edit row column
-//		Column<CidrSummaryPojo, String> editRowColumn = new Column<CidrSummaryPojo, String>(
-//				new ButtonCell()) {
-//			@Override
-//			public String getValue(CidrSummaryPojo object) {
-//				if (userLoggedIn.hasPermission(Constants.PERMISSION_MAINTAIN_EVERYTHING_FOR_ACCOUNT)) {
-//					GWT.log(userLoggedIn.getEppn() + " is an admin");
-//					return "Edit";
-//				}
-//				else {
-//					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-//					return "View";
-//				}
-//			}
-//		};
-//		editRowColumn.setCellStyleNames("actionButton");
-//		cidrListTable.addColumn(editRowColumn, "");
-//		cidrListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
-//		editRowColumn.setFieldUpdater(new FieldUpdater<CidrSummaryPojo, String>() {
-//			@Override
-//			public void update(int index, final CidrSummaryPojo cidrSummary,
-//					String value) {
-//				
-//				// fire MAINTAIN_CIDR event passing the cidr to be maintained
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_CIDR, cidrSummary);
-//			}
-//		});
 	}
 
 	@Override
