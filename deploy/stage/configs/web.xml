@@ -19,7 +19,7 @@
 			
 			<!-- for ALL EAP environments (value is turned into a URL by start scripts on server) -->
 			<!-- Also used for AWS deployment and testing -->
-			<param-value>configs/messaging/Environments/Examples/Deployments/VpcProvisioningWebApplication.xml-STAGE</param-value>
+			<param-value>configs/messaging/Environments/Examples/Deployments/VpcProvisioningWebApplication-STAGE.xml</param-value>
 		</init-param>
 		<init-param>
 			<param-name>appId</param-name>

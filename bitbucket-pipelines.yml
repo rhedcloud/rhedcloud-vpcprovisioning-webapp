@@ -18,7 +18,7 @@ pipelines:
           - maven
         script: # Modify the commands below to build your repository.
 #          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
-          - export BUILD_HOME='pwd'
+          - export BUILD_HOME=`pwd`
           - source $HOME/.profile
           - cd $GWT_PROJECT_NAME
           - sed -i 's/APPLICATION_ENVIRONMENT_BASE/'"$APPLICATION_ENVIRONMENT_BASE"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
@@ -106,6 +106,7 @@ pipelines:
         script:
           - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - export BUILD_HOME=`pwd`
           - source $HOME/.profile
           # begin for shibboleth (stage)
           - sed -i 's,IDP_URL,https://login.emory.edu:4443/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
@@ -116,10 +117,14 @@ pipelines:
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (stage)
           # begin new (stage specific web.xml)
+          - mkdir -p $BUILD_HOME/deploy/stage/libs/WEB-INF
+          - cp deploy/stage/configs/web.xml $BUILD_HOME/deploy/stage/libs/WEB-INF
+          - cp /tmp/ROOT.war $BUILD_HOME/deploy/stage/libs
+          - cd $BUILD_HOME/deploy/stage/libs
+          - jar uf ROOT.war WEB-INF/web.xml
+          - rm -Rf WEB-INF
+          - cp ROOT.war /tmp
           - cd $BUILD_HOME
-          - mkdir -p deploy/stage/libs/WEB-INF
-          - cp deploy/stage/configs/web.xml deploy/stage/libs/WEB-INF
-          - jar uf /tmp/ROOT.war WEB-INF/web.xml
           # end new
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
 
