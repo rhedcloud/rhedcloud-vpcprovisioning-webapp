@@ -44,8 +44,8 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public void logMessageOnServer(final String message);
 		public void setDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getDirectoryPerson();
-		public void addAdminDirectoryPersonToAccount();
-		public void getAdminsForAccount();
+		public void addDirectoryPersonInRoleToAccount(String roleName);
+		public void getRoleAssignmentsForAccount();
 		public List<RoleAssignmentSummaryPojo> getRoleAssignmentSummaries();
 		public void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentSummaryPojo roleAssignmentSummary);
 		public MaintainAccountView getView();

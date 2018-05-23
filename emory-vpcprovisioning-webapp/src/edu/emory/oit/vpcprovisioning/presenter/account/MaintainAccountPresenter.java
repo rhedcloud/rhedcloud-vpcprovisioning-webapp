@@ -155,7 +155,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						getView().setInitialFocus();
 						
 						if (isEditing) {
-							getAdminsForAccount();
+							getRoleAssignmentsForAccount();
 						}
 						
 						// apply authorization mask
@@ -492,7 +492,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	}
 
 	@Override
-	public void addAdminDirectoryPersonToAccount() {
+	public void addDirectoryPersonInRoleToAccount(final String roleName) {
 		// get fullperson for current directory person
 		// get net id from fullperson
 		// create role assignment
@@ -530,13 +530,13 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 							accountRoleAssignmentSummaries.add(ra_summary);
 							getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
 									directoryPerson.getEmail().getEmailAddress(), 
-									directoryPerson.toString());
+									directoryPerson.toString() + " " + ra_summary.getRoleAssignment().getRoleDN());
 							getView().hidePleaseWaitDialog();
 							getView().hidePleaseWaitPanel();
 						}
 					};
 					// now, create the role assignment and add the role assignment to the account
-					VpcProvisioningService.Util.getInstance().createAdminRoleAssignmentForPersonInAccount(fp, account.getAccountId(), raCallback);
+					VpcProvisioningService.Util.getInstance().createRoleAssignmentForPersonInAccount(fp, account.getAccountId(), roleName, raCallback);
 				}
 				else {
 					GWT.log("Expected exactly 1 FullPerson, got " + result.getResults().size() + " this shouldn't happen.");
@@ -552,7 +552,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	}
 
 	@Override
-	public void getAdminsForAccount() {
+	public void getRoleAssignmentsForAccount() {
 		
 		AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
 			@Override
@@ -573,14 +573,14 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					RoleAssignmentSummaryPojo ra_summary = result.get(i);
 					getView().addRoleAssignment(i, ra_summary.getDirectoryPerson().getFullName(), 
 							ra_summary.getDirectoryPerson().getEmail().getEmailAddress(), 
-							ra_summary.getDirectoryPerson().toString());
+							ra_summary.getDirectoryPerson().toString() + " " + ra_summary.getRoleAssignment().getRoleDN());
 				}
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 			}
 		};
 		getView().showPleaseWaitDialog();
-		VpcProvisioningService.Util.getInstance().getAdminRoleAssignmentsForAccount(account.getAccountId(), callback);
+		VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(account.getAccountId(), callback);
 	}
 
 	@Override

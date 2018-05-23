@@ -5366,8 +5366,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public RoleAssignmentPojo createAdminRoleAssignmentForPersonInAccount(FullPersonPojo person, String accountId)
-			throws RpcException {
+	public RoleAssignmentPojo createRoleAssignmentForPersonInAccount(FullPersonPojo person, 
+			String accountId, String roleName) throws RpcException {
 
 		/*
 		<RoleAssignment>
@@ -5397,7 +5397,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				
 				String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
-				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
 				RoleDNs roleDns = requisition.newRoleDNs();
 				roleDns.addDistinguishedName(distName);
 				requisition.setRoleDNs(roleDns);
@@ -5515,7 +5515,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public List<RoleAssignmentSummaryPojo> getAdminRoleAssignmentsForAccount(String accountId) throws RpcException {
+	public List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccount(String accountId) throws RpcException {
 
 		// get admin role assignments for this account
 		// for each role assignment
@@ -5527,51 +5527,53 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
 		try {
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
-			String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
-			roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
-			roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
-			RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
-			info("[getAdminRoleAssignmentsForAccount] filter.roleDN: " + roleDN);
-			filter.setRoleDN(roleDN);
-			filter.setIdentityType("USER");
-			filter.setDirectAssignOnly(true);
-			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(filter);
-			if (ra_result != null) {
-				if (ra_result.getResults().size() > 0) {
-					for (RoleAssignmentPojo ra : ra_result.getResults()) {
-						if (ra.getExplicityIdentitiyDNs() != null) {
-							for (String dn : ra.getExplicityIdentitiyDNs().getDistinguishedNames()) {
-								info("[getAdminRoleAssignmentsForAccount] dn: " + dn);
-								String[] cns = dn.split(",");
-								info("[getAdminRoleAssignmentsForAccount] cns: " + cns);
-								String publicIdCn = cns[0];
-								info("[getAdminRoleAssignmentsForAccount] publicIdCn: " + publicIdCn);
-								String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
-								info("[getAdminRoleAssignmentsForAccount] publicId: " + publicId);
-								
-								// get directoryperson for publicid
-								DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
-								dp_filter.setKey(publicId);
-								DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-								
-								// create RoleAssignmentSummaryPojo and add it to the results
-								if (dp_result.getResults().size() > 0) {
-									RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
-									ra_summary.setDirectoryPerson(dp_result.getResults().get(0));
-									ra_summary.setRoleAssignment(ra);
-									info("[getAdminRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
-									results.add(ra_summary);
+			for (String roleName : Constants.ACCOUNT_ROLE_NAMES) {
+				String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
+				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
+				RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
+				info("[getAdminRoleAssignmentsForAccount] filter.roleDN: " + roleDN);
+				filter.setRoleDN(roleDN);
+				filter.setIdentityType("USER");
+				filter.setDirectAssignOnly(true);
+				RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(filter);
+				if (ra_result != null) {
+					if (ra_result.getResults().size() > 0) {
+						for (RoleAssignmentPojo ra : ra_result.getResults()) {
+							if (ra.getExplicityIdentitiyDNs() != null) {
+								for (String dn : ra.getExplicityIdentitiyDNs().getDistinguishedNames()) {
+									info("[getAdminRoleAssignmentsForAccount] dn: " + dn);
+									String[] cns = dn.split(",");
+									info("[getAdminRoleAssignmentsForAccount] cns: " + cns);
+									String publicIdCn = cns[0];
+									info("[getAdminRoleAssignmentsForAccount] publicIdCn: " + publicIdCn);
+									String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
+									info("[getAdminRoleAssignmentsForAccount] publicId: " + publicId);
+									
+									// get directoryperson for publicid
+									DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+									dp_filter.setKey(publicId);
+									DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+									
+									// create RoleAssignmentSummaryPojo and add it to the results
+									if (dp_result.getResults().size() > 0) {
+										RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
+										ra_summary.setDirectoryPerson(dp_result.getResults().get(0));
+										ra_summary.setRoleAssignment(ra);
+										info("[getAdminRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
+										results.add(ra_summary);
+									}
 								}
 							}
 						}
+					}
+					else {
+						// error
 					}
 				}
 				else {
 					// error
 				}
-			}
-			else {
-				// error
 			}
 		} 
 		catch (EnterpriseConfigurationObjectException e) {

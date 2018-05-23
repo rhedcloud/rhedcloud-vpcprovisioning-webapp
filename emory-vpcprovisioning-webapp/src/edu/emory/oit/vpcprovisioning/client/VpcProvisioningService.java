@@ -236,8 +236,8 @@ public interface VpcProvisioningService extends RemoteService {
 	
 	// RoleAssignments
 	RoleAssignmentQueryResultPojo getRoleAssignmentsForFilter(RoleAssignmentQueryFilterPojo filter) throws RpcException;
-	RoleAssignmentPojo createAdminRoleAssignmentForPersonInAccount(FullPersonPojo person, String accountId) throws RpcException;
-	List<RoleAssignmentSummaryPojo> getAdminRoleAssignmentsForAccount(String accountId) throws RpcException;
+	RoleAssignmentPojo createRoleAssignmentForPersonInAccount(FullPersonPojo person, String accountId, String roleName) throws RpcException;
+	List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccount(String accountId) throws RpcException;
 	void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment) throws RpcException;
 	
 	HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException;

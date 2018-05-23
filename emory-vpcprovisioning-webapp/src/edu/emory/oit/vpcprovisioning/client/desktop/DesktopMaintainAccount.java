@@ -10,11 +10,14 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -23,7 +26,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
+import edu.emory.oit.vpcprovisioning.client.common.RoleSelectionPopup;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
@@ -144,7 +147,31 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@UiHandler ("addAdminButton")
 	void addAdminButtonClick(ClickEvent e) {
-		addAdminDirectoryPersonToAccount();
+		// present a dialog where user must select a role
+		// then pass that role to the add method
+		final RoleSelectionPopup rsp = new RoleSelectionPopup();
+		rsp.showRelativeTo(addAdminButton);
+		rsp.addCloseHandler(new CloseHandler<PopupPanel>() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void onClose(CloseEvent event) {
+				GWT.log("selected role is: " + rsp.getSelectedRoleName());
+				if (!rsp.isCanceled()) {
+					if (rsp.isRoleSelected()) {
+						if (rsp.getSelectedRoleName() != null) {
+							addDirectoryPersonInRoleToAccount(rsp.getSelectedRoleName());
+						}
+						else {
+							Window.alert("You must select a role to assign this person to.");
+						}
+					}
+					else {
+						Window.alert("You must select a role to assign this person to.");
+					}
+				}
+			}
+		});
+		
 	}
 
 	@UiHandler ("addEmailTF")
@@ -210,7 +237,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	/*
 	 * Role/Roleassignment helper methods
 	 */
-	private void addAdminDirectoryPersonToAccount() {
+	private void addDirectoryPersonInRoleToAccount(String roleName) {
 		// get fullperson for current directory person
 		// get net id from fullperson
 		// create role assignment
@@ -219,7 +246,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			return;
 		}
 		presenter.getAccount().setAccountId(accountIdTB.getText());
-		presenter.addAdminDirectoryPersonToAccount();
+		presenter.addDirectoryPersonInRoleToAccount(roleName);
 	}
 	
 	/*
