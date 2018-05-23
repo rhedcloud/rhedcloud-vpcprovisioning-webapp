@@ -7,7 +7,6 @@ public class ElasticIpRequisitionPojo extends SharedObject implements IsSerializ
 	String ownerId;
 
 	public ElasticIpRequisitionPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getOwnerId() {

@@ -8,7 +8,6 @@ public class CidrAssignmentStatus extends SharedObject implements IsSerializable
 	CidrAssignmentPojo cidrAssignment;
 
 	public CidrAssignmentStatus() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean isAssigned() {

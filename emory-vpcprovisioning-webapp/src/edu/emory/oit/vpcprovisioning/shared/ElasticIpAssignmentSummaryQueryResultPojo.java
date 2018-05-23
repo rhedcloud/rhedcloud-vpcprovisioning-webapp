@@ -8,7 +8,6 @@ public class ElasticIpAssignmentSummaryQueryResultPojo extends SharedObject {
 	List<ElasticIpAssignmentSummaryPojo> results;
 
 	public ElasticIpAssignmentSummaryQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ElasticIpAssignmentSummaryQueryFilterPojo getFilterUsed() {

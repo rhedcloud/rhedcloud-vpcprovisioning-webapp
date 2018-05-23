@@ -13,12 +13,13 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">VPC List</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of existing AWS VPCs that you can view or edit.<br/><br/>
-		These reside in the database associated to the Emory AWS ESB Service.  
-		The Emory AWS Service is authoritatative for 
-		AWS Account and VirtualPrivateCloud objects and allows applications like this one 
-		to query, create, update and delete those objects.<br/><br/>
-		Click the 'Register' button to go to the VPC maintenance page where you can register an AWS VPC.</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
+		AWS VPCs with which you are affiliated.<br/><br/>This account 
+		metadata resides in the database of the Emory AWS ESB Service 
+		and was created at the time the AWS account was provisioned for 
+		Emory. You may view or manage this information after provisioning 
+		from this application. Only central administrators may register 
+		accounts by adding them here.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>

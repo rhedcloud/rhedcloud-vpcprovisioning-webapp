@@ -9,7 +9,6 @@ public class CauseIdentitiesPojo extends SharedObject implements IsSerializable 
 	List<IdentityTypeDnMapPojo> identityTypeDnMaps = new java.util.ArrayList<IdentityTypeDnMapPojo>();
 
 	public CauseIdentitiesPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public List<IdentityTypeDnMapPojo> getIdentityTypeDnMaps() {

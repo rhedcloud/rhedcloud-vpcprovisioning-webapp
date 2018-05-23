@@ -19,7 +19,6 @@ public class BillSummaryPojo extends SharedObject implements IsSerializable {
 	HashMap<String, LineItemSummaryPojo> lineItemSummaryMap = new HashMap<String, LineItemSummaryPojo>();
 	
 	public BillSummaryPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getBillId() {

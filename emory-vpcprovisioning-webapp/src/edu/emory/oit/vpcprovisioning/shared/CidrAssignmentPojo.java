@@ -20,7 +20,6 @@ public class CidrAssignmentPojo extends SharedObject implements IsSerializable, 
 	};
 
 	public CidrAssignmentPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getCidrAssignmentId() {

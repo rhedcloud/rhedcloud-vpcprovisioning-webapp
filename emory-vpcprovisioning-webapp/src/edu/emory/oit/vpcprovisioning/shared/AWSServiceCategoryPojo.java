@@ -7,7 +7,6 @@ public class AWSServiceCategoryPojo implements IsSerializable {
 	String code;
 
 	public AWSServiceCategoryPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getName() {

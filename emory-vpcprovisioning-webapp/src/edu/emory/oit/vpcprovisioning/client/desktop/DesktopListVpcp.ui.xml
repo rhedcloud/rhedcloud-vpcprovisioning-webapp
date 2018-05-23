@@ -13,13 +13,15 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">VPC Provisioning List</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of VPC Provisioning objects and their current status.<br/><br/>
-		These objects represent a VPC Provisioning request that is either in 
-		progress or completed.  To see more details regarding the status of a 
-		particular request, click the 'View' button associated to the request 
-		you wish to view.<br/><br/>
-		Click the 'Generate' button to go to the VPC Provisioning maintenance 
-		page where you can request the provisioning of a new AWS VPC.</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of VPC 
+		Provisioning executions and their status. These objects 
+		represent a VPC Provisioning request that is either completed 
+		or in progress. To see more details regarding the status of a 
+		particular request, click the 'View' button associated to the 
+		request you wish to view.<br/><br/>Only central administrators 
+		may click the 'Generate' button to go to the VPC Provisioning 
+		maintenance page where you can request the provisioning of a 
+		new AWS account or VPC.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>

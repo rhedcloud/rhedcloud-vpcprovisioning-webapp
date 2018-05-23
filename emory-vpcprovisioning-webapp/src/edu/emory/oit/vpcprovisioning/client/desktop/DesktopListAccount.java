@@ -124,7 +124,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(3, 1);
+	    Grid grid = new Grid(4, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -206,6 +206,33 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 			}
 		});
 		grid.setWidget(2, 0, billSummaryAnchor);
+
+		Anchor terminateAnchor = new Anchor("Terminate Account");
+		terminateAnchor.addStyleName("productAnchor");
+		terminateAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		terminateAnchor.setTitle("Terminate selected Account");
+		terminateAnchor.ensureDebugId(terminateAnchor.getText());
+		terminateAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AccountPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+						// TODO: dialog for terminating account
+						showMessageToUser("Terminate account dialog and logic here.");
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(3, 0, terminateAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}

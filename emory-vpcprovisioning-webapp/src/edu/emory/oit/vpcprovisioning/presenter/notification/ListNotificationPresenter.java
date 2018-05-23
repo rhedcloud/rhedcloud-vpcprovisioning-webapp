@@ -13,6 +13,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -227,8 +229,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 					getView().hidePleaseWaitDialog();
 					// status message
 					getView().showStatus(getView().getStatusMessageSource(), "Notification was deleted.");
-					
-					// TODO fire list Vpcs event...
+					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
 				}
 			};
 			VpcProvisioningService.Util.getInstance().deleteNotification(notification, callback);

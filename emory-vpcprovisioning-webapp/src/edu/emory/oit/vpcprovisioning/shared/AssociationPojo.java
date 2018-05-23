@@ -9,7 +9,6 @@ public class AssociationPojo extends SharedObject implements IsSerializable {
 	String realm;
 
 	public AssociationPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getName() {

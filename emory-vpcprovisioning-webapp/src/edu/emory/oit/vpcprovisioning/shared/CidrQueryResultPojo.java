@@ -14,7 +14,6 @@ public class CidrQueryResultPojo extends SharedObject implements IsSerializable 
 	List<CidrSummaryPojo> results = new java.util.ArrayList<CidrSummaryPojo>();
 
 	public CidrQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public CidrQueryFilterPojo getFilterUsed() {

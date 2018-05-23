@@ -74,7 +74,7 @@ public class UserAccountPojo implements IsSerializable {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getAccountId() != null && 
 					arp.getAccountId().equalsIgnoreCase(accountId)) {
-				if (arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AUDITOR)) {
+				if (arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
 					return true;
 				}
 			}
@@ -85,7 +85,7 @@ public class UserAccountPojo implements IsSerializable {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getAccountId() != null && 
 					arp.getAccountId().equalsIgnoreCase(accountId)) {
-				if (arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AWS_ADMIN)) {
+				if (arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
 					return true;
 				}
 			}
@@ -95,7 +95,7 @@ public class UserAccountPojo implements IsSerializable {
 	public boolean isEmoryAwsAdmin() {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getRoleName() != null && 
-					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AWS_ADMIN)) {
+					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
 				return true;
 			}
 		}
@@ -104,7 +104,7 @@ public class UserAccountPojo implements IsSerializable {
 	public boolean isLitsAdmin() {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getRoleName() != null && 
-					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMIN)) {
+					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN)) {
 				return true;
 			}
 		}
@@ -113,7 +113,7 @@ public class UserAccountPojo implements IsSerializable {
 	public boolean isAuditor() {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getRoleName() != null && 
-					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AUDITOR)) {
+					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
 				return true;
 			}
 		}

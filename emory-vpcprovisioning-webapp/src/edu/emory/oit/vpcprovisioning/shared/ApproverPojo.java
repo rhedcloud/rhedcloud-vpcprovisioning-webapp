@@ -9,7 +9,6 @@ public class ApproverPojo extends SharedObject implements IsSerializable {
 	String sequence;
 
 	public ApproverPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getApproverDN() {

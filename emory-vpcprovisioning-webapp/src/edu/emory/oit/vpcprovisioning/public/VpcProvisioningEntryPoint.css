@@ -305,11 +305,16 @@ a:visited {
 }
 
 .gwt-DisclosurePanel {
-	border: 2px solid #C3D9FF;
+    border: 2px solid #dadada;
+    border-radius: 7px;
 }
 
 .gwt-DisclosurePanel .header {
-	background-color: #e8eef7;
+	background: -moz-linear-gradient(top, #f6f6f6 0%, #e0e0e0);
+    color: black;
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 14px;
+	font-weight: bold;
 	cursor: hand;
 }
 

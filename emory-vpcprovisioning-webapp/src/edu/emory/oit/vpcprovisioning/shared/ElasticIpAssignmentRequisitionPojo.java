@@ -7,7 +7,6 @@ public class ElasticIpAssignmentRequisitionPojo extends SharedObject implements 
 	String ownerId;
 
 	public ElasticIpAssignmentRequisitionPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getOwnerId() {

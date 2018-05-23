@@ -18,7 +18,6 @@ public class BillPojo extends SharedObject implements IsSerializable, Comparable
 	Date billingPeriodEndDate;
 	
 	public BillPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

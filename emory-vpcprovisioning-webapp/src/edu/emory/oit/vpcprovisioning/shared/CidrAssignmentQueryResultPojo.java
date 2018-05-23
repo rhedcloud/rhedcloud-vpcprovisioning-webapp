@@ -10,7 +10,6 @@ public class CidrAssignmentQueryResultPojo extends SharedObject implements IsSer
 	List<CidrAssignmentPojo> results;
 
 	public CidrAssignmentQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public CidrAssignmentQueryFilterPojo getFilterUsed() {

@@ -21,7 +21,6 @@ public class CidrPojo extends SharedObject implements IsSerializable, Comparable
 		}
 	};
 	public CidrPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getCidrId() {

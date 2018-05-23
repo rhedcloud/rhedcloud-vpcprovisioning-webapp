@@ -1,11 +1,10 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -28,6 +27,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -35,14 +35,13 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListNotification extends ViewImplBase implements ListNotificationView {
 	Presenter presenter;
 	private ListDataProvider<NotificationPojo> dataProvider = new ListDataProvider<NotificationPojo>();
-	private SingleSelectionModel<NotificationPojo> selectionModel;
+	private MultiSelectionModel<NotificationPojo> selectionModel;
 	List<NotificationPojo> serviceList = new java.util.ArrayList<NotificationPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
@@ -75,31 +74,95 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(1, 1);
+	    Grid grid = new Grid(3, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
-		Anchor assignAnchor = new Anchor("View Status");
-		assignAnchor.addStyleName("productAnchor");
-		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		assignAnchor.setTitle("View status of selected VPCP");
-		assignAnchor.ensureDebugId(assignAnchor.getText());
-		assignAnchor.addClickHandler(new ClickHandler() {
+		Anchor viewAnchor = new Anchor("View Notification");
+		viewAnchor.addStyleName("productAnchor");
+		viewAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		viewAnchor.setTitle("View the selected Notification");
+		viewAnchor.ensureDebugId(viewAnchor.getText());
+		viewAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				NotificationPojo m = selectionModel.getSelectedObject();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				if (selectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select one Notification to view");
+					return;
+				}
+				Iterator<NotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
+				
+				NotificationPojo m = nIter.next();
 				if (m != null) {
-					// just use a popup here and not try to show the "normal" CidrAssignment
-					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
 				}
 			}
 		});
-		grid.setWidget(0, 0, assignAnchor);
+		grid.setWidget(0, 0, viewAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Notification(s)");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected Notification(s)");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				Iterator<NotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
+				while (nIter.hasNext()) {
+					NotificationPojo m = nIter.next();
+					if (m != null) {
+						presenter.deleteNotification(m);
+					}
+					else {
+						showMessageToUser("Please select an item from the list");
+					}
+				}
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
+
+		Anchor markAnchor = new Anchor("Mark as read");
+		markAnchor.addStyleName("productAnchor");
+		markAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		markAnchor.setTitle("Mark selected Notification(s) as read");
+		markAnchor.ensureDebugId(markAnchor.getText());
+		markAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				Iterator<NotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
+				while (nIter.hasNext()) {
+					NotificationPojo m = nIter.next();
+					if (m != null) {
+						// TODO: update the status of the notification
+						m.setViewed(true);
+//						presenter.deleteNotification(m);
+					}
+					else {
+						showMessageToUser("Please select an item from the list");
+					}
+				}
+			}
+		});
+		grid.setWidget(2, 0, markAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -112,7 +175,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	void closeOtherFeaturesButtonClicked(ClickEvent e) {
 		presenter.getClientFactory().getShell().hideOtherFeaturesPanel();
 		presenter.getClientFactory().getShell().showMainTabPanel();
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ACCOUNT);
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
 	}
 
 	@Override
@@ -192,14 +255,14 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		dataProvider.getList().addAll(this.serviceList);
 		
 		selectionModel = 
-	    	new SingleSelectionModel<NotificationPojo>(NotificationPojo.KEY_PROVIDER);
+	    	new MultiSelectionModel<NotificationPojo>(NotificationPojo.KEY_PROVIDER);
 		notificationListTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		NotificationPojo m = selectionModel.getSelectedObject();
-	    		GWT.log("Selected service is: " + m.getNotificationId());
+//	    		NotificationPojo m = selectionModel.getSelectedObject();
+//	    		GWT.log("Selected service is: " + m.getNotificationId());
 	    	}
 	    });
 
@@ -267,59 +330,26 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 			@Override
 			public String getValue(NotificationPojo object) {
-				return dateFormat.format(object.getCreateTime());
+				if (object.getCreateTime() != null) {
+					return dateFormat.format(object.getCreateTime());
+				}
+				else {
+					return "No Info";
+				}
 			}
 		};
 		createTimeColumn.setSortable(true);
 		sortHandler.setComparator(createTimeColumn, new Comparator<NotificationPojo>() {
 			public int compare(NotificationPojo o1, NotificationPojo o2) {
-				return o1.getCreateTime().compareTo(o2.getCreateTime());
+				if (o1.getCreateTime() != null && o2.getCreateTime() != null) {
+					return o1.getCreateTime().compareTo(o2.getCreateTime());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		notificationListTable.addColumn(createTimeColumn, "Create Time");
-
-		// delete row column
-		Column<NotificationPojo, String> deleteRowColumn = new Column<NotificationPojo, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(NotificationPojo object) {
-				return "Delete";
-			}
-		};
-		deleteRowColumn.setCellStyleNames("glowing-border");
-		notificationListTable.addColumn(deleteRowColumn, "");
-		notificationListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
-		deleteRowColumn
-		.setFieldUpdater(new FieldUpdater<NotificationPojo, String>() {
-			@Override
-			public void update(int index, final NotificationPojo svc,
-					String value) {
-
-				presenter.deleteNotification(svc);
-			}
-		});
-
-		// edit row column
-		Column<NotificationPojo, String> editRowColumn = new Column<NotificationPojo, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(NotificationPojo object) {
-				return "View";
-			}
-		};
-		editRowColumn.setCellStyleNames("glowing-border");
-		notificationListTable.addColumn(editRowColumn, "");
-		notificationListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
-		editRowColumn.setFieldUpdater(new FieldUpdater<NotificationPojo, String>() {
-			@Override
-			public void update(int index, final NotificationPojo svc,
-					String value) {
-				
-				// fire MAINTAIN_VPC event passing the vpc to be maintained
-				GWT.log("[DesktopListVpc] editing Notification: " + svc.getNotificationId());
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, svc);
-			}
-		});
 	}
 
 	@Override

@@ -227,6 +227,23 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 			}
 		});
 		vpcListTable.addColumn(acctIdColumn, "Account ID");
+		
+		// account name column
+//		Column<VpcPojo, String> acctNqmeColumn = 
+//				new Column<VpcPojo, String> (new TextCell()) {
+//				
+//				@Override
+//				public String getValue(VpcPojo object) {
+//					return object
+//				}
+//			};
+//			acctNqmeColumn.setSortable(true);
+//			sortHandler.setComparator(acctNqmeColumn, new Comparator<VpcPojo>() {
+//				public int compare(VpcPojo o1, VpcPojo o2) {
+//					return o1.getAccountId().compareTo(o2.getAccountId());
+//				}
+//			});
+//			vpcListTable.addColumn(acctNqmeColumn, "Account Name");
 
 		// VPC id column
 		Column<VpcPojo, String> vpcIdColumn = 
@@ -262,6 +279,40 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		});
 		vpcListTable.addColumn(vpcTypeColumn, "VPC Type");
 		
+		// cidr
+		Column<VpcPojo, String> cidrColumn = 
+				new Column<VpcPojo, String> (new TextCell()) {
+				
+				@Override
+				public String getValue(VpcPojo object) {
+					return object.getCidr();
+				}
+			};
+			cidrColumn.setSortable(true);
+			sortHandler.setComparator(cidrColumn, new Comparator<VpcPojo>() {
+				public int compare(VpcPojo o1, VpcPojo o2) {
+					return o1.getCidr().compareTo(o2.getCidr());
+				}
+			});
+			vpcListTable.addColumn(cidrColumn, "CIDR");
+		
+		// vpn profile
+			Column<VpcPojo, String> vpnProfileColumn = 
+					new Column<VpcPojo, String> (new TextCell()) {
+					
+					@Override
+					public String getValue(VpcPojo object) {
+						return object.getVpnProfileId();
+					}
+				};
+				vpnProfileColumn.setSortable(true);
+				sortHandler.setComparator(vpnProfileColumn, new Comparator<VpcPojo>() {
+					public int compare(VpcPojo o1, VpcPojo o2) {
+						return o1.getVpnProfileId().compareTo(o2.getVpnProfileId());
+					}
+				});
+				vpcListTable.addColumn(vpnProfileColumn, "VPN Profile ID");
+		
 		// create user
 		Column<VpcPojo, String> createUserColumn = 
 				new Column<VpcPojo, String> (new TextCell()) {
@@ -285,13 +336,23 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 			@Override
 			public String getValue(VpcPojo object) {
-				return dateFormat.format(object.getCreateTime());
+				if (object.getCreateTime() != null) {
+					return dateFormat.format(object.getCreateTime());
+				}
+				else {
+					return "Unknown";
+				}
 			}
 		};
 		createTimeColumn.setSortable(true);
 		sortHandler.setComparator(createTimeColumn, new Comparator<VpcPojo>() {
 			public int compare(VpcPojo o1, VpcPojo o2) {
-				return o1.getCreateTime().compareTo(o2.getCreateTime());
+				if (o1.getCreateTime() != null && o2.getCreateTime() != null) {
+					return o1.getCreateTime().compareTo(o2.getCreateTime());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcListTable.addColumn(createTimeColumn, "Create Time");
@@ -319,13 +380,23 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 			@Override
 			public String getValue(VpcPojo object) {
-				return dateFormat.format(object.getUpdateTime());
+				if (object.getUpdateTime() != null) {
+					return dateFormat.format(object.getUpdateTime());
+				}
+				else {
+					return "Unknown";
+				}
 			}
 		};
 		updateTimeColumn.setSortable(true);
 		sortHandler.setComparator(updateTimeColumn, new Comparator<VpcPojo>() {
 			public int compare(VpcPojo o1, VpcPojo o2) {
-				return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+				if (o1.getUpdateTime() != null && o2.getUpdateTime() != null) {
+					return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcListTable.addColumn(updateTimeColumn, "Update Time");

@@ -13,12 +13,25 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">Account List</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of existing AWS Accounts that you can view or edit.<br/><br/>
-		These reside in the database associated to the Emory AWS ESB Service.  
-		The Emory AWS Service is authoritatative for 
-		AWS Account and VirtualPrivateCloud objects and allows applications like this one 
-		to query, create, update and delete those objects.<br/><br/>
-		Click the 'Add' button to go to the Account maintenance page where you can create an AWS Account.</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
+		AWS Accounts with which you are affiliated.<br/><br/>This account 
+		metadata resides in the database of the Emory AWS ESB Service 
+		and was created at the time the AWS account was provisioned for 
+		Emory. You may view or manage this information after provisioning 
+		from this application. Only central administrators may register 
+		accounts by adding them here.<br/><br/>
+		<b>Terminating Emory AWS Accounts</b><br/><br/>
+		To request termination of an Emory AWS Account, select the account 
+		you administer in the VPCP application and select "Terminate Account." 
+		You will be presented with a dialog to create a request to LITS 
+		administrators to terminate your account. Termination of the 
+		account is not immediate, but is a manual process in which LITS 
+		administrators will contact the account owners and confirm the 
+		desire to terminate the account and all activity in the account. 
+		This process is intended to ensure that no account is 
+		accidentally terminated and that the accountable account owner 
+		truly intends to terminate the account.
+		</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>

@@ -10,7 +10,6 @@ public class AccountQueryResultPojo extends SharedObject implements IsSerializab
 	List<AccountPojo> results;
 
 	public AccountQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public AccountQueryFilterPojo getFilterUsed() {

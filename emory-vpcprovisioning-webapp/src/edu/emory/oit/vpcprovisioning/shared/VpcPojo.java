@@ -16,6 +16,8 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 	String type;
 //	String complianceClass;
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
+	String cidr;
+	String vpnProfileId;
 	VpcPojo baseline;
 	
 	public static final ProvidesKey<VpcPojo> KEY_PROVIDER = new ProvidesKey<VpcPojo>() {
@@ -72,6 +74,22 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 
 	public void setBaseline(VpcPojo baseline) {
 		this.baseline = baseline;
+	}
+
+	public String getCidr() {
+		return cidr;
+	}
+
+	public void setCidr(String cidr) {
+		this.cidr = cidr;
+	}
+
+	public String getVpnProfileId() {
+		return vpnProfileId;
+	}
+
+	public void setVpnProfileId(String vpnConnectionProfileId) {
+		this.vpnProfileId = vpnConnectionProfileId;
 	}
 
 //	public String getComplianceClass() {

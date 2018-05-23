@@ -27,7 +27,6 @@ public class DirectoryPersonPojo extends SharedObject implements IsSerializable,
 	String type;
 
 	public DirectoryPersonPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getDepartmentName() {

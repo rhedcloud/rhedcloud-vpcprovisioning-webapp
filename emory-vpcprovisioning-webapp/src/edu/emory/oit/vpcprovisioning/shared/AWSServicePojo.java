@@ -27,7 +27,6 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	};
 
 	public AWSServicePojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 

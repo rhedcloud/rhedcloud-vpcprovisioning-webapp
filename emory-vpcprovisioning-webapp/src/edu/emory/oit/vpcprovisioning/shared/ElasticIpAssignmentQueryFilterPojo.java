@@ -8,7 +8,6 @@ public class ElasticIpAssignmentQueryFilterPojo extends SharedObject implements 
 	String ownerId;
 
 	public ElasticIpAssignmentQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getAssignmentId() {

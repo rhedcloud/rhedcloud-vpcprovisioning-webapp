@@ -10,7 +10,6 @@ public class ElasticIpQueryResultPojo extends SharedObject implements IsSerializ
 	List<ElasticIpSummaryPojo> results;
 
 	public ElasticIpQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ElasticIpQueryFilterPojo getFilterUsed() {

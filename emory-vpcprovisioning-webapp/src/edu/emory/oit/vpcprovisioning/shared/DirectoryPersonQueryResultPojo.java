@@ -10,7 +10,6 @@ public class DirectoryPersonQueryResultPojo extends SharedObject implements IsSe
 	List<DirectoryPersonPojo> results = new java.util.ArrayList<DirectoryPersonPojo>();
 
 	public DirectoryPersonQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public DirectoryPersonQueryFilterPojo getFilterUsed() {

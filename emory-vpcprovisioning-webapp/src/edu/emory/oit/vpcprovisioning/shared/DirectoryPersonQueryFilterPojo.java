@@ -9,7 +9,6 @@ public class DirectoryPersonQueryFilterPojo extends SharedObject implements IsSe
 	String testRequest;
 
 	public DirectoryPersonQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getSearchString() {

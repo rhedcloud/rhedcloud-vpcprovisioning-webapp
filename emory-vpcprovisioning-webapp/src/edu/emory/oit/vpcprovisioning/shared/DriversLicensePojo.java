@@ -12,7 +12,6 @@ public class DriversLicensePojo extends SharedObject implements IsSerializable {
 	String imageUrl;
 
 	public DriversLicensePojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getValue() {

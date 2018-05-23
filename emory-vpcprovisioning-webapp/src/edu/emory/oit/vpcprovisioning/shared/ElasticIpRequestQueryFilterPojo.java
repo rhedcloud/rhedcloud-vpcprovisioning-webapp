@@ -23,7 +23,6 @@ public class ElasticIpRequestQueryFilterPojo extends SharedObject implements IsS
 	 */
 
 	public ElasticIpRequestQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public List<String> getTags() {

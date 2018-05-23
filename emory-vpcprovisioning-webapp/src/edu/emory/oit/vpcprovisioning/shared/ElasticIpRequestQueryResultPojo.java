@@ -10,7 +10,6 @@ public class ElasticIpRequestQueryResultPojo extends SharedObject implements IsS
 	List<ElasticIpRequestPojo> results;
 
 	public ElasticIpRequestQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ElasticIpRequestQueryFilterPojo getFilterUsed() {

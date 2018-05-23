@@ -15,7 +15,6 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 	UserAccountPojo userLoggedIn;
 	
 	public AccountQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getAccountId() {

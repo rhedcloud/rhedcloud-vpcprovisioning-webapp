@@ -9,7 +9,6 @@ public class AssociatedRoleDNsPojo extends SharedObject implements IsSerializabl
 	List<String> distinguishedNames = new java.util.ArrayList<String>();
 
 	public AssociatedRoleDNsPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public List<String> getDistinguishedNames() {

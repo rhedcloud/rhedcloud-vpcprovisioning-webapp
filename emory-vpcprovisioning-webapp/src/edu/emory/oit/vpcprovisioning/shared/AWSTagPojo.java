@@ -8,7 +8,6 @@ public class AWSTagPojo extends SharedObject implements IsSerializable {
 	String value;
 
 	public AWSTagPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getKey() {

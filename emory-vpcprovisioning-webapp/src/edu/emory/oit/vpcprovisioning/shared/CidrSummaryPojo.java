@@ -21,7 +21,6 @@ public class CidrSummaryPojo extends SharedObject implements IsSerializable, Com
 	};
 
 	public CidrSummaryPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

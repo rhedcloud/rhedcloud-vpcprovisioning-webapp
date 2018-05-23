@@ -263,6 +263,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	// key is category
 	private HashMap<String, List<AWSServicePojo>> awsServicesMap = new HashMap<String, List<AWSServicePojo>>();
+	
+	// temporary
+	List<NotificationPojo> notificationList = new java.util.ArrayList<NotificationPojo>();
 
 
 	@Override
@@ -912,7 +915,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			// to make the user a LITS admin (temporary)
 			AccountRolePojo arp = new AccountRolePojo();
-			arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMIN);
+			arp.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
 			user.getAccountRoles().add(arp);
 
 			info("[getRoleForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
@@ -1153,6 +1156,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //            moa.addCustomerAdminNetId(p);
 //        }
 
+		moa.setCidr(pojo.getCidr());
+		moa.setVpnProfileId(pojo.getVpnProfileId());
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
@@ -1170,6 +1175,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //			pojo.getCustomerAdminNetIdList().add(netId);
 //		}
 		
+		pojo.setCidr(moa.getCidr());
+		pojo.setVpnProfileId(moa.getVpnProfileId());
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
@@ -4475,7 +4482,60 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		NotificationQueryResultPojo result = new NotificationQueryResultPojo();
-		result.setResults(Collections.<NotificationPojo> emptyList());
+		
+		if (notificationList.isEmpty()) {
+			NotificationPojo n1 = new NotificationPojo();
+			n1.setNotificationId("1");
+			n1.setNotificationText("Simple notification.");
+			n1.setCreateTime(new java.util.Date());
+			notificationList.add(n1);
+			NotificationPojo n2 = new NotificationPojo();
+			n2.setNotificationId("2");
+			n2.setNotificationText("Simple notification.");
+			n2.setCreateTime(new java.util.Date());
+			notificationList.add(n2);
+			NotificationPojo n3 = new NotificationPojo();
+			n3.setNotificationId("3");
+			n3.setNotificationText("Simple notification.");
+			notificationList.add(n3);
+			NotificationPojo n4 = new NotificationPojo();
+			n4.setNotificationId("4");
+			n4.setNotificationText("Simple notification.");
+			n4.setCreateTime(new java.util.Date());
+			notificationList.add(n4);
+			NotificationPojo n5 = new NotificationPojo();
+			n5.setNotificationId("5");
+			n5.setNotificationText("Simple notification.");
+			n5.setCreateTime(new java.util.Date());
+			notificationList.add(n5);
+			NotificationPojo n6 = new NotificationPojo();
+			n6.setNotificationId("6");
+			n6.setNotificationText("Simple notification.");
+			n6.setCreateTime(new java.util.Date());
+			notificationList.add(n6);
+			NotificationPojo n7 = new NotificationPojo();
+			n7.setNotificationId("7");
+			n7.setNotificationText("Simple notification.");
+			notificationList.add(n7);
+			NotificationPojo n8 = new NotificationPojo();
+			n8.setNotificationId("8");
+			n8.setNotificationText("Simple notification.");
+			n8.setCreateTime(new java.util.Date());
+			notificationList.add(n8);
+			NotificationPojo n9 = new NotificationPojo();
+			n9.setNotificationId("9");
+			n9.setNotificationText("Simple notification.");
+			n9.setCreateTime(new java.util.Date());
+			notificationList.add(n9);
+			NotificationPojo n10 = new NotificationPojo();
+			n10.setNotificationId("10");
+			n10.setNotificationText("Simple notification.");
+			notificationList.add(n10);
+		}
+		
+		result.setResults(notificationList);
+		
+//		result.setResults(Collections.<NotificationPojo> emptyList());
 		return result;
 	}
 
@@ -4493,8 +4553,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteNotification(NotificationPojo notification) throws RpcException {
-		// TODO Auto-generated method stub
 		
+		for (int i=0; i<notificationList.size(); i++) {
+			NotificationPojo n = notificationList.get(i);
+			if (n.getNotificationId().equalsIgnoreCase(notification.getNotificationId())) {
+				notificationList.remove(i);
+			}
+		}
 	}
 
 	@Override
@@ -5070,14 +5135,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getDirectoryPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			@SuppressWarnings("unchecked")
 			List<DirectoryPerson> moas = null;
 			try {
 				moas = actionable.query(queryObject,
 						this.getDirectoryRequestService());
 			} catch (EnterpriseObjectQueryException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+				throw new RpcException(e);
 			}
 			if (moas != null) {
 				info("[service layer] got " + moas.size() + " DirectoryPerson objects back from ESB.");
@@ -5333,7 +5397,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				
 				String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
-				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, "EmoryAdministratorRole");
+				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 				RoleDNs roleDns = requisition.newRoleDNs();
 				roleDns.addDistinguishedName(distName);
 				requisition.setRoleDNs(roleDns);
@@ -5465,7 +5529,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 			roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
-			roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, "EmoryAdministratorRole");
+			roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 			RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
 			info("[getAdminRoleAssignmentsForAccount] filter.roleDN: " + roleDN);
 			filter.setRoleDN(roleDN);

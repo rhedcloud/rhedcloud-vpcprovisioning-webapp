@@ -27,7 +27,6 @@ public class ElasticIpRequestPojo extends SharedObject implements IsSerializable
 	};
 
 	public ElasticIpRequestPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

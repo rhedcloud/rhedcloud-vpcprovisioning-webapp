@@ -10,7 +10,6 @@ public class CidrRequisitionPojo extends SharedObject implements IsSerializable 
 	String bits;
 
 	public CidrRequisitionPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getRequestorNetId() {

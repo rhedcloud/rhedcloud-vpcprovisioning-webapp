@@ -11,7 +11,6 @@ public class AccountRolePojo extends SharedObject implements IsSerializable {
 	Date effectiveDate;
 
 	public AccountRolePojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getAccountId() {

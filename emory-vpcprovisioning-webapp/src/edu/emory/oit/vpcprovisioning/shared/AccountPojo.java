@@ -27,7 +27,6 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 		}
 	};
 	public AccountPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

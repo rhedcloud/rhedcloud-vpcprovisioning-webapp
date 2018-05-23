@@ -9,7 +9,6 @@ public class AWSServiceQueryFilterPojo extends SharedObject implements IsSeriali
 	String status;
 
 	public AWSServiceQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getServiceId() {

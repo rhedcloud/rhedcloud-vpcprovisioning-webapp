@@ -2,154 +2,195 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style src="DesktopStyles.css" />
+	
 	<ui:style field="otherStyles">
+	
 	</ui:style>
 	<g:ScrollPanel width="100%" height="99%">
-	<g:VerticalPanel spacing="8" width="100%">
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			
-			<!-- Hide this one when generating -->
-			<g:Grid ui:field="maintainVpcGrid" cellSpacing="8">
-			<!-- NEEDS these (when maintaining):
-				<!ELEMENT VirtualPrivateCloud (
-					AccountId, 
-					VpcId, 
-					Type, 
-					CustomerAdminNetId+, 
-					CreateUser (view only), 
-					CreateDatetime (view only), 
-					LastUpdateUser? (view only), 
-					LastUpdateDatetime? (view only))>
-			 -->
-				<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="accountIdTB" debugId="accountIdTB"/>
-				    	</g:customCell>
-			    	</g:row>
-			    	
-			    	<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<!-- <g:TextBox enabled="false" addStyleNames="{style.field} {style.glowing-border}" -->
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcIdTB" debugId="vpcIdTB" />
-				    	</g:customCell>
-				</g:row>
-				
-				<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcTypeLB" debugId="vpcTypeLB" />
-				    	</g:customCell>
-				</g:row>
-				<!-- TODO create/update user/time read only -->
-			</g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<!-- hide this one when maintaining -->
-			<g:Grid ui:field="generateVpcGrid" cellSpacing="8">
-			<!-- NEEDS these (when generating):
-				<!ELEMENT VirtualPrivateCloudRequisition (
-					AccountId?, 
-					AccountOwnerNetId, 
-					FinancialAccountNumber, 
-					CustomerAdminNetId+, 
-					Type)>
-			 -->
-				<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqAccountIdTB" debugId="vpcReqAccountIdTB" />
-				    	</g:customCell>
-			    	</g:row>
-			    	
-			    	<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Owner NetId:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqOwnerNetIdTB" debugId="vpcReqOwnerNetIdTB" />
-				    	</g:customCell>
-				</g:row>
-				
-				<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqSpeedTypeTB" debugId="vpcReqSpeedTypeTB" />
-				    	</g:customCell>
-				    	<g:customCell>
-						<g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">SpeedType status</g:Label>
-				    	</g:customCell>
-			    	</g:row>
-			    	<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="vpcReqTypeLB" debugId="vpcReqTypeLB" />
-				    	</g:customCell>
-				</g:row>
-			</g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
-			<g:Grid cellSpacing="12">
-				<g:row>
-			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
-			    	</g:customCell>
-				</g:row>
-			</g:Grid>
-		</g:cell>
-		<g:VerticalPanel width="100%" height="100%">
-			<g:TabLayoutPanel 
-				barHeight="2" 
-				barUnit="EM" 
-				width="100%"
-				height="600px" 
-				animationDuration="500" 
-				animationVertical="false" 
-				ui:field="vpcTabPanel"
-				debugId="vpcTabPanel"
-				addStyleNames="gwt-TabLayoutPanel">
+		<g:VerticalPanel spacing="8" width="100%">
+			<g:cell horizontalAlignment="ALIGN_LEFT"
+				verticalAlignment="ALIGN_MIDDLE">
 
-				<g:tab>
-					<g:header>Firewall Rules</g:header>
-					<g:DeckLayoutPanel ui:field="firewallContainer" debugId="firewallContainer" width="100%" height="100%"/>
-				</g:tab>
-				<!-- 
-				<g:tab>
-					<g:header>CIDR Assignments</g:header>
-					<g:DeckLayoutPanel ui:field="cidrAssignmentContainer" debugId="cidrAssignmentContainer" width="100%" height="100%"/>
-				</g:tab>
-				 -->
-				<g:tab>
-					<g:header>Elastic IP Assignments</g:header>
-					<g:DeckLayoutPanel ui:field="elasticIpAssignmentContainer" debugId="elasticIpAssignmentContainer" width="100%" height="100%"/>
-				</g:tab>
-			</g:TabLayoutPanel>
+				<!-- Hide this one when generating -->
+				<g:Grid ui:field="maintainVpcGrid" cellSpacing="8">
+					<!-- NEEDS these (when maintaining): <!ELEMENT VirtualPrivateCloud ( 
+						AccountId, VpcId, Type, CustomerAdminNetId+, CreateUser (view only), CreateDatetime 
+						(view only), LastUpdateUser? (view only), LastUpdateDatetime? (view only))> -->
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="accountIdTB" debugId="accountIdTB" />
+						</g:customCell>
+					</g:row>
+
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<!-- <g:TextBox enabled="false" addStyleNames="{style.field} {style.glowing-border}" -->
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcIdTB" debugId="vpcIdTB" />
+						</g:customCell>
+					</g:row>
+
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:ListBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcTypeLB" debugId="vpcTypeLB" />
+						</g:customCell>
+					</g:row>
+					
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}"></g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:DisclosurePanel>
+								<g:header>VPN Connection Info</g:header>
+								<g:Grid>
+									<g:row>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 1</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 2</g:Label>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 3</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 4</g:Label>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 5</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 6</g:Label>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 7</g:Label>
+										</g:customCell>
+										<g:customCell>
+											<g:Label addStyleNames="{style.label}">VPN 8</g:Label>
+										</g:customCell>
+									</g:row>
+								</g:Grid>
+							</g:DisclosurePanel>
+						</g:customCell>
+					</g:row>
+					<!-- TODO create/update user/time read only -->
+				</g:Grid>
+			</g:cell>
+			<g:cell horizontalAlignment="ALIGN_LEFT"
+				verticalAlignment="ALIGN_MIDDLE">
+				<!-- hide this one when maintaining -->
+				<g:Grid ui:field="generateVpcGrid" cellSpacing="8">
+					<!-- NEEDS these (when generating): <!ELEMENT VirtualPrivateCloudRequisition 
+						( AccountId?, AccountOwnerNetId, FinancialAccountNumber, CustomerAdminNetId+, 
+						Type)> -->
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqAccountIdTB" debugId="vpcReqAccountIdTB" />
+						</g:customCell>
+					</g:row>
+
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">Owner NetId:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqOwnerNetIdTB" debugId="vpcReqOwnerNetIdTB" />
+						</g:customCell>
+					</g:row>
+
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqSpeedTypeTB" debugId="vpcReqSpeedTypeTB" />
+						</g:customCell>
+						<g:customCell>
+							<g:Label ui:field="speedTypeLabel"
+								addStyleNames="{style.label}">SpeedType status</g:Label>
+						</g:customCell>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:ListBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqTypeLB" debugId="vpcReqTypeLB" />
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+			</g:cell>
+			<g:cell horizontalAlignment="ALIGN_LEFT"
+				verticalAlignment="ALIGN_MIDDLE" width="100%">
+				<g:Grid cellSpacing="12">
+					<g:row>
+						<g:customCell>
+							<g:Button
+								addStyleNames="{style.glowing-border} {style.normalButton}"
+								ui:field="okayButton" debugId="okayButton">Okay</g:Button>
+						</g:customCell>
+						<g:customCell>
+							<g:Button
+								addStyleNames="{style.glowing-border} {style.normalButton}"
+								ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+						</g:customCell>
+					</g:row>
+				</g:Grid>
+			</g:cell>
+			<g:VerticalPanel width="100%" height="100%">
+				<g:TabLayoutPanel barHeight="2" barUnit="EM"
+					width="100%" height="600px" animationDuration="500"
+					animationVertical="false" ui:field="vpcTabPanel"
+					debugId="vpcTabPanel" addStyleNames="gwt-TabLayoutPanel">
+
+					<g:tab>
+						<g:header>Firewall Rules</g:header>
+						<g:DeckLayoutPanel ui:field="firewallContainer"
+							debugId="firewallContainer" width="100%" height="100%" />
+					</g:tab>
+					<!-- <g:tab> <g:header>CIDR Assignments</g:header> <g:DeckLayoutPanel 
+						ui:field="cidrAssignmentContainer" debugId="cidrAssignmentContainer" width="100%" 
+						height="100%"/> </g:tab> -->
+					<g:tab>
+						<g:header>Elastic IP Assignments</g:header>
+						<g:DeckLayoutPanel
+							ui:field="elasticIpAssignmentContainer"
+							debugId="elasticIpAssignmentContainer" width="100%" height="100%" />
+					</g:tab>
+				</g:TabLayoutPanel>
+			</g:VerticalPanel>
 		</g:VerticalPanel>
-	</g:VerticalPanel>
 	</g:ScrollPanel>
 </ui:UiBinder> 

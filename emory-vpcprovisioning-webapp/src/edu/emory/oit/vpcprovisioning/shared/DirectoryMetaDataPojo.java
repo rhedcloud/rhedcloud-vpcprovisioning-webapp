@@ -10,7 +10,6 @@ public class DirectoryMetaDataPojo extends SharedObject implements IsSerializabl
 	String emailAddress;
 
 	public DirectoryMetaDataPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getNetId() {

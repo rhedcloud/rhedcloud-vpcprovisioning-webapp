@@ -9,7 +9,6 @@ public class AssociatedCidrPojo extends SharedObject implements IsSerializable {
 	String bits;
 
 	public AssociatedCidrPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getType() {

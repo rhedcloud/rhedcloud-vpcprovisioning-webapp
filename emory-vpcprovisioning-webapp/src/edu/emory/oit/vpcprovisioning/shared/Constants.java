@@ -1,7 +1,6 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.paloaltonetworks.moa.objects.resources.v1_0.FirewallRuleQuerySpecification;
 
 public class Constants implements IsSerializable {
 	public static final String CIDR_ASSIGNMENT = "CidrAssignment";
@@ -12,9 +11,9 @@ public class Constants implements IsSerializable {
 
 	// these will need to be specific for this app's functionality
 	
-	public static final String ROLE_NAME_EMORY_AWS_CENTRAL_ADMIN = "EmoryCentralAdministratorRole";
-	public static final String ROLE_NAME_EMORY_AWS_ADMIN = "EmoryAdministratorRole";
-	public static final String ROLE_NAME_EMORY_AUDITOR = "EmoryAuditorRole";
+	public static final String ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN = "RHEDcloudCentralAdministratorRole";
+	public static final String ROLE_NAME_RHEDCLOUD_AWS_ADMIN = "RHEDcloudAdministratorRole";
+	public static final String ROLE_NAME_RHEDCLOUD_AUDITOR = "RHEDcloudAuditorRole";
 
 	public static final String TIME_RULE_INDEFINITELY = "Indefinitely";
 	public static final String TIME_RULE_SPECIFIC_DATE = "Specific Date";

@@ -73,31 +73,49 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(1, 1);
+	    Grid grid = new Grid(2, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
-		Anchor assignAnchor = new Anchor("View Status");
-		assignAnchor.addStyleName("productAnchor");
-		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		assignAnchor.setTitle("View status of selected VPCP");
-		assignAnchor.ensureDebugId(assignAnchor.getText());
-		assignAnchor.addClickHandler(new ClickHandler() {
+		Anchor editAnchor = new Anchor("Edit Service");
+		editAnchor.addStyleName("productAnchor");
+		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editAnchor.setTitle("View/Maintain selected Service");
+		editAnchor.ensureDebugId(editAnchor.getText());
+		editAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
 				AWSServicePojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					// just use a popup here and not try to show the "normal" CidrAssignment
-					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE, m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
 				}
 			}
 		});
-		grid.setWidget(0, 0, assignAnchor);
+		grid.setWidget(0, 0, editAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Service");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected Service");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AWSServicePojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					presenter.deleteService(m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -106,7 +124,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	void closeOtherFeaturesButtonClicked(ClickEvent e) {
 		presenter.getClientFactory().getShell().hideOtherFeaturesPanel();
 		presenter.getClientFactory().getShell().showMainTabPanel();
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ACCOUNT);
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
 	}
 	@UiHandler ("createServiceButton")
 	void createSserviceClicked(ClickEvent e) {
@@ -278,9 +296,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		});
 		serviceListTable.addColumn(vpcTypeColumn, "Name");
 		
-		/*
-<!ELEMENT Service (ServiceId, ServiceCode, ServiceName, Status, ServiceLandingPageUrl, Description?, Category*, ConsoleCategory*, HippaEligible?, Tag*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-		 */
 		// compliance class
 		Column<AWSServicePojo, String> complianceClassColumn = 
 			new Column<AWSServicePojo, String> (new TextCell()) {
@@ -381,59 +396,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			}
 		});
 		serviceListTable.addColumn(updateTimeColumn, "Update Time");
-
-		if (userLoggedIn.isLitsAdmin()) {
-			GWT.log(userLoggedIn.getEppn() + " is an admin");
-			// delete row column
-			Column<AWSServicePojo, String> deleteRowColumn = new Column<AWSServicePojo, String>(
-					new ButtonCell()) {
-				@Override
-				public String getValue(AWSServicePojo object) {
-					return "Delete";
-				}
-			};
-			deleteRowColumn.setCellStyleNames("glowing-border");
-			serviceListTable.addColumn(deleteRowColumn, "");
-			serviceListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
-			deleteRowColumn
-			.setFieldUpdater(new FieldUpdater<AWSServicePojo, String>() {
-				@Override
-				public void update(int index, final AWSServicePojo svc,
-						String value) {
-	
-					presenter.deleteService(svc);
-				}
-			});
-		}
-
-		// edit row column
-		Column<AWSServicePojo, String> editRowColumn = new Column<AWSServicePojo, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(AWSServicePojo object) {
-				if (userLoggedIn.isLitsAdmin()) {
-					GWT.log(userLoggedIn.getEppn() + " is an admin");
-					return "Edit";
-				}
-				else {
-					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-					return "View";
-				}
-			}
-		};
-		editRowColumn.setCellStyleNames("glowing-border");
-		serviceListTable.addColumn(editRowColumn, "");
-		serviceListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
-		editRowColumn.setFieldUpdater(new FieldUpdater<AWSServicePojo, String>() {
-			@Override
-			public void update(int index, final AWSServicePojo svc,
-					String value) {
-				
-				// fire MAINTAIN_VPC event passing the vpc to be maintained
-				GWT.log("[DesktopListVpc] editing Service: " + svc.getName());
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE, svc);
-			}
-		});
 	}
 	@Override
 	public List<Widget> getMissingRequiredFields() {

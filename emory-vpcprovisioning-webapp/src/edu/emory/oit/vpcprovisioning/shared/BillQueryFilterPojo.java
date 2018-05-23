@@ -18,7 +18,6 @@ public class BillQueryFilterPojo extends SharedObject implements IsSerializable 
 	String type;
 	
 	public BillQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getPayerAccountId() {

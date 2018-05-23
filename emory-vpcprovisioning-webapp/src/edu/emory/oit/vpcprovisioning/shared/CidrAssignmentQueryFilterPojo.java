@@ -9,7 +9,6 @@ public class CidrAssignmentQueryFilterPojo extends SharedObject implements IsSer
 	UserAccountPojo userLoggedIn;
 	
 	public CidrAssignmentQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getCidrAssignmentId() {

@@ -516,7 +516,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						@Override
 						public void onFailure(Throwable caught) {
 							// TODO Auto-generated method stub
-							
+							getView().hidePleaseWaitDialog();
+							getView().hidePleaseWaitPanel();
 						}
 
 						@Override
@@ -530,6 +531,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 							getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
 									directoryPerson.getEmail().getEmailAddress(), 
 									directoryPerson.toString());
+							getView().hidePleaseWaitDialog();
+							getView().hidePleaseWaitPanel();
 						}
 					};
 					// now, create the role assignment and add the role assignment to the account
@@ -537,11 +540,11 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				}
 				else {
 					GWT.log("Expected exactly 1 FullPerson, got " + result.getResults().size() + " this shouldn't happen.");
+					getView().hidePleaseWaitDialog();
+					getView().hidePleaseWaitPanel();
 					// TODO: error
 					return;
 				}
-				getView().hidePleaseWaitDialog();
-				getView().hidePleaseWaitPanel();
 			}
 		};
 		getView().showPleaseWaitDialog();

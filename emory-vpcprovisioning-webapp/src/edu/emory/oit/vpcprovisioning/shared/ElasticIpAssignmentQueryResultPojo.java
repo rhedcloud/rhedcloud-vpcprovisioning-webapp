@@ -10,7 +10,6 @@ public class ElasticIpAssignmentQueryResultPojo extends SharedObject implements 
 	List<ElasticIpAssignmentPojo> results;
 
 	public ElasticIpAssignmentQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public ElasticIpAssignmentQueryFilterPojo getFilterUsed() {

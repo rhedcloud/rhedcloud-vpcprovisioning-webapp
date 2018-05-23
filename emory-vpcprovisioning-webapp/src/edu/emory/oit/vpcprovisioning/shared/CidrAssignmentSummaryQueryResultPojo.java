@@ -8,7 +8,6 @@ public class CidrAssignmentSummaryQueryResultPojo extends SharedObject {
 	List<CidrAssignmentSummaryPojo> results;
 
 	public CidrAssignmentSummaryQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public CidrAssignmentSummaryQueryFilterPojo getFilterUsed() {

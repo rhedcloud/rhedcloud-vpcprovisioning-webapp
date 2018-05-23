@@ -10,7 +10,6 @@ public class AWSServiceQueryResultPojo extends SharedObject implements IsSeriali
 	List<AWSServicePojo> results = new java.util.ArrayList<AWSServicePojo>();
 
 	public AWSServiceQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public AWSServiceQueryFilterPojo getFilterUsed() {

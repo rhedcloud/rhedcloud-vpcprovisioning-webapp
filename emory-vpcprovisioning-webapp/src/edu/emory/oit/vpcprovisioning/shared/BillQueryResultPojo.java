@@ -10,7 +10,6 @@ public class BillQueryResultPojo extends SharedObject implements IsSerializable 
 	List<BillPojo> results;
 
 	public BillQueryResultPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public BillQueryFilterPojo getFilterUsed() {

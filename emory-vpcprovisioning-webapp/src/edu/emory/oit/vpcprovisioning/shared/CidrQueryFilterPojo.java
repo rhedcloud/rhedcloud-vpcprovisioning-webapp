@@ -12,7 +12,6 @@ public class CidrQueryFilterPojo extends SharedObject implements IsSerializable 
 	UserAccountPojo userLoggedIn;
 	
 	public CidrQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getBits() {

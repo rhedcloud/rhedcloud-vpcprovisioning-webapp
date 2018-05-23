@@ -11,7 +11,6 @@ public class ElasticIpQueryFilterPojo extends SharedObject implements IsSerializ
 
 	public ElasticIpQueryFilterPojo() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getElasticIpId() {
