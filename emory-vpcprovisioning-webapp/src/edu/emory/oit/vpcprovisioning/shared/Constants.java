@@ -14,6 +14,8 @@ public class Constants implements IsSerializable {
 	public static final String ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN = "RHEDcloudCentralAdministratorRole";
 	public static final String ROLE_NAME_RHEDCLOUD_AWS_ADMIN = "RHEDcloudAdministratorRole";
 	public static final String ROLE_NAME_RHEDCLOUD_AUDITOR = "RHEDcloudAuditorRole";
+	public static final String STATIC_TEXT_ADMINISTRATOR = "Administrator";
+	public static final String STATIC_TEXT_AUDITOR = "Auditor";
 	
 	public static final String[] ACCOUNT_ROLE_NAMES = new String[] {
 			ROLE_NAME_RHEDCLOUD_AWS_ADMIN,

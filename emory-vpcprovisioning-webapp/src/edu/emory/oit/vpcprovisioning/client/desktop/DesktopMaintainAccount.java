@@ -86,7 +86,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField Button addAdminButton;
 	@UiField Label adminLabel;
 	
-	@UiField HTML accountInfoHTML;
+//	@UiField HTML accountInfoHTML;
 	@UiField HTML speedTypeHTML;
 	@UiField ListBox complianceClassLB;
 
@@ -147,9 +147,19 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@UiHandler ("addAdminButton")
 	void addAdminButtonClick(ClickEvent e) {
+		if (accountIdTB.getText() == null || accountIdTB.getText().trim().length() == 0) {
+			showMessageToUser("Please enter a valid account ID.");
+			return;
+		}
+		if (directoryLookupSB.getText() == null || directoryLookupSB.getText().trim().length() == 0) {
+			showMessageToUser("Please enter the name of a person you want to assign a role to for this account.");
+			return;
+		}
 		// present a dialog where user must select a role
 		// then pass that role to the add method
 		final RoleSelectionPopup rsp = new RoleSelectionPopup();
+		rsp.setAssigneeName(directoryLookupSB.getText());
+		rsp.initPanel();
 		rsp.showRelativeTo(addAdminButton);
 		rsp.addCloseHandler(new CloseHandler<PopupPanel>() {
 			@SuppressWarnings("rawtypes")
@@ -241,10 +251,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		// get fullperson for current directory person
 		// get net id from fullperson
 		// create role assignment
-		if (accountIdTB.getText() == null || accountIdTB.getText().trim().length() == 0) {
-			showMessageToUser("Please enter the name of an account admin.");
-			return;
-		}
 		presenter.getAccount().setAccountId(accountIdTB.getText());
 		presenter.addDirectoryPersonInRoleToAccount(roleName);
 	}
@@ -254,9 +260,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	 */
 	
 	@Override
-	public void addRoleAssignment(final int ra_summaryIndex, String name, final String netId, String widgetTitle) {
+	public void addRoleAssignment(final int ra_summaryIndex, String name, final String netId, String roleName, String widgetTitle) {
 		int numRows = adminTable.getRowCount();
-		final Label nameLabel = new Label(name + " (" + netId + ")");
+		final Label nameLabel = new Label(name + " (" + netId + ")/" + roleName);
 		nameLabel.setTitle(widgetTitle);
 		nameLabel.addStyleName("emailLabel");
 //		nameLabel.addMouseOverHandler(new MouseOverHandler() {
@@ -540,13 +546,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void setAwsAccountsURL(String awsAccountsURL) {
-		String acctInfo = accountInfoHTML.getHTML();
-		accountInfoHTML.setHTML(acctInfo.replaceAll("AWS_ACCOUNTS_URL", awsAccountsURL));
+//		String acctInfo = accountInfoHTML.getHTML();
+//		accountInfoHTML.setHTML(acctInfo.replaceAll("AWS_ACCOUNTS_URL", awsAccountsURL));
 	}
 	@Override
 	public void setAwsBillingManagementURL(String awsBillingManagementURL) {
-		String acctInfo = accountInfoHTML.getHTML();
-		accountInfoHTML.setHTML(acctInfo.replaceAll("AWS_BILLING_MANAGEMENT_URL", awsBillingManagementURL));
+//		String acctInfo = accountInfoHTML.getHTML();
+//		accountInfoHTML.setHTML(acctInfo.replaceAll("AWS_BILLING_MANAGEMENT_URL", awsBillingManagementURL));
 	}
 	@Override
 	public void setSpeedTypeStatus(String status) {

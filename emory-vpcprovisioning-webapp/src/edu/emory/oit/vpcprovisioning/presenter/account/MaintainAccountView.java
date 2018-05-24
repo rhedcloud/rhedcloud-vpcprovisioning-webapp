@@ -100,7 +100,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	Widget getSpeedTypeWidget();
 	void setSpeedTypeConfirmed(boolean confirmed);
 	boolean isSpeedTypeConfirmed();
-	void addRoleAssignment(int index, String name, String netId, String widgetTitle);
+	void addRoleAssignment(int index, String name, String netId, String roleName, String widgetTitle);
 	void setRoleAssignmentSummaries(List<RoleAssignmentSummaryPojo> summaries);
 	void setComplianceClassItems(List<String> complianceClassTypes);
 }

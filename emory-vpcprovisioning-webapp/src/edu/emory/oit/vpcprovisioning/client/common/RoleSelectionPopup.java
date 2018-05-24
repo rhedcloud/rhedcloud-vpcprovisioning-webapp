@@ -15,6 +15,7 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 
 public class RoleSelectionPopup extends PopupPanel {
 	String selectedRoleName;
+	String assigneeName;
 	boolean roleSelected = false;
 	boolean canceled = false;
 
@@ -28,24 +29,29 @@ public class RoleSelectionPopup extends PopupPanel {
 
 	public RoleSelectionPopup(boolean autoHide, boolean modal) {
 		super(autoHide, modal);
-		// TODO Auto-generated constructor stub
-		
-//	    actionsPopup.setAutoHideEnabled(true);
-//	    actionsPopup.setAnimationEnabled(true);
+	}
+	
+	public void initPanel() {
 	    this.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
 		VerticalPanel mainPanel = new VerticalPanel();
 		this.add(mainPanel);
 		
-		HTML h = new HTML("<b>Please select which role you want to assign this person to:</b>");
-		mainPanel.add(h);
+		if (assigneeName != null) {
+			HTML h = new HTML("<b>Select the role you would like to <br/>assign " + assigneeName + " to:</b>");
+			mainPanel.add(h);
+		}
+		else {
+			HTML h = new HTML("<b>Select the role you would like to <br/>assign this person to:</b>");
+			mainPanel.add(h);
+		}
 		
 	    Grid rbGrid = new Grid(2, 1);
 	    rbGrid.setCellSpacing(8);
 	    mainPanel.add(rbGrid);
 	    
-	    final RadioButton adminRB = new RadioButton("roles", Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
-	    final RadioButton auditorRB = new RadioButton("roles", Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+	    final RadioButton adminRB = new RadioButton("roles", Constants.STATIC_TEXT_ADMINISTRATOR);
+	    final RadioButton auditorRB = new RadioButton("roles", Constants.STATIC_TEXT_AUDITOR);
 	    rbGrid.setWidget(0, 0, adminRB);
 	    rbGrid.setWidget(1, 0, auditorRB);
 	    
@@ -63,11 +69,11 @@ public class RoleSelectionPopup extends PopupPanel {
 				setCanceled(false);
 				if (adminRB.getValue()) {
 					setRoleSelected(true);
-					setSelectedRoleName(adminRB.getText());
+					setSelectedRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 				}
 				else if (auditorRB.getValue()) {
 					setRoleSelected(true);
-					setSelectedRoleName(auditorRB.getText());
+					setSelectedRoleName(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
 				}
 				else {
 					setRoleSelected(false);
@@ -91,7 +97,6 @@ public class RoleSelectionPopup extends PopupPanel {
 	    });
 	    buttonGrid.setWidget(0, 0, okayButton);
 	    buttonGrid.setWidget(0, 1, cancelButton);
-
 	}
 
 	public String getSelectedRoleName() {
@@ -128,6 +133,14 @@ public class RoleSelectionPopup extends PopupPanel {
 
 	public void setCanceled(boolean canceled) {
 		this.canceled = canceled;
+	}
+
+	public String getAssigneeName() {
+		return assigneeName;
+	}
+
+	public void setAssigneeName(String assigneeName) {
+		this.assigneeName = assigneeName;
 	}
 
 }

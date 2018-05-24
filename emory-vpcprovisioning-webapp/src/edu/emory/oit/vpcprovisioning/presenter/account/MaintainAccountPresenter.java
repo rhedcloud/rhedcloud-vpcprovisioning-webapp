@@ -528,8 +528,9 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 							ra_summary.setDirectoryPerson(directoryPerson);
 							ra_summary.setRoleAssignment(roleAssignment);
 							accountRoleAssignmentSummaries.add(ra_summary);
+							String roleName = getSimpleRoleNameFromRoleDN(ra_summary.getRoleAssignment().getRoleDN());
 							getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
-									directoryPerson.getEmail().getEmailAddress(), 
+									directoryPerson.getEmail().getEmailAddress(), roleName, 
 									directoryPerson.toString() + " " + ra_summary.getRoleAssignment().getRoleDN());
 							getView().hidePleaseWaitDialog();
 							getView().hidePleaseWaitPanel();
@@ -571,9 +572,10 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				// add each role assignment summary to the view
 				for (int i=0; i<result.size(); i++) {
 					RoleAssignmentSummaryPojo ra_summary = result.get(i);
+					String roleName = getSimpleRoleNameFromRoleDN(ra_summary.getRoleAssignment().getRoleDN());
 					getView().addRoleAssignment(i, ra_summary.getDirectoryPerson().getFullName(), 
-							ra_summary.getDirectoryPerson().getEmail().getEmailAddress(), 
-							ra_summary.getDirectoryPerson().toString() + " " + ra_summary.getRoleAssignment().getRoleDN());
+							ra_summary.getDirectoryPerson().getEmail().getEmailAddress(), roleName,  
+							ra_summary.getDirectoryPerson().toString());
 				}
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
@@ -581,6 +583,20 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		};
 		getView().showPleaseWaitDialog();
 		VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(account.getAccountId(), callback);
+	}
+	
+	private String getSimpleRoleNameFromRoleDN(String roleDn) {
+		String roleName = null;
+		if (roleDn.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN) >= 0) {
+			roleName = Constants.STATIC_TEXT_ADMINISTRATOR;
+		}
+		else if (roleDn.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR) >= 0) {
+			roleName = Constants.STATIC_TEXT_AUDITOR;
+		}
+		else {
+			roleName = "Unknown";
+		}
+		return roleName;
 	}
 
 	@Override
