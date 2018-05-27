@@ -60,21 +60,30 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
-		// TODO Auto-generated method stub
-		
+	public void applyAWSAccountAdminMask() {
+		okayButton.setEnabled(true);
+		accountLB.setEnabled(true);
+		vpcLB.setEnabled(true);
+		elasticIpLB.setEnabled(true);
+		descriptionTB.setEnabled(true);
+		purposeTB.setEnabled(true);
+		ownerIdTB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
-		// TODO Auto-generated method stub
-		
+	public void applyAWSAccountAuditorMask() {
+		okayButton.setEnabled(false);
+		accountLB.setEnabled(false);
+		vpcLB.setEnabled(false);
+		elasticIpLB.setEnabled(false);
+		descriptionTB.setEnabled(false);
+		purposeTB.setEnabled(false);
+		ownerIdTB.setEnabled(false);
 	}
 
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {
-		// TODO Auto-generated method stub
-		
+		this.userLoggedIn = user;
 	}
 
 	@Override
@@ -97,8 +106,7 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 
 	@Override
 	public void setPresenter(Presenter presenter) {
-		// TODO Auto-generated method stub
-		
+		this.presenter = presenter;
 	}
 
 	@Override

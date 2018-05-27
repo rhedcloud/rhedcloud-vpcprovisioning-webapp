@@ -143,10 +143,10 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 				// apply authorization mask
 				// TODO: need to determine the Notification structure so we can apply authorization mask appropriately
 				if (user.isLitsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 				}
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();

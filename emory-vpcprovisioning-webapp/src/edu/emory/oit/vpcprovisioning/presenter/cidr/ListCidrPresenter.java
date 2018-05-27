@@ -154,10 +154,10 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				setCidrSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 					getView().showMessageToUser("An error has occurred.  The user logged in does not "
 							+ "appear to be associated to any valid roles for this page.");
 					// TODO: need to not show them the list of items???

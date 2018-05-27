@@ -152,18 +152,18 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 				setCidrAssignmentSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (vpc != null && user.isAuditorForAccount(vpc.getAccountId())) {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 				}
 				else {
 					getView().showMessageToUser("An error has occurred.  The user logged in does not "
 							+ "appear to be associated to any valid roles for this page.");
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 					// TODO: need to not show them this page??
 				}
 				GWT.log("back to presenter, masks applied...");

@@ -313,7 +313,7 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
 		networkTB.setEnabled(true);
 		bitsTB.setEnabled(true);
@@ -327,7 +327,7 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
 		networkTB.setEnabled(false);
 		bitsTB.setEnabled(false);

@@ -255,7 +255,7 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
 		accountLB.setEnabled(true);
 		vpcLB.setEnabled(true);
@@ -266,7 +266,7 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
 		accountLB.setEnabled(false);
 		vpcLB.setEnabled(false);

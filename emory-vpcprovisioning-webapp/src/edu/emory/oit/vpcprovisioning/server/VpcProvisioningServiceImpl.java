@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -898,18 +897,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				</RoleAssignment>
 				 */
 				String roleDn = roleAssignment.getRoleDN();
-				if (roleDn.indexOf("RGR_AWS") >= 0) {
-					info("[getRolesForUser] roleDn: " + roleDn);
-					String[] cns = roleDn.split(",");
-					String acctCn = cns[0];
-					String[] idRoles = acctCn.split("-");
-					String acctId = idRoles[1];
-					String roleName = idRoles[2];
-					AccountRolePojo arp = new AccountRolePojo();
-					arp.setAccountId(acctId);
-					arp.setRoleName(roleName);
-					info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-					user.getAccountRoles().add(arp);
+				if (roleDn != null) {
+					if (roleDn.indexOf("RGR_AWS") >= 0) {
+						info("[getRolesForUser] roleDn: " + roleDn);
+						String[] cns = roleDn.split(",");
+						String acctCn = cns[0];
+						String[] idRoles = acctCn.split("-");
+						if (idRoles.length != 3) {
+							info("roleDn doesn't have 3 'idRoles', continuing to next roleDn");
+							continue;
+						}
+						String acctId = idRoles[1];
+						String roleName = idRoles[2];
+						AccountRolePojo arp = new AccountRolePojo();
+						arp.setAccountId(acctId);
+						arp.setRoleName(roleName);
+						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						user.getAccountRoles().add(arp);
+					}
 				}
 			}
 			
@@ -1167,6 +1172,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ParseException {
 		
 		pojo.setAccountId(moa.getAccountId());
+		AccountPojo account = this.getAccountById(pojo.getAccountId());
+		pojo.setAccountName(account.getAccountName());
 		pojo.setVpcId(moa.getVpcId());
 		pojo.setType(moa.getType());
 //		pojo.setComplianceClass(moa.getComplianceClass());

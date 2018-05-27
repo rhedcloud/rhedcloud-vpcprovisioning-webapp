@@ -114,11 +114,11 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 						else {
 							// apply authorization mask
 							if (user.isLitsAdmin()) {
-								getView().applyEmoryAWSAdminMask();
+								getView().applyAWSAccountAdminMask();
 							}
 							else {
 								clientFactory.getShell().setSubTitle("View CIDR");
-								getView().applyEmoryAWSAuditorMask();
+								getView().applyAWSAccountAuditorMask();
 							}
 						}
 					}

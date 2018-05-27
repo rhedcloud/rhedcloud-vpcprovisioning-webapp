@@ -196,10 +196,10 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				}
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 				}
                 getView().hidePleaseWaitDialog();
                 getView().hidePleaseWaitPanel();

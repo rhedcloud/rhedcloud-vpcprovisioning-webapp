@@ -65,14 +65,14 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
 		elasticIpTB.setEnabled(true);
 		associatedIpTB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
 		elasticIpTB.setEnabled(false);
 		associatedIpTB.setEnabled(false);

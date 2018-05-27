@@ -152,15 +152,51 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
-		// TODO Auto-generated method stub
-		
+	public void applyAWSAccountAdminMask() {
+		okayButton.setEnabled(true);
+		netIdTB.setEnabled(true);
+		technicalContactTB.setEnabled(true);
+		applicationNameTB.setEnabled(true);
+		isSourceOutsideEmoryCB.setEnabled(true);
+		timeRuleLB.setEnabled(true);
+		validUntilDB.setEnabled(true);
+		sourceIpAddressesTA.setEnabled(true);
+		destinationIpAddressesTA.setEnabled(true);
+		portsTA.setEnabled(true);
+		businessReasonTA.setEnabled(true);
+		isPatchedCB.setEnabled(true);
+		isDefaultPasswordChangedCB.setEnabled(true);
+		isAppConsoleACLedCB.setEnabled(true);
+		isHardenedCB.setEnabled(true);
+		patchingPlanTA.setEnabled(true);
+		complianceClassLB.setEnabled(true);
+		sensitiveDataDescriptionTA.setEnabled(true);
+		localFirewallRulesDescriptionTA.setEnabled(true);
+		isDefaultDenyZoneCB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
-		// TODO Auto-generated method stub
-		
+	public void applyAWSAccountAuditorMask() {
+		okayButton.setEnabled(false);
+		netIdTB.setEnabled(false);
+		technicalContactTB.setEnabled(false);
+		applicationNameTB.setEnabled(false);
+		isSourceOutsideEmoryCB.setEnabled(false);
+		timeRuleLB.setEnabled(false);
+		validUntilDB.setEnabled(false);
+		sourceIpAddressesTA.setEnabled(false);
+		destinationIpAddressesTA.setEnabled(false);
+		portsTA.setEnabled(false);
+		businessReasonTA.setEnabled(false);
+		isPatchedCB.setEnabled(false);
+		isDefaultPasswordChangedCB.setEnabled(false);
+		isAppConsoleACLedCB.setEnabled(false);
+		isHardenedCB.setEnabled(false);
+		patchingPlanTA.setEnabled(false);
+		complianceClassLB.setEnabled(false);
+		sensitiveDataDescriptionTA.setEnabled(false);
+		localFirewallRulesDescriptionTA.setEnabled(false);
+		isDefaultDenyZoneCB.setEnabled(false);
 	}
 
 	@Override

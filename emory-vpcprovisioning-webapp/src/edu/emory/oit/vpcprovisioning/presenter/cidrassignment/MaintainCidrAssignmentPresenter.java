@@ -136,19 +136,19 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 						getView().setInitialFocus();
 						// apply authorization mask
 						if (user.isLitsAdmin()) {
-							getView().applyEmoryAWSAdminMask();
+							getView().applyAWSAccountAdminMask();
 						}
 						else if (cidrAssignmentSummary != null) {
 							if (cidrAssignmentSummary.getAccount() != null && user.isAdminForAccount(cidrAssignmentSummary.getAccount().getAccountId())) {
-								getView().applyEmoryAWSAdminMask();
+								getView().applyAWSAccountAdminMask();
 							}
 							else if (cidrAssignmentSummary.getAccount() != null && user.isAuditorForAccount(cidrAssignmentSummary.getAccount().getAccountId())) {
-								getView().applyEmoryAWSAuditorMask();
+								getView().applyAWSAccountAuditorMask();
 							}
 							else {
 								getView().showMessageToUser("An error has occurred.  The user logged in does not "
 										+ "appear to be associated to any valid roles for this page.");
-								getView().applyEmoryAWSAuditorMask();
+								getView().applyAWSAccountAuditorMask();
 								// TODO: need to not show them this page??
 							}
 						}

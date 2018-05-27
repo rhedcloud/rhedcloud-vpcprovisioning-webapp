@@ -79,13 +79,13 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		// TODO Auto-generated method stub
 		
 	}

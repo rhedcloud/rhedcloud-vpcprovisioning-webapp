@@ -39,7 +39,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -721,19 +720,19 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		// enable add firewallRule button
 		firewallExceptionRequestButton.setEnabled(true);
-		// enable Delete button in table (handled in initFirewallRuleListTableColumns)
-		// change text of button to Edit (handled in initFirewallRuleListTableColumns)
+		firewallExceptionRequestActionsButton.setEnabled(true);
+		firewallRuleActionsButton.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		// disable add firewallRule button
 		firewallExceptionRequestButton.setEnabled(false);
-		// disable Delete button in table (handled in initFirewallRuleListTableColumns)
-		// change text of button to View (handled in initFirewallRuleListTableColumns)
+		firewallExceptionRequestActionsButton.setEnabled(false);
+		firewallRuleActionsButton.setEnabled(false);
 	}
 
 	@Override

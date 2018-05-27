@@ -143,13 +143,15 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		createServiceButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		createServiceButton.setEnabled(false);
+		actionsButton.setEnabled(false);
 	}
 
 	@Override

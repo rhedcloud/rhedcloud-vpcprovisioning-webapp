@@ -3,9 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -21,7 +19,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -36,11 +33,8 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
 public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	Presenter presenter;
@@ -229,21 +223,21 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		vpcListTable.addColumn(acctIdColumn, "Account ID");
 		
 		// account name column
-//		Column<VpcPojo, String> acctNqmeColumn = 
-//				new Column<VpcPojo, String> (new TextCell()) {
-//				
-//				@Override
-//				public String getValue(VpcPojo object) {
-//					return object
-//				}
-//			};
-//			acctNqmeColumn.setSortable(true);
-//			sortHandler.setComparator(acctNqmeColumn, new Comparator<VpcPojo>() {
-//				public int compare(VpcPojo o1, VpcPojo o2) {
-//					return o1.getAccountId().compareTo(o2.getAccountId());
-//				}
-//			});
-//			vpcListTable.addColumn(acctNqmeColumn, "Account Name");
+		Column<VpcPojo, String> acctNqmeColumn = 
+			new Column<VpcPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(VpcPojo object) {
+				return object.getAccountName();
+			}
+		};
+		acctNqmeColumn.setSortable(true);
+		sortHandler.setComparator(acctNqmeColumn, new Comparator<VpcPojo>() {
+			public int compare(VpcPojo o1, VpcPojo o2) {
+				return o1.getAccountName().compareTo(o2.getAccountName());
+			}
+		});
+		vpcListTable.addColumn(acctNqmeColumn, "Account Name");
 
 		// VPC id column
 		Column<VpcPojo, String> vpcIdColumn = 
@@ -494,21 +488,17 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		// enable add button
-//		addVpcButton.setEnabled(true);
 		registerVpcButton.setEnabled(true);
-		// enable Delete button in table (handled in init...ListTableColumns)
-		// change text of button to Edit (handled in init...ListTableColumns)
+		actionsButton.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		// disable add button
-//		addVpcButton.setEnabled(false);
 		registerVpcButton.setEnabled(false);
-		// disable Delete button in table (handled in init...ListTableColumns)
-		// change text of button to Edit (handled in init...ListTableColumns)
+		actionsButton.setEnabled(true);
 	}
 
 	@Override

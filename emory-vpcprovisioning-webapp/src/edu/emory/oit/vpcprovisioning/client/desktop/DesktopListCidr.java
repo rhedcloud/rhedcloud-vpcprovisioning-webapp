@@ -567,19 +567,23 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		// enable add button
 		addCidrButton.setEnabled(true);
-		// enable Delete button in table (handled in init...ListTableColumns)
-		// change text of button to Edit (handled in init...ListTableColumns)
+		actionsButton.setEnabled(true);
+		filterButton.setEnabled(true);
+		clearFilterButton.setEnabled(true);
+		filterTB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		// disable add button
 		addCidrButton.setEnabled(false);
-		// disable Delete button in table (handled in init...ListTableColumns)
-		// change text of button to Edit (handled in init...ListTableColumns)
+		actionsButton.setEnabled(false);
+		filterButton.setEnabled(false);
+		clearFilterButton.setEnabled(false);
+		filterTB.setEnabled(false);
 	}
 
 	@Override

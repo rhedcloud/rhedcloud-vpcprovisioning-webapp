@@ -104,17 +104,17 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 						getView().setInitialFocus();
 						// apply authorization mask
 						if (user.isLitsAdmin()) {
-							getView().applyEmoryAWSAdminMask();
+							getView().applyAWSAccountAdminMask();
 						}
 						else if (user.isAdminForAccount(vpc.getAccountId())) {
-							getView().applyEmoryAWSAdminMask();
+							getView().applyAWSAccountAdminMask();
 						}
 						else if (user.isAuditorForAccount(vpc.getAccountId())) {
 							clientFactory.getShell().setSubTitle("View VPC");
-							getView().applyEmoryAWSAuditorMask();
+							getView().applyAWSAccountAuditorMask();
 						}
 						else {
-							getView().applyEmoryAWSAuditorMask();
+							getView().applyAWSAccountAuditorMask();
 							getView().showMessageToUser("An error has occurred.  The user logged in does not "
 									+ "appear to be associated to any valid roles for this page.");
 							// TODO: need to not show them the item???

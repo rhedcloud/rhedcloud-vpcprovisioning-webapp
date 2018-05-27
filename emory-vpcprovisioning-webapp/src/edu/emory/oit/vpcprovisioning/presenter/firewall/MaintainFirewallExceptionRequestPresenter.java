@@ -109,10 +109,10 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 			    if (user.isAdminForAccount(getVpc().getAccountId()) ||
 			    		user.isLitsAdmin()) {
 			    	
-			    	getView().applyEmoryAWSAdminMask();
+			    	getView().applyAWSAccountAdminMask();
 			    }
 			    else {
-			    	getView().applyEmoryAWSAuditorMask();
+			    	getView().applyAWSAccountAuditorMask();
 			    }
 
 				getView().setInitialFocus();

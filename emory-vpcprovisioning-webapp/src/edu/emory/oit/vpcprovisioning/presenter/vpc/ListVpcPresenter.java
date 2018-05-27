@@ -145,13 +145,13 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 				setVpcList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin() || user.isEmoryAwsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (user.isAuditor()) {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 				}
 				else {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 					getView().showMessageToUser("An error has occurred.  The user logged in does not "
 							+ "appear to be associated to any valid roles for this page.");
 					// TODO: need to not show them the list of items???

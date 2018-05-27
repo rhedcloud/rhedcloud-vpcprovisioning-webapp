@@ -304,14 +304,14 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
 		provisioningIdTB.setEnabled(true);
 		vpcTypeLB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
 		provisioningIdTB.setEnabled(false);
 		vpcTypeLB.setEnabled(false);

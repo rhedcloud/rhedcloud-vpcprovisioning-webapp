@@ -17,8 +17,8 @@ public interface View extends IsWidget {
 	public Widget getStatusMessageSource();
 //	public void applyLITSAdminMask();
 //	public void applyLITSAuditorMask();
-	public void applyEmoryAWSAdminMask();
-	public void applyEmoryAWSAuditorMask();
+	public void applyAWSAccountAdminMask();
+	public void applyAWSAccountAuditorMask();
 	public void setUserLoggedIn(UserAccountPojo user);
 	public List<Widget> getMissingRequiredFields();
 	public void resetFieldStyles();

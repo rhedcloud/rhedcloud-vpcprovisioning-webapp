@@ -73,20 +73,16 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	// AWS Account associated emails
 	@UiField VerticalPanel emailsVP;
 	@UiField TextBox addEmailTF;
-//	@UiField TextBox addEmailTypeTF;
 	@UiField ListBox addEmailTypeLB;
 	@UiField Button addEmailButton;
 	@UiField FlexTable emailTable;
 	
 	// AWS Account Administrator (net ids)
 	@UiField VerticalPanel adminVP;
-//	@UiField TextBox addNetIdTF;
-//	@UiField Button addNetIdButton;
 	@UiField FlexTable adminTable;
 	@UiField Button addAdminButton;
 	@UiField Label adminLabel;
 	
-//	@UiField HTML accountInfoHTML;
 	@UiField HTML speedTypeHTML;
 	@UiField ListBox complianceClassLB;
 
@@ -509,7 +505,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		}
 	}
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
 		accountIdTB.setEnabled(true);
 		accountNameTB.setEnabled(true);
@@ -519,13 +515,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailTF.setEnabled(true);
 		addEmailTypeLB.setEnabled(true);
 		addEmailButton.setEnabled(true);
-//		addNetIdTF.setEnabled(true);
-//		addNetIdButton.setEnabled(true);
 		directoryLookupSB.setEnabled(true);
 		addAdminButton.setEnabled(true);
+		complianceClassLB.setEnabled(true);
 	}
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
@@ -535,10 +530,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailTF.setEnabled(false);
 		addEmailTypeLB.setEnabled(false);
 		addEmailButton.setEnabled(false);
-//		addNetIdTF.setEnabled(false);
-//		addNetIdButton.setEnabled(false);
 		directoryLookupSB.setEnabled(false);
 		addAdminButton.setEnabled(false);
+		complianceClassLB.setEnabled(false);
 	}
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {

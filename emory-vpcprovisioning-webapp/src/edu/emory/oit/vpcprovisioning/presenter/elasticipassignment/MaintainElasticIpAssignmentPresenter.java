@@ -114,16 +114,16 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 						getView().setInitialFocus();
 						// apply authorization mask
 						if (user.isLitsAdmin()) {
-							getView().applyEmoryAWSAdminMask();
+							getView().applyAWSAccountAdminMask();
 						}
 						else if (summary != null && user.isAdminForAccount(summary.getAccount().getAccountId())) {
-							getView().applyEmoryAWSAdminMask();
+							getView().applyAWSAccountAdminMask();
 						}
 						else if (summary != null && user.isAuditorForAccount(summary.getAccount().getAccountId())) {
-							getView().applyEmoryAWSAuditorMask();
+							getView().applyAWSAccountAuditorMask();
 						}
 						else {
-							getView().applyEmoryAWSAuditorMask();
+							getView().applyAWSAccountAuditorMask();
 							getView().showMessageToUser("An error has occurred.  The user logged in does not "
 									+ "appear to be associated to any valid roles for this page.");
 						}

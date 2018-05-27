@@ -98,13 +98,13 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		// TODO Auto-generated method stub
 		
 	}

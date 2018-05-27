@@ -17,6 +17,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -27,10 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPresenter;
@@ -48,12 +45,14 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	UserAccountPojo userLoggedIn;
 	String speedTypeBeingTyped=null;
 	
+	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
 	
 	// used for maintaining vpc
 	@UiField Grid maintainVpcGrid;
 	@UiField TextBox accountIdTB;
+	@UiField TextBox accountNameTB;
 	@UiField TextBox vpcIdTB;
 	@UiField ListBox vpcTypeLB;
 	
@@ -71,7 +70,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 //	@UiField DeckLayoutPanel cidrAssignmentContainer;
 	@UiField DeckLayoutPanel elasticIpAssignmentContainer;
 
-	private boolean firstCidrWidget = true;
+//	private boolean firstCidrWidget = true;
 	private boolean firstElasticIpWidget = true;
 	private boolean firstFirewallWidget = true;
 
@@ -246,12 +245,14 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			maintainVpcGrid.setVisible(true);
 			// clear the page
 			accountIdTB.setText("");
+			accountNameTB.setText("");
 			vpcIdTB.setText("");
 			vpcTypeLB.setSelectedIndex(0);
 
 			if (presenter.getVpc() != null) {
 				GWT.log("maintain VPC view initPage.  VPC: " + presenter.getVpc().getVpcId());
 				accountIdTB.setText(presenter.getVpc().getAccountId());
+				accountNameTB.setText(presenter.getVpc().getAccountName());
 				vpcIdTB.setText(presenter.getVpc().getVpcId());
 			}
 			
@@ -283,14 +284,12 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
-		
+		pleaseWaitPanel.setVisible(false);
 	}
 
 	@Override
 	public void showPleaseWaitPanel() {
-		// TODO Auto-generated method stub
-		
+		pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override
@@ -360,19 +359,27 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
 		accountIdTB.setEnabled(true);
 		vpcIdTB.setEnabled(true);
 		vpcTypeLB.setEnabled(true);
+		vpcReqOwnerNetIdTB.setEnabled(true);
+		vpcReqAccountIdTB.setEnabled(true);
+		vpcReqSpeedTypeTB.setEnabled(true);
+		vpcReqTypeLB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
 		vpcIdTB.setEnabled(false);
 		vpcTypeLB.setEnabled(false);
+		vpcReqOwnerNetIdTB.setEnabled(false);
+		vpcReqAccountIdTB.setEnabled(false);
+		vpcReqSpeedTypeTB.setEnabled(false);
+		vpcReqTypeLB.setEnabled(false);
 	}
 
 	@Override
@@ -415,11 +422,4 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
 	}
-
-	@Override
-	public void showMessageToUser(String message) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

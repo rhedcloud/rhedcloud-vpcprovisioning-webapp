@@ -149,12 +149,12 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		accountLB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		accountLB.setEnabled(false);
 	}
 

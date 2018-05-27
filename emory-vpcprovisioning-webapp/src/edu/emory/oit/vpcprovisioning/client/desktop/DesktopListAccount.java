@@ -588,19 +588,22 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
-		// enable add account button
+	public void applyAWSAccountAdminMask() {
 		addAccountButton.setEnabled(true);
-		// enable Delete button in table (handled in initAccountListTableColumns)
-		// change text of button to Edit (handled in initAccountListTableColumns)
+		actionsButton.setEnabled(true);
+		filterButton.setEnabled(true);
+		clearFilterButton.setEnabled(true);
+		accountIdTB.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		// disable add account button
 		addAccountButton.setEnabled(false);
-		// disable Delete button in table (handled in initAccountListTableColumns)
-		// change text of button to View (handled in initAccountListTableColumns)
+		actionsButton.setEnabled(false);
+		filterButton.setEnabled(false);
+		clearFilterButton.setEnabled(false);
+		accountIdTB.setEnabled(false);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 <!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Type, ComplianceClass, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 	 */
 	String accountId;
+	String accountName;
 	String vpcId;
 	String type;
 //	String complianceClass;
@@ -90,6 +91,14 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 
 	public void setVpnProfileId(String vpnConnectionProfileId) {
 		this.vpnProfileId = vpnConnectionProfileId;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 
 //	public String getComplianceClass() {

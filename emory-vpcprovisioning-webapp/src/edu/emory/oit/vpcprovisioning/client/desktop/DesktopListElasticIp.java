@@ -38,8 +38,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -155,15 +153,15 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
-		// TODO Auto-generated method stub
-		
+	public void applyAWSAccountAdminMask() {
+		actionsButton.setEnabled(true);
+		allocateAddressButton.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
-		// TODO Auto-generated method stub
-		
+	public void applyAWSAccountAuditorMask() {
+		actionsButton.setEnabled(false);
+		allocateAddressButton.setEnabled(false);
 	}
 
 	@Override

@@ -154,16 +154,16 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				setFirewallRuleList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (vpc != null && user.isAuditorForAccount(vpc.getAccountId())) {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 				}
 				else {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 					getView().showMessageToUser("An error has occurred.  The user logged in does not "
 							+ "appear to be associated to any valid roles for this page.");
 				}
@@ -204,16 +204,16 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				setFirewallExceptionRequestList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (vpc != null && user.isAuditorForAccount(vpc.getAccountId())) {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 				}
 				else {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 					getView().showMessageToUser("An error has occurred.  The user logged in does not "
 							+ "appear to be associated to any valid roles for this page.");
 				}

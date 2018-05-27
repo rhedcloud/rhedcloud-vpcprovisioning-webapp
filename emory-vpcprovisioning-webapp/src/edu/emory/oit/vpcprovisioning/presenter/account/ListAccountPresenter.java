@@ -149,18 +149,18 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				setAccountList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (account != null && user.isAdminForAccount(account.getAccountId())) {
-					getView().applyEmoryAWSAdminMask();
+					getView().applyAWSAccountAdminMask();
 				}
 				else if (account != null && user.isAuditorForAccount(account.getAccountId())) {
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 				}
 				else {
 					getView().showMessageToUser("An error has occurred.  The user logged in does not "
 							+ "appear to be associated to any valid roles for this account.");
-					getView().applyEmoryAWSAuditorMask();
+					getView().applyAWSAccountAuditorMask();
 					// TODO: need to not show them the list of accounts???
 				}
                 getView().hidePleaseWaitPanel();

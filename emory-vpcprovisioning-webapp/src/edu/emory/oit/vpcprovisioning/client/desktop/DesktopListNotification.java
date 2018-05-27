@@ -190,11 +190,15 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
+		createNotificationButton.setEnabled(true);;
+		actionsButton.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
+		createNotificationButton.setEnabled(false);;
+		actionsButton.setEnabled(false);
 	}
 
 	@Override

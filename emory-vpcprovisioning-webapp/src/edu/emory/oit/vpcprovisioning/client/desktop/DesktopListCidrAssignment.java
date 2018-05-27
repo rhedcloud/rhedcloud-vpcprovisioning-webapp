@@ -511,7 +511,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		// enable add button
 		addCidrAssignmentButton.setEnabled(true);
 		// enable Delete button in table (handled in init...ListTableColumns)
@@ -519,7 +519,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		// disable add button
 		addCidrAssignmentButton.setEnabled(false);
 		// disable Delete button in table (handled in init...ListTableColumns)

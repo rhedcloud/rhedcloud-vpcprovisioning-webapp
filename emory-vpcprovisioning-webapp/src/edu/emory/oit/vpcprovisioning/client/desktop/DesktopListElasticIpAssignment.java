@@ -29,11 +29,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
-import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -80,6 +77,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					showMessageToUser("Will release address");
+					// TODO: elastic ip assignment delete (no longer assigned to VPC)
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
 				}
 				else {
@@ -97,7 +95,10 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 		associateAddressesAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+				showMessageToUser("Will associate address");
+				// TODO: elasticip assignment update with the new private ip which comes from somewhere
+				// for now, they can type it in (prompt for private IP address).
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
 			}
 		});
 		associateAddressesAnchor.setEnabled(false);
@@ -114,7 +115,8 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				actionsPopup.hide();
 				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					showMessageToUser("Will associate address");
+					showMessageToUser("Will disassociate address");
+					// TODO: elastic ip assignment update to have NO private IP in it
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
 				}
 				else {
@@ -147,13 +149,13 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		allocateAddressButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		allocateAddressButton.setEnabled(false);
 		actionsButton.setEnabled(false);
 	}

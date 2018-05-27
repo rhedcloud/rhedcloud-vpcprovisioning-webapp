@@ -117,13 +117,15 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	}
 
 	@Override
-	public void applyEmoryAWSAdminMask() {
+	public void applyAWSAccountAdminMask() {
 		generateVpcButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 
 	@Override
-	public void applyEmoryAWSAuditorMask() {
+	public void applyAWSAccountAuditorMask() {
 		generateVpcButton.setEnabled(false);
+		actionsButton.setEnabled(false);
 	}
 
 	@Override
