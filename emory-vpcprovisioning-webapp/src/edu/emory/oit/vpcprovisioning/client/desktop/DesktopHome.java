@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
@@ -26,7 +26,32 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField HTML introBodyHTML;
-	@UiField VerticalPanel accountRolePanel;
+	@UiField HTML emoryAwsInfoHTML;
+	@UiField HTML directoryInfoHTML;
+	@UiField HTML personInfoHTML;
+	@UiField Button roleInfoButton;
+	@UiField Button directoryInfoButton;
+	@UiField Button personInfoButton;
+	
+	@UiHandler ("roleInfoButton")
+	void roleInfoButtonClicked(ClickEvent e) {
+		HTML h = new HTML(presenter.getDetailedRoleInfoHTML());
+		h.addStyleName("body");
+		PopupPanel p = new PopupPanel();
+	    p.setAutoHideEnabled(true);
+	    p.setAnimationEnabled(true);
+	    p.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		p.setWidget(h);
+		p.showRelativeTo(roleInfoButton);
+	}
+	@UiHandler ("directoryInfoButton")
+	void directoryInfoButtonClicked(ClickEvent e) {
+		presenter.getDetailedDirectoryInfoHTML();
+	}
+	@UiHandler ("personInfoButton")
+	void personInfoButtonClicked(ClickEvent e) {
+		presenter.getDetailedPersonInfoHTML();
+	}
 
 	private static DesktopHomeUiBinder uiBinder = GWT.create(DesktopHomeUiBinder.class);
 
@@ -123,31 +148,71 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	@Override
 	public void setAccountRoleList(List<AccountRolePojo> accountRoles) {
 		this.accountRoles = accountRoles;
-		refreshAccountRolePanel();
+//		refreshAccountRolePanel();
 	}
 
-	private void refreshAccountRolePanel() {
-		// build a table with account role information in it
-		accountRolePanel.clear();
-		HTML html = new HTML("Here's a list of the accounts you're affiliated with and the "
-			+ "roles you hold for those accounts:");
-		html.addStyleName("body");
+//	private void refreshAccountRolePanel() {
+//		// build a table with account role information in it
+//		accountRolePanel.clear();
+//		HTML html = new HTML("Here's a list of the accounts you're affiliated with and the "
+//			+ "roles you hold for those accounts:");
+//		html.addStyleName("body");
+//		
+//		accountRolePanel.add(html);
+//		for (final AccountRolePojo ar : this.accountRoles) {
+//			if (ar.getAccountId() != null) {
+//				Anchor accountRoleAnchor = new Anchor(ar.getAccountId() + "-" + ar.getRoleName());
+//				accountRoleAnchor.addStyleName("productAnchor");
+//				accountRoleAnchor.setTitle("View/Maintain this account");
+//				accountRoleAnchor.addClickHandler(new ClickHandler() {
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						// TODO fire an event to maintain the account indicated by the id associated to this account
+//						presenter.viewAccountForId(ar.getAccountId());
+//					}
+//				});
+//				accountRolePanel.add(accountRoleAnchor);
+//			}
+//		}
+//	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
 		
-		accountRolePanel.add(html);
-		for (final AccountRolePojo ar : this.accountRoles) {
-			if (ar.getAccountId() != null) {
-				Anchor accountRoleAnchor = new Anchor(ar.getAccountId() + "-" + ar.getRoleName());
-				accountRoleAnchor.addStyleName("productAnchor");
-				accountRoleAnchor.setTitle("View/Maintain this account");
-				accountRoleAnchor.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						// TODO fire an event to maintain the account indicated by the id associated to this account
-						presenter.viewAccountForId(ar.getAccountId());
-					}
-				});
-				accountRolePanel.add(accountRoleAnchor);
-			}
-		}
+	}
+	@Override
+	public void setRoleInfoHTML(String roleInfo) {
+		emoryAwsInfoHTML.setHTML(roleInfo);
+	}
+	@Override
+	public void setPersonInfoHTML(String personInfo) {
+		personInfoHTML.setHTML(personInfo);
+	}
+	@Override
+	public void setDirectoryInfoHTML(String directoryInfo) {
+		directoryInfoHTML.setHTML(directoryInfo);
+	}
+	@Override
+	public void showDirectoryPersonInfoPopup(String directoryPersonInfoHTML) {
+		HTML h = new HTML(directoryPersonInfoHTML);
+		h.addStyleName("body");
+		PopupPanel p = new PopupPanel();
+	    p.setAutoHideEnabled(true);
+	    p.setAnimationEnabled(true);
+	    p.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		p.setWidget(h);
+		p.showRelativeTo(directoryInfoButton);
+	}
+	@Override
+	public void showFullPersonInfoPopup(String fullPersonInfoHTML) {
+		HTML h = new HTML(fullPersonInfoHTML);
+		h.addStyleName("body");
+		PopupPanel p = new PopupPanel();
+	    p.setAutoHideEnabled(true);
+	    p.setAnimationEnabled(true);
+	    p.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		p.setWidget(h);
+		p.showRelativeTo(personInfoButton);
 	}
 }

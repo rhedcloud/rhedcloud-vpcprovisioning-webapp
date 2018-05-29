@@ -141,7 +141,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				// apply authorization mask
 				// TODO: need to determine the Service structure so we can apply authorization mask appropriately
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else {
 					getView().applyAWSAccountAuditorMask();

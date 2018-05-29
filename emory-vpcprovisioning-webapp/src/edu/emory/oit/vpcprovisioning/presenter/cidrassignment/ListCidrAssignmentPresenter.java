@@ -152,7 +152,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 				setCidrAssignmentSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
 					getView().applyAWSAccountAdminMask();

@@ -106,9 +106,10 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 				getView().setTimeRuleItems(timeRules);
 				
 				getView().initPage();
-			    if (user.isAdminForAccount(getVpc().getAccountId()) ||
-			    		user.isLitsAdmin()) {
-			    	
+				if (user.isLitsAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else if (user.isAdminForAccount(getVpc().getAccountId())) {
 			    	getView().applyAWSAccountAdminMask();
 			    }
 			    else {

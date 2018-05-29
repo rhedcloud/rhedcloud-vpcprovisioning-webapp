@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
@@ -21,6 +20,9 @@ public interface HomeView extends Editor<Void>, IsWidget, View {
 		public ClientFactory getClientFactory();
 		public void logMessageOnServer(final String message);
 		public void viewAccountForId(String accountId);
+		public String getDetailedRoleInfoHTML();
+		public String getDetailedDirectoryInfoHTML();
+		public String getDetailedPersonInfoHTML();
 	}
 
 	/**
@@ -35,4 +37,9 @@ public interface HomeView extends Editor<Void>, IsWidget, View {
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel();
 	void setAccountRoleList(List<AccountRolePojo> accountRoles);
+	void setRoleInfoHTML(String roleInfo);
+	void setPersonInfoHTML(String personInfo);
+	void setDirectoryInfoHTML(String directoryInfo);
+	void showDirectoryPersonInfoPopup(String directoryPersonInfoHTML);
+	void showFullPersonInfoPopup(String fullPersonInfoHTML);
 }

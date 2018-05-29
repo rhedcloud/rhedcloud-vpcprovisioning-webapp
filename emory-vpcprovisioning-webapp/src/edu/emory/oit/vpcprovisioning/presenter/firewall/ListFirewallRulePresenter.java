@@ -124,7 +124,6 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				// this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
 				// the user enter a VPC id in order to filter the list down.
 				refreshFirewallRuleList(userLoggedIn);
-				refreshFirewallRuleExceptionRequestList(userLoggedIn);
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -144,7 +143,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
                 getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving FirewallRules", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of firewallRules.  " +
+						"server retrieving the list of Firewall Rules for this VPC.  " +
 						"Message from server is: " + caught.getMessage());
 			}
 
@@ -154,7 +153,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				setFirewallRuleList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
 					getView().applyAWSAccountAdminMask();
@@ -181,6 +180,8 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 //			getView().initPage();
 //            getView().hidePleaseWaitPanel();
 		}
+        getView().showPleaseWaitPanel();
+        getView().showPleaseWaitDialog();
 		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(fw_filter, callback);
 	}
 
@@ -204,7 +205,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				setFirewallExceptionRequestList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
 					getView().applyAWSAccountAdminMask();
@@ -226,6 +227,8 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			fwer_filter = new FirewallExceptionRequestQueryFilterPojo();
 			fwer_filter.getTags().add(vpc.getVpcId());
 		}
+        getView().showPleaseWaitPanel();
+        getView().showPleaseWaitDialog();
 		VpcProvisioningService.Util.getInstance().getFirewallExceptionRequestsForFilter(fwer_filter, callback);
 	}
 

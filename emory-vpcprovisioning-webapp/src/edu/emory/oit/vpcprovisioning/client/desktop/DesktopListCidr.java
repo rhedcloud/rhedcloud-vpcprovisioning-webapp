@@ -618,4 +618,9 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		filterTB.setText("");
 		filterTB.getElement().setPropertyString("placeholder", "enter VPC id");
 	}
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

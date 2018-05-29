@@ -344,4 +344,10 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 	public HasClickHandlers getOkayWidget() {
 		return null;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

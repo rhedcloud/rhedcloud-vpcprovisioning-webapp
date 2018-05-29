@@ -526,4 +526,10 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	public HasClickHandlers getOkayWidget() {
 		return null;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

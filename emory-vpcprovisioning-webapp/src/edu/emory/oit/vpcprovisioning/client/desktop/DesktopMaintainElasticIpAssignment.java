@@ -172,4 +172,10 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 	public HasClickHandlers getOkayWidget() {
 		return cancelButton;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

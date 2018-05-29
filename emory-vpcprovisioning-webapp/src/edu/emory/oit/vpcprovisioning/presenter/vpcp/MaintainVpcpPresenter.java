@@ -151,7 +151,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 										getView().setInitialFocus();
 										// apply authorization mask
 										if (user.isLitsAdmin()) {
-											getView().applyAWSAccountAdminMask();
+											getView().applyCentralAdminMask();
 										}
 										else if (vpcp != null) {
 											if (vpcp.getVpcRequisition() != null) {

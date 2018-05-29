@@ -125,4 +125,10 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 		
 	}
 
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

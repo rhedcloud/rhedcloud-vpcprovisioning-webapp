@@ -196,7 +196,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				}
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else {
 					getView().applyAWSAccountAuditorMask();

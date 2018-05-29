@@ -241,4 +241,10 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 	public HasClickHandlers getOkayWidget() {
 		return null;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

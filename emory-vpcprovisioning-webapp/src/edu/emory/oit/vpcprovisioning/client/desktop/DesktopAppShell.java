@@ -42,10 +42,6 @@ import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
-import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
-import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
@@ -108,7 +104,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				userLoggedIn = result;
 				if (!userLoggedIn.isLitsAdmin()) {
 					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-					mainTabPanel.getTabWidget(5).getParent().setVisible(false);
+//					mainTabPanel.getTabWidget(5).getParent().setVisible(false);
 					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
 						@Override
 						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {

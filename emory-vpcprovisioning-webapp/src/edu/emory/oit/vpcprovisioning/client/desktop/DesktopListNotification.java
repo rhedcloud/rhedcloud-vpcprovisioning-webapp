@@ -376,4 +376,10 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	public HasClickHandlers getOkayWidget() {
 		return null;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

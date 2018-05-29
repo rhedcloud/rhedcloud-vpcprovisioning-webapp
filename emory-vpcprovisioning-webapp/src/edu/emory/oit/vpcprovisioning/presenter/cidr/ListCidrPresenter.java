@@ -154,7 +154,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				setCidrSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else {
 					getView().applyAWSAccountAuditorMask();

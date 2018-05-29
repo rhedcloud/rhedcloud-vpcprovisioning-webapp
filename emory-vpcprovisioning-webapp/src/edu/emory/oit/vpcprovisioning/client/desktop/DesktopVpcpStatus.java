@@ -354,4 +354,10 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	public HasClickHandlers getOkayWidget() {
 		return doneButton;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

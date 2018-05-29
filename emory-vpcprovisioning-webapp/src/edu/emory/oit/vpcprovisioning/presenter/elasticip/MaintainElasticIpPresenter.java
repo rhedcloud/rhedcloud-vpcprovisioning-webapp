@@ -88,7 +88,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 				
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else {
 					getView().applyAWSAccountAuditorMask();

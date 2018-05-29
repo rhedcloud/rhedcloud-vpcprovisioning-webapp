@@ -480,7 +480,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (useAuthzService) {
 					// get permissions for user so they can be checked against later
 					// only do this once per session.
-//					this.getPermissionsForUser(user);
 					this.getRolesForUser(user);
 					if (user.getAccountRoles().size() == 0) {
 						// ERROR, user does not have any required permissions to use
@@ -491,15 +490,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							"Please contact your support representative to " +
 							"gain access to this application.");
 					}
-//					if (user.getPermissions().size() == 0) {
-//						// ERROR, user does not have any required permissions to use
-//						// this app
-//						info("user " + user.getEppn() + " is not authorized to use this application.");
-//						throw new RpcException("The user id being used to log " +
-//							"in is not authorized to use this application.  " +
-//							"Please contact your support representative to " +
-//							"gain access to this application.");
-//					}
 				}
 				else {
 					info("not configured to use authorization service, anyone "
@@ -571,7 +561,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (useAuthzService) {
 					// get permissions for user so they can be checked against later
 					// only do this once per session.
-//					this.getPermissionsForUser(user);
 					this.getRolesForUser(user);
 					if (user.getAccountRoles().size() == 0) {
 						// ERROR, user does not have any required permissions to use
@@ -582,15 +571,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							"Please contact your support representative to " +
 							"gain access to this application.");
 					}
-//					if (user.getPermissions().size() == 0) {
-//						// ERROR, user does not have any required permissions to use
-//						// this app
-//						info("user " + eppn + " is not authorized to use this application.");
-//						throw new RpcException("The user id being used to log " +
-//							"in is not authorized to use this application.  " +
-//							"Please contact your support representative to " +
-//							"gain access to this application.");
-//					}
 				}
 				else {
 					info("not configured to use authorization service, anyone "
@@ -667,7 +647,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 					if (useAuthzService) {
 						// get permissions
-//						this.getPermissionsForUser(user);
 						user.setSuperUser(false);
 						this.getRolesForUser(user);
 					}
@@ -695,13 +674,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 								"Please contact your support representative to " +
 								"gain access to this application.");
 						}
-//						if (user.getPermissions().size() == 0) {
-//							info("user " + eppn + " is not authorized to use this application.");
-//							throw new RpcException("The user id being used to log " +
-//								"in is not authorized to use this application.  " +
-//								"Please contact your support representative to " +
-//								"gain access to this application.");
-//						}
 					}
 					
 					if (userCnt == 0) {

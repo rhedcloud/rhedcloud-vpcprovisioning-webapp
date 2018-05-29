@@ -149,7 +149,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				setAccountList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else if (account != null && user.isAdminForAccount(account.getAccountId())) {
 					getView().applyAWSAccountAdminMask();

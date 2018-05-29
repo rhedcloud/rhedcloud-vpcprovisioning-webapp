@@ -90,6 +90,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
+						getView().hidePleaseWaitPanel();
 						getView().hidePleaseWaitDialog();
 						GWT.log("Exception retrieving VPC types", caught);
 						getView().showMessageToUser("There was an exception on the " +
@@ -104,7 +105,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 						getView().setInitialFocus();
 						// apply authorization mask
 						if (user.isLitsAdmin()) {
-							getView().applyAWSAccountAdminMask();
+							getView().applyCentralAdminMask();
 						}
 						else if (user.isAdminForAccount(vpc.getAccountId())) {
 							getView().applyAWSAccountAdminMask();
@@ -120,6 +121,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 							// TODO: need to not show them the item???
 						}
 						getView().hidePleaseWaitDialog();
+						getView().hidePleaseWaitPanel();
 					}
 				};
 				VpcProvisioningService.Util.getInstance().getVpcTypeItems(callback);

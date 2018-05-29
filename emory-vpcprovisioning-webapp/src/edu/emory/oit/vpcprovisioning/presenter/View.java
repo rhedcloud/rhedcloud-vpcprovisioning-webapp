@@ -17,6 +17,7 @@ public interface View extends IsWidget {
 	public Widget getStatusMessageSource();
 //	public void applyLITSAdminMask();
 //	public void applyLITSAuditorMask();
+	public void applyCentralAdminMask();
 	public void applyAWSAccountAdminMask();
 	public void applyAWSAccountAuditorMask();
 	public void setUserLoggedIn(UserAccountPojo user);

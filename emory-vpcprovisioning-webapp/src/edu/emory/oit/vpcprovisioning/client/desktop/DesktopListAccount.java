@@ -633,4 +633,10 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		accountIdTB.setText("");
 		accountIdTB.getElement().setPropertyString("placeholder", "enter account id");
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

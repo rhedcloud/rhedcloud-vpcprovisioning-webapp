@@ -539,4 +539,9 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public void addAdminNetId(String netId) {
 		this.addNetIdToPanel(netId);
 	}
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

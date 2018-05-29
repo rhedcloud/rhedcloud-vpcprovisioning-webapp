@@ -578,4 +578,10 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		validUntilLabel.setVisible(false);
 		validUntilDB.setVisible(false);
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

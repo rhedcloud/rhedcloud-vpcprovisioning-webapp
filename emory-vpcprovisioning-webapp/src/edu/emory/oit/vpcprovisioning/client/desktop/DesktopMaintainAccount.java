@@ -506,18 +506,18 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void applyAWSAccountAdminMask() {
-		okayButton.setEnabled(true);
-		accountIdTB.setEnabled(true);
-		accountNameTB.setEnabled(true);
-		ownerNetIdTB.setEnabled(true);
-		passwordLocationTB.setEnabled(true);
+		okayButton.setEnabled(false);
+		accountIdTB.setEnabled(false);
+		accountNameTB.setEnabled(false);
+		ownerNetIdTB.setEnabled(false);
+		passwordLocationTB.setEnabled(false);
 		speedTypeTB.setEnabled(true);
-		addEmailTF.setEnabled(true);
-		addEmailTypeLB.setEnabled(true);
-		addEmailButton.setEnabled(true);
+		addEmailTF.setEnabled(false);
+		addEmailTypeLB.setEnabled(false);
+		addEmailButton.setEnabled(false);
 		directoryLookupSB.setEnabled(true);
 		addAdminButton.setEnabled(true);
-		complianceClassLB.setEnabled(true);
+		complianceClassLB.setEnabled(false);
 	}
 	@Override
 	public void applyAWSAccountAuditorMask() {
@@ -658,6 +658,21 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		if (adminPleaseWaitDialog != null) {
 			adminPleaseWaitDialog.hide();
 		}
+	}
+	@Override
+	public void applyCentralAdminMask() {
+		okayButton.setEnabled(true);
+		accountIdTB.setEnabled(true);
+		accountNameTB.setEnabled(true);
+		ownerNetIdTB.setEnabled(true);
+		passwordLocationTB.setEnabled(true);
+		speedTypeTB.setEnabled(true);
+		addEmailTF.setEnabled(true);
+		addEmailTypeLB.setEnabled(true);
+		addEmailButton.setEnabled(true);
+		directoryLookupSB.setEnabled(true);
+		addAdminButton.setEnabled(true);
+		complianceClassLB.setEnabled(true);
 	}
 	
 }

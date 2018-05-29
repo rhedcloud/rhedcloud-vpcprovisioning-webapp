@@ -503,4 +503,10 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	public HasClickHandlers getOkayWidget() {
 		return null;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

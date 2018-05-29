@@ -129,7 +129,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				setElasticIpAssignmentList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
 					getView().applyAWSAccountAdminMask();

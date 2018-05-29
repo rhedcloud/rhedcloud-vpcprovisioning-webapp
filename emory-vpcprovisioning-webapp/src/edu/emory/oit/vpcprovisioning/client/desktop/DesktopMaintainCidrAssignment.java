@@ -324,4 +324,10 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 		return okayButton;
 	}
 
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

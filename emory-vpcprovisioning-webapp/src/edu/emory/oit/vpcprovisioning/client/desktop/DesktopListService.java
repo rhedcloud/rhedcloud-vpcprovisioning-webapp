@@ -418,4 +418,10 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	public HasClickHandlers getOkayWidget() {
 		return null;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

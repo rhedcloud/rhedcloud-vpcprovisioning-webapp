@@ -389,4 +389,10 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 			}
 		}
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

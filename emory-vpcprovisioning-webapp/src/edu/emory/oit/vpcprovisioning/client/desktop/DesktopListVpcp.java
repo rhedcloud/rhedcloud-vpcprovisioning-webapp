@@ -343,4 +343,10 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	public HasClickHandlers getOkayWidget() {
 		return null;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

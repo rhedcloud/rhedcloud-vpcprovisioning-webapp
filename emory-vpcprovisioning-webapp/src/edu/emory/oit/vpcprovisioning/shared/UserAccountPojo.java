@@ -101,6 +101,17 @@ public class UserAccountPojo implements IsSerializable {
 		}
 		return false;
 	}
+	public boolean isLitsAdminForAccount(String accountId) {
+		for (AccountRolePojo arp : accountRoles) {
+			if (arp.getAccountId() != null && 
+					arp.getAccountId().equalsIgnoreCase(accountId)) {
+				if (arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	public boolean isLitsAdmin() {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getRoleName() != null && 

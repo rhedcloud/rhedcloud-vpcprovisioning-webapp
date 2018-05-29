@@ -103,7 +103,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 						// apply authorization mask
 						// TODO: need to determine the Service structure so we can apply authorization mask appropriately
 						if (user.isLitsAdmin()) {
-							getView().applyAWSAccountAdminMask();
+							getView().applyCentralAdminMask();
 						}
 						else {
 							getView().applyAWSAccountAuditorMask();

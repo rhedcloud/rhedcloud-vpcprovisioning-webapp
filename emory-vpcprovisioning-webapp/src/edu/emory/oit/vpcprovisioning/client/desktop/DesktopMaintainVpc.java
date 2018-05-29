@@ -360,14 +360,14 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		okayButton.setEnabled(true);
-		accountIdTB.setEnabled(true);
-		vpcIdTB.setEnabled(true);
-		vpcTypeLB.setEnabled(true);
-		vpcReqOwnerNetIdTB.setEnabled(true);
-		vpcReqAccountIdTB.setEnabled(true);
-		vpcReqSpeedTypeTB.setEnabled(true);
-		vpcReqTypeLB.setEnabled(true);
+		okayButton.setEnabled(false);
+		accountIdTB.setEnabled(false);
+		vpcIdTB.setEnabled(false);
+		vpcTypeLB.setEnabled(false);
+		vpcReqOwnerNetIdTB.setEnabled(false);
+		vpcReqAccountIdTB.setEnabled(false);
+		vpcReqSpeedTypeTB.setEnabled(false);
+		vpcReqTypeLB.setEnabled(false);
 	}
 
 	@Override
@@ -421,5 +421,17 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
+	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		okayButton.setEnabled(true);
+		accountIdTB.setEnabled(true);
+		vpcIdTB.setEnabled(true);
+		vpcTypeLB.setEnabled(true);
+		vpcReqOwnerNetIdTB.setEnabled(true);
+		vpcReqAccountIdTB.setEnabled(true);
+		vpcReqSpeedTypeTB.setEnabled(true);
+		vpcReqTypeLB.setEnabled(true);
 	}
 }

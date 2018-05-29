@@ -160,10 +160,10 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						
 						// apply authorization mask
 						if (user.isLitsAdmin()) {
-							getView().applyAWSAccountAdminMask();
+							getView().applyCentralAdminMask();
 						}
 						else if (account != null) {
-							if (user.isAdminForAccount(account.getAccountId()) || user.isLitsAdmin()) {
+							if (user.isAdminForAccount(account.getAccountId())) {
 								getView().applyAWSAccountAdminMask();
 							}
 							else if (user.isAuditorForAccount(account.getAccountId())) {

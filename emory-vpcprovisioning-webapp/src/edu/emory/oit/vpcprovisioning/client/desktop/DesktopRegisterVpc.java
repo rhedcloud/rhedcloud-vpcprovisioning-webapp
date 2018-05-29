@@ -227,4 +227,10 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -141,4 +141,10 @@ public class DesktopMaintainNotification extends ViewImplBase implements Maintai
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -13,15 +13,54 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">Virtual Private Cloud Provisioning (VPCP) Console Home</g:HTML>
-		<g:HTML ui:field="introBodyHTML" addStyleNames="{style.body}">Welcome, FIRST_NAME, this is where we'll give a 
-		welcome to the user and show them some stats about the stuff 
-		they might be interested in.<br/><br/>
-		For example, a listing of their accounts with links to those or something....</g:HTML>
-		<g:VerticalPanel ui:field="accountRolePanel">
-		<!-- TODO: some sort of table to list the accounts and roles 
-			 they have for those accounts.  May be dynamically built in 
-			 the view
-		 -->
-		</g:VerticalPanel>
+		<g:HTML ui:field="introBodyHTML" addStyleNames="{style.body}">Welcome, FIRST_NAME, take a look at the information below...</g:HTML>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:CaptionPanel addStyleNames="{style.light-captionpanel}" width="90%" captionHTML="Emory AWS Information">
+				<g:VerticalPanel width="100%" height="100%" spacing="8">
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="emoryAwsInfoHTML" addStyleNames="{style.body}">Click to view a list of your roles.
+						</g:HTML>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}" width="150px"
+							ui:field="roleInfoButton" debugId="roleInfoButton" title="Click to view a list of your roles.">Click To View</g:Button>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:CaptionPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:CaptionPanel addStyleNames="{style.light-captionpanel}" width="90%" captionHTML="Directory Information">
+				<g:VerticalPanel width="100%" height="100%" spacing="8">
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="directoryInfoHTML" addStyleNames="{style.body}">Click to view the 
+						internal directory information used by this application
+						</g:HTML>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}" width="150px"
+							ui:field="directoryInfoButton" debugId="directoryInfoButton" title="Click to view your internal directory information used by this application.">Click To View</g:Button>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:CaptionPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:CaptionPanel addStyleNames="{style.light-captionpanel}" width="90%" captionHTML="Person Information">
+				<g:VerticalPanel width="100%" height="100%" spacing="8">
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="personInfoHTML" addStyleNames="{style.body}">Click to view the 
+						internal person information used by this application 
+						and the AWS provisioning process to determine eligibility 
+						to create Emory AWS accounts and VPCs.  Based on this information 
+						you are (or are not) eligible to create or generate 
+						AWS accounts and VPCs						
+						</g:HTML>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}" width="150px"
+							ui:field="personInfoButton" debugId="personInfoButton" title="Click to view the internal persion information used by this application.">Click To View</g:Button>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:CaptionPanel>
+		</g:cell>
 	</g:VerticalPanel>
 </ui:UiBinder> 

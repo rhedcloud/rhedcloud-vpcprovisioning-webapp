@@ -995,4 +995,9 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 //		filterTB.setText("");
 //		filterTB.getElement().setPropertyString("placeholder", "enter VPC id");
 	}
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -137,7 +137,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 				setVpcpList(result.getResults());
 				// apply authorization mask
 				if (user.isLitsAdmin()) {
-					getView().applyAWSAccountAdminMask();
+					getView().applyCentralAdminMask();
 				}
 				else if (user.isEmoryAwsAdmin()) {
 					getView().applyAWSAccountAdminMask();

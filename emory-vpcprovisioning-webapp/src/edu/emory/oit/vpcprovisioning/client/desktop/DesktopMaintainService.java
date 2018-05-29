@@ -208,4 +208,10 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
 	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

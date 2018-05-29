@@ -171,4 +171,9 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	public HasClickHandlers getOkayWidget() {
 		return okayButton;
 	}
+	@Override
+	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }
