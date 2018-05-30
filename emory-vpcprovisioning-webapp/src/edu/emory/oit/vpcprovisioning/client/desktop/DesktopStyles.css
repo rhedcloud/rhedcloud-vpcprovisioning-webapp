@@ -456,8 +456,8 @@ a:visited {
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
     font-size: 12pt;
 	font-weight: normal;
-    margin: 0 0 15px;
-    padding: 0 12px 12px;
+    margin: 0 0 5px;
+    padding: 5px 8px 8px;
 }
 .label {
     color: black;

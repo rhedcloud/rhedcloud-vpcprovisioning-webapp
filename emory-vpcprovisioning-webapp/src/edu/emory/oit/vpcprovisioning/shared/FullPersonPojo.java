@@ -66,4 +66,11 @@ public class FullPersonPojo extends SharedObject implements IsSerializable {
 		this.sponsoredPersons = sponsoredPersons;
 	}
 
+	@Override
+	public String toString() {
+		return person.getPersonalName().getFirstName() + " " + person.getPersonalName().getLastName() + " " + 
+				publicId; 
+				
+	}
+
 }

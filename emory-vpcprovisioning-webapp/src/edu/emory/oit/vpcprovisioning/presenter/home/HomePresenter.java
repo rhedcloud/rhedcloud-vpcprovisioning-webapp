@@ -86,8 +86,8 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				while (acctIter.hasNext()) {
 					totalAccountCount += accountMap.get(acctIter.next());
 				}
-				StringBuffer roleInfoHTML = new StringBuffer("You are affiliated to " + totalAccountCount + " distinct accounts.<br/>");
-				roleInfoHTML.append("You have " + user.getAccountRoles().size() + " total roles in these accounts.<br/>");
+				StringBuffer roleInfoHTML = new StringBuffer("You are affiliated to " + totalAccountCount + " distinct account(s).<br/>");
+				roleInfoHTML.append("You have " + user.getAccountRoles().size() + " total roles in these account(s).<br/>");
 				int centralAdminCnt = 0;
 				int adminCnt = 0;
 				int auditorCnt = 0;

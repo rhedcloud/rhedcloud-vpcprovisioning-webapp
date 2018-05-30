@@ -331,8 +331,8 @@ a:visited {
 }
 .glowing-border:focus { 
     outline: none;
-    border-color: #9ecaed;
-    box-shadow: 0 0 10px #9ecaed;
+    border-color: #e47911;
+    box-shadow: 0 0 5px #e47911;
 }
 .heavy-captionpanel {
     background-color: #FCFCFC;
@@ -413,8 +413,8 @@ a:visited {
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
     font-size: 12pt;
 	font-weight: normal;
-    margin: 0 0 15px;
-    padding: 0 12px 12px;
+    margin: 0 0 5px;
+    padding: 5px 8px 8px;
 }
 .tableBody {
     color: black;
