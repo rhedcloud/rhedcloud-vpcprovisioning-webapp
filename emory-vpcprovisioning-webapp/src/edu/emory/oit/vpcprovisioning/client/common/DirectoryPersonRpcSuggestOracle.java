@@ -37,9 +37,13 @@ public class DirectoryPersonRpcSuggestOracle extends SuggestOracle {
 
 			@Override
 			public void onSuccess(DirectoryPersonQueryResultPojo result) {
+				List<String> ppids = new java.util.ArrayList<String>();
 				List<MultiWordRpcSuggestion> descList = new java.util.ArrayList<MultiWordRpcSuggestion>();
 				for (DirectoryPersonPojo pojo : result.getResults()) {
-					descList.add(new MultiWordRpcSuggestion(pojo.getFullName(), pojo.getFullName(), pojo));
+					if (!ppids.contains(pojo.getKey())) {
+						ppids.add(pojo.getKey());
+						descList.add(new MultiWordRpcSuggestion(pojo.getFullName(), pojo.getFullName(), pojo));
+					}
 				}
 				Response resp =
 		            new Response(descList);

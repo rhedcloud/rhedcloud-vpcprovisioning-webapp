@@ -15,7 +15,7 @@
 		<init-param>
 			<param-name>configDocPath</param-name>
 			<!-- Local testing -->
-			<!-- <param-value>file:///Users/jtjacks/Development/workspace/deployment-esb-dev/Deployments/VpcProvisioningWebApplication.xml</param-value> -->
+			<!-- <param-value>file:///Users/jtjacks/Development/oxygen-workspace/deployment-esb-dev/Deployments/VpcProvisioningWebApplication.xml</param-value> -->
 			
 			<!-- for ALL EAP environments (value is turned into a URL by start scripts on server) -->
 			<!-- Also used for AWS deployment and testing -->
@@ -27,6 +27,20 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+
+	<servlet>
+	    <servlet-name>restServlet</servlet-name>
+	    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+	    <init-param>
+	        <param-name>jersey.config.server.provider.packages</param-name>
+	        <param-value>edu.emory.oit.vpcprovisioning.server</param-value>
+	    </init-param>
+	</servlet>
+
+	<servlet-mapping>
+	    <servlet-name>restServlet</servlet-name>
+	    <url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>VpcProvisioningService</servlet-name>

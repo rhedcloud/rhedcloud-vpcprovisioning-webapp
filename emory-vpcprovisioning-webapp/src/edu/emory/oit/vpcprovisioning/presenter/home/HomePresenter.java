@@ -65,7 +65,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 				
 				getView().setAccountRoleList(user.getAccountRoles());
-				// TODO: account affiliation count needs to be calculated because the accountRoles in the user 
+				// account affiliation count needs to be calculated because the accountRoles in the user 
 				// could have multilple roles for the same account.  so, i need to go through and get a 
 				// distinct account count.
 				HashMap<String, Integer> accountMap = new HashMap<String, Integer>();

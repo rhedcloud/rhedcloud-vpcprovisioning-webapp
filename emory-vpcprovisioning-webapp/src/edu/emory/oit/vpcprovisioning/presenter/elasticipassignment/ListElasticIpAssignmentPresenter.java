@@ -11,6 +11,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.ElasticIpAssignmentListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
@@ -204,7 +206,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				@Override
 				public void onFailure(Throwable caught) {
 					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the CidrAssignment.  Message " +
+							"server deleting the Elastic IP Assignment.  Message " +
 							"from server is: " + caught.getMessage());
 					getView().hidePleaseWaitDialog();
 				}
@@ -268,6 +270,43 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 		};
 		GWT.log("getting user logged in from server...");
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+	}
+
+	@Override
+	public void saveElasticIpAssignment(final ElasticIpAssignmentPojo selected) {
+		getView().showPleaseWaitDialog();
+		if (selected == null) {
+			getView().showMessageToUser("Please select an item from the list.");
+			return;
+		}
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
+		AsyncCallback<ElasticIpAssignmentPojo> callback = new AsyncCallback<ElasticIpAssignmentPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception saving the ElasticIP Assignment", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the ElasticIP Assignment.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(ElasticIpAssignmentPojo result) {
+				getView().hidePleaseWaitDialog();
+				ActionEvent.fire(eventBus, ActionNames.ELASTIC_IP_ASSIGNMENT_SAVED, result);
+			}
+		};
+		// it's an update
+		VpcProvisioningService.Util.getInstance().updateElasticIpAssignment(selected, callback);
 	}
 
 }

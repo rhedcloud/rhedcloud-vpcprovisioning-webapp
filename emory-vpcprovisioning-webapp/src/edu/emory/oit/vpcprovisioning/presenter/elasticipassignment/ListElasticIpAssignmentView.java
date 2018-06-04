@@ -33,6 +33,7 @@ public interface ListElasticIpAssignmentView extends IsWidget, View {
 		public void logMessageOnServer(final String message);
 		public void setVpc(VpcPojo vpc);
 		public void generateElasticIpAssignment();
+		void saveElasticIpAssignment(ElasticIpAssignmentPojo selected);
 	}
 
 	/**

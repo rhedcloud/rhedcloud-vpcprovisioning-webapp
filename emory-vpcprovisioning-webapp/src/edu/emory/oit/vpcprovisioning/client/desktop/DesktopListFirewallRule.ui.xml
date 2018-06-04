@@ -13,7 +13,7 @@
 				</g:HorizontalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
 		<g:VerticalPanel width="100%" height="100%">
 			<g:TabLayoutPanel 
 				barHeight="2" 
@@ -27,7 +27,7 @@
 
 				<g:tab>
 					<g:header>Existing Firewall Rules</g:header>
-					<g:VerticalPanel ui:field="firewallRuleTabContainer" width="100%" height="100%">
+					<g:VerticalPanel ui:field="firewallRuleTabContainer" width="100%" height="100%" spacing="20">
 						<g:HTML addStyleNames="{style.introHeading}">FirewallRule List</g:HTML>
 						<g:HTML addStyleNames="{style.body}">Below is a list of existing AWS FirewallRules for VPCs you are associated with.<br/><br/></g:HTML>
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
@@ -36,9 +36,22 @@
 									<g:customCell>
 										<g:Button ui:field="firewallRuleActionsButton" debugId="firewallRuleActionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
 									</g:customCell>
+									<!-- TEMPORARY -->
+							    	<g:customCell>
+										<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+											ui:field="fwFilterTB" debugId="filterTB"/>
+							    	</g:customCell>
+									<g:customCell>
+										<g:Button ui:field="fwFilterButton" debugId="fwFilterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter"/>
+									</g:customCell>
+									<g:customCell>
+										<g:Button ui:field="clearfwFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Clear filter"/>
+									</g:customCell>
+							    	<!-- END TEMPORARY -->
 								</g:row>
 							</g:Grid>
 						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
 						<g:VerticalPanel ui:field="firewallRuleListPanel" width="100%">
 							<g:Grid>
 								<g:row>
@@ -53,11 +66,12 @@
 								</g:row>
 							</g:Grid>
 						</g:VerticalPanel>
+						</g:cell>
 					</g:VerticalPanel>
 				</g:tab>
 				<g:tab>
 					<g:header>Your Requests</g:header>
-					<g:VerticalPanel ui:field="requestsTabContainer" width="100%" height="100%">
+					<g:VerticalPanel ui:field="requestsTabContainer" width="100%" height="100%" spacing="20">
 						<g:HTML addStyleNames="{style.introHeading}">Firewall Exception Request List</g:HTML>
 						<g:HTML addStyleNames="{style.body}">Below is a list of existing AWS Firewall Exception Requests that you have made and their statuses.<br/><br/></g:HTML>
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
@@ -69,6 +83,18 @@
 									<g:customCell>
 										<g:Button ui:field="firewallExceptionRequestActionsButton" debugId="firewallExceptionRequestActionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
 									</g:customCell>
+									<!-- TEMPORARY -->
+							    	<g:customCell>
+										<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+											ui:field="fwerFilterTB" debugId="fwerFilterTB"/>
+							    	</g:customCell>
+									<g:customCell>
+										<g:Button ui:field="fwerFilterButton" debugId="fwerFilterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter"/>
+									</g:customCell>
+									<g:customCell>
+										<g:Button ui:field="clearfwerFilterButton" debugId="clearfwerFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Clear filter"/>
+									</g:customCell>
+							    	<!-- END TEMPORARY -->
 								</g:row>
 							</g:Grid>
 						</g:cell>
@@ -90,7 +116,7 @@
 				</g:tab>
 			</g:TabLayoutPanel>
 		</g:VerticalPanel>
-		
+		</g:cell>
 	</g:VerticalPanel>
 	</g:ScrollPanel>
 </ui:UiBinder> 

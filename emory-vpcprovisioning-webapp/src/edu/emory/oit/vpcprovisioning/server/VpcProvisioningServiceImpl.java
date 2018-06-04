@@ -33,6 +33,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
 import org.jdom.Document;
 import org.jdom.Element;
@@ -204,6 +206,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
 
+@Path("vpcpHealthCheck")
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
@@ -226,7 +229,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private boolean useEsbService = true;
 	private boolean useShibboleth = true;
 	private boolean useAuthzService = true;
-	private AppConfig appConfig = null;
+	private static AppConfig appConfig = null;
 	Properties roleAssignmentProps = null;
 	Properties generalProps = null;
 	private String configDocPath = null;
@@ -5116,6 +5119,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			List<DirectoryPerson> moas = null;
 			try {
+				info("Query spec is: " + queryObject.toXmlString());
 				moas = actionable.query(queryObject,
 						this.getDirectoryRequestService());
 			} catch (EnterpriseObjectQueryException e) {
@@ -5533,6 +5537,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 									DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 									dp_filter.setKey(publicId);
 									DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+									info("[getAdminRoleAssignmentsForAccount] got " + dp_result.getResults().size() + 
+											" DirectoryPerson objects back for key=" + publicId);
 									
 									// create RoleAssignmentSummaryPojo and add it to the results
 									if (dp_result.getResults().size() > 0) {
@@ -5982,5 +5988,65 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		ReleaseInfo ri = new ReleaseInfo();
 		ri.setApplicationEnvironment(applicationEnvironment);
 		return ri;
+	}
+
+//	@GET
+//	@Path("/ping")
+//	public String ping() {
+//		return "VpcpServiceImpl-PING";
+//	}
+	
+	@GET
+//	@Path("/check")
+	public String getVpcpHealthCheck() {
+		info("getVpcpHealthCheck...");
+		
+		try {
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException("Error");
+		}
+		HashMap<String, List<AWSServicePojo>> svcMap = this.getAWSServiceMap(); 
+		applicationEnvironment = generalProps.getProperty("applicationEnvironment", "DEV");
+
+		info("appId: " + this.getAppId());
+		info("AWS service map: " + svcMap);
+		info("appConfig is: " + appConfig);
+		info("AppConfig stats: " + this.getAppConfig().dumpStats());
+		
+
+		try {
+			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
+			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
+			ProducerPool l_awsProducerPool = (ProducerPool) getAppConfig().getObject(
+					AWS_SERVICE_NAME);
+			RequestService reqSvc = (RequestService) l_awsProducerPool.getProducer();
+			@SuppressWarnings("unchecked")
+			List<Account> moas = actionable.query(queryObject,reqSvc);
+			info("[getVpcpHealthCheck] got " + moas.size() + " accounts from ESB service");
+			
+			if (applicationEnvironment != null && 
+					svcMap != null && 
+					svcMap.size() > 0) {
+			
+					return "GOOD";
+				}
+				else {
+					throw new RpcException("Error");
+				}
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 }

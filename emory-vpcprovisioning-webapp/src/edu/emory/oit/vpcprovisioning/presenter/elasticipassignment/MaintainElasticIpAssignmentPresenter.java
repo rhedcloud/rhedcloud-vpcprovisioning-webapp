@@ -13,11 +13,9 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainElasticIpAssignmentPresenter extends PresenterBase implements MaintainElasticIpAssignmentView.Presenter {
@@ -211,9 +209,9 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception saving the Cidr", caught);
+				GWT.log("Exception saving the ElasticIP Assignment", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the CIDR.  Message " +
+						"server saving the ElasticIP Assignment.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 

@@ -77,8 +77,8 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					showMessageToUser("Will release address");
-					// TODO: elastic ip assignment delete (no longer assigned to VPC)
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+					// elastic ip assignment delete (no longer assigned to VPC)
+					presenter.deleteElasticIpAssignment(m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
