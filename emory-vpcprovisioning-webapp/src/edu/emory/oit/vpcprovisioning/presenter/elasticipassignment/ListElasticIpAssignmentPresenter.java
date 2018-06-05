@@ -219,7 +219,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 					// status message
 					getView().showStatus(getView().getStatusMessageSource(), "Elastic IP Assignment was deleted.");
 					
-					// TODO fire list accounts event...
+					// TODO fire list elastic ip assignment event...
 				}
 			};
 			VpcProvisioningService.Util.getInstance().deleteElasticIpAssignment(elasticIpAssignment, callback);

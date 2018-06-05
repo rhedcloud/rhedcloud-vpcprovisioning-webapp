@@ -4274,7 +4274,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.doGenerate(moa, requisition, getElasticIpRequestService());
 
 				ElasticIpAssignmentPojo ipAssignment = new ElasticIpAssignmentPojo();
-				info("populating pojo");
+				info("populating pojo with moa returned: " + moa.toXmlString());
 				this.populateElasticIpAssignmentPojo(moa, ipAssignment);
 				info("ElasticIpAssignment.generate is complete...");
 
@@ -5390,6 +5390,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 				info("generating ROLE Assignment record on the server:  " + requisition.toXmlString());
 				this.doGenerate(moa, requisition, getIDMRequestService());
+				info("RoleAssignment returned from the generate: " + moa.toXmlString());
 
 				RoleAssignmentPojo roleAssignment = new RoleAssignmentPojo();
 				info("populating pojo");

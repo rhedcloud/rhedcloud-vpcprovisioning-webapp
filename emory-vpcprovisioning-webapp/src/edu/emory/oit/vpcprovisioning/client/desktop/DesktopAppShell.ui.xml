@@ -137,10 +137,12 @@
 							<g:DeckLayoutPanel ui:field="cidrContentContainer" width="100%" height="100%"/>
 						</g:tab>
 						 -->
+						<!-- 
 						<g:tab>
 							<g:header>Elastic IP Maintenance</g:header>
 							<g:DeckLayoutPanel ui:field="elasticIpContentContainer" width="100%" height="100%"/>
 						</g:tab>
+						 -->
 						<!-- 
 						<g:tab>
 							<g:header>Elastic IP Assignments</g:header>

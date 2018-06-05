@@ -86,42 +86,40 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 //		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
 		
-		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(UserAccountPojo result) {
-				userLoggedIn = result;
-				if (!userLoggedIn.isLitsAdmin()) {
-					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+//		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//
+//			@Override
+//			public void onSuccess(UserAccountPojo result) {
+//				userLoggedIn = result;
+//				if (!userLoggedIn.isLitsAdmin()) {
+//					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 //					mainTabPanel.getTabWidget(5).getParent().setVisible(false);
-					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-						@Override
-						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+//					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+//						@Override
+//						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
 //							if (event.getItem() == 4 || event.getItem() == 5) {
-							if (event.getItem() == 4) {
-								event.cancel();
-							}
-						}
-					});
-				}
-				else {
-					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+//							if (event.getItem() == 4) {
+//								event.cancel();
+//							}
+//						}
+//					});
+//				}
+//				else {
+//					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
 //					mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-				}
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+//				}
+//			}
+//		};
+//		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 		
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 			@Override
@@ -184,7 +182,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
-	@UiField DeckLayoutPanel elasticIpContentContainer;
+//	@UiField DeckLayoutPanel elasticIpContentContainer;
 //	@UiField DeckLayoutPanel firewallContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
 
@@ -418,17 +416,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //				cidrContentContainer.setAnimationDuration(500);
 //				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
 //				break;
-			case 4:
-				GWT.log("need to get Elastic IP Maintentenance content.");
-				firstElasticIpContentWidget = true;
-				elasticIpContentContainer.clear();
-				ListElasticIpView listEipView = clientFactory.getListElasticIpView();
-				MaintainElasticIpView maintainEipView = clientFactory.getMaintainElasticIpView();
-				elasticIpContentContainer.add(listEipView);
-				elasticIpContentContainer.add(maintainEipView);
-				elasticIpContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
-				break;
+//			case 4:
+//				GWT.log("need to get Elastic IP Maintentenance content.");
+//				firstElasticIpContentWidget = true;
+//				elasticIpContentContainer.clear();
+//				ListElasticIpView listEipView = clientFactory.getListElasticIpView();
+//				MaintainElasticIpView maintainEipView = clientFactory.getMaintainElasticIpView();
+//				elasticIpContentContainer.add(listEipView);
+//				elasticIpContentContainer.add(maintainEipView);
+//				elasticIpContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
+//				break;
 //			case 6:
 //				GWT.log("need to get Firewall Maintentenance content.");
 //				firstFirewallContentWidget = true;
@@ -502,15 +500,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
-			elasticIpContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstElasticIpContentWidget) {
-				firstElasticIpContentWidget = false;
-				elasticIpContentContainer.animate(0);
-			}
-			return;
-		}
+//		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
+//			elasticIpContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstElasticIpContentWidget) {
+//				firstElasticIpContentWidget = false;
+//				elasticIpContentContainer.animate(0);
+//			}
+//			return;
+//		}
 
 //		if (w instanceof ListFirewallRulePresenter) {
 //			firewallContentContainer.setWidget(w);

@@ -523,15 +523,17 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						@Override
 						public void onSuccess(final RoleAssignmentPojo roleAssignment) {
 							// then, tell the view to refresh it's role list
-//							account.getRoleAssignments().add(roleAssignment);
+							GWT.log("start - onSuccess...");
 							RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
 							ra_summary.setDirectoryPerson(directoryPerson);
 							ra_summary.setRoleAssignment(roleAssignment);
 							accountRoleAssignmentSummaries.add(ra_summary);
 							String roleName = getSimpleRoleNameFromRoleDN(ra_summary.getRoleAssignment().getRoleDN());
+							GWT.log("start - getView().addRoleAssignment...");
 							getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
 									directoryPerson.getEmail().getEmailAddress(), roleName, 
 									directoryPerson.toString() + " " + ra_summary.getRoleAssignment().getRoleDN());
+							GWT.log("done - getView();.addRoleAssignment...");
 							getView().hidePleaseWaitDialog();
 							getView().hidePleaseWaitPanel();
 						}
@@ -587,6 +589,10 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	
 	private String getSimpleRoleNameFromRoleDN(String roleDn) {
 		String roleName = null;
+		if (roleDn == null) {
+			GWT.log("null roleDn");
+			return "Unknown";
+		}
 		if (roleDn.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN) >= 0) {
 			roleName = Constants.STATIC_TEXT_ADMINISTRATOR;
 		}
