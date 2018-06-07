@@ -195,7 +195,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	}
 
 	@Override
-	public void deleteElasticIpAssignment(ElasticIpAssignmentPojo selected) {
+	public void deleteElasticIpAssignment(final ElasticIpAssignmentPojo selected) {
 		if (Window.confirm("Delete the Elastic IP Assignment " + 
 				selected.getAssignmentId() + "/" + 
 				selected.getPurpose() + "?")) {
@@ -214,15 +214,16 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				@Override
 				public void onSuccess(Void result) {
 					// remove from dataprovider
-					getView().removeElasticIpAssignmentFromView(elasticIpAssignment);
+					getView().removeElasticIpAssignmentFromView(selected);
 					getView().hidePleaseWaitDialog();
 					// status message
 					getView().showStatus(getView().getStatusMessageSource(), "Elastic IP Assignment was deleted.");
 					
-					// TODO fire list elastic ip assignment event...
+					// fire list elastic ip assignment event...
+//					ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT, vpc);
 				}
 			};
-			VpcProvisioningService.Util.getInstance().deleteElasticIpAssignment(elasticIpAssignment, callback);
+			VpcProvisioningService.Util.getInstance().deleteElasticIpAssignment(selected, callback);
 		}
 	}
 
@@ -302,7 +303,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 			@Override
 			public void onSuccess(ElasticIpAssignmentPojo result) {
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.ELASTIC_IP_ASSIGNMENT_SAVED, result);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT, vpc);
 			}
 		};
 		// it's an update

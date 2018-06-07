@@ -33,6 +33,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListElasticIpAssignment extends ViewImplBase implements ListElasticIpAssignmentView {
@@ -77,7 +78,6 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				actionsPopup.hide();
 				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					showMessageToUser("Will release address");
 					// elastic ip assignment delete (no longer assigned to VPC)
 					presenter.deleteElasticIpAssignment(m);
 				}
@@ -96,18 +96,32 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 		associateAddressesAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-//				showMessageToUser("Will associate address");
-				// TODO: elasticip assignment update with the new private ip which comes from somewhere
+				// elasticip assignment update with the new private ip which comes from somewhere
 				// for now, they can type it in (prompt for private IP address).
-				Window.alert("hello, this is a test");
-				String privateIp = Window.prompt("Enter a Private IP Address to associate to this Elastic IP", "");
-//				String privateIp = myPrompt("Enter a Private IP Address to associate to this Elastic IP", "");
-				GWT.log("Private IP is: " + privateIp);
-				if (privateIp != null && privateIp.length() > 0) {
-					boolean confirmed = Window.confirm("Use the Private IP address: " + privateIp + "?");
-					GWT.log("Confirmed is: " + confirmed);
+				actionsPopup.hide();
+				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					String privateIp = Window.prompt("Enter a Private IP Address to associate to this Elastic IP", "");
+					GWT.log("Private IP is: " + privateIp);
+					if (privateIp != null && privateIp.length() > 0) {
+						boolean confirmed = Window.confirm("Use the Private IP address: " + privateIp + "?");
+						GWT.log("Confirmed is: " + confirmed);
+						if (confirmed) {
+							if (m.getElasticIp() != null) {
+								m.getElasticIp().setAssociatedIpAddress(privateIp);
+							}
+							else {
+								ElasticIpPojo eip = new ElasticIpPojo();
+								eip.setAssociatedIpAddress(privateIp);
+								m.setElasticIp(eip);
+							}
+							presenter.saveElasticIpAssignment(m);
+						}
+					}
 				}
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
 			}
 		});
 		associateAddressesAnchor.setEnabled(false);
@@ -124,9 +138,20 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				actionsPopup.hide();
 				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					showMessageToUser("Will disassociate address");
-					// TODO: elastic ip assignment update to have NO private IP in it
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+					// elastic ip assignment update to have NO private IP in it
+					boolean confirmed = Window.confirm("Dissasociate the private IP: " + m.getElasticIp().getAssociatedIpAddress() + "?");
+					if (confirmed) {
+						if (m.getElasticIp() != null) {
+							m.getElasticIp().setAssociatedIpAddress(null);
+						}
+						else {
+							showMessageToUser("The selected Elastic IP Assignment doesn't have an "
+									+ "associated private IP address.  Please select a different Elastic "
+									+ "IP Assignment object.");
+							return;
+						}
+						presenter.saveElasticIpAssignment(m);
+					}
 				}
 				else {
 					showMessageToUser("Please select an item from the list");

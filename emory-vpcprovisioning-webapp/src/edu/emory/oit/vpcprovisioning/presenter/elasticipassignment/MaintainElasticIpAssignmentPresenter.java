@@ -219,7 +219,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 			public void onSuccess(ElasticIpAssignmentPojo result) {
 				getView().hidePleaseWaitDialog();
 				if (!isRegisteringVpc) {
-					ActionEvent.fire(eventBus, ActionNames.ELASTIC_IP_ASSIGNMENT_SAVED, result);
+					ActionEvent.fire(eventBus, ActionNames.ELASTIC_IP_ASSIGNMENT_SAVED, null, result);
 				}
 				else {
 					// TODO:  not sure if this will be needed or not...will depend on provisioning flow

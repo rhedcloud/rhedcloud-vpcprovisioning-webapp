@@ -105,8 +105,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, ElasticIpPojo elasticIp) {
 		eventBus.fireEventFromSource(new ActionEvent(elasticIp), sourceName);
 	}
-	public static void fire(EventBus eventBus, String sourceName, ElasticIpAssignmentPojo elasticIpAssignment) {
-		eventBus.fireEventFromSource(new ActionEvent(elasticIpAssignment), sourceName);
+	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc, ElasticIpAssignmentPojo elasticIpAssignment) {
+		eventBus.fireEventFromSource(new ActionEvent(vpc, elasticIpAssignment), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, ElasticIpPojo elasticIp, ElasticIpAssignmentPojo elasticIpAssignment, Place nextPlace) {
 		eventBus.fireEventFromSource(new ActionEvent(elasticIp, elasticIpAssignment, nextPlace), sourceName);
@@ -211,7 +211,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.elasticIp = pojo;
 	}
 	
-	public ActionEvent(ElasticIpAssignmentPojo pojo) {
+	public ActionEvent(VpcPojo vpc, ElasticIpAssignmentPojo pojo) {
+		this.vpc = vpc;
 		this.elasticIpAssignment = pojo;
 	}
 	
