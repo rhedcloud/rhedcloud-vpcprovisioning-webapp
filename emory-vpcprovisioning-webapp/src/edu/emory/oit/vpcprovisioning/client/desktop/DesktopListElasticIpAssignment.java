@@ -19,6 +19,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -95,9 +96,17 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 		associateAddressesAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				showMessageToUser("Will associate address");
+//				showMessageToUser("Will associate address");
 				// TODO: elasticip assignment update with the new private ip which comes from somewhere
 				// for now, they can type it in (prompt for private IP address).
+				Window.alert("hello, this is a test");
+				String privateIp = Window.prompt("Enter a Private IP Address to associate to this Elastic IP", "");
+//				String privateIp = myPrompt("Enter a Private IP Address to associate to this Elastic IP", "");
+				GWT.log("Private IP is: " + privateIp);
+				if (privateIp != null && privateIp.length() > 0) {
+					boolean confirmed = Window.confirm("Use the Private IP address: " + privateIp + "?");
+					GWT.log("Confirmed is: " + confirmed);
+				}
 //				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
 			}
 		});
@@ -128,6 +137,44 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
+
+	protected native String myPrompt(String msg, String defaultValue) /*-{
+//		$wnd.onbeforeunload = function(e) {
+		$wnd.confirm({
+		    title: 'Confirm!',
+		    content: 'Are you sure you want to refund invoice ?',
+		    confirm: function(){
+		       //do something 
+		    },
+		    cancel: function(){
+		       //do something
+		    }
+			}); 
+			return "";
+	}-*/;
+	
+	protected native void alert() /*-{
+		$wnd.alert = function(message) { $(document.createElement('div'))
+		    .attr({
+		      title: 'Alert',
+		      'class': 'alert'
+		    })
+		    .html(message)
+		    .dialog({
+		      buttons: {
+		        OK: function() {
+		          $(this).dialog('close');
+		        }
+		      },
+		      close: function() {
+		        $(this).remove();
+		      },
+		      modal: true,
+		      resizable: false,
+		      width: 'auto'
+		    });
+		};
+	}-*/;
 
 	private static DesktopListElasticIpAssignmentUiBinder uiBinder = GWT
 			.create(DesktopListElasticIpAssignmentUiBinder.class);

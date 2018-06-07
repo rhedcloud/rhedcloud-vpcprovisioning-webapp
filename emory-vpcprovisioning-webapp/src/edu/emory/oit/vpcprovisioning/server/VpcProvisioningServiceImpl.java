@@ -4271,14 +4271,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				ElasticIpAssignment moa = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
 
 				info("generating elastic ip Assignment record on the server:  " + requisition.toXmlString());
-				this.doGenerate(moa, requisition, getElasticIpRequestService());
+				List<ActionableEnterpriseObject> results = this.doGenerate(moa, requisition, getElasticIpRequestService());
+				if (results.size() != 1) {
+					// error
+					String msg = "Incorrect number of ElasticIpAssignments generated.  Expected 1, got " + results.size();
+					throw new RpcException(msg);
+				}
+				else {
+					ElasticIpAssignment generated = (ElasticIpAssignment)results.get(0);
+					info("ElasticIpAssignment returned from the generate: " + generated.toXmlString());
+					ElasticIpAssignmentPojo eipAssignment = new ElasticIpAssignmentPojo();
+					info("populating pojo");
+					this.populateElasticIpAssignmentPojo(generated, eipAssignment);
+					info("eipAssignment.generate is complete...");
 
-				ElasticIpAssignmentPojo ipAssignment = new ElasticIpAssignmentPojo();
-				info("populating pojo with moa returned: " + moa.toXmlString());
-				this.populateElasticIpAssignmentPojo(moa, ipAssignment);
-				info("ElasticIpAssignment.generate is complete...");
-
-				return ipAssignment;
+					return eipAssignment;
+				}
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
@@ -5386,18 +5394,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				requisition.setRoleDNs(roleDns);
 
 				RoleAssignment moa = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
-//				this.populateRoleAssignmentMoa(roleAssignment, moa);
 
 				info("generating ROLE Assignment record on the server:  " + requisition.toXmlString());
-				this.doGenerate(moa, requisition, getIDMRequestService());
-				info("RoleAssignment returned from the generate: " + moa.toXmlString());
+				List<ActionableEnterpriseObject> results = this.doGenerate(moa, requisition, getIDMRequestService());
+				if (results.size() != 1) {
+					// error
+					String msg = "Incorrect number of RoleAssignments generated.  Expected 1, got " + results.size();
+					throw new RpcException(msg);
+				}
+				else {
+					RoleAssignment generated = (RoleAssignment)results.get(0);
+					info("RoleAssignment returned from the generate: " + generated.toXmlString());
+					RoleAssignmentPojo roleAssignment = new RoleAssignmentPojo();
+					info("populating pojo");
+					this.populateRoleAssignmentPojo(generated, roleAssignment);
+					info("RoleAssignment.generate is complete...");
 
-				RoleAssignmentPojo roleAssignment = new RoleAssignmentPojo();
-				info("populating pojo");
-				this.populateRoleAssignmentPojo(moa, roleAssignment);
-				info("RoleAssignment.generate is complete...");
+					return roleAssignment;
+				}
 
-				return roleAssignment;
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
