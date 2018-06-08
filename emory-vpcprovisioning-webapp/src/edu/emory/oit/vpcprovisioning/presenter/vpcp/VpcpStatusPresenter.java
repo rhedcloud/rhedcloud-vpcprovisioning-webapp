@@ -269,6 +269,6 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 					" - from the Identity Service.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForNetId(netId, callback);
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
 	}
 }

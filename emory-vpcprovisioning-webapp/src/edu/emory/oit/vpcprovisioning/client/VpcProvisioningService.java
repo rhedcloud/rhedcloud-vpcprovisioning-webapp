@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -105,7 +107,9 @@ public interface VpcProvisioningService extends RemoteService {
 	// END TEMPORARY
 	
 //	String getLoginURL() throws RpcException;
-	
+
+	String getEsbServiceStatusURL() throws RpcException;
+
 	// ReleaseInfo
 	ReleaseInfo getReleaseInfo() throws RpcException;
 	
@@ -113,7 +117,7 @@ public interface VpcProvisioningService extends RemoteService {
 	void logMessage(String message) throws RpcException;
 	
 	// Identity services
-	DirectoryMetaDataPojo getDirectoryMetaDataForNetId(String netId) throws RpcException;
+	DirectoryMetaDataPojo getDirectoryMetaDataForPublicId(String netId) throws RpcException;
 
 	// UserAccount services (user logged in)
 	UserAccountPojo getUserLoggedIn() throws RpcException;

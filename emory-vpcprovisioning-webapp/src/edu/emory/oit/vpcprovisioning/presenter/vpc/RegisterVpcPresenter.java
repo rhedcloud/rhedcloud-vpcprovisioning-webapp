@@ -237,9 +237,10 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 				getView().hidePleaseWaitDialog();
 //				ActionEvent.fire(eventBus, ActionNames.VPC_SAVED, vpc);
 				
-				// TODO: once the VPC has been registered, display a message
+				// once the VPC has been registered, display a message
 				// and take the user to the MaintainCidrAssigmnent page
-				ActionEvent.fire(eventBus, ActionNames.CREATE_CIDR_ASSIGNMENT_AFTER_VPC_REGISTRATION);
+//				ActionEvent.fire(eventBus, ActionNames.CREATE_CIDR_ASSIGNMENT_AFTER_VPC_REGISTRATION);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
 
 			}
 		};

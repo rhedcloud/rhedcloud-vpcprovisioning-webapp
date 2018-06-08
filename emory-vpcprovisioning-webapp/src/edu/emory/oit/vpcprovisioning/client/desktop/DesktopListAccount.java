@@ -372,26 +372,24 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		accountListTable.addColumn(acctNameColumn, "Account Name");
 		
-		// owner net id
-		Column<AccountPojo, String> ownerNetIdColumn = 
+		// account owner
+		Column<AccountPojo, String> ownerColumn = 
 			new Column<AccountPojo, String> (new TextCell()) {
 			
 			@Override
 			public String getValue(AccountPojo object) {
-				return object.getAccountOwnerDirectoryMetaData().getNetId() + 
-						" (" + object.getAccountOwnerDirectoryMetaData().getFirstName() + 
-						" " + object.getAccountOwnerDirectoryMetaData().getLastName() + 
-						")";
+				return object.getAccountOwnerDirectoryMetaData().getFirstName() + 
+						" " + object.getAccountOwnerDirectoryMetaData().getLastName();
 			}
 		};
-		ownerNetIdColumn.setSortable(true);
-		ownerNetIdColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(ownerNetIdColumn, new Comparator<AccountPojo>() {
+		ownerColumn.setSortable(true);
+		ownerColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(ownerColumn, new Comparator<AccountPojo>() {
 			public int compare(AccountPojo o1, AccountPojo o2) {
 				return o1.getAccountOwnerDirectoryMetaData().getNetId().compareTo(o2.getAccountOwnerDirectoryMetaData().getNetId());
 			}
 		});
-		accountListTable.addColumn(ownerNetIdColumn, "Owner's NetID");
+		accountListTable.addColumn(ownerColumn, "Account Owner");
 		
 		// compliance class
 		Column<AccountPojo, String> complianceClassColumn = 

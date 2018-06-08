@@ -70,6 +70,37 @@
 					
 					<g:row>
 						<g:customCell>
+							<g:Label addStyleNames="{style.label}">CIDR:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="cidrTB" debugId="cidrTB" title="In the form 'ip address/bits'"/>
+						</g:customCell>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPN Profile ID:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpnProfileIdTB" debugId="vpnProfileIdTB" title="VPN Profile ID"/>
+						</g:customCell>
+					</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="purposeTA" debugId="purposeTA" 
+								title="The purpose of this VPC."/>
+				    	</g:customCell>
+			    	</g:row>
+
+					<g:row>
+						<g:customCell>
 							<g:Label addStyleNames="{style.label}"></g:Label>
 						</g:customCell>
 						<g:customCell>
@@ -166,6 +197,16 @@
 							<g:ListBox
 								addStyleNames="{style.field} {style.glowing-border}"
 								ui:field="vpcReqTypeLB" debugId="vpcReqTypeLB" />
+						</g:customCell>
+					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">CIDR:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:TextBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="vpcReqCidrTB" debugId="vpcReqCidrTB" title="In the form 'ip address/bits'"/>
 						</g:customCell>
 					</g:row>
 				</g:Grid>

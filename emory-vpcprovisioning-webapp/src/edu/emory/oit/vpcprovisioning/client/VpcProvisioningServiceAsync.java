@@ -89,12 +89,13 @@ public interface VpcProvisioningServiceAsync {
 	
 //	void getLoginURL(AsyncCallback<String> callback);
 	void logMessage(String message, AsyncCallback<Void> callback);
+	void getEsbServiceStatusURL(AsyncCallback<String> callback);
 	
 	// ReleaseInfo
 	void getReleaseInfo(AsyncCallback<ReleaseInfo> callback);
 	
 	// Identity services
-	void getDirectoryMetaDataForNetId(String netId, AsyncCallback<DirectoryMetaDataPojo> callback);
+	void getDirectoryMetaDataForPublicId(String netId, AsyncCallback<DirectoryMetaDataPojo> callback);
 
 	// UserAccount services (user logged in)
 	void getUserLoggedIn(AsyncCallback<UserAccountPojo> callback);

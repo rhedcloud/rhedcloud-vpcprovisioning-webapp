@@ -79,6 +79,12 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					// elastic ip assignment delete (no longer assigned to VPC)
+					if (m.getElasticIp().getAssociatedIpAddress() != null && 
+						m.getElasticIp().getAssociatedIpAddress().length() > 0) {
+
+						showMessageToUser("Please disassociate the address before releasing it.");
+						return;
+					}
 					presenter.deleteElasticIpAssignment(m);
 				}
 				else {

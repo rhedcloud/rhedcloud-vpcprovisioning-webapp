@@ -58,11 +58,15 @@
 			    	</g:row>
 				<g:row>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Owner Net Id:</g:Label>
+							<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
+					    	<!-- 
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="ownerNetIdTB" debugId="ownerNetIdTB" />
+								ui:field="ownerIdTB" debugId="ownerIdTB" />
+					    	 -->
+							<g:SuggestBox ui:field="ownerIdSB" debugId="ownerIdSB" 
+								addStyleNames="{style.field} {style.glowing-border}"/>
 				    	</g:customCell>
 			    	</g:row>
 				<g:row>

@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -43,7 +44,10 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	@UiField CaptionPanel accountCP;
 	@UiField TextBox vpcIdTB;
 	@UiField ListBox vpcTypeLB;
-	
+	@UiField TextBox cidrTB;
+	@UiField TextBox vpnProfileIdTB;
+	@UiField TextArea purposeTA;
+
 	private static DesktopRegisterVpcUiBinder uiBinder = GWT.create(DesktopRegisterVpcUiBinder.class);
 
 	interface DesktopRegisterVpcUiBinder extends UiBinder<Widget, DesktopRegisterVpc> {
@@ -64,6 +68,9 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 				presenter.getVpc().setAccountId(accountLB.getSelectedValue());
 				presenter.getVpc().setVpcId(vpcIdTB.getText());
 				presenter.getVpc().setType(vpcTypeLB.getSelectedValue());
+				presenter.getVpc().setCidr(cidrTB.getText());
+				presenter.getVpc().setVpnProfileId(vpnProfileIdTB.getText());
+				presenter.getVpc().setPurpose(purposeTA.getText());
 				presenter.registerVpc();
 			}
 		}, ClickEvent.getType());
@@ -206,6 +213,15 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		if (vpc.getType() == null || vpc.getType().length() == 0) {
 			fields.add(vpcTypeLB);
 		}
+		if (vpc.getCidr() == null || vpc.getCidr().length() == 0) {
+			fields.add(cidrTB);
+		}
+		if (vpc.getVpnProfileId() == null || vpc.getVpnProfileId().length() == 0) {
+			fields.add(vpnProfileIdTB);
+		}
+		if (vpc.getPurpose() == null || vpc.getPurpose().length() == 0) {
+			fields.add(purposeTA);
+		}
 		return fields;
 	}
 
@@ -215,6 +231,9 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		fields.add(vpcIdTB);
 		fields.add(accountLB);
 		fields.add(vpcTypeLB);
+		fields.add(cidrTB);
+		fields.add(purposeTA);
+		fields.add(vpnProfileIdTB);
 		this.resetFieldStyles(fields);
 	}
 

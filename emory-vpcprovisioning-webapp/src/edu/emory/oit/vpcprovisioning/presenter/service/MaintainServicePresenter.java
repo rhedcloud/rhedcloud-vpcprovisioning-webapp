@@ -279,6 +279,6 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 					" - from the Identity Service.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForNetId(netId, callback);
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
 	}
 }

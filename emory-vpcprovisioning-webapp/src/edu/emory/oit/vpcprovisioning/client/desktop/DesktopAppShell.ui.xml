@@ -11,9 +11,19 @@
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 			<g:VerticalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel ui:field='logoTitleBar' title="Home">
-						<div ui:field='logoElem'><img src="images/emory-aws-logos.png"/></div>
-					</g:HTMLPanel>
+					<g:Grid cellSpacing="8">
+						<g:row>
+					    	<g:customCell>
+								<g:HTMLPanel ui:field='logoTitleBar' title="Home">
+									<div ui:field='logoElem'><img src="images/emory-aws-logos.png"/></div>
+								</g:HTMLPanel>
+					    	</g:customCell>
+					    	<g:customCell>
+					    		<g:Anchor addStyleNames="{style.linksMenuHeader}" 
+					    			ui:field="esbServiceStatusAnchor">Check System Status</g:Anchor>
+					    	</g:customCell>
+						</g:row>
+					</g:Grid>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:HTMLPanel ui:field='releaseInfoPanel'>

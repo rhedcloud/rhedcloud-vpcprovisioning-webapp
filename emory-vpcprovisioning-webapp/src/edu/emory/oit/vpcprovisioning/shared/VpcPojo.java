@@ -9,7 +9,7 @@ import com.google.gwt.view.client.ProvidesKey;
 public class VpcPojo extends SharedObject implements IsSerializable, Comparable<VpcPojo> {
 
 	/*
-<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Type, ComplianceClass, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+<!ELEMENT VirtualPrivateCloud (VpcId, AccountId, Cidr, VpnProfileId, Type, Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>	 
 	 */
 	String accountId;
 	String accountName;
@@ -19,6 +19,7 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 	String cidr;
 	String vpnProfileId;
+	String purpose;
 	VpcPojo baseline;
 	
 	public static final ProvidesKey<VpcPojo> KEY_PROVIDER = new ProvidesKey<VpcPojo>() {
@@ -99,6 +100,14 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 
 	public void setAccountName(String accountName) {
 		this.accountName = accountName;
+	}
+
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
 	}
 
 //	public String getComplianceClass() {

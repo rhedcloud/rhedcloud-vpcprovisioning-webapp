@@ -377,7 +377,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 					" - from the Identity Service.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForNetId(netId, callback);
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
 	}
 
 	@Override

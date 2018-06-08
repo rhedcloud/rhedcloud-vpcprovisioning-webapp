@@ -262,6 +262,6 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 					" - from the Identity Notification.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForNetId(netId, callback);
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
 	}
 }

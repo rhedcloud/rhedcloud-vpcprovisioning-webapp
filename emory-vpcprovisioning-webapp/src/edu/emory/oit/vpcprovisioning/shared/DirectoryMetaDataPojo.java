@@ -8,6 +8,7 @@ public class DirectoryMetaDataPojo extends SharedObject implements IsSerializabl
 	String firstName;
 	String lastName;
 	String emailAddress;
+	String ppid;
 
 	public DirectoryMetaDataPojo() {
 	}
@@ -42,6 +43,14 @@ public class DirectoryMetaDataPojo extends SharedObject implements IsSerializabl
 
 	public void setEmailAddress(String emailAddress) {
 		this.emailAddress = emailAddress;
+	}
+
+	public String getPublicId() {
+		return ppid;
+	}
+
+	public void setPublicId(String ppid) {
+		this.ppid = ppid;
 	}
 
 }

@@ -58,6 +58,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	String speedTypeBeingTyped=null;
 	boolean speedTypeConfirmed = false;
 	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
+	private final DirectoryPersonRpcSuggestOracle ownerIdSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	PopupPanel adminPleaseWaitDialog;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -66,7 +67,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField Button cancelButton;
 	@UiField TextBox accountIdTB;
 	@UiField TextBox accountNameTB;
-	@UiField TextBox ownerNetIdTB;
+//	@UiField TextBox ownerIdTB;
 	@UiField TextBox passwordLocationTB;
 	@UiField TextBox speedTypeTB;
 
@@ -87,6 +88,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField ListBox complianceClassLB;
 
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
+	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -129,18 +131,18 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, presenter.getAccount());
 	}
 	
-	@UiHandler ("ownerNetIdTB")
-	void ownerNetIdTBMouseOver(MouseOverEvent e) {
-		DirectoryMetaDataPojo dmd = presenter.getAccount().getAccountOwnerDirectoryMetaData();
-		if (dmd != null) {
-			ownerNetIdTB.setTitle(dmd.getFirstName() + " " + 
-					dmd.getLastName() + 
-					" - From the IdentityService.");
-		}
-		else {
-			ownerNetIdTB.setTitle("Owner NetID");
-		}
-	}
+//	@UiHandler ("ownerIdSB")
+//	void ownerIdSBMouseOver(MouseOverEvent e) {
+//		DirectoryMetaDataPojo dmd = presenter.getAccount().getAccountOwnerDirectoryMetaData();
+//		if (dmd != null) {
+//			ownerIdSB.setTitle(dmd.getFirstName() + " " + 
+//					dmd.getLastName() + 
+//					" - From the IdentityService.");
+//		}
+//		else {
+//			ownerIdSB.setTitle("Owner ID");
+//		}
+//	}
 	@UiHandler ("addAdminButton")
 	void addAdminButtonClick(ClickEvent e) {
 		if (accountIdTB.getText() == null || accountIdTB.getText().trim().length() == 0) {
@@ -196,10 +198,10 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		if (this.hasFieldViolations() == false) {
 			presenter.getAccount().setAccountId(accountIdTB.getText());
 			presenter.getAccount().setAccountName(accountNameTB.getText());
-			if (presenter.getAccount().getAccountOwnerDirectoryMetaData() == null) {
-				presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
-			}
-			presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerNetIdTB.getText());
+//			if (presenter.getAccount().getAccountOwnerDirectoryMetaData() == null) {
+//				presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
+//			}
+//			presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerIdTB.getText());
 			presenter.getAccount().setComplianceClass(complianceClassLB.getSelectedValue());
 			presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
 			presenter.getAccount().setSpeedType(speedTypeTB.getText());
@@ -412,7 +414,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		removeButtonColumnNum = 1;
 		accountIdTB.setText("");
 		accountNameTB.setText("");
-		ownerNetIdTB.setText("");
+		ownerIdSB.setText("");
 		passwordLocationTB.setText("");
 		speedTypeTB.setText("");
 		addEmailTF.setText("");
@@ -434,7 +436,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			// account id can't be changed
 			accountNameTB.setText(presenter.getAccount().getAccountName());
 			if (presenter.getAccount().getAccountOwnerDirectoryMetaData() != null) {
-				ownerNetIdTB.setText(presenter.getAccount().getAccountOwnerDirectoryMetaData().getNetId());
+				ownerIdSB.setText(presenter.getAccount().getAccountOwnerDirectoryMetaData().getFirstName() + 
+						" " + presenter.getAccount().getAccountOwnerDirectoryMetaData().getLastName());
+			}
+			else {
+				// enter placeholder text on ownerIdSB
+				ownerIdSB.getElement().setPropertyString("placeholder", "enter name");
 			}
 			// TODO: add a static text object to show person's name from the meta data pojo
 			passwordLocationTB.setText(presenter.getAccount().getPasswordLocation());
@@ -460,6 +467,29 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				if (dp_suggestion.getDirectoryPerson() != null) {
 					presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
 					directoryLookupSB.setTitle(presenter.getDirectoryPerson().toString());
+				}
+			}
+		});
+		
+		ownerIdSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (dp_suggestion.getDirectoryPerson() != null) {
+					if (presenter.getAccount().getAccountOwnerDirectoryMetaData() == null) {
+						presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
+					}
+					
+					//TODO: set the ownerIdSB text to their name
+					
+					//set the PPID on AccountOwnerDirectoryMetaData.
+					presenter.getAccount().getAccountOwnerDirectoryMetaData().
+						setPublicId(dp_suggestion.getDirectoryPerson().getKey());
+					
+					// basically, we want to present their name but store their PPID
+					
+//					presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
+//					directoryLookupSB.setTitle(presenter.getDirectoryPerson().toString());
 				}
 			}
 		});
@@ -509,7 +539,18 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
-		ownerNetIdTB.setEnabled(false);
+		ownerIdSB.setEnabled(false);
+		if (editing) {
+			if (presenter.getAccount() != null) {
+				if (userLoggedIn.getPublicId().equalsIgnoreCase(presenter.getAccount().getAccountOwnerDirectoryMetaData().getPublicId())) {
+					ownerIdSB.setEnabled(true);
+				}
+			}
+		}
+		else {
+			// it's a create
+			ownerIdSB.setEnabled(true);
+		}
 		passwordLocationTB.setEnabled(false);
 		speedTypeTB.setEnabled(true);
 		addEmailTF.setEnabled(false);
@@ -524,7 +565,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
-		ownerNetIdTB.setEnabled(false);
+		ownerIdSB.setEnabled(false);
 		passwordLocationTB.setEnabled(false);
 		speedTypeTB.setEnabled(false);
 		addEmailTF.setEnabled(false);
@@ -664,7 +705,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		okayButton.setEnabled(true);
 		accountIdTB.setEnabled(true);
 		accountNameTB.setEnabled(true);
-		ownerNetIdTB.setEnabled(true);
+		ownerIdSB.setEnabled(true);
 		passwordLocationTB.setEnabled(true);
 		speedTypeTB.setEnabled(true);
 		addEmailTF.setEnabled(true);

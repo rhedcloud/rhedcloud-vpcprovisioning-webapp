@@ -1138,6 +1138,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		moa.setCidr(pojo.getCidr());
 		moa.setVpnProfileId(pojo.getVpnProfileId());
+		moa.setPurpose(pojo.getPurpose());
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
@@ -1151,6 +1152,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setAccountName(account.getAccountName());
 		pojo.setVpcId(moa.getVpcId());
 		pojo.setType(moa.getType());
+		pojo.setCidr(moa.getCidr());
+		pojo.setVpnProfileId(moa.getVpnProfileId());
+		pojo.setPurpose(moa.getPurpose());
 //		pojo.setComplianceClass(moa.getComplianceClass());
 
 //		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
@@ -1232,7 +1236,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setAccountName(pojo.getAccountName());
 		moa.setPasswordLocation(pojo.getPasswordLocation());
-		moa.setAccountOwnerNetId(pojo.getAccountOwnerDirectoryMetaData().getNetId());
+		moa.setAccountOwnerNetId(pojo.getAccountOwnerDirectoryMetaData().getPublicId());
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setComplianceClass(pojo.getComplianceClass());
 		// email
@@ -1265,8 +1269,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// a clean meta data object with that data so we don't end up with a 
 		// reference to the cached object which would lead to issues during update
 		DirectoryMetaDataPojo ownerDmdp = new DirectoryMetaDataPojo();
-		DirectoryMetaDataPojo cachedDmdp = this.getDirectoryMetaDataForNetId(moa.getAccountOwnerNetId());
+		DirectoryMetaDataPojo cachedDmdp = this.getDirectoryMetaDataForPublicId(moa.getAccountOwnerNetId());
 		if (cachedDmdp != null) {
+			ownerDmdp.setPublicId(cachedDmdp.getPublicId());
 			ownerDmdp.setNetId(cachedDmdp.getNetId());
 			ownerDmdp.setFirstName(cachedDmdp.getFirstName());
 			ownerDmdp.setLastName(cachedDmdp.getLastName());
@@ -3342,7 +3347,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public DirectoryMetaDataPojo getDirectoryMetaDataForNetId(String netId) throws RpcException {
+	public DirectoryMetaDataPojo getDirectoryMetaDataForPublicId(String publicId) throws RpcException {
 		// - check cache
 		// - if cache exists
 		// 	- return DirectoryMetaDataPojo from cache
@@ -3351,9 +3356,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// 	- populate DirectoryMetaDataPojo with FullPerson data
 		//  - add DirectoryMetaDataPojo to cache
 		//  - return pojo
-		netId = netId.toLowerCase().trim();
+//		publicId = publicId.toLowerCase().trim();
 		DirectoryMetaDataPojo dmd = (DirectoryMetaDataPojo) Cache.getCache().get(
-				Constants.NET_ID + netId);
+				Constants.NET_ID + publicId);
 		if (dmd!= null) {
 			return dmd;
 		}
@@ -3363,7 +3368,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
 				FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
 
-				queryObject.setNetId(netId);
+//				queryObject.setNetId(netId);
+				queryObject.setPublicId(publicId);
 
 				String authUserId = this.getAuthUserIdForHALS();
 				actionable.getAuthentication().setAuthUserId(authUserId);
@@ -3374,14 +3380,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						this.getIdentityServiceRequestService());
 				
 				// should only get one back
-				info("got " + moas.size() + " FullPerson moas back from ESB for NetId '" + netId + "'");
+				info("got " + moas.size() + " FullPerson moas back from ESB for PublicID '" + publicId + "'");
 				for (FullPerson moa : moas) {
-					dmd.setNetId(netId);
+//					dmd.setNetId(netId);
 					dmd.setFirstName(moa.getPerson().getPersonalName().getFirstName());
 					dmd.setLastName(moa.getPerson().getPersonalName().getLastName());
+					dmd.setPublicId(moa.getPublicId());
 				}
 
-				Cache.getCache().put(Constants.NET_ID + netId, dmd);
+				Cache.getCache().put(Constants.NET_ID + publicId, dmd);
 				return dmd;
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
@@ -5168,6 +5175,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setFax(moa.getFax());
 		pojo.setFirstMiddle(moa.getFirstMiddle());
 		pojo.setFullName(moa.getFullName());
+		// Key is their publicId
 		pojo.setKey(moa.getKey());
 		pojo.setLastName(moa.getLastName());
 		pojo.setDirectoryLocation(moa.getDirectoryLocation());
@@ -6141,6 +6149,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public String getEsbServiceStatusURL() throws RpcException {
+		try {
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String esbServiceStatusURL = generalProps.getProperty("esbServiceStatusURL", null);
+			if (esbServiceStatusURL == null) {
+				throw new RpcException("Null 'esbServiceStatusURL' property.  This application is not configured correctly.");
+			}
+			return esbServiceStatusURL;
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
 		}
 	}
 }

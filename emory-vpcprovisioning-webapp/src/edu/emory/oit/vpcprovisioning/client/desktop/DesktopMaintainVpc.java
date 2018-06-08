@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -55,6 +56,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiField TextBox accountNameTB;
 	@UiField TextBox vpcIdTB;
 	@UiField ListBox vpcTypeLB;
+	@UiField TextBox cidrTB;
+	@UiField TextBox vpnProfileIdTB;
+	@UiField TextArea purposeTA;
 	
 	// used when generating vpc
 	@UiField Grid generateVpcGrid;
@@ -62,6 +66,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiField TextBox vpcReqAccountIdTB;
 	@UiField TextBox vpcReqSpeedTypeTB;
 	@UiField ListBox vpcReqTypeLB;
+	@UiField TextBox vpcReqCidrTB;
 	@UiField Label speedTypeLabel;
 	
 	// firewall rules and elasticip tabs
@@ -96,6 +101,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 					presenter.getVpc().setAccountId(accountIdTB.getText());
 					presenter.getVpc().setVpcId(vpcIdTB.getText());
 					presenter.getVpc().setType(vpcTypeLB.getSelectedValue());
+					presenter.getVpc().setCidr(cidrTB.getText());
+					presenter.getVpc().setVpnProfileId(vpnProfileIdTB.getText());
+					presenter.getVpc().setPurpose(purposeTA.getText());
 					// admin net ids are added as they're added in the interface
 				}
 				else {

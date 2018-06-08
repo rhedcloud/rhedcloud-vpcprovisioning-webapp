@@ -9,14 +9,13 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
@@ -43,10 +42,6 @@ import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
-import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
@@ -85,6 +80,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		// Create a new timer that checks for notifications
+//	    Timer t = new Timer() {
+//	      @Override
+//	      public void run() {
+//	        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+//				@Override
+//				public void onFailure(Throwable caught) {
+//			        GWT.log("error checking for notifications...");
+//				}
+//
+//				@Override
+//				public void onSuccess(Void result) {
+//			        GWT.log("checked for notifications...");
+//				}
+//	        };
+//	        VpcProvisioningService.Util.getInstance().logMessage("Check for notifications.", callback);
+//	      }
+//	    };
+
+	    // Schedule the timer to run once every 10 seconds
+//	    t.scheduleRepeating(10000);
 		
 //		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 //		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
@@ -196,6 +213,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField HorizontalPanel generalInfoPanel;
 	@UiField HorizontalPanel linksPanel;
 	@UiField HTMLPanel notificationsHTML;
+	@UiField Anchor esbServiceStatusAnchor;
 	
     /**
 	 * A boolean indicating that we have not yet seen the first content widget.
@@ -355,6 +373,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	/*** Handlers ***/
+	@UiHandler("esbServiceStatusAnchor")
+	void esbServiceStatusAnchorClick(ClickEvent e) {
+		AsyncCallback<String> callback = new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				String msg = "Exception getting ESB service status URL"; 
+				GWT.log(msg, caught);
+				showMessageToUser(msg + " "	 + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				GWT.log("opening " + result);
+				Window.open(result, "_blank", "");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getEsbServiceStatusURL(callback);
+	}
+
 	@UiHandler ("mainTabPanel") 
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
@@ -593,5 +630,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void hideMainTabPanel() {
 		mainTabPanel.setVisible(false);
+	}
+
+	public void showMessageToUser(String message) {
+		Window.alert(message);
 	}
 }
