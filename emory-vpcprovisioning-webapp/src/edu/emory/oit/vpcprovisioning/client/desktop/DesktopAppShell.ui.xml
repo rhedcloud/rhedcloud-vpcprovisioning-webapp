@@ -11,22 +11,20 @@
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 			<g:VerticalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:Grid cellSpacing="8">
-						<g:row>
-					    	<g:customCell>
-								<g:HTMLPanel ui:field='logoTitleBar' title="Home">
-									<div ui:field='logoElem'><img src="images/emory-aws-logos.png"/></div>
-								</g:HTMLPanel>
-					    	</g:customCell>
-					    	<g:customCell>
-					    		<g:Anchor addStyleNames="{style.linksMenuHeader}" 
-					    			ui:field="esbServiceStatusAnchor">Check System Status</g:Anchor>
-					    	</g:customCell>
-						</g:row>
-					</g:Grid>
+					<g:HorizontalPanel spacing="8">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:HTMLPanel addStyleNames="{style.logo}" ui:field='logoTitleBar' title="Home">
+								<div ui:field='logoElem'><img src="images/emory-aws-logos.png"/></div>
+							</g:HTMLPanel>
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
+				    		<g:Anchor addStyleNames="{style.systemStatusLink}" 
+				    			ui:field="esbServiceStatusAnchor">Check System Status</g:Anchor>
+						</g:cell>
+					</g:HorizontalPanel>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel ui:field='releaseInfoPanel'>
+					<g:HTMLPanel styleName="{style.releaseInfoPanel}" ui:field='releaseInfoPanel'>
 						<div ui:field='releaseInfoElem'/>
 					</g:HTMLPanel>
 				</g:cell>
