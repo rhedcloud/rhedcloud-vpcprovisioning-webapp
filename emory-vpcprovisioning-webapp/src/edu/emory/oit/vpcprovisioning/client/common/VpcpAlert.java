@@ -1,7 +1,9 @@
 package edu.emory.oit.vpcprovisioning.client.common;
 
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -17,9 +19,14 @@ public class VpcpAlert extends DialogBox {
 		vpcpAlert.setHTML(title);
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("100%");
+		vp.setSpacing(12);
 		HTML h = new HTML(message);
+		h.setWidth("100%");
 		vp.add(h);
 		Button okayButton = new Button("Okay");
+		okayButton.addStyleName("normalButton");
+		okayButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		okayButton.setWidth("100px");
 		okayButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -30,7 +37,7 @@ public class VpcpAlert extends DialogBox {
 		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_LEFT);
 		vp.setCellHorizontalAlignment(okayButton, HasHorizontalAlignment.ALIGN_CENTER);
 		vpcpAlert.setWidget(vp);
-		vpcpAlert.setWidth("450px");
+		vpcpAlert.setWidth(Integer.toString(Window.getClientWidth() / 3) + "px");
 		vpcpAlert.center();
 		vpcpAlert.show();
 	}
