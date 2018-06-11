@@ -5,7 +5,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Image;
@@ -13,6 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 
 public abstract class ViewImplBase extends Composite {
@@ -47,7 +47,7 @@ public abstract class ViewImplBase extends Composite {
 	}
 
 	public void showMessageToUser(String message) {
-		Window.alert(message);
+		VpcpAlert.alert("Alert", message);
 	}
 	
 	public void showStatus(Widget source, String message) {

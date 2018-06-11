@@ -1,6 +1,5 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -18,6 +17,7 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 //	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 //	List<RoleAssignmentPojo> roleAssignments = new ArrayList<RoleAssignmentPojo>();
 	String complianceClass;
+	List<String> sensitiveDataList = new java.util.ArrayList<String>();
 	AccountPojo baseline;
 	
 	public static final ProvidesKey<AccountPojo> KEY_PROVIDER = new ProvidesKey<AccountPojo>() {
@@ -132,5 +132,13 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 
 	public void setComplianceClass(String complianceClass) {
 		this.complianceClass = complianceClass;
+	}
+
+	public List<String> getSensitiveDataList() {
+		return sensitiveDataList;
+	}
+
+	public void setSensitiveDataList(List<String> sensitiveDataList) {
+		this.sensitiveDataList = sensitiveDataList;
 	}
 }

@@ -89,6 +89,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
+	@UiField VerticalPanel sensitiveDataPanel;
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -454,6 +455,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		// populate associated emails if appropriate
 		initializeEmailPanel();
 		
+		// populate sensitive data panel
+		
 		// populate admin net id fields if appropriate
 		adminTable.clear();
 //		initializeNetIdPanel();
@@ -677,21 +680,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void showPleaseWaitDialog() {
-//		super.showPleaseWaitDialog();
 		adminPleaseWaitDialog = new PopupPanel(true);
 		Image img = new Image();
 		img.setUrl("images/ajax-loader.gif");
 		adminPleaseWaitDialog.setWidget(img);
 		adminPleaseWaitDialog.center();
-//		adminPleaseWaitDialog.showRelativeTo(adminLabel);
 		adminPleaseWaitDialog.setPopupPosition(adminLabel.getOffsetWidth() / 2, adminLabel.getAbsoluteTop() + 75);
 		adminPleaseWaitDialog.show();
-//		adminPleaseWaitDialog.setPopupPositionAndShow(new PositionCallback() {
-//			@Override
-//			public void setPosition(int offsetWidth, int offsetHeight) {
-//				adminLabel.getOffsetWidth() 
-//			}
-//		});
 	}
 	@Override
 	public void hidePleaseWaitDialog() {
@@ -714,6 +709,26 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		directoryLookupSB.setEnabled(true);
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(true);
+	}
+	@Override
+	public void vpcpPromptOkay(String valueEntered) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpPromptCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpConfirmOkay() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpConfirmCancel() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

@@ -30,6 +30,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpPrompt;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
@@ -43,6 +45,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 	List<ElasticIpAssignmentPojo> elasticIpAssignmentList = new java.util.ArrayList<ElasticIpAssignmentPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
+    ElasticIpAssignmentPojo selectedEia = null;
 
 	/*** FIELDS ***/
 	@UiField SimplePager elasticIpAssignmentListPager;
@@ -105,29 +108,36 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				// elasticip assignment update with the new private ip which comes from somewhere
 				// for now, they can type it in (prompt for private IP address).
 				actionsPopup.hide();
-				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
-				if (m != null) {
-					String privateIp = Window.prompt("Enter a Private IP Address to associate to this Elastic IP", "");
-					GWT.log("Private IP is: " + privateIp);
-					if (privateIp != null && privateIp.length() > 0) {
-						boolean confirmed = Window.confirm("Use the Private IP address: " + privateIp + "?");
-						GWT.log("Confirmed is: " + confirmed);
-						if (confirmed) {
-							if (m.getElasticIp() != null) {
-								m.getElasticIp().setAssociatedIpAddress(privateIp);
-							}
-							else {
-								ElasticIpPojo eip = new ElasticIpPojo();
-								eip.setAssociatedIpAddress(privateIp);
-								m.setElasticIp(eip);
-							}
-							presenter.saveElasticIpAssignment(m);
-						}
-					}
-				}
-				else {
+//				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
+				selectedEia = selectionModel.getSelectedObject();
+				if (selectedEia == null) {
 					showMessageToUser("Please select an item from the list");
 				}
+				else {
+					VpcpPrompt.prompt(DesktopListElasticIpAssignment.this, "Please Enter a Private IP", "Enter a Private IP Address to associate to this Elastic IP",  "In the form IP/bits");
+				}
+//				if (m != null) {
+//					String privateIp = Window.prompt("Enter a Private IP Address to associate to this Elastic IP", "");
+//					GWT.log("Private IP is: " + privateIp);
+//					if (privateIp != null && privateIp.length() > 0) {
+//						boolean confirmed = Window.confirm("Use the Private IP address: " + privateIp + "?");
+//						GWT.log("Confirmed is: " + confirmed);
+//						if (confirmed) {
+//							if (m.getElasticIp() != null) {
+//								m.getElasticIp().setAssociatedIpAddress(privateIp);
+//							}
+//							else {
+//								ElasticIpPojo eip = new ElasticIpPojo();
+//								eip.setAssociatedIpAddress(privateIp);
+//								m.setElasticIp(eip);
+//							}
+//							presenter.saveElasticIpAssignment(m);
+//						}
+//					}
+//				}
+//				else {
+//					showMessageToUser("Please select an item from the list");
+//				}
 			}
 		});
 		associateAddressesAnchor.setEnabled(false);
@@ -168,44 +178,6 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
-
-	protected native String myPrompt(String msg, String defaultValue) /*-{
-//		$wnd.onbeforeunload = function(e) {
-		$wnd.confirm({
-		    title: 'Confirm!',
-		    content: 'Are you sure you want to refund invoice ?',
-		    confirm: function(){
-		       //do something 
-		    },
-		    cancel: function(){
-		       //do something
-		    }
-			}); 
-			return "";
-	}-*/;
-	
-	protected native void alert() /*-{
-		$wnd.alert = function(message) { $(document.createElement('div'))
-		    .attr({
-		      title: 'Alert',
-		      'class': 'alert'
-		    })
-		    .html(message)
-		    .dialog({
-		      buttons: {
-		        OK: function() {
-		          $(this).dialog('close');
-		        }
-		      },
-		      close: function() {
-		        $(this).remove();
-		      },
-		      modal: true,
-		      resizable: false,
-		      width: 'auto'
-		    });
-		};
-	}-*/;
 
 	private static DesktopListElasticIpAssignmentUiBinder uiBinder = GWT
 			.create(DesktopListElasticIpAssignmentUiBinder.class);
@@ -427,5 +399,49 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 	public void applyCentralAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void vpcpPromptOkay(String valueEntered) {
+		if (selectedEia != null) {
+			GWT.log("Private IP is: " + valueEntered);
+			if (valueEntered != null && valueEntered.length() > 0) {
+				if (selectedEia.getElasticIp() != null) {
+					selectedEia.getElasticIp().setAssociatedIpAddress(valueEntered);
+				}
+				else {
+					ElasticIpPojo eip = new ElasticIpPojo();
+					eip.setAssociatedIpAddress(valueEntered);
+					selectedEia.setElasticIp(eip);
+				}
+				// use VpcpConfirm dialog box
+//				VpcpConfirm.confirm(DesktopListElasticIpAssignment.this, "Confirm CIDR", "Use the Private IP address: " + valueEntered + "?");
+				boolean confirmed = Window.confirm("Use the Private IP address: " + valueEntered + "?");
+				if (confirmed) {
+					presenter.saveElasticIpAssignment(selectedEia);
+				}
+			}
+			else {
+				showMessageToUser("Please enter a private IP to associate to the selected item.");
+			}
+		}
+		else {
+			showMessageToUser("Please select an item from the list");
+		}
+	}
+
+	@Override
+	public void vpcpPromptCancel() {
+		showMessageToUser("Operation canceled.");
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		presenter.saveElasticIpAssignment(selectedEia);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		showMessageToUser("Operation canceled.");
 	}
 }

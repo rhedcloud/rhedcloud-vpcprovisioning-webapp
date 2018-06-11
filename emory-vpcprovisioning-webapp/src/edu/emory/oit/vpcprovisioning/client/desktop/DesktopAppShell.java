@@ -33,6 +33,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPresenter;
@@ -633,6 +634,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	public void showMessageToUser(String message) {
-		Window.alert(message);
+		VpcpAlert.alert("Alert", message);
 	}
 }

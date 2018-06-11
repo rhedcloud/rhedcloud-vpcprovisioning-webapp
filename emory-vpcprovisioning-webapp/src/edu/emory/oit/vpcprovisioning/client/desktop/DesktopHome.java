@@ -215,4 +215,24 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 		p.setWidget(h);
 		p.showRelativeTo(personInfoButton);
 	}
+	@Override
+	public void vpcpPromptOkay(String valueEntered) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpPromptCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpConfirmOkay() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpConfirmCancel() {
+		// TODO Auto-generated method stub
+		
+	}
 }

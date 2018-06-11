@@ -19,14 +19,6 @@
 		The Emory ElasticIp Service is authoritatative for 
 		ElasticIp and ElasticIpAssignment objects and allows applications like this one 
 		to query, create, update and delete those objects if appropriate.</g:HTML>
-		<!-- 
-		<br/><br/>
-		ElasticIpAssignments are created automatically by backend services when a 
-		VirtualPrivateCloud is generated.  Therefore, for ElasticIpAssignments, the 
-		only supported operations from this application are query and delete, 
-		you can delete a ElasticIpAssignent or you can select a 
-		row and view more details about the selected ElasticIpAssignment.
-		-->
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>

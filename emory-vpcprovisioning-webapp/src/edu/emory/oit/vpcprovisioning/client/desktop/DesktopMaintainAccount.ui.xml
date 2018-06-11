@@ -13,29 +13,6 @@
 				</g:HorizontalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<!-- 
-		<g:VerticalPanel spacing="8" width="100%">
-			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-				<g:CaptionPanel width="90%" captionHTML="Notice">
-					<g:VerticalPanel width="100%" height="100%">
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-						<g:HTML ui:field="accountInfoHTML">Make a note of the account number you wish to log into and 
-							then click <a target="_blank" 
-							href="AWS_ACCOUNTS_URL" title="Open AWS Console in new tab.">here</a> 
-							to log into AWS accounts using your Emory login.  
-							Once you are logged into the appropriate account and 
-							assumed the appropriate role, you can use these 
-							links to access various account information:
-							<ul>
-								<li>Billing Management:  AWS_BILLING_MANAGEMENT_URL</li>
-							</ul>
-						</g:HTML>
-						</g:cell>
-					</g:VerticalPanel>
-				</g:CaptionPanel>
-			</g:cell>
-		</g:VerticalPanel>
-		 -->
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="8">
 				<g:row>
@@ -61,10 +38,6 @@
 							<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-					    	<!-- 
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="ownerIdTB" debugId="ownerIdTB" />
-					    	 -->
 							<g:SuggestBox ui:field="ownerIdSB" debugId="ownerIdSB" 
 								addStyleNames="{style.field} {style.glowing-border}"/>
 				    	</g:customCell>
@@ -100,6 +73,9 @@
 				    	</g:customCell>
 			    	</g:row>
 			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+			<g:VerticalPanel spacing="8" ui:field="sensitiveDataPanel"/>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
 			<g:HorizontalPanel>

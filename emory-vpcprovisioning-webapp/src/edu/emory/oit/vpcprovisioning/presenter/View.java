@@ -28,4 +28,8 @@ public interface View extends IsWidget {
 	public boolean hasFieldViolations();
 	HasClickHandlers getCancelWidget();
 	HasClickHandlers getOkayWidget();
+	void vpcpPromptOkay(String valueEntered);
+	void vpcpPromptCancel();
+	void vpcpConfirmOkay();
+	void vpcpConfirmCancel();
 }

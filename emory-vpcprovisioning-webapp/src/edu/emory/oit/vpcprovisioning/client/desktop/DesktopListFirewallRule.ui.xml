@@ -5,7 +5,7 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:ScrollPanel width="100%" height="99%">
-	<g:VerticalPanel width="100%" spacing="20">
+	<g:VerticalPanel width="100%" spacing="15">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:HorizontalPanel spacing="8">
@@ -30,7 +30,7 @@
 					<g:VerticalPanel ui:field="firewallRuleTabContainer" width="100%" height="100%" spacing="20">
 						<g:HTML addStyleNames="{style.introHeading}">FirewallRule List</g:HTML>
 						<g:HTML addStyleNames="{style.body}">Below is a list of existing AWS FirewallRules for VPCs you are associated with.<br/><br/></g:HTML>
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
 							<g:Grid cellSpacing="8">
 								<g:row>
 									<g:customCell>
@@ -70,7 +70,7 @@
 					</g:VerticalPanel>
 				</g:tab>
 				<g:tab>
-					<g:header>Your Requests</g:header>
+					<g:header>Request Firewall Rules</g:header>
 					<g:VerticalPanel ui:field="requestsTabContainer" width="100%" height="100%" spacing="20">
 						<g:HTML addStyleNames="{style.introHeading}">Firewall Exception Request List</g:HTML>
 						<g:HTML addStyleNames="{style.body}">Below is a list of existing AWS Firewall Exception Requests that you have made and their statuses.<br/><br/></g:HTML>

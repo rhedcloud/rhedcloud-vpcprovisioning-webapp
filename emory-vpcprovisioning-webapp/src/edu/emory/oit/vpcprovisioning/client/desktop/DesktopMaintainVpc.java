@@ -256,12 +256,18 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			accountNameTB.setText("");
 			vpcIdTB.setText("");
 			vpcTypeLB.setSelectedIndex(0);
+			cidrTB.setText("");
+			purposeTA.setText("");
+			vpnProfileIdTB.setText("");
 
 			if (presenter.getVpc() != null) {
 				GWT.log("maintain VPC view initPage.  VPC: " + presenter.getVpc().getVpcId());
 				accountIdTB.setText(presenter.getVpc().getAccountId());
 				accountNameTB.setText(presenter.getVpc().getAccountName());
 				vpcIdTB.setText(presenter.getVpc().getVpcId());
+				cidrTB.setText(presenter.getVpc().getCidr());
+				purposeTA.setText(presenter.getVpc().getPurpose());
+				vpnProfileIdTB.setText(presenter.getVpc().getVpnProfileId());
 			}
 			
 			ListFirewallRuleView listAccountView = presenter.getClientFactory().getListFirewallRuleView();
@@ -278,6 +284,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			vpcReqAccountIdTB.setText("");
 			vpcReqSpeedTypeTB.setText("");
 			vpcReqTypeLB.setSelectedIndex(0);
+			cidrTB.setText("");
+			purposeTA.setText("");
+			vpnProfileIdTB.setText("");
 		}
 		
 		// populate admin net id fields if appropriate
@@ -368,26 +377,38 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
+		accountNameTB.setEnabled(false);
 		vpcIdTB.setEnabled(false);
 		vpcTypeLB.setEnabled(false);
+		cidrTB.setEnabled(false);
+		vpnProfileIdTB.setEnabled(false);
+		purposeTA.setEnabled(true);
+		okayButton.setEnabled(true);
+		
 		vpcReqOwnerNetIdTB.setEnabled(false);
 		vpcReqAccountIdTB.setEnabled(false);
 		vpcReqSpeedTypeTB.setEnabled(false);
 		vpcReqTypeLB.setEnabled(false);
+		vpcReqCidrTB.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
+		accountNameTB.setEnabled(false);
 		vpcIdTB.setEnabled(false);
 		vpcTypeLB.setEnabled(false);
+		cidrTB.setEnabled(false);
+		vpnProfileIdTB.setEnabled(false);
+		purposeTA.setEnabled(false);
+		okayButton.setEnabled(false);
+		
 		vpcReqOwnerNetIdTB.setEnabled(false);
 		vpcReqAccountIdTB.setEnabled(false);
 		vpcReqSpeedTypeTB.setEnabled(false);
 		vpcReqTypeLB.setEnabled(false);
+		vpcReqCidrTB.setEnabled(false);
 	}
 
 	@Override
@@ -433,13 +454,43 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void applyCentralAdminMask() {
-		okayButton.setEnabled(true);
 		accountIdTB.setEnabled(true);
+		accountNameTB.setEnabled(true);
 		vpcIdTB.setEnabled(true);
 		vpcTypeLB.setEnabled(true);
+		cidrTB.setEnabled(true);
+		vpnProfileIdTB.setEnabled(true);
+		purposeTA.setEnabled(true);
+		okayButton.setEnabled(true);
+		
 		vpcReqOwnerNetIdTB.setEnabled(true);
 		vpcReqAccountIdTB.setEnabled(true);
 		vpcReqSpeedTypeTB.setEnabled(true);
 		vpcReqTypeLB.setEnabled(true);
+		vpcReqCidrTB.setEnabled(true);
+	}
+
+	@Override
+	public void vpcpPromptOkay(String valueEntered) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void vpcpPromptCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		// TODO Auto-generated method stub
+		
 	}
 }

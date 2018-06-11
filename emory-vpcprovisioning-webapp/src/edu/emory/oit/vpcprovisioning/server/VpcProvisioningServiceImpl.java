@@ -1246,11 +1246,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
             email.setEmail(p.getEmailAddress());
             moa.addEmailAddress(email);
         }
-
-		// owner net ids
-//        for (String p : pojo.getCustomerAdminNetIdList()) {
-//            moa.addCustomerAdminNetId(p);
-//        }
+        
+        for (String s : pojo.getSensitiveDataList()) {
+        	moa.addSensitiveDataType(s);
+        }
 
         this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
@@ -1287,9 +1286,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			pojo.getEmailList().add(emp);
 		}
 		
-//		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
-//			pojo.getCustomerAdminNetIdList().add(netId);
-//		}
+		if (moa.getSensitiveDataType() != null) {
+			for (String sensitiveDataType : (List<String>) moa.getSensitiveDataType()) {
+				pojo.getSensitiveDataList().add(sensitiveDataType);
+			}
+		}
 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);

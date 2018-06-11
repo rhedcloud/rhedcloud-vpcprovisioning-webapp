@@ -130,7 +130,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) || 
 				userLoggedIn.isLitsAdmin()) {
 
-		    Grid grid = new Grid(2, 1);
+		    Grid grid = new Grid(3, 1);
 		    grid.setCellSpacing(8);
 		    actionsPopup.add(grid);
 		    
@@ -142,7 +142,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			Anchor maintainAnchor = new Anchor(anchorText);
 			maintainAnchor.addStyleName("productAnchor");
 			maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-			maintainAnchor.setTitle("View/edit selected Firewall Exception Request");
+			maintainAnchor.setTitle("Create Firewall Exception Request like the selected Firewall Rule.");
 			maintainAnchor.ensureDebugId(anchorText);
 			maintainAnchor.addClickHandler(new ClickHandler() {
 				@Override
@@ -150,8 +150,6 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 					actionsPopup.hide();
 					FirewallRulePojo m = fw_selectionModel.getSelectedObject();
 					if (m != null) {
-						// just use a popup here and not try to show the "normal" CidrAssignment
-						// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());
 					}
 					else {
@@ -160,6 +158,22 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				}
 			});
 			grid.setWidget(0, 0, maintainAnchor);
+
+			Anchor createFwerAnchor = new Anchor("Create Firewall Exception Request");
+			createFwerAnchor.addStyleName("productAnchor");
+			createFwerAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			createFwerAnchor.setTitle("Create a new Firewall Exception Request");
+			createFwerAnchor.ensureDebugId(createFwerAnchor.getText());
+			createFwerAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					actionsPopup.hide();
+					FirewallRulePojo m = null;
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());
+				}
+			});
+			grid.setWidget(1, 0, createFwerAnchor);
+			actionsPopup.showRelativeTo(firewallRuleActionsButton);
 
 			Anchor deleteAnchor = new Anchor("Remove Firewall Rule");
 			deleteAnchor.addStyleName("productAnchor");
@@ -181,7 +195,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 					}
 				}
 			});
-			grid.setWidget(1, 0, deleteAnchor);
+			grid.setWidget(2, 0, deleteAnchor);
 			actionsPopup.showRelativeTo(firewallRuleActionsButton);
 		}
 		else {
@@ -997,6 +1011,26 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	}
 	@Override
 	public void applyCentralAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpPromptOkay(String valueEntered) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpPromptCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpConfirmOkay() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void vpcpConfirmCancel() {
 		// TODO Auto-generated method stub
 		
 	}

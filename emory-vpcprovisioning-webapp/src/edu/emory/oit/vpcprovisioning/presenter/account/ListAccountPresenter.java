@@ -18,8 +18,6 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListAccountPresenter extends PresenterBase implements ListAccountView.Presenter {
@@ -87,7 +85,12 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-                getView().hidePleaseWaitPanel();
+				log.log(Level.SEVERE, "Exception Retrieving Accounts", caught);
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Accounts you're associated to.  " +
+						"Message from server is: " + caught.getMessage());
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					log.log(Level.SEVERE, 
 //							"Exception getting user logged in on server", 
@@ -104,9 +107,6 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
-				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Accounts");
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());

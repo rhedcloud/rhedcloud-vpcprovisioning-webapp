@@ -509,4 +509,28 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void vpcpPromptOkay(String valueEntered) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void vpcpPromptCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		// TODO Auto-generated method stub
+		
+	}
 }
