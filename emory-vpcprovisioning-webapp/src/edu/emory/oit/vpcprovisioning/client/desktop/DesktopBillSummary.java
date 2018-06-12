@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Tree;
@@ -17,6 +19,8 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
@@ -36,7 +40,12 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 	@UiField ListBox accountLB;
 	@UiField ListBox billLB;	
 	@UiField VerticalPanel billSummaryPanel;
-	
+	@UiField Button closeButton;
+
+	@UiHandler ("closeButton")
+	void closeButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ACCOUNT);
+	}
 	@UiHandler ("accountLB")
 	void accountSelected(ChangeEvent e) {
 		// refresh the bill drop down with bills for the selected account

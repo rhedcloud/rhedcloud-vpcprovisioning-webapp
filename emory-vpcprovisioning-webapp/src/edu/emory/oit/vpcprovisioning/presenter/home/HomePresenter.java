@@ -227,10 +227,14 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 					getView().showDirectoryPersonInfoPopup("NULL DirectoryPerson "
 							+ "object returned from server");
 				}
-				else if (result.getResults().size() != 1) {
-					getView().showDirectoryPersonInfoPopup("Invalid number of DirectoryPerson objects "
-							+ "returned from server.  Got " + result.getResults().size() + " expected 1");
-				}
+				// There may be more than one returned but we'll just take the first one.
+				// this is because now we're pulling back EHC people too which may lead 
+				// to duplicate records returned for the same public id.  This is okay but 
+				// we only need one of them.
+//				else if (result.getResults().size() != 1) {
+//					getView().showDirectoryPersonInfoPopup("Invalid number of DirectoryPerson objects "
+//							+ "returned from server.  Got " + result.getResults().size() + " expected 1");
+//				}
 				else {
 					DirectoryPersonPojo dp = result.getResults().get(0);
 					getView().showDirectoryPersonInfoPopup(dp.toString());
