@@ -455,7 +455,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void applyCentralAdminMask() {
 		accountIdTB.setEnabled(true);
-		accountNameTB.setEnabled(true);
+		accountNameTB.setEnabled(false);
 		vpcIdTB.setEnabled(true);
 		vpcTypeLB.setEnabled(true);
 		cidrTB.setEnabled(true);

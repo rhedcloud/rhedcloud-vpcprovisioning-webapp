@@ -615,13 +615,17 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				GWT.log("Error removing person from role", caught);
 				getView().hidePleaseWaitDialog();
+				getView().showMessageToUser("Error removing person from role.  Error is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(Void result) {
 				accountRoleAssignmentSummaries.remove(roleAssignmentSummary);
 				getView().hidePleaseWaitDialog();
+				getView().showMessageToUser(roleAssignmentSummary.getDirectoryPerson().getFullName() + 
+					" was successfully removed from Role " + roleAssignmentSummary.getRoleAssignment().getRoleDN());
 			}
 		};
 		getView().showPleaseWaitDialog();

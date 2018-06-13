@@ -64,6 +64,20 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				getView().initPage();
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 				
+				AsyncCallback<String> asCallback = new AsyncCallback<String>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("Error getting account series info", caught);
+						getView().setAccountSeriesInfo("Error");
+					}
+
+					@Override
+					public void onSuccess(String result) {
+						getView().setAccountSeriesInfo(result);
+					}
+				};
+				VpcProvisioningService.Util.getInstance().getAccountSeriesText(asCallback);
+
 				getView().setAccountRoleList(user.getAccountRoles());
 				// account affiliation count needs to be calculated because the accountRoles in the user 
 				// could have multilple roles for the same account.  so, i need to go through and get a 

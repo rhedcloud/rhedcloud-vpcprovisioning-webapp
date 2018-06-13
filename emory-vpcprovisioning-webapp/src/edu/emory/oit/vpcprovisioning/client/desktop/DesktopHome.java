@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,7 +33,8 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	@UiField Button roleInfoButton;
 	@UiField Button directoryInfoButton;
 	@UiField Button personInfoButton;
-	
+	@UiField Element accountSeriesElem;
+
 	@UiHandler ("roleInfoButton")
 	void roleInfoButtonClicked(ClickEvent e) {
 		HTML h = new HTML(presenter.getDetailedRoleInfoHTML());
@@ -234,5 +236,9 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	public void vpcpConfirmCancel() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public void setAccountSeriesInfo(String seriesInfo) {
+		accountSeriesElem.setInnerHTML(seriesInfo);
 	}
 }

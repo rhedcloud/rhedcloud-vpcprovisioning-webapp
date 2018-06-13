@@ -18,6 +18,11 @@
 			<g:CaptionPanel addStyleNames="{style.light-captionpanel}" width="90%" captionHTML="Emory AWS Information">
 				<g:VerticalPanel width="100%" height="100%" spacing="8">
 					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTMLPanel styleName="{style.body}" ui:field='accountSeriesPanel'>
+							<div ui:field='accountSeriesElem'/>
+						</g:HTMLPanel>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 						<g:HTML ui:field="emoryAwsInfoHTML" addStyleNames="{style.body}">Click to view a list of your roles.
 						</g:HTML>
 					</g:cell>

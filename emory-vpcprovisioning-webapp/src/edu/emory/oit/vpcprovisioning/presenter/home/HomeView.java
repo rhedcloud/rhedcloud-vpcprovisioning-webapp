@@ -38,6 +38,7 @@ public interface HomeView extends Editor<Void>, IsWidget, View {
 	void showPleaseWaitPanel();
 	void setAccountRoleList(List<AccountRolePojo> accountRoles);
 	void setRoleInfoHTML(String roleInfo);
+	void setAccountSeriesInfo(String seriesInfo);
 	void setPersonInfoHTML(String personInfo);
 	void setDirectoryInfoHTML(String directoryInfo);
 	void showDirectoryPersonInfoPopup(String directoryPersonInfoHTML);

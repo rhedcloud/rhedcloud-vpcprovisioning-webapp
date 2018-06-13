@@ -29,7 +29,12 @@ public class DirectoryPersonRpcSuggestOracle extends SuggestOracle {
 			public void onFailure(Throwable caught) {
 				GWT.log("[MultiWordRpcSuggestOracle.requestSuggestions] Failure: " + caught);
 				List<MultiWordRpcSuggestion> descList = new java.util.ArrayList<MultiWordRpcSuggestion>();
-				descList.add(new MultiWordRpcSuggestion("No matches found yet...", "", null));
+				if (caught.getMessage().toLowerCase().indexOf("more than 100 matches found") >= 0) {
+					descList.add(new MultiWordRpcSuggestion("Too many matches, keep typing...", "", null));
+				}
+				else {
+					descList.add(new MultiWordRpcSuggestion("An Error Occurred: " + caught.getMessage(), "", null));
+				}
 				Response resp =
 			            new Response(descList);
 				callback.onSuggestionsReady(request, resp);

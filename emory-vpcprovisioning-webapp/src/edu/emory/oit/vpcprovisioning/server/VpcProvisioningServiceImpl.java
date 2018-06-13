@@ -6167,4 +6167,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e.getMessage());
 		}
 	}
+
+	@Override
+	public String getAccountSeriesText() throws RpcException {
+		try {
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String l_awsConsoleInfoText = generalProps.getProperty("awsConsoleInfoText", "Unknown");
+			return l_awsConsoleInfoText;
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+	}
 }

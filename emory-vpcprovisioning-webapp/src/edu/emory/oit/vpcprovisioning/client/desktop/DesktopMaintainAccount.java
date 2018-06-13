@@ -562,6 +562,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		directoryLookupSB.setEnabled(true);
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(false);
+		billSummaryButton.setVisible(false);
 	}
 	@Override
 	public void applyAWSAccountAuditorMask() {
@@ -577,6 +578,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		directoryLookupSB.setEnabled(false);
 		addAdminButton.setEnabled(false);
 		complianceClassLB.setEnabled(false);
+		billSummaryButton.setVisible(false);
 	}
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {
@@ -709,6 +711,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		directoryLookupSB.setEnabled(true);
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(true);
+		billSummaryButton.setVisible(true);
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
