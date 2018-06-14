@@ -348,7 +348,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		            				svcAnchor.addStyleName("productAnchor");
 		            				svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
 		            					"  DESCRIPTION: " + svc.getDescription());
-		            				svcAnchor.setHref(svc.getLandingPage());
+		            				svcAnchor.setHref(svc.getLandingPageURL());
 		            				svcAnchor.setTarget("_blank");
 		            				if (svc.getStatus().toLowerCase().contains("blocked")) {
 		            					svcAnchor.addStyleName("productAnchorBlocked");

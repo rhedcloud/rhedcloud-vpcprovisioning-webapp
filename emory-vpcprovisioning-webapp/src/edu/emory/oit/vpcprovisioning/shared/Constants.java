@@ -66,6 +66,8 @@ public class Constants implements IsSerializable {
 	public static final String MOA_ELASTIC_IP_REQUISITION = "ElasticIpRequisition.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_REQUEST_QUERY_SPEC = "FirewallExceptionRequestQuerySpecification.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_REQUEST = "FirewallExceptionRequest.v1_0";
+	public static final String MOA_SERVICE = "Service.v1_0";
+	public static final String MOA_STACK_QUERY_SPEC = "StackQuerySpecification.v1_0";
 
     public static final String STYLE_INFO_POPUP_MESSAGE = "informationalPopupMessage";
     

@@ -123,7 +123,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 			serviceIdTB.setText(presenter.getService().getServiceId());
 			serviceCodeTB.setText(presenter.getService().getCode());
 			serviceNameTB.setText(presenter.getService().getName());
-			landingPageURLTB.setText(presenter.getService().getLandingPage());
+			landingPageURLTB.setText(presenter.getService().getLandingPageURL());
 			descriptionTA.setText(presenter.getService().getDescription());;
 		}
 	}
@@ -183,7 +183,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		if (svc.getStatus() == null || svc.getStatus().length() == 0) {
 			fields.add(statusLB);
 		}
-		if (svc.getLandingPage() == null || svc.getLandingPage().length() == 0) {
+		if (svc.getLandingPageURL() == null || svc.getLandingPageURL().length() == 0) {
 			fields.add(landingPageURLTB);
 		}
 		return fields;

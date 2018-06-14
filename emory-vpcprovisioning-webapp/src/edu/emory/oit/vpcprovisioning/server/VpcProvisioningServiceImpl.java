@@ -43,6 +43,7 @@ import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
+import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.ActionableEnterpriseObject;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectDeleteException;
@@ -70,6 +71,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
@@ -123,6 +125,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSTagPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -4478,48 +4481,106 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings("unchecked")
+	private void populateAWSServicePojo(com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa, AWSServicePojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setServiceId(moa.getServiceId());
+		pojo.setCode(moa.getServiceCode());
+		pojo.setName(moa.getServiceName());
+		pojo.setStatus(moa.getStatus());
+		pojo.setLandingPageURL(moa.getServiceLandingPageUrl());
+		pojo.setDescription(moa.getDescription());
+		info("MOA AWS Hipaa Eligible: '" + moa.getAwsHipaaEligible() + "'");
+		pojo.setAWSHipaaEligible(this.toBooleanFromString(moa.getAwsHipaaEligible()));
+		info("POJO AWS Hipaa Eligible: " + pojo.isAWSHipaaEligible());
+		pojo.setEmoryHipaaEligible(this.toBooleanFromString(moa.getEmoryHipaaEligible()));
+		if (moa.getConsoleCategoryLength() > 0) {
+			for (String consoleCat : (List<String>)moa.getConsoleCategory()) {
+				pojo.getConsoleCategories().add(consoleCat);
+			}
+		}
+		if (moa.getCategoryLength() > 0) {
+			for (String cat : (List<String>)moa.getCategory()) {
+				pojo.getCategories().add(cat);
+			}
+		}
+		if (moa.getTagLength() > 0) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Tag tag : 
+				(List<com.amazon.aws.moa.objects.resources.v1_0.Tag>)moa.getTag()) {
+				
+				AWSTagPojo ptag = new AWSTagPojo();
+				ptag.setKey(tag.getKey());
+				ptag.setValue(tag.getValue());
+				pojo.getTags().add(ptag);
+			}
+		}
+		
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException {
 		AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
 		result.setFilterUsed(filter);
 		
+		List<AWSServicePojo> pojos = new java.util.ArrayList<AWSServicePojo>();
 		XmlDocumentReader xmlReader = new XmlDocumentReader();
 		try {
+//			StackQuerySpecification queryObject = (StackQuerySpecification) getObject(Constants.MOA_STACK_QUERY_SPEC);
+
 			// TODO: Temporary
 			Document provideDoc = xmlReader.initializeDocument("configs/messaging/Environments/Examples/InputFiles/VpcProvisioningWebApp/Provide-Replies.xml", false);
 			info("Read document.  Root element is: " + provideDoc.getRootElement().getName());
 			Element dataArea = provideDoc.getRootElement().getChild("DataArea");
 			List<Element> eServices = dataArea.getChildren("Service");
 			for (Element eService : eServices) {
-				String category = eService.getChildText("ConsoleCategory");
-				String id = eService.getChildText("ServiceId");
-				String code = eService.getChildText("ServiceCode");
-				String name = eService.getChildText("ServiceName");
-				String status = eService.getChildText("Status");
-				String url = eService.getChildText("ServiceLandingPageUrl");
-				String description = eService.getChildText("Description");
-				String hipaaEligible = eService.getChildText("HippaEligible");
-				
-				AWSServicePojo svcPojo = new AWSServicePojo();
-				svcPojo.setServiceId(id);
-				svcPojo.setCode(code);
-				svcPojo.setName(name);
-				svcPojo.setStatus(status);
-				svcPojo.setLandingPage(url);
-				svcPojo.setDescription(description);
-				svcPojo.setHipaaEligible(hipaaEligible == null ? false : Boolean.getBoolean(hipaaEligible));
-				svcPojo.getConsoleCategories().add(category);
-				svcPojo.setCreateInfo("jtjack", new java.util.Date());
-				info(category + ": " + svcPojo.getName());
+				com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = 
+					(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+				actionable.buildObjectFromInput(eService);
+				AWSServicePojo pojo = new AWSServicePojo();
+				AWSServicePojo baseline = new AWSServicePojo();
+				this.populateAWSServicePojo(actionable, pojo);
+				this.populateAWSServicePojo(actionable, baseline);
+				pojo.setBaseline(baseline);
+//				pojos.add(pojo);
 
-				result.getResults().add(svcPojo);
+//				String category = eService.getChildText("ConsoleCategory");
+//				String id = eService.getChildText("ServiceId");
+//				String code = eService.getChildText("ServiceCode");
+//				String name = eService.getChildText("ServiceName");
+//				String status = eService.getChildText("Status");
+//				String url = eService.getChildText("ServiceLandingPageUrl");
+//				String description = eService.getChildText("Description");
+//				String hipaaEligible = eService.getChildText("HippaEligible");
+				
+//				AWSServicePojo svcPojo = new AWSServicePojo();
+//				svcPojo.setServiceId(id);
+//				svcPojo.setCode(code);
+//				svcPojo.setName(name);
+//				svcPojo.setStatus(status);
+//				svcPojo.setLandingPageURL(url);
+//				svcPojo.setDescription(description);
+//				svcPojo.setAWSHipaaEligible(hipaaEligible == null ? false : Boolean.getBoolean(hipaaEligible));
+//				svcPojo.getConsoleCategories().add(category);
+//				svcPojo.setCreateInfo("jtjack", new java.util.Date());
+//				info(category + ": " + svcPojo.getName());
+
+				result.getResults().add(pojo);
 			}
-		} catch (XmlDocumentReaderException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (XmlDocumentReaderException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseLayoutException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
 		}
 
-//		result.setResults(Collections.<AWSServicePojo> emptyList());
 		info("returning " + result.getResults().size() + " services.");
 		return result;
 	}

@@ -331,7 +331,27 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			});
 			serviceListTable.addColumn(descColumn, "Description");
 
-		// create user
+	    Column<AWSServicePojo, String> awsHipaaEligibleColumn = new Column<AWSServicePojo, String>(
+		        new TextCell()) {
+		      @Override
+		      public String getValue(AWSServicePojo object) {
+		        return (object.isAWSHipaaEligible() ? "Yes" : "No");
+		      }
+		    };
+		    serviceListTable.addColumn(awsHipaaEligibleColumn, "AWS HIPAA Eligible");
+		    serviceListTable.setColumnWidth(awsHipaaEligibleColumn, 40, Unit.PX);
+			
+	    Column<AWSServicePojo, String> emoryHipaaEligibleColumn = new Column<AWSServicePojo, String>(
+		        new TextCell()) {
+		      @Override
+		      public String getValue(AWSServicePojo object) {
+		        return (object.isEmoryHipaaEligible() ? "Yes" : "No");
+		      }
+		    };
+		    serviceListTable.addColumn(emoryHipaaEligibleColumn, "Emory HIPAA Eligible");
+		    serviceListTable.setColumnWidth(emoryHipaaEligibleColumn, 40, Unit.PX);
+
+			    // create user
 		Column<AWSServicePojo, String> createUserColumn = 
 				new Column<AWSServicePojo, String> (new TextCell()) {
 
@@ -354,13 +374,23 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return dateFormat.format(object.getCreateTime());
+				if (object.getCreateTime() != null) {
+					return dateFormat.format(object.getCreateTime());
+				}
+				else {
+					return "Unknown";
+				}
 			}
 		};
 		createTimeColumn.setSortable(true);
 		sortHandler.setComparator(createTimeColumn, new Comparator<AWSServicePojo>() {
 			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				return o1.getCreateTime().compareTo(o2.getCreateTime());
+				if (o1.getCreateTime() != null) {
+					return o1.getCreateTime().compareTo(o2.getCreateTime());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		serviceListTable.addColumn(createTimeColumn, "Create Time");
@@ -388,13 +418,23 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return dateFormat.format(object.getUpdateTime());
+				if (object.getUpdateTime() != null) {
+					return dateFormat.format(object.getUpdateTime());
+				}
+				else {
+					return "Uknown";
+				}
 			}
 		};
 		updateTimeColumn.setSortable(true);
 		sortHandler.setComparator(updateTimeColumn, new Comparator<AWSServicePojo>() {
 			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+				if (o1.getUpdateTime() != null) {
+					return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		serviceListTable.addColumn(updateTimeColumn, "Update Time");

@@ -7,17 +7,37 @@ import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class AWSServicePojo extends SharedObject implements IsSerializable {
-	List<AWSServiceCategoryPojo> categories = new java.util.ArrayList<AWSServiceCategoryPojo>();
-	String name;
-	String code;
-	String status;
-	
+	/*
+	<!ELEMENT Service (
+		ServiceId, 
+		ServiceCode, 
+		ServiceName, 
+		Status, 
+		ServiceLandingPageUrl, 
+		Description?, 
+		Category*, 
+		ConsoleCategory*, 
+		AwsHipaaEligible, 
+		EmoryHipaaEligible, 
+		Tag*, 
+		CreateUser, 
+		CreateDatetime, 
+		LastUpdateUser?, 
+		LastUpdateDatetime?)>
+	 */
 	String serviceId;
-	String landingPage;
+	String code;
+	String name;
+	String status;
+	String landingPageURL;
 	String description;
-	boolean hipaaEligible;
-	List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
+	List<String> categories = new java.util.ArrayList<String>();
 	List<String> consoleCategories = new java.util.ArrayList<String>();
+
+	boolean awsHipaaEligible;
+	boolean emoryHipaaEligible;
+	List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
+	AWSServicePojo baseline;
 
 	public static final ProvidesKey<AWSServicePojo> KEY_PROVIDER = new ProvidesKey<AWSServicePojo>() {
 		@Override
@@ -30,12 +50,12 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	}
 
 
-	public List<AWSServiceCategoryPojo> getCategories() {
+	public List<String> getCategories() {
 		return categories;
 	}
 
 
-	public void setCategories(List<AWSServiceCategoryPojo> categories) {
+	public void setCategories(List<String> categories) {
 		this.categories = categories;
 	}
 
@@ -80,13 +100,13 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	}
 
 
-	public String getLandingPage() {
-		return landingPage;
+	public String getLandingPageURL() {
+		return landingPageURL;
 	}
 
 
-	public void setLandingPage(String landingPage) {
-		this.landingPage = landingPage;
+	public void setLandingPageURL(String landingPage) {
+		this.landingPageURL = landingPage;
 	}
 
 
@@ -99,13 +119,13 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 		this.description = description;
 	}
 
-	public boolean isHipaaEligible() {
-		return hipaaEligible;
+	public boolean isAWSHipaaEligible() {
+		return awsHipaaEligible;
 	}
 
 
-	public void setHipaaEligible(boolean hipaaEligible) {
-		this.hipaaEligible = hipaaEligible;
+	public void setAWSHipaaEligible(boolean hipaaEligible) {
+		this.awsHipaaEligible = hipaaEligible;
 	}
 
 
@@ -126,6 +146,26 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 
 	public void setConsoleCategories(List<String> consoleCategories) {
 		this.consoleCategories = consoleCategories;
+	}
+
+
+	public boolean isEmoryHipaaEligible() {
+		return emoryHipaaEligible;
+	}
+
+
+	public void setEmoryHipaaEligible(boolean emoryHipaaEligible) {
+		this.emoryHipaaEligible = emoryHipaaEligible;
+	}
+
+
+	public AWSServicePojo getBaseline() {
+		return baseline;
+	}
+
+
+	public void setBaseline(AWSServicePojo baseline) {
+		this.baseline = baseline;
 	}
 
 }
