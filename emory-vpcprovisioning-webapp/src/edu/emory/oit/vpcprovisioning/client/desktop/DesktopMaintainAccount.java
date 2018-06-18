@@ -261,7 +261,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	
 	@Override
 	public void addRoleAssignment(final int ra_summaryIndex, String name, final String netId, String roleName, String widgetTitle) {
-		int numRows = adminTable.getRowCount();
+//		int numRows = adminTable.getRowCount();
 		final Label nameLabel = new Label(name + " (" + netId + ")/" + roleName);
 		nameLabel.setTitle(widgetTitle);
 		nameLabel.addStyleName("emailLabel");
@@ -285,29 +285,31 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		removeAdminButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO: RoleAssignment.Delete
+				// RoleAssignment.Delete
 				presenter.removeRoleAssignmentFromAccount(presenter.getAccount().getAccountId(), 
 						presenter.getRoleAssignmentSummaries().get(ra_summaryIndex));
+				// TODO: move this to the presenter, after the assignment has actually been deleted
 				adminTable.remove(nameLabel);
 				adminTable.remove(removeAdminButton);
 			}
 		});
 		directoryLookupSB.setText("");
-		if (numRows > 6) {
-			if (adminRowNum > 5) {
-				adminRowNum = 0;
-				adminColumnNum = adminColumnNum + 2;
-				removeButtonColumnNum = removeButtonColumnNum + 2;
-			}
-			else {
-				adminRowNum ++;
-			}
-		}
-		else {
-			adminRowNum = numRows;
-		}
+//		if (numRows > 6) {
+//			if (adminRowNum > 5) {
+//				adminRowNum = 0;
+//				adminColumnNum = adminColumnNum + 2;
+//				removeButtonColumnNum = removeButtonColumnNum + 2;
+//			}
+//			else {
+//				adminRowNum ++;
+//			}
+//		}
+//		else {
+//			adminRowNum = numRows;
+//		}
 		adminTable.setWidget(adminRowNum, adminColumnNum, nameLabel);
 		adminTable.setWidget(adminRowNum, removeButtonColumnNum, removeAdminButton);
+		adminRowNum++;
 	}
 
 	/*
