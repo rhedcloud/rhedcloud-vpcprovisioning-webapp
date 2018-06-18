@@ -23,13 +23,13 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
@@ -227,9 +227,16 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override

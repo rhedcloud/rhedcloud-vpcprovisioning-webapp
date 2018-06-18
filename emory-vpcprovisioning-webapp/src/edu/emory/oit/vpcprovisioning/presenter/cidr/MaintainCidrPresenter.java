@@ -14,8 +14,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentStatus;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainCidrPresenter extends PresenterBase implements MaintainCidrView.Presenter {
@@ -190,7 +188,7 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 	@Override
 	public void saveCidr() {
 		// save on server
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving CIDR...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);

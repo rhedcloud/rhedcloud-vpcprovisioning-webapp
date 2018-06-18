@@ -17,10 +17,8 @@ import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.LineItemPojo;
 import edu.emory.oit.vpcprovisioning.shared.LineItemSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class BillSummaryPresenter extends PresenterBase implements BillSummaryView.Presenter {
@@ -161,7 +159,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 	@Override
 	public void selectAccount(AccountPojo selected) {
 		// refresh bill information for account passed in.
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Loading Bill information");
 		getView().setBillItems(new java.util.ArrayList<BillPojo>());
 		setAccount(selected);
 		AsyncCallback<List<BillPojo>> billCallback = new AsyncCallback<List<BillPojo>>() {

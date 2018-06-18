@@ -90,8 +90,6 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setEmailTypeItems(List<String> emailTypes);
 	void setAwsAccountsURL(String awsAccountsURL);
 	void setAwsBillingManagementURL(String awsBillingManagementURL);

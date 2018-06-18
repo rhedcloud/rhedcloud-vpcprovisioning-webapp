@@ -20,6 +20,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -451,9 +452,16 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	private void addTagToFirewallExceptionRequest(String tag) {

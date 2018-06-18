@@ -77,7 +77,5 @@ public interface MaintainCidrView extends Editor<CidrPojo>, IsWidget, View {
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setAssociatedCidrTypeItems(List<String> associatedCidrTypes);
 }

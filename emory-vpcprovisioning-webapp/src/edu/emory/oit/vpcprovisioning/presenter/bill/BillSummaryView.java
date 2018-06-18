@@ -42,8 +42,6 @@ public interface BillSummaryView extends IsWidget, View {
 	void setPresenter(Presenter presenter);
 
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	// populate drop downs
 	void setBillItems(List<BillPojo> bills);
 	void setAccountItems(List<AccountPojo> accounts);

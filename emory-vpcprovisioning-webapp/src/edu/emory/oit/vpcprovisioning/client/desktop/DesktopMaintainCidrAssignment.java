@@ -12,6 +12,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
@@ -188,9 +189,16 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override

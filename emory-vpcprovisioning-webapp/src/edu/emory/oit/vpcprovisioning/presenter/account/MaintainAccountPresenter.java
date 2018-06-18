@@ -19,10 +19,6 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
@@ -238,7 +234,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void saveAccount() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving account...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().setFieldViolations(true);
@@ -493,65 +489,37 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void addDirectoryPersonInRoleToAccount(final String roleName) {
-		// get fullperson for current directory person
-		// get net id from fullperson
-		// create role assignment
-
-		final FullPersonQueryFilterPojo filter = new FullPersonQueryFilterPojo();
-		filter.setPublicId(this.directoryPerson.getKey());
-		AsyncCallback<FullPersonQueryResultPojo> callback = new AsyncCallback<FullPersonQueryResultPojo>() {
+		AsyncCallback<RoleAssignmentPojo> raCallback = new AsyncCallback<RoleAssignmentPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server creating the role assignment.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(final RoleAssignmentPojo roleAssignment) {
+				// then, tell the view to refresh it's role list
+				GWT.log("start - onSuccess...");
+				RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
+				ra_summary.setDirectoryPerson(directoryPerson);
+				ra_summary.setRoleAssignment(roleAssignment);
+				accountRoleAssignmentSummaries.add(ra_summary);
+				String roleName = getSimpleRoleNameFromRoleDN(ra_summary.getRoleAssignment().getRoleDN());
+				GWT.log("start - getView().addRoleAssignment...");
+				getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
+						directoryPerson.getEmail().getEmailAddress(), roleName, 
+						directoryPerson.toString() + " " + ra_summary.getRoleAssignment().getRoleDN());
+				GWT.log("done - getView();.addRoleAssignment...");
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 			}
-
-			@Override
-			public void onSuccess(FullPersonQueryResultPojo result) {
-				if (result.getResults().size() == 1) {
-					final FullPersonPojo fp = result.getResults().get(0);
-					GWT.log("Got 1 FullPerson back for public id " + filter.getPublicId());
-					AsyncCallback<RoleAssignmentPojo> raCallback = new AsyncCallback<RoleAssignmentPojo>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
-							getView().hidePleaseWaitDialog();
-							getView().hidePleaseWaitPanel();
-						}
-
-						@Override
-						public void onSuccess(final RoleAssignmentPojo roleAssignment) {
-							// then, tell the view to refresh it's role list
-							GWT.log("start - onSuccess...");
-							RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
-							ra_summary.setDirectoryPerson(directoryPerson);
-							ra_summary.setRoleAssignment(roleAssignment);
-							accountRoleAssignmentSummaries.add(ra_summary);
-							String roleName = getSimpleRoleNameFromRoleDN(ra_summary.getRoleAssignment().getRoleDN());
-							GWT.log("start - getView().addRoleAssignment...");
-							getView().addRoleAssignment(accountRoleAssignmentSummaries.size() - 1, directoryPerson.getFullName(), 
-									directoryPerson.getEmail().getEmailAddress(), roleName, 
-									directoryPerson.toString() + " " + ra_summary.getRoleAssignment().getRoleDN());
-							GWT.log("done - getView();.addRoleAssignment...");
-							getView().hidePleaseWaitDialog();
-							getView().hidePleaseWaitPanel();
-						}
-					};
-					// now, create the role assignment and add the role assignment to the account
-					VpcProvisioningService.Util.getInstance().createRoleAssignmentForPersonInAccount(fp, account.getAccountId(), roleName, raCallback);
-				}
-				else {
-					GWT.log("Expected exactly 1 FullPerson, got " + result.getResults().size() + " this shouldn't happen.");
-					getView().hidePleaseWaitDialog();
-					getView().hidePleaseWaitPanel();
-					// TODO: error
-					return;
-				}
-			}
 		};
-		getView().showPleaseWaitDialog();
-		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, callback);
+		// now, create the role assignment and add the role assignment to the account
+		getView().showPleaseWaitDialog("Creating Role Assignment with the IDM service...");
+		VpcProvisioningService.Util.getInstance().createRoleAssignmentForPersonInAccount(directoryPerson.getKey(), account.getAccountId(), roleName, raCallback);
 	}
 
 	@Override
@@ -583,7 +551,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				getView().hidePleaseWaitPanel();
 			}
 		};
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving Role Assignments from the IDM service...");
 		VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(account.getAccountId(), callback);
 	}
 	
@@ -628,7 +596,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					" was successfully removed from Role " + roleAssignmentSummary.getRoleAssignment().getRoleDN());
 			}
 		};
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Deleting Role Assignment...");
 		VpcProvisioningService.Util.getInstance().removeRoleAssignmentFromAccount(accountId, 
 				roleAssignmentSummary.getRoleAssignment(), callback);
 	}

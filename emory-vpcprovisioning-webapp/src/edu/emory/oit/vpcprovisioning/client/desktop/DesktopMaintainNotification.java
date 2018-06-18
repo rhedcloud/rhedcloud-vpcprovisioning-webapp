@@ -105,8 +105,7 @@ public class DesktopMaintainNotification extends ViewImplBase implements Maintai
 	}
 
 	@Override
-	public void showPleaseWaitPanel() {
-		// TODO Auto-generated method stub
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 	}
 
 	@Override

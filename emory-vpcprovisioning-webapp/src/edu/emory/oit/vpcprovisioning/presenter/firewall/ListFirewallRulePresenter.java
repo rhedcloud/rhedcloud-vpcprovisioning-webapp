@@ -16,14 +16,12 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleRequestListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
@@ -92,7 +90,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving firewall rules from the Firewall service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -180,8 +178,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 //			getView().initPage();
 //            getView().hidePleaseWaitPanel();
 		}
-        getView().showPleaseWaitPanel();
-        getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving firewall rules from the Firewall service...");
 		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(fw_filter, callback);
 	}
 
@@ -227,8 +224,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			fwer_filter = new FirewallExceptionRequestQueryFilterPojo();
 			fwer_filter.getTags().add(vpc.getVpcId());
 		}
-        getView().showPleaseWaitPanel();
-        getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving firewall exception requests from service now...");
 		VpcProvisioningService.Util.getInstance().getFirewallExceptionRequestsForFilter(fwer_filter, callback);
 	}
 
@@ -290,7 +286,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	@Override
 	public void deleteFirewallRule(final FirewallRulePojo firewallRule) {
 		if (Window.confirm("Delete the AWS FirewallRule " + firewallRule.getName() + "?")) {
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting firewall rule...");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override
@@ -323,7 +319,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 	@Override
 	public void filterByVPCId(String vpcId) {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Filtering firewall rules...");
 		fw_filter = new FirewallRuleQueryFilterPojo();
 		fw_filter.getTags().add(vpcId);
 		this.getUserAndRefreshList();
@@ -331,7 +327,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 	@Override
 	public void clearFilter() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Clearing filter...");
 		fw_filter = null;
 		this.getUserAndRefreshList();
 	}

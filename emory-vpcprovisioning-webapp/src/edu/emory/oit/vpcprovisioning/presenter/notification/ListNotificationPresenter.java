@@ -18,11 +18,9 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListNotificationPresenter extends PresenterBase implements ListNotificationView.Presenter {
@@ -86,7 +84,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
 
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving Notifications from the AWS Account service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -211,7 +209,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	@Override
 	public void deleteNotification(final NotificationPojo notification) {
 		if (Window.confirm("Delete the AWS Notification " + notification.getNotificationId() + "?")) {
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting Notification...");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override

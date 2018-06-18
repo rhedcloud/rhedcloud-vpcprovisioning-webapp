@@ -12,6 +12,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Tree;
@@ -66,7 +67,7 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 	
 	@UiHandler ("billLB")
 	void billSelected(ChangeEvent e) {
-		showPleaseWaitDialog();
+		showPleaseWaitDialog("Getting bill details for selected item.");
 		billSummaryPanel.setVisible(false);
 		String billId = billLB.getSelectedValue();
 		BillPojo selectedBill = null;
@@ -188,9 +189,16 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override

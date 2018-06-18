@@ -13,8 +13,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -211,7 +209,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 
 	@Override
 	public void registerVpc() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Registering VPC with the AWS Account service...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);

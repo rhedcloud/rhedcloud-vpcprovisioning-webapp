@@ -12,10 +12,8 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainNotificationPresenter extends PresenterBase implements MaintainNotificationView.Presenter {
@@ -159,7 +157,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 
 	@Override
 	public void saveNotification() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving Notification...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);

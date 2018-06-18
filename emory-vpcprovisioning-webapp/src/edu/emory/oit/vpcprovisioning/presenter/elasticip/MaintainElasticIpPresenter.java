@@ -12,11 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentStatusPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainElasticIpPresenter extends PresenterBase implements MaintainElasticIpView.Presenter {
@@ -133,7 +129,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	}
 	@Override
 	public void saveElasticIp() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving Elastic IP...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);

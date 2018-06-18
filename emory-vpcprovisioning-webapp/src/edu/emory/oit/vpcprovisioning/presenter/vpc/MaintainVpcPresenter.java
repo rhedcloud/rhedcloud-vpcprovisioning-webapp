@@ -15,7 +15,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -191,7 +190,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 
 	@Override
 	public void saveVpc() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving VPC...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);

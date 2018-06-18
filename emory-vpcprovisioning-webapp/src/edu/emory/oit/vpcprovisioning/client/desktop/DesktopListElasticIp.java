@@ -27,6 +27,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -471,9 +472,16 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override

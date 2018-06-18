@@ -281,20 +281,14 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	public void showPleaseWaitPanel() {
-		// TODO Auto-generated method stub
-		
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 	}
 
 	@Override

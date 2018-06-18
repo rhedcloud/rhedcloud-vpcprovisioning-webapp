@@ -51,8 +51,6 @@ public interface ListServiceView extends IsWidget, View {
 	void setServices(List<AWSServicePojo> services);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeServiceFromView(AWSServicePojo service);
 
 

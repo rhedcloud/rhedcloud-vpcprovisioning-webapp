@@ -54,8 +54,6 @@ public interface ListAccountView extends IsWidget, View {
 	void setAccounts(List<AccountPojo> accounts);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeAccountFromView(AccountPojo account);
 	void initPage();
 }

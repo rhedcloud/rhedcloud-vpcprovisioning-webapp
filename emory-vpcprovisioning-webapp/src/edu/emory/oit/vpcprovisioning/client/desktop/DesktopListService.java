@@ -3,9 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -24,6 +22,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,8 +35,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListService extends ViewImplBase implements ListServiceView {
@@ -46,7 +43,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	private SingleSelectionModel<AWSServicePojo> selectionModel;
 	List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
 	UserAccountPojo userLoggedIn;
-    PopupPanel actionsPopup = new PopupPanel(true);
+	PopupPanel actionsPopup = new PopupPanel(true);
 
 	private static DesktopListServiceUiBinder uiBinder = GWT.create(DesktopListServiceUiBinder.class);
 
@@ -69,14 +66,14 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
-	    actionsPopup.setAutoHideEnabled(true);
-	    actionsPopup.setAnimationEnabled(true);
-	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    
-	    Grid grid = new Grid(2, 1);
-	    grid.setCellSpacing(8);
-	    actionsPopup.add(grid);
-	    
+		actionsPopup.setAutoHideEnabled(true);
+		actionsPopup.setAnimationEnabled(true);
+		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid = new Grid(2, 1);
+		grid.setCellSpacing(8);
+		actionsPopup.add(grid);
+
 		Anchor editAnchor = new Anchor("Edit Service");
 		editAnchor.addStyleName("productAnchor");
 		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
@@ -134,7 +131,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@Override
 	public void setInitialFocus() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -172,7 +169,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -180,9 +177,16 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override
@@ -201,56 +205,56 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		GWT.log("initializing service list table...");
 		serviceListTable.setTableLayoutFixed(false);
 		serviceListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
-		
+
 		// set range to display
 		serviceListTable.setVisibleRange(0, 5);
-		
+
 		// create dataprovider
 		dataProvider = new ListDataProvider<AWSServicePojo>();
 		dataProvider.addDataDisplay(serviceListTable);
 		dataProvider.getList().clear();
 		dataProvider.getList().addAll(this.serviceList);
-		
+
 		selectionModel = 
-	    	new SingleSelectionModel<AWSServicePojo>(AWSServicePojo.KEY_PROVIDER);
+				new SingleSelectionModel<AWSServicePojo>(AWSServicePojo.KEY_PROVIDER);
 		serviceListTable.setSelectionModel(selectionModel);
-	    
-	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-	    	@Override
-	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		AWSServicePojo m = selectionModel.getSelectedObject();
-	    		GWT.log("Selected service is: " + m.getServiceId());
-	    	}
-	    });
 
-	    ListHandler<AWSServicePojo> sortHandler = 
-	    	new ListHandler<AWSServicePojo>(dataProvider.getList());
-	    serviceListTable.addColumnSortHandler(sortHandler);
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				AWSServicePojo m = selectionModel.getSelectedObject();
+				GWT.log("Selected service is: " + m.getServiceId());
+			}
+		});
 
-	    if (serviceListTable.getColumnCount() == 0) {
-		    initServiceListTableColumns(sortHandler);
-	    }
-		
+		ListHandler<AWSServicePojo> sortHandler = 
+				new ListHandler<AWSServicePojo>(dataProvider.getList());
+		serviceListTable.addColumnSortHandler(sortHandler);
+
+		if (serviceListTable.getColumnCount() == 0) {
+			initServiceListTableColumns(sortHandler);
+		}
+
 		return serviceListTable;
 	}
 	private void initServiceListTableColumns(ListHandler<AWSServicePojo> sortHandler) {
 		GWT.log("initializing VPC list table columns...");
-		
-	    Column<AWSServicePojo, Boolean> checkColumn = new Column<AWSServicePojo, Boolean>(
-		        new CheckboxCell(true, false)) {
-		      @Override
-		      public Boolean getValue(AWSServicePojo object) {
-		        // Get the value from the selection model.
-		        return selectionModel.isSelected(object);
-		      }
-		    };
-		    serviceListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-		    serviceListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		Column<AWSServicePojo, Boolean> checkColumn = new Column<AWSServicePojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(AWSServicePojo object) {
+				// Get the value from the selection model.
+				return selectionModel.isSelected(object);
+			}
+		};
+		serviceListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		serviceListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		// Account id column
 		Column<AWSServicePojo, String> acctIdColumn = 
-			new Column<AWSServicePojo, String> (new TextCell()) {
-			
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
 			@Override
 			public String getValue(AWSServicePojo object) {
 				return object.getConsoleCategories().get(0);
@@ -266,8 +270,8 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 		// VPC id column
 		Column<AWSServicePojo, String> vpcIdColumn = 
-			new Column<AWSServicePojo, String> (new TextCell()) {
-			
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
 			@Override
 			public String getValue(AWSServicePojo object) {
 				return object.getCode();
@@ -280,11 +284,11 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			}
 		});
 		serviceListTable.addColumn(vpcIdColumn, "Code");
-		
+
 		// type
 		Column<AWSServicePojo, String> vpcTypeColumn = 
-			new Column<AWSServicePojo, String> (new TextCell()) {
-			
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
 			@Override
 			public String getValue(AWSServicePojo object) {
 				return object.getName();
@@ -297,11 +301,11 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			}
 		});
 		serviceListTable.addColumn(vpcTypeColumn, "Name");
-		
+
 		// compliance class
 		Column<AWSServicePojo, String> complianceClassColumn = 
-			new Column<AWSServicePojo, String> (new TextCell()) {
-			
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
 			@Override
 			public String getValue(AWSServicePojo object) {
 				return object.getStatus();
@@ -314,44 +318,45 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			}
 		});
 		serviceListTable.addColumn(complianceClassColumn, "Status");
-		
+
 		Column<AWSServicePojo, String> descColumn = 
 				new Column<AWSServicePojo, String> (new TextCell()) {
-				
-				@Override
-				public String getValue(AWSServicePojo object) {
-					return object.getDescription();
-				}
-			};
-			descColumn.setSortable(true);
-			sortHandler.setComparator(descColumn, new Comparator<AWSServicePojo>() {
-				public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-					return o1.getDescription().compareTo(o2.getDescription());
-				}
-			});
-			serviceListTable.addColumn(descColumn, "Description");
 
-	    Column<AWSServicePojo, String> awsHipaaEligibleColumn = new Column<AWSServicePojo, String>(
-		        new TextCell()) {
-		      @Override
-		      public String getValue(AWSServicePojo object) {
-		        return (object.isAWSHipaaEligible() ? "Yes" : "No");
-		      }
-		    };
-		    serviceListTable.addColumn(awsHipaaEligibleColumn, "AWS HIPAA Eligible");
-		    serviceListTable.setColumnWidth(awsHipaaEligibleColumn, 40, Unit.PX);
-			
-	    Column<AWSServicePojo, String> emoryHipaaEligibleColumn = new Column<AWSServicePojo, String>(
-		        new TextCell()) {
-		      @Override
-		      public String getValue(AWSServicePojo object) {
-		        return (object.isEmoryHipaaEligible() ? "Yes" : "No");
-		      }
-		    };
-		    serviceListTable.addColumn(emoryHipaaEligibleColumn, "Emory HIPAA Eligible");
-		    serviceListTable.setColumnWidth(emoryHipaaEligibleColumn, 40, Unit.PX);
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getDescription();
+			}
+		};
+		descColumn.setSortable(true);
+		sortHandler.setComparator(descColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getDescription().compareTo(o2.getDescription());
+			}
+		});
+		serviceListTable.addColumn(descColumn, "Description");
 
-			    // create user
+		Column<AWSServicePojo, String> awsHipaaEligibleColumn = new Column<AWSServicePojo, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return (object.isAWSHipaaEligible() ? "Yes" : "No");
+			}
+		};
+		serviceListTable.addColumn(awsHipaaEligibleColumn, "AWS HIPAA Eligible");
+		serviceListTable.setColumnWidth(awsHipaaEligibleColumn, 40, Unit.PX);
+
+
+		Column<AWSServicePojo, String> emoryHipaaEligibleColumn = new Column<AWSServicePojo, String>(
+				new TextCell()) {
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return (object.isEmoryHipaaEligible() ? "Yes" : "No");
+			}
+		};
+		serviceListTable.addColumn(emoryHipaaEligibleColumn, "Emory HIPAA Eligible");
+		serviceListTable.setColumnWidth(emoryHipaaEligibleColumn, 40, Unit.PX);
+
+		// create user
 		Column<AWSServicePojo, String> createUserColumn = 
 				new Column<AWSServicePojo, String> (new TextCell()) {
 
@@ -367,7 +372,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			}
 		});
 		serviceListTable.addColumn(createUserColumn, "Create User");
-		
+
 		// create time
 		Column<AWSServicePojo, String> createTimeColumn = 
 				new Column<AWSServicePojo, String> (new TextCell()) {
@@ -411,7 +416,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			}
 		});
 		serviceListTable.addColumn(lastUpdateUserColumn, "Update User");
-		
+
 		// update time
 		Column<AWSServicePojo, String> updateTimeColumn = 
 				new Column<AWSServicePojo, String> (new TextCell()) {
@@ -447,7 +452,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@Override
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
-		
+
 	}
 	@Override
 	public HasClickHandlers getCancelWidget() {
@@ -462,30 +467,30 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@Override
 	public void applyCentralAdminMask() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

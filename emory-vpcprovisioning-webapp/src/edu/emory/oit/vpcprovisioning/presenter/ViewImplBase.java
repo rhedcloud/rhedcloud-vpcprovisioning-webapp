@@ -7,9 +7,12 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
@@ -31,11 +34,22 @@ public abstract class ViewImplBase extends Composite {
 		}
 	}
 	
-	public void showPleaseWaitDialog() {
-		pleaseWaitDialog = new PopupPanel(true);
+	public void showPleaseWaitDialog(String pleaseWaitHTML) {
+		if (pleaseWaitDialog == null) {
+			pleaseWaitDialog = new PopupPanel(true);
+		}
+		else {
+			pleaseWaitDialog.clear();
+		}
+		VerticalPanel vp = new VerticalPanel();
 		Image img = new Image();
 		img.setUrl("images/ajax-loader.gif");
-		pleaseWaitDialog.setWidget(img);
+		vp.add(img);
+		HTML h = new HTML(pleaseWaitHTML);
+		vp.add(h);
+		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+		pleaseWaitDialog.setWidget(vp);
 		pleaseWaitDialog.center();
 		pleaseWaitDialog.show();
 	}

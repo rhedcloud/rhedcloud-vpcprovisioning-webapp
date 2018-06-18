@@ -88,8 +88,6 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setVpcTypeItems(List<String> vpcTypes);
 	void setAccountItems(List<AccountPojo> accounts);
 	void setComplianceClassItems(List<String> complianceClassTypes);

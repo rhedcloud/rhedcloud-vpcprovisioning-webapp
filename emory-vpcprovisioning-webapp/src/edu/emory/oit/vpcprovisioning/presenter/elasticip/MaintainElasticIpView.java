@@ -68,8 +68,6 @@ public interface MaintainElasticIpView extends Editor<ElasticIpPojo>, IsWidget, 
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 
 
 }

@@ -1,8 +1,5 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")

@@ -139,8 +139,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	}
 
 	@Override
-	public void showPleaseWaitPanel() {
-		// TODO Auto-generated method stub
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 	}
 
 	@Override

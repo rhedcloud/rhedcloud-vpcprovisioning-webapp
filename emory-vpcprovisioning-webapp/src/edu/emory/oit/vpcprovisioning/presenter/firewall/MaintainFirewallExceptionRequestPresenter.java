@@ -15,7 +15,6 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -182,7 +181,7 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 	@Override
 	public void saveFirewallExceptionRequest() {
 		// save on server
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving firewall exception request...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().setFieldViolations(true);

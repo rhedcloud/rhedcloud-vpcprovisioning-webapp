@@ -24,6 +24,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -37,7 +38,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrAssignmentView {
@@ -164,16 +164,6 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 		grid.setWidget(1, 0, editAssignmentAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
-	}
-
-	@Override
-	public void showPleaseWaitDialog() {
-		pleaseWaitPanel.setVisible(true);
-	}
-
-	@Override
-	public void hidePleaseWaitDialog() {
-		pleaseWaitPanel.setVisible(false);
 	}
 
 	@Override
@@ -491,9 +481,16 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override

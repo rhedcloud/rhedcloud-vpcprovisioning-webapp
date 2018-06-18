@@ -67,7 +67,7 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 	}
 
 	@Override
-	public void showPleaseWaitPanel() {
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 		// TODO Auto-generated method stub
 		
 	}

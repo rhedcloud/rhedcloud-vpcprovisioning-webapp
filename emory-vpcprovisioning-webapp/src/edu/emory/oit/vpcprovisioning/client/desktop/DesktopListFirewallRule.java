@@ -26,6 +26,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -304,16 +305,6 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 //		grid.setWidget(2, 0, historyAnchor);
 
 		actionsPopup.showRelativeTo(firewallExceptionRequestActionsButton);
-	}
-
-	@Override
-	public void showPleaseWaitDialog() {
-		pleaseWaitPanel.setVisible(true);
-	}
-
-	@Override
-	public void hidePleaseWaitDialog() {
-		pleaseWaitPanel.setVisible(false);
 	}
 
 	@Override
@@ -706,9 +697,16 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override

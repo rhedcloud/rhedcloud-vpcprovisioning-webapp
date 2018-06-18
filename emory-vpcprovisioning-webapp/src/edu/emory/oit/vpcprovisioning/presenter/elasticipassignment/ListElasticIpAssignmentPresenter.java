@@ -64,12 +64,13 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-        getView().showPleaseWaitPanel();
+        getView().showPleaseWaitDialog("Retrieving Elastic IP Assignments");
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					getView().showMessageToUser("There was an exception on the " +
 //							"server retrieving information about the user logged " +
@@ -119,6 +120,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of ElasticIpAssignmentSummaries.  " +
 						"Message from server is: " + caught.getMessage());
@@ -143,6 +145,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 					getView().applyAWSAccountAuditorMask();
 				}
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 			}
 		};
 
@@ -200,7 +203,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				selected.getAssignmentId() + "/" + 
 				selected.getPurpose() + "?")) {
 			
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting Elastic IP Assignment");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override
@@ -237,7 +240,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	@Override
 	public void generateElasticIpAssignment() {
-        getView().showPleaseWaitPanel();
+        getView().showPleaseWaitPanel("Generating Elastic IP Assignment");
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -275,7 +278,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	@Override
 	public void saveElasticIpAssignment(final ElasticIpAssignmentPojo selected) {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving Elastic IP Assignment");
 		if (selected == null) {
 			getView().showMessageToUser("Please select an item from the list.");
 			return;

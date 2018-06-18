@@ -67,8 +67,6 @@ public interface ListFirewallRuleView extends IsWidget, View {
 	void setFirewallRuleRequests(List<FirewallExceptionRequestPojo> firewallRequests);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeFirewallRuleFromView(FirewallRulePojo firewallRule);
 //	void setVpcItems(List<VpcPojo> vpcs);
 	void initPage();

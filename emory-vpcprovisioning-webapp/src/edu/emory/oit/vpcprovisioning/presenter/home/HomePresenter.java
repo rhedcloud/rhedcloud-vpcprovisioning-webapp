@@ -46,6 +46,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 		
 		setReleaseInfo(clientFactory);
 		
+		getView().showPleaseWaitPanel("Retrieving account metadata from the AWS Account Service...");
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
 			@Override
@@ -200,7 +201,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				}
 			}
 		};
-		getView().showPleaseWaitPanel();
+		getView().showPleaseWaitPanel("Retrieving account metadata from the AWS Account Service...");
 		AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
 		filter.setAccountId(accountId);
 		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, callback);
@@ -258,7 +259,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 		};
 		DirectoryPersonQueryFilterPojo filter = new DirectoryPersonQueryFilterPojo();
 		filter.setKey(userLoggedIn.getPublicId());
-		getView().showPleaseWaitPanel();
+		getView().showPleaseWaitPanel("Retrieving Directory meta data from the Directory Service...");
 		VpcProvisioningService.Util.getInstance().getDirectoryPersonsForFilter(filter, srvrCallback);
 		return null;
 	}
@@ -295,7 +296,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 		};
 		FullPersonQueryFilterPojo filter = new FullPersonQueryFilterPojo();
 		filter.setPublicId(userLoggedIn.getPublicId());
-		getView().showPleaseWaitPanel();
+		getView().showPleaseWaitPanel("Getting person meta data from the Identity Service...");
 		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, srvrCallback);
 		return null;
 	}

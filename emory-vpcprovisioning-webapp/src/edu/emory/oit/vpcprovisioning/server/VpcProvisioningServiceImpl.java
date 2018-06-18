@@ -71,7 +71,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
-import com.amazon.aws.moa.objects.resources.v1_0.StackQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
@@ -220,14 +219,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
 	private static final String AWS_PEOPLE_SOFT_SERVICE_NAME = "AWSPeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
-	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
+//	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
 //	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
 	private static final String ROLE_ASSIGNMENT_PROPERTIES = "RoleAssignmentProperties";
-	private static String LOGTAG = "[" + VpcProvisioningServiceImpl.class.getSimpleName()
-			+ "]";
+//	private static String LOGTAG = "[" + VpcProvisioningServiceImpl.class.getSimpleName()
+//			+ "]";
 	private Logger log = Logger.getLogger(getClass().getName());
 	private boolean useEsbService = true;
 	private boolean useShibboleth = true;
@@ -983,6 +982,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		}
 //	}
 
+	@SuppressWarnings("unused")
 	private void populateBillMoa(BillPojo pojo, Bill moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 		/*
 		<!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, 
@@ -1910,7 +1910,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	public void setAppConfig(AppConfig appConfig) {
-		this.appConfig = appConfig;
+		VpcProvisioningServiceImpl.appConfig = appConfig;
 	}
 
 	public Properties getGeneralProps() {
@@ -3566,7 +3566,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setActualTime(pojo.getActualTime());
 		moa.setAnticipatedTime(pojo.getAnticipatedTime());
 		if (pojo.getProperties() != null) {
-	        @SuppressWarnings("unchecked")
 			Iterator<String> keys = pojo.getProperties().keySet().iterator();
 	        while (keys.hasNext()) {
 	        	com.amazon.aws.moa.objects.resources.v1_0.Property stepProps = moa.newProperty();
@@ -3593,6 +3592,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void populateVpcpMoa(VpcpPojo pojo,
 			VirtualPrivateCloudProvisioning moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -4787,6 +4787,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 	
+	@SuppressWarnings("unused")
 	private void populateSpeedChartMoa(SpeedChartPojo pojo,
 			SPEEDCHART moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -4845,6 +4846,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	@SuppressWarnings("unused")
 	private void populateFirewallRuleMoa(FirewallRulePojo pojo,
 			FirewallRule moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -5088,6 +5090,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("[FromClient] " + message);
 	}
 
+	@SuppressWarnings("unused")
 	private void populateRoleMoa(RolePojo pojo,
 			Role moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -5099,6 +5102,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
+	@SuppressWarnings("unused")
 	private void populateRolePojo(Role moa,
 			RolePojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
@@ -5188,6 +5192,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	@SuppressWarnings("unused")
 	private void populateDirectoryPersonMoa(DirectoryPersonPojo pojo,
 			DirectoryPerson moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -5505,7 +5510,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public RoleAssignmentPojo createRoleAssignmentForPersonInAccount(FullPersonPojo person, 
+	public RoleAssignmentPojo createRoleAssignmentForPersonInAccount(String publicId, 
 			String accountId, String roleName) throws RpcException {
 
 		/*
@@ -5531,7 +5536,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				requisition.setReason("Added using VPCP by (" + getUserLoggedIn().getEppn() +")");
 				
 				String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
-				idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, person.getPublicId());
+				idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, publicId);
 				requisition.setIdentityDN(idDn);
 				
 				String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
@@ -5675,6 +5680,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		try {
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			for (String roleName : Constants.ACCOUNT_ROLE_NAMES) {
+				if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN)) {
+					continue;
+				}
 				String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);

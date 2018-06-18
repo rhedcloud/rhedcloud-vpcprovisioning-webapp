@@ -16,8 +16,6 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.VpcpListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
@@ -74,12 +72,13 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel();
+		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					log.log(Level.SEVERE, 
 //							"Exception getting user logged in on server", 
@@ -214,7 +213,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 	@Override
 	public void deleteVpcp(final VpcpPojo vpcp) {
 		if (Window.confirm("Delete the AWS Vpcp " + vpcp.getProvisioningId() + "?")) {
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting VPC Provisioning item...");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override

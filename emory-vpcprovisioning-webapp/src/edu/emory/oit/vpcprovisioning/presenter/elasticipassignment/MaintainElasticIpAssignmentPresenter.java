@@ -194,7 +194,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 
 	@Override
 	public void saveElasticIpAssignment() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving Elastic IP Assignment...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);

@@ -74,7 +74,5 @@ public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, V
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setServiceStatusItems(List<String> serviceStatusTypes);
 }

@@ -6,7 +6,6 @@ public class ReleaseInfo implements IsSerializable {
 	/**
 	 * test2
 	 */
-	private static final long serialVersionUID = 1L;
 	String version = "1.0";
 	String build = "20";
 	

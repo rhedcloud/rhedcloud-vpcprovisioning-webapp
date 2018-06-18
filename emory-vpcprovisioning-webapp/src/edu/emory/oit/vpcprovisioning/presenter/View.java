@@ -10,8 +10,13 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public interface View extends IsWidget {
 	void showMessageToUser(String message);
-	void showPleaseWaitDialog();
+	
+	void showPleaseWaitDialog(String pleaseWaitHTML);
 	void hidePleaseWaitDialog();
+	
+	void hidePleaseWaitPanel();
+	void showPleaseWaitPanel(String pleaseWaitHTML);
+
 	void setInitialFocus();
 	public void showStatus(Widget source, String message);
 	public Widget getStatusMessageSource();

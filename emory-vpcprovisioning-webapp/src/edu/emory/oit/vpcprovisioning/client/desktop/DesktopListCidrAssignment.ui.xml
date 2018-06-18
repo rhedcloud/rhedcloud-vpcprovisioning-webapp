@@ -5,11 +5,16 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:VerticalPanel width="100%" spacing="20">
-		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-				<g:HorizontalPanel spacing="8">
-					<g:Image url="images/ajax-loader.gif"/>
-				</g:HorizontalPanel>
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">CIDR Assignments</g:HTML>

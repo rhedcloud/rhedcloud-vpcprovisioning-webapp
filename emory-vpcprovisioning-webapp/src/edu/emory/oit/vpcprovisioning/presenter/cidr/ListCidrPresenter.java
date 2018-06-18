@@ -20,8 +20,6 @@ import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -87,8 +85,8 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 		setReleaseInfo(clientFactory);
 
-		getView().showPleaseWaitDialog();
-		getView().showPleaseWaitPanel();
+		getView().showPleaseWaitDialog("Retrieving CIDRs");
+		getView().showPleaseWaitPanel("Retrieving CIDRs");
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -264,7 +262,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 					if (Window.confirm("Delete the CIDR Assignment for " + cidrSummary.getCidr().getNetwork() + 
 						"/" + cidrSummary.getCidr().getBits() + "?")) {
 						
-						getView().showPleaseWaitDialog();
+						getView().showPleaseWaitDialog("Deleting CIDR Assignment");
 						AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 							@Override
@@ -297,7 +295,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 	@Override
 	public void filterByVPCId(String vpcId) {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Filtering byt VPC");
 		List<CidrSummaryPojo> filteredList = new java.util.ArrayList<CidrSummaryPojo>();
 		for (CidrSummaryPojo pojo : this.cidrSummaryList) {
 			if (pojo.getAssignmentSummary() != null) {
@@ -315,7 +313,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 	@Override
 	public void clearFilter() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Clearing filter");
 		filter = null;
 		this.getUserAndRefreshList();
 	}

@@ -12,7 +12,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
@@ -242,7 +241,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 		};
 
 		GWT.log("[PRESENTER] refreshing Vpcp object for provisioning id:  " + provisioningId);
-        getView().showPleaseWaitDialog();
+        getView().showPleaseWaitDialog("Retrieving VPCs for the provisioning id: " + provisioningId);
 		VpcpQueryFilterPojo filter = new VpcpQueryFilterPojo();
 		filter.setProvisioningId(provisioningId);
 		VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, callback);

@@ -34,8 +34,6 @@ public interface HomeView extends Editor<Void>, IsWidget, View {
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setAccountRoleList(List<AccountRolePojo> accountRoles);
 	void setRoleInfoHTML(String roleInfo);
 	void setAccountSeriesInfo(String seriesInfo);

@@ -19,8 +19,6 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListServicePresenter extends PresenterBase implements ListServiceView.Presenter {
@@ -84,7 +82,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -209,7 +207,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	@Override
 	public void deleteService(final AWSServicePojo service) {
 		if (Window.confirm("Delete the AWS Service " + service.getName() + "?")) {
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting service...");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override

@@ -2,7 +2,6 @@ package edu.emory.oit.vpcprovisioning.presenter.vpcp;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -75,10 +74,5 @@ public interface VpcpStatusView extends Editor<VpcpPojo>, IsWidget, View {
 	void startTimer(int delay);
 	void stopTimer();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void refreshVpcpStatusInformation();
-//	void setSpeedTypeStatus(String status);
-//	void setSpeedTypeColor(String color);
-//	Widget getSpeedTypeWidget();
 }

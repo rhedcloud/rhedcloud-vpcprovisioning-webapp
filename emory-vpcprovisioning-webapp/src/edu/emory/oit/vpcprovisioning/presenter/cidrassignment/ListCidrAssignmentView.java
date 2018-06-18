@@ -54,7 +54,5 @@ public interface ListCidrAssignmentView extends IsWidget, View {
 	void setCidrAssignmentSummaries(List<CidrAssignmentSummaryPojo> cidrAssignmentSummaries);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeCidrAssignmentSummaryFromView(CidrAssignmentSummaryPojo cidrAssignmentSummary);
 }

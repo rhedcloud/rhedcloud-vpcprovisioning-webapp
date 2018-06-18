@@ -81,8 +81,6 @@ public interface MaintainCidrAssignmentView extends Editor<CidrAssignmentPojo>, 
 	void initPage();
 
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setVpcItems(List<VpcPojo> vpcs);
 	void setAccountItems(List<AccountPojo> accounts);
 	void setCidrItems(List<CidrPojo> cidrs);

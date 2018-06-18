@@ -51,8 +51,6 @@ public interface ListNotificationView extends IsWidget, View {
 	void setNotifications(List<NotificationPojo> services);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeNotificationFromView(NotificationPojo service);
 
 

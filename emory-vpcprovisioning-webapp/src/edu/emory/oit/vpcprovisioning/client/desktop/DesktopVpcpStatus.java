@@ -176,8 +176,6 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -185,9 +183,16 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override
@@ -248,7 +253,6 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 			stepsGrid.setWidget(gridRow, 5, hAnticipatedTime);
 			if (psp.getProperties().size() > 0) {
 				StringBuffer sProps = new StringBuffer();
-				@SuppressWarnings("unchecked")
 				Iterator<String> iter = psp.getProperties().keySet().iterator();
 				boolean firstKey = true;
 				while (iter.hasNext()) {

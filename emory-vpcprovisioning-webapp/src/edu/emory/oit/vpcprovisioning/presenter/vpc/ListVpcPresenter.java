@@ -15,9 +15,6 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.VpcListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
@@ -83,7 +80,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving VPCs from the AWS Account Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -130,6 +127,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving Vpcs", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Vpcs.  " +
@@ -157,6 +155,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 					// TODO: need to not show them the list of items???
 				}
                 getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 			}
 		};
 
@@ -222,7 +221,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	@Override
 	public void deleteVpc(final VpcPojo vpc) {
 		if (Window.confirm("Delete the AWS Vpc " + vpc.getAccountId() + "/" + vpc.getVpcId() + "?")) {
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting VPC...");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override

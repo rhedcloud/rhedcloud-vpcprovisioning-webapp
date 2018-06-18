@@ -78,8 +78,6 @@ public interface MaintainFirewallExceptionRequestView extends Editor<FirewallExc
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setComplianceClassItems(List<String> complianceClassTypes);
 	void setTimeRuleItems(List<String> timeRules);
 }

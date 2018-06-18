@@ -52,8 +52,6 @@ public interface ListCidrView extends IsWidget, View {
 	void setCidrSummaries(List<CidrSummaryPojo> cidrSummaries);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeCidrSummaryFromView(CidrSummaryPojo cidrSummary);
 	void initPage();
 }

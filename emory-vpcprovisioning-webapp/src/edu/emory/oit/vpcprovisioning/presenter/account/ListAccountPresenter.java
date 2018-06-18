@@ -80,7 +80,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving accounts from the AWS Account Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -137,6 +137,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving Accounts", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of accounts.  " +
@@ -164,6 +165,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 					// TODO: need to not show them the list of accounts???
 				}
                 getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 			}
 		};
 
@@ -228,7 +230,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	@Override
 	public void deleteAccount(final AccountPojo account) {
 		if (Window.confirm("Delete the AWS Account " + account.getAccountId() + "/" + account.getAccountName() + "?")) {
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting account");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override
@@ -256,7 +258,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 	@Override
 	public void filterByAccountId(String accountId) {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Filtering accounts");
 		filter = new AccountQueryFilterPojo();
 		filter.setAccountId(accountId);
 		this.getUserAndRefreshList();
@@ -264,7 +266,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 	@Override
 	public void clearFilter() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Clearing filter");
 		filter = null;
 		this.getUserAndRefreshList();
 	}

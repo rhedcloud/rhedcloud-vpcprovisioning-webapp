@@ -77,8 +77,6 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void setVpcTypeItems(List<String> vpcTypes);
 	void setSpeedTypeStatus(String status);
 	void setSpeedTypeColor(String color);

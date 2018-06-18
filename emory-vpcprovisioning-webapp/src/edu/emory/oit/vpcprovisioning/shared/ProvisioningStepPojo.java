@@ -109,11 +109,11 @@ public class ProvisioningStepPojo extends SharedObject implements IsSerializable
 		this.anticipatedTime = anticipatedTime;
 	}
 
-	public HashMap getProperties() {
+	public HashMap<String, String> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(HashMap properties) {
+	public void setProperties(HashMap<String, String> properties) {
 		this.properties = properties;
 	}
 

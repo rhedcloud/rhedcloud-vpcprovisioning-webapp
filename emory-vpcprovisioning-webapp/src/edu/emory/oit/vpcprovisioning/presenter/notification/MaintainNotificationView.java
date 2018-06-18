@@ -1,7 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
-import java.util.List;
-
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -74,8 +72,6 @@ public interface MaintainNotificationView extends Editor<NotificationPojo>, IsWi
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 
 
 }

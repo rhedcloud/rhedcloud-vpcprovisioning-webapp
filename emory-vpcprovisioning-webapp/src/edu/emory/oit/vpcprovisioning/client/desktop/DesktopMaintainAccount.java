@@ -21,6 +21,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -509,9 +510,16 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		pleaseWaitPanel.setVisible(false);
 	}
 
+	@UiField HTML pleaseWaitHTML;
 	@Override
-	public void showPleaseWaitPanel() {
-		pleaseWaitPanel.setVisible(true);
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		}
+		else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
 	}
 
 	@Override
@@ -681,11 +689,19 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		}
 	}
 	@Override
-	public void showPleaseWaitDialog() {
+	public void showPleaseWaitDialog(String pleaseWaitHTML) {
 		adminPleaseWaitDialog = new PopupPanel(true);
+
+		VerticalPanel vp = new VerticalPanel();
 		Image img = new Image();
 		img.setUrl("images/ajax-loader.gif");
-		adminPleaseWaitDialog.setWidget(img);
+		vp.add(img);
+		HTML h = new HTML(pleaseWaitHTML);
+		vp.add(h);
+		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+
+		adminPleaseWaitDialog.setWidget(vp);
 		adminPleaseWaitDialog.center();
 		adminPleaseWaitDialog.setPopupPosition(adminLabel.getOffsetWidth() / 2, adminLabel.getAbsoluteTop() + 75);
 		adminPleaseWaitDialog.show();

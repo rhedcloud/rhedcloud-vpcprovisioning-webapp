@@ -55,8 +55,6 @@ public interface ListElasticIpAssignmentView extends IsWidget, View {
 	void setElasticIpAssignments(List<ElasticIpAssignmentPojo> pojos);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeElasticIpAssignmentFromView(ElasticIpAssignmentPojo summary);
 
 

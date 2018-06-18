@@ -51,7 +51,5 @@ public interface ListVpcView extends IsWidget, View {
 	void setVpcs(List<VpcPojo> Vpcs);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void hidePleaseWaitPanel();
-	void showPleaseWaitPanel();
 	void removeVpcFromView(VpcPojo Vpc);
 }

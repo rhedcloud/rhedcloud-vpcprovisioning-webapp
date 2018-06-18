@@ -149,20 +149,14 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	public void showPleaseWaitPanel() {
-		// TODO Auto-generated method stub
-		
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 	}
 
 	@Override

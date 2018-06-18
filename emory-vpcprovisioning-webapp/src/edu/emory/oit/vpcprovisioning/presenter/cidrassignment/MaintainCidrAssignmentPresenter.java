@@ -17,8 +17,6 @@ import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -235,7 +233,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 
 	@Override
 	public void saveCidrAssignment() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving CIDR Assignment...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);
@@ -310,7 +308,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 	@Override
 	public void getVpcsForAccount(String accountId) {
 		// get vpcs for the accountid passed in
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving VPCs for the Account...");
 		AsyncCallback<List<VpcPojo>> callback = new AsyncCallback<List<VpcPojo>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -333,7 +331,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 	@Override
 	public void getUnassigedCidrs() {
 		// get all unassigned cidrs
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving unassigned CIDRs...");
 		AsyncCallback<List<CidrPojo>> callback = new AsyncCallback<List<CidrPojo>>() {
 			@Override
 			public void onFailure(Throwable caught) {

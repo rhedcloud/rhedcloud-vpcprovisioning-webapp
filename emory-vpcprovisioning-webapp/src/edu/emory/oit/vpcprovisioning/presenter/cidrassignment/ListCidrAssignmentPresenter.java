@@ -16,8 +16,6 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -82,7 +80,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-        getView().showPleaseWaitPanel();
+        getView().showPleaseWaitPanel("Retrieving CIDR Assignments");
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -205,7 +203,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 				cidrAssignmentSummary.getCidrAssignment().getCidrAssignmentId() + "/" + 
 				cidrAssignmentSummary.getCidrAssignment().getPurpose() + "?")) {
 			
-			getView().showPleaseWaitDialog();
+			getView().showPleaseWaitDialog("Deleting CIDR Assignment");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
 				@Override

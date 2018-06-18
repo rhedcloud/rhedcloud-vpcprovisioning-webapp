@@ -24,7 +24,6 @@ import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.NetworkIdentityPojo;
-import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -256,7 +255,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 
 	@Override
 	public void saveVpcp() {
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving VPC Provisioning object...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);
@@ -565,7 +564,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 				getView().hidePleaseWaitPanel();
 			}
 		};
-		getView().showPleaseWaitDialog();
+		getView().showPleaseWaitDialog("Adding person to VPC Provisioning object...");
 		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, callback);
 	}
 
