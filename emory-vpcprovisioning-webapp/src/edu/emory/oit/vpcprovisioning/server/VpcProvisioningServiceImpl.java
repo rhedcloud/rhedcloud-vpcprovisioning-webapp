@@ -5745,7 +5745,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					else {
 						// error
 						info("Could not find a RoleAssignment for the filter: " + filter.toString());
-						throw new RpcException("Could not find a RoleAssignment for the filter: " + filter.toString());
+//						throw new RpcException("Could not find a RoleAssignment for the filter: " + filter.toString());
 					}
 				}
 				else {
