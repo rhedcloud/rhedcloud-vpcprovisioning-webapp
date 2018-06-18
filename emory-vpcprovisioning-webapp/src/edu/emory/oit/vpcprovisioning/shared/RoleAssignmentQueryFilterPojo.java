@@ -46,4 +46,9 @@ public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSer
 		this.directAssignOnly = directAssignOnly;
 	}
 
+	@Override
+	public String toString() {
+		return "roleDN: " + roleDN + ", identityType: " + identityType + ", userDN: " + userDN;
+	}
+
 }
