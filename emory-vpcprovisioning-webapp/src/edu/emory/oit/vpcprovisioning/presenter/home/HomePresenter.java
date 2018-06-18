@@ -230,6 +230,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 				GWT.log("Exception retrieving DirectoryPerson information.", caught);
 				getView().showDirectoryPersonInfoPopup("Exception retrieving DirectoryPerson info.  "
 						+ "Exception: " + caught.getMessage());
@@ -238,6 +239,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			@Override
 			public void onSuccess(DirectoryPersonQueryResultPojo result) {
 				getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 				if (result == null) {
 					getView().showDirectoryPersonInfoPopup("NULL DirectoryPerson "
 							+ "object returned from server");
@@ -271,6 +273,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 				GWT.log("Exception retrieving FullPerson information.", caught);
 				getView().showFullPersonInfoPopup("Exception retrieving FullPerson info.  "
 						+ "Exception: " + caught.getMessage());
@@ -279,6 +282,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			@Override
 			public void onSuccess(FullPersonQueryResultPojo result) {
 				getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 				if (result == null) {
 					getView().showDirectoryPersonInfoPopup("NULL FirstPerson "
 							+ "object returned from server");
