@@ -117,8 +117,10 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				GWT.log("Exception retrieving user logged in", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the user logged in.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
@@ -145,8 +147,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						getView().setComplianceClassItems(complianceClassTypes);
 
 						getView().initPage();
-//						getView().hidePleaseWaitDialog();
-//						getView().hidePleaseWaitPanel();
 						getView().setFieldViolations(false);
 						getView().setInitialFocus();
 						
@@ -322,7 +322,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	}
 
 	@Override
-	public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w) {
+	public void setDirectoryMetaDataTitleOnWidget(final String publicId, final Widget w) {
 		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -341,7 +341,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					" - from the Identity Service.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(publicId, callback);
 	}
 
 	@Override

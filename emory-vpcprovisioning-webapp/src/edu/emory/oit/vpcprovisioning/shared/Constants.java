@@ -93,4 +93,5 @@ public class Constants implements IsSerializable {
 	public static final String REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER = "AWS_ACCOUNT_NUMBER";
 	public static final String REPLACEMENT_VAR_EMORY_ROLE_NAME = "EMORY_ROLE_NAME";
 	public static final String REPLACEMENT_VAR_PUBLIC_ID = "PUBLIC_ID";
+	public static final String DIRECTORY_PERSON = "DirectoryPerson";
 }

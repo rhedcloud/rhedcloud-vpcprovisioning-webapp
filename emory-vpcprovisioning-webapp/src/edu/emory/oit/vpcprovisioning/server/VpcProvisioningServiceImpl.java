@@ -5706,30 +5706,50 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 									info("[getAdminRoleAssignmentsForAccount] publicId: " + publicId);
 									
 									// get directoryperson for publicid
-									DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
-									dp_filter.setKey(publicId);
-									DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-									info("[getAdminRoleAssignmentsForAccount] got " + dp_result.getResults().size() + 
-											" DirectoryPerson objects back for key=" + publicId);
+									// check cache to see if the DirectoryPerson is already in the cache
+									// if not, go get it.
+									DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache().get(
+											Constants.DIRECTORY_PERSON + publicId);
+									if (cached_dp == null) {
+										DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+										dp_filter.setKey(publicId);
+										DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+										info("[getAdminRoleAssignmentsForAccount] got " + dp_result.getResults().size() + 
+												" DirectoryPerson objects back for key=" + publicId);
+										if (dp_result.getResults().size() > 0) {
+											cached_dp = dp_result.getResults().get(0);
+											// add to cache
+											Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
+										}
+										else {
+											throw new RpcException("Could not find a DirectoryPerson for the public id: " + publicId);
+										}
+									}
+									else {
+										info("[getAdminRoleAssignmentsForAccount] got DirectoryPerson (" + publicId + ") from cache.");
+									}
 									
 									// create RoleAssignmentSummaryPojo and add it to the results
-									if (dp_result.getResults().size() > 0) {
+//									if (dp_result.getResults().size() > 0) {
 										RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
-										ra_summary.setDirectoryPerson(dp_result.getResults().get(0));
+//										ra_summary.setDirectoryPerson(dp_result.getResults().get(0));
+										ra_summary.setDirectoryPerson(cached_dp);
 										ra_summary.setRoleAssignment(ra);
 										info("[getAdminRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
 										results.add(ra_summary);
-									}
+//									}
 								}
 							}
 						}
 					}
 					else {
 						// error
+						throw new RpcException("Could not find a RoleAssignment for the filter: " + filter.toString());
 					}
 				}
 				else {
 					// error
+					throw new RpcException("NULL RoleAssignment returned for the filter: " + filter.toString());
 				}
 			}
 		} 
