@@ -5683,6 +5683,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN)) {
 					continue;
 				}
+//				if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
+//					continue;
+//				}
 				String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);

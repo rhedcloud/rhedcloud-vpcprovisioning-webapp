@@ -2,6 +2,7 @@ package edu.emory.oit.vpcprovisioning.presenter.home;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -22,6 +23,7 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class HomePresenter extends PresenterBase implements HomeView.Presenter {
@@ -127,6 +129,27 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				getView().setFieldViolations(false);
 				getView().setInitialFocus();
 				
+				// just to prime the pump for directory person results so the first page load
+				// on the account details page won't take so long.  this could be done in a number
+				// of places but since we have the account ids, we'll do it here (asynchronously)
+				AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+//						getView().hidePleaseWaitDialog();
+//						getView().hidePleaseWaitPanel();
+//						GWT.log("Exception retrieving Administrators", caught);
+//						getView().showMessageToUser("There was an exception on the " +
+//								"server retrieving Administrators.  Message " +
+//								"from server is: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
+					}
+				};
+				for (AccountRolePojo arp : user.getAccountRoles()) {
+					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
+				}
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
