@@ -114,6 +114,7 @@ public interface VpcProvisioningServiceAsync {
 	void getEmailTypeItems(AsyncCallback<List<String>> callback);
 	void getAwsAccountsURL(AsyncCallback<String> callback);
 	void getAwsBillingManagementURL(AsyncCallback<String> callback);
+	void getAccountById(String accountId, AsyncCallback<AccountPojo> callback);
 	
 	// CIDR
 	void getCidrsForUserLoggedIn(AsyncCallback<List<CidrPojo>> callback);

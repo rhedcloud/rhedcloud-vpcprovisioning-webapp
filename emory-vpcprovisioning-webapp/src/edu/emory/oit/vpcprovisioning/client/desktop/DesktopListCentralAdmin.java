@@ -44,15 +44,15 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 
 	/*** FIELDS ***/
 	@UiField SimplePager centralAdminListPager;
-	@UiField Button addCentralAdminButton;
-	@UiField Button actionsButton;
+//	@UiField Button addCentralAdminButton;
+//	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<RoleAssignmentSummaryPojo> centralAdminListTable = new CellTable<RoleAssignmentSummaryPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel centralAdminListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 
-	@UiField Button filterButton;
-	@UiField Button clearFilterButton;
-	@UiField TextBox centralAdminIdTB;
+//	@UiField Button filterButton;
+//	@UiField Button clearFilterButton;
+//	@UiField TextBox centralAdminIdTB;
 
 	private static DesktopListCentralAdminUiBinder uiBinder = GWT.create(DesktopListCentralAdminUiBinder.class);
 
@@ -372,8 +372,8 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 
 	@Override
 	public void initPage() {
-		centralAdminIdTB.setText("");
-		centralAdminIdTB.getElement().setPropertyString("placeholder", "enter filter text");
+//		centralAdminIdTB.setText("");
+//		centralAdminIdTB.getElement().setPropertyString("placeholder", "enter filter text");
 	}
 
 }

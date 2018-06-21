@@ -102,20 +102,6 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
 				}
 
-				// TEMP:  central admin query test
-//				AsyncCallback<List<RoleAssignmentSummaryPojo>> ca_callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						GWT.log("Exception retrieving Central Administrators", caught);
-//					}
-//
-//					@Override
-//					public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
-//						GWT.log("got " + result.size() + " central admins back from the server");
-//					}
-//				};
-//				VpcProvisioningService.Util.getInstance().getCentralAdmins(ca_callback);
-
 				getView().setUserLoggedIn(user);
 				getView().initPage();
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());

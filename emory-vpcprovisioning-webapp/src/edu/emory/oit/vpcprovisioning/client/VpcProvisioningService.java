@@ -134,6 +134,8 @@ public interface VpcProvisioningService extends RemoteService {
 	List<String> getEmailTypeItems();
 	String getAwsAccountsURL() throws RpcException;
 	String getAwsBillingManagementURL() throws RpcException;
+	AccountPojo getAccountById(String accountId) throws RpcException;
+
 	
 	// CIDR
 	List<CidrPojo>getCidrsForUserLoggedIn() throws RpcException;

@@ -2439,7 +2439,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return null;
 	}
 
-	private AccountPojo getAccountById(String accountId) throws RpcException {
+	@Override
+	public AccountPojo getAccountById(String accountId) throws RpcException {
 		
 		try {
 			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
