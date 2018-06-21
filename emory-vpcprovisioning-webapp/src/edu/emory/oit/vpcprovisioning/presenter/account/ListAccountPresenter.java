@@ -91,17 +91,6 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Accounts you're associated to.  " +
 						"Message from server is: " + caught.getMessage());
-//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-//					log.log(Level.SEVERE, 
-//							"Exception getting user logged in on server", 
-//							caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving information about the user logged " +
-//							"in.  Message from server is: " + caught.getMessage());
-//					
-//					// TODO try to account for shib session timeout
-//					// caught.getMessage() from server returns "0"
-//				}
 			}
 
 			@Override
@@ -129,7 +118,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	}
 
 	/**
-	 * Refresh the CIDR list.
+	 * Refresh the Account list.
 	 */
 	private void refreshList(final UserAccountPojo user) {
 		// use RPC to get all accounts for the current filter being used
@@ -152,18 +141,33 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
-				else if (account != null && user.isAdminForAccount(account.getAccountId())) {
-					getView().applyAWSAccountAdminMask();
-				}
-				else if (account != null && user.isAuditorForAccount(account.getAccountId())) {
-					getView().applyAWSAccountAuditorMask();
-				}
 				else {
-					getView().showMessageToUser("An error has occurred.  The user logged in does not "
-							+ "appear to be associated to any valid roles for this account.");
-					getView().applyAWSAccountAuditorMask();
-					// TODO: need to not show them the list of accounts???
+					boolean isAdmin=false;
+					boolean isAuditor=false;
+					acctLoop: for (AccountPojo acct : result.getResults()) {
+						// if they're an admin for any of the accounts, they are an admin for this page
+						if (user.isAdminForAccount(acct.getAccountId())) {
+							isAdmin = true;
+							break acctLoop;
+						}
+						if (user.isAuditorForAccount(acct.getAccountId())) {
+							isAuditor = true;
+						}
+					}
+					if (isAdmin) {
+						getView().applyAWSAccountAdminMask();
+					}
+					else if (isAuditor) {
+						getView().applyAWSAccountAuditorMask();
+					}
+					else {
+						getView().showMessageToUser("An error has occurred.  The user logged in does not "
+								+ "appear to be associated to any valid roles for this account.");
+						getView().applyAWSAccountAuditorMask();
+						// TODO: need to not show them the list of accounts???
+					}
 				}
+				
                 getView().hidePleaseWaitPanel();
 				getView().hidePleaseWaitDialog();
 			}

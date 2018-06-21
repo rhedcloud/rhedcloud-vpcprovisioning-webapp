@@ -155,7 +155,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 				}
 				else {
 					getView().showMessageToUser("An error has occurred.  The user logged in does not "
-							+ "appear to be associated to any valid roles.");
+							+ "appear to be associated to any valid roles required to view this data.");
 					getView().applyAWSAccountAuditorMask();
 					// TODO: need to not show them the list of accounts???
 				}

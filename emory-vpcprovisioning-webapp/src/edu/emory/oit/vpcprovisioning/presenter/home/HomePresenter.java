@@ -3,7 +3,6 @@ package edu.emory.oit.vpcprovisioning.presenter.home;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -31,6 +30,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private UserAccountPojo userLoggedIn;
+	private boolean finishedDirectoryPersonCache=false;
 
 	public HomePresenter(ClientFactory clientFactory) {
 		this.clientFactory = clientFactory;
@@ -66,20 +66,20 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				userLoggedIn = user;
 				
 				// cache accounts
-				AsyncCallback<AccountQueryResultPojo> acct_callback = new AsyncCallback<AccountQueryResultPojo>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log("Exception Retrieving Accounts", caught);
-					}
-
-					@Override
-					public void onSuccess(AccountQueryResultPojo result) {
-					}
-				};
-				GWT.log("caching Account list...");
-				AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
-				filter.setUserLoggedIn(user);
-				VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
+//				AsyncCallback<AccountQueryResultPojo> acct_callback = new AsyncCallback<AccountQueryResultPojo>() {
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						GWT.log("Exception Retrieving Accounts", caught);
+//					}
+//
+//					@Override
+//					public void onSuccess(AccountQueryResultPojo result) {
+//					}
+//				};
+//				GWT.log("caching Account list...");
+//				AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
+//				filter.setUserLoggedIn(user);
+//				VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
 				
 				// just to prime the pump for directory person results so the first page load
 				// on the account details page won't take so long.  this could be done in a number
@@ -101,6 +101,20 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 					}
 					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
 				}
+				
+//				AsyncCallback<Void> log_cb = new AsyncCallback<Void>() {
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						// TODO Auto-generated method stub
+//						
+//					}
+//
+//					@Override
+//					public void onSuccess(Void result) {
+//						// TODO Auto-generated method stub
+//					}
+//				};
+//				VpcProvisioningService.Util.getInstance().logMessage("starting DirectoryPerson cache", log_cb);
 
 				getView().setUserLoggedIn(user);
 				getView().initPage();
@@ -258,7 +272,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			else {
 				sbuf.append("<br/>");
 			}
-			sbuf.append("Account: " + (arp.getAccountId() != null ? arp.getAccountId() : "N/A") + ", Role: " + arp.getRoleName());
+			sbuf.append("Account: " + (arp.getAccountId() != null ? (arp.getAccountId() + " (" + arp.getAccountName() + ")") : "N/A") + ", Role: " + arp.getRoleName());
 		}
 		return sbuf.toString();
 	}

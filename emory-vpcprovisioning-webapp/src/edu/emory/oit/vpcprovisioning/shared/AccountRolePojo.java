@@ -9,6 +9,7 @@ public class AccountRolePojo extends SharedObject implements IsSerializable {
 	String accountId;
 	String roleName;
 	Date effectiveDate;
+	String accountName;
 
 	public AccountRolePojo() {
 	}
@@ -40,6 +41,14 @@ public class AccountRolePojo extends SharedObject implements IsSerializable {
 	@Override
 	public String toString() {
 		return "Account ID: " + accountId + " Role: " + roleName;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
 	}
 
 }

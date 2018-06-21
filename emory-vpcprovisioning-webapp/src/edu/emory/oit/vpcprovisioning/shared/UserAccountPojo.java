@@ -115,7 +115,9 @@ public class UserAccountPojo implements IsSerializable {
 	public boolean isCentralAdmin() {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getRoleName() != null && 
-					arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN)) {
+				(arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN) ||
+				 arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS))) {
+				
 				return true;
 			}
 		}

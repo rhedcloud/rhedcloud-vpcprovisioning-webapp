@@ -108,36 +108,36 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	    // Schedule the timer to run once every 10 seconds
 //	    t.scheduleRepeating(10000);
 		
-		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
 		
-		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-			}
-
-			@Override
-			public void onSuccess(UserAccountPojo result) {
-				userLoggedIn = result;
-				if (!userLoggedIn.isCentralAdmin()) {
-					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-						@Override
-						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-							if (event.getItem() == 4) {
-								event.cancel();
-							}
-						}
-					});
-				}
-				else {
-					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-				}
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+//		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//			}
+//
+//			@Override
+//			public void onSuccess(UserAccountPojo result) {
+//				userLoggedIn = result;
+//				if (!userLoggedIn.isCentralAdmin()) {
+//					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+//					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+//						@Override
+//						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+//							if (event.getItem() == 4) {
+//								event.cancel();
+//							}
+//						}
+//					});
+//				}
+//				else {
+//					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+//				}
+//			}
+//		};
+//		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 		
 		
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {

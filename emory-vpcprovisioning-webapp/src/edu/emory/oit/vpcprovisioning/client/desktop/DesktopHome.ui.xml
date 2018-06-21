@@ -72,5 +72,10 @@
 				</g:VerticalPanel>
 			</g:CaptionPanel>
 		</g:cell>
+		<!-- 
+		<g:cell>
+			<g:HTMLPanel><div class="blink_me">Work is continuing in the background but you can still do stuff.</div></g:HTMLPanel>
+		</g:cell>
+		 -->
 	</g:VerticalPanel>
 </ui:UiBinder> 
