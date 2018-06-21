@@ -6396,4 +6396,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e.getMessage());
 		}
 	}
+
+	@Override
+	public String getMyNetIdURL() throws RpcException {
+		try {
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String myNetIdURL = generalProps.getProperty("myNetIdURL", "https://dev.mynetid.emory.edu/");
+			return myNetIdURL;
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+	}
 }

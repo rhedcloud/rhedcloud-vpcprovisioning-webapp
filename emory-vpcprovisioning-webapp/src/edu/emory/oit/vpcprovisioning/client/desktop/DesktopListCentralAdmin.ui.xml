@@ -18,8 +18,9 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">Central Admin List</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
-		Central Administrators in this environment.
+		<g:HTML addStyleNames="{style.body}" ui:field="introBodyHTML">Below is a list of existing 
+		Central Administrators in this environment.  NOTE:  to manage this list 
+		please visit Emory's <a target="_blank" href="MY_NET_ID_URL">MyNetId</a> system.
 		</g:HTML>
 		<!-- 
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">

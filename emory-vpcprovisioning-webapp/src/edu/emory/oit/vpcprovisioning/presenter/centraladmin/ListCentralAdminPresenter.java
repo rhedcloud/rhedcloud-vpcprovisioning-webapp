@@ -81,6 +81,19 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving Central Administrators from the IDM Service...");
 		
+		AsyncCallback<String> myNetIdCallback = new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().setMyNetIdURL("Exception getting MyNETId URL from Server: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				getView().setMyNetIdURL(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getMyNetIdURL(myNetIdCallback);
+		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -90,17 +103,6 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
 						"Message from server is: " + caught.getMessage());
-//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-//					log.log(Level.SEVERE, 
-//							"Exception getting user logged in on server", 
-//							caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving information about the user logged " +
-//							"in.  Message from server is: " + caught.getMessage());
-//					
-//					// TODO try to account for shib session timeout
-//					// caught.getMessage() from server returns "0"
-//				}
 			}
 
 			@Override

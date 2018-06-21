@@ -3,13 +3,9 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -17,11 +13,9 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -49,6 +43,7 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 	@UiField(provided=true) CellTable<RoleAssignmentSummaryPojo> centralAdminListTable = new CellTable<RoleAssignmentSummaryPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel centralAdminListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
+	@UiField HTML introBodyHTML;
 
 //	@UiField Button filterButton;
 //	@UiField Button clearFilterButton;
@@ -374,6 +369,14 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 	public void initPage() {
 //		centralAdminIdTB.setText("");
 //		centralAdminIdTB.getElement().setPropertyString("placeholder", "enter filter text");
+	}
+
+	@Override
+	public void setMyNetIdURL(String url) {
+		String intro = introBodyHTML.
+				getHTML().
+				replace("MY_NET_ID_URL", url);
+		introBodyHTML.setHTML(intro);
 	}
 
 }

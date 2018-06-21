@@ -78,6 +78,34 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		getView().showPleaseWaitPanel(null);
 		getView().disableAdminMaintenance();
 
+		if (accountId == null) {
+			clientFactory.getShell().setSubTitle("Create Account");
+			startCreate();
+		} 
+		else {
+			clientFactory.getShell().setSubTitle("Edit Account");
+			startEdit();
+			// get latest version of the account from the server
+			AsyncCallback<AccountPojo> acct_cb = new AsyncCallback<AccountPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					getView().hidePleaseWaitDialog();
+					getView().hidePleaseWaitPanel();
+					getView().enableAdminMaintenance();
+					GWT.log("Exception retrieving account details", caught);
+					getView().showMessageToUser("There was an exception on the " +
+							"server retrieving the details for this account.  Message " +
+							"from server is: " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(AccountPojo result) {
+					account = result;
+				}
+			};
+			VpcProvisioningService.Util.getInstance().getAccountById(accountId, acct_cb);
+		}
+
 		// get awsAccountsURL and awsBillingManagementURL in parallel
 		AsyncCallback<String> accountsUrlCB = new AsyncCallback<String>() {
 			@Override
@@ -107,34 +135,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		};
 		VpcProvisioningService.Util.getInstance().getAwsBillingManagementURL(billingUrlCB);
 		
-		if (accountId == null) {
-			clientFactory.getShell().setSubTitle("Create Account");
-			startCreate();
-		} 
-		else {
-			clientFactory.getShell().setSubTitle("Edit Account");
-			startEdit();
-			// get latest version of the account from the server
-			AsyncCallback<AccountPojo> acct_cb = new AsyncCallback<AccountPojo>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().hidePleaseWaitDialog();
-					getView().hidePleaseWaitPanel();
-					getView().enableAdminMaintenance();
-					GWT.log("Exception retrieving account details", caught);
-					getView().showMessageToUser("There was an exception on the " +
-							"server retrieving the details for this account.  Message " +
-							"from server is: " + caught.getMessage());
-				}
-
-				@Override
-				public void onSuccess(AccountPojo result) {
-					account = result;
-				}
-			};
-			VpcProvisioningService.Util.getInstance().getAccountById(accountId, acct_cb);
-		}
-
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
 			@Override

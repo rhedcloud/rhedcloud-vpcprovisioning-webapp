@@ -55,4 +55,5 @@ public interface ListCentralAdminView extends IsWidget, View {
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeCentralAdminFromView(RoleAssignmentSummaryPojo centralAdmin);
 	void initPage();
+	void setMyNetIdURL(String url);
 }

@@ -108,6 +108,7 @@ public interface VpcProvisioningService extends RemoteService {
 
 	String getEsbServiceStatusURL() throws RpcException;
 	String getAccountSeriesText() throws RpcException;
+	String getMyNetIdURL() throws RpcException;
 
 	// ReleaseInfo
 	ReleaseInfo getReleaseInfo() throws RpcException;

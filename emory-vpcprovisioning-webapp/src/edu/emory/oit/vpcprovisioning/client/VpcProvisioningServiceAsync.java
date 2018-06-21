@@ -91,6 +91,7 @@ public interface VpcProvisioningServiceAsync {
 	void logMessage(String message, AsyncCallback<Void> callback);
 	void getEsbServiceStatusURL(AsyncCallback<String> callback);
 	void getAccountSeriesText(AsyncCallback<String> callback) throws RpcException;
+	void getMyNetIdURL(AsyncCallback<String> callback) throws RpcException;
 	
 	// ReleaseInfo
 	void getReleaseInfo(AsyncCallback<ReleaseInfo> callback);
