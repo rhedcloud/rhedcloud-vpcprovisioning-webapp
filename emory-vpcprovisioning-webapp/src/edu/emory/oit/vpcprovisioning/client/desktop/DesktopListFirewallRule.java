@@ -129,7 +129,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
 		if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) || 
-				userLoggedIn.isLitsAdmin()) {
+				userLoggedIn.isCentralAdmin()) {
 
 		    Grid grid = new Grid(3, 1);
 		    grid.setCellSpacing(8);
@@ -228,7 +228,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    // - delete
 	    String anchorText = "View Firewall Exception Request";
 	    if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) ||
-	    	userLoggedIn.isLitsAdmin()) {
+	    	userLoggedIn.isCentralAdmin()) {
 	    	
 			anchorText = "Maintain Firewall Exception Request";
 	    }
@@ -263,7 +263,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
 			    if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) &&
-				    	!userLoggedIn.isLitsAdmin()) {
+				    	!userLoggedIn.isCentralAdmin()) {
 			    	
 			    	showMessageToUser("User are not authorized to perform this action on this item.");
 			    	return;

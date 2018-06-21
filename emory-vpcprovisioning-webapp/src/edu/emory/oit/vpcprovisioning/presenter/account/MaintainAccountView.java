@@ -101,4 +101,6 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void addRoleAssignment(int index, String name, String netId, String roleName, String widgetTitle);
 	void setRoleAssignmentSummaries(List<RoleAssignmentSummaryPojo> summaries);
 	void setComplianceClassItems(List<String> complianceClassTypes);
+	void enableAdminMaintenance();
+	void disableAdminMaintenance();
 }

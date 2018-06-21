@@ -140,7 +140,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 				setNotificationList(result.getResults());
 				// apply authorization mask
 				// TODO: need to determine the Notification structure so we can apply authorization mask appropriately
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else {

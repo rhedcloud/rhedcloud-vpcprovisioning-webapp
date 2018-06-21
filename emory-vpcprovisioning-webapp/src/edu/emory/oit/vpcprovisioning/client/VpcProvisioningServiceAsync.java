@@ -225,4 +225,5 @@ public interface VpcProvisioningServiceAsync {
 	void getRoleAssignmentsForFilter(RoleAssignmentQueryFilterPojo filter, AsyncCallback<RoleAssignmentQueryResultPojo> callback);
 	void getRoleAssignmentsForAccount(String accountId, AsyncCallback<List<RoleAssignmentSummaryPojo>> callback) throws RpcException;
 	void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment, AsyncCallback<Void> callback) throws RpcException;
+	void getCentralAdmins(AsyncCallback<List<RoleAssignmentSummaryPojo>> callback) throws RpcException;
 }

@@ -75,6 +75,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
+		getView().showPleaseWaitPanel(null);
+		getView().disableAdminMaintenance();
 
 		// get awsAccountsURL and awsBillingManagementURL in parallel
 		AsyncCallback<String> accountsUrlCB = new AsyncCallback<String>() {
@@ -117,6 +119,9 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 			@Override
 			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().enableAdminMaintenance();
 				GWT.log("Exception retrieving user logged in", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  Message " +
@@ -132,6 +137,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					public void onFailure(Throwable caught) {
 						getView().hidePleaseWaitDialog();
 						getView().hidePleaseWaitPanel();
+						getView().enableAdminMaintenance();
 						GWT.log("Exception retrieving e-mail types", caught);
 						getView().showMessageToUser("There was an exception on the " +
 								"server retrieving e-mail types.  Message " +
@@ -155,7 +161,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						}
 						
 						// apply authorization mask
-						if (user.isLitsAdmin()) {
+						if (user.isCentralAdmin()) {
 							getView().applyCentralAdminMask();
 						}
 						else if (account != null) {
@@ -534,6 +540,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving Administrators.  Message " +
 						"from server is: " + caught.getMessage());
+				getView().enableAdminMaintenance();
 			}
 
 			@Override
@@ -547,6 +554,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 							ra_summary.getDirectoryPerson().getEmail().getEmailAddress(), roleName,  
 							ra_summary.getDirectoryPerson().toString());
 				}
+				getView().enableAdminMaintenance();
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 			}

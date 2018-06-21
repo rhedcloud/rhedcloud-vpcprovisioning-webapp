@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.mobile.MobileListAccount;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
@@ -72,6 +73,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ListFirewallRuleView listFirewallRuleView;
 	private MaintainFirewallExceptionRequestView maintainFirewallRule;
 	private HomeView homeView;
+	private ListCentralAdminView centralAdminView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -237,6 +239,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public HomeView getHomeView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListCentralAdminView getListCentralAdminView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

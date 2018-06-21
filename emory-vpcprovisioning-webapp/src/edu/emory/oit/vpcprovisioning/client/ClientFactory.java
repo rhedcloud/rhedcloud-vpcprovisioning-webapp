@@ -6,6 +6,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
@@ -84,4 +85,5 @@ public interface ClientFactory {
 	ListFirewallRuleView getListFirewallRuleView();
 	MaintainFirewallExceptionRequestView getMaintainFirewallExceptionRequestView();
 	HomeView getHomeView();
+	ListCentralAdminView getListCentralAdminView();
 }

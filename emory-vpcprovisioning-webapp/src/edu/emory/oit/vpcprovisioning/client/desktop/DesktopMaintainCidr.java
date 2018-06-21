@@ -173,7 +173,7 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		cidrPropertyLabel.addStyleName("emailLabel");
 		final Button removeButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (this.userLoggedIn.isLitsAdmin()) {
+		if (this.userLoggedIn.isCentralAdmin()) {
 				
 			removeButton.setEnabled(true);
 		}
@@ -246,7 +246,7 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		associatedCidrLabel.addStyleName("emailLabel");
 		final Button removeButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (this.userLoggedIn.isLitsAdmin()) {
+		if (this.userLoggedIn.isCentralAdmin()) {
 				
 			removeButton.setEnabled(true);
 		}

@@ -103,7 +103,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 						getView().setVpcTypeItems(result);
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.isLitsAdmin()) {
+						if (user.isCentralAdmin()) {
 							getView().applyCentralAdminMask();
 						}
 						else if (user.isAdminForAccount(vpc.getAccountId())) {

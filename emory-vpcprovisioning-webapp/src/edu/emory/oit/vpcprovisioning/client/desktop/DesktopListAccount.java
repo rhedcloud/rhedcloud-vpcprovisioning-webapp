@@ -193,7 +193,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				if (m != null) {
 					// just use a popup here and not try to show the "normal" CidrAssignment
 					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
 						// show billing information for this account
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, m);
 					}
@@ -219,7 +219,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				actionsPopup.hide();
 				AccountPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
 						// TODO: dialog for terminating account
 						showMessageToUser("Terminate account dialog and logic here.");
 //						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, m);

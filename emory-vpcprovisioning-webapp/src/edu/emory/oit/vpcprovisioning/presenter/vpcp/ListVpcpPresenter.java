@@ -135,7 +135,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 				GWT.log("Got " + result.getResults().size() + " Vpcps for " + result.getFilterUsed());
 				setVpcpList(result.getResults());
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else if (user.isEmoryAwsAdmin()) {

@@ -111,7 +111,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 						getView().initPage();
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.isLitsAdmin()) {
+						if (user.isCentralAdmin()) {
 							getView().applyCentralAdminMask();
 						}
 						else if (summary != null && user.isAdminForAccount(summary.getAccount().getAccountId())) {

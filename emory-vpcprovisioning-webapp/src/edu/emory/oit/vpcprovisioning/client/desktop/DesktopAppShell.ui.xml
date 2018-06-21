@@ -177,6 +177,10 @@
 							</g:HTMLPanel>
 						</g:tab>
 						 -->
+						<g:tab>
+							<g:header>Central Admin</g:header>
+							<g:DeckLayoutPanel ui:field="centralAdminContentContainer" width="100%" height="100%"/>
+						</g:tab>
 					</g:TabLayoutPanel>
 					</g:VerticalPanel>
 				</g:cell>

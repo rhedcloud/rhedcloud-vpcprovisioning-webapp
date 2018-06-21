@@ -9,6 +9,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -42,6 +44,8 @@ import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
@@ -82,7 +86,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		// Create a new timer that checks for notifications
+		// TODO: Create a new timer that checks for notifications
 //	    Timer t = new Timer() {
 //	      @Override
 //	      public void run() {
@@ -104,40 +108,37 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	    // Schedule the timer to run once every 10 seconds
 //	    t.scheduleRepeating(10000);
 		
-//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
 		
-//		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//
-//			@Override
-//			public void onSuccess(UserAccountPojo result) {
-//				userLoggedIn = result;
-//				if (!userLoggedIn.isLitsAdmin()) {
-//					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-//					mainTabPanel.getTabWidget(5).getParent().setVisible(false);
-//					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-//						@Override
-//						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-//							if (event.getItem() == 4 || event.getItem() == 5) {
-//							if (event.getItem() == 4) {
-//								event.cancel();
-//							}
-//						}
-//					});
-//				}
-//				else {
-//					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-//					mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-//				}
-//			}
-//		};
-//		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				userLoggedIn = result;
+				if (!userLoggedIn.isCentralAdmin()) {
+					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+						@Override
+						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+							if (event.getItem() == 4) {
+								event.cancel();
+							}
+						}
+					});
+				}
+				else {
+					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		
 		
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 			@Override
@@ -203,6 +204,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //	@UiField DeckLayoutPanel elasticIpContentContainer;
 //	@UiField DeckLayoutPanel firewallContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
+	@UiField DeckLayoutPanel centralAdminContentContainer;
 
 	@UiField Element userNameElem;
 
@@ -219,17 +221,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
     /**
 	 * A boolean indicating that we have not yet seen the first content widget.
 	 */
-	private boolean firstCidrContentWidget = true;
-//	private boolean firstCidrAssignmentContentWidget = true;
 	private boolean firstAccountContentWidget = true;
 	private boolean firstVpcContentWidget = true;
 	private boolean firstVpcpContentWidget = true;
-	private boolean firstElasticIpContentWidget = true;
-//	private boolean firstFirewallContentWidget = true;
-	private boolean firstNotificationContentWidget = true;
-	private boolean firstServicesContentWidget = true;
-	private boolean firstNotificationsContentWidget = true;
 	private boolean firstHomeContentWidget = true;
+	private boolean firstCentralAdminContentWidget = true;
 
 	private void registerEvents() {
 	    Event.sinkEvents(logoElem, Event.ONCLICK);
@@ -288,34 +284,29 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		            	vpList.add(new VerticalPanel());
 		            	vpList.add(new VerticalPanel());
 		            	 
-		            	// TODO: only do this for admins...
-        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
-        				manageSvcsAnchor.addStyleName("productAnchor");
-        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
-        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							productsPopup.hide();
-							// clear other features panel
-							// add list services view
-							// add maintain services view
-//							otherFeaturesContentContainer.clear();
-							otherFeaturesPanel.clear();
-			        			hideMainTabPanel();
-			        			showOtherFeaturesPanel();
-			    				firstServicesContentWidget = true;
-//			    				ListServiceView listServiceView = clientFactory.getListServiceView();
-//				    				MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
-//			    				otherFeaturesContentContainer.add(listServiceView);
-//				    				otherFeaturesPanel.add(maintainServiceView);
-//			    				otherFeaturesContentContainer.setAnimationDuration(500);
-			    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-						}
-        				});
+		            	// only do this for admins...
+		            	if (userLoggedIn.isCentralAdmin()) {
+	        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
+	        				manageSvcsAnchor.addStyleName("productAnchor");
+	        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
+	        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								productsPopup.hide();
+								// clear other features panel
+								// add list services view
+								// add maintain services view
+								otherFeaturesPanel.clear();
+				        			hideMainTabPanel();
+				        			showOtherFeaturesPanel();
+				    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+							}
+	        				});
 
-        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
-		            	vpList.get(0).add(manageSvcsAnchor);
-		            	vpList.get(0).add(hrHtml);
+	        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
+			            	vpList.get(0).add(manageSvcsAnchor);
+			            	vpList.get(0).add(hrHtml);
+		            	}
 
 		            	int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
 		            	if (catsPerPanel < 5) {
@@ -443,6 +434,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				vpcpContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
 				break;
+			case 4:
+				GWT.log("need to get CIDR Maintentance Content.");
+				firstCentralAdminContentWidget = true;
+				centralAdminContentContainer.clear();
+				ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
+//				MaintainCentralAdminView maintainCentralAdminView = clientFactory.getMaintainCentralAdminView();
+				centralAdminContentContainer.add(listCentralAdminView);
+//				centralAdminContentContainer.add(maintainCentralAdminView);
+				centralAdminContentContainer.setAnimationDuration(500);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
+				break;
 //			case 4:
 //				GWT.log("need to get CIDR Maintentance Content.");
 //				firstCidrContentWidget = true;
@@ -534,6 +536,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			if (firstVpcpContentWidget) {
 				firstVpcpContentWidget = false;
 				vpcpContentContainer.animate(0);
+			}
+			return;
+		}
+		
+//		if (w instanceof ListCentralAdminPresenter || 
+//			w instanceof MaintainCentralAdminPresenter) {
+		if (w instanceof ListCentralAdminPresenter) {
+			centralAdminContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstCentralAdminContentWidget) {
+				firstCentralAdminContentWidget = false;
+				centralAdminContentContainer.animate(0);
 			}
 			return;
 		}

@@ -133,7 +133,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 						getView().initPage();
 						getView().setInitialFocus();
 						// apply authorization mask
-						if (user.isLitsAdmin()) {
+						if (user.isCentralAdmin()) {
 							getView().applyCentralAdminMask();
 						}
 						else if (cidrAssignmentSummary != null) {

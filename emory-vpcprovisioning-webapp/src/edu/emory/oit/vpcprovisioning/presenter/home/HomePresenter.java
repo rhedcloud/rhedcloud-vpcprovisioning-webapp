@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.presenter.home;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -63,6 +64,58 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
+				
+				// cache accounts
+				AsyncCallback<AccountQueryResultPojo> acct_callback = new AsyncCallback<AccountQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("Exception Retrieving Accounts", caught);
+					}
+
+					@Override
+					public void onSuccess(AccountQueryResultPojo result) {
+					}
+				};
+				GWT.log("caching Account list...");
+				AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
+				filter.setUserLoggedIn(user);
+				VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
+				
+				// just to prime the pump for directory person results so the first page load
+				// on the account details page won't take so long.  this could be done in a number
+				// of places but since we have the account ids, we'll do it here (asynchronously)
+				AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("Exception retrieving RoleAssignments", caught);
+					}
+
+					@Override
+					public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
+					}
+				};
+				GWT.log("caching DirectoryPerson list for all user's role assignments...");
+				for (AccountRolePojo arp : user.getAccountRoles()) {
+					if (arp.getAccountId() == null) {
+						continue;
+					}
+					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
+				}
+
+				// TEMP:  central admin query test
+//				AsyncCallback<List<RoleAssignmentSummaryPojo>> ca_callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						GWT.log("Exception retrieving Central Administrators", caught);
+//					}
+//
+//					@Override
+//					public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
+//						GWT.log("got " + result.size() + " central admins back from the server");
+//					}
+//				};
+//				VpcProvisioningService.Util.getInstance().getCentralAdmins(ca_callback);
+
 				getView().setUserLoggedIn(user);
 				getView().initPage();
 				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
@@ -115,11 +168,11 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 					else if (user.isAuditorForAccount(arp.getAccountId())) {
 						auditorCnt++;
 					}
-					else if (user.isLitsAdminForAccount(arp.getAccountId())) {
+					else if (user.isCentralAdminForAccount(arp.getAccountId())) {
 						centralAdminCnt++;
 					}
 				}
-				roleInfoHTML.append("You " + (user.isLitsAdmin() ? "are" : "are not") + " a central administrator, "
+				roleInfoHTML.append("You " + (user.isCentralAdmin() ? "are" : "are not") + " a central administrator, "
 						+ "you are the administrator of " + adminCnt + " account(s), "
 						+ "and the auditor of " + auditorCnt + " account(s).");
 				getView().setRoleInfoHTML(roleInfoHTML.toString());
@@ -128,28 +181,6 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				getView().hidePleaseWaitPanel();
 				getView().setFieldViolations(false);
 				getView().setInitialFocus();
-				
-				// just to prime the pump for directory person results so the first page load
-				// on the account details page won't take so long.  this could be done in a number
-				// of places but since we have the account ids, we'll do it here (asynchronously)
-				AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-//						getView().hidePleaseWaitDialog();
-//						getView().hidePleaseWaitPanel();
-//						GWT.log("Exception retrieving Administrators", caught);
-//						getView().showMessageToUser("There was an exception on the " +
-//								"server retrieving Administrators.  Message " +
-//								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
-					}
-				};
-				for (AccountRolePojo arp : user.getAccountRoles()) {
-					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
-				}
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);

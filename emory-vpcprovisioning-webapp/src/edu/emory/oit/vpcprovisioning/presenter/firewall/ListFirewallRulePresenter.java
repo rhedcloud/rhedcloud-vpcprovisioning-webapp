@@ -150,7 +150,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				GWT.log("Got " + result.getResults().size() + " firewallRules for " + result.getFilterUsed());
 				setFirewallRuleList(result.getResults());
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {
@@ -201,7 +201,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				GWT.log("Got " + result.getResults().size() + " firewall exception requests for " + result.getFilterUsed());
 				setFirewallExceptionRequestList(result.getResults());
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {

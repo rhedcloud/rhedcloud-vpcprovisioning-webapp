@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPlace;
@@ -166,6 +167,13 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
 				placeController.goTo(new ListAccountPlace(false));
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				// TODO need pass filter...
+				placeController.goTo(new ListCentralAdminPlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_FIREWALL_RULE, new ActionEvent.Handler() {

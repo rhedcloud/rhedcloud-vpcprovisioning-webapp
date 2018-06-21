@@ -6,6 +6,7 @@ import com.google.gwt.place.shared.WithTokenizers;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPlace;
@@ -49,7 +50,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 				 ListNotificationPlace.Tokenizer.class,
 				 MaintainNotificationPlace.Tokenizer.class,
 				 ListFirewallRulePlace.Tokenizer.class,
-				 HomePlace.Tokenizer.class})
+				 HomePlace.Tokenizer.class,
+				 ListCentralAdminPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

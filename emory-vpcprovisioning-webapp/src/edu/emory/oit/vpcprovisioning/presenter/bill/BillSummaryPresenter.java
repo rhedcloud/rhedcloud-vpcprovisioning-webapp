@@ -81,7 +81,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 						getView().setAccountItems(result.getResults());
 						selectAccount(account);
 						// apply authorization mask
-						if (user.isLitsAdmin()) {
+						if (user.isCentralAdmin()) {
 							getView().applyCentralAdminMask();
 						}
 						else if (account != null && user.isAdminForAccount(account.getAccountId())) {

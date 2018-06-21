@@ -193,7 +193,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 					setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
 				}
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else {

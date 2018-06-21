@@ -151,7 +151,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				GWT.log("Got " + result.getResults().size() + " CIDRs for " + result.getFilterUsed());
 				setCidrSummaryList(result.getResults());
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else {

@@ -86,7 +86,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 				getView().setInitialFocus();
 				// apply authorization mask
 				// TODO: need to determine the Notification structure so we can apply authorization mask appropriately
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else {

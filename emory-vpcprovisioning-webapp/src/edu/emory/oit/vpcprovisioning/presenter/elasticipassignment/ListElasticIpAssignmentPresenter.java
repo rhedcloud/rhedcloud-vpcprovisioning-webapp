@@ -132,7 +132,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				GWT.log("presenter, initializing Elastic IP Assignment list with " + result.getResults().size() + " Elastic IP Assignments.");
 				setElasticIpAssignmentList(result.getResults());
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {

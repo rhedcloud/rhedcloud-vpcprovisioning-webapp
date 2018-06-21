@@ -2446,12 +2446,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
 	
 			queryObject.setAccountId(accountId);
-			
+			info("[getAccountById] querying for account: " + accountId);
 			@SuppressWarnings("unchecked")
 			List<Account> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
 			
-			info("[getAccountById] got " + moas.size() + " accounts from ESB service");
+			info("[getAccountById] got " + moas.size() + " accounts from ESB service for account id: " + accountId);
 			// there should only ever be one returned
 			if (moas.size() != 1) {
 				// error
@@ -2502,15 +2502,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<AccountPojo> pojos = new java.util.ArrayList<AccountPojo>();
 		if (filter != null) {
 			if (filter.getUserLoggedIn() != null) {
-				if (!filter.getUserLoggedIn().isLitsAdmin()) {
+//				if (!filter.getUserLoggedIn().isCentralAdmin()) {
+//					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS NOT a Central Admin.");
 					// iterate over all filter.AccountRoles and do a query for each account 
 					// in the list.  Then, need to add each account to the result 
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
-						AccountPojo acct = this.getAccountById(arp.getAccountId());
-						if (acct != null) {
-							info("[getAccountsForFilter] adding account " + acct.getAccountId() + 
+						if (arp.getAccountId() == null) {
+							continue;
+						}
+						// check cache, if present, get account from cache
+						// otherwise, get it from the account service and store it in the cache
+						info("[getAccountsForFilter] getting account: " + arp.getAccountId());
+						boolean inCache = false;
+						AccountPojo cached_acct = (AccountPojo) Cache.getCache().get(
+								Constants.ACCOUNT + arp.getAccountId());
+						if (cached_acct == null) {
+							cached_acct = this.getAccountById(arp.getAccountId());
+							info("[getAccountsForFilter] got account from account service...");
+						}
+						else {
+							info("[getAccountsForFilter] got account from cache...");
+							inCache = true;
+						}
+//						AccountPojo acct = this.getAccountById(arp.getAccountId());
+						if (cached_acct != null) {
+							info("[getAccountsForFilter] adding account " + cached_acct.getAccountId() + 
 								" to list of accounts for the user logged in" );
-							pojos.add(acct);
+							pojos.add(cached_acct);
+							if (!inCache) {
+								Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
+							}
 						}
 						else {
 							String errorMsg = "[getAccountsForFilter] null result from getAccountById, this is an issue.";
@@ -2523,11 +2544,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					result.setFilterUsed(filter);
 					info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
 					return result;
-				}
+//				}
+//				else {
+//					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS a Central Admin.");
+//				}
+			}
+			else {
+				info("[getAccountsForFilter] filter.userLoggedIn is null");
 			}
 		}
 		
-		// if filter.userLoggedIn isn't null and the user isn't a LITS admin, we won't get this far
+		// if filter.userLoggedIn isn't null and the user isn't a Central Admin, we won't get this far
 		try {
 			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
@@ -2801,7 +2828,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		if (filter != null) {
 			if (filter.getUserLoggedIn() != null) {
-				if (!filter.getUserLoggedIn().isLitsAdmin()) {
+				if (!filter.getUserLoggedIn().isCentralAdmin()) {
 					// iterate over all filter.AccountRoles and do a query for each account 
 					// in the list.  Then, need to add each account to the result 
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
@@ -5152,7 +5179,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setExplicitIdentityDNs(eid);
 		moa.setRoleDN(pojo.getRoleDN());
-
+		
+		Datetime expirationDatetime = moa.newExpirationDatetime();
+		this.populateDatetime(expirationDatetime, pojo.getExpirationDate());
+		moa.setExpirationDatetime(expirationDatetime);
+		
+		Datetime effectiveDatetime = moa.newEffectiveDatetime();
+		this.populateDatetime(effectiveDatetime, pojo.getEffectiveDate());
+		moa.setEffectiveDatetime(effectiveDatetime);
+		
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
 	}
@@ -5187,6 +5222,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			info("RoleAssignment DOES NOT HAVE ExplicityIdentityDNs field.");
 		}
+		pojo.setExpirationDate(this.toDateFromDatetime(moa.getExpirationDatetime()));
+		pojo.setEffectiveDate(this.toDateFromDatetime(moa.getEffectiveDatetime()));
 		
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
@@ -5667,6 +5704,88 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
+	public List<RoleAssignmentSummaryPojo> getCentralAdmins() throws RpcException {
+		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
+
+		try {
+			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+			roleDN = roleDN.replaceAll("RGR_AWS", "");
+			roleDN = roleDN.replaceAll("-" + Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, "");
+			roleDN = roleDN.replaceAll("-" + Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
+			RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
+			info("[getCentralAdmins] filter.roleDN: " + roleDN);
+			filter.setRoleDN(roleDN);
+			filter.setIdentityType("USER");
+			filter.setDirectAssignOnly(true);
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(filter);
+			if (ra_result != null) {
+				if (ra_result.getResults().size() > 0) {
+					for (RoleAssignmentPojo ra : ra_result.getResults()) {
+						if (ra.getExplicityIdentitiyDNs() != null) {
+							for (String dn : ra.getExplicityIdentitiyDNs().getDistinguishedNames()) {
+								info("[getCentralAdmins] dn: " + dn);
+								String[] cns = dn.split(",");
+								info("[getCentralAdmins] cns: " + cns);
+								String publicIdCn = cns[0];
+								info("[getCentralAdmins] publicIdCn: " + publicIdCn);
+								String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
+								info("[getCentralAdmins] publicId: " + publicId);
+								
+								// get directoryperson for publicid
+								// check cache to see if the DirectoryPerson is already in the cache
+								// if not, go get it.
+								DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache().get(
+										Constants.DIRECTORY_PERSON + publicId);
+								if (cached_dp == null) {
+									DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+									dp_filter.setKey(publicId);
+									DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+									info("[getCentralAdmins] got " + dp_result.getResults().size() + 
+											" DirectoryPerson objects back for key=" + publicId);
+									if (dp_result.getResults().size() > 0) {
+										cached_dp = dp_result.getResults().get(0);
+										info("[getCentralAdmins] " + cached_dp.getFullName() + " IS a Central Admin");
+										// add to cache
+										Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
+									}
+									else {
+										throw new RpcException("Could not find a DirectoryPerson for the public id: " + publicId);
+									}
+								}
+								else {
+									info("[getCentralAdmins] " + cached_dp.getFullName() + " IS a Central Admin");
+								}
+								
+								// create RoleAssignmentSummaryPojo and add it to the results
+								RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
+								ra_summary.setDirectoryPerson(cached_dp);
+								ra_summary.setRoleAssignment(ra);
+								info("[getCentralAdmins] adding RoleAssignmentSummary: " + ra_summary.toString());
+								results.add(ra_summary);
+							}
+						}
+					}
+				}
+				else {
+					// error
+					info("[getCentralAdmins] Could not find a RoleAssignment for the filter: " + filter.toString());
+				}
+			}
+			else {
+				// error
+				info("[getCentralAdmins] NULL RoleAssignment for the filter: " + filter.toString());
+				throw new RpcException("NULL RoleAssignment returned for the filter: " + filter.toString());
+			}
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+
+		return results;
+	}
+
+	@Override
 	public List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccount(String accountId) throws RpcException {
 
 		// get admin role assignments for this account
@@ -5686,6 +5805,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
 //					continue;
 //				}
+				if (accountId == null) {
+					return results;
+				}
 				String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);

@@ -274,7 +274,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		final Button removeAdminButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
 		if (this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId()) ||
-			this.userLoggedIn.isLitsAdmin()) {
+			this.userLoggedIn.isCentralAdmin()) {
 			
 			removeAdminButton.setEnabled(true);
 		}
@@ -347,7 +347,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		final Button removeEmailButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
 		if (this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId()) ||
-			this.userLoggedIn.isLitsAdmin()) {
+			this.userLoggedIn.isCentralAdmin()) {
 				
 			removeEmailButton.setEnabled(true);
 		}
@@ -750,6 +750,16 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void vpcpConfirmCancel() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public void enableAdminMaintenance() {
+		addAdminButton.setEnabled(true);
+		directoryLookupSB.setEnabled(true);
+	}
+	@Override
+	public void disableAdminMaintenance() {
+		addAdminButton.setEnabled(false);
+		directoryLookupSB.setEnabled(false);
 	}
 	
 }

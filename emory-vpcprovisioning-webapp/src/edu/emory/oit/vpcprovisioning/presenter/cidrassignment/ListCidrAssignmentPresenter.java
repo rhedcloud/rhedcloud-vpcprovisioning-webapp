@@ -149,7 +149,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 				GWT.log("presenter, initializing CidrAssignment list with " + result.getResults().size() + " CidrAssignments.");
 				setCidrAssignmentSummaryList(result.getResults());
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else if (vpc != null && user.isAdminForAccount(vpc.getAccountId())) {

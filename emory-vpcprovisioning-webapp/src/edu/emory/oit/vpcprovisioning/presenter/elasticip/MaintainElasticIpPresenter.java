@@ -83,7 +83,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 				getView().setInitialFocus();
 				
 				// apply authorization mask
-				if (user.isLitsAdmin()) {
+				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else {

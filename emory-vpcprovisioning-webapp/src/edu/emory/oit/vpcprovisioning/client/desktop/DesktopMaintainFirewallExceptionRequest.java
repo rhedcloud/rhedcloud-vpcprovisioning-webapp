@@ -492,7 +492,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		});
 		final Button removeTagButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) || userLoggedIn.isLitsAdmin()) {
+		if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) || userLoggedIn.isCentralAdmin()) {
 			removeTagButton.setEnabled(true);
 		}
 		else {

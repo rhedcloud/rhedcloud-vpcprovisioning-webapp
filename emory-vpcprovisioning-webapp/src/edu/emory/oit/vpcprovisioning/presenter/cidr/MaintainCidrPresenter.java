@@ -111,7 +111,7 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 						}
 						else {
 							// apply authorization mask
-							if (user.isLitsAdmin()) {
+							if (user.isCentralAdmin()) {
 								getView().applyCentralAdminMask();
 							}
 							else {

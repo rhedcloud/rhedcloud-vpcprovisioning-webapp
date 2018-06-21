@@ -113,7 +113,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				actionsPopup.hide();
 				VpcPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
 						presenter.deleteVpc(m);
 					}
 					else {

@@ -252,7 +252,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		final Button removeNetIdButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin		
 		if (userLoggedIn.isAdminForAccount(presenter.getVpcRequisition().getAccountId()) || 
-			userLoggedIn.isLitsAdmin()) {
+			userLoggedIn.isCentralAdmin()) {
 			
 			removeNetIdButton.setEnabled(true);
 		}

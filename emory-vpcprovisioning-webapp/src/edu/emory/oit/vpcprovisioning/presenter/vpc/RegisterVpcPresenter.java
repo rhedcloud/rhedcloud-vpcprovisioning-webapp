@@ -115,7 +115,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 								getView().initPage();
 								getView().setInitialFocus();
 								// apply authorization mask
-								if (user.isLitsAdmin()) {
+								if (user.isCentralAdmin()) {
 									getView().applyCentralAdminMask();
 								}
 								else if (vpc != null) {

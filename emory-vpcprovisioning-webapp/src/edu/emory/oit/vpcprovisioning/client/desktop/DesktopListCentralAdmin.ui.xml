@@ -1,0 +1,64 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:VerticalPanel width="100%" spacing="20">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:HTML addStyleNames="{style.introHeading}">Central Admin List</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
+		Central Administrators in this environment.
+		</g:HTML>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="8">
+				<g:row>
+					<g:customCell>
+						<g:Button ui:field="addCentralAdminButton" debugId="addCentralAdminButton" text="Add CentralAdmin" addStyleNames="{style.glowing-border} {style.actionButton}"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+					</g:customCell>
+					<!-- TEMPORARY -->
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="centralAdminIdTB" debugId="centralAdminIdTB"/>
+			    	</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by centralAdmin id"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by centralAdmin id"/>
+					</g:customCell>
+			    	<!-- END TEMPORARY -->
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:VerticalPanel ui:field="centralAdminListPanel" width="100%">
+			<g:Grid>
+				<g:row>
+					<g:customCell>
+						<c:CellTable width="100%" ui:field="centralAdminListTable" debugId="centralAdminListTable" title="Existing CentralAdmins"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="centralAdminListPager" debugId="centralAdminListPager" location="CENTER"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:VerticalPanel>
+	</g:VerticalPanel>
+
+</ui:UiBinder> 

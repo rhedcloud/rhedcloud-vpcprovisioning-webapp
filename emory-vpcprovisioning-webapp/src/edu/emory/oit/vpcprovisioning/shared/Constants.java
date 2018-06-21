@@ -12,6 +12,7 @@ public class Constants implements IsSerializable {
 	// these will need to be specific for this app's functionality
 	
 	public static final String ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN = "RHEDcloudCentralAdministratorRole";
+	public static final String ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS = "RGR_AwsCentralAdministrators";
 	public static final String ROLE_NAME_RHEDCLOUD_AWS_ADMIN = "RHEDcloudAdministratorRole";
 	public static final String ROLE_NAME_RHEDCLOUD_AUDITOR = "RHEDcloudAuditorRole";
 	public static final String STATIC_TEXT_ADMINISTRATOR = "Administrator";
@@ -94,4 +95,5 @@ public class Constants implements IsSerializable {
 	public static final String REPLACEMENT_VAR_EMORY_ROLE_NAME = "EMORY_ROLE_NAME";
 	public static final String REPLACEMENT_VAR_PUBLIC_ID = "PUBLIC_ID";
 	public static final String DIRECTORY_PERSON = "DirectoryPerson";
+	public static final String ACCOUNT = "Account";
 }

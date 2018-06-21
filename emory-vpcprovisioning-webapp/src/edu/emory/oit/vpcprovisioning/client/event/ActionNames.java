@@ -115,4 +115,5 @@ public interface ActionNames {
 	final String PIN_CONFIRMED = "pinConfirmed";
 	final String SHOW_VPCP_STATUS = "showVpcpStatus";
 	final String SHOW_BILL_SUMMARY_FOR_ACCOUNT = "showBillSummaryForAccount";
+	final String GO_HOME_CENTRAL_ADMIN = "goHomeCentralAdmin";
 }

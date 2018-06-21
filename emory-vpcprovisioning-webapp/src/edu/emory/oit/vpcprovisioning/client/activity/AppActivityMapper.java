@@ -12,6 +12,8 @@ import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPlace;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPlace;
@@ -175,6 +177,18 @@ public class AppActivityMapper implements ActivityMapper {
 				@Override
 				public void start(AcceptsOneWidget panel, EventBus eventBus) {
 					ListElasticIpAssignmentPresenter presenter = new ListElasticIpAssignmentPresenter(clientFactory, (ListElasticIpAssignmentPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
+		if (place instanceof ListCentralAdminPlace) {
+			// The list of case records.
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListCentralAdminPresenter presenter = new ListCentralAdminPresenter(clientFactory, (ListCentralAdminPlace) place);
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}

@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopAppShell;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopBillSummary;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopHome;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListAccount;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCentralAdmin;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIp;
@@ -38,6 +39,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
+import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
@@ -98,6 +100,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListFirewallRuleView listFirewallRuleView;
 	private MaintainFirewallExceptionRequestView maintainFirewallRuleView;
 	private HomeView homeView;
+	private ListCentralAdminView listCentralAdminView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -406,5 +409,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected HomeView createHomeView() {
 		return new DesktopHome();
+	}
+	@Override
+	public ListCentralAdminView getListCentralAdminView() {
+        if (listCentralAdminView == null) {
+        	listCentralAdminView = createCentralAdminListView();
+        }
+        return listCentralAdminView;
+	}
+	protected ListCentralAdminView createCentralAdminListView() {
+		return new DesktopListCentralAdmin();
 	}
 }
