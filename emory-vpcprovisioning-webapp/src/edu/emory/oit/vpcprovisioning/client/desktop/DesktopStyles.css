@@ -944,12 +944,7 @@ a:active {
 }
 /* END AWS Styles */
 
-.blink_me {
-  animation: blinker 1s linear infinite;
+.waitingForWork {
+  animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate;  
 }
-
-@keyframes blinker {
-  50% {
-    opacity: 0;
-  }
-}
+@keyframes blinker { to { opacity: 0; } }

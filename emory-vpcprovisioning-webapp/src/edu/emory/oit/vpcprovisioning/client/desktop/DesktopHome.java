@@ -34,6 +34,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	@UiField Button directoryInfoButton;
 	@UiField Button personInfoButton;
 	@UiField Element accountSeriesElem;
+	@UiField HTML backgroundNoticeHTML;
 
 	@UiHandler ("roleInfoButton")
 	void roleInfoButtonClicked(ClickEvent e) {
@@ -247,5 +248,9 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	@Override
 	public void setAccountSeriesInfo(String seriesInfo) {
 		accountSeriesElem.setInnerHTML(seriesInfo);
+	}
+	@Override
+	public void hideBackgroundWorkNotice() {
+		backgroundNoticeHTML.setVisible(false);
 	}
 }

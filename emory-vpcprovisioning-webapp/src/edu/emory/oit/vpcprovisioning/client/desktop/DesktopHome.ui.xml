@@ -72,10 +72,9 @@
 				</g:VerticalPanel>
 			</g:CaptionPanel>
 		</g:cell>
-		<!-- 
-		<g:cell>
-			<g:HTMLPanel><div class="blink_me">Work is continuing in the background but you can still do stuff.</div></g:HTMLPanel>
-		</g:cell>
-		 -->
+		 <g:cell>
+		 	<g:HTML ui:field="backgroundNoticeHTML" addStyleNames="{style.waitingForWork}">*** Work is 
+		 		continuing asynchronously in the background but you can still do work while that finishes up. ***</g:HTML>
+		 </g:cell>
 	</g:VerticalPanel>
 </ui:UiBinder> 

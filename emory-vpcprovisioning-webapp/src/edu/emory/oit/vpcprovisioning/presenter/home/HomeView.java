@@ -41,4 +41,5 @@ public interface HomeView extends Editor<Void>, IsWidget, View {
 	void setDirectoryInfoHTML(String directoryInfo);
 	void showDirectoryPersonInfoPopup(String directoryPersonInfoHTML);
 	void showFullPersonInfoPopup(String fullPersonInfoHTML);
+	void hideBackgroundWorkNotice();
 }

@@ -119,8 +119,8 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		generateVpcButton.setEnabled(true);
-		actionsButton.setEnabled(true);
+		generateVpcButton.setEnabled(false);
+		actionsButton.setEnabled(false);
 	}
 
 	@Override
@@ -354,8 +354,8 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		generateVpcButton.setEnabled(true);;
+		actionsButton.setEnabled(true);;
 	}
 
 	@Override

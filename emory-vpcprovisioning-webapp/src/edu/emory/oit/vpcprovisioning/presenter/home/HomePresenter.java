@@ -46,6 +46,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		finishedDirectoryPersonCache = false;
 		
 		setReleaseInfo(clientFactory);
 		
@@ -92,15 +93,29 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 					@Override
 					public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
+						if (finishedDirectoryPersonCache) {
+							getView().hideBackgroundWorkNotice();
+						}
 					}
 				};
 				GWT.log("caching DirectoryPerson list for all user's role assignments...");
-				for (AccountRolePojo arp : user.getAccountRoles()) {
+				for (int i=0; i<user.getAccountRoles().size(); i++) {
+					AccountRolePojo arp = user.getAccountRoles().get(i);
+					if (i == user.getAccountRoles().size() - 1) {
+						GWT.log("last RoleAssignment query...i=" + i);
+						finishedDirectoryPersonCache = true;
+					}
 					if (arp.getAccountId() == null) {
 						continue;
 					}
 					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
 				}
+//				for (AccountRolePojo arp : user.getAccountRoles()) {
+//					if (arp.getAccountId() == null) {
+//						continue;
+//					}
+//					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
+//				}
 				
 //				AsyncCallback<Void> log_cb = new AsyncCallback<Void>() {
 //					@Override

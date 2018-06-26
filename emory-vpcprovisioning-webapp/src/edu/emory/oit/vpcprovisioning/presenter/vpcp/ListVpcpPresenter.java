@@ -138,17 +138,8 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
-				else if (user.isEmoryAwsAdmin()) {
-					getView().applyAWSAccountAdminMask();
-				}
-				else if (user.isAuditor()) {
-					getView().applyAWSAccountAuditorMask();
-				}
 				else {
-					getView().showMessageToUser("An error has occurred.  The user logged in does not "
-							+ "appear to be associated to any valid roles for this page.");
 					getView().applyAWSAccountAuditorMask();
-					// TODO: need to not show them the list???
 				}
                 getView().hidePleaseWaitDialog();
                 getView().hidePleaseWaitPanel();
