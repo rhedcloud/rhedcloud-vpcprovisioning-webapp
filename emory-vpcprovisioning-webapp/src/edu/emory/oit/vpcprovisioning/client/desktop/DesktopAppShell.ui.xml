@@ -33,9 +33,10 @@
 			<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:HorizontalPanel ui:field="generalInfoPanel" width="100%">
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel title="Security Notifications" ui:field='notificationsHTML' styleName="{style.linksMenuHeader}">
-						<div ui:field='notificationsElem'><img src="images/bell-512.png" width="24" height="24"/></div>
-					</g:HTMLPanel>
+					<g:HTML title="Security Notifications" ui:field='notificationsHTML' styleName="{style.linksMenuHeader}">
+						<img src="images/bell-512.png" width="24" height="24"/>
+<!-- 						<div ui:field='notificationsElem'><img src="images/bell-512.png" width="24" height="24"/></div>
+ -->					</g:HTML>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:HTMLPanel styleName="{style.productsMenuHeader}" ui:field='productsTitleBar' title="Emory AWS Services">

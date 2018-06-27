@@ -80,4 +80,9 @@ public class PersonalNamePojo extends SharedObject implements IsSerializable {
 		this.compositeName = compositeName;
 	}
 
+	@Override
+	public String toString() {
+		return firstName + " " + lastName;
+	}
+
 }

@@ -9,18 +9,18 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -35,6 +35,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.Notification;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
@@ -86,7 +87,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		// TODO: Create a new timer that checks for notifications
+		// Create a new timer that checks for notifications
 //	    Timer t = new Timer() {
 //	      @Override
 //	      public void run() {
@@ -99,46 +100,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //				@Override
 //				public void onSuccess(Void result) {
 //			        GWT.log("checked for notifications...");
+//			        Notification n = new Notification(new HTML("You have notification(s)"));
+//			        n.show(notificationsHTML);
+////			        notificationsHTML.addStyleName("notification");
+////			        notificationsElem.setInnerHTML("<img style=\"watingForWork\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
+//			        notificationsHTML.setHTML("<img class=\"notification\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
+//			        esbServiceStatusAnchor.addStyleName("notification");
 //				}
 //	        };
 //	        VpcProvisioningService.Util.getInstance().logMessage("Check for notifications.", callback);
 //	      }
 //	    };
-
-	    // Schedule the timer to run once every 10 seconds
+//
+//	    // Schedule the timer to run once every 10 seconds
 //	    t.scheduleRepeating(10000);
 		
 //		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
-		
-//		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//
-//			@Override
-//			public void onSuccess(UserAccountPojo result) {
-//				userLoggedIn = result;
-//				if (!userLoggedIn.isCentralAdmin()) {
-//					mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-//					mainTabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
-//						@Override
-//						public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
-//							if (event.getItem() == 4) {
-//								event.cancel();
-//							}
-//						}
-//					});
-//				}
-//				else {
-//					mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-//				}
-//			}
-//		};
-//		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
-		
 		
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 			@Override
@@ -157,12 +137,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		HomeView homeView = clientFactory.getHomeView();
 		homeContentContainer.add(homeView);
 
-//		ListAccountView listAccountView = clientFactory.getListAccountView();
-//		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
-//		accountContentContainer.add(listAccountView);
-//		accountContentContainer.add(maintainAccountView);
-//		accountContentContainer.setAnimationDuration(500);
-		
 		mainTabPanel.addStyleName("tab-style-content");
 
 		registerEvents();
@@ -211,11 +185,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
     PopupPanel productsPopup = new PopupPanel(true);
 	@UiField Element releaseInfoElem;
 	@UiField Element productsElem;
-	@UiField Element notificationsElem;
+//	@UiField Element notificationsElem;
 	@UiField Element logoElem;
 	@UiField HorizontalPanel generalInfoPanel;
 	@UiField HorizontalPanel linksPanel;
-	@UiField HTMLPanel notificationsHTML;
+	@UiField HTML notificationsHTML;
 	@UiField Anchor esbServiceStatusAnchor;
 	
     /**
@@ -241,22 +215,22 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 	    });
 	    
-	    Event.sinkEvents(notificationsElem, Event.ONCLICK);
-	    Event.setEventListener(notificationsElem, new EventListener() {
-			@Override
-			public void onBrowserEvent(Event event) {
-				if(Event.ONCLICK == event.getTypeInt()) {
-					productsPopup.hide();
-					// clear other features panel
-					otherFeaturesPanel.clear();
-					// add list notifications view
-					// add maintain notifications view
-					hideMainTabPanel();
-					showOtherFeaturesPanel();
-					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
-				}
-			}
-	    });
+//	    Event.sinkEvents(notificationsElem, Event.ONCLICK);
+//	    Event.setEventListener(notificationsElem, new EventListener() {
+//			@Override
+//			public void onBrowserEvent(Event event) {
+//				if(Event.ONCLICK == event.getTypeInt()) {
+//					productsPopup.hide();
+//					// clear other features panel
+//					otherFeaturesPanel.clear();
+//					// add list notifications view
+//					// add maintain notifications view
+//					hideMainTabPanel();
+//					showOtherFeaturesPanel();
+//					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
+//				}
+//			}
+//	    });
 	    
 	    Event.sinkEvents(productsElem, Event.ONCLICK);
 	    Event.setEventListener(productsElem, new EventListener() {
@@ -365,6 +339,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	/*** Handlers ***/
+	@UiHandler("notificationsHTML")
+	void notificationsClick(ClickEvent e) {
+		productsPopup.hide();
+		// clear other features panel
+		otherFeaturesPanel.clear();
+		// add list notifications view
+		// add maintain notifications view
+		hideMainTabPanel();
+		showOtherFeaturesPanel();
+		ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
+	}
 	@UiHandler("esbServiceStatusAnchor")
 	void esbServiceStatusAnchorClick(ClickEvent e) {
 		AsyncCallback<String> callback = new AsyncCallback<String>() {

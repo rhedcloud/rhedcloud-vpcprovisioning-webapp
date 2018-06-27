@@ -148,4 +148,15 @@ public class UserAccountPojo implements IsSerializable {
 	public void setSuperUser(boolean superUser) {
 		this.superUser = superUser;
 	}
+
+	@Override
+	public String toString() {
+		return "EPPN: " + eppn + 
+				", Principal: " + principal + 
+				", Permissions: " + permissions +
+				", PublicID: " + publicId +
+				", AccountRoles: " + accountRoles + 
+				", Personal Name: " + personalName +
+				", isSuperUser: " + superUser;
+	}
 }

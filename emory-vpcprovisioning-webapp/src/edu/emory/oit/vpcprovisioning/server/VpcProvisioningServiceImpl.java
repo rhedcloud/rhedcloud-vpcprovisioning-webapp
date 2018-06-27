@@ -2515,8 +2515,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<AccountPojo> pojos = new java.util.ArrayList<AccountPojo>();
 		if (filter != null) {
 			if (filter.getUserLoggedIn() != null) {
-//				if (!filter.getUserLoggedIn().isCentralAdmin()) {
-//					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS NOT a Central Admin.");
+				if (!filter.getUserLoggedIn().isCentralAdmin()) {
+					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS NOT a Central Admin.");
 					// iterate over all filter.AccountRoles and do a query for each account 
 					// in the list.  Then, need to add each account to the result 
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
@@ -2563,10 +2563,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					result.setFilterUsed(filter);
 					info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
 					return result;
-//				}
-//				else {
-//					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS a Central Admin.");
-//				}
+				}
+				else {
+					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS a Central Admin.");
+				}
 			}
 			else {
 				info("[getAccountsForFilter] filter.userLoggedIn is null");
@@ -5133,7 +5133,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void logMessage(String message) throws RpcException {
-		info("[FromClient] " + message);
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+				Constants.USER_ACCOUNT + getCurrentSessionId());
+		if (user != null) {
+			info("[FromClient] for user: " + user.toString() + ": " + message);
+		}
+		else {
+			info("[FromClient-NO_CACHED_USER] " + message);
+		}
 	}
 
 	@SuppressWarnings("unused")
