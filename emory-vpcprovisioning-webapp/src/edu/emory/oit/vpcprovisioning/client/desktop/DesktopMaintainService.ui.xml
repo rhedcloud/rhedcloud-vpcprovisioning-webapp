@@ -79,24 +79,6 @@
 			    	</g:row>
 					<g:row>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Category:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="categoryTB" debugId="categoryTB" />
-				    	</g:customCell>
-			    	</g:row>
-					<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Console Category:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="consoleCategoryTB" debugId="consoleCategoryTB" />
-				    	</g:customCell>
-			    	</g:row>
-					<g:row>
-				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">AWS HIPAA Eligible:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>

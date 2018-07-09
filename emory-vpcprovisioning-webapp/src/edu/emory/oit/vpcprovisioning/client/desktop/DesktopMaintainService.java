@@ -48,8 +48,6 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	@UiField Button cancelButton;
 	@UiField Button testURLButton;
 	@UiField ListBox statusLB;
-	@UiField TextBox categoryTB;
-	@UiField TextBox consoleCategoryTB;
 	@UiField TextBox alternateNameTB;
 	@UiField TextBox combinedNameTB;
 	@UiField TextBox awsCodeTB;
@@ -128,8 +126,21 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	@UiHandler("okayButton")
 	void okayClick(ClickEvent e) {
-		// TODO: save service
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+		// populate/save service
+		presenter.getService().setAwsServiceCode(awsCodeTB.getText());
+		presenter.getService().setAwsServiceName(awsNameTB.getText());
+		presenter.getService().setAlternateServiceName(alternateNameTB.getText());
+		presenter.getService().setCombinedServiceName(combinedNameTB.getText());
+		presenter.getService().setEmoryHipaaEligible(emoryHipaaEligibleCB.getValue());
+		presenter.getService().setAwsHipaaEligible(awsHipaaEligibleCB.getValue());
+		presenter.getService().setDescription(descriptionTA.getText());
+		presenter.getService().setLandingPageURL(landingPageURLTB.getText());
+		presenter.getService().setStatus(statusLB.getSelectedValue());
+		
+		// categories, console categories and tags are added to the service as they're 
+		// added to the page.
+		
+		presenter.saveService();
 	}
 
 	@UiHandler("cancelButton")
