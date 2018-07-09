@@ -4470,7 +4470,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setStatus(moa.getStatus());
 		pojo.setLandingPageURL(moa.getServiceLandingPageUrl());
 		pojo.setDescription(moa.getDescription());
-		pojo.setAWSHipaaEligible(this.toBooleanFromString(moa.getAwsHipaaEligible()));
+		pojo.setAwsHipaaEligible(this.toBooleanFromString(moa.getAwsHipaaEligible()));
 		pojo.setEmoryHipaaEligible(this.toBooleanFromString(moa.getEmoryHipaaEligible()));
 		if (moa.getConsoleCategoryLength() > 0) {
 			for (String consoleCat : (List<String>)moa.getConsoleCategory()) {

@@ -632,7 +632,37 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		mainTabPanel.setVisible(false);
 	}
 
+	@Override
 	public void showMessageToUser(String message) {
 		VpcpAlert.alert("Alert", message);
+	}
+
+	@Override
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
+	}
+
+	@Override
+	public void showPleaseWaitDialog(String pleaseWaitHTML) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hidePleaseWaitDialog() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hidePleaseWaitPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		// TODO Auto-generated method stub
+		
 	}
 }

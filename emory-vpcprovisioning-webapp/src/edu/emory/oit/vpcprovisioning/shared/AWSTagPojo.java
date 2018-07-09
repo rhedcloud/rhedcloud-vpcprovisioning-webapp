@@ -10,6 +10,11 @@ public class AWSTagPojo extends SharedObject implements IsSerializable {
 	public AWSTagPojo() {
 	}
 
+	public AWSTagPojo(String key, String value) {
+		this.key = key;
+		this.value = value;
+	}
+
 	public String getKey() {
 		return key;
 	}

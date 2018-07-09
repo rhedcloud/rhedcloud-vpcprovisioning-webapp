@@ -339,7 +339,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				new TextCell()) {
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return (object.isAWSHipaaEligible() ? "Yes" : "No");
+				return (object.isAwsHipaaEligible() ? "Yes" : "No");
 			}
 		};
 		serviceListTable.addColumn(awsHipaaEligibleColumn, "AWS HIPAA Eligible");

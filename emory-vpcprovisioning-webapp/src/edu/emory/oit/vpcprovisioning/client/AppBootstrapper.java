@@ -12,6 +12,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.web.bindery.event.shared.EventBus;
@@ -51,6 +52,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class AppBootstrapper {
 
@@ -108,10 +110,28 @@ public class AppBootstrapper {
 	 * @param parentView where to show the app's widget
 	 */
 	public void run(HasWidgets.ForIsWidget parentView) {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception Retrieving User Logged in", caught);
+				shell.hidePleaseWaitDialog();
+				shell.hidePleaseWaitPanel();
+				shell.showMessageToUser("There was an exception on the " +
+						"server retrieving the Accounts you're associated to.  " +
+						"Message from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(final UserAccountPojo userLoggedIn) {
+				shell.setUserLoggedIn(userLoggedIn);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+
 		activityManager.setDisplay(shell);
 
 		parentView.add(shell);
-
+		
 		// handling events here so this logic can be shared among different view
 		// implementations.  if we don't use the same flow for desktop views
 		// this code may be moved to the appropriate view implementation and implemented

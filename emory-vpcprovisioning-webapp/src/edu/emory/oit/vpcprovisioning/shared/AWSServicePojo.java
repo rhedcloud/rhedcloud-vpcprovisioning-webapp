@@ -123,16 +123,6 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 		this.description = description;
 	}
 
-	public boolean isAWSHipaaEligible() {
-		return awsHipaaEligible;
-	}
-
-
-	public void setAWSHipaaEligible(boolean hipaaEligible) {
-		this.awsHipaaEligible = hipaaEligible;
-	}
-
-
 	public List<AWSTagPojo> getTags() {
 		return tags;
 	}
@@ -200,6 +190,16 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 
 	public void setAwsHipaaEligible(boolean awsHipaaEligible) {
 		this.awsHipaaEligible = awsHipaaEligible;
+	}
+
+
+	public boolean hasTag(AWSTagPojo tag) {
+		for (AWSTagPojo t : tags) {
+			if (t.getKey().equalsIgnoreCase(tag.getKey())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

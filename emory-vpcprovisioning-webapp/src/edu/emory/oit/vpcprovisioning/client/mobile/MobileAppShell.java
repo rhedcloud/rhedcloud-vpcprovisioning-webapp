@@ -35,6 +35,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MobileAppShell extends ResizeComposite implements AppShell {
     Logger log=Logger.getLogger(DesktopAppShell.class.getName());
@@ -217,6 +218,42 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void hideMainTabPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showMessageToUser(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showPleaseWaitDialog(String pleaseWaitHTML) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hidePleaseWaitDialog() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hidePleaseWaitPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 		// TODO Auto-generated method stub
 		
 	}
