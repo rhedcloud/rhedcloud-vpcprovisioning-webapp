@@ -5,234 +5,229 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
-		<g:VerticalPanel spacing="8" width="100%">
-			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-				<g:CaptionPanel width="90%" captionHTML="Notice">
-					<g:VerticalPanel width="100%" height="100%">
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-						<g:HTML ui:field="infoHTML">Maintain service
-						</g:HTML>
-						</g:cell>
-					</g:VerticalPanel>
-				</g:CaptionPanel>
-			</g:cell>
-		</g:VerticalPanel>
+		<g:HTML addStyleNames="{style.introHeading}">Maintain Service</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">AWS Code:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="awsCodeTB" debugId="awsCodeTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">AWS Name:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="awsNameTB" debugId="awsNameTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Alternate Service Name:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="alternateNameTB" debugId="alternateNameTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Combined Service Name:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="combinedNameTB" debugId="combinedNameTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Status:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="statusLB" debugId="statusLB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Landing Page URL:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="landingPageURLTB" debugId="landingPageUTLTB" />
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="testURLButton" debugId="testURLButton">Test URL</g:Button>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Description:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="descriptionTA" debugId="descriptionTA" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Category:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="categoryTB" debugId="categoryTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Console Category:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="consoleCategoryTB" debugId="consoleCategoryTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">AWS HIPAA Eligible:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="awsHipaaEligibleCB" debugId="awsHippaEligibleCB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Emory HIPAA Eligible:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="emoryHipaaEligibleCB" debugId="emoryHippaEligibleCB" />
-			    	</g:customCell>
-		    	</g:row>
-			</g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
-				<g:row>
-			    	<g:customCell>
-						<g:HorizontalPanel>
-							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-									<g:ScrollPanel>
-										<g:VerticalPanel spacing="8" ui:field="categoriesVP" height="100%">
-											<g:Label addStyleNames="{style.heading_label}">Add/remove Categories:</g:Label>
-											<g:HorizontalPanel ui:field="categoriesTagHP" spacing="16">
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:TextBox ui:field="categoryTF" debugId="tagKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-												</g:cell>
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:Button ui:field="addCategoryButton" debugId="addCategoryButton"
-														addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-												</g:cell>
-											</g:HorizontalPanel>
-											<g:VerticalPanel spacing="8">
-												<g:Label addStyleNames="{style.heading_label}">Categories associated to this Service:</g:Label>
-												<g:FlexTable ui:field="categoriesTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Categories for this service."/>
-											</g:VerticalPanel>
-										</g:VerticalPanel>
-									</g:ScrollPanel>
-							</g:cell>
-						</g:HorizontalPanel>
-				    </g:customCell>
-		    	</g:row>
-		    </g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
-				<g:row>
-			    	<g:customCell>
-						<g:HorizontalPanel>
-							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-									<g:ScrollPanel>
-										<g:VerticalPanel spacing="8" ui:field="consoleCategoriesVP" height="100%">
-											<g:Label addStyleNames="{style.heading_label}">Add/remove Console Categories:</g:Label>
-											<g:HorizontalPanel ui:field="consoleCategoriesTagHP" spacing="16">
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:TextBox ui:field="consoleCategoryTF" debugId="consoleCategoryTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-												</g:cell>
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:Button ui:field="addConsoleCategoryButton" debugId="addConsoleCategoryButton"
-														addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-												</g:cell>
-											</g:HorizontalPanel>
-											<g:VerticalPanel spacing="8">
-												<g:Label addStyleNames="{style.heading_label}">Console Categories associated to this Service:</g:Label>
-												<g:FlexTable ui:field="consoleCategoriesTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Console Categories for this service."/>
-											</g:VerticalPanel>
-										</g:VerticalPanel>
-									</g:ScrollPanel>
-							</g:cell>
-						</g:HorizontalPanel>
-				    </g:customCell>
-		    	</g:row>
-		    </g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
-				<g:row>
-			    	<g:customCell>
-						<g:HorizontalPanel>
-							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-									<g:ScrollPanel>
-										<g:VerticalPanel spacing="8" ui:field="tagsVP" height="100%">
-											<g:Label addStyleNames="{style.heading_label}">Add/remove Tags:</g:Label>
-											<g:HorizontalPanel ui:field="addTagHP" spacing="16">
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:TextBox ui:field="tagKeyTF" debugId="tagKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-												</g:cell>
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:Label>=</g:Label>
-												</g:cell>
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:TextBox ui:field="tagValueTF" debugId="tagValueTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-												</g:cell>
-												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-													<g:Button ui:field="addTagButton" debugId="addTagButton"
-														addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-												</g:cell>
-											</g:HorizontalPanel>
-											<g:VerticalPanel spacing="8">
-												<g:Label addStyleNames="{style.heading_label}">Tags associated to this Service:</g:Label>
-												<g:FlexTable ui:field="tagsTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Tags for this request."/>
-											</g:VerticalPanel>
-										</g:VerticalPanel>
-									</g:ScrollPanel>
-							</g:cell>
-						</g:HorizontalPanel>
-				    </g:customCell>
-		    	</g:row>
-		    </g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
-			<g:Grid cellSpacing="12">
-				<g:row>
-			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="okayButton" debugId="okayButton">Save</g:Button>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
-			    	</g:customCell>
-				</g:row>
-			</g:Grid>
+			<g:HorizontalPanel>
+				<g:VerticalPanel spacing="12">
+				<g:Grid cellSpacing="8">
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">AWS Service Code:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="awsCodeTB" debugId="awsCodeTB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">AWS Service Name:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="awsNameTB" debugId="awsNameTB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Alternate Service Name:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="alternateNameTB" debugId="alternateNameTB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Combined Service Name:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="combinedNameTB" debugId="combinedNameTB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Status:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+								ui:field="statusLB" debugId="statusLB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Landing Page URL:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="landingPageURLTB" debugId="landingPageUTLTB" />
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
+								ui:field="testURLButton" debugId="testURLButton">Test URL</g:Button>
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Description:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="descriptionTA" debugId="descriptionTA" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Category:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="categoryTB" debugId="categoryTB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Console Category:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="consoleCategoryTB" debugId="consoleCategoryTB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">AWS HIPAA Eligible:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="awsHipaaEligibleCB" debugId="awsHippaEligibleCB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Emory HIPAA Eligible:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="emoryHipaaEligibleCB" debugId="emoryHippaEligibleCB" />
+				    	</g:customCell>
+			    	</g:row>
+				</g:Grid>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+					<g:Grid cellSpacing="12">
+						<g:row>
+					    	<g:customCell>
+								<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+									ui:field="okayButton" debugId="okayButton">Save</g:Button>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+									ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+					    	</g:customCell>
+						</g:row>
+					</g:Grid>
+				</g:cell>
+				</g:VerticalPanel>
+				<g:VerticalPanel>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:Grid cellSpacing="8">
+							<g:row>
+						    	<g:customCell>
+									<g:HorizontalPanel>
+										<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+												<g:ScrollPanel>
+													<g:VerticalPanel spacing="8" ui:field="categoriesVP" height="100%">
+														<g:Label addStyleNames="{style.heading_label}">Add/remove Categories:</g:Label>
+														<g:HorizontalPanel ui:field="categoriesTagHP" spacing="16">
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:TextBox ui:field="categoryTF" debugId="tagKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+															</g:cell>
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:Button ui:field="addCategoryButton" debugId="addCategoryButton"
+																	addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+															</g:cell>
+														</g:HorizontalPanel>
+														<g:VerticalPanel spacing="8">
+															<g:Label addStyleNames="{style.heading_label}">Categories associated to this Service:</g:Label>
+															<g:FlexTable ui:field="categoriesTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Categories for this service."/>
+														</g:VerticalPanel>
+													</g:VerticalPanel>
+												</g:ScrollPanel>
+										</g:cell>
+									</g:HorizontalPanel>
+							    </g:customCell>
+					    	</g:row>
+					    </g:Grid>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:Grid cellSpacing="8">
+							<g:row>
+						    	<g:customCell>
+									<g:HorizontalPanel>
+										<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+												<g:ScrollPanel>
+													<g:VerticalPanel spacing="8" ui:field="consoleCategoriesVP" height="100%">
+														<g:Label addStyleNames="{style.heading_label}">Add/remove Console Categories:</g:Label>
+														<g:HorizontalPanel ui:field="consoleCategoriesTagHP" spacing="16">
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:TextBox ui:field="consoleCategoryTF" debugId="consoleCategoryTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+															</g:cell>
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:Button ui:field="addConsoleCategoryButton" debugId="addConsoleCategoryButton"
+																	addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+															</g:cell>
+														</g:HorizontalPanel>
+														<g:VerticalPanel spacing="8">
+															<g:Label addStyleNames="{style.heading_label}">Console Categories associated to this Service:</g:Label>
+															<g:FlexTable ui:field="consoleCategoriesTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Console Categories for this service."/>
+														</g:VerticalPanel>
+													</g:VerticalPanel>
+												</g:ScrollPanel>
+										</g:cell>
+									</g:HorizontalPanel>
+							    </g:customCell>
+					    	</g:row>
+					    </g:Grid>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+						<g:Grid cellSpacing="8">
+							<g:row>
+						    	<g:customCell>
+									<g:HorizontalPanel>
+										<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+												<g:ScrollPanel>
+													<g:VerticalPanel spacing="8" ui:field="tagsVP" height="100%">
+														<g:Label addStyleNames="{style.heading_label}">Add/remove Tags:</g:Label>
+														<g:HorizontalPanel ui:field="addTagHP" spacing="16">
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:TextBox ui:field="tagKeyTF" debugId="tagKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+															</g:cell>
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:Label>=</g:Label>
+															</g:cell>
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:TextBox ui:field="tagValueTF" debugId="tagValueTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+															</g:cell>
+															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+																<g:Button ui:field="addTagButton" debugId="addTagButton"
+																	addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+															</g:cell>
+														</g:HorizontalPanel>
+														<g:VerticalPanel spacing="8">
+															<g:Label addStyleNames="{style.heading_label}">Tags associated to this Service:</g:Label>
+															<g:FlexTable ui:field="tagsTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Tags for this request."/>
+														</g:VerticalPanel>
+													</g:VerticalPanel>
+												</g:ScrollPanel>
+										</g:cell>
+									</g:HorizontalPanel>
+							    </g:customCell>
+					    	</g:row>
+					    </g:Grid>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:HorizontalPanel>
 		</g:cell>
 	</g:VerticalPanel>
 </ui:UiBinder> 

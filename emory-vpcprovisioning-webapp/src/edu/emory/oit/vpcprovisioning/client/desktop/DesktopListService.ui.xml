@@ -18,7 +18,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:VerticalPanel>
+		<g:VerticalPanel spacing="12">
 			<g:Button width="150px" addStyleNames="{style.awsButton}"
 				ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton">Close</g:Button>
 		</g:VerticalPanel>
