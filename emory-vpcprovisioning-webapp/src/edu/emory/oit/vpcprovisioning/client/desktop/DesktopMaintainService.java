@@ -121,8 +121,8 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	public void initPage() {
 		if (presenter.getService() != null) {
 			serviceIdTB.setText(presenter.getService().getServiceId());
-			serviceCodeTB.setText(presenter.getService().getCode());
-			serviceNameTB.setText(presenter.getService().getName());
+			serviceCodeTB.setText(presenter.getService().getAwsServiceCode());
+			serviceNameTB.setText(presenter.getService().getAwsServiceName());
 			landingPageURLTB.setText(presenter.getService().getLandingPageURL());
 			descriptionTA.setText(presenter.getService().getDescription());;
 		}
@@ -173,10 +173,10 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		if (svc.getServiceId() == null || svc.getServiceId().length() == 0) {
 			fields.add(serviceIdTB);
 		}
-		if (svc.getCode() == null || svc.getCode().length() == 0) {
+		if (svc.getAwsServiceCode() == null || svc.getAwsServiceCode().length() == 0) {
 			fields.add(serviceCodeTB);
 		}
-		if (svc.getName() == null || svc.getName().length() == 0) {
+		if (svc.getAwsServiceName() == null || svc.getAwsServiceName().length() == 0) {
 			fields.add(serviceNameTB);
 		}
 		if (svc.getStatus() == null || svc.getStatus().length() == 0) {

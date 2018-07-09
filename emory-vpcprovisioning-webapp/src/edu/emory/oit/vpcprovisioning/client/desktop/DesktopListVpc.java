@@ -287,13 +287,13 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 					
 					@Override
 					public String getValue(VpcPojo object) {
-						return object.getVpnProfileId();
+						return object.getVpnConnectionProfileId();
 					}
 				};
 				vpnProfileColumn.setSortable(true);
 				sortHandler.setComparator(vpnProfileColumn, new Comparator<VpcPojo>() {
 					public int compare(VpcPojo o1, VpcPojo o2) {
-						return o1.getVpnProfileId().compareTo(o2.getVpnProfileId());
+						return o1.getVpnConnectionProfileId().compareTo(o2.getVpnConnectionProfileId());
 					}
 				});
 				vpcListTable.addColumn(vpnProfileColumn, "VPN Profile ID");

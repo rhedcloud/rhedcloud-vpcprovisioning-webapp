@@ -103,13 +103,13 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 					presenter.getVpc().setVpcId(vpcIdTB.getText());
 					presenter.getVpc().setType(vpcTypeLB.getSelectedValue());
 					presenter.getVpc().setCidr(cidrTB.getText());
-					presenter.getVpc().setVpnProfileId(vpnProfileIdTB.getText());
+					presenter.getVpc().setVpnConnectionProfileId(vpnProfileIdTB.getText());
 					presenter.getVpc().setPurpose(purposeTA.getText());
 					// admin net ids are added as they're added in the interface
 				}
 				else {
 					presenter.getVpcRequisition().setAccountId(vpcReqAccountIdTB.getText());
-					presenter.getVpcRequisition().setAccountOwnerNetId(vpcReqOwnerNetIdTB.getText());
+					presenter.getVpcRequisition().setAccountOwnerUserId(vpcReqOwnerNetIdTB.getText());
 					presenter.getVpcRequisition().setSpeedType(vpcReqSpeedTypeTB.getText());
 					presenter.getVpcRequisition().setType(vpcReqTypeLB.getSelectedValue());
 					// admin net ids are added as they're added in the interface
@@ -268,7 +268,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 				vpcIdTB.setText(presenter.getVpc().getVpcId());
 				cidrTB.setText(presenter.getVpc().getCidr());
 				purposeTA.setText(presenter.getVpc().getPurpose());
-				vpnProfileIdTB.setText(presenter.getVpc().getVpnProfileId());
+				vpnProfileIdTB.setText(presenter.getVpc().getVpnConnectionProfileId());
 			}
 			
 			ListFirewallRuleView listAccountView = presenter.getClientFactory().getListFirewallRuleView();

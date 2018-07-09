@@ -23,20 +23,16 @@
 				ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton">Close</g:Button>
 		</g:VerticalPanel>
 		<g:HTML addStyleNames="{style.introHeading}">Notification List</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of existing Emory AWS Notifications that you can view or edit.<br/><br/>
-		These reside in the database associated to the Emory AWS ESB Notification.  
-		The Emory AWS Notification is authoritatative for 
-		AWS Notification objects and allows applications like this one 
-		to query, create, update and delete those objects.<br/><br/>
-		Click the 'Add Notification' button to go to the Notification maintenance 
-		page where you can create a new Emory AWS Notification.</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of your User Notifications.</g:HTML>
 
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
 				<g:row>
+					<!-- 
 					<g:customCell>
 						<g:Button ui:field="createNotificationButton" debugId="createNotificationButton" text="Add Notification" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Notification"/>
 					</g:customCell>
+					 -->
 					<g:customCell>
 						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
 					</g:customCell>

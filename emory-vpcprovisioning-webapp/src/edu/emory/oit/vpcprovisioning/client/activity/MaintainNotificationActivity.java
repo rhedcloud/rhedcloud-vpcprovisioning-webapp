@@ -8,7 +8,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.event.ViewNotificationEvent;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class MaintainNotificationActivity extends AbstractActivity {
@@ -73,7 +73,7 @@ public class MaintainNotificationActivity extends AbstractActivity {
 		return rtn;
 	}
 
-	private PresentsWidgets startEdit(NotificationPojo notification) {
+	private PresentsWidgets startEdit(UserNotificationPojo notification) {
 		PresentsWidgets rtn = new MaintainNotificationPresenter(clientFactory, notification);
 		rtn.start(childEventBus);
 		return rtn;

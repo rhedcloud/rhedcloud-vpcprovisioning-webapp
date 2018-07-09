@@ -160,8 +160,8 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				// populate vpcrequisition that will be used as seed data
 				// for the vpcp.generate
 				presenter.getVpcRequisition().setTicketId(vpcpReqTicketIdTB.getText());
-				presenter.getVpcRequisition().setAuthenticatedRequestorNetId(vpcpReqRequestorNetIdTB.getText());
-				presenter.getVpcRequisition().setAccountOwnerNetId(vpcpReqOwnerNetIdTB.getText());
+				presenter.getVpcRequisition().setAuthenticatedRequestorUserId(vpcpReqRequestorNetIdTB.getText());
+				presenter.getVpcRequisition().setAccountOwnerUserId(vpcpReqOwnerNetIdTB.getText());
 				presenter.getVpcRequisition().setSpeedType(vpcpReqSpeedTypeTB.getText());
 				presenter.getVpcRequisition().setComplianceClass(vpcpReqComplianceClassLB.getSelectedValue());
 				presenter.getVpcRequisition().setNotifyAdmins(vpcpReqNotifyAdminsCB.getValue());
@@ -263,7 +263,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		removeNetIdButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.getVpcRequisition().getCustomerAdminNetIdList().remove(netId);
+				presenter.getVpcRequisition().getCustomerAdminUserIdList().remove(netId);
 				adminTable.remove(netIdLabel);
 				adminTable.remove(removeNetIdButton);
 			}
@@ -289,8 +289,8 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	void initializeNetIdPanel() {
 		adminTable.removeAllRows();
 		if (presenter.getVpcRequisition() != null) {
-			GWT.log("Adding " + presenter.getVpcRequisition().getCustomerAdminNetIdList().size() + " net ids to the panel (update).");
-			for (String netId : presenter.getVpcRequisition().getCustomerAdminNetIdList()) {
+			GWT.log("Adding " + presenter.getVpcRequisition().getCustomerAdminUserIdList().size() + " net ids to the panel (update).");
+			for (String netId : presenter.getVpcRequisition().getCustomerAdminUserIdList()) {
 				addNetIdToPanel(netId);
 			}
 		}
@@ -479,11 +479,11 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public List<Widget> getMissingRequiredFields() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		VpcRequisitionPojo vpcr = presenter.getVpcRequisition();
-		if (vpcr.getAuthenticatedRequestorNetId() == null || vpcr.getAuthenticatedRequestorNetId().length() == 0) {
+		if (vpcr.getAuthenticatedRequestorUserId() == null || vpcr.getAuthenticatedRequestorUserId().length() == 0) {
 			this.setFieldViolations(true);
 			fields.add(vpcpReqRequestorNetIdTB);
 		}
-		if (vpcr.getAccountOwnerNetId() == null || vpcr.getAccountOwnerNetId().length() == 0) {
+		if (vpcr.getAccountOwnerUserId() == null || vpcr.getAccountOwnerUserId().length() == 0) {
 			this.setFieldViolations(true);
 			fields.add(vpcpReqOwnerNetIdTB);
 		}
@@ -491,7 +491,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			this.setFieldViolations(true);
 			fields.add(vpcpReqSpeedTypeTB);
 		}
-		if (vpcr.getCustomerAdminNetIdList() == null || vpcr.getCustomerAdminNetIdList().size() == 0) {
+		if (vpcr.getCustomerAdminUserIdList() == null || vpcr.getCustomerAdminUserIdList().size() == 0) {
 			this.setFieldViolations(true);
 			fields.add(directoryLookupSB);
 		}

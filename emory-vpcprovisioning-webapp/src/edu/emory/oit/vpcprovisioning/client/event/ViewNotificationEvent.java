@@ -19,7 +19,7 @@ package edu.emory.oit.vpcprovisioning.client.event;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 /**
  * Fired when the user wants to edit a case record.
@@ -37,9 +37,9 @@ public class ViewNotificationEvent extends GwtEvent<ViewNotificationEvent.Handle
    */
   public static final Type<ViewNotificationEvent.Handler> TYPE = new Type<ViewNotificationEvent.Handler>();
 
-  private final NotificationPojo notification;
+  private final UserNotificationPojo notification;
 
-  public ViewNotificationEvent(NotificationPojo acct) {
+  public ViewNotificationEvent(UserNotificationPojo acct) {
     this.notification = acct;
   }
 
@@ -48,7 +48,7 @@ public class ViewNotificationEvent extends GwtEvent<ViewNotificationEvent.Handle
     return TYPE;
   }
 
-  public NotificationPojo getNotification() {
+  public UserNotificationPojo getNotification() {
     return notification;
   }
 

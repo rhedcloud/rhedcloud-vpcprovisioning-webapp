@@ -18,9 +18,9 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListNotificationPresenter extends PresenterBase implements ListNotificationView.Presenter {
@@ -40,7 +40,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 	private EventBus eventBus;
 	
-	NotificationQueryFilterPojo filter;
+	UserNotificationQueryFilterPojo filter;
 
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -52,7 +52,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	 */
 	//	  private Timer sessionTimer;
 
-	public ListNotificationPresenter(ClientFactory clientFactory, boolean clearList, NotificationQueryFilterPojo filter) {
+	public ListNotificationPresenter(ClientFactory clientFactory, boolean clearList, UserNotificationQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
 		clientFactory.getListNotificationView().setPresenter(this);
@@ -91,16 +91,18 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
+                GWT.log("Exception getting notifications", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your list of Notifications.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
 				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
-				clientFactory.getShell().setSubTitle("AWS Notifications");
+				clientFactory.getShell().setSubTitle("User Notifications");
 
 				// Clear the Vpc list and display it.
 				if (clearList) {
@@ -108,7 +110,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setNotificationList(Collections.<NotificationPojo> emptyList());
+				setNotificationList(Collections.<UserNotificationPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);
@@ -119,23 +121,23 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	}
 
 	/**
-	 * Refresh the CIDR list.
+	 * Refresh the Notification list.
 	 */
 	private void refreshList(final UserAccountPojo user) {
 		// use RPC to get all Notifications for the current filter being used
-		AsyncCallback<NotificationQueryResultPojo> callback = new AsyncCallback<NotificationQueryResultPojo>() {
+		AsyncCallback<UserNotificationQueryResultPojo> callback = new AsyncCallback<UserNotificationQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving Notifications", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of Vpcs.  " +
+						"server retrieving your list of Notifications.  " +
 						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(NotificationQueryResultPojo result) {
+			public void onSuccess(UserNotificationQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " Notifications for " + result.getFilterUsed());
 				setNotificationList(result.getResults());
 				// apply authorization mask
@@ -152,13 +154,13 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		};
 
 		GWT.log("refreshing Notifications list...");
-		VpcProvisioningService.Util.getInstance().getNotificationsForFilter(filter, callback);
+		VpcProvisioningService.Util.getInstance().getUserNotificationsForFilter(filter, callback);
 	}
 
 	/**
 	 * Set the list of Vpcs.
 	 */
-	private void setNotificationList(List<NotificationPojo> notifications) {
+	private void setNotificationList(List<UserNotificationPojo> notifications) {
 		getView().setNotifications(notifications);
 		eventBus.fireEventFromSource(new NotificationListUpdateEvent(notifications), this);
 	}
@@ -181,7 +183,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	}
 
 	@Override
-	public void selectNotification(NotificationPojo selected) {
+	public void selectNotification(UserNotificationPojo selected) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -194,11 +196,11 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		this.eventBus = eventBus;
 	}
 
-	public NotificationQueryFilterPojo getFilter() {
+	public UserNotificationQueryFilterPojo getFilter() {
 		return filter;
 	}
 
-	public void setFilter(NotificationQueryFilterPojo filter) {
+	public void setFilter(UserNotificationQueryFilterPojo filter) {
 		this.filter = filter;
 	}
 
@@ -207,8 +209,8 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	}
 
 	@Override
-	public void deleteNotification(final NotificationPojo notification) {
-		if (Window.confirm("Delete the AWS Notification " + notification.getNotificationId() + "?")) {
+	public void deleteNotification(final UserNotificationPojo notification) {
+		if (Window.confirm("Delete the AWS Notification " + notification.getUserNotificationId() + "?")) {
 			getView().showPleaseWaitDialog("Deleting Notification...");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
@@ -230,8 +232,41 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
 				}
 			};
-			VpcProvisioningService.Util.getInstance().deleteNotification(notification, callback);
+			VpcProvisioningService.Util.getInstance().deleteUserNotification(notification, callback);
 		}
+	}
+
+	@Override
+	public void saveNotification(final UserNotificationPojo selected) {
+		getView().showPleaseWaitDialog("Saving Notification...");
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
+		AsyncCallback<UserNotificationPojo> callback = new AsyncCallback<UserNotificationPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception saving the Notification", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the Notification.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(UserNotificationPojo result) {
+				getView().hidePleaseWaitDialog();
+				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, selected);
+			}
+		};
+		// it's an update
+		VpcProvisioningService.Util.getInstance().updateUserNotification(selected, callback);
 	}
 
 }

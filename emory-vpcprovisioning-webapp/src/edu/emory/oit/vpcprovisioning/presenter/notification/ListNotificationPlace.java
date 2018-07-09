@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 
 public class ListNotificationPlace extends Place {
 
@@ -25,7 +25,7 @@ public class ListNotificationPlace extends Place {
 	}
 
 	private final boolean listStale;
-	NotificationQueryFilterPojo filter;
+	UserNotificationQueryFilterPojo filter;
 
 	/**
 	 * Construct a new {@link case recordListPlace}.
@@ -45,11 +45,11 @@ public class ListNotificationPlace extends Place {
 		return listStale;
 	}
 
-	public NotificationQueryFilterPojo getFilter() {
+	public UserNotificationQueryFilterPojo getFilter() {
 		return filter;
 	}
 
-	public void setFilter(NotificationQueryFilterPojo filter) {
+	public void setFilter(UserNotificationQueryFilterPojo filter) {
 		this.filter = filter;
 	}
 

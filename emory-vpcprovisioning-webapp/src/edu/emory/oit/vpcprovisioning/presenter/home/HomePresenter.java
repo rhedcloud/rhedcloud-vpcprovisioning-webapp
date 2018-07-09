@@ -368,6 +368,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			
 		};
 		FullPersonQueryFilterPojo filter = new FullPersonQueryFilterPojo();
+		GWT.log("Getting FullPerson for public id: " + userLoggedIn.getPublicId());
 		filter.setPublicId(userLoggedIn.getPublicId());
 		getView().showPleaseWaitDialog("Getting person meta data from the Identity Service...");
 		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, srvrCallback);

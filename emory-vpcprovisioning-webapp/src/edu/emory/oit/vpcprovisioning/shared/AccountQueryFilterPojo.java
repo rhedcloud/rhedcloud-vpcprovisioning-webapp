@@ -8,7 +8,7 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 	String accountName;
 	// TODO: change to a list of emails (and query spec)?
 	EmailPojo email;
-	String accountOwnerNetId;
+	String accountOwnerId;
 	String speedType;
 	String createUser;
 	String lastUpdateUser;
@@ -41,12 +41,12 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 		this.email = email;
 	}
 
-	public String getAccountOwnerNetId() {
-		return accountOwnerNetId;
+	public String getAccountOwnerId() {
+		return accountOwnerId;
 	}
 
-	public void setAccountOwnerNetId(String accountOwnerNetId) {
-		this.accountOwnerNetId = accountOwnerNetId;
+	public void setAccountOwnerId(String accountOwnerNetId) {
+		this.accountOwnerId = accountOwnerNetId;
 	}
 
 	public String getSpeedType() {

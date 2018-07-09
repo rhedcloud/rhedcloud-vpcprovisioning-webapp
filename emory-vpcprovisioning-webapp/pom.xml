@@ -142,14 +142,14 @@
 		<artifactId>aws-moa</artifactId>
 		<version>1</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-moa-master-62.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-moa-master-79.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>edu.emory</groupId>
 		<artifactId>emory-moa</artifactId>
 		<version>1.2</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/emory-moa-1.0.0-72.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/emory-moa-1.0.0-78.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>edu.emory</groupId>

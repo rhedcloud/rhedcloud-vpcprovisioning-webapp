@@ -22,6 +22,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -58,12 +61,8 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultP
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
@@ -73,7 +72,21 @@ import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserActionPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserActionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserActionQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
@@ -141,7 +154,7 @@ public interface VpcProvisioningServiceAsync {
 	// VPC
 	void getVpcsForUserLoggedIn(AsyncCallback<List<VpcPojo>> callback);
 	void getVpcsForFilter(VpcQueryFilterPojo filter, AsyncCallback<VpcQueryResultPojo> callback);
-	void generateVpc(VpcRequisitionPojo vpcRequisition, AsyncCallback<VpcPojo> callback);
+//	void generateVpc(VpcRequisitionPojo vpcRequisition, AsyncCallback<VpcPojo> callback);
 	void updateVpc(VpcPojo vpc, AsyncCallback<VpcPojo> callback);
 	void registerVpc(VpcPojo vpc, AsyncCallback<VpcPojo> callback);
 	void deleteVpc(VpcPojo vpc, AsyncCallback<Void> callback);
@@ -198,11 +211,17 @@ public interface VpcProvisioningServiceAsync {
 	void getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter, AsyncCallback<SpeedChartQueryResultPojo> callback);
 	void getSpeedChartForFinancialAccountNumber(String accountNumber, AsyncCallback<SpeedChartPojo> callback);
 	
-	// notifications
-	void getNotificationsForFilter(NotificationQueryFilterPojo filter, AsyncCallback<NotificationQueryResultPojo> callback);
-	void createNotification(NotificationPojo notification, AsyncCallback<NotificationPojo> callback);
-	void updateNotification(NotificationPojo notification, AsyncCallback<NotificationPojo> callback);
-	void deleteNotification(NotificationPojo notification, AsyncCallback<Void> callback);
+	// user notifications
+	void getUserNotificationsForFilter(UserNotificationQueryFilterPojo filter, AsyncCallback<UserNotificationQueryResultPojo> callback);
+	void createUserNotification(UserNotificationPojo notification, AsyncCallback<UserNotificationPojo> callback);
+	void updateUserNotification(UserNotificationPojo notification, AsyncCallback<UserNotificationPojo> callback);
+	void deleteUserNotification(UserNotificationPojo notification, AsyncCallback<Void> callback);
+	
+	// account notifications
+	void getAccountNotificationsForFilter(AccountNotificationQueryFilterPojo filter, AsyncCallback<AccountNotificationQueryResultPojo> callback);
+	void createAccountNotification(AccountNotificationPojo notification, AsyncCallback<AccountNotificationPojo> callback);
+	void updateAccountNotification(AccountNotificationPojo notification, AsyncCallback<AccountNotificationPojo> callback);
+	void deleteAccountNotification(AccountNotificationPojo notification, AsyncCallback<Void> callback);
 	
 	// FirewallRule
 	void getFirewallRulesForFilter(FirewallRuleQueryFilterPojo filter, AsyncCallback<FirewallRuleQueryResultPojo> callback);
@@ -228,4 +247,20 @@ public interface VpcProvisioningServiceAsync {
 	void getRoleAssignmentsForAccount(String accountId, AsyncCallback<List<RoleAssignmentSummaryPojo>> callback) throws RpcException;
 	void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment, AsyncCallback<Void> callback) throws RpcException;
 	void getCentralAdmins(AsyncCallback<List<RoleAssignmentSummaryPojo>> callback) throws RpcException;
+
+	// user profile
+	void getUserProfilesForFilter(UserProfileQueryFilterPojo filter, AsyncCallback<UserProfileQueryResultPojo> callback);
+	void createUserProfile(UserProfilePojo profile, AsyncCallback<UserProfilePojo> callback);
+	void updateUserProfile(UserProfilePojo profile, AsyncCallback<UserProfilePojo> callback);
+	void deleteUserProfile(UserProfilePojo profile, AsyncCallback<Void> callback);
+
+	
+	// user actions
+	void getUserActionsForFilter(UserActionQueryFilterPojo filter, AsyncCallback<UserActionQueryResultPojo> callback);
+	void createUserAction(UserActionPojo profile, AsyncCallback<UserActionPojo> callback);
+	
+	// terms of use
+	void getTermsOfUseForFilter(TermsOfUseQueryFilterPojo filter, AsyncCallback<TermsOfUseQueryResultPojo> callback);
+	void getTermsOfUseAgreementsForFilter(TermsOfUseAgreementQueryFilterPojo filter, AsyncCallback<TermsOfUseAgreementQueryResultPojo> callback);
+	void createTermsOfUseAgreement(TermsOfUseAgreementPojo profile, AsyncCallback<TermsOfUseAgreementPojo> callback);
 }

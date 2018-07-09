@@ -69,7 +69,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 				presenter.getVpc().setVpcId(vpcIdTB.getText());
 				presenter.getVpc().setType(vpcTypeLB.getSelectedValue());
 				presenter.getVpc().setCidr(cidrTB.getText());
-				presenter.getVpc().setVpnProfileId(vpnProfileIdTB.getText());
+				presenter.getVpc().setVpnConnectionProfileId(vpnProfileIdTB.getText());
 				presenter.getVpc().setPurpose(purposeTA.getText());
 				presenter.registerVpc();
 			}
@@ -210,7 +210,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		if (vpc.getCidr() == null || vpc.getCidr().length() == 0) {
 			fields.add(cidrTB);
 		}
-		if (vpc.getVpnProfileId() == null || vpc.getVpnProfileId().length() == 0) {
+		if (vpc.getVpnConnectionProfileId() == null || vpc.getVpnConnectionProfileId().length() == 0) {
 			fields.add(vpnProfileIdTB);
 		}
 		if (vpc.getPurpose() == null || vpc.getPurpose().length() == 0) {

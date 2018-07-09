@@ -7,8 +7,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListNotificationView extends IsWidget, View {
@@ -21,14 +21,15 @@ public interface ListNotificationView extends IsWidget, View {
 		 * 
 		 * @param selected the selected caseRecord
 		 */
-		void selectNotification(NotificationPojo selected);
+		void selectNotification(UserNotificationPojo selected);
 		public EventBus getEventBus();
-		public NotificationQueryFilterPojo getFilter();
+		public UserNotificationQueryFilterPojo getFilter();
 		public ClientFactory getClientFactory();
 		/**
 		 * Delete the current Vpc or cancel the creation of a Vpc.
 		 */
-		void deleteNotification(NotificationPojo service);
+		void saveNotification(UserNotificationPojo selected);
+		void deleteNotification(UserNotificationPojo service);
 		public void logMessageOnServer(final String message);
 	}
 
@@ -48,10 +49,10 @@ public interface ListNotificationView extends IsWidget, View {
 	 * 
 	 * @param cidrs the list of caseRecords
 	 */
-	void setNotifications(List<NotificationPojo> services);
+	void setNotifications(List<UserNotificationPojo> services);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void removeNotificationFromView(NotificationPojo service);
+	void removeNotificationFromView(UserNotificationPojo service);
 
 
 }

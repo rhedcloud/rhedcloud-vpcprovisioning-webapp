@@ -34,7 +34,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_SPEEDCHART_QUERY_SPEC = "SPEEDCHART_QUERY.v1_0";
 	public static final String MOA_SPEEDCHART = "SPEEDCHART.v1_0";
 	public static final String MOA_VPC_QUERY_SPEC = "VirtualPrivateCloudQuerySpecification.v1_0";
-	public static final String MOA_VPC_GENERATE = "GenerateVirtualPrivateCloud.v1_0";
+//	public static final String MOA_VPC_GENERATE = "GenerateVirtualPrivateCloud.v1_0";
 	public static final String MOA_VPC_MAINTAIN = "MaintainVirtualPrivateCloud.v1_0";
 	public static final String MOA_VPC_REQUISITION = "VirtualPrivateCloudRequisition.v1_0";
 	public static final String MOA_VPCP_QUERY_SPEC = "VirtualPrivateCloudProvisioningQuerySpecification.v1_0";
@@ -68,7 +68,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_FIREWALL_EXCEPTION_REQUEST_QUERY_SPEC = "FirewallExceptionRequestQuerySpecification.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_REQUEST = "FirewallExceptionRequest.v1_0";
 	public static final String MOA_SERVICE = "Service.v1_0";
-	public static final String MOA_STACK_QUERY_SPEC = "StackQuerySpecification.v1_0";
+	public static final String MOA_SERVICE_QUERY_SPEC = "ServiceQuerySpecification.v1_0";
 
     public static final String STYLE_INFO_POPUP_MESSAGE = "informationalPopupMessage";
     

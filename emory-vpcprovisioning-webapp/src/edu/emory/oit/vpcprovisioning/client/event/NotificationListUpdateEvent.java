@@ -20,7 +20,7 @@ import java.util.List;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 
 /**
@@ -41,9 +41,9 @@ public class NotificationListUpdateEvent extends GwtEvent<NotificationListUpdate
 
   public static final Type<NotificationListUpdateEvent.Handler> TYPE = new Type<NotificationListUpdateEvent.Handler>();
 
-  private final List<NotificationPojo> notifications;
+  private final List<UserNotificationPojo> notifications;
 
-  public NotificationListUpdateEvent(List<NotificationPojo> notifications) {
+  public NotificationListUpdateEvent(List<UserNotificationPojo> notifications) {
     this.notifications = notifications;
   }
 
@@ -52,7 +52,7 @@ public class NotificationListUpdateEvent extends GwtEvent<NotificationListUpdate
     return TYPE;
   }
 
-  public List<NotificationPojo> getNotifications() {
+  public List<UserNotificationPojo> getNotifications() {
     return notifications;
   }
 

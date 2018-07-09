@@ -206,7 +206,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 
 	@Override
 	public void deleteService(final AWSServicePojo service) {
-		if (Window.confirm("Delete the AWS Service " + service.getName() + "?")) {
+		if (Window.confirm("Delete the AWS Service " + service.getAwsServiceName() + "?")) {
 			getView().showPleaseWaitDialog("Deleting service...");
 			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 

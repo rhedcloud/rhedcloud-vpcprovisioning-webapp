@@ -274,16 +274,16 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return object.getCode();
+				return object.getAwsServiceCode();
 			}
 		};
 		vpcIdColumn.setSortable(true);
 		sortHandler.setComparator(vpcIdColumn, new Comparator<AWSServicePojo>() {
 			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				return o1.getCode().compareTo(o2.getCode());
+				return o1.getAwsServiceCode().compareTo(o2.getAwsServiceCode());
 			}
 		});
-		serviceListTable.addColumn(vpcIdColumn, "Code");
+		serviceListTable.addColumn(vpcIdColumn, "AWS Code");
 
 		// type
 		Column<AWSServicePojo, String> vpcTypeColumn = 
@@ -291,16 +291,16 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return object.getName();
+				return object.getAwsServiceName();
 			}
 		};
 		vpcTypeColumn.setSortable(true);
 		sortHandler.setComparator(vpcTypeColumn, new Comparator<AWSServicePojo>() {
 			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				return o1.getName().compareTo(o2.getName());
+				return o1.getAwsServiceName().compareTo(o2.getAwsServiceName());
 			}
 		});
-		serviceListTable.addColumn(vpcTypeColumn, "Name");
+		serviceListTable.addColumn(vpcTypeColumn, "AWS Name");
 
 		// compliance class
 		Column<AWSServicePojo, String> complianceClassColumn = 

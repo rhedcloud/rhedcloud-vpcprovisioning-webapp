@@ -536,7 +536,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 					if (networkIds != null) {
 						if (networkIds.size() == 1) {
 							String principal = networkIds.get(0).getValue();
-							vpcRequisition.getCustomerAdminNetIdList().add(principal);
+							vpcRequisition.getCustomerAdminUserIdList().add(principal);
 							getView().addAdminNetId(principal);
 						}
 						else {
@@ -546,7 +546,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 								String principal = networkId.getValue();
 								GWT.log("NetworkId.value: " + principal);
 								if (domain.equalsIgnoreCase("EMORYUNIVAD")) {
-									vpcRequisition.getCustomerAdminNetIdList().add(principal);
+									vpcRequisition.getCustomerAdminUserIdList().add(principal);
 									getView().addAdminNetId(principal);
 									break networkIdLoop;
 								}

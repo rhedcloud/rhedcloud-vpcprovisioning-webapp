@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,14 +36,14 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopListNotification extends ViewImplBase implements ListNotificationView {
 	Presenter presenter;
-	private ListDataProvider<NotificationPojo> dataProvider = new ListDataProvider<NotificationPojo>();
-	private MultiSelectionModel<NotificationPojo> selectionModel;
-	List<NotificationPojo> serviceList = new java.util.ArrayList<NotificationPojo>();
+	private ListDataProvider<UserNotificationPojo> dataProvider = new ListDataProvider<UserNotificationPojo>();
+	private MultiSelectionModel<UserNotificationPojo> selectionModel;
+	List<UserNotificationPojo> serviceList = new java.util.ArrayList<UserNotificationPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
 
@@ -61,10 +62,10 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	/*** FIELDS ***/
 	@UiField SimplePager notificationsListPager;
-	@UiField(provided=true) CellTable<NotificationPojo> notificationListTable = new CellTable<NotificationPojo>();
+	@UiField(provided=true) CellTable<UserNotificationPojo> notificationListTable = new CellTable<UserNotificationPojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
-	@UiField Button createNotificationButton;
+//	@UiField Button createNotificationButton;
 	@UiField Button actionsButton;
 
 	@UiHandler("actionsButton")
@@ -95,9 +96,9 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 					showMessageToUser("Please select one Notification to view");
 					return;
 				}
-				Iterator<NotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
+				Iterator<UserNotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
 				
-				NotificationPojo m = nIter.next();
+				UserNotificationPojo m = nIter.next();
 				if (m != null) {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, m);
 				}
@@ -121,9 +122,9 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 					showMessageToUser("Please select an item from the list");
 					return;
 				}
-				Iterator<NotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
+				Iterator<UserNotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
 				while (nIter.hasNext()) {
-					NotificationPojo m = nIter.next();
+					UserNotificationPojo m = nIter.next();
 					if (m != null) {
 						presenter.deleteNotification(m);
 					}
@@ -145,19 +146,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
 				if (selectionModel.getSelectedSet().size() == 0) {
-					showMessageToUser("Please select an item from the list");
+					showMessageToUser("Please select one or more item(s) from the list");
 					return;
 				}
-				Iterator<NotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
+				Iterator<UserNotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
 				while (nIter.hasNext()) {
-					NotificationPojo m = nIter.next();
+					UserNotificationPojo m = nIter.next();
 					if (m != null) {
-						// TODO: update the status of the notification
-						m.setViewed(true);
-//						presenter.deleteNotification(m);
+						// update the status of the notification
+						m.setRead(true);
+						m.setReadDateTime(new Date());
+						presenter.saveNotification(m);
 					}
 					else {
-						showMessageToUser("Please select an item from the list");
+						showMessageToUser("Please select one or more item(s) from the list");
 					}
 				}
 			}
@@ -167,10 +169,10 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
-	@UiHandler ("createNotificationButton")
-	void createButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_NOTIFICATION);
-	}
+//	@UiHandler ("createNotificationButton")
+//	void createButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_NOTIFICATION);
+//	}
 	@UiHandler ("closeOtherFeaturesButton")
 	void closeOtherFeaturesButtonClicked(ClickEvent e) {
 		presenter.getClientFactory().getShell().hideOtherFeaturesPanel();
@@ -191,13 +193,13 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		createNotificationButton.setEnabled(true);;
+//		createNotificationButton.setEnabled(true);;
 		actionsButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		createNotificationButton.setEnabled(false);;
+//		createNotificationButton.setEnabled(false);;
 		actionsButton.setEnabled(false);
 	}
 
@@ -240,14 +242,14 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	}
 
 	@Override
-	public void setNotifications(List<NotificationPojo> services) {
+	public void setNotifications(List<UserNotificationPojo> services) {
 		this.serviceList = services;
 		this.initializeNotificationListTable();
 		notificationsListPager.setDisplay(notificationListTable);
 	}
 
 	@Override
-	public void removeNotificationFromView(NotificationPojo service) {
+	public void removeNotificationFromView(UserNotificationPojo service) {
 		dataProvider.getList().remove(service);
 	}
 
@@ -260,13 +262,13 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		notificationListTable.setVisibleRange(0, 5);
 		
 		// create dataprovider
-		dataProvider = new ListDataProvider<NotificationPojo>();
+		dataProvider = new ListDataProvider<UserNotificationPojo>();
 		dataProvider.addDataDisplay(notificationListTable);
 		dataProvider.getList().clear();
 		dataProvider.getList().addAll(this.serviceList);
 		
 		selectionModel = 
-	    	new MultiSelectionModel<NotificationPojo>(NotificationPojo.KEY_PROVIDER);
+	    	new MultiSelectionModel<UserNotificationPojo>(UserNotificationPojo.KEY_PROVIDER);
 		notificationListTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -277,8 +279,8 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	    	}
 	    });
 
-	    ListHandler<NotificationPojo> sortHandler = 
-	    	new ListHandler<NotificationPojo>(dataProvider.getList());
+	    ListHandler<UserNotificationPojo> sortHandler = 
+	    	new ListHandler<UserNotificationPojo>(dataProvider.getList());
 	    notificationListTable.addColumnSortHandler(sortHandler);
 
 	    if (notificationListTable.getColumnCount() == 0) {
@@ -287,13 +289,13 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		
 		return notificationListTable;
 	}
-	private void initNotificationListTableColumns(ListHandler<NotificationPojo> sortHandler) {
+	private void initNotificationListTableColumns(ListHandler<UserNotificationPojo> sortHandler) {
 		GWT.log("initializing VPC list table columns...");
 		
-	    Column<NotificationPojo, Boolean> checkColumn = new Column<NotificationPojo, Boolean>(
+	    Column<UserNotificationPojo, Boolean> checkColumn = new Column<UserNotificationPojo, Boolean>(
 		        new CheckboxCell(true, false)) {
 		      @Override
-		      public Boolean getValue(NotificationPojo object) {
+		      public Boolean getValue(UserNotificationPojo object) {
 		        // Get the value from the selection model.
 		        return selectionModel.isSelected(object);
 		      }
@@ -301,46 +303,97 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		    notificationListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
 		    notificationListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
-		// Account id column
-		Column<NotificationPojo, String> acctIdColumn = 
-			new Column<NotificationPojo, String> (new TextCell()) {
+		// Notification id column
+		Column<UserNotificationPojo, String> notificationIdColumn = 
+			new Column<UserNotificationPojo, String> (new TextCell()) {
 			
 			@Override
-			public String getValue(NotificationPojo object) {
-				return object.getNotificationId();
+			public String getValue(UserNotificationPojo object) {
+				return object.getUserNotificationId();
 			}
 		};
-		acctIdColumn.setSortable(true);
-		sortHandler.setComparator(acctIdColumn, new Comparator<NotificationPojo>() {
-			public int compare(NotificationPojo o1, NotificationPojo o2) {
-				return o1.getNotificationId().compareTo(o2.getNotificationId());
+		notificationIdColumn.setSortable(true);
+		sortHandler.setComparator(notificationIdColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				return o1.getUserNotificationId().compareTo(o2.getUserNotificationId());
 			}
 		});
-		notificationListTable.addColumn(acctIdColumn, "Notification ID");
+		notificationListTable.addColumn(notificationIdColumn, "Notification ID");
 
-		// VPC id column
-		Column<NotificationPojo, String> vpcIdColumn = 
-			new Column<NotificationPojo, String> (new TextCell()) {
+		// Type column
+		Column<UserNotificationPojo, String> typeColumn = 
+			new Column<UserNotificationPojo, String> (new TextCell()) {
 			
 			@Override
-			public String getValue(NotificationPojo object) {
-				return object.getNotificationText();
+			public String getValue(UserNotificationPojo object) {
+				return object.getType();
 			}
 		};
-		vpcIdColumn.setSortable(true);
-		sortHandler.setComparator(vpcIdColumn, new Comparator<NotificationPojo>() {
-			public int compare(NotificationPojo o1, NotificationPojo o2) {
-				return o1.getNotificationText().compareTo(o2.getNotificationText());
+		typeColumn.setSortable(true);
+		sortHandler.setComparator(typeColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				return o1.getType().compareTo(o2.getType());
 			}
 		});
-		notificationListTable.addColumn(vpcIdColumn, "Text");
+		notificationListTable.addColumn(typeColumn, "Type");
+		
+		// Priority column
+		Column<UserNotificationPojo, String> priorityColumn = 
+			new Column<UserNotificationPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(UserNotificationPojo object) {
+				return object.getPriority();
+			}
+		};
+		priorityColumn.setSortable(true);
+		sortHandler.setComparator(priorityColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				return o1.getPriority().compareTo(o2.getPriority());
+			}
+		});
+		notificationListTable.addColumn(priorityColumn, "Priority");
+		
+		// Subject column
+		Column<UserNotificationPojo, String> subjectColumn = 
+			new Column<UserNotificationPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(UserNotificationPojo object) {
+				return object.getSubject();
+			}
+		};
+		subjectColumn.setSortable(true);
+		sortHandler.setComparator(subjectColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				return o1.getSubject().compareTo(o2.getSubject());
+			}
+		});
+		notificationListTable.addColumn(subjectColumn, "Subject");
+		
+		// FullText column
+		Column<UserNotificationPojo, String> fullTextColumn = 
+			new Column<UserNotificationPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(UserNotificationPojo object) {
+				return object.getText();
+			}
+		};
+		fullTextColumn.setSortable(true);
+		sortHandler.setComparator(fullTextColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				return o1.getText().compareTo(o2.getText());
+			}
+		});
+		notificationListTable.addColumn(fullTextColumn, "Text");
 		
 		// create time
-		Column<NotificationPojo, String> createTimeColumn = 
-				new Column<NotificationPojo, String> (new TextCell()) {
+		Column<UserNotificationPojo, String> createTimeColumn = 
+				new Column<UserNotificationPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(NotificationPojo object) {
+			public String getValue(UserNotificationPojo object) {
 				if (object.getCreateTime() != null) {
 					return dateFormat.format(object.getCreateTime());
 				}
@@ -350,8 +403,8 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 			}
 		};
 		createTimeColumn.setSortable(true);
-		sortHandler.setComparator(createTimeColumn, new Comparator<NotificationPojo>() {
-			public int compare(NotificationPojo o1, NotificationPojo o2) {
+		sortHandler.setComparator(createTimeColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				if (o1.getCreateTime() != null && o2.getCreateTime() != null) {
 					return o1.getCreateTime().compareTo(o2.getCreateTime());
 				}
@@ -361,6 +414,33 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 			}
 		});
 		notificationListTable.addColumn(createTimeColumn, "Create Time");
+
+		// read time
+		Column<UserNotificationPojo, String> readTimeColumn = 
+				new Column<UserNotificationPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(UserNotificationPojo object) {
+				if (object.getCreateTime() != null) {
+					return dateFormat.format(object.getReadDateTime());
+				}
+				else {
+					return "No Info";
+				}
+			}
+		};
+		readTimeColumn.setSortable(true);
+		sortHandler.setComparator(readTimeColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				if (o1.getReadDateTime() != null && o2.getReadDateTime() != null) {
+					return o1.getReadDateTime().compareTo(o2.getReadDateTime());
+				}
+				else {
+					return 0;
+				}
+			}
+		});
+		notificationListTable.addColumn(readTimeColumn, "Read Time");
 	}
 
 	@Override

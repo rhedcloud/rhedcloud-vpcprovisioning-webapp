@@ -8,26 +8,30 @@ import com.google.gwt.view.client.ProvidesKey;
 @SuppressWarnings("serial")
 public class AWSServicePojo extends SharedObject implements IsSerializable {
 	/*
-	<!ELEMENT Service (
-		ServiceId, 
-		ServiceCode, 
-		ServiceName, 
-		Status, 
-		ServiceLandingPageUrl, 
-		Description?, 
-		Category*, 
-		ConsoleCategory*, 
-		AwsHipaaEligible, 
-		EmoryHipaaEligible, 
-		Tag*, 
-		CreateUser, 
-		CreateDatetime, 
-		LastUpdateUser?, 
-		LastUpdateDatetime?)>
+		<!ELEMENT Service (
+			ServiceId?, 
+			AwsServiceCode, 
+			AwsServiceName, 
+			AlternateServiceName?, 
+			CombinedServiceName?, 
+			Status, 
+			ServiceLandingPageUrl, 
+			Description?, 
+			Category*, 
+			ConsoleCategory*, 
+			AwsHipaaEligible, 
+			EmoryHipaaEligible, 
+			Tag*, 
+			CreateUser, 
+			CreateDatetime, 
+			LastUpdateUser?, 
+			LastUpdateDatetime?)>
 	 */
 	String serviceId;
-	String code;
-	String name;
+	String awsServiceCode;
+	String awsServiceName;
+	String alternateServiceName;
+	String combinedServiceName;
 	String status;
 	String landingPageURL;
 	String description;
@@ -42,7 +46,7 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	public static final ProvidesKey<AWSServicePojo> KEY_PROVIDER = new ProvidesKey<AWSServicePojo>() {
 		@Override
 		public Object getKey(AWSServicePojo item) {
-			return item == null ? null : item.getName();
+			return item == null ? null : item.getAwsServiceName();
 		}
 	};
 
@@ -60,23 +64,23 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	}
 
 
-	public String getName() {
-		return name;
+	public String getAwsServiceName() {
+		return awsServiceName;
 	}
 
 
-	public void setName(String name) {
-		this.name = name;
+	public void setAwsServiceName(String name) {
+		this.awsServiceName = name;
 	}
 
 
-	public String getCode() {
-		return code;
+	public String getAwsServiceCode() {
+		return awsServiceCode;
 	}
 
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setAwsServiceCode(String code) {
+		this.awsServiceCode = code;
 	}
 
 
@@ -166,6 +170,36 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 
 	public void setBaseline(AWSServicePojo baseline) {
 		this.baseline = baseline;
+	}
+
+
+	public String getAlternateServiceName() {
+		return alternateServiceName;
+	}
+
+
+	public void setAlternateServiceName(String alternateServiceName) {
+		this.alternateServiceName = alternateServiceName;
+	}
+
+
+	public String getCombinedServiceName() {
+		return combinedServiceName;
+	}
+
+
+	public void setCombinedServiceName(String combinedServiceName) {
+		this.combinedServiceName = combinedServiceName;
+	}
+
+
+	public boolean isAwsHipaaEligible() {
+		return awsHipaaEligible;
+	}
+
+
+	public void setAwsHipaaEligible(boolean awsHipaaEligible) {
+		this.awsHipaaEligible = awsHipaaEligible;
 	}
 
 }

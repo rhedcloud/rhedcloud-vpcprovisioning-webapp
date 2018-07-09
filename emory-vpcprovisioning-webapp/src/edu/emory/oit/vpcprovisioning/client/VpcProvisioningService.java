@@ -24,6 +24,9 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
@@ -60,12 +63,8 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultP
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
@@ -75,7 +74,21 @@ import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserActionPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserActionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserActionQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
@@ -162,7 +175,7 @@ public interface VpcProvisioningService extends RemoteService {
 	// VPC
 	List<VpcPojo>getVpcsForUserLoggedIn() throws RpcException;
 	VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter) throws RpcException;
-	VpcPojo generateVpc(VpcRequisitionPojo vpcRequisition) throws RpcException;
+//	VpcPojo generateVpc(VpcRequisitionPojo vpcRequisition) throws RpcException;
 	VpcPojo updateVpc(VpcPojo vpc) throws RpcException;
 	VpcPojo registerVpc(VpcPojo vpc) throws RpcException;
 	void deleteVpc(VpcPojo vpc) throws RpcException;
@@ -206,11 +219,17 @@ public interface VpcProvisioningService extends RemoteService {
 	void deleteService(AWSServicePojo service) throws RpcException;
 	List<String> getServiceStatusItems();
 
-	// Notifications
-	NotificationQueryResultPojo getNotificationsForFilter(NotificationQueryFilterPojo filter) throws RpcException;
-	NotificationPojo createNotification(NotificationPojo notification) throws RpcException;
-	NotificationPojo updateNotification(NotificationPojo notification) throws RpcException;
-	void deleteNotification(NotificationPojo notification) throws RpcException;
+	// UserNotifications
+	UserNotificationQueryResultPojo getUserNotificationsForFilter(UserNotificationQueryFilterPojo filter) throws RpcException;
+	UserNotificationPojo createUserNotification(UserNotificationPojo notification) throws RpcException;
+	UserNotificationPojo updateUserNotification(UserNotificationPojo notification) throws RpcException;
+	void deleteUserNotification(UserNotificationPojo notification) throws RpcException;
+	
+	// AccountNotifications
+	AccountNotificationQueryResultPojo getAccountNotificationsForFilter(AccountNotificationQueryFilterPojo filter) throws RpcException;
+	AccountNotificationPojo createAccountNotification(AccountNotificationPojo notification) throws RpcException;
+	AccountNotificationPojo updateAccountNotification(AccountNotificationPojo notification) throws RpcException;
+	void deleteAccountNotification(AccountNotificationPojo notification) throws RpcException;
 	
 	// Speed Chart
 	SpeedChartQueryResultPojo getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter) throws RpcException;
@@ -249,4 +268,18 @@ public interface VpcProvisioningService extends RemoteService {
 	
 	HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException;
 
+	// user profile
+	UserProfileQueryResultPojo getUserProfilesForFilter(UserProfileQueryFilterPojo filter) throws RpcException;
+	UserProfilePojo createUserProfile(UserProfilePojo notification) throws RpcException;
+	UserProfilePojo updateUserProfile(UserProfilePojo notification) throws RpcException;
+	void deleteUserProfile(UserProfilePojo notification) throws RpcException;
+	
+	// user actions
+	UserActionQueryResultPojo getUserActionsForFilter(UserActionQueryFilterPojo filter) throws RpcException;
+	UserActionPojo createUserAction(UserActionPojo notification) throws RpcException;
+	
+	// terms of use
+	TermsOfUseQueryResultPojo getTermsOfUseForFilter(TermsOfUseQueryFilterPojo filter) throws RpcException;
+	TermsOfUseAgreementQueryResultPojo getTermsOfUseAgreementsForFilter(TermsOfUseAgreementQueryFilterPojo filter) throws RpcException;
+	TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo notification) throws RpcException;
 }

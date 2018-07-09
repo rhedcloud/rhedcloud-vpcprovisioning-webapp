@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class MaintainNotificationPlace extends Place {
 	/**
@@ -44,8 +44,8 @@ public class MaintainNotificationPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static MaintainNotificationPlace createMaintainNotificationPlace(NotificationPojo notification) {
-		return new MaintainNotificationPlace(notification.getNotificationId(), notification);
+	public static MaintainNotificationPlace createMaintainNotificationPlace(UserNotificationPojo notification) {
+		return new MaintainNotificationPlace(notification.getUserNotificationId(), notification);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class MaintainNotificationPlace extends Place {
 		return singleton;
 	}
 
-	private final NotificationPojo notification;
+	private final UserNotificationPojo notification;
 	private final String notificationId;
 	public String getNotificationId() {
 		return notificationId;
@@ -73,7 +73,7 @@ public class MaintainNotificationPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private MaintainNotificationPlace(String notificationId, NotificationPojo notification) {
+	private MaintainNotificationPlace(String notificationId, UserNotificationPojo notification) {
 		this.notificationId = notificationId;
 		this.notification = notification;
 	}
@@ -83,7 +83,7 @@ public class MaintainNotificationPlace extends Place {
 	 * 
 	 * @return the caseRecord to edit, or null if not available
 	 */
-	public NotificationPojo getNotification() {
+	public UserNotificationPojo getNotification() {
 		return notification;
 	}
 

@@ -13,14 +13,14 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainNotificationPresenter extends PresenterBase implements MaintainNotificationView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String notificationId;
-	private NotificationPojo notification;
+	private UserNotificationPojo notification;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -42,9 +42,9 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 	/**
 	 * For editing an existing ACCOUNT.
 	 */
-	public MaintainNotificationPresenter(ClientFactory clientFactory, NotificationPojo notification) {
+	public MaintainNotificationPresenter(ClientFactory clientFactory, UserNotificationPojo notification) {
 		this.isEditing = true;
-		this.notificationId = notification.getNotificationId();
+		this.notificationId = notification.getUserNotificationId();
 		this.clientFactory = clientFactory;
 		this.notification = notification;
 		clientFactory.getMaintainNotificationView().setPresenter(this);
@@ -101,7 +101,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		GWT.log("Maintain notification: create");
 		isEditing = false;
 		getView().setEditing(false);
-		notification = new NotificationPojo();
+		notification = new UserNotificationPojo();
 	}
 
 	private void startEdit() {
@@ -168,7 +168,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		else {
 			getView().resetFieldStyles();
 		}
-		AsyncCallback<NotificationPojo> callback = new AsyncCallback<NotificationPojo>() {
+		AsyncCallback<UserNotificationPojo> callback = new AsyncCallback<UserNotificationPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
@@ -179,23 +179,23 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 			}
 
 			@Override
-			public void onSuccess(NotificationPojo result) {
+			public void onSuccess(UserNotificationPojo result) {
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, notification);
+				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, notification);
 			}
 		};
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().createNotification(notification, callback);
+			VpcProvisioningService.Util.getInstance().createUserNotification(notification, callback);
 		}
 		else {
 			// it's an update
-			VpcProvisioningService.Util.getInstance().updateNotification(notification, callback);
+			VpcProvisioningService.Util.getInstance().updateUserNotification(notification, callback);
 		}
 	}
 
 	@Override
-	public NotificationPojo getNotification() {
+	public UserNotificationPojo getNotification() {
 		return this.notification;
 	}
 
@@ -235,7 +235,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		return clientFactory;
 	}
 
-	public void setNotification(NotificationPojo notification) {
+	public void setNotification(UserNotificationPojo notification) {
 		this.notification = notification;
 	}
 

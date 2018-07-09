@@ -33,7 +33,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
@@ -66,7 +66,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private ElasticIpAssignmentPojo elasticIpAssignment;
 	private ElasticIpAssignmentSummaryPojo elasticIpAssignmentSummary;
 	private AWSServicePojo awsService;
-	private NotificationPojo notification;
+	private UserNotificationPojo notification;
 	private FirewallRulePojo firewallRule;
 	private FirewallExceptionRequestPojo firewallExceptionRequest;
 	private CidrSummaryPojo cidrSummary;
@@ -137,7 +137,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(vpcp), sourceName);
 	}
 
-	public static void fire(EventBus eventBus, String sourceName, NotificationPojo notification) {
+	public static void fire(EventBus eventBus, String sourceName, UserNotificationPojo notification) {
 		eventBus.fireEventFromSource(new ActionEvent(notification), sourceName);
 	}
 
@@ -187,7 +187,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.firewallRule = rule;
 	}
 
-	public ActionEvent(NotificationPojo notification) {
+	public ActionEvent(UserNotificationPojo notification) {
 		this.notification = notification;
 	}
 
@@ -364,11 +364,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.awsService = awsService;
 	}
 
-	public NotificationPojo getNotification() {
+	public UserNotificationPojo getNotification() {
 		return notification;
 	}
 
-	public void setNotification(NotificationPojo notification) {
+	public void setNotification(UserNotificationPojo notification) {
 		this.notification = notification;
 	}
 

@@ -308,8 +308,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	            				List<AWSServicePojo> services = awsServices.get(catName);
 	            				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 	            				for (AWSServicePojo svc : services) {
-	            					GWT.log("Adding service: " + svc.getName());
-	            					Anchor svcAnchor = new Anchor(svc.getName() + (svc.getCode() != null ? " (" + svc.getCode() + ")" : ""));
+	            					GWT.log("Adding service: " + svc.getAwsServiceName());
+	            					Anchor svcAnchor = new Anchor(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
 		            				svcAnchor.addStyleName("productAnchor");
 		            				svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
 		            					"  DESCRIPTION: " + svc.getDescription());

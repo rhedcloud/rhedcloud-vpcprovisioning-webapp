@@ -7,10 +7,10 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.NotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface MaintainNotificationView extends Editor<NotificationPojo>, IsWidget, View {
+public interface MaintainNotificationView extends Editor<UserNotificationPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
@@ -25,7 +25,7 @@ public interface MaintainNotificationView extends Editor<NotificationPojo>, IsWi
 		 * inputs.
 		 */
 		void saveNotification();
-		NotificationPojo getNotification();
+		UserNotificationPojo getNotification();
 		public boolean isValidNotificationId(String value);
 		public boolean isValidNotificationName(String value);
 		public EventBus getEventBus();

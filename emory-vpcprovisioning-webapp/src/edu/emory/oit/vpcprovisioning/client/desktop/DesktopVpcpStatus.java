@@ -70,12 +70,12 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 
 	@UiHandler ("ownerNetIdLabel")
 	void ownerNetIdTBMouseOver(MouseOverEvent e) {
-		presenter.setDirectoryMetaDataTitleOnWidget(presenter.getVpcp().getVpcRequisition().getAccountOwnerNetId(), ownerNetIdLabel);
+		presenter.setDirectoryMetaDataTitleOnWidget(presenter.getVpcp().getVpcRequisition().getAccountOwnerUserId(), ownerNetIdLabel);
 	}
 
 	@UiHandler ("requestorNetIdLabel")
 	void requestorNetIdTBMouseOver(MouseOverEvent e) {
-		presenter.setDirectoryMetaDataTitleOnWidget(presenter.getVpcp().getVpcRequisition().getAuthenticatedRequestorNetId(), requestorNetIdLabel);
+		presenter.setDirectoryMetaDataTitleOnWidget(presenter.getVpcp().getVpcRequisition().getAuthenticatedRequestorUserId(), requestorNetIdLabel);
 	}
 
 	public DesktopVpcpStatus() {
@@ -209,8 +209,8 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		provisioningResultLabel.setText(presenter.getVpcp().getProvisioningResult());
 		anticipatedTimeLabel.setText(presenter.getVpcp().getAnticipatedTime());
 		actualTimeLabel.setText(presenter.getVpcp().getActualTime());
-		requestorNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAuthenticatedRequestorNetId());
-		ownerNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAccountOwnerNetId());
+		requestorNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAuthenticatedRequestorUserId());
+		ownerNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAccountOwnerUserId());
 		speedTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getSpeedType());
 		vpcTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getType());
 		complianceClassLabel.setText(presenter.getVpcp().getVpcRequisition().getComplianceClass());
@@ -326,8 +326,8 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	void initializeNetIdPanel() {
 		netIdTable.removeAllRows();
 		if (presenter.getVpcp().getVpcRequisition() != null) {
-			GWT.log("Adding " + presenter.getVpcp().getVpcRequisition().getCustomerAdminNetIdList().size() + " net ids to the panel (update).");
-			for (String netId : presenter.getVpcp().getVpcRequisition().getCustomerAdminNetIdList()) {
+			GWT.log("Adding " + presenter.getVpcp().getVpcRequisition().getCustomerAdminUserIdList().size() + " net ids to the panel (update).");
+			for (String netId : presenter.getVpcp().getVpcRequisition().getCustomerAdminUserIdList()) {
 				addNetIdToPanel(netId);
 			}
 		}

@@ -219,7 +219,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 		};
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().generateVpc(vpcRequisition, callback);
+//			VpcProvisioningService.Util.getInstance().generateVpc(vpcRequisition, callback);
 		}
 		else {
 			// it's an update

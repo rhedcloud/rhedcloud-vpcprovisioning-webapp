@@ -9,10 +9,10 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 
 	String accountId;
 	String ticketId;
-	String authenticatedRequestorNetId;
-	String accountOwnerNetId;
+	String authenticatedRequestorUserId;
+	String accountOwnerUserId;
 	String speedType;
-	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
+	List<String> customerAdminUserIdList = new java.util.ArrayList<String>();
 	String type;
 	String complianceClass;
 	String purpose;
@@ -31,12 +31,12 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 		this.ticketId = ticketId;
 	}
 
-	public String getAuthenticatedRequestorNetId() {
-		return authenticatedRequestorNetId;
+	public String getAuthenticatedRequestorUserId() {
+		return authenticatedRequestorUserId;
 	}
 
-	public void setAuthenticatedRequestorNetId(String authenticatedRequestorNetId) {
-		this.authenticatedRequestorNetId = authenticatedRequestorNetId;
+	public void setAuthenticatedRequestorUserId(String authenticatedRequestorUserId) {
+		this.authenticatedRequestorUserId = authenticatedRequestorUserId;
 	}
 
 	public String getComplianceClass() {
@@ -63,12 +63,12 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 		this.accountId = accountId;
 	}
 
-	public String getAccountOwnerNetId() {
-		return accountOwnerNetId;
+	public String getAccountOwnerUserId() {
+		return accountOwnerUserId;
 	}
 
-	public void setAccountOwnerNetId(String accountOwnerNetId) {
-		this.accountOwnerNetId = accountOwnerNetId;
+	public void setAccountOwnerUserId(String accountOwnerUserId) {
+		this.accountOwnerUserId = accountOwnerUserId;
 	}
 
 	public String getSpeedType() {
@@ -79,12 +79,12 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 		this.speedType = speedType;
 	}
 
-	public List<String> getCustomerAdminNetIdList() {
-		return customerAdminNetIdList;
+	public List<String> getCustomerAdminUserIdList() {
+		return customerAdminUserIdList;
 	}
 
-	public void setCustomerAdminNetIdList(List<String> customerAdminNetIdList) {
-		this.customerAdminNetIdList = customerAdminNetIdList;
+	public void setCustomerAdminUserIdList(List<String> customerAdminUserIdList) {
+		this.customerAdminUserIdList = customerAdminUserIdList;
 	}
 
 	public String getType() {
