@@ -98,7 +98,6 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Accounts");
-				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 
 				// Clear the account list and display it.
 				if (clearList) {

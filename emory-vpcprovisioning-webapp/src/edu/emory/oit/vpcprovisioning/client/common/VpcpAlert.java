@@ -1,18 +1,20 @@
 package edu.emory.oit.vpcprovisioning.client.common;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VpcpAlert extends DialogBox {
 
-	public static void alert(String title, String message) {
+	public static void alert(String title, String message, final Focusable postFocus) {
 		final VpcpAlert vpcpAlert = new VpcpAlert();
 		vpcpAlert.setAutoHideEnabled(false);
 		vpcpAlert.setModal(true);
@@ -31,6 +33,13 @@ public class VpcpAlert extends DialogBox {
 			@Override
 			public void onClick(ClickEvent event) {
 				vpcpAlert.hide();
+				if (postFocus != null) {
+					Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+				        public void execute () {
+							postFocus.setFocus(true);
+				        }
+				    });
+				}
 			}
 		});
 		vp.add(okayButton);
@@ -40,6 +49,9 @@ public class VpcpAlert extends DialogBox {
 		vpcpAlert.setWidth(Integer.toString(Window.getClientWidth() / 3) + "px");
 		vpcpAlert.center();
 		vpcpAlert.show();
+	}
+	public static void alert(String title, String message) {
+		VpcpAlert.alert(title, message, null);
 	}
 	public VpcpAlert() {
 		// TODO Auto-generated constructor stub

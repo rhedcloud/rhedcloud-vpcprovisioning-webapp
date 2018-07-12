@@ -18,8 +18,11 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElast
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -51,7 +54,10 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 				 MaintainNotificationPlace.Tokenizer.class,
 				 ListFirewallRulePlace.Tokenizer.class,
 				 HomePlace.Tokenizer.class,
-				 ListCentralAdminPlace.Tokenizer.class})
+				 ListCentralAdminPlace.Tokenizer.class, 
+				 MaintainSecurityAssessmentPlace.Tokenizer.class,
+				 ListSecurityRiskPlace.Tokenizer.class, 
+				 MaintainAccountNotificationPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

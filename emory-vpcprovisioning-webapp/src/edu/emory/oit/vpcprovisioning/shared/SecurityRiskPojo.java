@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class SecurityRiskPojo extends SharedObject implements IsSerializable {
@@ -19,6 +20,12 @@ public class SecurityRiskPojo extends SharedObject implements IsSerializable {
 		Countermeasure*
 	 */
 
+	public static final ProvidesKey<SecurityRiskPojo> KEY_PROVIDER = new ProvidesKey<SecurityRiskPojo>() {
+		@Override
+		public Object getKey(SecurityRiskPojo item) {
+			return item == null ? null : item.getSecurityRiskName();
+		}
+	};
 	String securityRiskId;
 	String serviceId;
 	int sequenceNumber;

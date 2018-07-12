@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -18,8 +19,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -40,6 +43,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
@@ -91,6 +95,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
 	@UiField VerticalPanel sensitiveDataPanel;
+	@UiField VerticalPanel accountNotificationsVP;
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -756,10 +761,62 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(true);
 		directoryLookupSB.setEnabled(true);
 	}
+	
 	@Override
 	public void disableAdminMaintenance() {
 		addAdminButton.setEnabled(false);
 		directoryLookupSB.setEnabled(false);
+	}
+	
+	@Override
+	public void addAccountNotification(final AccountNotificationPojo accountNotification) {
+		/*
+			Type, 
+			Priority, 
+			Subject, 
+			ReferenceId?, 
+			CreateDatetime, 
+			LastUpdateDatetime?)>
+	 */
+	    Grid grid = new Grid(1, 5);
+	    accountNotificationsVP.add(grid);
+
+		HTML type = new HTML(accountNotification.getType());
+		type.addStyleName("accountNotificationText");
+		grid.setWidget(0, 0, type);
+
+		HTML priority = new HTML (accountNotification.getPriority());
+		priority.addStyleName("accountNotificationText");
+		grid.setWidget(0, 1, priority);
+
+		Anchor notificationAnchor = new Anchor(accountNotification.getSubject());
+		notificationAnchor.addStyleName("accountNotificationAnchor");
+//		notificationAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		notificationAnchor.setTitle("View/Maintain selected Notification");
+		notificationAnchor.ensureDebugId(accountNotification.getSubject());
+		notificationAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), accountNotification);
+			}
+		});
+//		accountNotificationsVP.add(notificationAnchor);
+		grid.setWidget(0, 2, notificationAnchor);
+
+		Date createTime = accountNotification.getCreateTime();
+		HTML createDate = new HTML(createTime != null ? dateFormat.format(createTime) : "Unknown");
+		createDate.addStyleName("accountNotificationText");
+		grid.setWidget(0, 3, createDate);
+
+		Date updateTime = accountNotification.getUpdateTime();
+		HTML updateDate = new HTML(updateTime != null ? dateFormat.format(updateTime) : "Unknown");
+		updateDate.addStyleName("accountNotificationText");
+		grid.setWidget(0, 4, updateDate);
+	}
+	
+	@Override
+	public void clearAccountNotificationList() {
+		accountNotificationsVP.clear();
 	}
 	
 }

@@ -10,6 +10,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, View {
@@ -26,7 +27,7 @@ public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, V
 		 * Create a new account or save the current account based on the values in the
 		 * inputs.
 		 */
-		void saveService();
+		void saveService(boolean listServices);
 		AWSServicePojo getService();
 		public boolean isValidServiceId(String value);
 		public boolean isValidServiceName(String value);
@@ -34,6 +35,7 @@ public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, V
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 		public void logMessageOnServer(final String message);
+		void deleteSecurityAssessment(ServiceSecurityAssessmentPojo selected);
 	}
 
 	/**
@@ -75,4 +77,8 @@ public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, V
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
 	void setServiceStatusItems(List<String> serviceStatusTypes);
+	void setAssessments(List<ServiceSecurityAssessmentPojo> assessments);
+	void removeAssessmentFromView(ServiceSecurityAssessmentPojo assessment);
+	void clearAssessmentList();
+
 }

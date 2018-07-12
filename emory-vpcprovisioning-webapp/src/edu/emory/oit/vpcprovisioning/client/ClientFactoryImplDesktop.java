@@ -21,16 +21,19 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIpAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListFirewallRule;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainAccount;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainAccountNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIpAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainFirewallExceptionRequest;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainNotification;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityAssessment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
@@ -52,8 +55,11 @@ import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -101,6 +107,9 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainFirewallExceptionRequestView maintainFirewallRuleView;
 	private HomeView homeView;
 	private ListCentralAdminView listCentralAdminView;
+	private MaintainSecurityAssessmentView maintainSecurityAssessmentView;
+	private ListSecurityRiskView listSecurityRiskView;
+	private MaintainAccountNotificationView maintainAccountNotificationView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -419,5 +428,35 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected ListCentralAdminView createCentralAdminListView() {
 		return new DesktopListCentralAdmin();
+	}
+	@Override
+	public MaintainSecurityAssessmentView getMaintainSecurityAssessmentView() {
+		if (maintainSecurityAssessmentView == null) {
+			maintainSecurityAssessmentView = createMaintainSecurityAssessmentView();
+		}
+		return maintainSecurityAssessmentView;
+	}
+	protected MaintainSecurityAssessmentView createMaintainSecurityAssessmentView() {
+		return new DesktopMaintainSecurityAssessment();
+	}
+	@Override
+	public ListSecurityRiskView getListSecurityRiskView() {
+		if (listSecurityRiskView == null) {
+			listSecurityRiskView = createListSecurityRiskView();
+		}
+		return listSecurityRiskView;
+	}
+	protected ListSecurityRiskView createListSecurityRiskView() {
+		return new DesktopListSecurityRisk();
+	}
+	@Override
+	public MaintainAccountNotificationView getMaintainAccountNotificationView() {
+		if (maintainAccountNotificationView == null) {
+			maintainAccountNotificationView = createMaintainAccountNotificationView();
+		}
+		return maintainAccountNotificationView;
+	}
+	private MaintainAccountNotificationView createMaintainAccountNotificationView() {
+		return new DesktopMaintainAccountNotification();
 	}
 }

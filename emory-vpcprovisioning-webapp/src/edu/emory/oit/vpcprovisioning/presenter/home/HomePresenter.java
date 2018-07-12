@@ -133,7 +133,8 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 				getView().setUserLoggedIn(user);
 				getView().initPage();
-				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
+				String linkText = userLoggedIn.getPersonalName().toString() + " (" + userLoggedIn.getPublicId() + ")";
+				clientFactory.getShell().setUserName(linkText);
 				
 				AsyncCallback<String> asCallback = new AsyncCallback<String>() {
 					@Override

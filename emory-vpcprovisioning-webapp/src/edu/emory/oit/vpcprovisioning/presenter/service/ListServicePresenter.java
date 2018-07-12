@@ -108,7 +108,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				getView().setUserLoggedIn(userLoggedIn);
 				setServiceList(Collections.<AWSServicePojo> emptyList());
 
-				// Request the Vpc list now.
+				// Request the service list now.
 				refreshList(userLoggedIn);
 			}
 		};
@@ -128,7 +128,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
                 getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving Services", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of Vpcs.  " +
+						"server retrieving the list of Services.  " +
 						"Message from server is: " + caught.getMessage());
 			}
 

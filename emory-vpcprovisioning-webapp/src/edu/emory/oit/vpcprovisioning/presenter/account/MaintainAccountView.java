@@ -10,6 +10,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
@@ -103,4 +104,6 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void setComplianceClassItems(List<String> complianceClassTypes);
 	void enableAdminMaintenance();
 	void disableAdminMaintenance();
+	void addAccountNotification(AccountNotificationPojo accountNotification);
+	void clearAccountNotificationList();
 }

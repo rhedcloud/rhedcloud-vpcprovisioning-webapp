@@ -110,7 +110,6 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Central Admins");
-				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 
 				// Clear the account list and display it.
 				if (clearList) {

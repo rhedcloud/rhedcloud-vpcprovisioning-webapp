@@ -41,7 +41,6 @@ import org.openeai.config.EnterpriseConfigurationObjectException;
 import org.openeai.config.EnterpriseFieldException;
 import org.openeai.jms.producer.PointToPointProducer;
 import org.openeai.jms.producer.ProducerPool;
-import org.openeai.layouts.EnterpriseLayoutException;
 import org.openeai.moa.ActionableEnterpriseObject;
 import org.openeai.moa.EnterpriseObjectCreateException;
 import org.openeai.moa.EnterpriseObjectDeleteException;
@@ -57,13 +56,15 @@ import org.openeai.transport.RequestService;
 import org.openeai.utils.config.AppConfigFactory;
 import org.openeai.utils.config.AppConfigFactoryException;
 import org.openeai.utils.config.SimpleAppConfigFactory;
-import org.openeai.xml.XmlDocumentReaderException;
 
 import com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
@@ -183,6 +184,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	
 	// temporary
 	List<UserNotificationPojo> notificationList = new java.util.ArrayList<UserNotificationPojo>();
+	List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
 
 
 	@Override
@@ -562,6 +564,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						"Using testUserEppn for development purposes");
 					user = new UserAccountPojo();
 					user.setEppn(testUserEppn);
+					PersonalNamePojo pnp = new PersonalNamePojo();
+					pnp.setFirstName("Tod");
+					pnp.setLastName("Jackson");
+					user.setPersonalName(pnp);
+					user.setPublicId("P7247525");
 
 					if (useAuthzService) {
 						// get permissions
@@ -4503,6 +4510,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
 		result.setFilterUsed(filter);
 		
+		// TEMPORARY
+		if (true) {
+			for (AWSServicePojo svc : serviceList) {
+				if (filter == null) {
+					result.getResults().add(svc);
+				}
+				else {
+					if (svc.getServiceId().equalsIgnoreCase(filter.getServiceId())) {
+						result.getResults().add(svc);
+					}
+				}
+			}
+			return result;
+		}
+		
 //		XmlDocumentReader xmlReader = new XmlDocumentReader();
 		try {
 			com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = 
@@ -4552,13 +4574,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AWSServicePojo createService(AWSServicePojo service) throws RpcException {
 		// TODO Auto-generated method stub
-		return null;
+		service.setServiceId(UUID.uuid());
+		serviceList.add(service);
+		return service;
 	}
 
 	@Override
 	public AWSServicePojo updateService(AWSServicePojo service) throws RpcException {
 		// TODO Auto-generated method stub
-		return null;
+		return service;
 	}
 
 	@Override
@@ -6408,20 +6432,92 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AccountNotificationQueryResultPojo getAccountNotificationsForFilter(
 			AccountNotificationQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		AccountNotificationQueryResultPojo result = new AccountNotificationQueryResultPojo();
+		List<AccountNotificationPojo> pojos = new java.util.ArrayList<AccountNotificationPojo>();
+		try {
+			AccountNotificationQuerySpecification queryObject = (AccountNotificationQuerySpecification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION_QUERY_SPEC);
+			AccountNotification actionable = (AccountNotification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION);
+
+			if (filter != null) {
+				queryObject.setAccountId(filter.getAccountId());
+				queryObject.setAccountNotificationId(filter.getAccountNotificationId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getAccountNotificationForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<AccountNotification> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			for (AccountNotification moa : moas) {
+				AccountNotificationPojo pojo = new AccountNotificationPojo();
+				AccountNotificationPojo baseline = new AccountNotificationPojo();
+				this.populateAccountNotificationPojo(moa, pojo);
+				this.populateAccountNotificationPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateAccountNotificationPojo(AccountNotification moa, AccountNotificationPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setAccountNotificationId(moa.getAccountNotificationId());
+		pojo.setAccountId(moa.getAccountId());
+		pojo.setType(moa.getType());
+		pojo.setPriority(moa.getPriority());
+		pojo.setSubject(moa.getSubject());
+		pojo.setText(moa.getText());
+		pojo.setReferenceid(moa.getReferenceId());
+		if (moa.getAnnotationLength() > 0) {
+			for (Annotation annotation : (List<Annotation>) moa.getAnnotation()) {
+				AnnotationPojo ap = new AnnotationPojo();
+				ap.setText(annotation.getText());
+				pojo.getAnnotations().add(ap);
+			}
+		}
+		
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@Override
 	public AccountNotificationPojo createAccountNotification(AccountNotificationPojo notification) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO temporary until notifications can be edited.
+		return notification;
 	}
 
 	@Override
 	public AccountNotificationPojo updateAccountNotification(AccountNotificationPojo notification) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO temporary until notifications can be edited.
+		return notification;
 	}
 
 	@Override
@@ -6483,5 +6579,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo notification) throws RpcException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public ServiceSecurityAssessmentQueryResultPojo getSecurityAssessmentsForFilter(
+			ServiceSecurityAssessmentQueryFilterPojo filter) throws RpcException {
+		
+		// TODO Auto-generated method stub
+		ServiceSecurityAssessmentQueryResultPojo result = new ServiceSecurityAssessmentQueryResultPojo();
+		result.setFilterUsed(filter);
+		
+		return result;
+	}
+
+	@Override
+	public ServiceSecurityAssessmentPojo createSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
+			throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ServiceSecurityAssessmentPojo updateSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
+			throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service) throws RpcException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<String> getAssessmentStatusTypeItems() {
+		List<String> types = new java.util.ArrayList<String>();
+		types.add("Complete");
+		types.add("In Progress");
+		types.add("Not Started");
+		return types;
 	}
 }

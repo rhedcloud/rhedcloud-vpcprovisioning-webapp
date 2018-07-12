@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class AccountNotificationPojo extends SharedObject implements IsSerializable {
+public class AccountNotificationPojo extends SharedObject implements IsSerializable, Comparable<AccountNotificationPojo> {
 	/*
 		<!ELEMENT AccountNotification (
 			AccountNotificationId?, 
@@ -30,6 +30,7 @@ public class AccountNotificationPojo extends SharedObject implements IsSerializa
 	String text;
 	String referenceid;
 	List<AnnotationPojo> annotations = new java.util.ArrayList<AnnotationPojo>();
+	AccountNotificationPojo baseline;
 	
 	public AccountNotificationPojo() {
 		// TODO Auto-generated constructor stub
@@ -97,6 +98,19 @@ public class AccountNotificationPojo extends SharedObject implements IsSerializa
 
 	public void setAnnotations(List<AnnotationPojo> annotations) {
 		this.annotations = annotations;
+	}
+
+	public AccountNotificationPojo getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(AccountNotificationPojo baseline) {
+		this.baseline = baseline;
+	}
+
+	@Override
+	public int compareTo(AccountNotificationPojo o) {
+		return o.getAccountNotificationId().compareTo(this.getAccountNotificationId());
 	}
 
 }

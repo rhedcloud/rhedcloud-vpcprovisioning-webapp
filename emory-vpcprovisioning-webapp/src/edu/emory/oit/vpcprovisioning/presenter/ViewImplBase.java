@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -60,6 +61,12 @@ public abstract class ViewImplBase extends Composite {
 		}
 	}
 
+	public void showMessageToUser(String title, String message, Focusable postFocus) {
+		if (title == null) {
+			title = "Alert";
+		}
+		VpcpAlert.alert(title, message, postFocus);
+	}
 	public void showMessageToUser(String message) {
 		VpcpAlert.alert("Alert", message);
 	}

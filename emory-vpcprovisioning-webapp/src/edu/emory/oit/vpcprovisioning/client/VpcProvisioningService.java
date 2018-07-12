@@ -71,6 +71,9 @@ import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
@@ -282,4 +285,11 @@ public interface VpcProvisioningService extends RemoteService {
 	TermsOfUseQueryResultPojo getTermsOfUseForFilter(TermsOfUseQueryFilterPojo filter) throws RpcException;
 	TermsOfUseAgreementQueryResultPojo getTermsOfUseAgreementsForFilter(TermsOfUseAgreementQueryFilterPojo filter) throws RpcException;
 	TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo notification) throws RpcException;
+
+	// security assessments
+	ServiceSecurityAssessmentQueryResultPojo getSecurityAssessmentsForFilter(ServiceSecurityAssessmentQueryFilterPojo filter) throws RpcException;
+	ServiceSecurityAssessmentPojo createSecurityAssessment(ServiceSecurityAssessmentPojo assessment) throws RpcException;
+	ServiceSecurityAssessmentPojo updateSecurityAssessment(ServiceSecurityAssessmentPojo assessment) throws RpcException;
+	void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service) throws RpcException;
+	List<String> getAssessmentStatusTypeItems();
 }

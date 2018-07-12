@@ -1,8 +1,10 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -11,16 +13,20 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.client.event.AssessmentListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainServicePresenter extends PresenterBase implements MaintainServiceView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String serviceId;
-	private AWSServicePojo account;
+	private AWSServicePojo service;
 	private String awsServicesURL = "Cannot retrieve AWS Services URL";
 	private String awsBillingManagementURL = "Cannot retrieve AWS Billing Management URL";
 
@@ -29,26 +35,29 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	 * new case record.
 	 */
 	private boolean isEditing;
+	private final boolean clearList;
 
 	/**
 	 * For creating a new ACCOUNT.
 	 */
 	public MaintainServicePresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
-		this.account = null;
+		this.service = null;
 		this.serviceId = null;
 		this.clientFactory = clientFactory;
+		this.clearList = true;
 		clientFactory.getMaintainServiceView().setPresenter(this);
 	}
 
 	/**
 	 * For editing an existing ACCOUNT.
 	 */
-	public MaintainServicePresenter(ClientFactory clientFactory, AWSServicePojo account) {
+	public MaintainServicePresenter(ClientFactory clientFactory, AWSServicePojo service) {
 		this.isEditing = true;
-		this.serviceId = account.getServiceId();
+		this.serviceId = service.getServiceId();
 		this.clientFactory = clientFactory;
-		this.account = account;
+		this.service = service;
+		this.clearList = true;
 		clientFactory.getMaintainServiceView().setPresenter(this);
 	}
 
@@ -75,8 +84,11 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception determining user logged in", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server determining the user logged in.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
@@ -94,18 +106,21 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 					@Override
 					public void onSuccess(List<String> result) {
+						// Clear the Vpc list and display it.
+						if (clearList) {
+							getView().clearAssessmentList();
+						}
+
+						getView().setUserLoggedIn(user);
+						setAssessmentList(Collections.<ServiceSecurityAssessmentPojo> emptyList());
+
+						// Request the service list now.
+						refreshList(user);
+
 						getView().initPage();
 						getView().setServiceStatusItems(result);
-						getView().hidePleaseWaitDialog();
 						getView().setInitialFocus();
-						// apply authorization mask
-						// TODO: need to determine the Service structure so we can apply authorization mask appropriately
-						if (user.isCentralAdmin()) {
-							getView().applyCentralAdminMask();
-						}
-						else {
-							getView().applyAWSAccountAuditorMask();
-						}
+						
 					}
 				};
 				VpcProvisioningService.Util.getInstance().getServiceStatusItems(callback);
@@ -114,11 +129,51 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 
+	private void refreshList(final UserAccountPojo user) {
+		// use RPC to get all Services for the current filter being used
+		AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+				GWT.log("Exception Retrieving Services", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the list of Security Assessments associated to this Service.  " +
+						"Message from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " Security Assessments for " + result.getFilterUsed());
+				setAssessmentList(result.getResults());
+				// apply authorization mask
+				if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else {
+					getView().applyAWSAccountAuditorMask();
+				}
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+			}
+		};
+
+		GWT.log("refreshing Services list...");
+		ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+		filter.setServiceId(this.serviceId);
+		VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
+	}
+
+	private void setAssessmentList(List<ServiceSecurityAssessmentPojo> services) {
+		getView().setAssessments(services);
+		eventBus.fireEventFromSource(new AssessmentListUpdateEvent(services), this);
+	}
+
 	private void startCreate() {
 		GWT.log("Maintain service: create");
 		isEditing = false;
 		getView().setEditing(false);
-		account = new AWSServicePojo();
+		service = new AWSServicePojo();
 	}
 
 	private void startEdit() {
@@ -165,15 +220,15 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	 * Delete the current case record.
 	 */
 	private void doDeleteService() {
-		if (account == null) {
+		if (service == null) {
 			return;
 		}
 
-		// TODO Delete the account on server then fire onServiceDeleted();
+		// TODO Delete the service on server then fire onServiceDeleted();
 	}
 
 	@Override
-	public void saveService() {
+	public void saveService(final boolean listServices) {
 		getView().showPleaseWaitDialog("Saving AWS Service...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
@@ -196,24 +251,32 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 			}
 
 			@Override
-			public void onSuccess(AWSServicePojo result) {
+			public void onSuccess(final AWSServicePojo result) {
+				GWT.log("MaintainServicePresenter.saveService - service was saved");
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, account);
+				// only go back to service list if true
+				// otherwise let the view decide what happens next.
+				if (listServices) {
+					ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, service);
+				}
+				else {
+					ActionEvent.fire(eventBus, ActionNames.CREATE_SECURITY_ASSESSMENT, result);
+				}
 			}
 		};
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().createService(account, callback);
+			VpcProvisioningService.Util.getInstance().createService(service, callback);
 		}
 		else {
 			// it's an update
-			VpcProvisioningService.Util.getInstance().updateService(account, callback);
+			VpcProvisioningService.Util.getInstance().updateService(service, callback);
 		}
 	}
 
 	@Override
 	public AWSServicePojo getService() {
-		return this.account;
+		return this.service;
 	}
 
 	@Override
@@ -252,8 +315,8 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 		return clientFactory;
 	}
 
-	public void setService(AWSServicePojo account) {
-		this.account = account;
+	public void setService(AWSServicePojo service) {
+		this.service = service;
 	}
 
 	@Override
@@ -278,5 +341,32 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
+	}
+
+	@Override
+	public void deleteSecurityAssessment(final ServiceSecurityAssessmentPojo selected) {
+		if (Window.confirm("Delete the Service Security Assessment " + selected.getServiceSecurityAssessmentId() + "?")) {
+			getView().showPleaseWaitDialog("Deleting service...");
+			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					getView().showMessageToUser("There was an exception on the " +
+							"server deleting the Security Assessment.  Message " +
+							"from server is: " + caught.getMessage());
+					getView().hidePleaseWaitDialog();
+				}
+
+				@Override
+				public void onSuccess(Void result) {
+					// remove from dataprovider
+					getView().removeAssessmentFromView(selected);
+					getView().hidePleaseWaitDialog();
+					// status message
+					getView().showStatus(getView().getStatusMessageSource(), "Security Assessment was deleted.");
+				}
+			};
+			VpcProvisioningService.Util.getInstance().deleteSecurityAssessment(selected, callback);
+		}
 	}
 }

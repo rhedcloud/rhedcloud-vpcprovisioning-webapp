@@ -1,11 +1,12 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
-		<g:HTML addStyleNames="{style.introHeading}">Maintain Service</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">Maintain Service</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:HorizontalPanel>
 				<g:VerticalPanel spacing="12">
@@ -109,6 +110,37 @@
 					    	</g:customCell>
 						</g:row>
 					</g:Grid>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+					<g:VerticalPanel>
+						<g:HTML addStyleNames="{style.mediumLabel}">Security Assessments</g:HTML>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+							<g:Grid cellSpacing="12">
+								<g:row>
+									<g:customCell>
+										<g:Button ui:field="createAssessmentButton" debugId="createAssessmentButton" text="Add Assessment" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Service Security Assessment"/>
+									</g:customCell>
+									<g:customCell>
+										<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+									</g:customCell>
+								</g:row>
+							</g:Grid>
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+							<g:Grid cellSpacing="12">
+								<g:row>
+									<g:customCell>
+										<c:CellTable width="100%" ui:field="assessmentListTable"  title="Existing Assessments for this Service"/>
+									</g:customCell>
+								</g:row>
+								<g:row>
+									<g:customCell>
+										<c:SimplePager ui:field="assessmentListPager" debugId="assessmentListPager" location="CENTER"/>
+									</g:customCell>
+								</g:row>
+							</g:Grid>
+						</g:cell>
+					</g:VerticalPanel>
 				</g:cell>
 				</g:VerticalPanel>
 				<g:VerticalPanel>

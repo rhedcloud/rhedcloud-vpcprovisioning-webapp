@@ -23,6 +23,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
@@ -33,6 +34,11 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
@@ -70,6 +76,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private FirewallRulePojo firewallRule;
 	private FirewallExceptionRequestPojo firewallExceptionRequest;
 	private CidrSummaryPojo cidrSummary;
+	ServiceSecurityAssessmentPojo securityAssessment;
+	private SecurityRiskPojo securityRisk;
+	private ServiceControlPojo serviceControl;
+	private ServiceGuidelinePojo serviceGuideline;
+	private ServiceTestPlanPojo testPlan;
+	private AccountNotificationPojo accountNotification;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -129,7 +141,6 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc) {
-		GWT.log("[ActionEvent.fire] editing VPC: " + vpc.getVpcId());
 		eventBus.fireEventFromSource(new ActionEvent(vpc), sourceName);
 	}
 	
@@ -157,9 +168,38 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(rule, vpc), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, ServiceSecurityAssessmentPojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, SecurityRiskPojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, ServiceControlPojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, ServiceGuidelinePojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, ServiceTestPlanPojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, AccountNotificationPojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, AccountPojo account,
+			AccountNotificationPojo notification) {
+
+		eventBus.fireEventFromSource(new ActionEvent(account, notification), sourceName);
+	}
+
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
-		
 	}
 
 	/**
@@ -282,6 +322,35 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.setNextPlace(nextPlace);
 	}
 
+	public ActionEvent(ServiceSecurityAssessmentPojo m) {
+		this.securityAssessment = m;
+	}
+
+	public ActionEvent(SecurityRiskPojo m) {
+		this.securityRisk = m;
+	}
+
+	public ActionEvent(ServiceControlPojo m) {
+		this.serviceControl = m;
+	}
+
+	public ActionEvent(ServiceGuidelinePojo m) {
+		this.serviceGuideline = m;
+	}
+
+	public ActionEvent(ServiceTestPlanPojo m) {
+		this.testPlan = m;
+	}
+
+	public ActionEvent(AccountNotificationPojo m) {
+		this.accountNotification = m;
+	}
+
+	public ActionEvent(AccountPojo account2, AccountNotificationPojo notification2) {
+		this.account = account2;
+		this.accountNotification = notification2;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -395,4 +464,53 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setFirewallExceptionRequest(FirewallExceptionRequestPojo firewallExceptionRequest) {
 		this.firewallExceptionRequest = firewallExceptionRequest;
 	}
+
+	public ServiceSecurityAssessmentPojo getSecurityAssessment() {
+		return securityAssessment;
+	}
+
+	public void setSecurityAssessment(ServiceSecurityAssessmentPojo securityAssessment) {
+		this.securityAssessment = securityAssessment;
+	}
+
+	public SecurityRiskPojo getSecurityRisk() {
+		return securityRisk;
+	}
+
+	public void setSecurityRisk(SecurityRiskPojo securityRisk) {
+		this.securityRisk = securityRisk;
+	}
+
+	public ServiceControlPojo getServiceControl() {
+		return serviceControl;
+	}
+
+	public void setServiceControl(ServiceControlPojo serviceControl) {
+		this.serviceControl = serviceControl;
+	}
+
+	public ServiceGuidelinePojo getServiceGuideline() {
+		return serviceGuideline;
+	}
+
+	public void setServiceGuideline(ServiceGuidelinePojo serviceGuideline) {
+		this.serviceGuideline = serviceGuideline;
+	}
+
+	public ServiceTestPlanPojo getTestPlan() {
+		return testPlan;
+	}
+
+	public void setTestPlan(ServiceTestPlanPojo testPlan) {
+		this.testPlan = testPlan;
+	}
+
+	public AccountNotificationPojo getAccountNotification() {
+		return accountNotification;
+	}
+
+	public void setAccountNotification(AccountNotificationPojo accountNotification) {
+		this.accountNotification = accountNotification;
+	}
+
 }

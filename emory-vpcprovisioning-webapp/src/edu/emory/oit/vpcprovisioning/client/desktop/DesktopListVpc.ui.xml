@@ -17,7 +17,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">VPC List</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">VPC List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
 		AWS VPCs with which you are affiliated.<br/><br/>This account 
 		metadata resides in the database of the Emory AWS ESB Service 

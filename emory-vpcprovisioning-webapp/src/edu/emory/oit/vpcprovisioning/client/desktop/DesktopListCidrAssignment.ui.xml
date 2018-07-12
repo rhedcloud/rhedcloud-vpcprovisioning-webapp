@@ -17,7 +17,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">CIDR Assignments</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">CIDR Assignments</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing CidrAssignments that you can view or delete.<br/><br/>
 		These reside in the database associated to the Emory Cidr ESB Service.  
 		The Emory Cidr Service is authoritatative for 

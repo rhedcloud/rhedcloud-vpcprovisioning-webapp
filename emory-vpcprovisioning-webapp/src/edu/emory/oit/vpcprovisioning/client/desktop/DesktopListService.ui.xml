@@ -18,11 +18,13 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
+		<!-- 
 		<g:VerticalPanel spacing="12">
 			<g:Button width="150px" addStyleNames="{style.awsButton}"
 				ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton">Close</g:Button>
 		</g:VerticalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">Service List</g:HTML>
+		 -->
+		<g:HTML addStyleNames="{style.mediumLabel}">Service List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing Emory AWS Services that you can view or edit.<br/><br/>
 		These reside in the database associated to the Emory AWS ESB Service.  
 		The Emory AWS Service is authoritatative for 

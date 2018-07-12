@@ -59,7 +59,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@UiField SimplePager serviceListPager;
 	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>();
 	@UiField HorizontalPanel pleaseWaitPanel;
-	@UiField Button closeOtherFeaturesButton;
+//	@UiField Button closeOtherFeaturesButton;
 	@UiField Button createServiceButton;
 	@UiField Button actionsButton;
 
@@ -117,12 +117,12 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
-	@UiHandler ("closeOtherFeaturesButton")
-	void closeOtherFeaturesButtonClicked(ClickEvent e) {
-		presenter.getClientFactory().getShell().hideOtherFeaturesPanel();
-		presenter.getClientFactory().getShell().showMainTabPanel();
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-	}
+//	@UiHandler ("closeOtherFeaturesButton")
+//	void closeOtherFeaturesButtonClicked(ClickEvent e) {
+//		presenter.getClientFactory().getShell().hideOtherFeaturesPanel();
+//		presenter.getClientFactory().getShell().showMainTabPanel();
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+//	}
 	@UiHandler ("createServiceButton")
 	void createSserviceClicked(ClickEvent e) {
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE);
@@ -141,7 +141,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		createServiceButton.setEnabled(true);
+		createServiceButton.setEnabled(false);
 		actionsButton.setEnabled(true);
 	}
 
@@ -238,7 +238,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		return serviceListTable;
 	}
 	private void initServiceListTableColumns(ListHandler<AWSServicePojo> sortHandler) {
-		GWT.log("initializing VPC list table columns...");
+		GWT.log("initializing Service list table columns...");
 
 		Column<AWSServicePojo, Boolean> checkColumn = new Column<AWSServicePojo, Boolean>(
 				new CheckboxCell(true, false)) {
@@ -257,15 +257,11 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return object.getConsoleCategories().get(0);
+				return "category";
+				// TODO: make a list of categories;
+				// return object.getConsoleCategories().get(0);
 			}
 		};
-		acctIdColumn.setSortable(true);
-		sortHandler.setComparator(acctIdColumn, new Comparator<AWSServicePojo>() {
-			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				return o1.getConsoleCategories().get(0).compareTo(o2.getConsoleCategories().get(0));
-			}
-		});
 		serviceListTable.addColumn(acctIdColumn, "Category");
 
 		// VPC id column
@@ -466,8 +462,8 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-
+		createServiceButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 
 	@Override

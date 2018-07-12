@@ -17,7 +17,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">CIDR List</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">CIDR List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing CIDRs that you can view or edit.<br/><br/>
 		These reside in the database associated to the Emory CIDR ESB Service.  
 		The CIDR Service is authoritatative for 

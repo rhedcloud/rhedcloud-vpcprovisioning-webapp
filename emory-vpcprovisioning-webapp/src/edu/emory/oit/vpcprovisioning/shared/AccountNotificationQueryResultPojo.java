@@ -13,4 +13,20 @@ public class AccountNotificationQueryResultPojo extends SharedObject implements 
 		// TODO Auto-generated constructor stub
 	}
 
+	public AccountNotificationQueryFilterPojo getFilterUsed() {
+		return filterUsed;
+	}
+
+	public void setFilterUsed(AccountNotificationQueryFilterPojo filterUsed) {
+		this.filterUsed = filterUsed;
+	}
+
+	public List<AccountNotificationPojo> getResults() {
+		return results;
+	}
+
+	public void setResults(List<AccountNotificationPojo> results) {
+		this.results = results;
+	}
+
 }

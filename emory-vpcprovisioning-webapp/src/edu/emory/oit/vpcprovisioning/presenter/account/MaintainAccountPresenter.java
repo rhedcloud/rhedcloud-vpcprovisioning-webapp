@@ -15,6 +15,9 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
@@ -104,6 +107,29 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				}
 			};
 			VpcProvisioningService.Util.getInstance().getAccountById(accountId, acct_cb);
+			
+			// get account notifications for this account
+			AsyncCallback<AccountNotificationQueryResultPojo> acct_not_cb = new AsyncCallback<AccountNotificationQueryResultPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					GWT.log("Exception retrieving account notifications", caught);
+					getView().showMessageToUser("There was an exception on the " +
+							"server retrieving the notifications for this account.  "
+							+ "Processing will continue.  Message " +
+							"from server is: " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(AccountNotificationQueryResultPojo result) {
+					for (AccountNotificationPojo anp : result.getResults()) {
+						getView().addAccountNotification(anp);
+					}
+				}
+			};
+			AccountNotificationQueryFilterPojo filter = new AccountNotificationQueryFilterPojo();
+			filter.setAccountId(accountId);
+			getView().clearAccountNotificationList();
+			VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
 		}
 
 		// get awsAccountsURL and awsBillingManagementURL in parallel

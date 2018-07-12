@@ -1,0 +1,116 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	
+	<ui:style field="otherStyles">
+	
+	</ui:style>
+	<g:ScrollPanel width="100%" height="99%">
+		<g:VerticalPanel spacing="8" width="100%">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+			<g:Grid ui:field="maintainAssessmentGrid" cellSpacing="8">
+				<g:row>
+					<g:customCell>
+						<g:Label addStyleNames="{style.mediumLabel}">Maintain Security Assessment</g:Label>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<g:Label addStyleNames="{style.label}">Status:</g:Label>
+					</g:customCell>
+					<g:customCell>
+						<g:ListBox
+							addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="statusLB" debugId="statusLB" />
+					</g:customCell>
+					<g:customCell>
+						<g:ScrollPanel>
+							<g:VerticalPanel spacing="8" ui:field="servicesVP" height="100%">
+								<g:HorizontalPanel ui:field="addServiceHP" spacing="8">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Label addStyleNames="{style.heading_label}">Add/Remove Services to this Assessment:</g:Label>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:SuggestBox ui:field="serviceLookupSB" debugId="serviceLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addServiceButton" debugId="addServiceButton"
+											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label ui:field="servicesLabel" addStyleNames="{style.heading_label}">Service(s) this assessment applies to:</g:Label>
+									<g:FlexTable ui:field="servicesTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+						</g:ScrollPanel>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+<!-- 		<g:cell horizontalAlignment="ALIGN_LEFT"
+			verticalAlignment="ALIGN_MIDDLE">
+
+		</g:cell>
+ -->		<g:cell horizontalAlignment="ALIGN_LEFT"
+			verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+					<g:customCell>
+						<g:Button
+							addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="okayButton" debugId="okayButton">Save</g:Button>
+					</g:customCell>
+					<g:customCell>
+						<g:Button
+							addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:VerticalPanel width="100%" height="100%">
+			<g:TabLayoutPanel barHeight="2" barUnit="EM"
+				width="100%" height="600px" animationDuration="500"
+				animationVertical="false" ui:field="assessmentTabPanel"
+				debugId="assessmentTabPanel" addStyleNames="gwt-TabLayoutPanel">
+
+				<g:tab>
+					<g:header>Security Risks</g:header>
+					<g:DeckLayoutPanel ui:field="securityRisksContainer"
+						debugId="securityRisksContainer" width="100%" height="100%" />
+				</g:tab>
+				<g:tab>
+					<g:header>Service Controls</g:header>
+					<g:DeckLayoutPanel
+						ui:field="serviceControlsContainer"
+						debugId="serviceControlsContainer" width="100%" height="100%" />
+				</g:tab>
+				<g:tab>
+					<g:header>Service Guidelines</g:header>
+					<g:DeckLayoutPanel ui:field="serviceGuidelinesContainer"
+						debugId="serviceGuidelinesContainer" width="100%" height="100%" />
+				</g:tab>
+				<g:tab>
+					<g:header>Test Plan</g:header>
+					<g:DeckLayoutPanel ui:field="testPlanContainer"
+						debugId="testPlanContainer" width="100%" height="100%" />
+				</g:tab>
+			</g:TabLayoutPanel>
+		</g:VerticalPanel>
+		</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 

@@ -69,6 +69,9 @@ import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
@@ -263,4 +266,10 @@ public interface VpcProvisioningServiceAsync {
 	void getTermsOfUseForFilter(TermsOfUseQueryFilterPojo filter, AsyncCallback<TermsOfUseQueryResultPojo> callback);
 	void getTermsOfUseAgreementsForFilter(TermsOfUseAgreementQueryFilterPojo filter, AsyncCallback<TermsOfUseAgreementQueryResultPojo> callback);
 	void createTermsOfUseAgreement(TermsOfUseAgreementPojo profile, AsyncCallback<TermsOfUseAgreementPojo> callback);
+
+	void getSecurityAssessmentsForFilter(ServiceSecurityAssessmentQueryFilterPojo filter, AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback);
+	void createSecurityAssessment(ServiceSecurityAssessmentPojo service, AsyncCallback<ServiceSecurityAssessmentPojo> callback);
+	void updateSecurityAssessment(ServiceSecurityAssessmentPojo service, AsyncCallback<ServiceSecurityAssessmentPojo> callback);
+	void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service, AsyncCallback<Void> callback);
+	void getAssessmentStatusTypeItems(AsyncCallback<List<String>> callback);
 }

@@ -17,7 +17,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">VPC Provisioning List</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">VPC Provisioning List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of VPC 
 		Provisioning executions and their status. These objects 
 		represent a VPC Provisioning request that is either completed 

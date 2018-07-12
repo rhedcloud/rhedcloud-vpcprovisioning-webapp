@@ -16,11 +16,6 @@ public interface ListServiceView extends IsWidget, View {
 	 * The presenter for this view.
 	 */
 	public interface Presenter extends PresentsWidgets {
-		/**
-		 * Select a caseRecord.
-		 * 
-		 * @param selected the selected caseRecord
-		 */
 		void selectService(AWSServicePojo selected);
 		public EventBus getEventBus();
 		public AWSServiceQueryFilterPojo getFilter();
@@ -43,11 +38,6 @@ public interface ListServiceView extends IsWidget, View {
 	 */
 	void setPresenter(Presenter presenter);
 
-	/**
-	 * Set the list of caseRecords to display.
-	 * 
-	 * @param cidrs the list of caseRecords
-	 */
 	void setServices(List<AWSServicePojo> services);
 	
 	void setReleaseInfo(String releaseInfoHTML);

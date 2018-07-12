@@ -140,25 +140,37 @@
 				</g:cell>
 			</g:HorizontalPanel>
 		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-			<g:ScrollPanel>
-				<g:VerticalPanel spacing="8" ui:field="adminVP" height="100%">
-					<g:Label addStyleNames="{style.heading_label}">Add/remove Users/Roles:</g:Label>
-					<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-							<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
-						</g:cell>
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-							<g:Button ui:field="addAdminButton" debugId="addAdminButton"
-								addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-						</g:cell>
-					</g:HorizontalPanel>
-					<g:VerticalPanel spacing="8">
-						<g:Label ui:field="adminLabel" addStyleNames="{style.heading_label}">Users/Roles associated to this AWS Account:</g:Label>
-						<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
-					</g:VerticalPanel>
-				</g:VerticalPanel>
-			</g:ScrollPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+			<g:HorizontalPanel width="100%">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+					<g:ScrollPanel>
+						<g:VerticalPanel spacing="8" ui:field="adminVP" height="100%">
+							<g:Label addStyleNames="{style.heading_label}">Add/remove Users/Roles:</g:Label>
+							<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+									<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
+								</g:cell>
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+									<g:Button ui:field="addAdminButton" debugId="addAdminButton"
+										addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+								</g:cell>
+							</g:HorizontalPanel>
+							<g:VerticalPanel spacing="8">
+								<g:Label ui:field="adminLabel" addStyleNames="{style.heading_label}">Users/Roles associated to this AWS Account:</g:Label>
+								<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
+							</g:VerticalPanel>
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+					<g:ScrollPanel>
+						<g:VerticalPanel width="100%">
+							<g:HTML addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
+							<g:VerticalPanel spacing="8" ui:field="accountNotificationsVP" height="100%"/>
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+				</g:cell>
+			</g:HorizontalPanel>
 		</g:cell>
 	</g:VerticalPanel>
 	</g:ScrollPanel>

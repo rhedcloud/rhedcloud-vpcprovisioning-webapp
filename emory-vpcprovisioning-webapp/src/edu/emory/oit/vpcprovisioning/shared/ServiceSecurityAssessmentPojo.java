@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSerializable {
@@ -16,8 +17,14 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 		ServiceTestPlan?
 	 */
 
+	public static final ProvidesKey<ServiceSecurityAssessmentPojo> KEY_PROVIDER = new ProvidesKey<ServiceSecurityAssessmentPojo>() {
+		@Override
+		public Object getKey(ServiceSecurityAssessmentPojo item) {
+			return item == null ? null : item.getServiceSecurityAssessmentId();
+		}
+	};
 	String serviceSecurityAssessmentId;
-	List<String> serviceId;
+	List<String> serviceIds = new java.util.ArrayList<String>();
 	String status;
 	List<SecurityRiskPojo> securityRisks = new java.util.ArrayList<SecurityRiskPojo>();
 	List<ServiceControlPojo> serviceControls = new java.util.ArrayList<ServiceControlPojo>();
@@ -36,12 +43,12 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 		this.serviceSecurityAssessmentId = serviceSecurityAssessmentId;
 	}
 
-	public List<String> getServiceId() {
-		return serviceId;
+	public List<String> getServiceIds() {
+		return serviceIds;
 	}
 
-	public void setServiceId(List<String> serviceId) {
-		this.serviceId = serviceId;
+	public void setServiceIds(List<String> serviceId) {
+		this.serviceIds = serviceId;
 	}
 
 	public String getStatus() {

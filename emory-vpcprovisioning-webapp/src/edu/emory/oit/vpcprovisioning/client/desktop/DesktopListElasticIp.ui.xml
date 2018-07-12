@@ -18,7 +18,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">Elastic IP List</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">Elastic IP List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of Elastic IP objects and their current status.<br/><br/>
 		These objects represent an Elastic IP that is either in 
 		progress or completed.  To see more details regarding the status of a 

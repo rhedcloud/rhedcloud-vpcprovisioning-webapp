@@ -105,7 +105,6 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				// Add a handler to the 'add' button in the shell.
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("FirewallRules");
-				clientFactory.getShell().setUserName(userLoggedIn.getEppn());
 
 				// Clear the firewallRule list and display it.
 				if (clearList) {

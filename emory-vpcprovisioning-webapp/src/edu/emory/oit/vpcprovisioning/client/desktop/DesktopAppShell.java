@@ -8,14 +8,12 @@ import java.util.logging.Logger;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -35,7 +33,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
-import edu.emory.oit.vpcprovisioning.client.common.Notification;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
@@ -53,7 +50,10 @@ import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
@@ -104,7 +104,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //			        n.show(notificationsHTML);
 ////			        notificationsHTML.addStyleName("notification");
 ////			        notificationsElem.setInnerHTML("<img style=\"watingForWork\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
-//			        notificationsHTML.setHTML("<img class=\"notification\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
+////			        notificationsHTML.setHTML(
+////			        	"<img class=\"notification\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>"
+////			        	+ "<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
+//			        notificationsHTML.setHTML(
+//			        		"<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
 //			        esbServiceStatusAnchor.addStyleName("notification");
 //				}
 //	        };
@@ -178,6 +182,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //	@UiField DeckLayoutPanel elasticIpContentContainer;
 //	@UiField DeckLayoutPanel firewallContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
+	@UiField DeckLayoutPanel servicesContentContainer;
 	@UiField DeckLayoutPanel centralAdminContentContainer;
 
 	@UiField Element userNameElem;
@@ -200,6 +205,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstVpcpContentWidget = true;
 	private boolean firstHomeContentWidget = true;
 	private boolean firstCentralAdminContentWidget = true;
+	private boolean firstServicesContentWidget = true;
 
 	private void registerEvents() {
 	    Event.sinkEvents(logoElem, Event.ONCLICK);
@@ -259,28 +265,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		            	vpList.add(new VerticalPanel());
 		            	 
 		            	// only do this for admins...
-		            	if (userLoggedIn.isCentralAdmin()) {
-	        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
-	        				manageSvcsAnchor.addStyleName("productAnchor");
-	        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
-	        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
-							@Override
-							public void onClick(ClickEvent event) {
-								productsPopup.hide();
-								// clear other features panel
-								// add list services view
-								// add maintain services view
-								otherFeaturesPanel.clear();
-				        			hideMainTabPanel();
-				        			showOtherFeaturesPanel();
-				    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-							}
-	        				});
-
-	        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
-			            	vpList.get(0).add(manageSvcsAnchor);
-			            	vpList.get(0).add(hrHtml);
-		            	}
+//		            	if (userLoggedIn.isCentralAdmin()) {
+//	        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
+//	        				manageSvcsAnchor.addStyleName("productAnchor");
+//	        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
+//	        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
+//							@Override
+//							public void onClick(ClickEvent event) {
+//								productsPopup.hide();
+//								// clear other features panel
+//								// add list services view
+//								// add maintain services view
+//								otherFeaturesPanel.clear();
+//				        			hideMainTabPanel();
+//				        			showOtherFeaturesPanel();
+//				    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+//							}
+//	        				});
+//
+//	        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
+//			            	vpList.get(0).add(manageSvcsAnchor);
+//			            	vpList.get(0).add(hrHtml);
+//		            	}
 
 		            	int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
 		            	if (catsPerPanel < 5) {
@@ -373,9 +379,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
 			case 0:
-//				HTMLPanel hp2 = new HTMLPanel("<div>Home content goes here</div>");
-//				hp2.addStyleName("content");
-//				homeContentContainer.setWidget(hp2);
 				firstHomeContentWidget = true;
 				homeContentContainer.clear();
 				HomeView view = clientFactory.getHomeView();
@@ -420,7 +423,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
 				break;
 			case 4:
-				GWT.log("need to get CIDR Maintentance Content.");
+				GWT.log("need to get Services content.");
+				firstServicesContentWidget = true;
+				servicesContentContainer.clear();
+				ListServiceView listServiceView = clientFactory.getListServiceView();
+				MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
+				vpcpContentContainer.add(listServiceView);
+				vpcpContentContainer.add(maintainServiceView);
+				vpcpContentContainer.setAnimationDuration(500);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+				break;
+			case 5:
+				GWT.log("need to get Central Admin Content.");
 				firstCentralAdminContentWidget = true;
 				centralAdminContentContainer.clear();
 				ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
@@ -430,39 +444,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				centralAdminContentContainer.setAnimationDuration(500);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
 				break;
-//			case 4:
-//				GWT.log("need to get CIDR Maintentance Content.");
-//				firstCidrContentWidget = true;
-//				cidrContentContainer.clear();
-//				ListCidrView listCidrView = clientFactory.getListCidrView();
-//				MaintainCidrView maintainCidrView = clientFactory.getMaintainCidrView();
-//				cidrContentContainer.add(listCidrView);
-//				cidrContentContainer.add(maintainCidrView);
-//				cidrContentContainer.setAnimationDuration(500);
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
-//				break;
-//			case 4:
-//				GWT.log("need to get Elastic IP Maintentenance content.");
-//				firstElasticIpContentWidget = true;
-//				elasticIpContentContainer.clear();
-//				ListElasticIpView listEipView = clientFactory.getListElasticIpView();
-//				MaintainElasticIpView maintainEipView = clientFactory.getMaintainElasticIpView();
-//				elasticIpContentContainer.add(listEipView);
-//				elasticIpContentContainer.add(maintainEipView);
-//				elasticIpContentContainer.setAnimationDuration(500);
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
-//				break;
-//			case 6:
-//				GWT.log("need to get Firewall Maintentenance content.");
-//				firstFirewallContentWidget = true;
-//				firewallContentContainer.clear();
-//				ListFirewallRuleView listFwView = clientFactory.getListFirewallRuleView();
-////				MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
-//				firewallContentContainer.add(listFwView);
-////				firewallContentContainer.add(maintainFwView);
-//				firewallContentContainer.setAnimationDuration(500);
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_FIREWALL_RULE);
-//				break;
 		}
 	}
 
@@ -489,17 +470,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
-
-//		if (w instanceof ListCidrPresenter || w instanceof MaintainCidrPresenter || 
-//			w instanceof MaintainCidrAssignmentPresenter) {
-//			cidrContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstCidrContentWidget) {
-//				firstCidrContentWidget = false;
-//				cidrContentContainer.animate(0);
-//			}
-//			return;
-//		}
 
 		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
 				|| w instanceof RegisterVpcPresenter
@@ -537,26 +507,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-//		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
-//			elasticIpContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstElasticIpContentWidget) {
-//				firstElasticIpContentWidget = false;
-//				elasticIpContentContainer.animate(0);
-//			}
-//			return;
-//		}
-
-//		if (w instanceof ListFirewallRulePresenter) {
-//			firewallContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstFirewallContentWidget) {
-//				firstFirewallContentWidget = false;
-//				firewallContentContainer.animate(0);
-//			}
-//			return;
-//		}
-		
 		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
 			GWT.log("It's the notifications presenter...");
 			otherFeaturesPanel.clear();
@@ -564,18 +514,23 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-		if (w instanceof ListServicePresenter || w instanceof MaintainServicePresenter) {
-			GWT.log("It's the services presenter...");
-//			otherFeaturesContentContainer.setWidget(w);
-			otherFeaturesPanel.clear();
-			otherFeaturesPanel.add(w);
+		if (w instanceof ListServicePresenter || 
+			w instanceof MaintainServicePresenter || 
+			w instanceof MaintainSecurityAssessmentPresenter) {
+			servicesContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
-//			if (firstServicesContentWidget) {
-//				firstServicesContentWidget = false;
-//				otherFeaturesContentContainer.animate(0);
-//			}
+			if (firstServicesContentWidget) {
+				firstServicesContentWidget = false;
+				servicesContentContainer.animate(0);
+			}
 			return;
 		}
+//		if (w instanceof ListServicePresenter || w instanceof MaintainServicePresenter) {
+//			GWT.log("It's the services presenter...");
+//			otherFeaturesPanel.clear();
+//			otherFeaturesPanel.add(w);
+//			return;
+//		}
 		
 		// if we get here, it's the home tab, just set the widget to what's passed in for now
 		homeContentContainer.setWidget(w);

@@ -116,4 +116,38 @@ public interface ActionNames {
 	final String SHOW_VPCP_STATUS = "showVpcpStatus";
 	final String SHOW_BILL_SUMMARY_FOR_ACCOUNT = "showBillSummaryForAccount";
 	final String GO_HOME_CENTRAL_ADMIN = "goHomeCentralAdmin";
+	
+	final String MAINTAIN_SECURITY_ASSESSMENT = "maintainSecurityAssessment";
+	final String CREATE_SECURITY_ASSESSMENT = "createSecurityAssessment";
+	final String SECURITY_ASSESSMENT_EDITING_CANCELED = "securityAssessmentEditingCancelled";
+	final String SECURITY_ASSESSMENT_SAVED = "securityAssessmentSaved";
+	
+	final String GO_HOME_SECURITY_RISK = "goHomeSecurityRisk";
+	final String MAINTAIN_SECURITY_RISK = "maintainSecurityRisk";
+	final String CREATE_SECURITY_RISK = "createSecurityRisk";
+	final String SECURITY_RISK_EDITING_CANCELED = "securityRiskEditingCancelled";
+	final String SECURITY_RISK_SAVED = "securityRiskSaved";
+
+	final String GO_HOME_SERVICE_CONTROL = "goHomeServiceControl";
+	final String MAINTAIN_SERVICE_CONTROL = "maintainServiceControl";
+	final String CREATE_SERVICE_CONTROL = "createServiceControl";
+	final String SERVICE_CONTROL_EDITING_CANCELED = "serviceControlEditingCancelled";
+	final String SERVICE_CONTROL_SAVED = "serviceControlSaved";
+	
+	final String GO_HOME_SERVICE_GUIDELINE = "goHomeServiceGuideline";
+	final String MAINTAIN_SERVICE_GUIDELINE = "maintainServiceGuideline";
+	final String CREATE_SERVICE_GUIDELINE = "createServiceGuideline";
+	final String SERVICE_GUIDELINE_EDITING_CANCELED = "ServiceGuidelineEditingCancelled";
+	final String SERVICE_GUIDELINE_SAVED = "ServiceGuidelineSaved";
+	
+	final String GO_HOME_TEST_PLAN = "goHomeTestPlan";
+	final String MAINTAIN_TEST_PLAN = "maintainTestPlan";
+	final String CREATE_TEST_PLAN = "createTestPlan";
+	final String TEST_PLAN_EDITING_CANCELED = "testPlanEditingCancelled";
+	final String TEST_PLAN_SAVED = "testPlanSaved";
+	
+	final String MAINTAIN_ACCOUNT_NOTIFICATION = "maintainAccountNotification";
+	final String ACCOUNT_NOTIFICATION_EDITING_CANCELED = "acctNotificationEditingCancelled";
+	final String ACCOUNT_NOTIFICATION_SAVED = "acctNotificationSaved";
+
 }

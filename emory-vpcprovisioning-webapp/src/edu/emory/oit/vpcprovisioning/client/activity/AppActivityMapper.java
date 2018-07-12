@@ -31,9 +31,13 @@ import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresente
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -195,6 +199,18 @@ public class AppActivityMapper implements ActivityMapper {
 			};
 		}
 
+		if (place instanceof ListSecurityRiskPlace) {
+			// The list of services
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListSecurityRiskPresenter presenter = new ListSecurityRiskPresenter(clientFactory, (ListSecurityRiskPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
 		if (place instanceof BillSummaryPlace) {
 			// Generate/Maintain vpcp
 			return new BillSummaryActivity(clientFactory, (BillSummaryPlace) place);
@@ -258,6 +274,16 @@ public class AppActivityMapper implements ActivityMapper {
 		if (place instanceof HomePlace) {
 			// Maintain service
 			return new HomeActivity(clientFactory, (HomePlace) place);
+		}
+
+		if (place instanceof MaintainSecurityAssessmentPlace) {
+			// Maintain service
+			return new MaintainSecurityAssessmentActivity(clientFactory, (MaintainSecurityAssessmentPlace) place);
+		}
+
+		if (place instanceof MaintainAccountNotificationPlace) {
+			// Maintain account notification
+			return new MaintainAccountNotificationActivity(clientFactory, (MaintainAccountNotificationPlace) place);
 		}
 
 		return null;

@@ -1,25 +1,42 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
@@ -27,6 +44,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSTagPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainService extends ViewImplBase implements MaintainServiceView {
@@ -34,6 +52,10 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	UserAccountPojo userLoggedIn;
 	List<String> statusTypes;
 	boolean editing;
+	private ListDataProvider<ServiceSecurityAssessmentPojo> dataProvider = new ListDataProvider<ServiceSecurityAssessmentPojo>();
+	private SingleSelectionModel<ServiceSecurityAssessmentPojo> selectionModel;
+	List<ServiceSecurityAssessmentPojo> assessmentList = new java.util.ArrayList<ServiceSecurityAssessmentPojo>();
+	PopupPanel actionsPopup = new PopupPanel(true);
 
 	private static DesktopMaintainServiceUiBinder uiBinder = GWT.create(DesktopMaintainServiceUiBinder.class);
 
@@ -43,6 +65,11 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	public DesktopMaintainService() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
+
+	@UiField SimplePager assessmentListPager;
+	@UiField(provided=true) CellTable<ServiceSecurityAssessmentPojo> assessmentListTable = new CellTable<ServiceSecurityAssessmentPojo>();
+	@UiField Button createAssessmentButton;
+	@UiField Button actionsButton;
 
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
@@ -86,6 +113,67 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
+	@UiHandler("createAssessmentButton")
+	void createButtonClicked(ClickEvent e) {
+		populateServiceWithFormData();
+		presenter.saveService(false);
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_ASSESSMENT, presenter.getService());
+	}
+	
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+		actionsPopup.setAutoHideEnabled(true);
+		actionsPopup.setAnimationEnabled(true);
+		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid = new Grid(2, 1);
+		grid.setCellSpacing(8);
+		actionsPopup.add(grid);
+
+		Anchor editAnchor = new Anchor("Edit Assessment");
+		editAnchor.addStyleName("productAnchor");
+		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editAnchor.setTitle("View/Maintain selected Service");
+		editAnchor.ensureDebugId(editAnchor.getText());
+		editAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				ServiceSecurityAssessmentPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, editAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Assessment");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected Service");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				ServiceSecurityAssessmentPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					presenter.deleteSecurityAssessment(m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
+	}
+
 	@UiHandler ("categoryTF")
 	void addCategoryTFKeyPressed(KeyPressEvent e) {
         int keyCode = e.getNativeEvent().getKeyCode();
@@ -116,16 +204,22 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
         if (keyCode == KeyCodes.KEY_ENTER) {
     		AWSTagPojo tag = new AWSTagPojo(tagKeyTF.getText(), tagValueTF.getText());
         	addTagToService(tag);
+        	tagKeyTF.setFocus(true);
         }
 	}
 	@UiHandler ("addTagButton")
 	void addUserButtonClick(ClickEvent e) {
 		AWSTagPojo tag = new AWSTagPojo(tagKeyTF.getText(), tagValueTF.getText());
 		addTagToService(tag);
+    	tagKeyTF.setFocus(true);
 	}
 
 	@UiHandler("okayButton")
 	void okayClick(ClickEvent e) {
+		populateServiceWithFormData();
+		presenter.saveService(true);
+	}
+	private void populateServiceWithFormData() {
 		// populate/save service
 		presenter.getService().setAwsServiceCode(awsCodeTB.getText());
 		presenter.getService().setAwsServiceName(awsNameTB.getText());
@@ -140,7 +234,6 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		// categories, console categories and tags are added to the service as they're 
 		// added to the page.
 		
-		presenter.saveService();
 	}
 
 	@UiHandler("cancelButton")
@@ -155,7 +248,11 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	awsCodeTB.setFocus(true);
+	        }
+	    });
 	}
 
 	@Override
@@ -166,12 +263,44 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
+		awsCodeTB.setEnabled(false);
+		awsNameTB.setEnabled(false);
+		alternateNameTB.setEnabled(false);
+		combinedNameTB.setEnabled(false);
+		emoryHipaaEligibleCB.setEnabled(false);
+		awsHipaaEligibleCB.setEnabled(false);
+		descriptionTA.setEnabled(false);
+		landingPageURLTB.setEnabled(false);
+		statusLB.setEnabled(false);
+		
+		tagKeyTF.setEnabled(false);
+		tagValueTF.setEnabled(false);
+		addTagButton.setEnabled(false);
+		categoryTF.setEnabled(false);
+		addCategoryButton.setEnabled(false);
+		consoleCategoryTF.setEnabled(false);
+		addConsoleCategoryButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
+		awsCodeTB.setEnabled(false);
+		awsNameTB.setEnabled(false);
+		alternateNameTB.setEnabled(false);
+		combinedNameTB.setEnabled(false);
+		emoryHipaaEligibleCB.setEnabled(false);
+		awsHipaaEligibleCB.setEnabled(false);
+		descriptionTA.setEnabled(false);
+		landingPageURLTB.setEnabled(false);
+		statusLB.setEnabled(false);
+		
+		tagKeyTF.setEnabled(false);
+		tagValueTF.setEnabled(false);
+		addTagButton.setEnabled(false);
+		categoryTF.setEnabled(false);
+		addCategoryButton.setEnabled(false);
+		consoleCategoryTF.setEnabled(false);
+		addConsoleCategoryButton.setEnabled(false);
 	}
 
 	@Override
@@ -396,6 +525,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 			}
 		});
 		tagKeyTF.setText("");
+		tagValueTF.setText("");
 		if (numRows > 6) {
 			if (tagRowNum > 5) {
 				tagRowNum = 0;
@@ -503,8 +633,23 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		awsCodeTB.setEnabled(true);
+		awsNameTB.setEnabled(true);
+		alternateNameTB.setEnabled(true);
+		combinedNameTB.setEnabled(true);
+		emoryHipaaEligibleCB.setEnabled(true);
+		awsHipaaEligibleCB.setEnabled(true);
+		descriptionTA.setEnabled(true);
+		landingPageURLTB.setEnabled(true);
+		statusLB.setEnabled(true);
 		
+		tagKeyTF.setEnabled(true);
+		tagValueTF.setEnabled(true);
+		addTagButton.setEnabled(true);
+		categoryTF.setEnabled(true);
+		addCategoryButton.setEnabled(true);
+		consoleCategoryTF.setEnabled(true);
+		addConsoleCategoryButton.setEnabled(true);
 	}
 
 	@Override
@@ -529,5 +674,90 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	public void vpcpConfirmCancel() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setAssessments(List<ServiceSecurityAssessmentPojo> assessments) {
+		this.assessmentList = assessments;
+		this.initializeAssessmentListTable();
+		assessmentListPager.setDisplay(assessmentListTable);
+	}
+
+	private Widget initializeAssessmentListTable() {
+		GWT.log("initializing service list table...");
+		assessmentListTable.setTableLayoutFixed(false);
+		assessmentListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		// set range to display
+		assessmentListTable.setVisibleRange(0, 5);
+
+		// create dataprovider
+		dataProvider = new ListDataProvider<ServiceSecurityAssessmentPojo>();
+		dataProvider.addDataDisplay(assessmentListTable);
+		dataProvider.getList().clear();
+		dataProvider.getList().addAll(this.assessmentList);
+
+		selectionModel = 
+				new SingleSelectionModel<ServiceSecurityAssessmentPojo>(ServiceSecurityAssessmentPojo.KEY_PROVIDER);
+		assessmentListTable.setSelectionModel(selectionModel);
+
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				ServiceSecurityAssessmentPojo m = selectionModel.getSelectedObject();
+				GWT.log("Selected service is: " + m.getServiceIds());
+			}
+		});
+
+		ListHandler<ServiceSecurityAssessmentPojo> sortHandler = 
+				new ListHandler<ServiceSecurityAssessmentPojo>(dataProvider.getList());
+		assessmentListTable.addColumnSortHandler(sortHandler);
+
+		if (assessmentListTable.getColumnCount() == 0) {
+			initAssessmentListTableColumns(sortHandler);
+		}
+
+		return assessmentListTable;
+	}
+
+	private void initAssessmentListTableColumns(ListHandler<ServiceSecurityAssessmentPojo> sortHandler) {
+		GWT.log("initializing Service list table columns...");
+
+		Column<ServiceSecurityAssessmentPojo, Boolean> checkColumn = new Column<ServiceSecurityAssessmentPojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(ServiceSecurityAssessmentPojo object) {
+				// Get the value from the selection model.
+				return selectionModel.isSelected(object);
+			}
+		};
+		assessmentListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		assessmentListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		Column<ServiceSecurityAssessmentPojo, String> acctIdColumn = 
+				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceSecurityAssessmentPojo object) {
+				return object.getServiceSecurityAssessmentId();
+			}
+		};
+		acctIdColumn.setSortable(true);
+		sortHandler.setComparator(acctIdColumn, new Comparator<ServiceSecurityAssessmentPojo>() {
+			public int compare(ServiceSecurityAssessmentPojo o1, ServiceSecurityAssessmentPojo o2) {
+				return o1.getServiceSecurityAssessmentId().compareTo(o2.getServiceSecurityAssessmentId());
+			}
+		});
+		assessmentListTable.addColumn(acctIdColumn, "ID");
+	}
+
+	@Override
+	public void removeAssessmentFromView(ServiceSecurityAssessmentPojo assessment) {
+		dataProvider.getList().remove(assessment);
+	}
+
+	@Override
+	public void clearAssessmentList() {
+		assessmentListTable.setVisibleRangeAndClearData(assessmentListTable.getVisibleRange(), true);
 	}
 }

@@ -27,8 +27,11 @@ import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -74,6 +77,9 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainFirewallExceptionRequestView maintainFirewallRule;
 	private HomeView homeView;
 	private ListCentralAdminView centralAdminView;
+	private MaintainSecurityAssessmentView maintainSecurityAssessmentView;
+	private ListSecurityRiskView listSecurityRiskView;
+	private MaintainAccountNotificationView maintainAccountNotificationView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -244,6 +250,21 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public ListCentralAdminView getListCentralAdminView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainSecurityAssessmentView getMaintainSecurityAssessmentView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListSecurityRiskView getListSecurityRiskView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainAccountNotificationView getMaintainAccountNotificationView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

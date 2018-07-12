@@ -22,7 +22,7 @@
 			<g:Button width="150px" addStyleNames="{style.awsButton}"
 				ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton">Close</g:Button>
 		</g:VerticalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">Notification List</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">Notification List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of your User Notifications.</g:HTML>
 
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
