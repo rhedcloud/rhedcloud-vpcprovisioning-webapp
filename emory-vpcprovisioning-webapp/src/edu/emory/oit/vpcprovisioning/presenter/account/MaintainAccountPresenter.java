@@ -80,6 +80,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitPanel(null);
 		getView().disableAdminMaintenance();
+		getView().showWaitForNotificationsDialog("Retreiving Account Notifications...");
 
 		if (accountId == null) {
 			clientFactory.getShell().setSubTitle("Create Account");
@@ -113,6 +114,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				@Override
 				public void onFailure(Throwable caught) {
 					GWT.log("Exception retrieving account notifications", caught);
+					getView().hidWaitForNotificationsDialog();
 					getView().showMessageToUser("There was an exception on the " +
 							"server retrieving the notifications for this account.  "
 							+ "Processing will continue.  Message " +
@@ -126,6 +128,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						AccountNotificationPojo anp = result.getResults().get(i);
 						getView().addAccountNotification(i, anp);
 					}
+					getView().hidWaitForNotificationsDialog();
 				}
 			};
 			AccountNotificationQueryFilterPojo filter = new AccountNotificationQueryFilterPojo();

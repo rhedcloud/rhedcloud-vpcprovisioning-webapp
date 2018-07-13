@@ -65,6 +65,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	private final DirectoryPersonRpcSuggestOracle ownerIdSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	PopupPanel adminPleaseWaitDialog;
+//	PopupPanel waitForNotificationsDialog;
     Grid notificationGrid = new Grid(1, 5);
 
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -97,6 +98,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
 	@UiField VerticalPanel sensitiveDataPanel;
 	@UiField VerticalPanel accountNotificationsVP;
+	@UiField HTML accountNotificationsHeader;
+	@UiField HorizontalPanel waitForNotificationsPopup;
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -710,8 +713,10 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
 
 		adminPleaseWaitDialog.setWidget(vp);
-		adminPleaseWaitDialog.center();
-		adminPleaseWaitDialog.setPopupPosition(adminLabel.getOffsetWidth() / 2, adminLabel.getAbsoluteTop() + 75);
+//		adminPleaseWaitDialog.center();
+		adminPleaseWaitDialog.setPopupPosition(
+				adminLabel.getOffsetWidth() / 2, 
+				adminLabel.getAbsoluteTop() + 75);
 		adminPleaseWaitDialog.show();
 	}
 	@Override
@@ -817,6 +822,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public void clearAccountNotificationList() {
 		accountNotificationsVP.clear();
+		accountNotificationsVP.setVisible(false);
 	}
 	@Override
 	public void initializeAccountNotificationGrid(int rowSize) {
@@ -837,6 +843,34 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		
 		HTML updatedHeader = new HTML("<b>Updated Time</b>");
 		notificationGrid.setWidget(0, 4, updatedHeader);
+		accountNotificationsVP.setVisible(true);
+	}
+	@Override
+	public void showWaitForNotificationsDialog(String message) {
+//		waitForNotificationsDialog = new PopupPanel(true);
+//
+//		VerticalPanel vp = new VerticalPanel();
+//		Image img = new Image();
+//		img.setUrl("images/ajax-loader.gif");
+//		vp.add(img);
+//		HTML h = new HTML(message);
+//		vp.add(h);
+//		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
+//		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+//
+//		waitForNotificationsDialog.setWidget(vp);
+//		waitForNotificationsDialog.setPopupPosition(
+//				accountNotificationsHeader.getAbsoluteLeft() + 25, 
+//				accountNotificationsHeader.getAbsoluteTop() + 25);
+//		waitForNotificationsDialog.show();
+		waitForNotificationsPopup.setVisible(true);
+	}
+	@Override
+	public void hidWaitForNotificationsDialog() {
+//		if (waitForNotificationsDialog != null) {
+//			waitForNotificationsDialog.hide();
+//		}
+		waitForNotificationsPopup.setVisible(false);
 	}
 	
 }

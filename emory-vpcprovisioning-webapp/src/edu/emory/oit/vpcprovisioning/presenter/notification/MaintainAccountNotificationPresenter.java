@@ -63,6 +63,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().showPleaseWaitDialog("Retrieving Notification Details...");
 
 		setReleaseInfo(clientFactory);
 		
@@ -78,8 +79,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitDialog();
 			}
 
 			@Override

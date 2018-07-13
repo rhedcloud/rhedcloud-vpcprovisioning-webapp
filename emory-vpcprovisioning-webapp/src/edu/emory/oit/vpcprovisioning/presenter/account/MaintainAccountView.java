@@ -107,4 +107,6 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void addAccountNotification(int rowNumber, AccountNotificationPojo accountNotification);
 	void initializeAccountNotificationGrid(int rowSize);
 	void clearAccountNotificationList();
+	void showWaitForNotificationsDialog(String message);
+	void hidWaitForNotificationsDialog();
 }
