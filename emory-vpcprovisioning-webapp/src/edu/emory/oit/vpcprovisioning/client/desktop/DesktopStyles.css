@@ -624,6 +624,11 @@ a:visited {
 	width: 250px;
 	font-size: 12pt;
 }
+.longField {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	width: 500px;
+	font-size: 12pt;
+}
 .listBoxField {
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
 	width: 250px;

@@ -655,3 +655,10 @@ hr {
 	text-align: left;
 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
 }
+.mediumLabel {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 16px;
+	font-style: normal;
+	font-weight: bold;
+	color: #e47911;
+}

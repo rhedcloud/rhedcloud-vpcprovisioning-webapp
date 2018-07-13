@@ -164,9 +164,9 @@
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 					<g:ScrollPanel>
-						<g:VerticalPanel width="100%">
+						<g:VerticalPanel width="100%" spacing="8">
 							<g:HTML addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
-							<g:VerticalPanel spacing="8" ui:field="accountNotificationsVP" height="100%"/>
+							<g:VerticalPanel addStyleNames="{style.statusLabel}" ui:field="accountNotificationsVP" height="100%"/>
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 				</g:cell>

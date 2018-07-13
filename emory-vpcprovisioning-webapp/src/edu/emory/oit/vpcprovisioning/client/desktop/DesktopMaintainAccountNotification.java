@@ -8,12 +8,13 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
-import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -36,8 +37,15 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
+	@UiField TextBox accountIdTB;
+	@UiField TextBox typeTB;
+	@UiField TextBox priorityTB;
+	@UiField TextBox subjectTB;
 	@UiField TextArea textTA;
-
+	@UiField Anchor referenceIdAnchor;
+	@UiField Label createInfoLabel;
+	@UiField Label updateInfoLabel;
+	
 	@UiHandler("okayButton")
 	void okayClick(ClickEvent e) {
 		// TODO: populate/save the notification
@@ -63,12 +71,22 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
+		okayButton.setEnabled(false);
+		accountIdTB.setEnabled(false);
+		typeTB.setEnabled(false);
+		priorityTB.setEnabled(false);
+		subjectTB.setEnabled(false);
+		textTA.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
+		okayButton.setEnabled(false);
+		accountIdTB.setEnabled(false);
+		typeTB.setEnabled(false);
+		priorityTB.setEnabled(false);
+		subjectTB.setEnabled(false);
+		textTA.setEnabled(false);
 	}
 
 	@Override
@@ -93,6 +111,21 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 
 	@Override
 	public void initPage() {
+		accountIdTB.setText(presenter.getNotification().getAccountId());
+		typeTB.setText(presenter.getNotification().getType());
+		priorityTB.setText(presenter.getNotification().getPriority());
+		subjectTB.setText(presenter.getNotification().getSubject());
+		textTA.setText(presenter.getNotification().getText());
+		referenceIdAnchor.setText(presenter.getNotification().getReferenceid());
+		String createInfo = "Created by " + presenter.getNotification().getCreateUser() + 
+				" at " + dateFormat.format(presenter.getNotification().getCreateTime());
+		createInfoLabel.setText(createInfo);
+		String updateInfo = "Never Updated";
+		if (presenter.getNotification().getUpdateTime() != null) {
+			updateInfo = "Updated by " + presenter.getNotification().getUpdateUser() + 
+					" at " + dateFormat.format(presenter.getNotification().getUpdateTime());
+		}
+		updateInfoLabel.setText(updateInfo);;
 	}
 
 	@Override
@@ -144,8 +177,12 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(false);
+		accountIdTB.setEnabled(false);
+		typeTB.setEnabled(false);
+		priorityTB.setEnabled(false);
+		subjectTB.setEnabled(false);
+		textTA.setEnabled(false);
 	}
 
 	@Override

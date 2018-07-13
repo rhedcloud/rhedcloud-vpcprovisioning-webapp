@@ -190,6 +190,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 						// just use a popup here and not try to show the "normal" CidrAssignment
 						// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
 //						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+						showMessageToUser("Action not supported yet.");
 					}
 					else {
 						showMessageToUser("Please select an item from the list");

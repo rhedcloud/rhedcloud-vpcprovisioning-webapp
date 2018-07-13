@@ -5068,9 +5068,92 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteFirewallRule(FirewallRulePojo rule) throws RpcException {
-		// TODO Auto-generated method stub
+		// TODO: this will be a request to service now (FirewallRuleExceptionRequest)
+		FirewallExceptionRequestPojo fer = new FirewallExceptionRequestPojo();
+		// TODO: populate the fer with stuff from the rule passed in.
+		/*
+			<!ELEMENT FirewallExceptionRequest (
+				UserNetID, 
+				ApplicationName, 
+				SourceOutsideEmory, 
+				TimeRule, 
+				SourceIpAddresses, 
+				DestinationIpAddresses, 
+				Ports, 
+				BusinessReason, 
+				Patched, 
+				DefaultPasswdChanged, 
+				AppConsoleACLed, 
+				Hardened, 
+				PatchingPlan, 
+				SensitiveDataDesc, 
+				LocalFirewallRules, 
+				DefaultDenyZone, 
+				Tag+, 
+		 */
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+				Constants.USER_ACCOUNT + getCurrentSessionId());
+
+		fer.setUserNetId(user.getPrincipal());
+		fer.setApplicationName("VPCP");
+		fer.setTimeRule("Indefinitely");
+		StringBuffer sources = new StringBuffer();
+		for (int i=0; i<rule.getSources().size(); i++) {
+			String source = rule.getSources().get(i);
+			sources.append(source);
+		}
+		for (String tag : rule.getTags()) {
+			fer.getTags().add(tag);
+		}
 		
-		// this will be a request to service now
+		try {
+			info("deleting FirewallExceptionRequest record on the server...");
+			FirewallExceptionRequest moa = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+			info("populating moa");
+			this.populateFirewallExceptionRequestMoa(fer, moa);
+
+			
+			info("doing the FirewallExceptionRequest.delete...to delete a FirewallRule");
+			this.doDelete(moa, getServiceNowRequestService());
+			info("FirewallExceptionRequest.delete (for FirewallRule) is complete...");
+
+			return;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override

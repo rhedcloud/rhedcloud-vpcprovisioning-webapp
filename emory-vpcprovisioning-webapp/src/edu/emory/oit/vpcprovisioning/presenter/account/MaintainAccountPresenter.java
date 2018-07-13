@@ -121,8 +121,10 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 				@Override
 				public void onSuccess(AccountNotificationQueryResultPojo result) {
-					for (AccountNotificationPojo anp : result.getResults()) {
-						getView().addAccountNotification(anp);
+					getView().initializeAccountNotificationGrid(result.getResults().size());
+					for (int i=0; i<result.getResults().size(); i++) {
+						AccountNotificationPojo anp = result.getResults().get(i);
+						getView().addAccountNotification(i, anp);
 					}
 				}
 			};

@@ -104,6 +104,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void setComplianceClassItems(List<String> complianceClassTypes);
 	void enableAdminMaintenance();
 	void disableAdminMaintenance();
-	void addAccountNotification(AccountNotificationPojo accountNotification);
+	void addAccountNotification(int rowNumber, AccountNotificationPojo accountNotification);
+	void initializeAccountNotificationGrid(int rowSize);
 	void clearAccountNotificationList();
 }

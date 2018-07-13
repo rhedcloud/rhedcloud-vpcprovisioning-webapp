@@ -5,30 +5,84 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
+		<!-- 
 		<g:VerticalPanel spacing="8" width="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:CaptionPanel width="90%" captionHTML="Notice">
 					<g:VerticalPanel width="100%" height="100%">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-						<g:HTML ui:field="infoHTML">View/Maintain Notification
+						<g:HTML ui:field="infoHTML">View/Maintain Account Notification
 						</g:HTML>
 						</g:cell>
 					</g:VerticalPanel>
 				</g:CaptionPanel>
 			</g:cell>
 		</g:VerticalPanel>
+		 -->
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="8">
 				<g:row>
-				    	<g:customCell>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountIdTB" debugId="accountIdTB" />
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Type:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="typeTB" debugId="typeTB" />
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Priority:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="priorityTB" debugId="priorityTB" />
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Subject:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="subjectTB" debugId="subjectTB" />
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Text:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextArea addStyleNames="{style.longField} {style.glowing-border}"
 							ui:field="textTA" debugId="textTA" />
-				    	</g:customCell>
-			    	</g:row>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Reference ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+			    		<g:Anchor addStyleNames="{style.systemStatusLink}" 
+			    			ui:field="referenceIdAnchor"/>
+			    	</g:customCell>
+		    	</g:row>
 			</g:Grid>
+		</g:cell>
+		<!-- TODO: Annotations -->
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Label ui:field="createInfoLabel" debugId="createInfoLabel" addStyleNames="{style.longField}"/>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Label ui:field="updateInfoLabel" debugId="updateInfoLabel" addStyleNames="{style.longField}"/>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
