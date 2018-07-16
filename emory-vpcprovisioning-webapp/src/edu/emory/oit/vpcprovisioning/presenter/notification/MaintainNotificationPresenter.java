@@ -62,6 +62,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		getView().showPleaseWaitDialog("Retrieving Notification Details...");
 		setReleaseInfo(clientFactory);
 		
 		if (notificationId == null) {
@@ -88,7 +89,6 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 				getView().hidePleaseWaitDialog();
 				getView().setInitialFocus();
 				// apply authorization mask
-				// TODO: need to determine the Notification structure so we can apply authorization mask appropriately
 				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
