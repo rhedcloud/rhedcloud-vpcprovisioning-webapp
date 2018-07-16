@@ -5,6 +5,7 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
+		<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notification Details</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="8">
 				<g:row>
