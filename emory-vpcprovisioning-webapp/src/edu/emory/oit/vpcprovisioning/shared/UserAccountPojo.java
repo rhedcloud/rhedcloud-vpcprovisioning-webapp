@@ -159,4 +159,24 @@ public class UserAccountPojo implements IsSerializable {
 				", Personal Name: " + personalName +
 				", isSuperUser: " + superUser;
 	}
+
+	public void addAccountRole(AccountRolePojo arp) {
+		boolean roleExists = false;
+		arpLoop: for (AccountRolePojo l_arp : accountRoles) {
+			if (l_arp.getAccountId() != null) {
+				if (l_arp.getAccountId().equalsIgnoreCase(arp.getAccountId()) && l_arp.getRoleName().equalsIgnoreCase(arp.getRoleName())) {
+					roleExists = true;
+					break arpLoop;
+				}
+			}
+			else if (l_arp.getRoleName().equalsIgnoreCase(arp.getRoleName())) {
+				roleExists = true;
+				break arpLoop;
+			}
+
+		}
+		if (!roleExists) {
+			accountRoles.add(arp);
+		}
+	}
 }

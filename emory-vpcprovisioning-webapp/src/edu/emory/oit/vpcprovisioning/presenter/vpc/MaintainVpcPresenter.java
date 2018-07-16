@@ -66,6 +66,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		getView().showPleaseWaitDialog("Retrieving VPC details...");
 		setReleaseInfo(clientFactory);
 		if (vpcId == null) {
 			clientFactory.getShell().setSubTitle("Generate VPC");
@@ -80,7 +81,8 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 			}
 
 			@Override

@@ -793,7 +793,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						AccountRolePojo arp = new AccountRolePojo();
 						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
 						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-						user.getAccountRoles().add(arp);
+//						user.getAccountRoles().add(arp);
+						user.addAccountRole(arp);
 						continue;
 					}
 					if (roleDn.indexOf("RGR_AWS") >= 0) {
@@ -814,7 +815,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							arp.setAccountName(verifiedAcct.getAccountName());
 							arp.setRoleName(roleName);
 							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-							user.getAccountRoles().add(arp);
+//							user.getAccountRoles().add(arp);
+							user.addAccountRole(arp);
 						}
 						else if (acctId == null && 
 								(roleName.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 || 
@@ -823,7 +825,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setRoleName(roleName);
 							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-							user.getAccountRoles().add(arp);
+//							user.getAccountRoles().add(arp);
+							user.addAccountRole(arp);
 						}
 						else {
 							continue;
