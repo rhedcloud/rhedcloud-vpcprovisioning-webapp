@@ -18,10 +18,10 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListNotificationPresenter extends PresenterBase implements ListNotificationView.Presenter {
 	private static final Logger log = Logger.getLogger(ListNotificationPresenter.class.getName());
@@ -113,7 +113,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 				getView().setUserLoggedIn(user);
 				userLoggedIn = user;
-				setNotificationList(Collections.<UserNotificationPojo> emptyList());
+//				setNotificationList(Collections.<UserNotificationPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(user);

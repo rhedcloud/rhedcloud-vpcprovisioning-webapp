@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -38,6 +39,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification.MyCellTableResources;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
@@ -46,6 +48,7 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSTagPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopMaintainService extends ViewImplBase implements MaintainServiceView {
 	Presenter presenter;
@@ -62,12 +65,17 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	interface DesktopMaintainServiceUiBinder extends UiBinder<Widget, DesktopMaintainService> {
 	}
 
+	public interface MyCellTableResources extends CellTable.Resources {
+
+	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+	     public CellTable.Style cellTableStyle();
+	}
 	public DesktopMaintainService() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
 	@UiField SimplePager assessmentListPager;
-	@UiField(provided=true) CellTable<ServiceSecurityAssessmentPojo> assessmentListTable = new CellTable<ServiceSecurityAssessmentPojo>();
+	@UiField(provided=true) CellTable<ServiceSecurityAssessmentPojo> assessmentListTable = new CellTable<ServiceSecurityAssessmentPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField Button createAssessmentButton;
 	@UiField Button actionsButton;
 

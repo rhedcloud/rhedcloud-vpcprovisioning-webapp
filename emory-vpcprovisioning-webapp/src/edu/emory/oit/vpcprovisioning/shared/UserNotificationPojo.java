@@ -7,23 +7,12 @@ import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class UserNotificationPojo extends SharedObject implements IsSerializable, Comparable<UserNotificationPojo> {
-	/*
-		<!ELEMENT UserNotification (
-			UserNotificationId?, 
-			AccountNotificationId?, 
-			UserId, 
-			Type?, 
-			Priority?, 
-			Subject?, 
-			Text?, 
-			Read, 
-			ReadDatetime?, 
-			SentToEmailAddress?, 
-			CreateUser, 
-			CreateDatetime, 
-			LastUpdateUser?, 
-			LastUpdateDatetime?)>
-	 */
+	public static final ProvidesKey<UserNotificationPojo> KEY_PROVIDER = new ProvidesKey<UserNotificationPojo>() {
+		@Override
+		public Object getKey(UserNotificationPojo item) {
+			return item == null ? null : item.getUserNotificationId();
+		}
+	};
 	String userNotificationId;
 	String accountNotificationId;
 	String userId;
@@ -36,20 +25,18 @@ public class UserNotificationPojo extends SharedObject implements IsSerializable
 	String sentToEmailAddress;
 	UserNotificationPojo baseline;
 	
-	public static final ProvidesKey<UserNotificationPojo> KEY_PROVIDER = new ProvidesKey<UserNotificationPojo>() {
-		@Override
-		public Object getKey(UserNotificationPojo item) {
-			return item == null ? null : item.getUserNotificationId();
-		}
-	};
 	public UserNotificationPojo() {
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public int compareTo(UserNotificationPojo o) {
-		// TODO Auto-generated method stub
-		return 0;
+		Date c1 = o.getCreateTime();
+		Date c2 = this.getCreateTime();
+		if (c1 == null || c2 == null) {
+			return 0;
+		}
+		return c1.compareTo(c2);
 	}
 
 	public String getUserNotificationId() {

@@ -109,7 +109,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 
 				getView().setUserLoggedIn(userLoggedIn);
 				GWT.log("presenter, emptying CidrAssignment list.");
-				setCidrAssignmentSummaryList(Collections.<CidrAssignmentSummaryPojo> emptyList());
+//				setCidrAssignmentSummaryList(Collections.<CidrAssignmentSummaryPojo> emptyList());
 
 				// Request the cidr assignment list now.
 				refreshList(userLoggedIn);

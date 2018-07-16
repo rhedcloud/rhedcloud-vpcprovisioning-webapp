@@ -93,9 +93,6 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
-				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Elastic IPs");
 
@@ -105,7 +102,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
+//				setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);
@@ -190,7 +187,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				}
 				else {
 					GWT.log("null elastic ip results returned.");
-					setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
+//					setElasticIpSummaryList(Collections.<ElasticIpSummaryPojo> emptyList());
 				}
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
@@ -205,12 +202,6 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		};
 
 		GWT.log("refreshing ElasticIP list...");
-//		if (filter == null) {
-//			filter = new ElasticIpQueryFilterPojo();
-//		}
-//		if (vpc != null) {
-//			filter.setOwnerId(vpc.getVpcId());
-//		}
 		VpcProvisioningService.Util.getInstance().getElasticIpsForFilter(filter, callback);
 	}
 

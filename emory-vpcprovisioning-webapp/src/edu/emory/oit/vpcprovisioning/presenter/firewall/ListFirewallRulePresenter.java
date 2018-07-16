@@ -113,8 +113,8 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
-				setFirewallExceptionRequestList(Collections.<FirewallExceptionRequestPojo> emptyList());
+//				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
+//				setFirewallExceptionRequestList(Collections.<FirewallExceptionRequestPojo> emptyList());
 				getView().initPage();
 
 				// Request the firewallRule list now.
@@ -170,12 +170,8 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 		GWT.log("refreshing FirewallRule list...");
 		if (fw_filter == null) {
-//			getView().setUserLoggedIn(user);
 			fw_filter = new FirewallRuleQueryFilterPojo();
 			fw_filter.getTags().add(vpc.getVpcId());
-//			setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
-//			getView().initPage();
-//            getView().hidePleaseWaitPanel();
 		}
 		getView().showPleaseWaitDialog("Retrieving firewall rules from the Firewall service...");
 		VpcProvisioningService.Util.getInstance().getFirewallRulesForFilter(fw_filter, callback);

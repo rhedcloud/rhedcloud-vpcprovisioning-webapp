@@ -5161,14 +5161,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		FirewallRuleQueryResultPojo result = new FirewallRuleQueryResultPojo();
-		
-		// TEMPORARY
-//		result.setResults(Collections.<FirewallRulePojo> emptyList());
-//		if (true) {
-//			return result;
-//		}
-		// END TEMPORARY
-		
 		List<FirewallRulePojo> pojos = new java.util.ArrayList<FirewallRulePojo>();
 		try {
 			FirewallRuleQuerySpecification queryObject = (FirewallRuleQuerySpecification) getObject(Constants.MOA_FIREWALL_RULE_QUERY_SPEC);
@@ -5193,10 +5185,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					this.getFirewallRequestService());
 			for (FirewallRule moa : moas) {
 				FirewallRulePojo pojo = new FirewallRulePojo();
-//				FirewallRulePojo baseline = new FirewallRulePojo();
 				this.populateFirewallRulePojo(moa, pojo);
-//				this.populateFirewallRulePojo(moa, baseline);
-//				pojo.setBaseline(baseline);
 				pojos.add(pojo);
 			}
 

@@ -123,18 +123,12 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 				@Override
 				public void onSuccess(AccountNotificationQueryResultPojo result) {
-//					getView().initializeAccountNotificationGrid(result.getResults().size());
-//					for (int i=0; i<result.getResults().size(); i++) {
-//						AccountNotificationPojo anp = result.getResults().get(i);
-//						getView().addAccountNotification(i, anp);
-//					}
 					getView().setAccountNotifications(result.getResults());
 					getView().hidWaitForNotificationsDialog();
 				}
 			};
 			AccountNotificationQueryFilterPojo filter = new AccountNotificationQueryFilterPojo();
 			filter.setAccountId(accountId);
-//			getView().clearAccountNotificationList();
 			VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
 		}
 

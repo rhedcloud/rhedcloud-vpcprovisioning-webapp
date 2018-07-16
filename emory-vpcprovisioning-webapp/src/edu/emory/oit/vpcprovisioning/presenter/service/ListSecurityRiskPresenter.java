@@ -102,7 +102,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setSecurityRiskList(Collections.<SecurityRiskPojo> emptyList());
+//				setSecurityRiskList(Collections.<SecurityRiskPojo> emptyList());
 
 				// Request the service list now.
 				refreshList(userLoggedIn);

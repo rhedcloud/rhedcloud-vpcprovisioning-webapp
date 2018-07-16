@@ -112,7 +112,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 						}
 
 						getView().setUserLoggedIn(user);
-						setAssessmentList(Collections.<ServiceSecurityAssessmentPojo> emptyList());
+//						setAssessmentList(Collections.<ServiceSecurityAssessmentPojo> emptyList());
 
 						// Request the service list now.
 						refreshList(user);

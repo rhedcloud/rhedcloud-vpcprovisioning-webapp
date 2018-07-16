@@ -94,9 +94,6 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
-				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("AWS Services");
 
@@ -106,7 +103,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setServiceList(Collections.<AWSServicePojo> emptyList());
+//				setServiceList(Collections.<AWSServicePojo> emptyList());
 
 				// Request the service list now.
 				refreshList(userLoggedIn);

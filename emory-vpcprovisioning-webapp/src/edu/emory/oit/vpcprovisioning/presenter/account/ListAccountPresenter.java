@@ -106,7 +106,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 				getView().setUserLoggedIn(userLoggedIn);
 				getView().initPage();
-				setAccountList(Collections.<AccountPojo> emptyList());
+//				setAccountList(Collections.<AccountPojo> emptyList());
 
 				// Request the account list now.
 				refreshList(userLoggedIn);

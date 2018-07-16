@@ -8,7 +8,6 @@ import java.util.List;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,7 +37,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
-import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
@@ -46,9 +44,16 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	Presenter presenter;
 	private ListDataProvider<UserNotificationPojo> dataProvider = new ListDataProvider<UserNotificationPojo>();
 	private MultiSelectionModel<UserNotificationPojo> selectionModel;
-	List<UserNotificationPojo> serviceList = new java.util.ArrayList<UserNotificationPojo>();
+	List<UserNotificationPojo> pojoList = new java.util.ArrayList<UserNotificationPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
+
+	@UiField(provided=true) CellTable<UserNotificationPojo> listTable = new CellTable<UserNotificationPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	public interface MyCellTableResources extends CellTable.Resources {
+
+	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+	     public CellTable.Style cellTableStyle();
+	}
 
 	private static DesktopListNotificationUiBinder uiBinder = GWT.create(DesktopListNotificationUiBinder.class);
 
@@ -64,8 +69,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	}
 
 	/*** FIELDS ***/
-	@UiField SimplePager notificationsListPager;
-	@UiField(provided=true) CellTable<UserNotificationPojo> notificationListTable = new CellTable<UserNotificationPojo>();
+	@UiField SimplePager listPager;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
 //	@UiField Button createNotificationButton;
@@ -191,7 +195,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return notificationListTable;
+		return listTable;
 	}
 
 	@Override
@@ -213,7 +217,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	@Override
 	public void clearList() {
-		notificationListTable.setVisibleRangeAndClearData(notificationListTable.getVisibleRange(), true);
+		listTable.setVisibleRangeAndClearData(listTable.getVisibleRange(), true);
 	}
 
 	@Override
@@ -245,10 +249,10 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	}
 
 	@Override
-	public void setNotifications(List<UserNotificationPojo> services) {
-		this.serviceList = services;
-		this.initializeNotificationListTable();
-		notificationsListPager.setDisplay(notificationListTable);
+	public void setNotifications(List<UserNotificationPojo> pojos) {
+		this.pojoList = pojos;
+		this.initializeListTable();
+		listPager.setDisplay(listTable);
 	}
 
 	@Override
@@ -256,23 +260,23 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		dataProvider.getList().remove(service);
 	}
 
-	private Widget initializeNotificationListTable() {
+	private Widget initializeListTable() {
 		GWT.log("initializing service list table...");
-		notificationListTable.setTableLayoutFixed(false);
-		notificationListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		listTable.setTableLayoutFixed(false);
+		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		notificationListTable.setVisibleRange(0, 5);
+		listTable.setVisibleRange(0, 5);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<UserNotificationPojo>();
-		dataProvider.addDataDisplay(notificationListTable);
+		dataProvider.addDataDisplay(listTable);
 		dataProvider.getList().clear();
-		dataProvider.getList().addAll(this.serviceList);
+		dataProvider.getList().addAll(this.pojoList);
 		
 		selectionModel = 
 	    	new MultiSelectionModel<UserNotificationPojo>(UserNotificationPojo.KEY_PROVIDER);
-		notificationListTable.setSelectionModel(selectionModel);
+		listTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
@@ -284,27 +288,28 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	    ListHandler<UserNotificationPojo> sortHandler = 
 	    	new ListHandler<UserNotificationPojo>(dataProvider.getList());
-	    notificationListTable.addColumnSortHandler(sortHandler);
+	    listTable.addColumnSortHandler(sortHandler);
 
-	    if (notificationListTable.getColumnCount() == 0) {
-		    initNotificationListTableColumns(sortHandler);
+	    if (listTable.getColumnCount() == 0) {
+		    initListTableColumns(sortHandler);
 	    }
 		
-		return notificationListTable;
+		return listTable;
 	}
-	private void initNotificationListTableColumns(ListHandler<UserNotificationPojo> sortHandler) {
-		GWT.log("initializing VPC list table columns...");
+	private void initListTableColumns(ListHandler<UserNotificationPojo> sortHandler) {
+		GWT.log("initializing User Notification list table columns...");
+		GWT.log("there are " + sortHandler.getList().size() + " user notifications in the list");
 		
-	    Column<UserNotificationPojo, Boolean> checkColumn = new Column<UserNotificationPojo, Boolean>(
-		        new CheckboxCell(true, false)) {
-		      @Override
-		      public Boolean getValue(UserNotificationPojo object) {
-		        // Get the value from the selection model.
-		        return selectionModel.isSelected(object);
-		      }
-		    };
-		    notificationListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-		    notificationListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+		Column<UserNotificationPojo, Boolean> checkColumn = new Column<UserNotificationPojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(UserNotificationPojo object) {
+				// Get the value from the selection model.
+				return selectionModel.isSelected(object);
+			}
+		};
+		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		// Notification id column
 		Column<UserNotificationPojo, String> notificationIdColumn = 
@@ -315,20 +320,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				return object.getUserNotificationId();
 			}
 		};
-		notificationIdColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
-	    	@Override
-	    	public void update(int index, UserNotificationPojo object, String value) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
-	    	}
-	    });
 		notificationIdColumn.setSortable(true);
 		sortHandler.setComparator(notificationIdColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getUserNotificationId().compareTo(o2.getUserNotificationId());
 			}
 		});
+		notificationIdColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		notificationIdColumn.setCellStyleNames("productAnchor");
-		notificationListTable.addColumn(notificationIdColumn, "Notification ID");
+		listTable.addColumn(notificationIdColumn, "Notification ID");
 
 		// Type column
 		Column<UserNotificationPojo, String> typeColumn = 
@@ -339,20 +344,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				return object.getType();
 			}
 		};
-		typeColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
-	    	@Override
-	    	public void update(int index, UserNotificationPojo object, String value) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
-	    	}
-	    });
 		typeColumn.setSortable(true);
 		sortHandler.setComparator(typeColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getType().compareTo(o2.getType());
 			}
 		});
+		typeColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		typeColumn.setCellStyleNames("productAnchor");
-		notificationListTable.addColumn(typeColumn, "Type");
+		listTable.addColumn(typeColumn, "Type");
 		
 		// Priority column
 		Column<UserNotificationPojo, String> priorityColumn = 
@@ -363,20 +368,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				return object.getPriority();
 			}
 		};
-		priorityColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
-	    	@Override
-	    	public void update(int index, UserNotificationPojo object, String value) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
-	    	}
-	    });
 		priorityColumn.setSortable(true);
 		sortHandler.setComparator(priorityColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getPriority().compareTo(o2.getPriority());
 			}
 		});
+		priorityColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		priorityColumn.setCellStyleNames("productAnchor");
-		notificationListTable.addColumn(priorityColumn, "Priority");
+		listTable.addColumn(priorityColumn, "Priority");
 		
 		// Subject column
 		Column<UserNotificationPojo, String> subjectColumn = 
@@ -387,20 +392,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				return object.getSubject();
 			}
 		};
-		subjectColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
-	    	@Override
-	    	public void update(int index, UserNotificationPojo object, String value) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
-	    	}
-	    });
 		subjectColumn.setSortable(true);
 		sortHandler.setComparator(subjectColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getSubject().compareTo(o2.getSubject());
 			}
 		});
+		subjectColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		subjectColumn.setCellStyleNames("productAnchor");
-		notificationListTable.addColumn(subjectColumn, "Subject");
+		listTable.addColumn(subjectColumn, "Subject");
 		
 		// FullText column
 		Column<UserNotificationPojo, String> fullTextColumn = 
@@ -411,20 +416,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				return object.getText();
 			}
 		};
-		fullTextColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
-	    	@Override
-	    	public void update(int index, UserNotificationPojo object, String value) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
-	    	}
-	    });
 		fullTextColumn.setSortable(true);
 		sortHandler.setComparator(fullTextColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getText().compareTo(o2.getText());
 			}
 		});
+		fullTextColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		fullTextColumn.setCellStyleNames("productAnchor");
-		notificationListTable.addColumn(fullTextColumn, "Text");
+		listTable.addColumn(fullTextColumn, "Text");
 		
 		// create time
 		Column<UserNotificationPojo, String> createTimeColumn = 
@@ -432,33 +437,30 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 			@Override
 			public String getValue(UserNotificationPojo object) {
-				if (object.getCreateTime() != null) {
-					return dateFormat.format(object.getCreateTime());
-				}
-				else {
-					return "No Info";
-				}
+				Date createTime = object.getCreateTime();
+				return createTime != null ? dateFormat.format(createTime) : "Unknown";
 			}
 		};
+		createTimeColumn.setSortable(true);
+		sortHandler.setComparator(createTimeColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				GWT.log("user notification create time sort handler...");
+				Date c1 = o1.getCreateTime();
+				Date c2 = o2.getCreateTime();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
 		createTimeColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
 	    	@Override
 	    	public void update(int index, UserNotificationPojo object, String value) {
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		createTimeColumn.setSortable(true);
-		sortHandler.setComparator(createTimeColumn, new Comparator<UserNotificationPojo>() {
-			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
-				if (o1.getCreateTime() != null && o2.getCreateTime() != null) {
-					return o1.getCreateTime().compareTo(o2.getCreateTime());
-				}
-				else {
-					return 0;
-				}
-			}
-		});
 		createTimeColumn.setCellStyleNames("productAnchor");
-		notificationListTable.addColumn(createTimeColumn, "Create Time");
+		listTable.addColumn(createTimeColumn, "Create Time");
 
 		// read time
 		Column<UserNotificationPojo, String> readTimeColumn = 
@@ -474,25 +476,25 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				}
 			}
 		};
+		readTimeColumn.setSortable(true);
+		sortHandler.setComparator(readTimeColumn, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				Date c1 = o1.getReadDateTime();
+				Date c2 = o2.getReadDateTime();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
 		readTimeColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
 	    	@Override
 	    	public void update(int index, UserNotificationPojo object, String value) {
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		readTimeColumn.setSortable(true);
-		sortHandler.setComparator(readTimeColumn, new Comparator<UserNotificationPojo>() {
-			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
-				if (o1.getReadDateTime() != null && o2.getReadDateTime() != null) {
-					return o1.getReadDateTime().compareTo(o2.getReadDateTime());
-				}
-				else {
-					return 0;
-				}
-			}
-		});
 		readTimeColumn.setCellStyleNames("productAnchor");
-		notificationListTable.addColumn(readTimeColumn, "Read Time");
+		listTable.addColumn(readTimeColumn, "Read Time");
 	}
 
 	@Override

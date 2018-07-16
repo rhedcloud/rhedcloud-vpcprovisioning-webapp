@@ -8,22 +8,6 @@ import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class AccountNotificationPojo extends SharedObject implements IsSerializable, Comparable<AccountNotificationPojo> {
-	/*
-		<!ELEMENT AccountNotification (
-			AccountNotificationId?, 
-			AccountId, 
-			Type, 
-			Priority, 
-			Subject, 
-			Text, 
-			ReferenceId?, 
-			Annotation*, 
-			CreateUser, 
-			CreateDatetime, 
-			LastUpdateUser?, 
-			LastUpdateDatetime?)>
-	 */
-
 	public static final ProvidesKey<AccountNotificationPojo> KEY_PROVIDER = new ProvidesKey<AccountNotificationPojo>() {
 		@Override
 		public Object getKey(AccountNotificationPojo item) {

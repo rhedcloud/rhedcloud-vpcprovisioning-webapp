@@ -108,7 +108,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 
 	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
 	     public CellTable.Style cellTableStyle();
-	 }
+	}
 	
 	@UiHandler ("firewallRuleTabPanel") 
 	void tabSelected(SelectionEvent<Integer> e) {

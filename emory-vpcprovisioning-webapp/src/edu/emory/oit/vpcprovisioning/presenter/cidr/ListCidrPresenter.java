@@ -106,9 +106,6 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
-				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("CIDRs");
 
@@ -120,7 +117,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				getView().setUserLoggedIn(userLoggedIn);
 				getView().initPage();
 
-				setCidrSummaryList(Collections.<CidrSummaryPojo> emptyList());
+//				setCidrSummaryList(Collections.<CidrSummaryPojo> emptyList());
 
 				// Request the CIDR list now.
 				refreshList(userLoggedIn);

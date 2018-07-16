@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -19,8 +18,6 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -85,9 +82,14 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	List<AccountNotificationPojo> pojoList = new java.util.ArrayList<AccountNotificationPojo>();
 	PopupPanel actionsPopup = new PopupPanel(true);
 
+	public interface MyCellTableResources extends CellTable.Resources {
+
+	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+	     public CellTable.Style cellTableStyle();
+	}
 	@UiField VerticalPanel notificationListPanel;
 	@UiField SimplePager listPager;
-	@UiField(provided=true) CellTable<AccountNotificationPojo> listTable = new CellTable<AccountNotificationPojo>();
+	@UiField(provided=true) CellTable<AccountNotificationPojo> listTable = new CellTable<AccountNotificationPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 //	@UiField Button actionsButton;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -935,26 +937,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		return listTable;
 	}
 	private void initListTableColumns(ListHandler<AccountNotificationPojo> sortHandler) {
-		GWT.log("initializing VPC list table columns...");
+		GWT.log("initializing account notification list table columns...");
+		GWT.log("there are " + sortHandler.getList().size() + " user notifications in the list");
 
-//		Column<AccountNotificationPojo, Boolean> checkColumn = new Column<AccountNotificationPojo, Boolean>(
-//				new CheckboxCell(true, false)) {
-//			@Override
-//			public Boolean getValue(AccountNotificationPojo object) {
-//				// Get the value from the selection model.
-//				return selectionModel.isSelected(object);
-//			}
-//		};
-//		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-//		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
-
-		/*
-		HTML typeHeader = new HTML("<b>Type</b>");
-		HTML priorityHeader = new HTML("<b>Priority<b>");
-		HTML subjectHeader = new HTML("<b>Subject</b>");
-		HTML createTimeHeader = new HTML("<b>Create Time</b>");
-		HTML updatedHeader = new HTML("<b>Updated Time</b>");
-		 */
 		// Notification id column
 		Column<AccountNotificationPojo, String> typeColumn = 
 				new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {
@@ -1038,6 +1023,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		createTime.setSortable(true);
 		sortHandler.setComparator(createTime, new Comparator<AccountNotificationPojo>() {
 			public int compare(AccountNotificationPojo o1, AccountNotificationPojo o2) {
+				GWT.log("account notification create time sort handler...");
 				Date c1 = o1.getCreateTime();
 				Date c2 = o2.getCreateTime();
 				if (c1 == null || c2 == null) {

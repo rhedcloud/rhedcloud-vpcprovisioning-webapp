@@ -91,8 +91,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				GWT.log("presenter, emptying Elastic IP Assignment list.");
-				setElasticIpAssignmentList(Collections.<ElasticIpAssignmentPojo> emptyList());
+//				setElasticIpAssignmentList(Collections.<ElasticIpAssignmentPojo> emptyList());
 
 				// Request the cidr assignment list now.
 				refreshList(userLoggedIn);

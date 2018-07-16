@@ -92,9 +92,6 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
-				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPCPs");
 
@@ -104,7 +101,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setVpcpList(Collections.<VpcpPojo> emptyList());
+//				setVpcpList(Collections.<VpcpPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);

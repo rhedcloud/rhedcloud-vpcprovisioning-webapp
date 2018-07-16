@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -49,6 +50,12 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 //	@UiField Button clearFilterButton;
 //	@UiField TextBox centralAdminIdTB;
 
+	public interface MyCellTableResources extends CellTable.Resources {
+
+	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+	     public CellTable.Style cellTableStyle();
+	}
+	
 	private static DesktopListCentralAdminUiBinder uiBinder = GWT.create(DesktopListCentralAdminUiBinder.class);
 
 	interface DesktopListCentralAdminUiBinder extends UiBinder<Widget, DesktopListCentralAdmin> {

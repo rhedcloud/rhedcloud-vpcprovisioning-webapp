@@ -96,9 +96,6 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 
-				// Add a handler to the 'add' button in the shell.
-//				clientFactory.getShell().setAddButtonVisible(true);
-//				clientFactory.getShell().setBackButtonVisible(false);
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPCs");
 
@@ -108,7 +105,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-				setVpcList(Collections.<VpcPojo> emptyList());
+//				setVpcList(Collections.<VpcPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);

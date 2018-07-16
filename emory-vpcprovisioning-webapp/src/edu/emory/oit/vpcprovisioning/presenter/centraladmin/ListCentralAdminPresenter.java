@@ -118,7 +118,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 
 				getView().setUserLoggedIn(userLoggedIn);
 				getView().initPage();
-				setCentralAdminList(Collections.<RoleAssignmentSummaryPojo> emptyList());
+//				setCentralAdminList(Collections.<RoleAssignmentSummaryPojo> emptyList());
 
 				// Request the account list now.
 				refreshList(userLoggedIn);

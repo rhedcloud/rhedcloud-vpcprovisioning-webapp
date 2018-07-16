@@ -12,6 +12,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,12 +34,14 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification.MyCellTableResources;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrAssignmentView {
 	Presenter presenter;
@@ -52,10 +55,16 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 	@UiField SimplePager cidrAssignmentSummaryListPager;
 	@UiField Button addCidrAssignmentButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<CidrAssignmentSummaryPojo> cidrAssignmentSummaryListTable = new CellTable<CidrAssignmentSummaryPojo>();
+	@UiField(provided=true) CellTable<CidrAssignmentSummaryPojo> cidrAssignmentSummaryListTable = new CellTable<CidrAssignmentSummaryPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel cidrAssignmentSummaryListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 
+	public interface MyCellTableResources extends CellTable.Resources {
+
+	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+	     public CellTable.Style cellTableStyle();
+	}
+	
 	private static DesktopListCidrAssignmentUiBinder uiBinder = GWT.create(DesktopListCidrAssignmentUiBinder.class);
 
 	interface DesktopListCidrAssignmentUiBinder extends UiBinder<Widget, DesktopListCidrAssignment> {
