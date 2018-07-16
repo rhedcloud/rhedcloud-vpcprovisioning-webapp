@@ -123,7 +123,7 @@ public class AccountNotificationPojo extends SharedObject implements IsSerializa
 		if (c1 == null || c2 == null) {
 			return 0;
 		}
-		return c2.compareTo(c1);
+		return c1.compareTo(c2);
 	}
 
 }
