@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class AccountQueryFilterPojo extends SharedObject implements IsSerializable {
+public class AccountQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter {
 	String accountId;
 	String accountName;
 	// TODO: change to a list of emails (and query spec)?

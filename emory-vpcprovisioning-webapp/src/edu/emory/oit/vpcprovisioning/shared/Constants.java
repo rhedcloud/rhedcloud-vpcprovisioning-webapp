@@ -99,4 +99,10 @@ public class Constants implements IsSerializable {
 	public static final String ACCOUNT = "Account";
 	public static final String MOA_ACCOUNT_NOTIFICATION_QUERY_SPEC = "AccountNotificationQuerySpecification.v1_0";
 	public static final String MOA_ACCOUNT_NOTIFICATION = "AccountNotification.v1_0";
+	public static final String MOA_USER_NOTIFICATION_QUERY_SPEC = "UserNotificationQuerySpecification.v1_0";
+	public static final String MOA_USER_NOTIFICATION = "UserNotification.v1_0";
+	public static final String MOA_USER_PROFILE_QUERY_SPEC = "UserProfileQuerySpecification.v1_0";
+	public static final String MOA_USER_PROFILE = "UserProfile.v1_0";
+	
+	public static final String PROFILE_SETTING_RECEIVE_NOTIFICATIONS = "send e-mail notifications in addition to in-app notifications";
 }

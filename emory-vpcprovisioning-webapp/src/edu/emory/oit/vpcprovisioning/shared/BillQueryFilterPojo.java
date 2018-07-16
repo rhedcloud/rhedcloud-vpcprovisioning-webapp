@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class BillQueryFilterPojo extends SharedObject implements IsSerializable {
+public class BillQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter {
 	/*
 <!ELEMENT BillQuerySpecification (Comparison*, QueryLanguage?,PayerAccountId?, LinkedAccountId?, BillDate?, StartDate?, EndDate?, Type?)>
 	 */

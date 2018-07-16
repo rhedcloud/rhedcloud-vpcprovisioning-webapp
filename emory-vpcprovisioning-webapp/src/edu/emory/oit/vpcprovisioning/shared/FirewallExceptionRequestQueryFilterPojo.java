@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class FirewallExceptionRequestQueryFilterPojo extends SharedObject implements IsSerializable {
+public class FirewallExceptionRequestQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	String systemId;
 	String userNetId;
 	String applicationName;

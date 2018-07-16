@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
@@ -28,7 +29,7 @@
 			<g:Grid cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">General Account Info:</g:Label>
+						<g:Label addStyleNames="{style.mediumLabel}">General Account Info:</g:Label>
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -93,7 +94,7 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 			<g:ScrollPanel>
 				<g:VerticalPanel spacing="8" ui:field="emailsVP" height="100%">
-					<g:Label addStyleNames="{style.heading_label}">Add/remove email(s):</g:Label>
+					<g:Label addStyleNames="{style.mediumLabel}">Add/remove email(s):</g:Label>
 					<g:HorizontalPanel ui:field="addEmailHP" spacing="16">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 							<g:TextBox ui:field="addEmailTF" debugId="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
@@ -108,7 +109,7 @@
 						</g:cell>
 					</g:HorizontalPanel>
 					<g:VerticalPanel spacing="8">
-						<g:Label addStyleNames="{style.heading_label}">e-mail addresses associated to this account:</g:Label>
+						<g:Label addStyleNames="{style.mediumLabel}">e-mail addresses associated to this account:</g:Label>
 						<g:FlexTable ui:field="emailTable" debugId="emailTable" cellSpacing="3" cellPadding="3"/>
 					</g:VerticalPanel>
 				</g:VerticalPanel>
@@ -142,10 +143,10 @@
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
 			<g:HorizontalPanel width="100%">
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="45%">
 					<g:ScrollPanel>
 						<g:VerticalPanel spacing="8" ui:field="adminVP" height="100%">
-							<g:Label addStyleNames="{style.heading_label}">Add/remove Users/Roles:</g:Label>
+							<g:Label addStyleNames="{style.mediumLabel}">Add/remove Users/Roles:</g:Label>
 							<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
 								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 									<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
@@ -156,13 +157,50 @@
 								</g:cell>
 							</g:HorizontalPanel>
 							<g:VerticalPanel spacing="8">
-								<g:Label ui:field="adminLabel" addStyleNames="{style.heading_label}">Users/Roles associated to this AWS Account:</g:Label>
+								<g:Label ui:field="adminLabel" addStyleNames="{style.mediumLabel}">Users/Roles associated to this AWS Account:</g:Label>
 								<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
 							</g:VerticalPanel>
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 				</g:cell>
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="45%">
+					<g:VerticalPanel addStyleNames="{style.statusLabel}" width="100%">
+						<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
+						<!-- 
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+							<g:Grid cellSpacing="12">
+								<g:row>
+									<g:customCell>
+										<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+									</g:customCell>
+								</g:row>
+							</g:Grid>
+						</g:cell>
+						 -->
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+							<g:VerticalPanel ui:field="notificationListPanel" width="100%">
+								<g:Grid>
+									<g:row>
+										<g:customCell>
+											<c:CellTable width="100%" ui:field="listTable" debugId="listTable" title="Existing Accounts"/>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<c:SimplePager ui:field="listPager" debugId="listPager" location="CENTER"/>
+										</g:customCell>
+									</g:row>
+								</g:Grid>
+							</g:VerticalPanel>
+						</g:cell>
+					</g:VerticalPanel>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:cell>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 
+					<!-- 
 					<g:ScrollPanel>
 						<g:VerticalPanel width="100%" spacing="8">
 							<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
@@ -179,9 +217,4 @@
 							<g:VerticalPanel visible="false" addStyleNames="{style.statusLabel}" ui:field="accountNotificationsVP" height="100%"/>
 						</g:VerticalPanel>
 					</g:ScrollPanel>
-				</g:cell>
-			</g:HorizontalPanel>
-		</g:cell>
-	</g:VerticalPanel>
-	</g:ScrollPanel>
-</ui:UiBinder> 
+					 -->

@@ -13,4 +13,20 @@ public class UserProfileQueryResultPojo extends SharedObject implements IsSerial
 		// TODO Auto-generated constructor stub
 	}
 
+	public UserProfileQueryFilterPojo getFilterUsed() {
+		return filterUsed;
+	}
+
+	public void setFilterUsed(UserProfileQueryFilterPojo filterUsed) {
+		this.filterUsed = filterUsed;
+	}
+
+	public List<UserProfilePojo> getResults() {
+		return results;
+	}
+
+	public void setResults(List<UserProfilePojo> results) {
+		this.results = results;
+	}
+
 }

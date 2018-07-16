@@ -4,6 +4,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
 
 public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void setTitle(String title);
@@ -23,4 +24,12 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	
 	void hidePleaseWaitPanel();
 	void showPleaseWaitPanel(String pleaseWaitHTML);
+	void clearNotifications();
+	void setUserProfile(UserProfilePojo profile);
+	UserProfilePojo getUserProfile();
+	
+	void startNotificationTimer();
+	void initializeAwsServiceMap();
+	void initiliizeUserProfile();
+	
 }

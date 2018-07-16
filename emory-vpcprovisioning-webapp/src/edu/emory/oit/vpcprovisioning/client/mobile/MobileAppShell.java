@@ -36,6 +36,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
 
 public class MobileAppShell extends ResizeComposite implements AppShell {
     Logger log=Logger.getLogger(DesktopAppShell.class.getName());
@@ -254,6 +255,42 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clearNotifications() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setUserProfile(UserProfilePojo profile) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public UserProfilePojo getUserProfile() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void startNotificationTimer() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initializeAwsServiceMap() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initiliizeUserProfile() {
 		// TODO Auto-generated method stub
 		
 	}

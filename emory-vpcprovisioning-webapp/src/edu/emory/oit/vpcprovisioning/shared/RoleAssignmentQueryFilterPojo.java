@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSerializable {
+public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	//RoleDN?, IdentityType?, DirectAssignOnly?, UserDN?
 	String roleDN;
 	String identityType;

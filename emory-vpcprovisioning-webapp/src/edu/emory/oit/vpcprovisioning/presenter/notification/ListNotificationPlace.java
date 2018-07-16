@@ -4,6 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 
 public class ListNotificationPlace extends Place {
@@ -16,7 +17,7 @@ public class ListNotificationPlace extends Place {
 	public static class Tokenizer implements PlaceTokenizer<ListNotificationPlace> {
 
 		public ListNotificationPlace getPlace(String token) {
-			return new ListNotificationPlace(true);
+			return new ListNotificationPlace(true, new UserNotificationQueryFilterPojo());
 		}
 
 		public String getToken(ListNotificationPlace place) {
@@ -32,8 +33,9 @@ public class ListNotificationPlace extends Place {
 	 * 
 	 * @param case recordListStale true if the case record list is stale and should be cleared
 	 */
-	public ListNotificationPlace(boolean listStale) {
+	public ListNotificationPlace(boolean listStale, QueryFilter filter) {
 		this.listStale = listStale;
+		this.filter = (UserNotificationQueryFilterPojo) filter;
 	}
 
 	/**

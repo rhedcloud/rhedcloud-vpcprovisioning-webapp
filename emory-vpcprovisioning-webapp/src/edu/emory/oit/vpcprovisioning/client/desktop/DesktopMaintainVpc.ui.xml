@@ -26,6 +26,11 @@
 				<!-- Hide this one when generating -->
 				<g:Grid ui:field="maintainVpcGrid" cellSpacing="8">
 					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.mediumLabel}">Maintain VPC</g:Label>
+				    	</g:customCell>
+					</g:row>
+					<g:row>
 						<g:customCell>
 							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
 						</g:customCell>

@@ -41,6 +41,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	private EventBus eventBus;
 	
 	UserNotificationQueryFilterPojo filter;
+	UserAccountPojo userLoggedIn;
 
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -55,6 +56,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	public ListNotificationPresenter(ClientFactory clientFactory, boolean clearList, UserNotificationQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
+		this.filter = filter;
 		clientFactory.getListNotificationView().setPresenter(this);
 	}
 
@@ -98,7 +100,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 			}
 
 			@Override
-			public void onSuccess(final UserAccountPojo userLoggedIn) {
+			public void onSuccess(final UserAccountPojo user) {
 
 				// Add a handler to the 'add' button in the shell.
 				clientFactory.getShell().setTitle("VPC Provisioning App");
@@ -109,11 +111,12 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 					getView().clearList();
 				}
 
-				getView().setUserLoggedIn(userLoggedIn);
+				getView().setUserLoggedIn(user);
+				userLoggedIn = user;
 				setNotificationList(Collections.<UserNotificationPojo> emptyList());
 
 				// Request the Vpc list now.
-				refreshList(userLoggedIn);
+				refreshList(user);
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -262,7 +265,11 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 			@Override
 			public void onSuccess(UserNotificationPojo result) {
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, selected);
+				if (filter == null) {
+					filter = new UserNotificationQueryFilterPojo();
+					filter.setUserId(userLoggedIn.getPublicId());
+				}
+				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, filter);
 			}
 		};
 		// it's an update

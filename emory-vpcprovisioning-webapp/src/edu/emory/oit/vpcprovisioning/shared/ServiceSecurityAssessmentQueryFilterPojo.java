@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class ServiceSecurityAssessmentQueryFilterPojo extends SharedObject implements IsSerializable {
+public class ServiceSecurityAssessmentQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	/*
 ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskId?, ServiceId?, RiskLevel?)>
 	 */

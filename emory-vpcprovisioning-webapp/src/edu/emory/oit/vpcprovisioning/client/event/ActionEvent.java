@@ -34,6 +34,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
@@ -82,6 +83,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private ServiceGuidelinePojo serviceGuideline;
 	private ServiceTestPlanPojo testPlan;
 	private AccountNotificationPojo accountNotification;
+	private QueryFilter filter;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -196,6 +198,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 			AccountNotificationPojo notification) {
 
 		eventBus.fireEventFromSource(new ActionEvent(account, notification), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, QueryFilter filter) {
+		eventBus.fireEventFromSource(new ActionEvent(filter), sourceName);
 	}
 
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
@@ -349,6 +355,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public ActionEvent(AccountPojo account2, AccountNotificationPojo notification2) {
 		this.account = account2;
 		this.accountNotification = notification2;
+	}
+
+	public ActionEvent(QueryFilter filter) {
+		this.filter = filter;
 	}
 
 	@Override
@@ -513,4 +523,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.accountNotification = accountNotification;
 	}
 
+	public QueryFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(QueryFilter filter) {
+		this.filter = filter;
+	}
 }

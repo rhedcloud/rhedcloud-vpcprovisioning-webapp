@@ -1,8 +1,10 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class AccountNotificationPojo extends SharedObject implements IsSerializable, Comparable<AccountNotificationPojo> {
@@ -22,6 +24,12 @@ public class AccountNotificationPojo extends SharedObject implements IsSerializa
 			LastUpdateDatetime?)>
 	 */
 
+	public static final ProvidesKey<AccountNotificationPojo> KEY_PROVIDER = new ProvidesKey<AccountNotificationPojo>() {
+		@Override
+		public Object getKey(AccountNotificationPojo item) {
+			return item == null ? null : item.getAccountNotificationId();
+		}
+	};
 	String accountNotificationId;
 	String accountId;
 	String type;
@@ -110,7 +118,12 @@ public class AccountNotificationPojo extends SharedObject implements IsSerializa
 
 	@Override
 	public int compareTo(AccountNotificationPojo o) {
-		return o.getAccountNotificationId().compareTo(this.getAccountNotificationId());
+		Date c1 = o.getCreateTime();
+		Date c2 = this.getCreateTime();
+		if (c1 == null || c2 == null) {
+			return 0;
+		}
+		return c2.compareTo(c1);
 	}
 
 }

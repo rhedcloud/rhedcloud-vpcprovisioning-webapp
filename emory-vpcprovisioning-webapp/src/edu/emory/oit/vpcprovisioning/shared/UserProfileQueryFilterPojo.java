@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class UserProfileQueryFilterPojo extends SharedObject implements IsSerializable {
+public class UserProfileQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	/*
 		<!ELEMENT UserProfileQuerySpecification (UserId?, Property*)>	 
 	*/

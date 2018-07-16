@@ -34,6 +34,7 @@ public class UserNotificationPojo extends SharedObject implements IsSerializable
 	boolean read;
 	Date readDateTime;
 	String sentToEmailAddress;
+	UserNotificationPojo baseline;
 	
 	public static final ProvidesKey<UserNotificationPojo> KEY_PROVIDER = new ProvidesKey<UserNotificationPojo>() {
 		@Override
@@ -131,4 +132,11 @@ public class UserNotificationPojo extends SharedObject implements IsSerializable
 		this.sentToEmailAddress = sentToEmailAddress;
 	}
 
+	public UserNotificationPojo getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(UserNotificationPojo baseline) {
+		this.baseline = baseline;
+	}
 }

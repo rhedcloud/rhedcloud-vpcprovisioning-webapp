@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -8,18 +9,25 @@ import java.util.logging.Logger;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -33,6 +41,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.Notification;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
@@ -66,7 +75,13 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryResultPojo;
 
 public class DesktopAppShell extends ResizeComposite implements AppShell {
 
@@ -74,6 +89,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
     ClientFactory clientFactory;
     EventBus eventBus;
     UserAccountPojo userLoggedIn;
+    UserProfilePojo userProfile;
     HashMap<String, List<AWSServicePojo>> awsServices;
     private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -87,56 +103,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		// Create a new timer that checks for notifications
-//	    Timer t = new Timer() {
-//	      @Override
-//	      public void run() {
-//	        AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//			        GWT.log("error checking for notifications...");
-//				}
-//
-//				@Override
-//				public void onSuccess(Void result) {
-//			        GWT.log("checked for notifications...");
-//			        Notification n = new Notification(new HTML("You have notification(s)"));
-//			        n.show(notificationsHTML);
-////			        notificationsHTML.addStyleName("notification");
-////			        notificationsElem.setInnerHTML("<img style=\"watingForWork\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
-////			        notificationsHTML.setHTML(
-////			        	"<img class=\"notification\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>"
-////			        	+ "<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
-//			        notificationsHTML.setHTML(
-//			        		"<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
-//			        esbServiceStatusAnchor.addStyleName("notification");
-//				}
-//	        };
-//	        VpcProvisioningService.Util.getInstance().logMessage("Check for notifications.", callback);
-//	      }
-//	    };
-//
-//	    // Schedule the timer to run once every 10 seconds
-//	    t.scheduleRepeating(10000);
 		
 //		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
-		GWT.log("Desktop shell...need to get Account Maintenance Content");
 		
-		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log("problem getting services..." + caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
-				awsServices = result;
-				GWT.log("got " + result.size() + " categories of services back.");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 
 		HomeView homeView = clientFactory.getHomeView();
 		homeContentContainer.add(homeView);
@@ -221,6 +192,98 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 	    });
 	    
+	    Event.sinkEvents(userNameElem, Event.ONCLICK);
+	    Event.setEventListener(userNameElem, new EventListener() {
+			@Override
+			public void onBrowserEvent(Event event) {
+				if(Event.ONCLICK == event.getTypeInt()) {
+					// TODO: fire event
+//					ActionEvent.fire(eventBus, ActionNames.MAINTAIN_USER_PROFILE);
+					
+					// TEMP:  just display a dialog with the contents of the current user profile
+					final DialogBox db = new DialogBox();
+					db.setText("Maintain User Profile");
+					db.setGlassEnabled(true);
+					db.center();
+//					final MaintainCidrAssignmentPresenter presenter = new MaintainCidrAssignmentPresenter(clientFactory, event.getCidr());
+//					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+//						@Override
+//						public void onClick(ClickEvent event) {
+//							db.hide();
+//						}
+//					});
+//					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+//						@Override
+//						public void onClick(ClickEvent event) {
+//							if (!presenter.getView().hasFieldViolations()) {
+//								db.hide();
+//							}
+//						}
+//					});
+//					presenter.start(eventBus);
+//					db.setWidget(presenter);
+					VerticalPanel vp = new VerticalPanel();
+					vp.setSpacing(8);;
+					Grid g = new Grid(userProfile.getProperties().size() + 1, 2);
+					vp.add(g);
+					HTML keyHeader = new HTML("<b>Profile Setting</b>");
+					g.setWidget(0, 0, keyHeader);
+					HTML valueHeader = new HTML("<b>Value</b>");
+					g.setWidget(0, 1, valueHeader);
+					for (int i=0; i<userProfile.getProperties().size(); i++) {
+						final PropertyPojo prop = userProfile.getProperties().get(i);
+						HTML key = new HTML(prop.getName());
+						String value = prop.getValue();
+						final CheckBox valueCb = new CheckBox();
+						valueCb.setValue(Boolean.parseBoolean(value));
+						valueCb.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								userProfile.updateProperty(prop.getName(), Boolean.toString(valueCb.getValue()));
+							}
+						});
+						g.setWidget(i+1, 0, key);
+						g.setWidget(i+1, 1, valueCb);
+					}
+					HorizontalPanel hp = new HorizontalPanel();
+					hp.setSpacing(8);
+					hp.setWidth("100%");
+					vp.add(hp);
+					vp.setCellHorizontalAlignment(hp, HasHorizontalAlignment.ALIGN_CENTER);
+					
+					Button ok_button = new Button("Save");
+					ok_button.addStyleName("normalButton");
+					ok_button.setWidth("150px");
+					hp.add(ok_button);
+					hp.setCellHorizontalAlignment(ok_button, HasHorizontalAlignment.ALIGN_CENTER);
+					ok_button.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							updateUserProfile(userProfile);
+							db.hide();
+						}
+					});
+					
+					Button cancel_button = new Button("Cancel");
+					cancel_button.addStyleName("normalButton");
+					cancel_button.setWidth("150px");
+					hp.setCellHorizontalAlignment(cancel_button, HasHorizontalAlignment.ALIGN_CENTER);
+					hp.add(cancel_button);
+					cancel_button.addClickHandler(new ClickHandler() {
+						@Override
+						public void onClick(ClickEvent event) {
+							db.hide();
+						}
+					});
+					
+					db.setWidget(vp);
+					db.show();
+					db.center();
+					
+				}
+			}
+	    });
+
 //	    Event.sinkEvents(notificationsElem, Event.ONCLICK);
 //	    Event.setEventListener(notificationsElem, new EventListener() {
 //			@Override
@@ -354,7 +417,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		// add maintain notifications view
 		hideMainTabPanel();
 		showOtherFeaturesPanel();
-		ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
+		UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
+		filter.setUserId(userLoggedIn.getPublicId());
+		ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION, filter);
 	}
 	@UiHandler("esbServiceStatusAnchor")
 	void esbServiceStatusAnchorClick(ClickEvent e) {
@@ -594,6 +659,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		GWT.log("DesktopShell: userLoggedIn is: " + userLoggedIn.getEppn());
 		this.userLoggedIn = userLoggedIn;
 	}
 
@@ -619,5 +685,192 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void clearNotifications() {
+	    notificationsHTML.setHTML(
+	    		"<img class=\"notification\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
+	}
+
+	@Override
+	public void setUserProfile(UserProfilePojo profile) {
+		this.userProfile = profile;
+	}
+
+	@Override
+	public UserProfilePojo getUserProfile() {
+		return this.userProfile;
+	}
+
+	@Override
+	public void startNotificationTimer() {
+		// Create a new timer that checks for notifications
+	    final Timer t = new Timer() {
+	      @Override
+	      public void run() {
+	        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+				@Override
+				public void onFailure(Throwable caught) {
+			        GWT.log("error checking for notifications...");
+				}
+
+				@Override
+				public void onSuccess(Boolean result) {
+			        if (result) {
+				        Notification n = new Notification(new HTML("You have notification(s)"));
+				        n.show(notificationsHTML);
+				        notificationsHTML.setHTML(
+				        		"<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
+				        esbServiceStatusAnchor.addStyleName("notification");
+			        }
+			        else {
+			        	clearNotifications();
+			        }
+				}
+	        };
+			VpcProvisioningService.Util.getInstance().userHasUnreadNotifications(userLoggedIn, callback);
+	      }
+	    };
+
+	    // Schedule the timer to run once every 10 seconds
+	    AsyncCallback<Integer> interval_cb = new AsyncCallback<Integer>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+		        GWT.log("error getting notification check interval and scheduling timer...");
+			}
+
+			@Override
+			public void onSuccess(Integer result) {
+			    t.scheduleRepeating(result);
+			}
+	    	
+	    };
+	    VpcProvisioningService.Util.getInstance().getNotificationCheckIntervalMillis(interval_cb);
+	}
+
+	@Override
+	public void initializeAwsServiceMap() {
+		GWT.log("Desktop shell...need to get Account Maintenance Content");
+		
+		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("problem getting services..." + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
+				awsServices = result;
+				GWT.log("got " + result.size() + " categories of services back.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+	}
+
+	@Override
+	public void initiliizeUserProfile() {
+		AsyncCallback<UserProfileQueryResultPojo> up_callback = new AsyncCallback<UserProfileQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception retrieving user profile", caught);
+				showMessageToUser("There was an exception on the " +
+						"server retrieving your user profile.  Processing can continue.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(final UserProfileQueryResultPojo result) {
+				if (result == null || result.getResults().size() == 0) {
+					// create a default profile
+					AsyncCallback<UserProfilePojo> create_profile_cb = new AsyncCallback<UserProfilePojo>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							GWT.log("Exception retrieving user profile", caught);
+							showMessageToUser("There was an exception on the " +
+									"server saving your user profile.  Processing can continue.  Message " +
+									"from server is: " + caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(UserProfilePojo profile) {
+							// set the user profile object on this page
+							GWT.log("Created a new user profile with default settings");
+							
+							// have to go get it again to get the baseline set
+							AsyncCallback<UserProfileQueryResultPojo> up_callback2 = new AsyncCallback<UserProfileQueryResultPojo>() {
+								@Override
+								public void onFailure(Throwable caught) {
+									GWT.log("Exception retrieving user profile", caught);
+									showMessageToUser("There was an exception on the " +
+											"server retrieving your user profile.  Processing can continue.  Message " +
+											"from server is: " + caught.getMessage());
+								}
+
+								@Override
+								public void onSuccess(final UserProfileQueryResultPojo result2) {
+									setUserProfile(result2.getResults().get(0));
+								}
+							};
+							
+							UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
+							up_filter.setUserId(userLoggedIn.getPublicId());
+							VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback2);
+						}
+					};
+					UserProfilePojo newProfile = new UserProfilePojo();
+					newProfile.setUserId(userLoggedIn.getPublicId());
+					newProfile.setLastLoginTime(new Date());
+					PropertyPojo prop = new PropertyPojo();
+					prop.setName(Constants.PROFILE_SETTING_RECEIVE_NOTIFICATIONS);
+					prop.setValue("true");
+					newProfile.getProperties().add(prop);
+					VpcProvisioningService.Util.getInstance().createUserProfile(newProfile, create_profile_cb);
+				}
+				else {
+					final UserProfilePojo profile = result.getResults().get(0);
+					profile.setLastLoginTime(new Date());
+					updateUserProfile(profile);
+				}
+			}
+		};
+		UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
+		up_filter.setUserId(userLoggedIn.getPublicId());
+		VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback);
+	}
+	private void updateUserProfile(UserProfilePojo profile) {
+		// update user profile
+		AsyncCallback<UserProfilePojo> update_profile_cb = new AsyncCallback<UserProfilePojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(UserProfilePojo updated_profile) {
+				// have to go get it again to get the baseline set
+				AsyncCallback<UserProfileQueryResultPojo> up_callback2 = new AsyncCallback<UserProfileQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("Exception retrieving user profile", caught);
+						showMessageToUser("There was an exception on the " +
+								"server retrieving your user profile.  Processing can continue.  Message " +
+								"from server is: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(final UserProfileQueryResultPojo result2) {
+						setUserProfile(result2.getResults().get(0));
+					}
+				};
+				
+				UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
+				up_filter.setUserId(userLoggedIn.getPublicId());
+				VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback2);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().updateUserProfile(profile, update_profile_cb);
 	}
 }

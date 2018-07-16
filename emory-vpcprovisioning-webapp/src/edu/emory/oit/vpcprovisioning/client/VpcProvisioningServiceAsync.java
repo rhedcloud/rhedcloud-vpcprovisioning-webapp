@@ -219,7 +219,9 @@ public interface VpcProvisioningServiceAsync {
 	void createUserNotification(UserNotificationPojo notification, AsyncCallback<UserNotificationPojo> callback);
 	void updateUserNotification(UserNotificationPojo notification, AsyncCallback<UserNotificationPojo> callback);
 	void deleteUserNotification(UserNotificationPojo notification, AsyncCallback<Void> callback);
-	
+	void userHasUnreadNotifications(UserAccountPojo user, AsyncCallback<Boolean> callback);
+	void getNotificationCheckIntervalMillis(AsyncCallback<Integer> callback);
+
 	// account notifications
 	void getAccountNotificationsForFilter(AccountNotificationQueryFilterPojo filter, AsyncCallback<AccountNotificationQueryResultPojo> callback);
 	void createAccountNotification(AccountNotificationPojo notification, AsyncCallback<AccountNotificationPojo> callback);

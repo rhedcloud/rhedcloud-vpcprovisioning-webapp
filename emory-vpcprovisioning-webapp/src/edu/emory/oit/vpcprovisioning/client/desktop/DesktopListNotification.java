@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -36,6 +38,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
@@ -75,7 +78,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(3, 1);
+	    Grid grid = new Grid(2, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -109,32 +112,32 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		});
 		grid.setWidget(0, 0, viewAnchor);
 
-		Anchor deleteAnchor = new Anchor("Delete Notification(s)");
-		deleteAnchor.addStyleName("productAnchor");
-		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deleteAnchor.setTitle("Delete selected Notification(s)");
-		deleteAnchor.ensureDebugId(deleteAnchor.getText());
-		deleteAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				if (selectionModel.getSelectedSet().size() == 0) {
-					showMessageToUser("Please select an item from the list");
-					return;
-				}
-				Iterator<UserNotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
-				while (nIter.hasNext()) {
-					UserNotificationPojo m = nIter.next();
-					if (m != null) {
-						presenter.deleteNotification(m);
-					}
-					else {
-						showMessageToUser("Please select an item from the list");
-					}
-				}
-			}
-		});
-		grid.setWidget(1, 0, deleteAnchor);
+//		Anchor deleteAnchor = new Anchor("Delete Notification(s)");
+//		deleteAnchor.addStyleName("productAnchor");
+//		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		deleteAnchor.setTitle("Delete selected Notification(s)");
+//		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+//		deleteAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				if (selectionModel.getSelectedSet().size() == 0) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				Iterator<UserNotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
+//				while (nIter.hasNext()) {
+//					UserNotificationPojo m = nIter.next();
+//					if (m != null) {
+//						presenter.deleteNotification(m);
+//					}
+//					else {
+//						showMessageToUser("Please select an item from the list");
+//					}
+//				}
+//			}
+//		});
+//		grid.setWidget(1, 0, deleteAnchor);
 
 		Anchor markAnchor = new Anchor("Mark as read");
 		markAnchor.addStyleName("productAnchor");
@@ -164,7 +167,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				}
 			}
 		});
-		grid.setWidget(2, 0, markAnchor);
+		grid.setWidget(1, 0, markAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -305,92 +308,127 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 		// Notification id column
 		Column<UserNotificationPojo, String> notificationIdColumn = 
-			new Column<UserNotificationPojo, String> (new TextCell()) {
+			new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
 			
 			@Override
 			public String getValue(UserNotificationPojo object) {
 				return object.getUserNotificationId();
 			}
 		};
+		notificationIdColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		notificationIdColumn.setSortable(true);
 		sortHandler.setComparator(notificationIdColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getUserNotificationId().compareTo(o2.getUserNotificationId());
 			}
 		});
+		notificationIdColumn.setCellStyleNames("productAnchor");
 		notificationListTable.addColumn(notificationIdColumn, "Notification ID");
 
 		// Type column
 		Column<UserNotificationPojo, String> typeColumn = 
-			new Column<UserNotificationPojo, String> (new TextCell()) {
+			new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
 			
 			@Override
 			public String getValue(UserNotificationPojo object) {
 				return object.getType();
 			}
 		};
+		typeColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		typeColumn.setSortable(true);
 		sortHandler.setComparator(typeColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getType().compareTo(o2.getType());
 			}
 		});
+		typeColumn.setCellStyleNames("productAnchor");
 		notificationListTable.addColumn(typeColumn, "Type");
 		
 		// Priority column
 		Column<UserNotificationPojo, String> priorityColumn = 
-			new Column<UserNotificationPojo, String> (new TextCell()) {
+			new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
 			
 			@Override
 			public String getValue(UserNotificationPojo object) {
 				return object.getPriority();
 			}
 		};
+		priorityColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		priorityColumn.setSortable(true);
 		sortHandler.setComparator(priorityColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getPriority().compareTo(o2.getPriority());
 			}
 		});
+		priorityColumn.setCellStyleNames("productAnchor");
 		notificationListTable.addColumn(priorityColumn, "Priority");
 		
 		// Subject column
 		Column<UserNotificationPojo, String> subjectColumn = 
-			new Column<UserNotificationPojo, String> (new TextCell()) {
+			new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
 			
 			@Override
 			public String getValue(UserNotificationPojo object) {
 				return object.getSubject();
 			}
 		};
+		subjectColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		subjectColumn.setSortable(true);
 		sortHandler.setComparator(subjectColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getSubject().compareTo(o2.getSubject());
 			}
 		});
+		subjectColumn.setCellStyleNames("productAnchor");
 		notificationListTable.addColumn(subjectColumn, "Subject");
 		
 		// FullText column
 		Column<UserNotificationPojo, String> fullTextColumn = 
-			new Column<UserNotificationPojo, String> (new TextCell()) {
+			new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
 			
 			@Override
 			public String getValue(UserNotificationPojo object) {
 				return object.getText();
 			}
 		};
+		fullTextColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		fullTextColumn.setSortable(true);
 		sortHandler.setComparator(fullTextColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
 				return o1.getText().compareTo(o2.getText());
 			}
 		});
+		fullTextColumn.setCellStyleNames("productAnchor");
 		notificationListTable.addColumn(fullTextColumn, "Text");
 		
 		// create time
 		Column<UserNotificationPojo, String> createTimeColumn = 
-				new Column<UserNotificationPojo, String> (new TextCell()) {
+				new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(UserNotificationPojo object) {
@@ -402,6 +440,12 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				}
 			}
 		};
+		createTimeColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		createTimeColumn.setSortable(true);
 		sortHandler.setComparator(createTimeColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
@@ -413,15 +457,16 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				}
 			}
 		});
+		createTimeColumn.setCellStyleNames("productAnchor");
 		notificationListTable.addColumn(createTimeColumn, "Create Time");
 
 		// read time
 		Column<UserNotificationPojo, String> readTimeColumn = 
-				new Column<UserNotificationPojo, String> (new TextCell()) {
+				new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(UserNotificationPojo object) {
-				if (object.getCreateTime() != null) {
+				if (object.getReadDateTime() != null) {
 					return dateFormat.format(object.getReadDateTime());
 				}
 				else {
@@ -429,6 +474,12 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				}
 			}
 		};
+		readTimeColumn.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
+	    	}
+	    });
 		readTimeColumn.setSortable(true);
 		sortHandler.setComparator(readTimeColumn, new Comparator<UserNotificationPojo>() {
 			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
@@ -440,6 +491,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				}
 			}
 		});
+		readTimeColumn.setCellStyleNames("productAnchor");
 		notificationListTable.addColumn(readTimeColumn, "Read Time");
 	}
 

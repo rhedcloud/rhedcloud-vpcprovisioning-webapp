@@ -62,6 +62,8 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
@@ -70,6 +72,8 @@ import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.UserNotificationQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
@@ -360,7 +364,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		HttpServletRequest request = this.getThreadLocalRequest();
 		String clientIp = request.getRemoteAddr();
 		try {
-			UserAccountPojo user = this.getUserLoggedIn();
+//			UserAccountPojo user = this.getUserLoggedIn();
+			UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+					Constants.USER_ACCOUNT + getCurrentSessionId());
+			if (user == null) {
+				// we have an issue...
+			}
 			return user.getEppn() + "/" + clientIp;
 		}
 		catch (RpcException e) {
@@ -4607,61 +4616,157 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		UserNotificationQueryResultPojo result = new UserNotificationQueryResultPojo();
+		List<UserNotificationPojo> pojos = new java.util.ArrayList<UserNotificationPojo>();
+		try {
+			UserNotificationQuerySpecification queryObject = (UserNotificationQuerySpecification) getObject(Constants.MOA_USER_NOTIFICATION_QUERY_SPEC);
+			UserNotification actionable = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+
+			if (filter != null) {
+				queryObject.setUserId(filter.getUserId());
+				queryObject.setPriority(filter.getPriority());
+				queryObject.setType(filter.getType());
+				queryObject.setUserNotificationId(filter.getUserNotificationId());
+				queryObject.setAccountId(filter.getAccountId());
+				queryObject.setAccountNotificationId(filter.getAccountNotificationId());
+				if (filter.getReadStr() != null) {
+					queryObject.setRead(this.toStringFromBoolean(filter.isRead()));
+				}
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<UserNotification> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getUserNotificationsForFilter] got " + moas.size() + 
+					" UserNotifications from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
+			for (UserNotification moa : moas) {
+				UserNotificationPojo pojo = new UserNotificationPojo();
+				UserNotificationPojo baseline = new UserNotificationPojo();
+				this.populateUserNotificationPojo(moa, pojo);
+				this.populateUserNotificationPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
 		
-		if (notificationList.isEmpty()) {
-			UserNotificationPojo n1 = new UserNotificationPojo();
-			n1.setUserNotificationId("1");
-			n1.setText("Simple notification.");
-			n1.setCreateTime(new java.util.Date());
-			notificationList.add(n1);
-			UserNotificationPojo n2 = new UserNotificationPojo();
-			n2.setUserNotificationId("2");
-			n2.setText("Simple notification.");
-			n2.setCreateTime(new java.util.Date());
-			notificationList.add(n2);
-			UserNotificationPojo n3 = new UserNotificationPojo();
-			n3.setUserNotificationId("3");
-			n3.setText("Simple notification.");
-			notificationList.add(n3);
-			UserNotificationPojo n4 = new UserNotificationPojo();
-			n4.setUserNotificationId("4");
-			n4.setText("Simple notification.");
-			n4.setCreateTime(new java.util.Date());
-			notificationList.add(n4);
-			UserNotificationPojo n5 = new UserNotificationPojo();
-			n5.setUserNotificationId("5");
-			n5.setText("Simple notification.");
-			n5.setCreateTime(new java.util.Date());
-			notificationList.add(n5);
-			UserNotificationPojo n6 = new UserNotificationPojo();
-			n6.setUserNotificationId("6");
-			n6.setText("Simple notification.");
-			n6.setCreateTime(new java.util.Date());
-			notificationList.add(n6);
-			UserNotificationPojo n7 = new UserNotificationPojo();
-			n7.setUserNotificationId("7");
-			n7.setText("Simple notification.");
-			notificationList.add(n7);
-			UserNotificationPojo n8 = new UserNotificationPojo();
-			n8.setUserNotificationId("8");
-			n8.setText("Simple notification.");
-			n8.setCreateTime(new java.util.Date());
-			notificationList.add(n8);
-			UserNotificationPojo n9 = new UserNotificationPojo();
-			n9.setUserNotificationId("9");
-			n9.setText("Simple notification.");
-			n9.setCreateTime(new java.util.Date());
-			notificationList.add(n9);
-			UserNotificationPojo n10 = new UserNotificationPojo();
-			n10.setUserNotificationId("10");
-			n10.setText("Simple notification.");
-			notificationList.add(n10);
+//		if (notificationList.isEmpty()) {
+//			UserNotificationPojo n1 = new UserNotificationPojo();
+//			n1.setUserNotificationId("1");
+//			n1.setText("Simple notification.");
+//			n1.setCreateTime(new java.util.Date());
+//			notificationList.add(n1);
+//			UserNotificationPojo n2 = new UserNotificationPojo();
+//			n2.setUserNotificationId("2");
+//			n2.setText("Simple notification.");
+//			n2.setCreateTime(new java.util.Date());
+//			notificationList.add(n2);
+//			UserNotificationPojo n3 = new UserNotificationPojo();
+//			n3.setUserNotificationId("3");
+//			n3.setText("Simple notification.");
+//			notificationList.add(n3);
+//			UserNotificationPojo n4 = new UserNotificationPojo();
+//			n4.setUserNotificationId("4");
+//			n4.setText("Simple notification.");
+//			n4.setCreateTime(new java.util.Date());
+//			notificationList.add(n4);
+//			UserNotificationPojo n5 = new UserNotificationPojo();
+//			n5.setUserNotificationId("5");
+//			n5.setText("Simple notification.");
+//			n5.setCreateTime(new java.util.Date());
+//			notificationList.add(n5);
+//			UserNotificationPojo n6 = new UserNotificationPojo();
+//			n6.setUserNotificationId("6");
+//			n6.setText("Simple notification.");
+//			n6.setCreateTime(new java.util.Date());
+//			notificationList.add(n6);
+//			UserNotificationPojo n7 = new UserNotificationPojo();
+//			n7.setUserNotificationId("7");
+//			n7.setText("Simple notification.");
+//			notificationList.add(n7);
+//			UserNotificationPojo n8 = new UserNotificationPojo();
+//			n8.setUserNotificationId("8");
+//			n8.setText("Simple notification.");
+//			n8.setCreateTime(new java.util.Date());
+//			notificationList.add(n8);
+//			UserNotificationPojo n9 = new UserNotificationPojo();
+//			n9.setUserNotificationId("9");
+//			n9.setText("Simple notification.");
+//			n9.setCreateTime(new java.util.Date());
+//			notificationList.add(n9);
+//			UserNotificationPojo n10 = new UserNotificationPojo();
+//			n10.setUserNotificationId("10");
+//			n10.setText("Simple notification.");
+//			notificationList.add(n10);
+//		}
+		
+//		result.setResults(notificationList);
+//		return result;
+	}
+
+	private void populateUserNotificationPojo(UserNotification moa, UserNotificationPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setUserNotificationId(moa.getUserNotificationId());
+		pojo.setAccountNotificationId(moa.getAccountNotificationId());
+		pojo.setUserId(moa.getUserId());
+		pojo.setType(moa.getType());
+		pojo.setPriority(moa.getPriority());
+		pojo.setSubject(moa.getSubject());
+		pojo.setText(moa.getText());
+		pojo.setRead(this.toBooleanFromString(moa.getRead()));
+		pojo.setSentToEmailAddress(moa.getSentToEmailAddress());
+		if (moa.getReadDatetime() != null) {
+			pojo.setReadDateTime(this.toDateFromDatetime(moa.getReadDatetime()));
 		}
 		
-		result.setResults(notificationList);
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	private void populateUserNotificationMoa(UserNotificationPojo pojo, UserNotification moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+		moa.setUserNotificationId(pojo.getUserNotificationId());
+		moa.setAccountNotificationId(pojo.getAccountNotificationId());
+		moa.setUserId(pojo.getUserId());
+		moa.setType(pojo.getType());
+		moa.setPriority(pojo.getPriority());
+		moa.setSubject(pojo.getSubject());
+		moa.setText(pojo.getText());
+		moa.setRead(this.toStringFromBoolean(pojo.isRead()));
+		moa.setSentToEmailAddress(pojo.getSentToEmailAddress());
+		if (pojo.getReadDateTime() != null) {
+			Datetime dt = new Datetime("ReadDatetime");
+			populateDatetime(dt, pojo.getReadDateTime());
+			moa.setReadDatetime(dt);
+		}
 		
-//		result.setResults(Collections.<NotificationPojo> emptyList());
-		return result;
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@Override
@@ -4672,17 +4777,86 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public UserNotificationPojo updateUserNotification(UserNotificationPojo notification) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+				Constants.USER_ACCOUNT + getCurrentSessionId());
+		notification.setUpdateInfo(user.getPrincipal());
+        try {
+            info("updating UserNotification on the server...");
+            UserNotification newData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+            UserNotification baselineData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+
+            info("populating newData...");
+            populateUserNotificationMoa(notification, newData);
+
+            info("populating baselineData...");
+            populateUserNotificationMoa(notification.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getAWSRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return notification;
 	}
 
 	@Override
 	public void deleteUserNotification(UserNotificationPojo notification) throws RpcException {
 		
-		for (int i=0; i<notificationList.size(); i++) {
-			UserNotificationPojo n = notificationList.get(i);
-			if (n.getUserNotificationId().equalsIgnoreCase(notification.getUserNotificationId())) {
-				notificationList.remove(i);
+		if (!useEsbService) {
+			return;
+		} 
+		else {
+			try {
+				info("deleting UserNotification record on the server...");
+				UserNotification moa = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+				info("populating moa");
+				this.populateUserNotificationMoa(notification, moa);
+
+				
+				info("doing the UserNotification.delete...");
+				this.doDelete(moa, getAWSRequestService());
+				info("UserNotification.delete is complete...");
+
+//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
+				return;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} catch (EnterpriseObjectDeleteException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
 			}
 		}
 	}
@@ -5068,7 +5242,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteFirewallRule(FirewallRulePojo rule) throws RpcException {
-		// TODO: this will be a request to service now (FirewallRuleExceptionRequest)
+		// TODO: this will be a request to service now (FirewallRuleExceptionRequest.Create)
 		FirewallExceptionRequestPojo fer = new FirewallExceptionRequestPojo();
 		// TODO: populate the fer with stuff from the rule passed in.
 		/*
@@ -6534,6 +6708,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			@SuppressWarnings("unchecked")
 			List<AccountNotification> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
+			info("[getAccountNotificationsForFilter] got " + moas.size() + 
+					" UserNotifications from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (AccountNotification moa : moas) {
 				AccountNotificationPojo pojo = new AccountNotificationPojo();
 				AccountNotificationPojo baseline = new AccountNotificationPojo();
@@ -6609,22 +6786,158 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 	}
 
+	@SuppressWarnings("unused")
+	private void populateUserProfileMoa(UserProfilePojo pojo,
+			UserProfile moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+
+		moa.setUserId(pojo.getUserId());
+		Datetime dt = new Datetime("LastLoginDatetime");
+		populateDatetime(dt, pojo.getLastLoginTime());
+		moa.setLastLoginDatetime(dt);
+
+		for (PropertyPojo prop : pojo.getProperties()) {
+			com.amazon.aws.moa.objects.resources.v1_0.Property m_prop = moa.newProperty();
+			m_prop.setKey(prop.getName());
+			m_prop.setValue(prop.getValue());
+			moa.addProperty(m_prop);
+		}
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	@SuppressWarnings({ "unused", "unchecked" })
+	private void populateUserProfilePojo(UserProfile moa,
+			UserProfilePojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+		
+		pojo.setUserId(moa.getUserId());
+		if (moa.getLastLoginDatetime() != null) {
+			pojo.setLastLoginTime(this.toDateFromDatetime(moa.getLastLoginDatetime()));
+		}
+		if (moa.getProperty() != null) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property m_prop : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+				PropertyPojo prop = new PropertyPojo();
+				prop.setName(m_prop.getKey());
+				prop.setValue(m_prop.getValue());
+				pojo.getProperties().add(prop);
+			}
+		}
+
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
 	@Override
 	public UserProfileQueryResultPojo getUserProfilesForFilter(UserProfileQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		UserProfileQueryResultPojo result = new UserProfileQueryResultPojo();
+		List<UserProfilePojo> pojos = new java.util.ArrayList<UserProfilePojo>();
+		try {
+			UserProfileQuerySpecification queryObject = (UserProfileQuerySpecification) getObject(Constants.MOA_USER_PROFILE_QUERY_SPEC);
+			UserProfile actionable = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
+
+			if (filter != null) {
+				queryObject.setUserId(filter.getUserId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<UserProfile> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getUserProfilesForFilter] got " + moas.size() + 
+					" UserProfiles from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
+			for (UserProfile moa : moas) {
+				UserProfilePojo pojo = new UserProfilePojo();
+				UserProfilePojo baseline = new UserProfilePojo();
+				this.populateUserProfilePojo(moa, pojo);
+				this.populateUserProfilePojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
 	}
 
 	@Override
-	public UserProfilePojo createUserProfile(UserProfilePojo notification) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+	public UserProfilePojo createUserProfile(UserProfilePojo profile) throws RpcException {
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+				Constants.USER_ACCOUNT + getCurrentSessionId());
+		profile.setCreateInfo(user.getPrincipal());
+        try {
+            info("creating UserNotification on the server...");
+            UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
+
+            info("populating newData...");
+            populateUserProfileMoa(profile, newData);
+
+            info("doing the update...");
+            doCreate(newData, getAWSRequestService());
+            info("create is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return profile;
 	}
 
 	@Override
-	public UserProfilePojo updateUserProfile(UserProfilePojo notification) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+	public UserProfilePojo updateUserProfile(UserProfilePojo profile) throws RpcException {
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+				Constants.USER_ACCOUNT + getCurrentSessionId());
+		profile.setUpdateInfo(user.getPrincipal());
+        try {
+            info("updating UserNotification on the server...");
+            UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
+            UserProfile baselineData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
+
+            info("populating newData...");
+            populateUserProfileMoa(profile, newData);
+
+            info("populating baselineData...");
+            populateUserProfileMoa(profile.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getAWSRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return profile;
 	}
 
 	@Override
@@ -6702,5 +7015,39 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		types.add("In Progress");
 		types.add("Not Started");
 		return types;
+	}
+
+	@Override
+	public boolean userHasUnreadNotifications(UserAccountPojo user) throws RpcException {
+		if (user == null) {
+			return false;
+		}
+		UserAccountPojo cachedUser = (UserAccountPojo) Cache.getCache().get(
+				Constants.USER_ACCOUNT + getCurrentSessionId());
+		if (cachedUser == null) {
+			return false;
+		}
+
+		UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
+		filter.setUserId(user.getPublicId());
+		filter.setRead(false);
+		UserNotificationQueryResultPojo result = this.getUserNotificationsForFilter(filter);
+		if (result.getResults().size() > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int getNotificationCheckIntervalMillis() throws RpcException {
+		try {
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = generalProps.getProperty("notificationCheckIntervalMillis", "10000");
+			int interval = Integer.parseInt(s_interval);
+			return interval;
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
 	}
 }

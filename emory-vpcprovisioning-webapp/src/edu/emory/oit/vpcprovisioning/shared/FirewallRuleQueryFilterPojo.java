@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class FirewallRuleQueryFilterPojo extends SharedObject implements IsSerializable {
+public class FirewallRuleQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	List<String> tags = new java.util.ArrayList<String>();
 
 	public FirewallRuleQueryFilterPojo() {

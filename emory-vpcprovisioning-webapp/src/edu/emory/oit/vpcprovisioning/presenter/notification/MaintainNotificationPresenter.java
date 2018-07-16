@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainNotificationPresenter extends PresenterBase implements MaintainNotificationView.Presenter {
@@ -21,6 +22,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 	private EventBus eventBus;
 	private String notificationId;
 	private UserNotificationPojo notification;
+	private UserAccountPojo userLoggedIn;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -80,6 +82,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
 				getView().initPage();
 				getView().hidePleaseWaitDialog();
@@ -181,7 +184,10 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 			@Override
 			public void onSuccess(UserNotificationPojo result) {
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, notification);
+//				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, notification);
+				UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
+				filter.setUserId(userLoggedIn.getPublicId());
+				ActionEvent.fire(getEventBus(), ActionNames.NOTIFICATION_SAVED, filter);
 			}
 		};
 		if (!this.isEditing) {

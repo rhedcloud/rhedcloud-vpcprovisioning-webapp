@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class SpeedChartQueryFilterPojo extends SharedObject implements IsSerializable {
+public class SpeedChartQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	List<String> speedChartKeys = new java.util.ArrayList<String>();
 
 	public SpeedChartQueryFilterPojo() {

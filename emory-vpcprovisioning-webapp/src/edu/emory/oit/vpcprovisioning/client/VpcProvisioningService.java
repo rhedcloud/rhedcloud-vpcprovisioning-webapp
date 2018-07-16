@@ -227,6 +227,8 @@ public interface VpcProvisioningService extends RemoteService {
 	UserNotificationPojo createUserNotification(UserNotificationPojo notification) throws RpcException;
 	UserNotificationPojo updateUserNotification(UserNotificationPojo notification) throws RpcException;
 	void deleteUserNotification(UserNotificationPojo notification) throws RpcException;
+	boolean userHasUnreadNotifications(UserAccountPojo user) throws RpcException;
+	int getNotificationCheckIntervalMillis() throws RpcException;
 	
 	// AccountNotifications
 	AccountNotificationQueryResultPojo getAccountNotificationsForFilter(AccountNotificationQueryFilterPojo filter) throws RpcException;

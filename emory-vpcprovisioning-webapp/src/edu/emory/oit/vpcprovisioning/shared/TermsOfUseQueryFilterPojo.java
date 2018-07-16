@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class TermsOfUseQueryFilterPojo extends SharedObject implements IsSerializable {
+public class TermsOfUseQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	/*
 		Comparison*, 
 		QueryLanguage?, 

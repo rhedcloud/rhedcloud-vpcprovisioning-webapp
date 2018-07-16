@@ -65,6 +65,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
+				getView().setUserLoggedIn(user);
 				
 				// cache accounts
 //				AsyncCallback<AccountQueryResultPojo> acct_callback = new AsyncCallback<AccountQueryResultPojo>() {
@@ -131,7 +132,6 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 //				};
 //				VpcProvisioningService.Util.getInstance().logMessage("starting DirectoryPerson cache", log_cb);
 
-				getView().setUserLoggedIn(user);
 				getView().initPage();
 				String linkText = userLoggedIn.getPersonalName().toString() + " (" + userLoggedIn.getPublicId() + ")";
 				clientFactory.getShell().setUserName(linkText);

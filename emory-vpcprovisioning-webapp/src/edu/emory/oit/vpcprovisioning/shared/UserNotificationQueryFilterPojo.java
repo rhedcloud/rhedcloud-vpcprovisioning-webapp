@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class UserNotificationQueryFilterPojo extends SharedObject implements IsSerializable {
+public class UserNotificationQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	/*
 		<!ELEMENT UserNotificationQuerySpecification (
 			Comparison*, 
@@ -24,6 +24,7 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 	String type;
 	String priority;
 	boolean read;
+	String readStr;
 	
 	public UserNotificationQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -81,8 +82,22 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 		return read;
 	}
 
-	public void setRead(boolean read) {
-		this.read = read;
+	public void setRead(boolean viewed) {
+		if (viewed) {
+			this.readStr = "true";
+		}
+		else {
+			this.readStr = "false";
+		}
+		this.read = viewed;
+	}
+
+	public String getReadStr() {
+		return readStr;
+	}
+
+	public void setReadStr(String readStr) {
+		this.readStr = readStr;
 	}
 
 }

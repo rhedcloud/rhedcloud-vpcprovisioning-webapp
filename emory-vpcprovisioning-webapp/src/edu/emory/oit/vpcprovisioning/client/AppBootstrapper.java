@@ -121,13 +121,16 @@ public class AppBootstrapper {
 				shell.hidePleaseWaitDialog();
 				shell.hidePleaseWaitPanel();
 				shell.showMessageToUser("There was an exception on the " +
-						"server retrieving the Accounts you're associated to.  " +
+						"server retrieving the the user logged in.  " +
 						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 				shell.setUserLoggedIn(userLoggedIn);
+				shell.startNotificationTimer();
+				shell.initializeAwsServiceMap();
+				shell.initiliizeUserProfile();
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
@@ -249,7 +252,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
-				placeController.goTo(new ListNotificationPlace(false));
+				placeController.goTo(new ListNotificationPlace(false, event.getFilter()));
 			}
 		});
 		
@@ -778,14 +781,15 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.NOTIFICATION_EDITING_CANCELED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(new ListNotificationPlace(false));
+				placeController.goTo(new ListNotificationPlace(false, event.getFilter()));
 			}
 		});
 
 		ActionEvent.register(eventBus, ActionNames.NOTIFICATION_SAVED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(new ListNotificationPlace(false));
+				shell.clearNotifications();
+				placeController.goTo(new ListNotificationPlace(false, event.getFilter()));
 			}
 		});
 

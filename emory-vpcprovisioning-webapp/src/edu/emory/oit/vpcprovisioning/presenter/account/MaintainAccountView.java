@@ -14,7 +14,9 @@ import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View {
@@ -51,6 +53,9 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentSummaryPojo roleAssignmentSummary);
 		public MaintainAccountView getView();
 
+//		public void selectAccountNotification
+		void saveNotification(AccountNotificationPojo selected);
+		void deleteNotification(AccountNotificationPojo selected);
 	}
 
 	/**
@@ -104,9 +109,13 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void setComplianceClassItems(List<String> complianceClassTypes);
 	void enableAdminMaintenance();
 	void disableAdminMaintenance();
-	void addAccountNotification(int rowNumber, AccountNotificationPojo accountNotification);
-	void initializeAccountNotificationGrid(int rowSize);
-	void clearAccountNotificationList();
+	
+//	void addAccountNotification(int rowNumber, AccountNotificationPojo accountNotification);
+//	void initializeAccountNotificationGrid(int rowSize);
+//	void clearAccountNotificationList();
 	void showWaitForNotificationsDialog(String message);
 	void hidWaitForNotificationsDialog();
+	
+	void setAccountNotifications(List<AccountNotificationPojo> pojos);
+	void removeAccountNotificationFromView(AccountNotificationPojo pojo);
 }

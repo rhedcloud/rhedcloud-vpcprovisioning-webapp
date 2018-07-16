@@ -1,8 +1,12 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,14 +19,19 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -35,6 +44,9 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.SelectionChangeEvent;
 
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
@@ -65,8 +77,18 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	private final DirectoryPersonRpcSuggestOracle ownerIdSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	PopupPanel adminPleaseWaitDialog;
-//	PopupPanel waitForNotificationsDialog;
-    Grid notificationGrid = new Grid(1, 5);
+	PopupPanel waitForNotificationsDialog;
+//    Grid notificationGrid = new Grid(1, 5);
+    
+	private ListDataProvider<AccountNotificationPojo> dataProvider = new ListDataProvider<AccountNotificationPojo>();
+	private MultiSelectionModel<AccountNotificationPojo> selectionModel;
+	List<AccountNotificationPojo> pojoList = new java.util.ArrayList<AccountNotificationPojo>();
+	PopupPanel actionsPopup = new PopupPanel(true);
+
+	@UiField VerticalPanel notificationListPanel;
+	@UiField SimplePager listPager;
+	@UiField(provided=true) CellTable<AccountNotificationPojo> listTable = new CellTable<AccountNotificationPojo>();
+//	@UiField Button actionsButton;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button billSummaryButton;
@@ -97,9 +119,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
 	@UiField VerticalPanel sensitiveDataPanel;
-	@UiField VerticalPanel accountNotificationsVP;
-	@UiField HTML accountNotificationsHeader;
-	@UiField HorizontalPanel waitForNotificationsPopup;
+//	@UiField VerticalPanel accountNotificationsVP;
+//	@UiField HTML accountNotificationsHeader;
+//	@UiField HorizontalPanel waitForNotificationsPopup;
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -774,103 +796,292 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		directoryLookupSB.setEnabled(false);
 	}
 	
-	@Override
-	public void addAccountNotification(int rowNumber, final AccountNotificationPojo accountNotification) {
-		/*
-			Type, 
-			Priority, 
-			Subject, 
-			ReferenceId?, 
-			CreateDatetime, 
-			LastUpdateDatetime?)>
-	 */
-	    accountNotificationsVP.add(notificationGrid);
-
-		HTML type = new HTML(accountNotification.getType());
-		type.addStyleName("accountNotificationText");
-		notificationGrid.setWidget(rowNumber+1, 0, type);
-
-		HTML priority = new HTML (accountNotification.getPriority());
-		priority.addStyleName("accountNotificationText");
-		notificationGrid.setWidget(rowNumber+1, 1, priority);
-
-		Anchor notificationAnchor = new Anchor(accountNotification.getSubject());
-		notificationAnchor.addStyleName("accountNotificationAnchor");
-//		notificationAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		notificationAnchor.setTitle("View/Maintain selected Notification");
-		notificationAnchor.ensureDebugId(accountNotification.getSubject());
-		notificationAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), accountNotification);
-			}
-		});
-//		accountNotificationsVP.add(notificationAnchor);
-		notificationGrid.setWidget(rowNumber+1, 2, notificationAnchor);
-
-		Date createTime = accountNotification.getCreateTime();
-		HTML createDate = new HTML(createTime != null ? dateFormat.format(createTime) : "Unknown");
-		createDate.addStyleName("accountNotificationText");
-		notificationGrid.setWidget(rowNumber+1, 3, createDate);
-
-		Date updateTime = accountNotification.getUpdateTime();
-		HTML updateDate = new HTML(updateTime != null ? dateFormat.format(updateTime) : "Unknown");
-		updateDate.addStyleName("accountNotificationText");
-		notificationGrid.setWidget(rowNumber+1, 4, updateDate);
-	}
+//	@Override
+//	public void addAccountNotification(int rowNumber, final AccountNotificationPojo accountNotification) {
+//	    accountNotificationsVP.add(notificationGrid);
+//
+//		HTML type = new HTML(accountNotification.getType());
+//		type.addStyleName("accountNotificationText");
+//		notificationGrid.setWidget(rowNumber+1, 0, type);
+//
+//		HTML priority = new HTML (accountNotification.getPriority());
+//		priority.addStyleName("accountNotificationText");
+//		notificationGrid.setWidget(rowNumber+1, 1, priority);
+//
+//		Anchor notificationAnchor = new Anchor(accountNotification.getSubject());
+//		notificationAnchor.addStyleName("accountNotificationAnchor");
+////		notificationAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		notificationAnchor.setTitle("View/Maintain selected Notification");
+//		notificationAnchor.ensureDebugId(accountNotification.getSubject());
+//		notificationAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), accountNotification);
+//			}
+//		});
+////		accountNotificationsVP.add(notificationAnchor);
+//		notificationGrid.setWidget(rowNumber+1, 2, notificationAnchor);
+//
+//		Date createTime = accountNotification.getCreateTime();
+//		HTML createDate = new HTML(createTime != null ? dateFormat.format(createTime) : "Unknown");
+//		createDate.addStyleName("accountNotificationText");
+//		notificationGrid.setWidget(rowNumber+1, 3, createDate);
+//
+//		Date updateTime = accountNotification.getUpdateTime();
+//		HTML updateDate = new HTML(updateTime != null ? dateFormat.format(updateTime) : "Unknown");
+//		updateDate.addStyleName("accountNotificationText");
+//		notificationGrid.setWidget(rowNumber+1, 4, updateDate);
+//	}
+//	
+//	@Override
+//	public void clearAccountNotificationList() {
+//		accountNotificationsVP.clear();
+//		accountNotificationsVP.setVisible(false);
+//	}
+//	@Override
+//	public void initializeAccountNotificationGrid(int rowSize) {
+//		notificationGrid.resizeRows(rowSize+1);
+//		notificationGrid.setCellSpacing(8);
+//		
+//		HTML typeHeader = new HTML("<b>Type</b>");
+//		notificationGrid.setWidget(0, 0, typeHeader);
+//		
+//		HTML priorityHeader = new HTML("<b>Priority<b>");
+//		notificationGrid.setWidget(0, 1, priorityHeader);
+//
+//		HTML subjectHeader = new HTML("<b>Subject</b>");
+//		notificationGrid.setWidget(0, 2, subjectHeader);
+//		
+//		HTML createTimeHeader = new HTML("<b>Create Time</b>");
+//		notificationGrid.setWidget(0, 3, createTimeHeader);
+//		
+//		HTML updatedHeader = new HTML("<b>Updated Time</b>");
+//		notificationGrid.setWidget(0, 4, updatedHeader);
+//		accountNotificationsVP.setVisible(true);
+//	}
 	
 	@Override
-	public void clearAccountNotificationList() {
-		accountNotificationsVP.clear();
-		accountNotificationsVP.setVisible(false);
-	}
-	@Override
-	public void initializeAccountNotificationGrid(int rowSize) {
-		notificationGrid.resizeRows(rowSize+1);
-		notificationGrid.setCellSpacing(8);
-		
-		HTML typeHeader = new HTML("<b>Type</b>");
-		notificationGrid.setWidget(0, 0, typeHeader);
-		
-		HTML priorityHeader = new HTML("<b>Priority<b>");
-		notificationGrid.setWidget(0, 1, priorityHeader);
-
-		HTML subjectHeader = new HTML("<b>Subject</b>");
-		notificationGrid.setWidget(0, 2, subjectHeader);
-		
-		HTML createTimeHeader = new HTML("<b>Create Time</b>");
-		notificationGrid.setWidget(0, 3, createTimeHeader);
-		
-		HTML updatedHeader = new HTML("<b>Updated Time</b>");
-		notificationGrid.setWidget(0, 4, updatedHeader);
-		accountNotificationsVP.setVisible(true);
-	}
-	@Override
 	public void showWaitForNotificationsDialog(String message) {
-//		waitForNotificationsDialog = new PopupPanel(true);
-//
-//		VerticalPanel vp = new VerticalPanel();
-//		Image img = new Image();
-//		img.setUrl("images/ajax-loader.gif");
-//		vp.add(img);
-//		HTML h = new HTML(message);
-//		vp.add(h);
-//		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
-//		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
-//
-//		waitForNotificationsDialog.setWidget(vp);
-//		waitForNotificationsDialog.setPopupPosition(
-//				accountNotificationsHeader.getAbsoluteLeft() + 25, 
-//				accountNotificationsHeader.getAbsoluteTop() + 25);
-//		waitForNotificationsDialog.show();
-		waitForNotificationsPopup.setVisible(true);
+		waitForNotificationsDialog = new PopupPanel(true);
+
+		VerticalPanel vp = new VerticalPanel();
+		Image img = new Image();
+		img.setUrl("images/ajax-loader.gif");
+		vp.add(img);
+		HTML h = new HTML(message);
+		vp.add(h);
+		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+
+		waitForNotificationsDialog.setWidget(vp);
+		waitForNotificationsDialog.setPopupPosition(
+				notificationListPanel.getAbsoluteLeft() + 25, 
+				notificationListPanel.getAbsoluteTop() + 25);
+		waitForNotificationsDialog.show();
+//		waitForNotificationsPopup.setVisible(true);
 	}
 	@Override
 	public void hidWaitForNotificationsDialog() {
-//		if (waitForNotificationsDialog != null) {
-//			waitForNotificationsDialog.hide();
-//		}
-		waitForNotificationsPopup.setVisible(false);
+		if (waitForNotificationsDialog != null) {
+			waitForNotificationsDialog.hide();
+		}
+//		waitForNotificationsPopup.setVisible(false);
+	}
+	@Override
+	public void setAccountNotifications(List<AccountNotificationPojo> pojos) {
+		this.pojoList = pojos;
+		this.initializeListTable();
+		listPager.setDisplay(listTable);
+	}
+	@Override
+	public void removeAccountNotificationFromView(AccountNotificationPojo pojo) {
+		dataProvider.getList().remove(pojo);
 	}
 	
+	private Widget initializeListTable() {
+		GWT.log("initializing account notification list table...");
+		listTable.setTableLayoutFixed(false);
+		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		
+		// set range to display
+		listTable.setVisibleRange(0, 5);
+		
+		// create dataprovider
+		dataProvider = new ListDataProvider<AccountNotificationPojo>();
+		dataProvider.addDataDisplay(listTable);
+		dataProvider.getList().clear();
+		dataProvider.getList().addAll(this.pojoList);
+		
+		selectionModel = 
+	    	new MultiSelectionModel<AccountNotificationPojo>(AccountNotificationPojo.KEY_PROVIDER);
+		listTable.setSelectionModel(selectionModel);
+	    
+	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+	    	@Override
+	    	public void onSelectionChange(SelectionChangeEvent event) {
+//	    		NotificationPojo m = selectionModel.getSelectedObject();
+//	    		GWT.log("Selected service is: " + m.getNotificationId());
+	    	}
+	    });
+
+	    ListHandler<AccountNotificationPojo> sortHandler = 
+	    	new ListHandler<AccountNotificationPojo>(dataProvider.getList());
+	    listTable.addColumnSortHandler(sortHandler);
+
+	    if (listTable.getColumnCount() == 0) {
+		    initListTableColumns(sortHandler);
+	    }
+		
+		return listTable;
+	}
+	private void initListTableColumns(ListHandler<AccountNotificationPojo> sortHandler) {
+		GWT.log("initializing VPC list table columns...");
+
+//		Column<AccountNotificationPojo, Boolean> checkColumn = new Column<AccountNotificationPojo, Boolean>(
+//				new CheckboxCell(true, false)) {
+//			@Override
+//			public Boolean getValue(AccountNotificationPojo object) {
+//				// Get the value from the selection model.
+//				return selectionModel.isSelected(object);
+//			}
+//		};
+//		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+//		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		/*
+		HTML typeHeader = new HTML("<b>Type</b>");
+		HTML priorityHeader = new HTML("<b>Priority<b>");
+		HTML subjectHeader = new HTML("<b>Subject</b>");
+		HTML createTimeHeader = new HTML("<b>Create Time</b>");
+		HTML updatedHeader = new HTML("<b>Updated Time</b>");
+		 */
+		// Notification id column
+		Column<AccountNotificationPojo, String> typeColumn = 
+				new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(AccountNotificationPojo object) {
+				return object.getType();
+			}
+		};
+		typeColumn.setSortable(true);
+		sortHandler.setComparator(typeColumn, new Comparator<AccountNotificationPojo>() {
+			public int compare(AccountNotificationPojo o1, AccountNotificationPojo o2) {
+				return o1.getType().compareTo(o2.getType());
+			}
+		});
+		typeColumn.setFieldUpdater(new FieldUpdater<AccountNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, AccountNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
+	    	}
+	    });
+		typeColumn.setCellStyleNames("productAnchor");
+		listTable.addColumn(typeColumn, "Type");
+		
+		Column<AccountNotificationPojo, String> priorityColumn = 
+				new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(AccountNotificationPojo object) {
+				return object.getPriority();
+			}
+		};
+		priorityColumn.setSortable(true);
+		sortHandler.setComparator(priorityColumn, new Comparator<AccountNotificationPojo>() {
+			public int compare(AccountNotificationPojo o1, AccountNotificationPojo o2) {
+				return o1.getPriority().compareTo(o2.getPriority());
+			}
+		});
+	    priorityColumn.setFieldUpdater(new FieldUpdater<AccountNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, AccountNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
+	    	}
+	    });
+	    priorityColumn.setCellStyleNames("productAnchor");
+		listTable.addColumn(priorityColumn, "Priority");
+		
+		Column<AccountNotificationPojo, String> subjectColumn = 
+				new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(AccountNotificationPojo object) {
+				return object.getSubject();
+			}
+	    };
+	    subjectColumn.setFieldUpdater(new FieldUpdater<AccountNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, AccountNotificationPojo object, String value) {
+	    		GWT.log("value updater for subject column");
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
+	    	}
+	    });
+		subjectColumn.setSortable(true);
+		sortHandler.setComparator(subjectColumn, new Comparator<AccountNotificationPojo>() {
+			public int compare(AccountNotificationPojo o1, AccountNotificationPojo o2) {
+				return o1.getSubject().compareTo(o2.getSubject());
+			}
+		});
+		subjectColumn.setCellStyleNames("productAnchor");
+		listTable.addColumn(subjectColumn, "Subject");
+
+		Column<AccountNotificationPojo, String> createTime = 
+				new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(AccountNotificationPojo object) {
+				Date createTime = object.getCreateTime();
+				return createTime != null ? dateFormat.format(createTime) : "Unknown";
+			}
+		};
+		createTime.setSortable(true);
+		sortHandler.setComparator(createTime, new Comparator<AccountNotificationPojo>() {
+			public int compare(AccountNotificationPojo o1, AccountNotificationPojo o2) {
+				Date c1 = o1.getCreateTime();
+				Date c2 = o2.getCreateTime();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
+	    createTime.setFieldUpdater(new FieldUpdater<AccountNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, AccountNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
+	    	}
+	    });
+	    createTime.setCellStyleNames("productAnchor");
+		listTable.addColumn(createTime, "Create Time");
+		
+		Column<AccountNotificationPojo, String> updateTime = 
+				new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(AccountNotificationPojo object) {
+				Date updateTime = object.getUpdateTime();
+				return updateTime != null ? dateFormat.format(updateTime) : "Unknown";
+			}
+		};
+		updateTime.setSortable(true);
+		sortHandler.setComparator(updateTime, new Comparator<AccountNotificationPojo>() {
+			public int compare(AccountNotificationPojo o1, AccountNotificationPojo o2) {
+				Date c1 = o1.getUpdateTime();
+				Date c2 = o2.getUpdateTime();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
+	    updateTime.setFieldUpdater(new FieldUpdater<AccountNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, AccountNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
+	    	}
+	    });
+	    updateTime.setCellStyleNames("productAnchor");
+		listTable.addColumn(updateTime, "Update Time");
+	}
 }

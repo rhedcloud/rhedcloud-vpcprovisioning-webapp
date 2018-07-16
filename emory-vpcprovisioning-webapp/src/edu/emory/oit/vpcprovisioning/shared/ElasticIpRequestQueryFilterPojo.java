@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class ElasticIpRequestQueryFilterPojo extends SharedObject implements IsSerializable {
+public class ElasticIpRequestQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
 	List<String> tags = new java.util.ArrayList<String>();
 	String systemId;
 	String awsNatType;

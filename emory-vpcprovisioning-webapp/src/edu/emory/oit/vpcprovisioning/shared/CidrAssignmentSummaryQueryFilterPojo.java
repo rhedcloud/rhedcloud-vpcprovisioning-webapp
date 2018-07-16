@@ -1,7 +1,9 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 @SuppressWarnings("serial")
-public class CidrAssignmentSummaryQueryFilterPojo extends SharedObject {
+public class CidrAssignmentSummaryQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter {
 	String cidrAssignmentId;
 	String ownerId;
 	CidrPojo cidr;

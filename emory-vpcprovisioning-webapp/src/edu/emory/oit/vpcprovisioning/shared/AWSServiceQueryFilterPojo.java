@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class AWSServiceQueryFilterPojo extends SharedObject implements IsSerializable {
+public class AWSServiceQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter {
 	String serviceId;
 	String serviceCode;
 	String status;
