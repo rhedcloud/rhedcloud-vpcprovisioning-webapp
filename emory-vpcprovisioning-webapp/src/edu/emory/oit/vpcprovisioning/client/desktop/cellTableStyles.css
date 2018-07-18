@@ -24,38 +24,53 @@
     padding: 5px !important;
 }
 .cellTableHeader {
-    font-family: arial;
-	font-size: 13px;
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 15px;
+	font-style: normal;
 	font-weight: bold;
-	line-height: 25px;
+	line-height: 2.5;
 	color: #444;
-	font: 14px/ 1.3em "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
-	background: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#e0e0e0));
+	background: -webkit-gradient(linear, left top, left bottom, from(#f2f3f4), to(#e0e0e0));
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid #fff;
-	line-height: 20px;
-	text-align: left;
+	text-align: center;
+	vertical-align: middle;
 	overflow: hidden;
 	border-left: 1px solid #fff;
 	border-right: 1px solid #ccc;
 	padding: 0 5px;
 }
 .cellTableFirstColumnHeader {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 15px;
+	font-style: normal;
+	font-weight: bold;
+	line-height: 2.5;
+	color: #444;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f2f3f4), to(#e0e0e0));
+	border-bottom: 1px solid #ccc;
+	border-top: 1px solid #fff;
+	text-align: center;
+	vertical-align: middle;
+	overflow: hidden;
+	border-left: 1px solid #fff;
+	border-right: 1px solid #ccc;
+	padding: 0 5px;
 }
 .cellTableLastColumnHeader {
 }
 .cellTableCell {
 }
 .cellTableEvenRow {
+	background:  #fef5e7 ;
 	/*
-	background: #fff;
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid #fff;
 	*/
 }
 .cellTableOddRow {
-	/*
 	background: #fff;
+	/*
 	border-bottom: 1px solid #ccc;
 	border-top: 1px solid #fff;
 	*/

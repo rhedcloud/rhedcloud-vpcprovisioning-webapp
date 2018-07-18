@@ -143,8 +143,10 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public void initPage() {
-		// TODO Auto-generated method stub
-		
+		vpcIdTB.setText("");
+		cidrTB.setText("");
+		vpnProfileIdTB.setText("");
+		purposeTA.setText("");
 	}
 
 	@Override

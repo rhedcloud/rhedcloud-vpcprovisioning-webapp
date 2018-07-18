@@ -75,7 +75,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	private final DirectoryPersonRpcSuggestOracle ownerIdSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	PopupPanel adminPleaseWaitDialog;
 	PopupPanel waitForNotificationsDialog;
-//    Grid notificationGrid = new Grid(1, 5);
     
 	private ListDataProvider<AccountNotificationPojo> dataProvider = new ListDataProvider<AccountNotificationPojo>();
 	private MultiSelectionModel<AccountNotificationPojo> selectionModel;
@@ -90,7 +89,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField VerticalPanel notificationListPanel;
 	@UiField SimplePager listPager;
 	@UiField(provided=true) CellTable<AccountNotificationPojo> listTable = new CellTable<AccountNotificationPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
-//	@UiField Button actionsButton;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button billSummaryButton;
@@ -98,7 +96,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField Button cancelButton;
 	@UiField TextBox accountIdTB;
 	@UiField TextBox accountNameTB;
-//	@UiField TextBox ownerIdTB;
 	@UiField TextBox passwordLocationTB;
 	@UiField TextBox speedTypeTB;
 
@@ -121,9 +118,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
 	@UiField VerticalPanel sensitiveDataPanel;
-//	@UiField VerticalPanel accountNotificationsVP;
-//	@UiField HTML accountNotificationsHeader;
-//	@UiField HorizontalPanel waitForNotificationsPopup;
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -327,19 +321,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			}
 		});
 		directoryLookupSB.setText("");
-//		if (numRows > 6) {
-//			if (adminRowNum > 5) {
-//				adminRowNum = 0;
-//				adminColumnNum = adminColumnNum + 2;
-//				removeButtonColumnNum = removeButtonColumnNum + 2;
-//			}
-//			else {
-//				adminRowNum ++;
-//			}
-//		}
-//		else {
-//			adminRowNum = numRows;
-//		}
 		adminTable.setWidget(adminRowNum, adminColumnNum, nameLabel);
 		adminTable.setWidget(adminRowNum, removeButtonColumnNum, removeAdminButton);
 		adminRowNum++;

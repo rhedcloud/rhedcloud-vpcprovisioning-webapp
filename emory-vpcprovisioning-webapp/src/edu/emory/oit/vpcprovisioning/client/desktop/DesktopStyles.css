@@ -909,8 +909,26 @@ a:active {
 	vertical-align: top;
 	text-align: left;
 }
+/*
+	border: 1px solid;
+	border-color: #be952c #a68226 #9b7924;
+	border-radius: 3px;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 14px;
+	font-weight: 500;
+	text-shadow: hsla(0,0%100%.0 0 1px 0;
+	background: #eeba37;
+	background-image: linear-gradient(180deg,#fee6b0 0,#eeba37);
+	font-family: Helvetica Neue Bold,Helvetica Neue,Helvetica,Arial,sans-serif;
+	min-width: 105px;
+	display: inline-block;
+	height: 35px;
+	box-shadow: inset 0 1px 0 hsla(0,0%,100%,.6);
+	color: #333;
+*/
+
 .normalButton {
-	color: #444;
 	border: 1px solid #ccc;
 	background: -moz-linear-gradient(top, #f6f6f6 0%, #e0e0e0);
 	box-shadow: 0 0 0 rgba(000,000,000,0),inset 0 0 2px rgba(255,255,255,1);
@@ -923,8 +941,13 @@ a:active {
 	padding-bottom: 5px;
 	padding-left: 10px;
 	padding-right: 10px;
-	border-radius: 5px;
-	width: 100px;
+	border-radius: 3px;
+	min-width: 105px;
+	display: inline-block;
+	height: 35px;
+	text-align: center;
+	font-size: 14px;
+	color: #444;
 }
 .actionButton {
 	display: inline-block;
@@ -945,6 +968,12 @@ a:active {
 	text-shadow: 0 1px 0 rgba(025, 084, 167, 1),0 0 0 rgba(255, 255, 255, 0);
 	font: 14px/ 1.3em "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
 	background: -moz-linear-gradient(top, #38d 0%, #16b);
+	border-radius: 3px;
+	min-width: 105px;
+	display: inline-block;
+	height: 35px;
+	text-align: center;
+	font-size: 14px;
 	color: #fff;
 }
 /* END AWS Styles */

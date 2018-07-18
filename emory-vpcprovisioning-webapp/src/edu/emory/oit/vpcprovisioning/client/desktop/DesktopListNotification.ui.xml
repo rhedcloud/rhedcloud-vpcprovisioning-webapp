@@ -18,10 +18,6 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:VerticalPanel>
-			<g:Button width="150px" addStyleNames="{style.awsButton}"
-				ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton">Close</g:Button>
-		</g:VerticalPanel>
 		<g:HTML addStyleNames="{style.mediumLabel}">Notification List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of your User Notifications.</g:HTML>
 
@@ -29,7 +25,14 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" 
+							addStyleNames="{style.glowing-border} {style.normalButton}" 
+							title="Actions you can perform on a selected item"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button addStyleNames="{style.awsButton}"
+							ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton"
+							title="Close page and return home." width="100">Close</g:Button>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

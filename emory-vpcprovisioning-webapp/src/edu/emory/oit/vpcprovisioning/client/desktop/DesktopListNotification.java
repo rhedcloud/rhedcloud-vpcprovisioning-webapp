@@ -8,11 +8,14 @@ import java.util.List;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -21,6 +24,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -296,6 +300,27 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		
 		return listTable;
 	}
+	
+	public class HeaderCheckbox extends CheckboxCell {
+
+//	    private final SafeHtml INPUT_CHECKED = SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked>Deselect All</>");
+//	    private final SafeHtml INPUT_UNCHECKED = SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\">Select All</>");
+	    private final SafeHtml INPUT_CHECKED = SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\" checked/>");
+	    private final SafeHtml INPUT_UNCHECKED = SafeHtmlUtils.fromSafeConstant("<input type=\"checkbox\" tabindex=\"-1\"/>");
+
+	    public HeaderCheckbox() {
+	    }
+
+	    @Override
+	    public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
+	      if (value != null && value) {
+	        sb.append(INPUT_CHECKED);
+	      } else {
+	        sb.append(INPUT_UNCHECKED);
+	      }
+	    }
+	}
+
 	private void initListTableColumns(ListHandler<UserNotificationPojo> sortHandler) {
 		GWT.log("initializing User Notification list table columns...");
 		GWT.log("there are " + sortHandler.getList().size() + " user notifications in the list");
@@ -308,7 +333,26 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				return selectionModel.isSelected(object);
 			}
 		};
-		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		Header<Boolean> selectAllHeader = new Header<Boolean>(new HeaderCheckbox()) {
+		    @Override
+		    public Boolean getValue() {
+		        for (UserNotificationPojo item : listTable.getVisibleItems()) {
+		            if (!selectionModel.isSelected(item)) {
+		                return false;
+		            }
+		        }
+		        return listTable.getVisibleItems().size() > 0;
+		    }
+		};
+		selectAllHeader.setUpdater(new ValueUpdater<Boolean>() {
+		    @Override
+		    public void update(Boolean value) {
+		        for (UserNotificationPojo object : listTable.getVisibleItems()) {
+		            selectionModel.setSelected(object, value);
+		        }
+		    }
+		});
+		listTable.addColumn(checkColumn, selectAllHeader);
 		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		// Notification id column
@@ -333,7 +377,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	    	}
 	    });
 		notificationIdColumn.setCellStyleNames("productAnchor");
-		listTable.addColumn(notificationIdColumn, "Notification ID");
+		listTable.addColumn(notificationIdColumn, "ID");
 
 		// Type column
 		Column<UserNotificationPojo, String> typeColumn = 

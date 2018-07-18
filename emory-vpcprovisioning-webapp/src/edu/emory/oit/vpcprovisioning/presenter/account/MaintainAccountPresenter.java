@@ -4,11 +4,13 @@ import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+import com.ibm.icu.impl.duration.DateFormatter;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
@@ -484,11 +486,14 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				+ "NOTE:  Using an invalid SpeedType is a violoation of Emory's Terms of Use.");
 		if (confirmed) {
 			// TODO: log that the user acknowldged the speed type (on the server)
-			this.logMessageOnServer("User " + this.userLoggedIn.getEppn() + " acknowledged "
-					+ "the SpeedType " + this.account.getSpeedType()
-					+ "is the correct SpeedType for this account at: " + new Date());
-			getView().showMessageToUser("Logged that [user] acknowledged the SpeedType [SpeedType] "
-					+ "is the correct SpeedType for this account at [time].");
+			DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
+			String msg = "User " + this.userLoggedIn.getPublicId() + " acknowledged "
+					+ "the SpeedType " + this.account.getSpeedType() 
+					+ " for account " + this.account.getAccountId() 
+					+ " (" + this.account.getAccountName() + ") "  
+					+ "is the correct SpeedType for this account at: " + new Date();
+			this.logMessageOnServer(msg);
+			getView().showMessageToUser("Logged " + msg);
 			getView().setSpeedTypeConfirmed(true);
 			return true;
 		}

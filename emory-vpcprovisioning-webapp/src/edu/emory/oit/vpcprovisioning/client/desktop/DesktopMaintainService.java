@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -13,16 +15,15 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -39,16 +40,18 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification.MyCellTableResources;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSTagPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopMaintainService extends ViewImplBase implements MaintainServiceView {
 	Presenter presenter;
@@ -59,6 +62,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	private SingleSelectionModel<ServiceSecurityAssessmentPojo> selectionModel;
 	List<ServiceSecurityAssessmentPojo> assessmentList = new java.util.ArrayList<ServiceSecurityAssessmentPojo>();
 	PopupPanel actionsPopup = new PopupPanel(true);
+	boolean linkableColumn = false;
 
 	private static DesktopMaintainServiceUiBinder uiBinder = GWT.create(DesktopMaintainServiceUiBinder.class);
 
@@ -743,7 +747,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		assessmentListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		Column<ServiceSecurityAssessmentPojo, String> acctIdColumn = 
-				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
+				new Column<ServiceSecurityAssessmentPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(ServiceSecurityAssessmentPojo object) {
@@ -756,7 +760,180 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 				return o1.getServiceSecurityAssessmentId().compareTo(o2.getServiceSecurityAssessmentId());
 			}
 		});
-		assessmentListTable.addColumn(acctIdColumn, "ID");
+		acctIdColumn.setFieldUpdater(new FieldUpdater<ServiceSecurityAssessmentPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceSecurityAssessmentPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, object);
+	    	}
+	    });
+		acctIdColumn.setCellStyleNames("productAnchor");
+		assessmentListTable.addColumn(acctIdColumn, "Assessment ID");
+		
+		// status
+		Column<ServiceSecurityAssessmentPojo, String> statusColumn = 
+				new Column<ServiceSecurityAssessmentPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceSecurityAssessmentPojo object) {
+				return object.getStatus();
+			}
+		};
+		statusColumn.setSortable(true);
+		sortHandler.setComparator(statusColumn, new Comparator<ServiceSecurityAssessmentPojo>() {
+			public int compare(ServiceSecurityAssessmentPojo o1, ServiceSecurityAssessmentPojo o2) {
+				return o1.getStatus().compareTo(o2.getStatus());
+			}
+		});
+		statusColumn.setFieldUpdater(new FieldUpdater<ServiceSecurityAssessmentPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceSecurityAssessmentPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, object);
+	    	}
+	    });
+		statusColumn.setCellStyleNames("productAnchor");
+		assessmentListTable.addColumn(statusColumn, "Status");
+		
+		// service ids/names
+		Column<ServiceSecurityAssessmentPojo, String> servicesColumn = 
+				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceSecurityAssessmentPojo object) {
+				StringBuffer serviceIds = new StringBuffer();
+				int cntr = 1;
+				if (object.getServiceIds().size() > 0) {
+					for (String svcId : object.getServiceIds()) {
+						if (cntr == object.getServiceIds().size()) {
+							serviceIds.append(svcId);
+						}
+						else {
+							cntr++;
+							serviceIds.append(svcId + "\n");
+						}
+					}
+					return serviceIds.toString();
+				}
+				return "No services";
+			}
+		};
+		servicesColumn.setSortable(false);
+		assessmentListTable.addColumn(servicesColumn, "Services");
+		
+		// summary about risks
+		Column<ServiceSecurityAssessmentPojo, String> risksColumn = 
+				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceSecurityAssessmentPojo object) {
+				StringBuffer risks = new StringBuffer();
+				int cntr = 1;
+				if (object.getSecurityRisks().size() > 0) {
+					for (SecurityRiskPojo srp : object.getSecurityRisks()) {
+						if (cntr == object.getSecurityRisks().size()) {
+							risks.append(srp.getSecurityRiskName());
+						}
+						else {
+							cntr++;
+							risks.append(srp.getSecurityRiskName() + "\n");
+						}
+					}
+					return risks.toString();
+				}
+				return "No Risks Defined";
+			}
+		};
+		risksColumn.setSortable(false);
+		assessmentListTable.addColumn(risksColumn, "Security Risks");
+		
+		// summary about controls
+		Column<ServiceSecurityAssessmentPojo, String> controlsColumns = 
+				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceSecurityAssessmentPojo object) {
+				StringBuffer controls = new StringBuffer();
+				int cntr = 1;
+				if (object.getServiceControls().size() > 0) {
+					for (ServiceControlPojo scp : object.getServiceControls()) {
+						if (cntr == object.getServiceControls().size()) {
+							controls.append(scp.getServiceControlName());
+						}
+						else {
+							cntr++;
+							controls.append(scp.getServiceControlName() + "\n");
+						}
+					}
+					return controls.toString();
+				}
+				return "No Controls Defined";
+			}
+		};
+		controlsColumns.setSortable(false);
+		assessmentListTable.addColumn(controlsColumns, "Security Controls");
+		
+		// summary about guidelines
+		Column<ServiceSecurityAssessmentPojo, String> guidelineColumn = 
+				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceSecurityAssessmentPojo object) {
+				StringBuffer guidelines= new StringBuffer();
+				int cntr = 1;
+				if (object.getServiceGuidelines().size() > 0) {
+					for (ServiceGuidelinePojo sgp : object.getServiceGuidelines()) {
+						if (cntr == object.getServiceGuidelines().size()) {
+							guidelines.append(sgp.getServiceGuidelineName());
+						}
+						else {
+							cntr++;
+							guidelines.append(sgp.getServiceGuidelineName() + "\n");
+						}
+					}
+					return guidelines.toString();
+				}
+				return "No Guidelines Defined";
+			}
+		};
+		guidelineColumn.setSortable(false);
+		assessmentListTable.addColumn(guidelineColumn, "Service Guidelines");
+		
+		// summary about test plans
+		linkableColumn = false;
+		Column<ServiceSecurityAssessmentPojo, String> testPlan = 
+				new Column<ServiceSecurityAssessmentPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceSecurityAssessmentPojo object) {
+				ServiceTestPlanPojo stp = object.getServiceTestPlan();
+				if (stp != null) {
+					linkableColumn = true;
+					return stp.getUniqueId();
+				}
+				return "No Test Plans Defined";
+			}
+		};
+		testPlan.setSortable(true);
+		sortHandler.setComparator(testPlan, new Comparator<ServiceSecurityAssessmentPojo>() {
+			public int compare(ServiceSecurityAssessmentPojo o1, ServiceSecurityAssessmentPojo o2) {
+				ServiceTestPlanPojo stp1 = o1.getServiceTestPlan();
+				ServiceTestPlanPojo stp2 = o2.getServiceTestPlan();
+				if (stp1 == null || stp2 == null) {
+					return 0;
+				}
+				return stp1.getUniqueId().compareTo(stp2.getUniqueId());
+			}
+		});
+		if (linkableColumn) {
+			testPlan.setFieldUpdater(new FieldUpdater<ServiceSecurityAssessmentPojo, String>() {
+		    	@Override
+		    	public void update(int index, ServiceSecurityAssessmentPojo object, String value) {
+		    		showMessageToUser("Not implemented yet.");
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_TEST_PLAN, presenter.getService(), object, object.getServiceTestPlan());
+		    	}
+		    });
+			testPlan.setCellStyleNames("productAnchor");
+		}
+		assessmentListTable.addColumn(testPlan, "Test Plan");
 	}
 
 	@Override

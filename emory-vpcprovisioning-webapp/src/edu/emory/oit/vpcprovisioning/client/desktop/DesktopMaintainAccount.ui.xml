@@ -163,7 +163,7 @@
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 				</g:cell>
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="45%">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="45%">
 					<g:VerticalPanel addStyleNames="{style.statusLabel}" width="100%">
 						<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
 						<!-- 

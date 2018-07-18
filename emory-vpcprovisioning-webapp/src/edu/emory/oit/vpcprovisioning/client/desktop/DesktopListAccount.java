@@ -310,6 +310,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		
 		return accountListTable;
 	}
+	
 	private void initAccountListTableColumns(ListHandler<AccountPojo> sortHandler) {
 		GWT.log("initializing ACCOUNT list table columns...");
 		
@@ -392,6 +393,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 			}
 		};
 		complianceClassColumn.setSortable(true);
+		complianceClassColumn.setCellStyleNames("tableBody");
 		sortHandler.setComparator(complianceClassColumn, new Comparator<AccountPojo>() {
 			public int compare(AccountPojo o1, AccountPojo o2) {
 				return o1.getComplianceClass().compareTo(o2.getComplianceClass());

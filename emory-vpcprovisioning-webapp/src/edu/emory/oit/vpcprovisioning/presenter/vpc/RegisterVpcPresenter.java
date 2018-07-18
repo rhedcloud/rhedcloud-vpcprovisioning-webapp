@@ -61,6 +61,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
+		getView().showPleaseWaitDialog("Retrieving accounts from AWS Account Service...");
 		
 		if (vpcId == null) {
 			clientFactory.getShell().setSubTitle("Register VPC");
@@ -74,14 +75,63 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 
 			@Override
 			public void onFailure(Throwable caught) {
-				GWT.log("Exception retrieving userLoggedIn", caught);
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception retrieving the User Logged in.", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the user logged in.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
-				GWT.log("got user logged in: " + user.getEppn());
 				getView().setUserLoggedIn(user);
-				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
+				getView().initPage();
+				getView().setInitialFocus();
+				
+				// apply authorization mask
+				if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else if (vpc != null) {
+					if (user.isAdminForAccount(vpc.getAccountId())) {
+						getView().applyAWSAccountAdminMask();
+					}
+					else if (user.isAuditorForAccount(vpc.getAccountId())) {
+						getView().applyAWSAccountAuditorMask();
+					}
+				}
+				else if (user.isAuditor()) {
+					getView().applyAWSAccountAuditorMask();
+				}
+				else {
+					getView().applyAWSAccountAuditorMask();
+					getView().showMessageToUser("An error has occurred.  The user logged in does not "
+							+ "appear to be associated to any valid roles for this page.");
+				}
+
+				AsyncCallback<AccountQueryResultPojo> acct_cb = new AsyncCallback<AccountQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						getView().hidePleaseWaitDialog();
+						getView().hidePleaseWaitPanel();
+						GWT.log("Exception retrieving AWS accounts", caught);
+						getView().showMessageToUser("There was an exception on the " +
+								"server retrieving a list of AWS Accounts.  Message " +
+								"from server is: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(AccountQueryResultPojo accountItems) {
+						GWT.log("got " + accountItems.getResults().size() + " accounts.");
+						getView().setAccountItems(accountItems.getResults());
+						getView().hidePleaseWaitDialog();
+						getView().hidePleaseWaitPanel();
+					}
+				};
+				GWT.log("getting accounts");
+				VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, acct_cb);
+
+				AsyncCallback<List<String>> vpctype_cb = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						getView().hidePleaseWaitDialog();
@@ -93,57 +143,14 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 
 					@Override
 					public void onSuccess(final List<String> vpcItems) {
-						// get list of accounts from server and add them 
+						// get list of vpc types from the server and add them 
 						// to the view
 						GWT.log("got vpc type items: " + vpcItems.size());
-						AsyncCallback<AccountQueryResultPojo> callback = new AsyncCallback<AccountQueryResultPojo>() {
-							@Override
-							public void onFailure(Throwable caught) {
-								getView().hidePleaseWaitDialog();
-								getView().hidePleaseWaitPanel();
-								GWT.log("Exception retrieving AWS accounts", caught);
-								getView().showMessageToUser("There was an exception on the " +
-										"server retrieving a list of AWS Accounts.  Message " +
-										"from server is: " + caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(AccountQueryResultPojo accountItems) {
-								GWT.log("got " + accountItems.getResults().size() + " accounts.");
-								getView().setVpcTypeItems(vpcItems);
-								getView().setAccountItems(accountItems.getResults());
-								getView().initPage();
-								getView().setInitialFocus();
-								// apply authorization mask
-								if (user.isCentralAdmin()) {
-									getView().applyCentralAdminMask();
-								}
-								else if (vpc != null) {
-									if (user.isAdminForAccount(vpc.getAccountId())) {
-										getView().applyAWSAccountAdminMask();
-									}
-									else if (user.isAuditorForAccount(vpc.getAccountId())) {
-										getView().applyAWSAccountAuditorMask();
-									}
-								}
-								else if (user.isAuditor()) {
-									getView().applyAWSAccountAuditorMask();
-								}
-								else {
-									getView().applyAWSAccountAuditorMask();
-									getView().showMessageToUser("An error has occurred.  The user logged in does not "
-											+ "appear to be associated to any valid roles for this page.");
-								}
-								getView().hidePleaseWaitDialog();
-								getView().hidePleaseWaitPanel();
-							}
-						};
-						GWT.log("getting accounts");
-						VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, callback);
+						getView().setVpcTypeItems(vpcItems);
 					}
 				};
 				GWT.log("getting vpc type items");
-				VpcProvisioningService.Util.getInstance().getVpcTypeItems(callback);
+				VpcProvisioningService.Util.getInstance().getVpcTypeItems(vpctype_cb);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
