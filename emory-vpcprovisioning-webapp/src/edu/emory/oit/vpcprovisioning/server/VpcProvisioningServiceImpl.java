@@ -6996,7 +6996,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service) throws RpcException {
-		// TODO Auto-generated method stub
+		// TODO need to implement this...
 		
 	}
 
