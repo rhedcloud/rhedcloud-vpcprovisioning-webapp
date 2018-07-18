@@ -7,6 +7,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -26,6 +27,7 @@ public interface ListSecurityRiskView extends IsWidget, View {
 		public ServiceSecurityAssessmentPojo getAssessment();
 		public void setUserLoggedIn(UserAccountPojo user);
 		public UserAccountPojo getUserLoggedIn();
+		public AWSServicePojo getService();
 	}
 
 	/**

@@ -798,70 +798,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		directoryLookupSB.setEnabled(false);
 	}
 	
-//	@Override
-//	public void addAccountNotification(int rowNumber, final AccountNotificationPojo accountNotification) {
-//	    accountNotificationsVP.add(notificationGrid);
-//
-//		HTML type = new HTML(accountNotification.getType());
-//		type.addStyleName("accountNotificationText");
-//		notificationGrid.setWidget(rowNumber+1, 0, type);
-//
-//		HTML priority = new HTML (accountNotification.getPriority());
-//		priority.addStyleName("accountNotificationText");
-//		notificationGrid.setWidget(rowNumber+1, 1, priority);
-//
-//		Anchor notificationAnchor = new Anchor(accountNotification.getSubject());
-//		notificationAnchor.addStyleName("accountNotificationAnchor");
-////		notificationAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		notificationAnchor.setTitle("View/Maintain selected Notification");
-//		notificationAnchor.ensureDebugId(accountNotification.getSubject());
-//		notificationAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), accountNotification);
-//			}
-//		});
-////		accountNotificationsVP.add(notificationAnchor);
-//		notificationGrid.setWidget(rowNumber+1, 2, notificationAnchor);
-//
-//		Date createTime = accountNotification.getCreateTime();
-//		HTML createDate = new HTML(createTime != null ? dateFormat.format(createTime) : "Unknown");
-//		createDate.addStyleName("accountNotificationText");
-//		notificationGrid.setWidget(rowNumber+1, 3, createDate);
-//
-//		Date updateTime = accountNotification.getUpdateTime();
-//		HTML updateDate = new HTML(updateTime != null ? dateFormat.format(updateTime) : "Unknown");
-//		updateDate.addStyleName("accountNotificationText");
-//		notificationGrid.setWidget(rowNumber+1, 4, updateDate);
-//	}
-//	
-//	@Override
-//	public void clearAccountNotificationList() {
-//		accountNotificationsVP.clear();
-//		accountNotificationsVP.setVisible(false);
-//	}
-//	@Override
-//	public void initializeAccountNotificationGrid(int rowSize) {
-//		notificationGrid.resizeRows(rowSize+1);
-//		notificationGrid.setCellSpacing(8);
-//		
-//		HTML typeHeader = new HTML("<b>Type</b>");
-//		notificationGrid.setWidget(0, 0, typeHeader);
-//		
-//		HTML priorityHeader = new HTML("<b>Priority<b>");
-//		notificationGrid.setWidget(0, 1, priorityHeader);
-//
-//		HTML subjectHeader = new HTML("<b>Subject</b>");
-//		notificationGrid.setWidget(0, 2, subjectHeader);
-//		
-//		HTML createTimeHeader = new HTML("<b>Create Time</b>");
-//		notificationGrid.setWidget(0, 3, createTimeHeader);
-//		
-//		HTML updatedHeader = new HTML("<b>Updated Time</b>");
-//		notificationGrid.setWidget(0, 4, updatedHeader);
-//		accountNotificationsVP.setVisible(true);
-//	}
-	
 	@Override
 	public void showWaitForNotificationsDialog(String message) {
 		waitForNotificationsDialog = new PopupPanel(true);
@@ -880,14 +816,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				notificationListPanel.getAbsoluteLeft() + 25, 
 				notificationListPanel.getAbsoluteTop() + 25);
 		waitForNotificationsDialog.show();
-//		waitForNotificationsPopup.setVisible(true);
 	}
 	@Override
 	public void hidWaitForNotificationsDialog() {
 		if (waitForNotificationsDialog != null) {
 			waitForNotificationsDialog.hide();
 		}
-//		waitForNotificationsPopup.setVisible(false);
 	}
 	@Override
 	public void setAccountNotifications(List<AccountNotificationPojo> pojos) {

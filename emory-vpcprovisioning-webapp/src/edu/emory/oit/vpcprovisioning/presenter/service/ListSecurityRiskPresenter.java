@@ -1,6 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -15,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.SecurityRiskListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -36,6 +36,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 
 	private EventBus eventBus;
 	private ServiceSecurityAssessmentPojo assessment;
+	private AWSServicePojo service;
 	private UserAccountPojo userLoggedIn;
 	
 	/**
@@ -48,9 +49,10 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	 */
 	//	  private Timer sessionTimer;
 
-	public ListSecurityRiskPresenter(ClientFactory clientFactory, boolean clearList, ServiceSecurityAssessmentPojo assessment) {
+	public ListSecurityRiskPresenter(ClientFactory clientFactory, boolean clearList, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
+		this.service = service;
 		this.assessment = assessment;
 		clientFactory.getListSecurityRiskView().setPresenter(this);
 	}
@@ -62,7 +64,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	 * @param place configuration for this activity
 	 */
 	public ListSecurityRiskPresenter(ClientFactory clientFactory, ListSecurityRiskPlace place) {
-		this(clientFactory, place.isListStale(), place.getAssessment());
+		this(clientFactory, place.isListStale(), place.getService(), place.getAssessment());
 	}
 
 	private ListSecurityRiskView getView() {
@@ -78,6 +80,8 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	@Override
 	public void start(EventBus eventBus) {
 		GWT.log("List security risks presenter...");
+		GWT.log("service is: " + this.service);
+		GWT.log("assessment is: " + this.assessment);
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
@@ -208,5 +212,13 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	@Override
 	public UserAccountPojo getUserLoggedIn() {
 		return userLoggedIn;
+	}
+
+	public AWSServicePojo getService() {
+		return service;
+	}
+
+	public void setService(AWSServicePojo service) {
+		this.service = service;
 	}
 }

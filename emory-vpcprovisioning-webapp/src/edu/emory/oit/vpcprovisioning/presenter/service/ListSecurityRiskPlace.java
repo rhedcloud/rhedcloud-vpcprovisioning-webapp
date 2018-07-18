@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 
 public class ListSecurityRiskPlace extends Place {
@@ -27,6 +27,7 @@ public class ListSecurityRiskPlace extends Place {
 
 	private final boolean listStale;
 	ServiceSecurityAssessmentPojo assessment;
+	AWSServicePojo service;
 
 	/**
 	 * Construct a new {@link case recordListPlace}.
@@ -52,5 +53,13 @@ public class ListSecurityRiskPlace extends Place {
 
 	public void setAssessment(ServiceSecurityAssessmentPojo assessment) {
 		this.assessment = assessment;
+	}
+
+	public AWSServicePojo getService() {
+		return service;
+	}
+
+	public void setService(AWSServicePojo service) {
+		this.service = service;
 	}
 }

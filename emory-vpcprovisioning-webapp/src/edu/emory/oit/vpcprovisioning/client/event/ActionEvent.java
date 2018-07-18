@@ -29,6 +29,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
@@ -79,6 +80,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private CidrSummaryPojo cidrSummary;
 	ServiceSecurityAssessmentPojo securityAssessment;
 	private SecurityRiskPojo securityRisk;
+	private CounterMeasurePojo counterMeasure;
 	private ServiceControlPojo serviceControl;
 	private ServiceGuidelinePojo serviceGuideline;
 	private ServiceTestPlanPojo testPlan;
@@ -202,6 +204,18 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName, QueryFilter filter) {
 		eventBus.fireEventFromSource(new ActionEvent(filter), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName,
+			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo securityRisk,
+			CounterMeasurePojo object) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(assessment, securityRisk, object), sourceName);
+	}
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo securityAssessment2) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment2), sourceName);
 	}
 
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
@@ -359,6 +373,19 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(QueryFilter filter) {
 		this.filter = filter;
+	}
+
+	public ActionEvent(ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo securityRisk2,
+			CounterMeasurePojo object) {
+
+		this.securityAssessment = assessment;
+		this.securityRisk = securityRisk2;
+		this.counterMeasure = object;
+	}
+
+	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo securityAssessment2) {
+		this.awsService = service;
+		this.securityAssessment = securityAssessment2;
 	}
 
 	@Override
@@ -530,4 +557,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setFilter(QueryFilter filter) {
 		this.filter = filter;
 	}
+
+	public CounterMeasurePojo getCounterMeasure() {
+		return counterMeasure;
+	}
+
+	public void setCounterMeasure(CounterMeasurePojo counterMeasure) {
+		this.counterMeasure = counterMeasure;
+	}
+
 }

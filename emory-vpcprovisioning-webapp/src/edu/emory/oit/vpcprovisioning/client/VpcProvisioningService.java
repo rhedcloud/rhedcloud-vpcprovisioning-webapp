@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -294,4 +295,6 @@ public interface VpcProvisioningService extends RemoteService {
 	ServiceSecurityAssessmentPojo updateSecurityAssessment(ServiceSecurityAssessmentPojo assessment) throws RpcException;
 	void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service) throws RpcException;
 	List<String> getAssessmentStatusTypeItems();
+	List<String> getRiskLevelTypeItems();
+	List<String> getCounterMeasureStatusTypeItems();
 }

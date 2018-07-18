@@ -85,13 +85,13 @@ import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryResultPojo;
 
 public class DesktopAppShell extends ResizeComposite implements AppShell {
 
-    Logger log=Logger.getLogger(DesktopAppShell.class.getName());
-    ClientFactory clientFactory;
-    EventBus eventBus;
-    UserAccountPojo userLoggedIn;
-    UserProfilePojo userProfile;
-    HashMap<String, List<AWSServicePojo>> awsServices;
-    private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
+	Logger log=Logger.getLogger(DesktopAppShell.class.getName());
+	ClientFactory clientFactory;
+	EventBus eventBus;
+	UserAccountPojo userLoggedIn;
+	UserProfilePojo userProfile;
+	HashMap<String, List<AWSServicePojo>> awsServices;
+	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
 	interface DesktopAppShellUiBinder extends UiBinder<Widget, DesktopAppShell> {
 	}
@@ -102,12 +102,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		
-//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+
+
+		//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
-		
+
 
 		HomeView homeView = clientFactory.getHomeView();
 		homeContentContainer.add(homeView);
@@ -116,15 +116,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 		registerEvents();
 
-//		HTML notificationsHtml = new HTML(
-//			"<div ui:field='notificationsElem' style=\"background: url('images/bell-512.png'); width: 24px; height:24px;\">" +
-//			"<div style=\"font-weight: bold; color: red;\">" +
-//			"3" +
-//			"</div>" +
-//			"</div>");
-//		notificationsHTML.clear();
-//		notificationsHTML.add(notificationsHtml);
-				
+		//		HTML notificationsHtml = new HTML(
+		//			"<div ui:field='notificationsElem' style=\"background: url('images/bell-512.png'); width: 24px; height:24px;\">" +
+		//			"<div style=\"font-weight: bold; color: red;\">" +
+		//			"3" +
+		//			"</div>" +
+		//			"</div>");
+		//		notificationsHTML.clear();
+		//		notificationsHTML.add(notificationsHtml);
+
 		/*
 			<div ui:field='notificationsElem'><img src="images/bell-512.png" width="24" height="24"/></div>
 			if (notificationCount > 0) {
@@ -146,29 +146,29 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField VerticalPanel appShellPanel;
 	@UiField VerticalPanel otherFeaturesPanel;
 	@UiField TabLayoutPanel mainTabPanel;
-//	@UiField DeckLayoutPanel cidrContentContainer;
+	//	@UiField DeckLayoutPanel cidrContentContainer;
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
-//	@UiField DeckLayoutPanel elasticIpContentContainer;
-//	@UiField DeckLayoutPanel firewallContentContainer;
+	//	@UiField DeckLayoutPanel elasticIpContentContainer;
+	//	@UiField DeckLayoutPanel firewallContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
 	@UiField DeckLayoutPanel servicesContentContainer;
 	@UiField DeckLayoutPanel centralAdminContentContainer;
 
 	@UiField Element userNameElem;
 
-    PopupPanel productsPopup = new PopupPanel(true);
+	PopupPanel productsPopup = new PopupPanel(true);
 	@UiField Element releaseInfoElem;
 	@UiField Element productsElem;
-//	@UiField Element notificationsElem;
+	//	@UiField Element notificationsElem;
 	@UiField Element logoElem;
 	@UiField HorizontalPanel generalInfoPanel;
 	@UiField HorizontalPanel linksPanel;
 	@UiField HTML notificationsHTML;
 	@UiField Anchor esbServiceStatusAnchor;
-	
-    /**
+
+	/**
 	 * A boolean indicating that we have not yet seen the first content widget.
 	 */
 	private boolean firstAccountContentWidget = true;
@@ -179,8 +179,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstServicesContentWidget = true;
 
 	private void registerEvents() {
-	    Event.sinkEvents(logoElem, Event.ONCLICK);
-	    Event.setEventListener(logoElem, new EventListener() {
+		Event.sinkEvents(logoElem, Event.ONCLICK);
+		Event.setEventListener(logoElem, new EventListener() {
 			@Override
 			public void onBrowserEvent(Event event) {
 				if(Event.ONCLICK == event.getTypeInt()) {
@@ -190,38 +190,38 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					ActionEvent.fire(eventBus, ActionNames.GO_HOME);
 				}
 			}
-	    });
-	    
-	    Event.sinkEvents(userNameElem, Event.ONCLICK);
-	    Event.setEventListener(userNameElem, new EventListener() {
+		});
+
+		Event.sinkEvents(userNameElem, Event.ONCLICK);
+		Event.setEventListener(userNameElem, new EventListener() {
 			@Override
 			public void onBrowserEvent(Event event) {
 				if(Event.ONCLICK == event.getTypeInt()) {
 					// TODO: fire event
-//					ActionEvent.fire(eventBus, ActionNames.MAINTAIN_USER_PROFILE);
-					
+					//					ActionEvent.fire(eventBus, ActionNames.MAINTAIN_USER_PROFILE);
+
 					// TEMP:  just display a dialog with the contents of the current user profile
 					final DialogBox db = new DialogBox();
 					db.setText("Maintain User Profile");
 					db.setGlassEnabled(true);
 					db.center();
-//					final MaintainCidrAssignmentPresenter presenter = new MaintainCidrAssignmentPresenter(clientFactory, event.getCidr());
-//					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
-//						@Override
-//						public void onClick(ClickEvent event) {
-//							db.hide();
-//						}
-//					});
-//					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
-//						@Override
-//						public void onClick(ClickEvent event) {
-//							if (!presenter.getView().hasFieldViolations()) {
-//								db.hide();
-//							}
-//						}
-//					});
-//					presenter.start(eventBus);
-//					db.setWidget(presenter);
+					//					final MaintainCidrAssignmentPresenter presenter = new MaintainCidrAssignmentPresenter(clientFactory, event.getCidr());
+					//					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					//						@Override
+					//						public void onClick(ClickEvent event) {
+					//							db.hide();
+					//						}
+					//					});
+					//					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					//						@Override
+					//						public void onClick(ClickEvent event) {
+					//							if (!presenter.getView().hasFieldViolations()) {
+					//								db.hide();
+					//							}
+					//						}
+					//					});
+					//					presenter.start(eventBus);
+					//					db.setWidget(presenter);
 					VerticalPanel vp = new VerticalPanel();
 					vp.setSpacing(8);;
 					Grid g = new Grid(userProfile.getProperties().size() + 1, 2);
@@ -250,7 +250,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					hp.setWidth("100%");
 					vp.add(hp);
 					vp.setCellHorizontalAlignment(hp, HasHorizontalAlignment.ALIGN_CENTER);
-					
+
 					Button ok_button = new Button("Save");
 					ok_button.addStyleName("normalButton");
 					ok_button.setWidth("150px");
@@ -263,7 +263,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							db.hide();
 						}
 					});
-					
+
 					Button cancel_button = new Button("Cancel");
 					cancel_button.addStyleName("normalButton");
 					cancel_button.setWidth("150px");
@@ -275,136 +275,136 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							db.hide();
 						}
 					});
-					
+
 					db.setWidget(vp);
 					db.show();
 					db.center();
-					
+
 				}
 			}
-	    });
+		});
 
-//	    Event.sinkEvents(notificationsElem, Event.ONCLICK);
-//	    Event.setEventListener(notificationsElem, new EventListener() {
-//			@Override
-//			public void onBrowserEvent(Event event) {
-//				if(Event.ONCLICK == event.getTypeInt()) {
-//					productsPopup.hide();
-//					// clear other features panel
-//					otherFeaturesPanel.clear();
-//					// add list notifications view
-//					// add maintain notifications view
-//					hideMainTabPanel();
-//					showOtherFeaturesPanel();
-//					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
-//				}
-//			}
-//	    });
-	    
-	    Event.sinkEvents(productsElem, Event.ONCLICK);
-	    Event.setEventListener(productsElem, new EventListener() {
-	        @Override
-	        public void onBrowserEvent(Event event) {
-	        		if(Event.ONCLICK == event.getTypeInt()) {
-	            	 	productsPopup.clear();
-	            	 	productsPopup.setAutoHideEnabled(true);
-		            	productsPopup.setWidth("1200px");
-		            	productsPopup.setHeight("800px");
-		            	productsPopup.setAnimationEnabled(true);
-		            	 
-		            	ScrollPanel sp = new ScrollPanel();
-		            	sp.setHeight("99%");
-		            	sp.setWidth("100%");
-		            	productsPopup.add(sp);
-		            	 
-		            	HorizontalPanel hp = new HorizontalPanel();
-		            	hp.setWidth("100%");
-		            	sp.add(hp);
-		            	// 4 columns
-		            	List<VerticalPanel> vpList = new java.util.ArrayList<VerticalPanel>();
-		            	vpList.add(new VerticalPanel());
-		            	vpList.add(new VerticalPanel());
-		            	vpList.add(new VerticalPanel());
-		            	vpList.add(new VerticalPanel());
-		            	 
-		            	// only do this for admins...
-//		            	if (userLoggedIn.isCentralAdmin()) {
-//	        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
-//	        				manageSvcsAnchor.addStyleName("productAnchor");
-//	        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
-//	        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
-//							@Override
-//							public void onClick(ClickEvent event) {
-//								productsPopup.hide();
-//								// clear other features panel
-//								// add list services view
-//								// add maintain services view
-//								otherFeaturesPanel.clear();
-//				        			hideMainTabPanel();
-//				        			showOtherFeaturesPanel();
-//				    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-//							}
-//	        				});
-//
-//	        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
-//			            	vpList.get(0).add(manageSvcsAnchor);
-//			            	vpList.get(0).add(hrHtml);
-//		            	}
+		//	    Event.sinkEvents(notificationsElem, Event.ONCLICK);
+		//	    Event.setEventListener(notificationsElem, new EventListener() {
+		//			@Override
+		//			public void onBrowserEvent(Event event) {
+		//				if(Event.ONCLICK == event.getTypeInt()) {
+		//					productsPopup.hide();
+		//					// clear other features panel
+		//					otherFeaturesPanel.clear();
+		//					// add list notifications view
+		//					// add maintain notifications view
+		//					hideMainTabPanel();
+		//					showOtherFeaturesPanel();
+		//					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
+		//				}
+		//			}
+		//	    });
 
-		            	int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
-		            	if (catsPerPanel < 5) {
-		            		catsPerPanel = awsServices.size();
-		            	}
-		            	GWT.log("catsPerPanel: " + catsPerPanel);
-		            	int catCntr = 0;
-		            	int vpCntr = 0;
-	            		Iterator<String> keys = awsServices.keySet().iterator();
-	            		while (keys.hasNext()) {
-	            			String catName = keys.next();
-	            			GWT.log("Category is: " + catName);
-	            			if (catCntr >= catsPerPanel) {
-	            				catCntr = 0;
-	            				GWT.log("adding vp number " + vpCntr + " to the HP");
-	            				hp.add(vpList.get(vpCntr));
-	            				vpCntr++;
-	            			}
-	            			else {
-	            				GWT.log("using vp number " + vpCntr);
-	            				VerticalPanel vp = vpList.get(vpCntr);
-	            				HTMLPanel catHtml = new HTMLPanel(catName);
-	            				catHtml.addStyleName("productCategory");
-	            				vp.add(catHtml);
-	            				List<AWSServicePojo> services = awsServices.get(catName);
-	            				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
-	            				for (AWSServicePojo svc : services) {
-	            					GWT.log("Adding service: " + svc.getAwsServiceName());
-	            					Anchor svcAnchor = new Anchor(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
-		            				svcAnchor.addStyleName("productAnchor");
-		            				svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
-		            					"  DESCRIPTION: " + svc.getDescription());
-		            				svcAnchor.setHref(svc.getLandingPageURL());
-		            				svcAnchor.setTarget("_blank");
-		            				if (svc.getStatus().toLowerCase().contains("blocked")) {
-		            					svcAnchor.addStyleName("productAnchorBlocked");
-		            				}
-		            				vp.add(svcAnchor);
-	            				}
-	            				HTMLPanel html = new HTMLPanel("<hr>");
-	            				vp.add(html);
-	            			}
-	            			catCntr++;
-	            		}
-	            		// add last VP to the HP because it gets populated but not added above
-	            		if (hp.getWidgetCount() < 4) {
-	            			for (int i=hp.getWidgetCount(); i<4; i++) {
-	    	            			hp.add(vpList.get(i));
-	            			}
-	            		}
-		            	
+		Event.sinkEvents(productsElem, Event.ONCLICK);
+		Event.setEventListener(productsElem, new EventListener() {
+			@Override
+			public void onBrowserEvent(Event event) {
+				if(Event.ONCLICK == event.getTypeInt()) {
+					productsPopup.clear();
+					productsPopup.setAutoHideEnabled(true);
+					productsPopup.setWidth("1200px");
+					productsPopup.setHeight("800px");
+					productsPopup.setAnimationEnabled(true);
+
+					ScrollPanel sp = new ScrollPanel();
+					sp.setHeight("99%");
+					sp.setWidth("100%");
+					productsPopup.add(sp);
+
+					HorizontalPanel hp = new HorizontalPanel();
+					hp.setWidth("100%");
+					sp.add(hp);
+					// 4 columns
+					List<VerticalPanel> vpList = new java.util.ArrayList<VerticalPanel>();
+					vpList.add(new VerticalPanel());
+					vpList.add(new VerticalPanel());
+					vpList.add(new VerticalPanel());
+					vpList.add(new VerticalPanel());
+
+					// only do this for admins...
+					//		            	if (userLoggedIn.isCentralAdmin()) {
+					//	        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
+					//	        				manageSvcsAnchor.addStyleName("productAnchor");
+					//	        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
+					//	        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
+					//							@Override
+					//							public void onClick(ClickEvent event) {
+					//								productsPopup.hide();
+					//								// clear other features panel
+					//								// add list services view
+					//								// add maintain services view
+					//								otherFeaturesPanel.clear();
+					//				        			hideMainTabPanel();
+					//				        			showOtherFeaturesPanel();
+					//				    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+					//							}
+					//	        				});
+					//
+					//	        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
+					//			            	vpList.get(0).add(manageSvcsAnchor);
+					//			            	vpList.get(0).add(hrHtml);
+					//		            	}
+
+					int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
+					if (catsPerPanel < 5) {
+						catsPerPanel = awsServices.size();
+					}
+					GWT.log("catsPerPanel: " + catsPerPanel);
+					int catCntr = 0;
+					int vpCntr = 0;
+					Iterator<String> keys = awsServices.keySet().iterator();
+					while (keys.hasNext()) {
+						String catName = keys.next();
+						GWT.log("Category is: " + catName);
+						if (catCntr >= catsPerPanel) {
+							catCntr = 0;
+							GWT.log("adding vp number " + vpCntr + " to the HP");
+							hp.add(vpList.get(vpCntr));
+							vpCntr++;
+						}
+						else {
+							GWT.log("using vp number " + vpCntr);
+							VerticalPanel vp = vpList.get(vpCntr);
+							HTMLPanel catHtml = new HTMLPanel(catName);
+							catHtml.addStyleName("productCategory");
+							vp.add(catHtml);
+							List<AWSServicePojo> services = awsServices.get(catName);
+							GWT.log("There are " + services.size() + " services in the " + catName + " category.");
+							for (AWSServicePojo svc : services) {
+								GWT.log("Adding service: " + svc.getAwsServiceName());
+								Anchor svcAnchor = new Anchor(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+								svcAnchor.addStyleName("productAnchor");
+								svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
+										"  DESCRIPTION: " + svc.getDescription());
+								svcAnchor.setHref(svc.getLandingPageURL());
+								svcAnchor.setTarget("_blank");
+								if (svc.getStatus().toLowerCase().contains("blocked")) {
+									svcAnchor.addStyleName("productAnchorBlocked");
+								}
+								vp.add(svcAnchor);
+							}
+							HTMLPanel html = new HTMLPanel("<hr>");
+							vp.add(html);
+						}
+						catCntr++;
+					}
+					// add last VP to the HP because it gets populated but not added above
+					if (hp.getWidgetCount() < 4) {
+						for (int i=hp.getWidgetCount(); i<4; i++) {
+							hp.add(vpList.get(i));
+						}
+					}
+
 					productsPopup.showRelativeTo(linksPanel);
-	             }
-	        }
-	    });
+				}
+			}
+		});
 	}
 
 	/*** Handlers ***/
@@ -443,72 +443,72 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiHandler ("mainTabPanel") 
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
-			case 0:
-				firstHomeContentWidget = true;
-				homeContentContainer.clear();
-				HomeView view = clientFactory.getHomeView();
-				homeContentContainer.setWidget(view);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME);
-				break;
-			case 1:
-				GWT.log("need to get Account Maintenance Content.");
-				firstAccountContentWidget = true;
-				accountContentContainer.clear();
-				ListAccountView listAccountView = clientFactory.getListAccountView();
-				MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
-				BillSummaryView billSummaryView = clientFactory.getBillSummaryView();
-				accountContentContainer.add(listAccountView);
-				accountContentContainer.add(maintainAccountView);
-				accountContentContainer.add(billSummaryView);
-				accountContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
-				break;
-			case 2:
-				GWT.log("need to get VPC Maintentenance content.");
-				firstVpcContentWidget = true;
-				vpcContentContainer.clear();
-				ListVpcView listVpcView = clientFactory.getListVpcView();
-				MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
-				vpcContentContainer.add(listVpcView);
-				vpcContentContainer.add(maintainVpcView);
-				vpcContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
-				break;
-			case 3:
-				GWT.log("need to get VPCP Maintentenance content.");
-				firstVpcpContentWidget = true;
-				vpcpContentContainer.clear();
-				ListVpcpView listVpcpView = clientFactory.getListVpcpView();
-				MaintainVpcpView maintainVpcpView = clientFactory.getMaintainVpcpView();
-				VpcpStatusView vpcpStatusView = clientFactory.getVpcpStatusView();
-				vpcpContentContainer.add(listVpcpView);
-				vpcpContentContainer.add(maintainVpcpView);
-				vpcpContentContainer.add(vpcpStatusView);
-				vpcpContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
-				break;
-			case 4:
-				GWT.log("need to get Services content.");
-				firstServicesContentWidget = true;
-				servicesContentContainer.clear();
-				ListServiceView listServiceView = clientFactory.getListServiceView();
-				MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
-				vpcpContentContainer.add(listServiceView);
-				vpcpContentContainer.add(maintainServiceView);
-				vpcpContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-				break;
-			case 5:
-				GWT.log("need to get Central Admin Content.");
-				firstCentralAdminContentWidget = true;
-				centralAdminContentContainer.clear();
-				ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
-//				MaintainCentralAdminView maintainCentralAdminView = clientFactory.getMaintainCentralAdminView();
-				centralAdminContentContainer.add(listCentralAdminView);
-//				centralAdminContentContainer.add(maintainCentralAdminView);
-				centralAdminContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
-				break;
+		case 0:
+			firstHomeContentWidget = true;
+			homeContentContainer.clear();
+			HomeView view = clientFactory.getHomeView();
+			homeContentContainer.setWidget(view);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME);
+			break;
+		case 1:
+			GWT.log("need to get Account Maintenance Content.");
+			firstAccountContentWidget = true;
+			accountContentContainer.clear();
+			ListAccountView listAccountView = clientFactory.getListAccountView();
+			MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
+			BillSummaryView billSummaryView = clientFactory.getBillSummaryView();
+			accountContentContainer.add(listAccountView);
+			accountContentContainer.add(maintainAccountView);
+			accountContentContainer.add(billSummaryView);
+			accountContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
+			break;
+		case 2:
+			GWT.log("need to get VPC Maintentenance content.");
+			firstVpcContentWidget = true;
+			vpcContentContainer.clear();
+			ListVpcView listVpcView = clientFactory.getListVpcView();
+			MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
+			vpcContentContainer.add(listVpcView);
+			vpcContentContainer.add(maintainVpcView);
+			vpcContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
+			break;
+		case 3:
+			GWT.log("need to get VPCP Maintentenance content.");
+			firstVpcpContentWidget = true;
+			vpcpContentContainer.clear();
+			ListVpcpView listVpcpView = clientFactory.getListVpcpView();
+			MaintainVpcpView maintainVpcpView = clientFactory.getMaintainVpcpView();
+			VpcpStatusView vpcpStatusView = clientFactory.getVpcpStatusView();
+			vpcpContentContainer.add(listVpcpView);
+			vpcpContentContainer.add(maintainVpcpView);
+			vpcpContentContainer.add(vpcpStatusView);
+			vpcpContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
+			break;
+		case 4:
+			GWT.log("need to get Services content.");
+			firstServicesContentWidget = true;
+			servicesContentContainer.clear();
+			ListServiceView listServiceView = clientFactory.getListServiceView();
+			MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
+			vpcpContentContainer.add(listServiceView);
+			vpcpContentContainer.add(maintainServiceView);
+			vpcpContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+			break;
+		case 5:
+			GWT.log("need to get Central Admin Content.");
+			firstCentralAdminContentWidget = true;
+			centralAdminContentContainer.clear();
+			ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
+			//				MaintainCentralAdminView maintainCentralAdminView = clientFactory.getMaintainCentralAdminView();
+			centralAdminContentContainer.add(listCentralAdminView);
+			//				centralAdminContentContainer.add(maintainCentralAdminView);
+			centralAdminContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
+			break;
 		}
 	}
 
@@ -525,8 +525,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		if (w instanceof ListAccountPresenter || 
-			w instanceof MaintainAccountPresenter ||
-			w instanceof BillSummaryPresenter) {
+				w instanceof MaintainAccountPresenter ||
+				w instanceof BillSummaryPresenter) {
 			accountContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstAccountContentWidget) {
@@ -549,8 +549,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		if (w instanceof ListVpcpPresenter || 
-			w instanceof MaintainVpcpPresenter ||
-			w instanceof VpcpStatusPresenter) {
+				w instanceof MaintainVpcpPresenter ||
+				w instanceof VpcpStatusPresenter) {
 			vpcpContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstVpcpContentWidget) {
@@ -559,9 +559,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
-		
-//		if (w instanceof ListCentralAdminPresenter || 
-//			w instanceof MaintainCentralAdminPresenter) {
+
+		//		if (w instanceof ListCentralAdminPresenter || 
+		//			w instanceof MaintainCentralAdminPresenter) {
 		if (w instanceof ListCentralAdminPresenter) {
 			centralAdminContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -571,17 +571,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
-		
+
 		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
 			GWT.log("It's the notifications presenter...");
 			otherFeaturesPanel.clear();
 			otherFeaturesPanel.add(w);
 			return;
 		}
-		
+
 		if (w instanceof ListServicePresenter || 
-			w instanceof MaintainServicePresenter || 
-			w instanceof MaintainSecurityAssessmentPresenter) {
+				w instanceof MaintainServicePresenter || 
+				w instanceof MaintainSecurityAssessmentPresenter) {
 			servicesContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstServicesContentWidget) {
@@ -590,13 +590,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
-//		if (w instanceof ListServicePresenter || w instanceof MaintainServicePresenter) {
-//			GWT.log("It's the services presenter...");
-//			otherFeaturesPanel.clear();
-//			otherFeaturesPanel.add(w);
-//			return;
-//		}
-		
+		//		if (w instanceof ListServicePresenter || w instanceof MaintainServicePresenter) {
+		//			GWT.log("It's the services presenter...");
+		//			otherFeaturesPanel.clear();
+		//			otherFeaturesPanel.add(w);
+		//			return;
+		//		}
+
 		// if we get here, it's the home tab, just set the widget to what's passed in for now
 		homeContentContainer.setWidget(w);
 		// Do not animate the first time we show a widget.
@@ -604,26 +604,26 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			firstHomeContentWidget = false;
 			homeContentContainer.animate(0);
 		}
-		
+
 	}
 
 	@Override
 	public void setTitle(String title) {
 		super.setTitle(title);
-//        titleElem.setInnerHTML(title);
+		//        titleElem.setInnerHTML(title);
 	}
 
 	@Override
 	public void setSubTitle(String subTitle) {
 		super.setTitle(subTitle);
-//        subTitleElem.setInnerHTML(subTitle);
+		//        subTitleElem.setInnerHTML(subTitle);
 	}
 
 	@Override
 	public void setReleaseInfo(String releaseInfo) {
 		super.setTitle(releaseInfo);
 		GWT.log("setting release info to " + releaseInfo);
-        releaseInfoElem.setInnerHTML(releaseInfo);
+		releaseInfoElem.setInnerHTML(releaseInfo);
 		GWT.log("set release info to " + releaseInfo);
 	}
 
@@ -666,31 +666,31 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void showPleaseWaitDialog(String pleaseWaitHTML) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void hidePleaseWaitDialog() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void hidePleaseWaitPanel() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clearNotifications() {
-	    notificationsHTML.setHTML(
-	    		"<img class=\"notification\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
+		notificationsHTML.setHTML(
+				"<img class=\"notification\" src=\"images/bell-512.png\" width=\"24\" height=\"24\"/>");
 	}
 
 	@Override
@@ -706,54 +706,54 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void startNotificationTimer() {
 		// Create a new timer that checks for notifications
-	    final Timer t = new Timer() {
-	      @Override
-	      public void run() {
-	        AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
-				@Override
-				public void onFailure(Throwable caught) {
-			        GWT.log("error checking for notifications...");
-				}
+		final Timer t = new Timer() {
+			@Override
+			public void run() {
+				AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("error checking for notifications...");
+					}
 
-				@Override
-				public void onSuccess(Boolean result) {
-			        if (result) {
-				        Notification n = new Notification(new HTML("You have notification(s)"));
-				        n.show(notificationsHTML);
-				        notificationsHTML.setHTML(
-				        		"<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
-				        esbServiceStatusAnchor.addStyleName("notification");
-			        }
-			        else {
-			        	clearNotifications();
-			        }
-				}
-	        };
-			VpcProvisioningService.Util.getInstance().userHasUnreadNotifications(userLoggedIn, callback);
-	      }
-	    };
+					@Override
+					public void onSuccess(Boolean result) {
+						if (result) {
+							Notification n = new Notification(new HTML("You have notification(s)"));
+							n.show(notificationsHTML);
+							notificationsHTML.setHTML(
+									"<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
+							esbServiceStatusAnchor.addStyleName("notification");
+						}
+						else {
+							clearNotifications();
+						}
+					}
+				};
+				VpcProvisioningService.Util.getInstance().userHasUnreadNotifications(userLoggedIn, callback);
+			}
+		};
 
-	    // Schedule the timer to run once every 10 seconds
-	    AsyncCallback<Integer> interval_cb = new AsyncCallback<Integer>() {
+		// Schedule the timer to run once every 10 seconds
+		AsyncCallback<Integer> interval_cb = new AsyncCallback<Integer>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-		        GWT.log("error getting notification check interval and scheduling timer...");
+				GWT.log("error getting notification check interval and scheduling timer...");
 			}
 
 			@Override
 			public void onSuccess(Integer result) {
-			    t.scheduleRepeating(result);
+				t.scheduleRepeating(result);
 			}
-	    	
-	    };
-	    VpcProvisioningService.Util.getInstance().getNotificationCheckIntervalMillis(interval_cb);
+
+		};
+		VpcProvisioningService.Util.getInstance().getNotificationCheckIntervalMillis(interval_cb);
 	}
 
 	@Override
 	public void initializeAwsServiceMap() {
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
-		
+
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -797,7 +797,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						public void onSuccess(UserProfilePojo profile) {
 							// set the user profile object on this page
 							GWT.log("Created a new user profile with default settings");
-							
+
 							// have to go get it again to get the baseline set
 							AsyncCallback<UserProfileQueryResultPojo> up_callback2 = new AsyncCallback<UserProfileQueryResultPojo>() {
 								@Override
@@ -813,7 +813,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 									setUserProfile(result2.getResults().get(0));
 								}
 							};
-							
+
 							UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
 							up_filter.setUserId(userLoggedIn.getPublicId());
 							VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback2);
@@ -845,7 +845,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -865,7 +865,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						setUserProfile(result2.getResults().get(0));
 					}
 				};
-				
+
 				UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
 				up_filter.setUserId(userLoggedIn.getPublicId());
 				VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback2);

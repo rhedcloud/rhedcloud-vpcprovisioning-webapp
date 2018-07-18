@@ -1601,7 +1601,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public CidrPojo createCidr(CidrPojo cidr) throws RpcException {
 		
-		cidr.setCreateInfo(this.getUserLoggedIn().getEppn(),
+		cidr.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
 
 		if (!useEsbService) {
@@ -1744,7 +1744,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public CidrAssignmentPojo createCidrAssignment(CidrAssignmentPojo cidrAssignment) throws RpcException {
 		
-		cidrAssignment.setCreateInfo(this.getUserLoggedIn().getEppn(),
+		cidrAssignment.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
 
 		if (!useEsbService) {
@@ -2266,7 +2266,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public CidrPojo updateCidr(CidrPojo cidr) throws RpcException {
-		cidr.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+		cidr.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating Cidr on the server...");
             Cidr newData = (Cidr) getObject(Constants.MOA_CIDR);
@@ -2291,7 +2291,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public CidrAssignmentPojo updateCidrAssignment(CidrAssignmentPojo cidrAssignment) throws RpcException {
-		cidrAssignment.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+		cidrAssignment.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating CidrAssignment on the server...");
             CidrAssignment newData = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
@@ -2571,7 +2571,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AccountPojo createAccount(AccountPojo account) throws RpcException {
-		account.setCreateInfo(this.getUserLoggedIn().getEppn(),
+		account.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
 
 		if (!useEsbService) {
@@ -2633,7 +2633,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AccountPojo updateAccount(AccountPojo account) throws RpcException {
-		account.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+		account.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating Account on the server...");
             Account newData = (Account) getObject(Constants.MOA_ACCOUNT);
@@ -2995,7 +2995,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public VpcPojo updateVpc(VpcPojo vpc) throws RpcException {
-		vpc.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+		vpc.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating Vpc on the server...");
             VirtualPrivateCloud newData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
@@ -3720,6 +3720,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public VpcpPojo updateVpcp(VpcpPojo vpc) throws RpcException {
 		// TODO Auto-generated method stub
+		vpc.setUpdateInfo(this.getCachedUser().getPublicId());
 		return null;
 	}
 
@@ -4020,7 +4021,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public ElasticIpPojo createElasticIp(ElasticIpPojo elasticIp) throws RpcException {
-		elasticIp.setCreateInfo(this.getUserLoggedIn().getEppn(),
+		elasticIp.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
 
 		if (!useEsbService) {
@@ -4141,7 +4142,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public ElasticIpPojo updateElasticIp(ElasticIpPojo elasticIp) throws RpcException {
-		elasticIp.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+		elasticIp.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating elasticIp on the server...");
             ElasticIp newData = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
@@ -4313,7 +4314,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ElasticIpAssignmentPojo updateElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment)
 			throws RpcException {
 		
-		elasticIpAssignment.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+		elasticIpAssignment.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating ElasticIpAssignment on the server...");
             ElasticIpAssignment newData = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
@@ -4585,7 +4586,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AWSServicePojo createService(AWSServicePojo service) throws RpcException {
-		// TODO Auto-generated method stub
+		// TEMPORARY
+		service.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
 		service.setServiceId(UUID.uuid());
 		serviceList.add(service);
 		return service;
@@ -4594,6 +4597,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AWSServicePojo updateService(AWSServicePojo service) throws RpcException {
 		// TODO Auto-generated method stub
+		service.setUpdateInfo(this.getCachedUser().getPublicId());
 		return service;
 	}
 
@@ -4775,14 +4779,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public UserNotificationPojo createUserNotification(UserNotificationPojo notification) throws RpcException {
 		// TODO Auto-generated method stub
+		notification.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
 		return null;
 	}
 
 	@Override
 	public UserNotificationPojo updateUserNotification(UserNotificationPojo notification) throws RpcException {
-		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
-		notification.setUpdateInfo(user.getPrincipal());
+		notification.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating UserNotification on the server...");
             UserNotification newData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
@@ -5220,7 +5224,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public FirewallRulePojo createFirewallRule(FirewallRulePojo rule) throws RpcException {
 		// TODO Auto-generated method stub
 		
-		// this will be a request sent to service now
+		// this will be a FirewallExceptionRequest request sent to service now
 		return null;
 	}
 
@@ -5767,17 +5771,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public RoleAssignmentPojo createRoleAssignmentForPersonInAccount(String publicId, 
 			String accountId, String roleName) throws RpcException {
 
-		/*
-		<RoleAssignment>
-			<RoleAssignmentActionType>grant</RoleAssignmentActionType>
-			<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
-			<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
-			<Reason>For Testing</Reason>
-			<RoleDNs>
-				<DistinguishedName>cn=RGR_AWS-158058157672-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
-			</RoleDNs>
-		</RoleAssignment>
-		 */
 		if (!useEsbService) {
 			return null;
 		} 
@@ -6424,7 +6417,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public FirewallExceptionRequestPojo createFirewallExceptionRequest(FirewallExceptionRequestPojo rule)
 			throws RpcException {
 
-		rule.setCreateInfo(this.getUserLoggedIn().getEppn(),
+		rule.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
 
 		if (!useEsbService) {
@@ -6492,7 +6485,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public FirewallExceptionRequestPojo updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule)
 			throws RpcException {
 
-		rule.setUpdateInfo(this.getUserLoggedIn().getPrincipal());
+		rule.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating FirewallExceptionRequest on the server...");
             FirewallExceptionRequest newData = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
@@ -6763,12 +6756,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AccountNotificationPojo createAccountNotification(AccountNotificationPojo notification) throws RpcException {
 		// TODO temporary until notifications can be edited.
+		notification.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
 		return notification;
 	}
 
 	@Override
 	public AccountNotificationPojo updateAccountNotification(AccountNotificationPojo notification) throws RpcException {
 		// TODO temporary until notifications can be edited.
+		notification.setUpdateInfo(this.getCachedUser().getPublicId());
 		return notification;
 	}
 
@@ -6885,9 +6881,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public UserProfilePojo createUserProfile(UserProfilePojo profile) throws RpcException {
-		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
-		profile.setCreateInfo(user.getPrincipal());
+		profile.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
         try {
             info("creating UserNotification on the server...");
             UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
@@ -6907,9 +6902,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public UserProfilePojo updateUserProfile(UserProfilePojo profile) throws RpcException {
-		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
-		profile.setUpdateInfo(user.getPrincipal());
+		profile.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating UserNotification on the server...");
             UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
@@ -6945,8 +6938,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public UserActionPojo createUserAction(UserActionPojo notification) throws RpcException {
+	public UserActionPojo createUserAction(UserActionPojo ua) throws RpcException {
 		// TODO Auto-generated method stub
+		ua.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
 		return null;
 	}
 
@@ -6964,8 +6959,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo notification) throws RpcException {
+	public TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo toua) throws RpcException {
 		// TODO Auto-generated method stub
+		toua.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
 		return null;
 	}
 
@@ -6984,6 +6981,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ServiceSecurityAssessmentPojo createSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
 			throws RpcException {
 		// TODO Auto-generated method stub
+		assessment.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
 		return null;
 	}
 
@@ -6991,6 +6990,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ServiceSecurityAssessmentPojo updateSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
 			throws RpcException {
 		// TODO Auto-generated method stub
+		assessment.setUpdateInfo(this.getCachedUser().getPublicId());
 		return null;
 	}
 
@@ -7041,5 +7041,34 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<String> getRiskLevelTypeItems() {
+		// TEMP
+		List<String> l = new java.util.ArrayList<String>();
+		l.add("Low");
+		l.add("Medium");
+		l.add("High");
+		l.add("Critical");
+		return l;
+	}
+
+	@Override
+	public List<String> getCounterMeasureStatusTypeItems() {
+		// TEMP
+		List<String> l = new java.util.ArrayList<String>();
+		l.add("Unknown");
+		l.add("Pending");
+		l.add("In-progress");
+		l.add("Complete");
+		return l;
+	}
+	
+	private UserAccountPojo getCachedUser() {
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+				Constants.USER_ACCOUNT + getCurrentSessionId());
+		
+		return user;
 	}
 }

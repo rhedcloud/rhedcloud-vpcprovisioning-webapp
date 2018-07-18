@@ -48,6 +48,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -153,7 +155,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				GWT.log("Bootstrapper, GO_HOME_SECURITY_RISK.onAction");
-				final ListSecurityRiskPresenter presenter = new ListSecurityRiskPresenter(clientFactory, true, event.getSecurityAssessment());
+				final ListSecurityRiskPresenter presenter = new ListSecurityRiskPresenter(clientFactory, true, event.getAwsService(), event.getSecurityAssessment());
 				// this will let the presenter get all Elastic IP assignments for this VPC
 				presenter.start(eventBus);
 				MaintainSecurityAssessmentView parent = clientFactory.getMaintainSecurityAssessmentView();
@@ -826,6 +828,40 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.CREATE_SECURITY_RISK, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("CREATE_SECURITY_RISK event service is: " + event.getAwsService());
+				GWT.log("CREATE_SECURITY_RISK event assessment is: " + event.getSecurityAssessment());
+//				placeController.goTo(MaintainSecurityRiskPlace.getMaintainSecurityRiskPlace(event.getAwsService(), event.getSecurityAssessment()));
+
+				// use this approach if we want to present in a dialog
+				final DialogBox db = new DialogBox();
+				db.setText("Maintain Service Security Assessment");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainSecurityRiskPresenter presenter = new MaintainSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
@@ -847,6 +883,27 @@ public class AppBootstrapper {
 			}
 		});
 		
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SECURITY_RISK, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityRiskPlace.createMaintainSecurityRiskPlace(event.getAwsService(), event.getSecurityAssessment(), event.getSecurityRisk()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SECURITY_RISK_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SECURITY_RISK_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.ACCOUNT_NOTIFICATION_SAVED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {

@@ -35,6 +35,8 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -88,11 +90,11 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			firstSecurityRiskWidget = true;
 			securityRisksContainer.clear();
 			ListSecurityRiskView listView = presenter.getClientFactory().getListSecurityRiskView();
-//			MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
+			MaintainSecurityRiskView maintainView = presenter.getClientFactory().getMaintainSecurityRiskView();
 			securityRisksContainer.add(listView);
-//			firewallContentContainer.add(maintainFwView);
+			securityRisksContainer.add(maintainView);
 			securityRisksContainer.setAnimationDuration(500);
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getSecurityAssessment());
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
 			break;
 		}
 	}
@@ -287,7 +289,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@Override
 	public void initPage() {
-		GWT.log("Service is: " + presenter.getService());
+		GWT.log("Maintain Assessment, Service is: " + presenter.getService());
 		registerHandlers();
 		if (presenter.getService() != null) {
 			GWT.log("Security Assessments for Service: " + presenter.getService().getAwsServiceName());
@@ -301,7 +303,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 		ListSecurityRiskView listView = presenter.getClientFactory().getListSecurityRiskView();
 		securityRisksContainer.add(listView);
 		securityRisksContainer.setAnimationDuration(500);
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getSecurityAssessment());
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
 		
 	}
 
@@ -345,8 +347,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	}
 	@Override
 	public void setWidget(IsWidget w) {
-//		if (w instanceof ListSecurityRiskPresenter || w instanceof MaintainSecurityRiskPresenter) {
-		if (w instanceof ListSecurityRiskPresenter) {
+		if (w instanceof ListSecurityRiskPresenter || w instanceof MaintainSecurityRiskPresenter) {
 			GWT.log("Maintain Security Assessment, setWidget: Security Risk");
 			securityRisksContainer.setWidget(w);
 			// Do not animate the first time we show a widget.

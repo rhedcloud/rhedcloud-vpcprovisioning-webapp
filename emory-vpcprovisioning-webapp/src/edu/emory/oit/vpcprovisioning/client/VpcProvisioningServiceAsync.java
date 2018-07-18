@@ -274,4 +274,6 @@ public interface VpcProvisioningServiceAsync {
 	void updateSecurityAssessment(ServiceSecurityAssessmentPojo service, AsyncCallback<ServiceSecurityAssessmentPojo> callback);
 	void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service, AsyncCallback<Void> callback);
 	void getAssessmentStatusTypeItems(AsyncCallback<List<String>> callback);
+	void getRiskLevelTypeItems(AsyncCallback<List<String>> callback);
+	void getCounterMeasureStatusTypeItems(AsyncCallback<List<String>> callback);
 }

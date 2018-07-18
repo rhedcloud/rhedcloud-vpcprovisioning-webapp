@@ -38,6 +38,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -279,6 +280,11 @@ public class AppActivityMapper implements ActivityMapper {
 		if (place instanceof MaintainSecurityAssessmentPlace) {
 			// Maintain service
 			return new MaintainSecurityAssessmentActivity(clientFactory, (MaintainSecurityAssessmentPlace) place);
+		}
+
+		if (place instanceof MaintainSecurityRiskPlace) {
+			// Maintain service
+			return new MaintainSecurityRiskActivity(clientFactory, (MaintainSecurityRiskPlace) place);
 		}
 
 		if (place instanceof MaintainAccountNotificationPlace) {

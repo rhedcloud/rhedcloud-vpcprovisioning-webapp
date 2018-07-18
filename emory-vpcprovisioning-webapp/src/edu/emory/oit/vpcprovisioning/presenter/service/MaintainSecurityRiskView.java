@@ -11,26 +11,31 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface MaintainSecurityAssessmentView extends Editor<ServiceSecurityAssessmentPojo>, AcceptsOneWidget, IsWidget, View {
+public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
 	public interface Presenter extends PresentsWidgets {
-		void saveAssessment();
-		ServiceSecurityAssessmentPojo getSecurityAssessment();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
-		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
+		public void setDirectoryMetaDataTitleOnWidget(String userId, Widget w);
 		public void logMessageOnServer(final String message);
-		void deleteSecurityAssessment(ServiceSecurityAssessmentPojo selected);
+		
+		void saveAssessment();
+		void setSecurityAssessment(ServiceSecurityAssessmentPojo assessment);
+		ServiceSecurityAssessmentPojo getSecurityAssessment();
+
 		AWSServicePojo getService();
 		void setService(AWSServicePojo service);
-		void setRelatedService(AWSServicePojo service);
-		AWSServicePojo getRelatedService();
+
+		void deleteSecurityRisk(SecurityRiskPojo selected);
+		SecurityRiskPojo getSecurityRisk();
 	}
 
 	/**
@@ -58,11 +63,9 @@ public interface MaintainSecurityAssessmentView extends Editor<ServiceSecurityAs
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void setAssessmentStatusItems(List<String> assessmentStatusTypes);
-	void addRelatedServiceToView(AWSServicePojo service, String widgetTitle);
 	
-//	void setSecurityRisks(List<SecurityRiskPojo> risks);
-//	void removeSecurityRiskFromView(SecurityRiskPojo risk);
-//	void clearSecurityRiskList();
-//	// TODO: controls, guidelines and test plans
+	void setRiskLevelItems(List<String> riskLevels);
+	void setCounterMeasureStatusItems(List<String> statuses);
+	void setCounterMeasures(List<CounterMeasurePojo> counterMeasures);
+	void removeCounterMeasureFromView(CounterMeasurePojo pojo);
 }

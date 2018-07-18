@@ -127,8 +127,8 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	}
 
 	@UiHandler ("createButton")
-	void createSserviceClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_RISK);
+	void createSecurityRiskClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_RISK, presenter.getService(), presenter.getAssessment());
 	}
 	
 	@Override

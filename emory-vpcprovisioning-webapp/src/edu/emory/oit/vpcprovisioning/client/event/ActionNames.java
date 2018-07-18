@@ -149,5 +149,6 @@ public interface ActionNames {
 	final String MAINTAIN_ACCOUNT_NOTIFICATION = "maintainAccountNotification";
 	final String ACCOUNT_NOTIFICATION_EDITING_CANCELED = "acctNotificationEditingCancelled";
 	final String ACCOUNT_NOTIFICATION_SAVED = "acctNotificationSaved";
+	final String MAINTAIN_COUNTER_MEASURE = "maintainCounterMeasure";
 
 }

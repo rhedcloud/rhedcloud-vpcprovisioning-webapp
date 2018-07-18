@@ -3,13 +3,20 @@ package edu.emory.oit.vpcprovisioning.shared;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
-public class CounterMeasurePojo extends SharedObject implements IsSerializable {
+public class CounterMeasurePojo extends SharedObject implements IsSerializable, Comparable<CounterMeasurePojo> {
 	/*
 		SecurityRiskId, Status, Description, Verifier?, VerificationDatetime?
 	 */
 
+	public static final ProvidesKey<CounterMeasurePojo> KEY_PROVIDER = new ProvidesKey<CounterMeasurePojo>() {
+		@Override
+		public Object getKey(CounterMeasurePojo item) {
+			return item == null ? null : item.getSecurityRiskId();
+		}
+	};
 	String securityRiskId;
 	String status;
 	String description;
@@ -58,6 +65,12 @@ public class CounterMeasurePojo extends SharedObject implements IsSerializable {
 
 	public void setVerificationDate(Date verificationDate) {
 		this.verificationDate = verificationDate;
+	}
+
+	@Override
+	public int compareTo(CounterMeasurePojo o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

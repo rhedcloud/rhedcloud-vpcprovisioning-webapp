@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -92,4 +93,5 @@ public interface ClientFactory {
 	MaintainSecurityAssessmentView getMaintainSecurityAssessmentView();
 	ListSecurityRiskView getListSecurityRiskView();
 	MaintainAccountNotificationView getMaintainAccountNotificationView();
+	MaintainSecurityRiskView getMaintainSecurityRiskView();
 }

@@ -32,6 +32,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -80,6 +81,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainSecurityAssessmentView maintainSecurityAssessmentView;
 	private ListSecurityRiskView listSecurityRiskView;
 	private MaintainAccountNotificationView maintainAccountNotificationView;
+	private MaintainSecurityRiskView maintainSecurityRiskView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -265,6 +267,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainAccountNotificationView getMaintainAccountNotificationView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainSecurityRiskView getMaintainSecurityRiskView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

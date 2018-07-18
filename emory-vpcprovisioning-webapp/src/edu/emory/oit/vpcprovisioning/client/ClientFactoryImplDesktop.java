@@ -34,6 +34,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIpAssi
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainFirewallExceptionRequest;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityAssessment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
@@ -60,6 +61,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -110,6 +112,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainSecurityAssessmentView maintainSecurityAssessmentView;
 	private ListSecurityRiskView listSecurityRiskView;
 	private MaintainAccountNotificationView maintainAccountNotificationView;
+	private MaintainSecurityRiskView maintainSecurityRiskView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -458,5 +461,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	private MaintainAccountNotificationView createMaintainAccountNotificationView() {
 		return new DesktopMaintainAccountNotification();
+	}
+	@Override
+	public MaintainSecurityRiskView getMaintainSecurityRiskView() {
+		if (maintainSecurityRiskView == null) {
+			maintainSecurityRiskView = createMaintainSecurityRiskView();
+		}
+		return maintainSecurityRiskView;
+	}
+	protected MaintainSecurityRiskView createMaintainSecurityRiskView() {
+		return new DesktopMaintainSecurityRisk();
 	}
 }
