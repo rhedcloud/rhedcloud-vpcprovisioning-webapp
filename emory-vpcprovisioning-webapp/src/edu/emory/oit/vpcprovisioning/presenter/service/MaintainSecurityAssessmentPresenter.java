@@ -257,7 +257,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 			public void onSuccess(ServiceSecurityAssessmentPojo result) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, assessment);
+				ActionEvent.fire(eventBus, ActionNames.SECURITY_ASSESSMENT_SAVED, service, assessment);
 			}
 		};
 		if (!this.isEditing) {

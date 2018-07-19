@@ -70,6 +70,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		if (serviceId == null) {
@@ -158,10 +159,12 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 			}
 		};
 
-		GWT.log("refreshing Services list...");
-		ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
-		filter.setServiceId(this.serviceId);
-		VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
+		if (isEditing) {
+			GWT.log("refreshing security assessment list...");
+			ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+			filter.setServiceId(this.serviceId);
+			VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
+		}
 	}
 
 	private void setAssessmentList(List<ServiceSecurityAssessmentPojo> services) {
@@ -257,7 +260,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 				// only go back to service list if true
 				// otherwise let the view decide what happens next.
 				if (listServices) {
-					ActionEvent.fire(eventBus, ActionNames.ACCOUNT_SAVED, service);
+					ActionEvent.fire(eventBus, ActionNames.SERVICE_SAVED, service);
 				}
 				else {
 					ActionEvent.fire(eventBus, ActionNames.CREATE_SECURITY_ASSESSMENT, result);

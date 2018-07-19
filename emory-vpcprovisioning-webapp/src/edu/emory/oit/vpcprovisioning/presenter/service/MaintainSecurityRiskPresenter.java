@@ -13,6 +13,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -25,6 +26,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	private AWSServicePojo service;
 	private SecurityRiskPojo securityRisk;
 	private String securityRiskId;
+	private DirectoryPersonPojo directoryPerson;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -253,6 +255,12 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 			}
 		};
 		// it's always an update
+		if (!isEditing) {
+			this.assessment.getSecurityRisks().add(getSecurityRisk());
+		}
+		else {
+			// TODO: have to find the security risk, remove it and then re-add this one to the list
+		}
 		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
 	}
 
@@ -318,5 +326,14 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	@Override
 	public SecurityRiskPojo getSecurityRisk() {
 		return this.securityRisk;
+	}
+
+	@Override
+	public void setDirectoryPerson(DirectoryPersonPojo pojo) {
+		this.directoryPerson = pojo;
+	}
+
+	public DirectoryPersonPojo getDirectoryPerson() {
+		return directoryPerson;
 	}
 }

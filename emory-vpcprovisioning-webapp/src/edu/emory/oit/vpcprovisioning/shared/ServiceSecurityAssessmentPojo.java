@@ -1,12 +1,13 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
-public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSerializable {
+public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSerializable, Comparable<ServiceSecurityAssessmentPojo> {
 	/*
 		ServiceSecurityAssessmentId?, 
 		ServiceId+, 
@@ -30,6 +31,7 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 	List<ServiceControlPojo> serviceControls = new java.util.ArrayList<ServiceControlPojo>();
 	List<ServiceGuidelinePojo> serviceGuidelines = new java.util.ArrayList<ServiceGuidelinePojo>();
 	ServiceTestPlanPojo serviceTestPlan;
+	ServiceSecurityAssessmentPojo baseline;
 	
 	public ServiceSecurityAssessmentPojo() {
 		// TODO Auto-generated constructor stub
@@ -89,6 +91,24 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 
 	public void setServiceTestPlan(ServiceTestPlanPojo serviceTestPlan) {
 		this.serviceTestPlan = serviceTestPlan;
+	}
+
+	public ServiceSecurityAssessmentPojo getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(ServiceSecurityAssessmentPojo baseline) {
+		this.baseline = baseline;
+	}
+
+	@Override
+	public int compareTo(ServiceSecurityAssessmentPojo o) {
+		Date c1 = o.getCreateTime();
+		Date c2 = this.getCreateTime();
+		if (c1 == null || c2 == null) {
+			return 0;
+		}
+		return c1.compareTo(c2);
 	}
 
 }

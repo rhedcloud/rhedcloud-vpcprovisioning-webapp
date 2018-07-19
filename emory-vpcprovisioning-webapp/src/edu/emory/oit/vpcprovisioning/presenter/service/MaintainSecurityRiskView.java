@@ -13,6 +13,7 @@ import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -36,6 +37,8 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 
 		void deleteSecurityRisk(SecurityRiskPojo selected);
 		SecurityRiskPojo getSecurityRisk();
+		public void setDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getDirectoryPerson();
 	}
 
 	/**

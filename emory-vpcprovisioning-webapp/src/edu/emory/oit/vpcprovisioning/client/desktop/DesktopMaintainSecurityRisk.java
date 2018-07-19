@@ -8,9 +8,13 @@ import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -21,14 +25,17 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
@@ -80,6 +87,39 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	@UiField TextBox riskNameTB;
 	@UiField TextArea riskDescriptionTA;
 	@UiField(provided=true) SuggestBox assessorLookupSB = new SuggestBox(assessorSuggestions, new TextBox());
+	@UiField DateBox assessmentDB;
+
+	@UiHandler ("okayButton")
+	void okayButtonClicked(ClickEvent e) {
+		populateRiskWithFormData();
+		presenter.saveAssessment();
+	}
+	private void populateRiskWithFormData() {
+		// populate/save service
+		presenter.getSecurityRisk().setRiskLevel(riskLevelLB.getSelectedValue());
+		presenter.getSecurityRisk().setSecurityRiskName(riskNameTB.getText());
+		presenter.getSecurityRisk().setDescription(riskDescriptionTA.getText());
+		if (presenter.getDirectoryPerson() != null) {
+			presenter.getSecurityRisk().setAssessorId(presenter.getDirectoryPerson().getKey());
+		}
+		presenter.getSecurityRisk().setSequenceNumber(Integer.parseInt(sequenceNumberTB.getText()));
+		presenter.getSecurityRisk().setAssessmentDate(assessmentDB.getValue());
+		
+		// TODO: countermeasures are added as they're filled out.
+	}
+
+	private void registerHandlers() {
+		assessorLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (dp_suggestion.getDirectoryPerson() != null) {
+					presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
+					assessorLookupSB.setTitle(presenter.getDirectoryPerson().toString());
+				}
+			}
+		});
+	}
 
 	@Override
 	public void hidePleaseWaitPanel() {
@@ -132,13 +172,39 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	@Override
 	public List<Widget> getMissingRequiredFields() {
 		// TODO Auto-generated method stub
-		return null;
+		/*
+		ServiceId, 
+		SequenceNumber, 
+		 */
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		SecurityRiskPojo risk = presenter.getSecurityRisk();
+		if (risk.getSecurityRiskName() == null || risk.getSecurityRiskName().length() == 0) {
+			fields.add(riskNameTB);
+		}
+		if (risk.getRiskLevel() == null || risk.getRiskLevel().length() == 0) {
+			fields.add(riskLevelLB);
+		}
+		if (risk.getDescription() == null || risk.getDescription().length() == 0) {
+			fields.add(riskDescriptionTA);
+		}
+		if (risk.getAssessorId() == null|| risk.getAssessorId().length() == 0) {
+			fields.add(assessorLookupSB);
+		}
+		if (risk.getAssessmentDate() == null) {
+			fields.add(assessmentDB);
+		}
+		return fields;
 	}
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
-		
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		fields.add(riskNameTB);
+		fields.add(riskLevelLB);
+		fields.add(riskDescriptionTA);
+		fields.add(assessorLookupSB);
+		fields.add(assessmentDB);
+		this.resetFieldStyles(fields);
 	}
 
 	@Override
@@ -194,6 +260,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	@Override
 	public void initPage() {
 		GWT.log("DesktopMaintainSecurityRisk: initPage");
+		registerHandlers();
 		if (presenter.getSecurityRisk() != null) {
 			SecurityRiskPojo srp = presenter.getSecurityRisk();
 			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));

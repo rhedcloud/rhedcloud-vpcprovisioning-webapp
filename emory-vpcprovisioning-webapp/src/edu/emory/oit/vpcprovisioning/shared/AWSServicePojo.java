@@ -35,13 +35,13 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	String status;
 	String landingPageURL;
 	String description;
-	List<String> categories = new java.util.ArrayList<String>();
+	List<String> awsCategories = new java.util.ArrayList<String>();
 	List<String> consoleCategories = new java.util.ArrayList<String>();
-
 	boolean awsHipaaEligible;
 	boolean emoryHipaaEligible;
 	List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
 	AWSServicePojo baseline;
+	boolean skeleton;
 
 	public static final ProvidesKey<AWSServicePojo> KEY_PROVIDER = new ProvidesKey<AWSServicePojo>() {
 		@Override
@@ -55,12 +55,12 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 
 
 	public List<String> getCategories() {
-		return categories;
+		return awsCategories;
 	}
 
 
 	public void setCategories(List<String> categories) {
-		this.categories = categories;
+		this.awsCategories = categories;
 	}
 
 
@@ -200,6 +200,34 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 			}
 		}
 		return false;
+	}
+
+
+	public boolean isSkeleton() {
+		if (alternateServiceName != null && alternateServiceName.length() > 0) {
+			return false;
+		}
+		if (combinedServiceName != null && combinedServiceName.length() > 0) {
+			return false;
+		}
+//		if (landingPageURL != null && landingPageURL.length() > 0) {
+//			return false;
+//		}
+		if (description != null && description.length() > 0) {
+			return false;
+		}
+		if (consoleCategories.size() > 0) {
+			return false;
+		}
+		if (tags.size() > 0) {
+			return false;
+		}
+		return true;
+	}
+
+
+	public void setSkeleton(boolean skeleton) {
+		this.skeleton = skeleton;
 	}
 
 }

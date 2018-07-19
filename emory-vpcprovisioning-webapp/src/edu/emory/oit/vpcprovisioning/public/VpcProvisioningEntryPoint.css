@@ -662,3 +662,12 @@ hr {
 	font-weight: bold;
 	color: #e47911;
 }
+.skeletonService {
+	background: red important!;
+	color: white important!;
+	/*animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate !important;*/  
+}
+.waitingForWork {
+	animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate;  
+}
+@keyframes blinker { to { opacity: 0; } }

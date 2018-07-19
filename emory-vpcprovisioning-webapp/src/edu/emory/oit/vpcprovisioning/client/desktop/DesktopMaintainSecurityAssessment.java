@@ -39,6 +39,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPrese
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainSecurityAssessment extends ViewImplBase implements MaintainSecurityAssessmentView {
@@ -75,7 +76,9 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@UiHandler("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		// TODO: populate assessment and save
+		// populate assessment and save
+		populateAssessmentWithFormData();
+		presenter.saveAssessment();
 	}
 	@UiHandler("cancelButton") 
 	void cancelButtonClicked(ClickEvent e) {
@@ -97,6 +100,15 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
 			break;
 		}
+	}
+
+	private void populateAssessmentWithFormData() {
+		// populate/save service
+		presenter.getSecurityAssessment().setStatus(statusLB.getSelectedValue());
+		
+		// risks, controls, guidelines and test plans are added as they're 
+		// added to the page.
+		
 	}
 
 	// TODO: test this, not sure it will work this way
@@ -227,8 +239,12 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		ServiceSecurityAssessmentPojo assess = presenter.getSecurityAssessment();
+		if (assess.getStatus() == null || assess.getStatus().length() == 0) {
+			fields.add(statusLB);
+		}
+		return fields;
 	}
 
 	@Override
@@ -297,6 +313,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 		else {
 			GWT.log("Service in the presenter is null");
 		}
+		servicesTable.clear();
 		serviceLookupSB.setText("");
 		serviceLookupSB.getElement().setPropertyString("placeholder", "enter service name");
 		

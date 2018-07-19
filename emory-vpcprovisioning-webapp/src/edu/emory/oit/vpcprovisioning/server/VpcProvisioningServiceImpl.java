@@ -62,16 +62,23 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.jmsobjects.services.v1_0.ServiceSecurityAssessment;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.Countermeasure;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceControl;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceGuideline;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceSecurityAssessmentQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestPlan;
 import com.amazon.aws.moa.objects.resources.v1_0.UserNotificationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
@@ -4524,40 +4531,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		result.setFilterUsed(filter);
 		
 		// TEMPORARY
-		if (true) {
-			for (AWSServicePojo svc : serviceList) {
-				if (filter == null) {
-					result.getResults().add(svc);
-				}
-				else {
-					if (svc.getServiceId().equalsIgnoreCase(filter.getServiceId())) {
-						result.getResults().add(svc);
-					}
-				}
-			}
-			return result;
-		}
+//		if (true) {
+//			for (AWSServicePojo svc : serviceList) {
+//				if (filter == null) {
+//					result.getResults().add(svc);
+//				}
+//				else {
+//					if (svc.getServiceId().equalsIgnoreCase(filter.getServiceId())) {
+//						result.getResults().add(svc);
+//					}
+//				}
+//			}
+//			return result;
+//		}
 		
-//		XmlDocumentReader xmlReader = new XmlDocumentReader();
 		try {
 			com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = 
 					(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
 			ServiceQuerySpecification queryObject = (ServiceQuerySpecification) getObject(Constants.MOA_SERVICE_QUERY_SPEC);
 
-			// TODO: Temporary
-//			Document provideDoc = xmlReader.initializeDocument("configs/messaging/Environments/Examples/InputFiles/VpcProvisioningWebApp/Provide-Replies.xml", false);
-//			info("Read document.  Root element is: " + provideDoc.getRootElement().getName());
-//			Element dataArea = provideDoc.getRootElement().getChild("DataArea");
-//			List<Element> eServices = dataArea.getChildren("Service");
 			List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
 
-//			for (Element eService : eServices) {
 			for (com.amazon.aws.moa.jmsobjects.services.v1_0.Service service : moas) {
-//				com.amazon.aws.moa.jmsobjects.services.v1_0.Service service = 
-//					(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
-//				service.buildObjectFromInput(eService);
 				AWSServicePojo pojo = new AWSServicePojo();
 				AWSServicePojo baseline = new AWSServicePojo();
 				this.populateAWSServicePojo(service, pojo);
@@ -4573,11 +4570,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		} catch (EnterpriseObjectQueryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RpcException(e);
 		} catch (JMSException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new RpcException(e);
 		}
 
 		info("returning " + result.getResults().size() + " services.");
@@ -4586,25 +4583,110 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AWSServicePojo createService(AWSServicePojo service) throws RpcException {
-		// TEMPORARY
 		service.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
-		service.setServiceId(UUID.uuid());
-		serviceList.add(service);
+        try {
+            info("creating AWS Service on the server...");
+            com.amazon.aws.moa.jmsobjects.services.v1_0.Service newData = 
+            	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+
+            info("populating newData...");
+            populateAWSServiceMoa(service, newData);
+
+            info("doing the update...");
+            doCreate(newData, getAWSRequestService());
+            info("create is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
 		return service;
+
+		// TEMPORARY
+//		service.setCreateInfo(this.getCachedUser().getPublicId(),
+//				new java.util.Date());
+//		service.setServiceId(UUID.uuid());
+//		serviceList.add(service);
+//		return service;
 	}
 
 	@Override
 	public AWSServicePojo updateService(AWSServicePojo service) throws RpcException {
-		// TODO Auto-generated method stub
 		service.setUpdateInfo(this.getCachedUser().getPublicId());
+        try {
+            info("updating UserNotification on the server...");
+            com.amazon.aws.moa.jmsobjects.services.v1_0.Service newData = 
+            	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+            com.amazon.aws.moa.jmsobjects.services.v1_0.Service baselineData = 
+            	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+
+            info("populating newData...");
+            populateAWSServiceMoa(service, newData);
+
+            info("populating baselineData...");
+            populateAWSServiceMoa(service.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getAWSRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
 		return service;
 	}
 
 	@Override
 	public void deleteService(AWSServicePojo service) throws RpcException {
-		// TODO Auto-generated method stub
-		
+		try {
+			info("deleting AWS Service on the server...");
+            com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa = 
+                	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+			info("populating moa");
+			this.populateAWSServiceMoa(service, moa);
+			
+			info("doing the Service.delete...");
+			this.doDelete(moa, getAWSRequestService());
+			info("Service.delete is complete...");
+
+			return;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
@@ -6973,8 +7055,210 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// TODO Auto-generated method stub
 		ServiceSecurityAssessmentQueryResultPojo result = new ServiceSecurityAssessmentQueryResultPojo();
 		result.setFilterUsed(filter);
+		List<ServiceSecurityAssessmentPojo> pojos = new java.util.ArrayList<ServiceSecurityAssessmentPojo>();
+		try {
+			ServiceSecurityAssessmentQuerySpecification queryObject = (ServiceSecurityAssessmentQuerySpecification) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT_QUERY_SPEC);
+			ServiceSecurityAssessment actionable = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+
+			if (filter != null) {
+				queryObject.setServiceId(filter.getServiceId());
+				queryObject.setRiskLevel(filter.getRiskLevel());
+				queryObject.setSecurityRiskId(filter.getSecurityRiskId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<ServiceSecurityAssessment> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getSecurityAssessmentsForFilter] got " + moas.size() + 
+					" Security Assessments from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
+			for (ServiceSecurityAssessment moa : moas) {
+				ServiceSecurityAssessmentPojo pojo = new ServiceSecurityAssessmentPojo();
+				ServiceSecurityAssessmentPojo baseline = new ServiceSecurityAssessmentPojo();
+				this.populateSecurityAssessmentPojo(moa, pojo);
+				this.populateSecurityAssessmentPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateSecurityAssessmentPojo(ServiceSecurityAssessment moa, ServiceSecurityAssessmentPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setServiceSecurityAssessmentId(moa.getServiceSecurityAssessmentId());
+		pojo.setStatus(moa.getStatus());
+		if (moa.getServiceId() != null) {
+			for (String svcid : (List<String>)moa.getServiceId()) {
+				pojo.getServiceIds().add(svcid);
+			}
+		}
+		if (moa.getSecurityRisk() != null) {
+			for (SecurityRisk risk : (List<SecurityRisk>)moa.getSecurityRisk()) {
+				SecurityRiskPojo rp = new SecurityRiskPojo();
+				rp.setSecurityRiskId(risk.getSecurityRiskId());
+				rp.setServiceId(risk.getServiceId());
+				rp.setSequenceNumber(this.toIntFromString(risk.getSequenceNumber()));
+				rp.setSecurityRiskName(risk.getServiceRiskName());
+				rp.setRiskLevel(risk.getRiskLevel());
+				rp.setDescription(risk.getDescription());
+				rp.setAssessorId(risk.getAssessorId());
+				rp.setAssessmentDate(this.toDateFromDatetime(risk.getAssessmentDatetime()));
+				if (risk.getCountermeasure() != null) {
+					for (Countermeasure cm : (List<Countermeasure>)risk.getCountermeasure()) {
+						CounterMeasurePojo cmp = new CounterMeasurePojo();
+						cmp.setSecurityRiskId(cm.getSecurityRiskId());
+						cmp.setStatus(cm.getStatus());
+						cmp.setDescription(cm.getDescription());
+						cmp.setVerifier(cm.getVerifier());
+						cmp.setVerificationDate(this.toDateFromDatetime(cm.getVerificationDatetime()));
+						risk.getCountermeasure().add(cmp);
+					}
+				}
+				pojo.getSecurityRisks().add(rp);
+			}
+		}
+		if (moa.getServiceControl() != null) {
+			for (ServiceControl sc : (List<ServiceControl>)moa.getServiceControl()) {
+				ServiceControlPojo scp = new ServiceControlPojo();
+				scp.setServiceId(sc.getServiceId());
+				scp.setServiceControlId(sc.getServiceControlId());
+				scp.setSequenceNumber(this.toIntFromString(sc.getSequenceNumber()));
+				scp.setServiceControlName(sc.getServiceControlName());
+				scp.setDescription(sc.getDescription());
+				scp.setAssessorId(sc.getAssessorId());
+				scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
+				scp.setVerifier(sc.getVerifier());
+				scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
+				pojo.getServiceControls().add(scp);
+			}
+		}
+		if (moa.getServiceGuideline() != null) {
+			for (ServiceGuideline sg : (List<ServiceGuideline>)moa.getServiceGuideline()) {
+				ServiceGuidelinePojo sgp = new ServiceGuidelinePojo();
+				sgp.setServiceGuidelineName(sg.getServiceId());
+				sgp.setSequenceNumber(this.toIntFromString(sg.getSequenceNumber()));
+				sgp.setServiceGuidelineName(sg.getServiceGuidelineName());
+				sgp.setDescription(sg.getDescription());
+				sgp.setAssessorId(sg.getAssessorId());
+				sgp.setAssessmentDate(this.toDateFromDatetime(sg.getAssessmentDatetime()));
+				pojo.getServiceGuidelines().add(sgp);
+			}
+		}
+		if (moa.getServiceTestPlan() != null) {
+			ServiceTestPlanPojo stp = new ServiceTestPlanPojo();
+			stp.setServiceId(moa.getServiceTestPlan().getServiceId());
+			// TODO: test plan requirement list
+		}
+	}
+
+	private void populateSecurityAssessmentMoa(ServiceSecurityAssessmentPojo pojo,
+			ServiceSecurityAssessment moa) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException, EnterpriseFieldException {
 		
-		return result;
+		moa.setStatus(pojo.getStatus());
+		for (String svcid : pojo.getServiceIds()) {
+			moa.addServiceId(svcid);
+		}
+		for (SecurityRiskPojo risk : pojo.getSecurityRisks()) {
+			SecurityRisk moa_risk = moa.newSecurityRisk();
+			moa_risk.setSecurityRiskId(risk.getSecurityRiskId());
+			moa_risk.setServiceId(risk.getServiceId());
+			moa_risk.setSequenceNumber(this.toStringFromInt(risk.getSequenceNumber()));
+			moa_risk.setServiceRiskName(risk.getSecurityRiskName());
+			moa_risk.setRiskLevel(risk.getRiskLevel());
+			moa_risk.setDescription(risk.getDescription());
+			moa_risk.setAssessorId(risk.getAssessorId());
+			
+			org.openeai.moa.objects.resources.Datetime assessDT = moa_risk.newAssessmentDatetime();
+			this.populateDatetime(assessDT, risk.getAssessmentDate());
+			moa_risk.setAssessmentDatetime(assessDT);
+			
+			for (CounterMeasurePojo cm : risk.getCouterMeasures()) {
+				Countermeasure moa_cm = moa_risk.newCountermeasure();
+				moa_cm.setSecurityRiskId(cm.getSecurityRiskId());
+				moa_cm.setStatus(cm.getStatus());
+				moa_cm.setDescription(cm.getDescription());
+				moa_cm.setVerifier(cm.getVerifier());
+				
+				org.openeai.moa.objects.resources.Datetime verifyDT = moa_cm.newVerificationDatetime();
+				this.populateDatetime(verifyDT, cm.getVerificationDate());
+				moa_cm.setVerificationDatetime(verifyDT);
+				
+				moa_risk.addCountermeasure(moa_cm);
+			}
+			moa.addSecurityRisk(moa_risk);
+		}
+		
+		for (ServiceControlPojo sc : pojo.getServiceControls()) {
+			ServiceControl moa_scp = moa.newServiceControl();
+			moa_scp.setServiceId(sc.getServiceId());
+			moa_scp.setServiceControlId(sc.getServiceControlId());
+			moa_scp.setSequenceNumber(this.toStringFromInt(sc.getSequenceNumber()));
+			moa_scp.setServiceControlName(sc.getServiceControlName());
+			moa_scp.setDescription(sc.getDescription());
+			moa_scp.setAssessorId(sc.getAssessorId());
+			
+			org.openeai.moa.objects.resources.Datetime assessDT = moa_scp.newAssessmentDatetime();
+			this.populateDatetime(assessDT, sc.getAssessmentDate());
+			moa_scp.setAssessmentDatetime(assessDT);
+			
+			moa_scp.setVerifier(sc.getVerifier());
+			
+			org.openeai.moa.objects.resources.Datetime verifyDT = moa_scp.newVerificationDatetime();
+			this.populateDatetime(verifyDT, sc.getVerificationDate());
+			moa_scp.setVerificationDatetime(verifyDT);
+			
+			moa.addServiceControl(moa_scp);
+		}
+
+		for (ServiceGuidelinePojo sg : pojo.getServiceGuidelines()) {
+			ServiceGuideline moa_sg = moa.newServiceGuideline();
+			moa_sg.setServiceGuidelineName(sg.getServiceId());
+			moa_sg.setSequenceNumber(this.toStringFromInt(sg.getSequenceNumber()));
+			moa_sg.setServiceGuidelineName(sg.getServiceGuidelineName());
+			moa_sg.setDescription(sg.getDescription());
+			moa_sg.setAssessorId(sg.getAssessorId());
+			
+			org.openeai.moa.objects.resources.Datetime assessDT = moa_sg.newAssessmentDatetime();
+			this.populateDatetime(assessDT, sg.getAssessmentDate());
+			moa_sg.setAssessmentDatetime(assessDT);
+
+			moa.addServiceGuideline(moa_sg);
+		}
+			
+		if (pojo.getServiceTestPlan() != null) {
+			ServiceTestPlan moa_stp = moa.newServiceTestPlan();
+			moa_stp.setServiceId(pojo.getServiceTestPlan().getServiceId());
+			moa.setServiceTestPlan(moa_stp);
+			// TODO: test plan requirement list
+		}
 	}
 
 	@Override
@@ -6983,7 +7267,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// TODO Auto-generated method stub
 		assessment.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
-		return null;
+		
+        try {
+            info("creating UserNotification on the server...");
+            ServiceSecurityAssessment newData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+
+            info("populating newData...");
+            populateSecurityAssessmentMoa(assessment, newData);
+
+            info("doing the update...");
+            doCreate(newData, getAWSRequestService());
+            info("create is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return assessment;
 	}
 
 	@Override
@@ -6991,7 +7290,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 		// TODO Auto-generated method stub
 		assessment.setUpdateInfo(this.getCachedUser().getPublicId());
-		return null;
+        try {
+            info("updating UserNotification on the server...");
+            ServiceSecurityAssessment newData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+            ServiceSecurityAssessment baselineData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+
+            info("populating newData...");
+            populateSecurityAssessmentMoa(assessment, newData);
+
+            info("populating baselineData...");
+            populateSecurityAssessmentMoa(assessment.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getAWSRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return assessment;
 	}
 
 	@Override

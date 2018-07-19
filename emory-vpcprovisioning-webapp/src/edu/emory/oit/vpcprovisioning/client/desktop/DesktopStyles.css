@@ -1040,3 +1040,8 @@ a:active {
     -ms-animation: blink normal 2s infinite ease-in-out; /* IE */
     animation: blink normal 2s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }
+.skeletonService {
+	background: red important!;
+	color: white important!;
+	/*animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate !important;*/  
+}
