@@ -45,11 +45,12 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlac
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
-import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -151,12 +152,21 @@ public class AppBootstrapper {
 				placeController.goTo(new HomePlace());
 			}
 		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_SERVICE_CONTROL, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_SERVICE_CONTROL.onAction");
+				final ListServiceControlPresenter presenter = new ListServiceControlPresenter(clientFactory, true, event.getAwsService(), event.getSecurityAssessment());
+				presenter.start(eventBus);
+				MaintainSecurityAssessmentView parent = clientFactory.getMaintainSecurityAssessmentView();
+				parent.setWidget(presenter);
+			}
+		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_SECURITY_RISK, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
 				GWT.log("Bootstrapper, GO_HOME_SECURITY_RISK.onAction");
 				final ListSecurityRiskPresenter presenter = new ListSecurityRiskPresenter(clientFactory, true, event.getAwsService(), event.getSecurityAssessment());
-				// this will let the presenter get all Elastic IP assignments for this VPC
 				presenter.start(eventBus);
 				MaintainSecurityAssessmentView parent = clientFactory.getMaintainSecurityAssessmentView();
 				parent.setWidget(presenter);
@@ -837,7 +847,7 @@ public class AppBootstrapper {
 
 				// use this approach if we want to present in a dialog
 				final DialogBox db = new DialogBox();
-				db.setText("Maintain Service Security Assessment");
+				db.setText("Create Security Risk");
 				db.setGlassEnabled(true);
 				db.center();
 				final MaintainSecurityRiskPresenter presenter = new MaintainSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment());
@@ -857,6 +867,40 @@ public class AppBootstrapper {
 				});
 				presenter.start(eventBus);
 				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_SERVICE_CONTROL, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("CREATE_SERVICE_CONTROL event service is: " + event.getAwsService());
+				GWT.log("CREATE_SERVICE_CONTROL event assessment is: " + event.getSecurityAssessment());
+//				placeController.goTo(MaintainServiceControlPlace.getMaintainServiceControlPlace(event.getAwsService(), event.getSecurityAssessment()));
+
+				// use this approach if we want to present in a dialog
+				final DialogBox db = new DialogBox();
+				db.setText("Create Service Control");
+				db.setGlassEnabled(true);
+				final MaintainServiceControlPresenter presenter = new MaintainServiceControlPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				GWT.log("db widget is: " + db.getWidget());
 				db.show();
 				db.center();
 			}
@@ -886,7 +930,30 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SECURITY_RISK, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(MaintainSecurityRiskPlace.createMaintainSecurityRiskPlace(event.getAwsService(), event.getSecurityAssessment(), event.getSecurityRisk()));
+//				placeController.goTo(MaintainSecurityRiskPlace.createMaintainSecurityRiskPlace(event.getAwsService(), event.getSecurityAssessment(), event.getSecurityRisk()));
+				final DialogBox db = new DialogBox();
+				db.setText("Maintain Security Risk");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainSecurityRiskPresenter presenter = new MaintainSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment(), event.getSecurityRisk());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
 			}
 		});
 
@@ -898,6 +965,50 @@ public class AppBootstrapper {
 		});
 
 		ActionEvent.register(eventBus, ActionNames.SECURITY_RISK_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SERVICE_CONTROL, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+//				placeController.goTo(MaintainServiceControlPlace.createMaintainServiceControlPlace(event.getAwsService(), event.getSecurityAssessment(), event.getServiceControl()));
+				final DialogBox db = new DialogBox();
+				db.setText("Maintain Service Control");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainServiceControlPresenter presenter = new MaintainServiceControlPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment(), event.getServiceControl());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_CONTROL_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_CONTROL_SAVED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));

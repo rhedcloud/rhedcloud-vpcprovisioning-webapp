@@ -261,52 +261,6 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 		});
 		centralAdminListTable.addColumn(reasonColumn, "Reason");
 
-//		Column<RoleAssignmentSummaryPojo, String> roleDNColumn = 
-//				new Column<RoleAssignmentSummaryPojo, String> (new TextCell()) {
-//
-//			@Override
-//			public String getValue(RoleAssignmentSummaryPojo object) {
-//				return object.getRoleAssignment().getRoleDN();
-//			}
-//		};
-//		roleDNColumn.setSortable(true);
-//		roleDNColumn.setCellStyleNames("tableBody");
-//		sortHandler.setComparator(roleDNColumn, new Comparator<RoleAssignmentSummaryPojo>() {
-//			public int compare(RoleAssignmentSummaryPojo o1, RoleAssignmentSummaryPojo o2) {
-//				return o1.getRoleAssignment().getRoleDN().compareTo(o2.getRoleAssignment().getRoleDN());
-//			}
-//		});
-//		centralAdminListTable.addColumn(roleDNColumn, "Role DN");
-//		centralAdminListTable.setColumnWidth(roleDNColumn, 250, Unit.PX);
-
-//		Column<RoleAssignmentSummaryPojo, SafeHtml> rolesColumn = 
-//				new Column<RoleAssignmentSummaryPojo, SafeHtml> (new SafeHtmlCell()) {
-//				
-//				@Override
-//				public SafeHtml getValue(RoleAssignmentSummaryPojo object) {
-//					StringBuffer sbuf = new StringBuffer();
-//					boolean isFirst = true;
-//					for (String s : object.getRoleAssignment().getRoleDNs().getDistinguishedNames()) {
-//						if (!isFirst) {
-//							sbuf.append("<br>");
-//						}
-//						else {
-//							isFirst = false;
-//						}
-//						sbuf.append(s);
-//					}
-//					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
-//				}
-//		};
-//		rolesColumn.setSortable(true);
-//		rolesColumn.setCellStyleNames("tableBody");
-//		sortHandler.setComparator(rolesColumn, new Comparator<RoleAssignmentSummaryPojo>() {
-//			public int compare(RoleAssignmentSummaryPojo o1, RoleAssignmentSummaryPojo o2) {
-//				return o1.getAction().compareTo(o2.getAction());
-//			}
-//		});
-//		centralAdminListTable.setColumnWidth(rolesColumn, 250, Unit.PX);
-//		centralAdminListTable.addColumn(rolesColumn, "Role(s)");
 
 		Column<RoleAssignmentSummaryPojo, String> effectiveDateColumn = 
 				new Column<RoleAssignmentSummaryPojo, String> (new TextCell()) {

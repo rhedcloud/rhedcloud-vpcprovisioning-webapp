@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class ServiceControlPojo extends SharedObject implements IsSerializable {
@@ -10,6 +11,12 @@ public class ServiceControlPojo extends SharedObject implements IsSerializable {
 ServiceId, ServiceControlId, SequenceNumber, ServiceControlName, Description, AssessorId, AssessmentDatetime, Verifier?, VerificationDatetime?
 	 */
 
+	public static final ProvidesKey<ServiceControlPojo> KEY_PROVIDER = new ProvidesKey<ServiceControlPojo>() {
+		@Override
+		public Object getKey(ServiceControlPojo item) {
+			return item == null ? null : item.getServiceControlName();
+		}
+	};
 	String serviceId;
 	String serviceControlId;
 	int sequenceNumber;

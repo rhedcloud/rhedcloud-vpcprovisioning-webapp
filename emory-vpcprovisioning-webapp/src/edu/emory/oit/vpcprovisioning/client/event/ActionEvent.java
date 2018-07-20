@@ -218,6 +218,18 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment2), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo m) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo assessment, ServiceControlPojo m) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
+	}
+
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
 	}
@@ -386,6 +398,18 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo securityAssessment2) {
 		this.awsService = service;
 		this.securityAssessment = securityAssessment2;
+	}
+
+	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo m) {
+		this.awsService = service;
+		this.securityAssessment = assessment;
+		this.securityRisk = m;
+	}
+
+	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceControlPojo m) {
+		this.awsService = service;
+		this.securityAssessment = assessment;
+		this.serviceControl = m;
 	}
 
 	@Override
@@ -565,5 +589,6 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setCounterMeasure(CounterMeasurePojo counterMeasure) {
 		this.counterMeasure = counterMeasure;
 	}
+
 
 }

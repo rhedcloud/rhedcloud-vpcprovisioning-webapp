@@ -81,7 +81,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
-		Anchor editAnchor = new Anchor("Edit Service");
+		Anchor editAnchor = new Anchor("View/Maintain Service");
 		editAnchor.addStyleName("productAnchor");
 		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		editAnchor.setTitle("View/Maintain selected Service");
@@ -106,19 +106,24 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		deleteAnchor.setTitle("Delete selected Service");
 		deleteAnchor.ensureDebugId(deleteAnchor.getText());
-		deleteAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				AWSServicePojo m = selectionModel.getSelectedObject();
-				if (m != null) {
-					presenter.deleteService(m);
+		if (userLoggedIn.isCentralAdmin()) {
+			deleteAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					actionsPopup.hide();
+					AWSServicePojo m = selectionModel.getSelectedObject();
+					if (m != null) {
+						presenter.deleteService(m);
+					}
+					else {
+						showMessageToUser("Please select an item from the list");
+					}
 				}
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
-			}
-		});
+			});
+		}
+		else {
+			deleteAnchor.setEnabled(false);
+		}
 		grid.setWidget(1, 0, deleteAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);

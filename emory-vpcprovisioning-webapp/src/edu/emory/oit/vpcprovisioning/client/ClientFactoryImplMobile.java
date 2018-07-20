@@ -30,9 +30,11 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -82,6 +84,9 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ListSecurityRiskView listSecurityRiskView;
 	private MaintainAccountNotificationView maintainAccountNotificationView;
 	private MaintainSecurityRiskView maintainSecurityRiskView;
+	private ListServiceControlView listServiceControlView;
+	private MaintainServiceControlView maintainServiceControlView;
+
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -272,6 +277,16 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainSecurityRiskView getMaintainSecurityRiskView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListServiceControlView getListServiceControlView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainServiceControlView getMaintainServiceControlView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

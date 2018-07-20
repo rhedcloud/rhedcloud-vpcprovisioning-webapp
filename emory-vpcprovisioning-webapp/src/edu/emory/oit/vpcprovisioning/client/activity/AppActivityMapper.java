@@ -35,10 +35,13 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -212,6 +215,18 @@ public class AppActivityMapper implements ActivityMapper {
 			};
 		}
 
+		if (place instanceof ListServiceControlPlace) {
+			// The list of services
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListServiceControlPresenter presenter = new ListServiceControlPresenter(clientFactory, (ListServiceControlPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
 		if (place instanceof BillSummaryPlace) {
 			// Generate/Maintain vpcp
 			return new BillSummaryActivity(clientFactory, (BillSummaryPlace) place);
@@ -290,6 +305,11 @@ public class AppActivityMapper implements ActivityMapper {
 		if (place instanceof MaintainAccountNotificationPlace) {
 			// Maintain account notification
 			return new MaintainAccountNotificationActivity(clientFactory, (MaintainAccountNotificationPlace) place);
+		}
+
+		if (place instanceof MaintainServiceControlPlace) {
+			// Maintain service control
+			return new MaintainServiceControlActivity(clientFactory, (MaintainServiceControlPlace) place);
 		}
 
 		return null;

@@ -14,21 +14,22 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UUID;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class MaintainSecurityRiskPresenter extends PresenterBase implements MaintainSecurityRiskView.Presenter {
+public class MaintainServiceControlPresenter extends PresenterBase implements MaintainServiceControlView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private ServiceSecurityAssessmentPojo assessment;
 	private UserAccountPojo userLoggedIn;
 	private AWSServicePojo service;
-	private SecurityRiskPojo securityRisk;
-	private String securityRiskId;
-	private DirectoryPersonPojo directoryPerson;
-	private MaintainSecurityRiskView view;
+	private ServiceControlPojo serviceControl;
+	private String serviceControlId;
+	private DirectoryPersonPojo assessorDirectoryPerson;
+	private DirectoryPersonPojo verifierDirectoryPerson;
+	private MaintainServiceControlView view;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -37,27 +38,27 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	private boolean isEditing;
 
 	/**
-	 * For creating a new ACCOUNT.
+	 * For creating a new service control.
 	 */
-	public MaintainSecurityRiskPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
+	public MaintainServiceControlPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
 		this.isEditing = false;
 		this.assessment = assessment;
 		this.clientFactory = clientFactory;
 		this.service = service;
-		this.securityRisk = null;
-		this.securityRiskId = null;
+		this.serviceControl = null;
+		this.serviceControlId = null;
 	}
 
 	/**
 	 * For editing an existing ACCOUNT.
 	 */
-	public MaintainSecurityRiskPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk) {
+	public MaintainServiceControlPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceControlPojo control) {
 		this.isEditing = true;
 		this.clientFactory = clientFactory;
 		this.assessment = assessment;
 		this.service = service;
-		this.securityRisk = risk;
-		this.securityRiskId = securityRisk.getSecurityRiskId();
+		this.serviceControl = control;
+		this.serviceControlId = serviceControl.getServiceControlId();
 	}
 
 	@Override
@@ -70,19 +71,20 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving Security Risk information...");
+		getView().showPleaseWaitDialog("Retrieving Service Control information...");
+		getView().resetFieldStyles();
 		
-		GWT.log("Maintain Security Risk: service is: " + service);
-		GWT.log("Maintain Security Risk: assessment is: " + assessment);
+		GWT.log("Maintain Service Control: service is: " + service);
+		GWT.log("Maintain Service Control: assessment is: " + assessment);
 
-		if (securityRiskId == null) {
-			clientFactory.getShell().setSubTitle("Create Security Risk");
+		if (serviceControlId == null) {
+			clientFactory.getShell().setSubTitle("Create Service Control");
 			startCreate();
 		} 
 		else {
-			clientFactory.getShell().setSubTitle("Edit Security Risk");
+			clientFactory.getShell().setSubTitle("Edit Service Control");
 			startEdit();
-			// get latest version of the security risk from the server
+			// get latest version of the service control from the server
 //			AsyncCallback<ServiceSecurityAssessmentPojo> acct_cb = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
 //				@Override
 //				public void onFailure(Throwable caught) {
@@ -118,72 +120,33 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
-				getView().setCounterMeasures(securityRisk.getCouterMeasures());
+				getView().initPage();
+				getView().setFieldViolations(false);
+				getView().setInitialFocus();
 				
-				AsyncCallback<List<String>> rl_callback = new AsyncCallback<List<String>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-						GWT.log("Exception retrieving risk level types", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving status types.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<String> result) {
-						getView().setRiskLevelItems(result);
-						getView().initPage();
-						getView().setFieldViolations(false);
-						getView().setInitialFocus();
-						
-						// apply authorization mask
-						if (user.isCentralAdmin()) {
-							getView().applyCentralAdminMask();
-						}
-						else {
-							getView().applyAWSAccountAuditorMask();
-						}
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-					}
-				};
-				// risk level types
-				VpcProvisioningService.Util.getInstance().getRiskLevelTypeItems(rl_callback);
-
-				AsyncCallback<List<String>> cm_status_callback = new AsyncCallback<List<String>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-						GWT.log("Exception retrieving counter measure statuses", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving counter measure statuses.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<String> result) {
-						getView().setCounterMeasureStatusItems(result);
-					}
-				};
-				// counter measure status types
-				VpcProvisioningService.Util.getInstance().getCounterMeasureStatusTypeItems(cm_status_callback);
+				// apply authorization mask
+				if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else {
+					getView().applyAWSAccountAuditorMask();
+				}
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 
 	private void startCreate() {
-		GWT.log("Maintain security risk: create");
+		GWT.log("Maintain service control: create");
 		isEditing = false;
 		getView().setEditing(false);
-		securityRisk = new SecurityRiskPojo();
+		serviceControl = new ServiceControlPojo();
 	}
 
 	private void startEdit() {
-		GWT.log("Maintain security risk: edit");
+		GWT.log("Maintain service control: edit");
 		isEditing = true;
 		getView().setEditing(true);
 		// Lock the display until the assessment is loaded.
@@ -193,7 +156,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	@Override
 	public void stop() {
 		eventBus = null;
-		clientFactory.getMaintainSecurityRiskView().setLocked(false);
+		clientFactory.getMaintainServiceControlView().setLocked(false);
 	}
 
 	@Override
@@ -206,17 +169,17 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		return getView().asWidget();
 	}
 
-	private void doCancelSecurityRisk() {
+	private void doCancelServiceControl() {
 		// go back to the maintain assessment page...
-		ActionEvent.fire(eventBus, ActionNames.SECURITY_RISK_EDITING_CANCELED, assessment);
+		ActionEvent.fire(eventBus, ActionNames.SERVICE_CONTROL_EDITING_CANCELED, assessment);
 	}
 
-	private void doDeleteSecurityRisk() {
-		if (securityRisk == null) {
+	private void doDeleteServiceControl() {
+		if (serviceControl == null) {
 			return;
 		}
 
-		// TODO remove the security risk from the assessment and save the assessment
+		// TODO remove the service control from the assessment and save the assessment
 		
 	}
 
@@ -245,7 +208,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the Security Assessment.  Message " +
 						"from server is: " + caught.getMessage());
-				assessment.getSecurityRisks().remove(getSecurityRisk());
+				assessment.getServiceControls().remove(getServiceControl());
 				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
 			}
 
@@ -258,12 +221,12 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 			}
 		};
 		if (!isEditing) {
-			getSecurityRisk().setSecurityRiskId(UUID.uuid());
-			getSecurityRisk().setServiceId(service.getServiceId());
-			this.assessment.getSecurityRisks().add(getSecurityRisk());
+			getServiceControl().setServiceControlId(UUID.uuid());
+			getServiceControl().setServiceId(service.getServiceId());
+			this.assessment.getServiceControls().add(getServiceControl());
 		}
 		else {
-			// TODO: have to find the security risk, remove it and then re-add this one to the list
+			// TODO: have to find the service control, remove it and then re-add this one to the list
 		}
 		// it's always an update
 		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
@@ -274,9 +237,9 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		return this.assessment;
 	}
 
-	public MaintainSecurityRiskView getView() {
+	public MaintainServiceControlView getView() {
 		if (view == null) {
-			view = clientFactory.getMaintainSecurityRiskView();
+			view = clientFactory.getMaintainServiceControlView();
 			view.setPresenter(this);
 		}
 		return view;
@@ -290,12 +253,12 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		this.eventBus = eventBus;
 	}
 
-	public String getSecurityRiskId() {
-		return securityRiskId;
+	public String getServiceControlId() {
+		return serviceControlId;
 	}
 
-	public void setSecurityRiskId(String riskId) {
-		this.securityRiskId = riskId;
+	public void setServiceControlId(String controlId) {
+		this.serviceControlId = controlId;
 	}
 
 	public ClientFactory getClientFactory() {
@@ -309,11 +272,11 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	}
 
 	@Override
-	public void deleteSecurityRisk(SecurityRiskPojo selected) {
+	public void deleteServiceControl(ServiceControlPojo selected) {
 		if (isEditing) {
-			doDeleteSecurityRisk();
+			doDeleteServiceControl();
 		} else {
-			doCancelSecurityRisk();
+			doCancelServiceControl();
 		}
 	}
 
@@ -333,16 +296,44 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	}
 
 	@Override
-	public SecurityRiskPojo getSecurityRisk() {
-		return this.securityRisk;
+	public ServiceControlPojo getServiceControl() {
+		return this.serviceControl;
 	}
 
 	@Override
-	public void setDirectoryPerson(DirectoryPersonPojo pojo) {
-		this.directoryPerson = pojo;
+	public void setAssessorDirectoryPerson(DirectoryPersonPojo pojo) {
+		this.assessorDirectoryPerson = pojo;
 	}
 
-	public DirectoryPersonPojo getDirectoryPerson() {
-		return directoryPerson;
+	public DirectoryPersonPojo getAssessorDirectoryPerson() {
+		return assessorDirectoryPerson;
+	}
+
+	public void setVerifierDirectoryPerson(DirectoryPersonPojo pojo) {
+		this.verifierDirectoryPerson = pojo;
+	}
+
+	public DirectoryPersonPojo getVerifierDirectoryPerson() {
+		return verifierDirectoryPerson;
+	}
+
+	public ServiceSecurityAssessmentPojo getAssessment() {
+		return assessment;
+	}
+
+	public void setAssessment(ServiceSecurityAssessmentPojo assessment) {
+		this.assessment = assessment;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
+	}
+
+	public void setServiceControl(ServiceControlPojo serviceControl) {
+		this.serviceControl = serviceControl;
 	}
 }

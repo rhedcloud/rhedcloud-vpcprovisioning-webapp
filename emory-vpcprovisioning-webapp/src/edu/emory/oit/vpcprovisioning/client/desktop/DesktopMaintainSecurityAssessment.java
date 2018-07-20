@@ -34,9 +34,13 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
@@ -98,6 +102,17 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			securityRisksContainer.add(maintainView);
 			securityRisksContainer.setAnimationDuration(500);
 			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
+			break;
+		case 1:
+			GWT.log("need to get Service Control content.");
+			firstServiceControlWidget = true;
+			serviceControlsContainer.clear();
+			ListServiceControlView listView2 = presenter.getClientFactory().getListServiceControlView();
+			MaintainServiceControlView maintainView2 = presenter.getClientFactory().getMaintainServiceControlView();
+			serviceControlsContainer.add(listView2);
+			serviceControlsContainer.add(maintainView2);
+			serviceControlsContainer.setAnimationDuration(500);
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE_CONTROL, presenter.getService(), presenter.getSecurityAssessment());
 			break;
 		}
 	}
@@ -375,17 +390,18 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			return;
 		}
 
+		if (w instanceof ListServiceControlPresenter || w instanceof MaintainServiceControlPresenter) {
+			GWT.log("Maintain Security Assessment, setWidget: Service Control");
+			serviceControlsContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstServiceControlWidget) {
+				firstServiceControlWidget = false;
+				serviceControlsContainer.animate(0);
+			}
+			return;
+		}
+		
 		// TODO:
-//		if (w instanceof ListServiceControlPresenter || w instanceof MaintainServiceControlPresenter) {
-//			GWT.log("Maintain Security Assessment, setWidget: Service Control");
-//			serviceControlsContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstServiceControlWidget) {
-//				firstServiceControlWidget = false;
-//				serviceControlsContainer.animate(0);
-//			}
-//			return;
-//		}
 //		if (w instanceof ListServiceGuidelinePresenter || w instanceof MaintainServiceGuidelinePresenter) {
 //			GWT.log("Maintain Security Assessment, setWidget: Service Guideline");
 //			serviceGuidelinesContainer.setWidget(w);

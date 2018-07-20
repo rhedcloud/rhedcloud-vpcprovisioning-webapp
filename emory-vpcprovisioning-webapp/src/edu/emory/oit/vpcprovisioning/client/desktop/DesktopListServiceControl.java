@@ -1,17 +1,17 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,36 +26,33 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification.MyCellTableResources;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
-import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
-import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
+import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
-public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurityRiskView {
+public class DesktopListServiceControl extends ViewImplBase implements ListServiceControlView {
 	Presenter presenter;
-	private ListDataProvider<SecurityRiskPojo> dataProvider = new ListDataProvider<SecurityRiskPojo>();
-	private SingleSelectionModel<SecurityRiskPojo> selectionModel;
-	List<SecurityRiskPojo> pojoList = new java.util.ArrayList<SecurityRiskPojo>();
+	private ListDataProvider<ServiceControlPojo> dataProvider = new ListDataProvider<ServiceControlPojo>();
+	private SingleSelectionModel<ServiceControlPojo> selectionModel;
+	List<ServiceControlPojo> pojoList = new java.util.ArrayList<ServiceControlPojo>();
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 
-	private static DesktopListSecurityRiskUiBinder uiBinder = GWT.create(DesktopListSecurityRiskUiBinder.class);
+	private static DesktopListServiceControlUiBinder uiBinder = GWT.create(DesktopListServiceControlUiBinder.class);
 
-	interface DesktopListSecurityRiskUiBinder extends UiBinder<Widget, DesktopListSecurityRisk> {
+	interface DesktopListServiceControlUiBinder extends UiBinder<Widget, DesktopListServiceControl> {
 	}
 
-	public DesktopListSecurityRisk() {
+	public DesktopListServiceControl() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -66,7 +63,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	}
 	/*** FIELDS ***/
 	@UiField SimplePager listPager;
-	@UiField(provided=true) CellTable<SecurityRiskPojo> listTable = new CellTable<SecurityRiskPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<ServiceControlPojo> listTable = new CellTable<ServiceControlPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 //	@UiField Button closeOtherFeaturesButton;
 	@UiField Button createButton;
@@ -83,18 +80,18 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
-		Anchor editAnchor = new Anchor("View/Maintain Security Risk");
+		Anchor editAnchor = new Anchor("View/Maintain Service Control");
 		editAnchor.addStyleName("productAnchor");
 		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		editAnchor.setTitle("View/Maintain selected Security Risk");
+		editAnchor.setTitle("View/Maintain selected Service Control");
 		editAnchor.ensureDebugId(editAnchor.getText());
 		editAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				SecurityRiskPojo m = selectionModel.getSelectedObject();
+				ServiceControlPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK, presenter.getService(), presenter.getAssessment(), m);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment(), m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -103,19 +100,19 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		});
 		grid.setWidget(0, 0, editAnchor);
 
-		Anchor deleteAnchor = new Anchor("Delete Security Risk");
+		Anchor deleteAnchor = new Anchor("Delete Service Control");
 		deleteAnchor.addStyleName("productAnchor");
 		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deleteAnchor.setTitle("Delete selected Security Risk");
+		deleteAnchor.setTitle("Delete selected Service Control");
 		deleteAnchor.ensureDebugId(deleteAnchor.getText());
 		if (userLoggedIn.isCentralAdmin()) {
 			deleteAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					actionsPopup.hide();
-					SecurityRiskPojo m = selectionModel.getSelectedObject();
+					ServiceControlPojo m = selectionModel.getSelectedObject();
 					if (m != null) {
-						presenter.deleteSecurityRisk(m);
+						presenter.deleteServiceControl(m);
 					}
 					else {
 						showMessageToUser("Please select an item from the list");
@@ -132,8 +129,8 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	}
 
 	@UiHandler ("createButton")
-	void createSecurityRiskClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_RISK, presenter.getService(), presenter.getAssessment());
+	void createServiceControlClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment());
 	}
 	
 	@Override
@@ -236,14 +233,14 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	}
 
 	@Override
-	public void setSecurityRisks(List<SecurityRiskPojo> securityRisks) {
-		GWT.log("view Setting security risks.");
-		this.pojoList = securityRisks;
+	public void setServiceControls(List<ServiceControlPojo> serviceControls) {
+		GWT.log("view Setting service controls.");
+		this.pojoList = serviceControls;
 		this.initializeTable();
 	    listPager.setDisplay(listTable);
 	}
 	private Widget initializeTable() {
-		GWT.log("initializing security risk list table...");
+		GWT.log("initializing service control list table...");
 		listTable.setTableLayoutFixed(false);
 		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
@@ -251,25 +248,25 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		listTable.setVisibleRange(0, 5);
 		
 		// create dataprovider
-		dataProvider = new ListDataProvider<SecurityRiskPojo>();
+		dataProvider = new ListDataProvider<ServiceControlPojo>();
 		dataProvider.addDataDisplay(listTable);
 		dataProvider.getList().clear();
 		dataProvider.getList().addAll(this.pojoList);
 		
 		selectionModel = 
-	    	new SingleSelectionModel<SecurityRiskPojo>(SecurityRiskPojo.KEY_PROVIDER);
+	    	new SingleSelectionModel<ServiceControlPojo>(ServiceControlPojo.KEY_PROVIDER);
 		listTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		SecurityRiskPojo m = selectionModel.getSelectedObject();
-	    		GWT.log("Selected security risk is: " + m.getSecurityRiskName());
+	    		ServiceControlPojo m = selectionModel.getSelectedObject();
+	    		GWT.log("Selected service control is: " + m.getServiceControlName());
 	    	}
 	    });
 
-	    ListHandler<SecurityRiskPojo> sortHandler = 
-	    	new ListHandler<SecurityRiskPojo>(dataProvider.getList());
+	    ListHandler<ServiceControlPojo> sortHandler = 
+	    	new ListHandler<ServiceControlPojo>(dataProvider.getList());
 	    listTable.addColumnSortHandler(sortHandler);
 
 	    if (listTable.getColumnCount() == 0) {
@@ -279,13 +276,13 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		return listTable;
 	}
 
-	private void initListTableColumns(ListHandler<SecurityRiskPojo> sortHandler) {
-		GWT.log("initializing Security Risk list table columns...");
+	private void initListTableColumns(ListHandler<ServiceControlPojo> sortHandler) {
+		GWT.log("initializing Service Control list table columns...");
 
-		Column<SecurityRiskPojo, Boolean> checkColumn = new Column<SecurityRiskPojo, Boolean>(
+		Column<ServiceControlPojo, Boolean> checkColumn = new Column<ServiceControlPojo, Boolean>(
 				new CheckboxCell(true, false)) {
 			@Override
-			public Boolean getValue(SecurityRiskPojo object) {
+			public Boolean getValue(ServiceControlPojo object) {
 				// Get the value from the selection model.
 				return selectionModel.isSelected(object);
 			}
@@ -293,67 +290,140 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
 		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
-		Column<SecurityRiskPojo, String> nameColumn = 
-				new Column<SecurityRiskPojo, String> (new TextCell()) {
+		Column<ServiceControlPojo, String> sequenceNumber = 
+				new Column<ServiceControlPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(SecurityRiskPojo object) {
-				return object.getSecurityRiskName();
+			public String getValue(ServiceControlPojo object) {
+				return Integer.toString(object.getSequenceNumber());
+			}
+		};
+		sequenceNumber.setSortable(true);
+		sequenceNumber.setCellStyleNames("tableBody");
+		sortHandler.setComparator(sequenceNumber, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
+					return 1;
+				}
+				return 0;
+			}
+		});
+		listTable.addColumn(sequenceNumber, "Sequence Number");
+
+		Column<ServiceControlPojo, String> nameColumn = 
+				new Column<ServiceControlPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceControlPojo object) {
+				return object.getServiceControlName();
 			}
 		};
 		nameColumn.setSortable(true);
 		nameColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(nameColumn, new Comparator<SecurityRiskPojo>() {
-			public int compare(SecurityRiskPojo o1, SecurityRiskPojo o2) {
-				return o1.getSecurityRiskName().compareTo(o2.getSecurityRiskName());
+		sortHandler.setComparator(nameColumn, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				return o1.getServiceControlName().compareTo(o2.getServiceControlName());
 			}
 		});
 		listTable.addColumn(nameColumn, "Name");
 		
-	/*
-		SecurityRiskId, 
-		ServiceId, 
-		SequenceNumber, 
-		ServiceRiskName, 
-		RiskLevel, 
-		Description, 
-		AssessorId, 
-		AssessmentDatetime, 
-		Countermeasure*
-	 */
-		Column<SecurityRiskPojo, String> descColumn = 
-				new Column<SecurityRiskPojo, String> (new TextCell()) {
+		Column<ServiceControlPojo, String> descColumn = 
+				new Column<ServiceControlPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(SecurityRiskPojo object) {
+			public String getValue(ServiceControlPojo object) {
 				return object.getDescription();
 			}
 		};
 		descColumn.setSortable(true);
 		descColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(descColumn, new Comparator<SecurityRiskPojo>() {
-			public int compare(SecurityRiskPojo o1, SecurityRiskPojo o2) {
+		sortHandler.setComparator(descColumn, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
 		listTable.addColumn(descColumn, "Description");
 		
-		Column<SecurityRiskPojo, String> riskLevelColumn = 
-				new Column<SecurityRiskPojo, String> (new TextCell()) {
+		Column<ServiceControlPojo, String> assessorId = 
+				new Column<ServiceControlPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(SecurityRiskPojo object) {
-				return object.getRiskLevel();
+			public String getValue(ServiceControlPojo object) {
+				// TODO: should this be their name?
+				return object.getAssessorId();
 			}
 		};
-		riskLevelColumn.setSortable(true);
-		riskLevelColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(riskLevelColumn, new Comparator<SecurityRiskPojo>() {
-			public int compare(SecurityRiskPojo o1, SecurityRiskPojo o2) {
-				return o1.getRiskLevel().compareTo(o2.getRiskLevel());
+		assessorId.setSortable(true);
+		assessorId.setCellStyleNames("tableBody");
+		sortHandler.setComparator(assessorId, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				return o1.getAssessorId().compareTo(o2.getAssessorId());
 			}
 		});
-		listTable.addColumn(riskLevelColumn, "Risk Level");
+		listTable.addColumn(assessorId, "Assessor");
+		
+		Column<ServiceControlPojo, String> assessmentDate = 
+				new Column<ServiceControlPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceControlPojo object) {
+				Date d1 = object.getAssessmentDate();
+				return d1 != null ? dateFormat.format(d1) : "Unknown";
+			}
+		};
+		assessmentDate.setSortable(true);
+		sortHandler.setComparator(assessmentDate, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				GWT.log("user notification create time sort handler...");
+				Date c1 = o1.getAssessmentDate();
+				Date c2 = o2.getAssessmentDate();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
+		listTable.addColumn(assessmentDate, "Assessment Date");
+
+		Column<ServiceControlPojo, String> verifier = 
+				new Column<ServiceControlPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceControlPojo object) {
+				// TODO: should this be their name?
+				return object.getVerifier();
+			}
+		};
+		verifier.setSortable(true);
+		verifier.setCellStyleNames("tableBody");
+		sortHandler.setComparator(verifier, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				return o1.getVerifier().compareTo(o2.getVerifier());
+			}
+		});
+		listTable.addColumn(verifier, "Verifier");
+		
+		Column<ServiceControlPojo, String> verificationDate = 
+				new Column<ServiceControlPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceControlPojo object) {
+				Date d1 = object.getVerificationDate();
+				return d1 != null ? dateFormat.format(d1) : "Unknown";
+			}
+		};
+		verificationDate.setSortable(true);
+		sortHandler.setComparator(verificationDate, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				Date c1 = o1.getVerificationDate();
+				Date c2 = o2.getVerificationDate();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
+		listTable.addColumn(verificationDate, "Verification Date");
 	}
 
 	@Override
@@ -363,8 +433,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	}
 
 	@Override
-	public void removeSecurityRiskFromView(SecurityRiskPojo securityRisks) {
-		dataProvider.getList().remove(securityRisks);
+	public void removeServiceControlFromView(ServiceControlPojo serviceControls) {
+		dataProvider.getList().remove(serviceControls);
 	}
-
 }

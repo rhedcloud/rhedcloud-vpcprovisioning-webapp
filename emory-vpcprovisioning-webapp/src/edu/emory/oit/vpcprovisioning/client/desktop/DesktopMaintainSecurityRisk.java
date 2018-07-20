@@ -96,6 +96,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	}
 	private void populateRiskWithFormData() {
 		// populate/save service
+		presenter.getSecurityRisk().setServiceId(presenter.getService().getServiceId());
 		presenter.getSecurityRisk().setRiskLevel(riskLevelLB.getSelectedValue());
 		presenter.getSecurityRisk().setSecurityRiskName(riskNameTB.getText());
 		presenter.getSecurityRisk().setDescription(riskDescriptionTA.getText());
@@ -135,7 +136,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	riskNameTB.setFocus(true);
+	        	sequenceNumberTB.setFocus(true);
 	        }
 	    });
 	}
@@ -268,6 +269,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 			riskDescriptionTA.setText(srp.getDescription());
 			// TODO: this will have to be a lookup to get the name of the person
 			assessorLookupSB.setText(srp.getAssessorId());
+			assessmentDB.setValue(srp.getAssessmentDate());
 		}
 		serviceNameTB.setText(presenter.getService().getAwsServiceName());
 	}

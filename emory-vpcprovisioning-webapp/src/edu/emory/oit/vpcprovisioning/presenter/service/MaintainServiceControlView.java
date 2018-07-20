@@ -1,7 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
-import java.util.List;
-
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,13 +8,12 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWidget, View {
+public interface MaintainServiceControlView extends Editor<ServiceControlPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
@@ -33,10 +30,12 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 		AWSServicePojo getService();
 		void setService(AWSServicePojo service);
 
-		void deleteSecurityRisk(SecurityRiskPojo selected);
-		SecurityRiskPojo getSecurityRisk();
-		public void setDirectoryPerson(DirectoryPersonPojo pojo);
-		public DirectoryPersonPojo getDirectoryPerson();
+		void deleteServiceControl(ServiceControlPojo selected);
+		ServiceControlPojo getServiceControl();
+		public void setAssessorDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getAssessorDirectoryPerson();
+		public void setVerifierDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getVerifierDirectoryPerson();
 	}
 
 	/**
@@ -64,9 +63,4 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	
-	void setRiskLevelItems(List<String> riskLevels);
-	void setCounterMeasureStatusItems(List<String> statuses);
-	void setCounterMeasures(List<CounterMeasurePojo> counterMeasures);
-	void removeCounterMeasureFromView(CounterMeasurePojo pojo);
 }
