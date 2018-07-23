@@ -413,4 +413,16 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

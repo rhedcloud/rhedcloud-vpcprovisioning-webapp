@@ -22,10 +22,12 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -63,7 +65,9 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 				 MaintainAccountNotificationPlace.Tokenizer.class, 
 				 MaintainSecurityRiskPlace.Tokenizer.class,
 				 ListServiceControlPlace.Tokenizer.class,
-				 MaintainServiceControlPlace.Tokenizer.class})
+				 MaintainServiceControlPlace.Tokenizer.class,
+				 ListServiceGuidelinePlace.Tokenizer.class,
+				 MaintainServiceGuidelinePlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

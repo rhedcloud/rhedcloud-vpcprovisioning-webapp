@@ -89,11 +89,15 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your user information.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("AWS Services");
 

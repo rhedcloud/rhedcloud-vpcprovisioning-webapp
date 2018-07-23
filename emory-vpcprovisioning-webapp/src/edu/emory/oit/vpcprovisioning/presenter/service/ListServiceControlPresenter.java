@@ -85,7 +85,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
-				GWT.log("Exception retrieving user logged in", caught);
+                getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  Message " +
 						"from server is: " + caught.getMessage());
@@ -93,7 +93,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+				getView().enableButtons();
 				// Add a handler to the 'add' button in the shell.
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle(" ServiceControls");

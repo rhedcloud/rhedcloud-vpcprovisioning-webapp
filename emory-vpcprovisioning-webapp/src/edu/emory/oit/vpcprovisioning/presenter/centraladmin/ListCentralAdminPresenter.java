@@ -100,6 +100,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 				log.log(Level.SEVERE, "Exception Retrieving Central Admins", caught);
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
+				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
 						"Message from server is: " + caught.getMessage());
@@ -107,7 +108,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Central Admins");
 

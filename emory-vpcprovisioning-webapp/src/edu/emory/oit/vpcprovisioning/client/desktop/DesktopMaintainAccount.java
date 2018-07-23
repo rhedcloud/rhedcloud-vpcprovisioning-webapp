@@ -985,4 +985,14 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	    updateTime.setCellStyleNames("productAnchor");
 		listTable.addColumn(updateTime, "Update Time");
 	}
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

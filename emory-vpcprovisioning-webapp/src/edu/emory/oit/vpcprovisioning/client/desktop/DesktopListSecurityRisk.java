@@ -10,8 +10,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,20 +24,17 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification.MyCellTableResources;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurityRiskView {
 	Presenter presenter;
@@ -365,6 +360,18 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	@Override
 	public void removeSecurityRiskFromView(SecurityRiskPojo securityRisks) {
 		dataProvider.getList().remove(securityRisks);
+	}
+
+	@Override
+	public void disableButtons() {
+		createButton.setEnabled(false);
+		actionsButton.setEnabled(false);
+	}
+
+	@Override
+	public void enableButtons() {
+		createButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 
 }

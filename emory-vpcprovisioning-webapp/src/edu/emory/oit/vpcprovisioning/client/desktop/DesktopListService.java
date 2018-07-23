@@ -669,4 +669,16 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void disableButtons() {
+		createServiceButton.setEnabled(false);
+		actionsButton.setEnabled(false);
+	}
+
+	@Override
+	public void enableButtons() {
+		createServiceButton.setEnabled(true);
+		actionsButton.setEnabled(true);
+	}
 }

@@ -46,11 +46,13 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -150,6 +152,16 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(new HomePlace());
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_SERVICE_GUIDELINE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_SERVICE_GUIDELINE.onAction");
+				final ListServiceGuidelinePresenter presenter = new ListServiceGuidelinePresenter(clientFactory, true, event.getAwsService(), event.getSecurityAssessment());
+				presenter.start(eventBus);
+				MaintainSecurityAssessmentView parent = clientFactory.getMaintainSecurityAssessmentView();
+				parent.setWidget(presenter);
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_SERVICE_CONTROL, new ActionEvent.Handler() {
@@ -906,6 +918,39 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.CREATE_SERVICE_GUIDELINE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("CREATE_SERVICE_GUIDELINE event service is: " + event.getAwsService());
+				GWT.log("CREATE_SERVICE_GUIDELINE event assessment is: " + event.getSecurityAssessment());
+//				placeController.goTo(MaintainServiceGuidelinePlace.getMaintainServiceGuidelinePlace(event.getAwsService(), event.getSecurityAssessment()));
+
+				// use this approach if we want to present in a dialog
+				final DialogBox db = new DialogBox();
+				db.setText("Create Service Guideline");
+				db.setGlassEnabled(true);
+				final MaintainServiceGuidelinePresenter presenter = new MaintainServiceGuidelinePresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
@@ -1009,6 +1054,50 @@ public class AppBootstrapper {
 		});
 
 		ActionEvent.register(eventBus, ActionNames.SERVICE_CONTROL_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SERVICE_GUIDELINE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+//				placeController.goTo(MaintainServiceGuidelinePlace.createMaintainServiceGuidelinePlace(event.getAwsService(), event.getSecurityAssessment(), event.getServiceControl()));
+				final DialogBox db = new DialogBox();
+				db.setText("Maintain Service Guideline");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainServiceGuidelinePresenter presenter = new MaintainServiceGuidelinePresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment(), event.getServiceGuideline());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_GUIDELINE_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_GUIDELINE_SAVED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));

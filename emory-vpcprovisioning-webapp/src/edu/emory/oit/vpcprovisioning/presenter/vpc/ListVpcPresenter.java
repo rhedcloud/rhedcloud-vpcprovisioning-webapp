@@ -85,9 +85,9 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				log.log(Level.SEVERE, "Exception Retrieving VPCs", caught);
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
+				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the VPCs you're associated to.  " +
 						"Message from server is: " + caught.getMessage());
@@ -95,7 +95,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPCs");
 

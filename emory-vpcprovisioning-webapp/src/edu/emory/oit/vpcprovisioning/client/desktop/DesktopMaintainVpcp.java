@@ -571,4 +571,14 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

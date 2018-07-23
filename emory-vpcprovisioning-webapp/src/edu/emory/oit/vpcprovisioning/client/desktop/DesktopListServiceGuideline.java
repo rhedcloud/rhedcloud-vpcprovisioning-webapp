@@ -34,25 +34,25 @@ import com.google.gwt.view.client.SingleSelectionModel;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
-import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
-import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelineView;
+import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class DesktopListServiceControl extends ViewImplBase implements ListServiceControlView {
+public class DesktopListServiceGuideline extends ViewImplBase implements ListServiceGuidelineView {
 	Presenter presenter;
-	private ListDataProvider<ServiceControlPojo> dataProvider = new ListDataProvider<ServiceControlPojo>();
-	private SingleSelectionModel<ServiceControlPojo> selectionModel;
-	List<ServiceControlPojo> pojoList = new java.util.ArrayList<ServiceControlPojo>();
+	private ListDataProvider<ServiceGuidelinePojo> dataProvider = new ListDataProvider<ServiceGuidelinePojo>();
+	private SingleSelectionModel<ServiceGuidelinePojo> selectionModel;
+	List<ServiceGuidelinePojo> pojoList = new java.util.ArrayList<ServiceGuidelinePojo>();
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 
-	private static DesktopListServiceControlUiBinder uiBinder = GWT.create(DesktopListServiceControlUiBinder.class);
+	private static DesktopListServiceGuidelineUiBinder uiBinder = GWT.create(DesktopListServiceGuidelineUiBinder.class);
 
-	interface DesktopListServiceControlUiBinder extends UiBinder<Widget, DesktopListServiceControl> {
+	interface DesktopListServiceGuidelineUiBinder extends UiBinder<Widget, DesktopListServiceGuideline> {
 	}
 
-	public DesktopListServiceControl() {
+	public DesktopListServiceGuideline() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -61,9 +61,10 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
 	     public CellTable.Style cellTableStyle();
 	}
+
 	/*** FIELDS ***/
 	@UiField SimplePager listPager;
-	@UiField(provided=true) CellTable<ServiceControlPojo> listTable = new CellTable<ServiceControlPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<ServiceGuidelinePojo> listTable = new CellTable<ServiceGuidelinePojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button createButton;
 	@UiField Button actionsButton;
@@ -88,9 +89,9 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				ServiceControlPojo m = selectionModel.getSelectedObject();
+				ServiceGuidelinePojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment(), m);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_GUIDELINE, presenter.getService(), presenter.getAssessment(), m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -109,9 +110,9 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 				@Override
 				public void onClick(ClickEvent event) {
 					actionsPopup.hide();
-					ServiceControlPojo m = selectionModel.getSelectedObject();
+					ServiceGuidelinePojo m = selectionModel.getSelectedObject();
 					if (m != null) {
-						presenter.deleteServiceControl(m);
+						presenter.deleteServiceGuideline(m);
 					}
 					else {
 						showMessageToUser("Please select an item from the list");
@@ -128,8 +129,8 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 	}
 
 	@UiHandler ("createButton")
-	void createServiceControlClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment());
+	void createServiceGuidelineClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_GUIDELINE, presenter.getService(), presenter.getAssessment());
 	}
 	
 	@Override
@@ -232,7 +233,7 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 	}
 
 	@Override
-	public void setServiceControls(List<ServiceControlPojo> serviceControls) {
+	public void setServiceGuidelines(List<ServiceGuidelinePojo> serviceControls) {
 		GWT.log("view Setting service controls.");
 		this.pojoList = serviceControls;
 		this.initializeTable();
@@ -247,25 +248,25 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 		listTable.setVisibleRange(0, 5);
 		
 		// create dataprovider
-		dataProvider = new ListDataProvider<ServiceControlPojo>();
+		dataProvider = new ListDataProvider<ServiceGuidelinePojo>();
 		dataProvider.addDataDisplay(listTable);
 		dataProvider.getList().clear();
 		dataProvider.getList().addAll(this.pojoList);
 		
 		selectionModel = 
-	    	new SingleSelectionModel<ServiceControlPojo>(ServiceControlPojo.KEY_PROVIDER);
+	    	new SingleSelectionModel<ServiceGuidelinePojo>(ServiceGuidelinePojo.KEY_PROVIDER);
 		listTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		ServiceControlPojo m = selectionModel.getSelectedObject();
-	    		GWT.log("Selected service control is: " + m.getServiceControlName());
+	    		ServiceGuidelinePojo m = selectionModel.getSelectedObject();
+	    		GWT.log("Selected service control is: " + m.getServiceGuidelineName());
 	    	}
 	    });
 
-	    ListHandler<ServiceControlPojo> sortHandler = 
-	    	new ListHandler<ServiceControlPojo>(dataProvider.getList());
+	    ListHandler<ServiceGuidelinePojo> sortHandler = 
+	    	new ListHandler<ServiceGuidelinePojo>(dataProvider.getList());
 	    listTable.addColumnSortHandler(sortHandler);
 
 	    if (listTable.getColumnCount() == 0) {
@@ -275,13 +276,13 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 		return listTable;
 	}
 
-	private void initListTableColumns(ListHandler<ServiceControlPojo> sortHandler) {
+	private void initListTableColumns(ListHandler<ServiceGuidelinePojo> sortHandler) {
 		GWT.log("initializing Service Control list table columns...");
 
-		Column<ServiceControlPojo, Boolean> checkColumn = new Column<ServiceControlPojo, Boolean>(
+		Column<ServiceGuidelinePojo, Boolean> checkColumn = new Column<ServiceGuidelinePojo, Boolean>(
 				new CheckboxCell(true, false)) {
 			@Override
-			public Boolean getValue(ServiceControlPojo object) {
+			public Boolean getValue(ServiceGuidelinePojo object) {
 				// Get the value from the selection model.
 				return selectionModel.isSelected(object);
 			}
@@ -289,18 +290,18 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
 		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
-		Column<ServiceControlPojo, String> sequenceNumber = 
-				new Column<ServiceControlPojo, String> (new TextCell()) {
+		Column<ServiceGuidelinePojo, String> sequenceNumber = 
+				new Column<ServiceGuidelinePojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ServiceControlPojo object) {
+			public String getValue(ServiceGuidelinePojo object) {
 				return Integer.toString(object.getSequenceNumber());
 			}
 		};
 		sequenceNumber.setSortable(true);
 		sequenceNumber.setCellStyleNames("tableBody");
-		sortHandler.setComparator(sequenceNumber, new Comparator<ServiceControlPojo>() {
-			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+		sortHandler.setComparator(sequenceNumber, new Comparator<ServiceGuidelinePojo>() {
+			public int compare(ServiceGuidelinePojo o1, ServiceGuidelinePojo o2) {
 				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
 					return 1;
 				}
@@ -309,70 +310,70 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 		});
 		listTable.addColumn(sequenceNumber, "Sequence Number");
 
-		Column<ServiceControlPojo, String> nameColumn = 
-				new Column<ServiceControlPojo, String> (new TextCell()) {
+		Column<ServiceGuidelinePojo, String> nameColumn = 
+				new Column<ServiceGuidelinePojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ServiceControlPojo object) {
-				return object.getServiceControlName();
+			public String getValue(ServiceGuidelinePojo object) {
+				return object.getServiceGuidelineName();
 			}
 		};
 		nameColumn.setSortable(true);
 		nameColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(nameColumn, new Comparator<ServiceControlPojo>() {
-			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
-				return o1.getServiceControlName().compareTo(o2.getServiceControlName());
+		sortHandler.setComparator(nameColumn, new Comparator<ServiceGuidelinePojo>() {
+			public int compare(ServiceGuidelinePojo o1, ServiceGuidelinePojo o2) {
+				return o1.getServiceGuidelineName().compareTo(o2.getServiceGuidelineName());
 			}
 		});
 		listTable.addColumn(nameColumn, "Name");
 		
-		Column<ServiceControlPojo, String> descColumn = 
-				new Column<ServiceControlPojo, String> (new TextCell()) {
+		Column<ServiceGuidelinePojo, String> descColumn = 
+				new Column<ServiceGuidelinePojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ServiceControlPojo object) {
+			public String getValue(ServiceGuidelinePojo object) {
 				return object.getDescription();
 			}
 		};
 		descColumn.setSortable(true);
 		descColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(descColumn, new Comparator<ServiceControlPojo>() {
-			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+		sortHandler.setComparator(descColumn, new Comparator<ServiceGuidelinePojo>() {
+			public int compare(ServiceGuidelinePojo o1, ServiceGuidelinePojo o2) {
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
 		listTable.addColumn(descColumn, "Description");
 		
-		Column<ServiceControlPojo, String> assessorId = 
-				new Column<ServiceControlPojo, String> (new TextCell()) {
+		Column<ServiceGuidelinePojo, String> assessorId = 
+				new Column<ServiceGuidelinePojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(ServiceControlPojo object) {
+			public String getValue(ServiceGuidelinePojo object) {
 				// TODO: should this be their name?
 				return object.getAssessorId();
 			}
 		};
 		assessorId.setSortable(true);
 		assessorId.setCellStyleNames("tableBody");
-		sortHandler.setComparator(assessorId, new Comparator<ServiceControlPojo>() {
-			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+		sortHandler.setComparator(assessorId, new Comparator<ServiceGuidelinePojo>() {
+			public int compare(ServiceGuidelinePojo o1, ServiceGuidelinePojo o2) {
 				return o1.getAssessorId().compareTo(o2.getAssessorId());
 			}
 		});
 		listTable.addColumn(assessorId, "Assessor");
 		
-		Column<ServiceControlPojo, String> assessmentDate = 
-				new Column<ServiceControlPojo, String> (new ClickableTextCell()) {
+		Column<ServiceGuidelinePojo, String> assessmentDate = 
+				new Column<ServiceGuidelinePojo, String> (new ClickableTextCell()) {
 
 			@Override
-			public String getValue(ServiceControlPojo object) {
+			public String getValue(ServiceGuidelinePojo object) {
 				Date d1 = object.getAssessmentDate();
 				return d1 != null ? dateFormat.format(d1) : "Unknown";
 			}
 		};
 		assessmentDate.setSortable(true);
-		sortHandler.setComparator(assessmentDate, new Comparator<ServiceControlPojo>() {
-			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+		sortHandler.setComparator(assessmentDate, new Comparator<ServiceGuidelinePojo>() {
+			public int compare(ServiceGuidelinePojo o1, ServiceGuidelinePojo o2) {
 				GWT.log("user notification create time sort handler...");
 				Date c1 = o1.getAssessmentDate();
 				Date c2 = o2.getAssessmentDate();
@@ -383,46 +384,6 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 			}
 		});
 		listTable.addColumn(assessmentDate, "Assessment Date");
-
-		Column<ServiceControlPojo, String> verifier = 
-				new Column<ServiceControlPojo, String> (new TextCell()) {
-
-			@Override
-			public String getValue(ServiceControlPojo object) {
-				// TODO: should this be their name?
-				return object.getVerifier();
-			}
-		};
-		verifier.setSortable(true);
-		verifier.setCellStyleNames("tableBody");
-		sortHandler.setComparator(verifier, new Comparator<ServiceControlPojo>() {
-			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
-				return o1.getVerifier().compareTo(o2.getVerifier());
-			}
-		});
-		listTable.addColumn(verifier, "Verifier");
-		
-		Column<ServiceControlPojo, String> verificationDate = 
-				new Column<ServiceControlPojo, String> (new ClickableTextCell()) {
-
-			@Override
-			public String getValue(ServiceControlPojo object) {
-				Date d1 = object.getVerificationDate();
-				return d1 != null ? dateFormat.format(d1) : "Unknown";
-			}
-		};
-		verificationDate.setSortable(true);
-		sortHandler.setComparator(verificationDate, new Comparator<ServiceControlPojo>() {
-			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
-				Date c1 = o1.getVerificationDate();
-				Date c2 = o2.getVerificationDate();
-				if (c1 == null || c2 == null) {
-					return 0;
-				}
-				return c1.compareTo(c2);
-			}
-		});
-		listTable.addColumn(verificationDate, "Verification Date");
 	}
 
 	@Override
@@ -432,7 +393,7 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 	}
 
 	@Override
-	public void removeServiceControlFromView(ServiceControlPojo serviceControls) {
+	public void removeServiceGuidelineFromView(ServiceGuidelinePojo serviceControls) {
 		dataProvider.getList().remove(serviceControls);
 	}
 

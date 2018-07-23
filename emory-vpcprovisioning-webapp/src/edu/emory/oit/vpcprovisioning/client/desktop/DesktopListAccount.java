@@ -661,4 +661,20 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void disableButtons() {
+		filterButton.setEnabled(false);
+		clearFilterButton.setEnabled(false);
+		actionsButton.setEnabled(false);
+		addAccountButton.setEnabled(false);
+	}
+
+	@Override
+	public void enableButtons() {
+		filterButton.setEnabled(true);
+		clearFilterButton.setEnabled(true);
+		actionsButton.setEnabled(true);
+		addAccountButton.setEnabled(true);
+	}
 }

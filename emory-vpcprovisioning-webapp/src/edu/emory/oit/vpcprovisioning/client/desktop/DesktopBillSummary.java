@@ -288,4 +288,14 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

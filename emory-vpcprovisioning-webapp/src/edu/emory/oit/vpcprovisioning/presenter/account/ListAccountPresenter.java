@@ -88,6 +88,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				log.log(Level.SEVERE, "Exception Retrieving Accounts", caught);
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
+				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Accounts you're associated to.  " +
 						"Message from server is: " + caught.getMessage());
@@ -95,7 +96,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Accounts");
 

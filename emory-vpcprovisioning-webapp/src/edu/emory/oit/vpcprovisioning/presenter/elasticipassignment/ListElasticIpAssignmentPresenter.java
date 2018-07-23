@@ -71,6 +71,10 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Central Admins you're associated to.  " +
+						"Message from server is: " + caught.getMessage());
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					getView().showMessageToUser("There was an exception on the " +
 //							"server retrieving information about the user logged " +
@@ -80,7 +84,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+				getView().enableButtons();
 				// Add a handler to the 'add' button in the shell.
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Elastic IP Assignments");

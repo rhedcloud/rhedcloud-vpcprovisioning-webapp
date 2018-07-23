@@ -9,7 +9,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
@@ -199,6 +198,18 @@ public class DesktopMaintainNotification extends ViewImplBase implements Maintai
 
 	@Override
 	public void vpcpConfirmCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
 		// TODO Auto-generated method stub
 		
 	}

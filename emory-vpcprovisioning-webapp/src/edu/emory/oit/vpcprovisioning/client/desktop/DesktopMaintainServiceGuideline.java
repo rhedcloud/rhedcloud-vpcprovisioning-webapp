@@ -24,27 +24,26 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
-import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class DesktopMaintainServiceControl extends ViewImplBase implements MaintainServiceControlView {
+public class DesktopMaintainServiceGuideline extends ViewImplBase implements MaintainServiceGuidelineView {
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
 	boolean editing;
 	PopupPanel actionsPopup = new PopupPanel(true);
 	private final DirectoryPersonRpcSuggestOracle assessorSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
-	private final DirectoryPersonRpcSuggestOracle verifierSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 
 
-	private static DesktopMaintainServiceControlUiBinder uiBinder = GWT
-			.create(DesktopMaintainServiceControlUiBinder.class);
+	private static DesktopMaintainServiceGuidelineUiBinder uiBinder = GWT
+			.create(DesktopMaintainServiceGuidelineUiBinder.class);
 
-	interface DesktopMaintainServiceControlUiBinder extends UiBinder<Widget, DesktopMaintainServiceControl> {
+	interface DesktopMaintainServiceGuidelineUiBinder extends UiBinder<Widget, DesktopMaintainServiceGuideline> {
 	}
 
-	public DesktopMaintainServiceControl() {
+	public DesktopMaintainServiceGuideline() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
@@ -57,28 +56,22 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 	@UiField TextArea controlDescriptionTA;
 	@UiField(provided=true) SuggestBox assessorLookupSB = new SuggestBox(assessorSuggestions, new TextBox());
 	@UiField DateBox assessmentDB;
-	@UiField(provided=true) SuggestBox verifierLookupSB = new SuggestBox(verifierSuggestions, new TextBox());
-	@UiField DateBox verificationDB;
 
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		populateServiceControlWithFormData();
+		populateServiceGuidelineWithFormData();
 		presenter.saveAssessment();
 	}
-	private void populateServiceControlWithFormData() {
+	private void populateServiceGuidelineWithFormData() {
 		// populate/save service
-		presenter.getServiceControl().setServiceId(presenter.getService().getServiceId());
-		presenter.getServiceControl().setServiceControlName(controlNameTB.getText());
-		presenter.getServiceControl().setDescription(controlDescriptionTA.getText());
-		presenter.getServiceControl().setSequenceNumber(Integer.parseInt(sequenceNumberTB.getText()));
+		presenter.getServiceGuideline().setServiceId(presenter.getService().getServiceId());
+		presenter.getServiceGuideline().setServiceGuidelineName(controlNameTB.getText());
+		presenter.getServiceGuideline().setDescription(controlDescriptionTA.getText());
+		presenter.getServiceGuideline().setSequenceNumber(Integer.parseInt(sequenceNumberTB.getText()));
 		if (presenter.getAssessorDirectoryPerson() != null) {
-			presenter.getServiceControl().setAssessorId(presenter.getAssessorDirectoryPerson().getKey());
+			presenter.getServiceGuideline().setAssessorId(presenter.getAssessorDirectoryPerson().getKey());
 		}
-		presenter.getServiceControl().setAssessmentDate(assessmentDB.getValue());
-		if (presenter.getVerifierDirectoryPerson() != null) {
-			presenter.getServiceControl().setVerifier(presenter.getVerifierDirectoryPerson().getKey());
-		}
-		presenter.getServiceControl().setVerificationDate(verificationDB.getValue());
+		presenter.getServiceGuideline().setAssessmentDate(assessmentDB.getValue());
 	}
 
 	private void registerHandlers() {
@@ -89,17 +82,6 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 				if (dp_suggestion.getDirectoryPerson() != null) {
 					presenter.setAssessorDirectoryPerson(dp_suggestion.getDirectoryPerson());
 					assessorLookupSB.setTitle(presenter.getAssessorDirectoryPerson().toString());
-				}
-			}
-		});
-
-		verifierLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
-			@Override
-			public void onSelection(SelectionEvent<Suggestion> event) {
-				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
-				if (dp_suggestion.getDirectoryPerson() != null) {
-					presenter.setVerifierDirectoryPerson(dp_suggestion.getDirectoryPerson());
-					verifierLookupSB.setTitle(presenter.getVerifierDirectoryPerson().toString());
 				}
 			}
 		});
@@ -156,8 +138,8 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 	@Override
 	public List<Widget> getMissingRequiredFields() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		ServiceControlPojo control = presenter.getServiceControl();
-		if (control.getServiceControlName() == null || control.getServiceControlName().length() == 0) {
+		ServiceGuidelinePojo control = presenter.getServiceGuideline();
+		if (control.getServiceGuidelineName() == null || control.getServiceGuidelineName().length() == 0) {
 			fields.add(controlNameTB);
 		}
 		if (control.getDescription() == null || control.getDescription().length() == 0) {
@@ -234,18 +216,16 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@Override
 	public void initPage() {
-		GWT.log("DesktopMaintainServiceControl: initPage");
-		GWT.log("DesktopMaintainServiceControl:editing=" + this.editing);
+		GWT.log("DesktopMaintainServiceGuideline: initPage");
+		GWT.log("DesktopMaintainServiceGuideline:editing=" + this.editing);
 		registerHandlers();
 		if (editing) {
-			ServiceControlPojo srp = presenter.getServiceControl();
+			ServiceGuidelinePojo srp = presenter.getServiceGuideline();
 			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
-			controlNameTB.setText(srp.getServiceControlName());
+			controlNameTB.setText(srp.getServiceGuidelineName());
 			controlDescriptionTA.setText(srp.getDescription());
 			// TODO: this will have to be a lookup to get the name of the person
 			assessorLookupSB.setText(srp.getAssessorId());
-			verifierLookupSB.setText(srp.getVerifier());
-			verificationDB.setValue(srp.getVerificationDate());
 			assessmentDB.setValue(srp.getAssessmentDate());
 		}
 		GWT.log("service name from presenter is: " + presenter.getService().getAwsServiceName());
@@ -267,6 +247,4 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		// TODO Auto-generated method stub
 		
 	}
-
-
 }

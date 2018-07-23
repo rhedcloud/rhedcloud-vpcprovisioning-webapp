@@ -93,7 +93,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
-                GWT.log("Exception getting notifications", caught);
+                getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Notifications.  " +
 						"Message from server is: " + caught.getMessage());
@@ -101,7 +101,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
-
+				getView().enableButtons();
 				// Add a handler to the 'add' button in the shell.
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("User Notifications");

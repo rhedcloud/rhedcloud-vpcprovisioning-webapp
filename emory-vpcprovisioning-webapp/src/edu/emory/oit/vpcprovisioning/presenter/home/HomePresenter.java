@@ -57,6 +57,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
+				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your user information.  " +
 						"Message from server is: " + caught.getMessage());
@@ -64,6 +65,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				getView().enableButtons();
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
 				

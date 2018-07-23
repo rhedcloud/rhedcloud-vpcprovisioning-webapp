@@ -651,4 +651,18 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void disableButtons() {
+		addCidrButton.setEnabled(false);
+		actionsButton.setEnabled(false);
+		filterButton.setEnabled(false);
+		clearFilterButton.setEnabled(false);
+	}
+	@Override
+	public void enableButtons() {
+		addCidrButton.setEnabled(true);
+		actionsButton.setEnabled(true);
+		filterButton.setEnabled(true);
+		clearFilterButton.setEnabled(true);
+	}
 }

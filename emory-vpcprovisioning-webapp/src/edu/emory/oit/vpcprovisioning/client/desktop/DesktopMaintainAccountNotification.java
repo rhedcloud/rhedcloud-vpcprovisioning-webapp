@@ -10,7 +10,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -205,6 +204,18 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 
 	@Override
 	public void vpcpConfirmCancel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
 		// TODO Auto-generated method stub
 		
 	}

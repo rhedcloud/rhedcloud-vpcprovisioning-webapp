@@ -155,4 +155,16 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 		
 	}
 
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

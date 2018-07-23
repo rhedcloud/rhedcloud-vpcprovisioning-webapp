@@ -253,4 +253,16 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	public void hideBackgroundWorkNotice() {
 		backgroundNoticeHTML.setVisible(false);
 	}
+	@Override
+	public void disableButtons() {
+		roleInfoButton.setEnabled(false);
+		directoryInfoButton.setEnabled(false);
+		personInfoButton.setEnabled(false);
+	}
+	@Override
+	public void enableButtons() {
+		roleInfoButton.setEnabled(true);
+		directoryInfoButton.setEnabled(true);
+		personInfoButton.setEnabled(true);
+	}
 }

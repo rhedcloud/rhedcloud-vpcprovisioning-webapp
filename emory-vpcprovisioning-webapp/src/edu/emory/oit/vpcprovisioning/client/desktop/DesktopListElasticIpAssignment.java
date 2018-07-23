@@ -10,7 +10,6 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -33,13 +32,11 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.common.VpcpPrompt;
-import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification.MyCellTableResources;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopListElasticIpAssignment extends ViewImplBase implements ListElasticIpAssignmentView {
 	Presenter presenter;
@@ -458,5 +455,17 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 	@Override
 	public void vpcpConfirmCancel() {
 		showMessageToUser("Operation canceled.");
+	}
+
+	@Override
+	public void disableButtons() {
+		allocateAddressButton.setEnabled(false);
+		actionsButton.setEnabled(false);
+	}
+
+	@Override
+	public void enableButtons() {
+		allocateAddressButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 }

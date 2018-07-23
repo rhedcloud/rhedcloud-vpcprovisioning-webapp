@@ -1033,4 +1033,16 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void disableButtons() {
+		firewallExceptionRequestButton.setEnabled(false);
+		firewallExceptionRequestActionsButton.setEnabled(false);
+		firewallRuleActionsButton.setEnabled(false);
+	}
+	@Override
+	public void enableButtons() {
+		firewallExceptionRequestButton.setEnabled(true);
+		firewallExceptionRequestActionsButton.setEnabled(true);
+		firewallRuleActionsButton.setEnabled(true);
+	}
 }

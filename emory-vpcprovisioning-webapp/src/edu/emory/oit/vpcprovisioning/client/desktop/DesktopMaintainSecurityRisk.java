@@ -456,4 +456,14 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	    verificationDateColumn.setCellStyleNames("productAnchor");
 		listTable.addColumn(verificationDateColumn, "Verification Date");
 	}
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

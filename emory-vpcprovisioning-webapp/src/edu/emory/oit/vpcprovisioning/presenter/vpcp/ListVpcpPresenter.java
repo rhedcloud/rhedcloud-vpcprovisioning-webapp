@@ -79,6 +79,10 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your user information.  " +
+						"Message from server is: " + caught.getMessage());
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					log.log(Level.SEVERE, 
 //							"Exception getting user logged in on server", 
@@ -91,7 +95,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPCPs");
 

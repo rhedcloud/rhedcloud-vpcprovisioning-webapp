@@ -950,4 +950,16 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	public void clearAssessmentList() {
 		assessmentListTable.setVisibleRangeAndClearData(assessmentListTable.getVisibleRange(), true);
 	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

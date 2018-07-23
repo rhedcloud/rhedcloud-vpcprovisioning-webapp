@@ -272,4 +272,16 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

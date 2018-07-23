@@ -616,4 +616,16 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
 }

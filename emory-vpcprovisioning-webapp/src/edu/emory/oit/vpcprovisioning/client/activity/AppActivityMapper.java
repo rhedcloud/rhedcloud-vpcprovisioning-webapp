@@ -37,11 +37,14 @@ import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -227,6 +230,18 @@ public class AppActivityMapper implements ActivityMapper {
 			};
 		}
 
+		if (place instanceof ListServiceGuidelinePlace) {
+			// The list of services
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListServiceGuidelinePresenter presenter = new ListServiceGuidelinePresenter(clientFactory, (ListServiceGuidelinePlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
 		if (place instanceof BillSummaryPlace) {
 			// Generate/Maintain vpcp
 			return new BillSummaryActivity(clientFactory, (BillSummaryPlace) place);
@@ -310,6 +325,11 @@ public class AppActivityMapper implements ActivityMapper {
 		if (place instanceof MaintainServiceControlPlace) {
 			// Maintain service control
 			return new MaintainServiceControlActivity(clientFactory, (MaintainServiceControlPlace) place);
+		}
+
+		if (place instanceof MaintainServiceGuidelinePlace) {
+			// Maintain service control
+			return new MaintainServiceGuidelineActivity(clientFactory, (MaintainServiceGuidelinePlace) place);
 		}
 
 		return null;

@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.resources.client.ClientBundle.Source;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -23,7 +22,6 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListAccount.MyCellTableResources;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
@@ -338,6 +336,18 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 				getHTML().
 				replace("MY_NET_ID_URL", url);
 		introBodyHTML.setHTML(intro);
+	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

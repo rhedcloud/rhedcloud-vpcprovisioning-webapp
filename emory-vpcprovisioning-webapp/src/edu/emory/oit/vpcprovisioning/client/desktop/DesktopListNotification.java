@@ -591,4 +591,14 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void disableButtons() {
+		actionsButton.setEnabled(false);
+	}
+
+	@Override
+	public void enableButtons() {
+		actionsButton.setEnabled(true);
+	}
 }

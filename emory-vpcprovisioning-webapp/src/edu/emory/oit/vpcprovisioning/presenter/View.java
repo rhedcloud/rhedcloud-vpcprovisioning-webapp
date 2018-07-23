@@ -37,4 +37,6 @@ public interface View extends IsWidget {
 	void vpcpPromptCancel();
 	void vpcpConfirmOkay();
 	void vpcpConfirmCancel();
+	void disableButtons();
+	void enableButtons();
 }

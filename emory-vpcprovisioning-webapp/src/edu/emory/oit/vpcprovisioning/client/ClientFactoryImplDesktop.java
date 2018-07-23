@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceControl;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceGuideline;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainAccount;
@@ -38,6 +39,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityAsses
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceControl;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceGuideline;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
@@ -62,10 +64,12 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -119,6 +123,8 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainSecurityRiskView maintainSecurityRiskView;
 	private ListServiceControlView listServiceControlView;
 	private MaintainServiceControlView maintainServiceControlView;
+	private ListServiceGuidelineView listServiceGuidelineView;
+	private MaintainServiceGuidelineView maintainServiceGuidelineView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -499,5 +505,27 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainServiceControlView createMaintainServiceControlView() {
 		return new DesktopMaintainServiceControl();
+	}
+	
+	@Override
+	public ListServiceGuidelineView getListServiceGuidelineView() {
+		if (listServiceGuidelineView == null) {
+			listServiceGuidelineView = createListServiceGuidelineView();
+		}
+		return listServiceGuidelineView;
+	}
+	protected ListServiceGuidelineView createListServiceGuidelineView() {
+		return new DesktopListServiceGuideline();
+	}
+	@Override
+	public MaintainServiceGuidelineView getMaintainServiceGuidelineView() {
+		return createMaintainServiceGuidelineView();
+//		if (maintainServiceControlView == null) {
+//			maintainServiceControlView = createMaintainServiceControlView();
+//		}
+//		return maintainServiceControlView;
+	}
+	protected MaintainServiceGuidelineView createMaintainServiceGuidelineView() {
+		return new DesktopMaintainServiceGuideline();
 	}
 }
