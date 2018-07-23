@@ -41,6 +41,8 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		GWT.log("BillSummary Presenter...");
 		GWT.log("[presenter] Selected account is: " + this.account.getAccountId());
 		this.eventBus = eventBus;

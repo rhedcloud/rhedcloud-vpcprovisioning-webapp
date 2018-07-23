@@ -65,6 +65,8 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		getView().showPleaseWaitDialog("Retrieving VPC details...");
 		setReleaseInfo(clientFactory);
@@ -80,13 +82,17 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				getView().hidePleaseWaitPanel();
 				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the VPCs you're associated to.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				getView().enableButtons();
 				getView().setUserLoggedIn(user);
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override

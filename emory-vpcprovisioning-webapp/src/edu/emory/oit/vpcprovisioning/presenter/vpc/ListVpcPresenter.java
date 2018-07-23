@@ -79,6 +79,8 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving VPCs from the AWS Account Service...");
 		

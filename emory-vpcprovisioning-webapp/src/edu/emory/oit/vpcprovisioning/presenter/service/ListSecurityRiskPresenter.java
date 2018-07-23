@@ -84,6 +84,8 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 		GWT.log("assessment is: " + this.assessment);
 		getView().showPleaseWaitDialog("Retrieving security risks...");
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		

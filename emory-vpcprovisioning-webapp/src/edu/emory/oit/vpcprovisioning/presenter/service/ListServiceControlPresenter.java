@@ -77,6 +77,8 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 		GWT.log("assessment is: " + this.assessment);
 		getView().showPleaseWaitDialog("Retrieving service controls...");
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		

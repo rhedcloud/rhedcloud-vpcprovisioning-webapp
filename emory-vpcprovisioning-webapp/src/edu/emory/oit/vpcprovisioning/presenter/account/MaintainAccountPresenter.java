@@ -78,6 +78,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitPanel(null);

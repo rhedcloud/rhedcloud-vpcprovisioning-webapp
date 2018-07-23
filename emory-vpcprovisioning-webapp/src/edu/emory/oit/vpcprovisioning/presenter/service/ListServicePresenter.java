@@ -80,6 +80,8 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	public void start(EventBus eventBus) {
 		GWT.log("List services presenter...");
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving services from the AWS Account Service...");

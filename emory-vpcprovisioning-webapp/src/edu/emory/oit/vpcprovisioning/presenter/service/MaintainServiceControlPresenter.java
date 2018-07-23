@@ -72,6 +72,7 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving Service Control information...");
+		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		
 		GWT.log("Maintain Service Control: service is: " + service);

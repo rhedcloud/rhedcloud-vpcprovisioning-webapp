@@ -77,15 +77,17 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-        getView().showPleaseWaitPanel("Retrieving CIDR Assignments");
+        getView().showPleaseWaitDialog("Retrieving CIDR Assignments");
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
@@ -141,7 +143,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 		AsyncCallback<CidrAssignmentSummaryQueryResultPojo> callback = new AsyncCallback<CidrAssignmentSummaryQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of CidrAssignmentSummaries.  " +
 						"Message from server is: " + caught.getMessage());
@@ -169,7 +171,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 					// TODO: need to not show them this page??
 				}
 				GWT.log("back to presenter, masks applied...");
-                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
 				GWT.log("back to presenter, please wait hidden...");
 			}
 		};

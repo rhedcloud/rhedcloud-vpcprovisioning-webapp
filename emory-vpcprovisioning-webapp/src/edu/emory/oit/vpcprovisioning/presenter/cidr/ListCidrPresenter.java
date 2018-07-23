@@ -81,12 +81,13 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
 
 		getView().showPleaseWaitDialog("Retrieving CIDRs");
-		getView().showPleaseWaitPanel("Retrieving CIDRs");
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override

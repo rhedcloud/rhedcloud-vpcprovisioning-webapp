@@ -69,6 +69,8 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving Security Risk information...");
 		

@@ -67,6 +67,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving Service Guideline information...");
+		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		
 		GWT.log("Maintain Service Guideline: service is: " + service);

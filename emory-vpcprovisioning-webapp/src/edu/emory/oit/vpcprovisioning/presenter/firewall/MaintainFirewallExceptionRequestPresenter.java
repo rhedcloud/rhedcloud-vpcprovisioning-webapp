@@ -63,9 +63,9 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
-		setReleaseInfo(clientFactory);
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
+		setReleaseInfo(clientFactory);
 
 		if (systemId == null) {
 			clientFactory.getShell().setSubTitle("Create Firewall Exception Request");
@@ -79,8 +79,12 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Central Admins you're associated to.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override

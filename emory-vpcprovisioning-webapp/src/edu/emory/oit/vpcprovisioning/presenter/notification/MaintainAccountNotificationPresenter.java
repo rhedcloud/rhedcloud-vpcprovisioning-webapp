@@ -64,6 +64,8 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		getView().showPleaseWaitDialog("Retrieving Notification Details...");
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		
@@ -79,7 +81,12 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 
 			@Override
 			public void onFailure(Throwable caught) {
-				getView().hidePleaseWaitDialog();
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your list of Notifications.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override

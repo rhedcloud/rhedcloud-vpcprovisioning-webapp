@@ -78,6 +78,8 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving accounts from the AWS Account Service...");

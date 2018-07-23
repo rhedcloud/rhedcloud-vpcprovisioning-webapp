@@ -66,6 +66,8 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitPanel("Retrieving Security Assessment information...");
 		

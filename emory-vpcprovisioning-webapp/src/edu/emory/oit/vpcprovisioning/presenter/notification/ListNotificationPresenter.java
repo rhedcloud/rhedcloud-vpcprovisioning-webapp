@@ -85,6 +85,8 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		GWT.log("List notifications presenter...");
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		getView().showPleaseWaitDialog("Retrieving Notifications from the AWS Account service...");
 		

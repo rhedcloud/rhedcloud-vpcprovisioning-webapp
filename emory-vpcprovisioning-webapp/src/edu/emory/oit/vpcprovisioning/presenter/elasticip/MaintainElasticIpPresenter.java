@@ -57,6 +57,8 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);

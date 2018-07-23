@@ -61,6 +61,8 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		getView().showPleaseWaitDialog("Retrieving Notification Details...");
 		setReleaseInfo(clientFactory);
@@ -77,8 +79,12 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your list of Notifications.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override

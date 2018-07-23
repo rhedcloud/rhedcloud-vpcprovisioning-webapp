@@ -59,6 +59,8 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving accounts from AWS Account Service...");
@@ -76,6 +78,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
+				getView().disableButtons();
 				GWT.log("Exception retrieving the User Logged in.", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  Message " +
@@ -84,6 +87,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				getView().enableButtons();
 				getView().setUserLoggedIn(user);
 				getView().initPage();
 				getView().setInitialFocus();

@@ -80,6 +80,8 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		
@@ -95,12 +97,17 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your user information.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				getView().enableButtons();
 				getView().setUserLoggedIn(user);
 				userLoggedIn = user;
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {

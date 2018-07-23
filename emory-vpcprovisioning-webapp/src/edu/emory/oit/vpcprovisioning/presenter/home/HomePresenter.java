@@ -47,7 +47,9 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		finishedDirectoryPersonCache = false;
-		
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
+
 		setReleaseInfo(clientFactory);
 		
 		getView().showPleaseWaitDialog("Retrieving account metadata from the AWS Account Service...");

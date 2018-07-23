@@ -60,6 +60,8 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		
@@ -68,6 +70,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
+                getView().disableButtons();
 				GWT.log("Exception Retrieving Vpcs", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
@@ -77,6 +80,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
 				clientFactory.getShell().setSubTitle("VPCP Status");
+				getView().enableButtons();
 				getView().setUserLoggedIn(user);
 				// TODO: depending on how the scheduler works, we may not need 
 				// to refreshVpcpStatusForId here.  If the scheduler immediately 

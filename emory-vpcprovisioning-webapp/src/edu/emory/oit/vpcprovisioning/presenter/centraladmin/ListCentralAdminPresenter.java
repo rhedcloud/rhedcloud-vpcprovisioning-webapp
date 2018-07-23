@@ -77,6 +77,8 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving Central Administrators from the IDM Service...");

@@ -70,6 +70,8 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");

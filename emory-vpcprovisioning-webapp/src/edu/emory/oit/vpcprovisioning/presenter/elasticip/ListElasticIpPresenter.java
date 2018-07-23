@@ -71,15 +71,21 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel("Retrieving Elastic IPs from the Elastic IP service...");
+		getView().showPleaseWaitDialog("Retrieving Elastic IPs from the Elastic IP service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Central Admins you're associated to.  " +
+						"Message from server is: " + caught.getMessage());
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					log.log(Level.SEVERE, 
 //							"Exception getting user logged in on server", 
@@ -171,7 +177,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		AsyncCallback<ElasticIpQueryResultPojo> callback = new AsyncCallback<ElasticIpQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
                 getView().hidePleaseWaitDialog();
 				log.log(Level.SEVERE, "Exception Retrieving Vpcs", caught);
 				getView().showMessageToUser("There was an exception on the " +
@@ -197,7 +203,6 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 					getView().applyAWSAccountAuditorMask();
 				}
                 getView().hidePleaseWaitDialog();
-                getView().hidePleaseWaitPanel();
 			}
 		};
 

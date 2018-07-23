@@ -70,6 +70,8 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
@@ -86,8 +88,12 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Central Admins you're associated to.  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
