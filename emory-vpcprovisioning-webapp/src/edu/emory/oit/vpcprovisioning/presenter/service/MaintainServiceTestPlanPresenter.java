@@ -14,6 +14,8 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
@@ -208,21 +210,48 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				GWT.log("Exception saving the Security Assessment", caught);
+				GWT.log("Exception saving the Security Assessment Test Plan", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the Security Assessment.  Message " +
+						"server saving the Security Assessment Test Plan.  Message " +
 						"from server is: " + caught.getMessage());
-//				assessment.getServiceTestPlan().remove(getServiceTestPlan());
-//				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
 			}
 
 			@Override
 			public void onSuccess(ServiceSecurityAssessmentPojo result) {
-				getView().hidePleaseWaitDialog();
-				getView().hidePleaseWaitPanel();
-				getView().refreshDataProvider();
-				getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
-//				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+				// TODO: also need to refresh the assessment associated to the security assessment page
+				// not sure how to do that
+				
+				AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+		                getView().hidePleaseWaitPanel();
+		                getView().hidePleaseWaitDialog();
+						GWT.log("Exception Retrieving Services", caught);
+						getView().showMessageToUser("There was an exception on the " +
+								"server retrieving the list of Security Assessments associated to this Service.  " +
+								"Message from server is: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+						GWT.log("Got " + result.getResults().size() + " Security Assessments for " + result.getFilterUsed());
+						for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
+							if (ssa.getServiceSecurityAssessmentId().equals(assessment.getServiceSecurityAssessmentId())) {
+								assessment = ssa;
+								break;
+							}
+						}
+						getView().hidePleaseWaitDialog();
+						getView().hidePleaseWaitPanel();
+						getView().refreshDataProvider();
+						getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
+					}
+				};
+
+				GWT.log("refreshing security assessment...");
+				ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+				filter.setServiceId(service.getServiceId());
+				VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
 			}
 		};
 		this.assessment.setServiceTestPlan(this.serviceTestPlan);
@@ -233,11 +262,11 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 			// TODO: have to find the service testPlan, remove it and then re-add this one to the list
 		}
 		// it's always an update
-//		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
+		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
 		// TODO: tempoarary until i get the update logic working correctly
-		getView().refreshDataProvider();
-		getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
-		getView().hidePleaseWaitDialog();
+//		getView().refreshDataProvider();
+//		getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
+//		getView().hidePleaseWaitDialog();
 	}
 
 	@Override

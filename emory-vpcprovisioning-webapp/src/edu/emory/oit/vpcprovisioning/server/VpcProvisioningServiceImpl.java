@@ -82,7 +82,10 @@ import com.amazon.aws.moa.objects.resources.v1_0.ServiceControl;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceGuideline;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceSecurityAssessmentQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceTest;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestPlan;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestRequirement;
+import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestStep;
 // TODO: this should be actionable so the aws-moa is currently not correct
 import com.amazon.aws.moa.objects.resources.v1_0.UserAction;
 import com.amazon.aws.moa.objects.resources.v1_0.UserNotificationQuerySpecification;
@@ -7231,10 +7234,44 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 		if (moa.getServiceTestPlan() != null) {
-			ServiceTestPlanPojo stp = new ServiceTestPlanPojo();
-			stp.setServiceId(moa.getServiceTestPlan().getServiceId());
-			// TODO: test plan requirement list
-			pojo.setServiceTestPlan(stp);
+			ServiceTestPlan stpm = moa.getServiceTestPlan();
+			ServiceTestPlanPojo stpp = new ServiceTestPlanPojo();
+			stpp.setServiceId(stpm.getServiceId());
+			// test plan requirement list
+			if (stpm.getServiceTestRequirement() != null) {
+				List<ServiceTestRequirementPojo> strPojos = new java.util.ArrayList<ServiceTestRequirementPojo>();
+				for (ServiceTestRequirement strm : (List<ServiceTestRequirement>)stpm.getServiceTestRequirement()) {
+					ServiceTestRequirementPojo strp = new ServiceTestRequirementPojo();
+					strp.setServiceTestRequirementId(strm.getServiceTestRequirementId());
+					strp.setSequenceNumber(this.toIntFromString(strm.getSequenceNumber()));
+					strp.setDescription(strm.getDescription());
+					if (strm.getServiceTest() != null) {
+						for (ServiceTest stm : (List<ServiceTest>)strm.getServiceTest()) {
+							ServiceTestPojo stp = new ServiceTestPojo();
+							stp.setServiceTestId(stm.getServiceTestId());
+							stp.setSequenceNumber(this.toIntFromString(stm.getSequenceNumber()));
+							stp.setDescription(stm.getDescription());
+							stp.setServiceTestExpectedResult(stm.getServiceTestExpectedResult());
+							if (stm.getServiceTestStep() != null) {
+								for (ServiceTestStep stsm : (List<ServiceTestStep>)stm.getServiceTestStep()) {
+									ServiceTestStepPojo stsp = new ServiceTestStepPojo();
+									stsp.setServiceTestId(stsm.getServiceTestId());
+									stsp.setServiceTestStepId(stsm.getServiceTestStepId());
+									stsp.setSequenceNumber(this.toIntFromString(stsm.getSequenceNumber()));
+									stsp.setDescription(stsm.getDescription());
+									stp.getServiceTestSteps().add(stsp);
+								}
+							}
+							strp.getServiceTests().add(stp);
+						}
+					}
+					strPojos.add(strp);
+//					stpp.getServiceTestRequirements().add(strp);
+				}
+				Collections.sort(strPojos);
+				stpp.setServiceTestRequirements(strPojos);
+			}
+			pojo.setServiceTestPlan(stpp);
 		}
 	}
 
@@ -7314,9 +7351,33 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 			
 		if (pojo.getServiceTestPlan() != null) {
+			ServiceTestPlanPojo stpp = pojo.getServiceTestPlan();
 			ServiceTestPlan moa_stp = moa.newServiceTestPlan();
 			moa_stp.setServiceId(pojo.getServiceTestPlan().getServiceId());
-			// TODO: test plan requirement list
+			// test plan requirement list
+			for (ServiceTestRequirementPojo strp : stpp.getServiceTestRequirements()) {
+				ServiceTestRequirement strm = moa_stp.newServiceTestRequirement();
+				strm.setServiceTestRequirementId(strp.getServiceTestRequirementId());
+				strm.setSequenceNumber(this.toStringFromInt(strp.getSequenceNumber()));
+				strm.setDescription(strp.getDescription());
+				for (ServiceTestPojo stp : strp.getServiceTests()) {
+					ServiceTest stm = strm.newServiceTest();
+					stm.setServiceTestId(stp.getServiceTestId());
+					stm.setSequenceNumber(this.toStringFromInt(stp.getSequenceNumber()));
+					stm.setDescription(stp.getDescription());
+					stm.setServiceTestExpectedResult(stp.getServiceTestExpectedResult());
+					for (ServiceTestStepPojo stsp : stp.getServiceTestSteps()) {
+						ServiceTestStep stsm = stm.newServiceTestStep();
+						stsm.setServiceTestId(stsp.getServiceTestId());
+						stsm.setServiceTestId(stsp.getServiceTestStepId());
+						stsm.setSequenceNumber(this.toStringFromInt(stsp.getSequenceNumber()));
+						stsm.setDescription(stsm.getDescription());
+						stm.addServiceTestStep(stsm);
+					}
+					strm.addServiceTest(stm);
+				}
+				moa_stp.addServiceTestRequirement(strm);
+			}
 			moa.setServiceTestPlan(moa_stp);
 		}
 	}

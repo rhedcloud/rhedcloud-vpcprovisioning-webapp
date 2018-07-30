@@ -127,7 +127,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	}
 
 	private void refreshList(final UserAccountPojo user) {
-		// use RPC to get all Services for the current filter being used
+		// use RPC to get all security assessments for the current filter being used
 		AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

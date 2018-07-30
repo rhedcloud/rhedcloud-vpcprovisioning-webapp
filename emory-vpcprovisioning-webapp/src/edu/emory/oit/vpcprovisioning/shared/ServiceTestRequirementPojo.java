@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
-public class ServiceTestRequirementPojo extends SharedObject implements IsSerializable {
+public class ServiceTestRequirementPojo extends SharedObject implements IsSerializable, Comparable<ServiceTestRequirementPojo> {
 	/*
 <!ELEMENT ServiceTestRequirement (ServiceTestRequirementId?, SequenceNumber, Description, ServiceTest*)>
 	 */
@@ -73,5 +73,16 @@ public class ServiceTestRequirementPojo extends SharedObject implements IsSerial
 	}
 	public void removeServiceTest(ServiceTestPojo st) {
 		serviceTests.remove(st);
+	}
+
+	@Override
+	public int compareTo(ServiceTestRequirementPojo o) {
+		if (o.getSequenceNumber() == sequenceNumber) {
+			return 0;
+		}
+		else if (sequenceNumber > o.getSequenceNumber()) {
+			return 1;
+		}
+		return -1;
 	}
 }

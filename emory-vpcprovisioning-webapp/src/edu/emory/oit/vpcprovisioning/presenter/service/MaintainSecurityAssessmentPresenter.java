@@ -258,9 +258,9 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				GWT.log("Exception saving the Account", caught);
+				GWT.log("Exception saving the Security Assessment", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the Account.  Message " +
+						"server saving the Security Assessment.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 

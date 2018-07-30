@@ -397,6 +397,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		ServiceTestStepPojo str = new ServiceTestStepPojo();
 		str.setSequenceNumber(Integer.parseInt(stepSequenceNumberTB.getText()));
 		str.setDescription(stepDescriptionTA.getText());
+		str.setServiceTestId(presenter.getSelectedTest().getServiceTestId());
 		
 		if (presenter.getSelectedTest().hasStep(str.getSequenceNumber())) {
 			showMessageToUser("A test step for the selected test with this sequence number already "
@@ -618,7 +619,9 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void refreshDataProvider() {
-		GWT.log("refreshing data provider...");
+		GWT.log("refreshing data provider...test " + 
+			"requirement count is: " + 
+			presenter.getServiceTestPlan().getServiceTestRequirements().size());
 		requirementDataProvider.setList(
 				presenter.getServiceTestPlan().getServiceTestRequirements());
 		requirementDataProvider.refresh();
