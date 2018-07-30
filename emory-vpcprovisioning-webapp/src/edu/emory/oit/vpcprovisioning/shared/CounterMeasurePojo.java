@@ -24,7 +24,6 @@ public class CounterMeasurePojo extends SharedObject implements IsSerializable, 
 	Date verificationDate;
 	
 	public CounterMeasurePojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getSecurityRiskId() {

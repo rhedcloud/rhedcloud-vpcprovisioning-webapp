@@ -20,7 +20,6 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 	String priority;
 	
 	public AccountNotificationQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getAccountNotificationId() {

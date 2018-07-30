@@ -29,6 +29,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
@@ -67,7 +68,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 				 ListServiceControlPlace.Tokenizer.class,
 				 MaintainServiceControlPlace.Tokenizer.class,
 				 ListServiceGuidelinePlace.Tokenizer.class,
-				 MaintainServiceGuidelinePlace.Tokenizer.class})
+				 MaintainServiceGuidelinePlace.Tokenizer.class, 
+				 MaintainServiceTestPlanPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

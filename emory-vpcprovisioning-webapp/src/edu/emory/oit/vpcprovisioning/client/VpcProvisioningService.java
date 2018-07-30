@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -72,6 +71,8 @@ import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
@@ -297,4 +298,7 @@ public interface VpcProvisioningService extends RemoteService {
 	List<String> getAssessmentStatusTypeItems();
 	List<String> getRiskLevelTypeItems();
 	List<String> getCounterMeasureStatusTypeItems();
+	
+	
+	SecurityRiskDetectionQueryResultPojo getSecurityRiskDetectionsForFilter(SecurityRiskDetectionQueryFilterPojo filter) throws RpcException;
 }

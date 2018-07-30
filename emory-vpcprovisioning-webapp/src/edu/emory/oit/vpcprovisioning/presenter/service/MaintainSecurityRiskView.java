@@ -34,6 +34,7 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 		void setService(AWSServicePojo service);
 
 		void deleteSecurityRisk(SecurityRiskPojo selected);
+		void deleteCounterMeasure(CounterMeasurePojo selected);
 		SecurityRiskPojo getSecurityRisk();
 		public void setDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getDirectoryPerson();

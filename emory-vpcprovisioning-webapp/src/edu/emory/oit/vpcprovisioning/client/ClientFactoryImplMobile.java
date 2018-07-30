@@ -37,6 +37,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmen
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -301,6 +302,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainServiceGuidelineView getMaintainServiceGuidelineView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainServiceTestPlanView getMaintainServiceTestPlanView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

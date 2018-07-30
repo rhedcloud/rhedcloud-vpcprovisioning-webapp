@@ -139,7 +139,13 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(2, 1);
+		Grid grid;
+		if (userLoggedIn.isCentralAdmin()) {
+			grid =  new Grid(2, 1);
+		}
+		else {
+			grid = new Grid(1,1);
+		}
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -163,12 +169,12 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		});
 		grid.setWidget(0, 0, editAnchor);
 
-		Anchor deleteAnchor = new Anchor("Delete Assessment");
-		deleteAnchor.addStyleName("productAnchor");
-		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deleteAnchor.setTitle("Delete selected Service");
-		deleteAnchor.ensureDebugId(deleteAnchor.getText());
 		if (userLoggedIn.isCentralAdmin()) {
+			Anchor deleteAnchor = new Anchor("Delete Assessment");
+			deleteAnchor.addStyleName("productAnchor");
+			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			deleteAnchor.setTitle("Delete selected Service");
+			deleteAnchor.ensureDebugId(deleteAnchor.getText());
 			deleteAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -182,11 +188,8 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 					}
 				}
 			});
+			grid.setWidget(1, 0, deleteAnchor);
 		}
-		else {
-			deleteAnchor.setEnabled(false);
-		}
-		grid.setWidget(1, 0, deleteAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -233,8 +236,13 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	@UiHandler("okayButton")
 	void okayClick(ClickEvent e) {
-		populateServiceWithFormData();
-		presenter.saveService(true);
+		if (userLoggedIn.isCentralAdmin()) {
+			populateServiceWithFormData();
+			presenter.saveService(true);
+		}
+		else {
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+		}
 	}
 	private void populateServiceWithFormData() {
 		// populate/save service
@@ -274,8 +282,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
-		return null;
+		return cancelButton;
 	}
 
 	@Override
@@ -357,11 +364,6 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 			awsNameTB.setText(presenter.getService().getAwsServiceName());
 			landingPageURLTB.setText(presenter.getService().getLandingPageURL());
 			descriptionTA.setText(presenter.getService().getDescription());
-			
-			/*
-	@UiField TextBox categoryTB;
-	@UiField TextBox consoleCategoryTB;
-			 */
 			alternateNameTB.setText(presenter.getService().getAlternateServiceName());
 			combinedNameTB.setText(presenter.getService().getCombinedServiceName());
 			awsHipaaEligibleCB.setValue(presenter.getService().isAwsHipaaEligible());
@@ -933,6 +935,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		    	@Override
 		    	public void update(int index, ServiceSecurityAssessmentPojo object, String value) {
 		    		showMessageToUser("Not implemented yet.");
+		    		// TODO:
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_TEST_PLAN, presenter.getService(), object, object.getServiceTestPlan());
 		    	}
 		    });

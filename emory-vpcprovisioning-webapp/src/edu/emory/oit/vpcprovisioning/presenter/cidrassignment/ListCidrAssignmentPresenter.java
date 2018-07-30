@@ -1,6 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.cidrassignment;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;

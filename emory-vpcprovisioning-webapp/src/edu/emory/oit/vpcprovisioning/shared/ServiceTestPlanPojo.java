@@ -6,6 +6,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
 public class ServiceTestPlanPojo extends SharedObject implements IsSerializable {
+	/*
+<!ELEMENT ServiceTestPlan (ServiceId, ServiceTestRequirement*)>
+	 */
 	String serviceId;
 	List<ServiceTestRequirementPojo> serviceTestRequirements = new java.util.ArrayList<ServiceTestRequirementPojo>();
 
@@ -29,4 +32,21 @@ public class ServiceTestPlanPojo extends SharedObject implements IsSerializable 
 		this.serviceTestRequirements = serviceTestRequirements;
 	}
 
+	public boolean hasRequirement(int sequenceNumber) {
+		for (ServiceTestRequirementPojo str : serviceTestRequirements) {
+			if (str.getSequenceNumber() == sequenceNumber) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public void removeServiceRequirement(ServiceTestRequirementPojo req) { 
+		serviceTestRequirements.remove(req);
+//		reqLoop: for (ServiceTestRequirementPojo str : serviceTestRequirements) {
+//			if (str.getSequenceNumber() == req.getSequenceNumber()) {
+//				serviceTestRequirements.remove(str);
+//				break reqLoop;
+//			}
+//		}
+	}
 }

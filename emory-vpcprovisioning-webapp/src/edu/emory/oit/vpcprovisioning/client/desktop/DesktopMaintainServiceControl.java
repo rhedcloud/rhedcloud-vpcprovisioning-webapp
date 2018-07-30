@@ -23,6 +23,8 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
@@ -62,8 +64,17 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		populateServiceControlWithFormData();
-		presenter.saveAssessment();
+		if (userLoggedIn.isCentralAdmin()) {
+			populateServiceControlWithFormData();
+			presenter.saveAssessment();
+		}
+		else {
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
+		}
+	}
+	@UiHandler ("cancelButton")
+	void cancelButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
 	}
 	private void populateServiceControlWithFormData() {
 		// populate/save service
@@ -132,20 +143,38 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		serviceNameTB.setEnabled(true);
+		sequenceNumberTB.setEnabled(true);
+		controlNameTB.setEnabled(true);
+		controlDescriptionTA.setEnabled(true);
+		assessorLookupSB.setEnabled(true);
+		assessmentDB.setEnabled(true);
+		verifierLookupSB.setEnabled(true);
+		verificationDB.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
-		
+		serviceNameTB.setEnabled(false);
+		sequenceNumberTB.setEnabled(false);
+		controlNameTB.setEnabled(false);
+		controlDescriptionTA.setEnabled(false);
+		assessorLookupSB.setEnabled(false);
+		assessmentDB.setEnabled(false);
+		verifierLookupSB.setEnabled(false);
+		verificationDB.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		serviceNameTB.setEnabled(false);
+		sequenceNumberTB.setEnabled(false);
+		controlNameTB.setEnabled(false);
+		controlDescriptionTA.setEnabled(false);
+		assessorLookupSB.setEnabled(false);
+		assessmentDB.setEnabled(false);
+		verifierLookupSB.setEnabled(false);
+		verificationDB.setEnabled(false);
 	}
 
 	@Override

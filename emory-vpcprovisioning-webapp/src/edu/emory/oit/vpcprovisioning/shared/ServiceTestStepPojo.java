@@ -1,11 +1,12 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class ServiceTestStepPojo extends SharedObject implements IsSerializable {
 	/*
-ServiceTestStepId, ServiceTestId, SequenceNumber, Description
+<!ELEMENT ServiceTestStep (ServiceTestStepId?, ServiceTestId, SequenceNumber, Description)>
 	 */
 
 	String serviceTestStepId;
@@ -13,6 +14,12 @@ ServiceTestStepId, ServiceTestId, SequenceNumber, Description
 	int sequenceNumber;
 	String description;
 	
+	public static final ProvidesKey<ServiceTestStepPojo> KEY_PROVIDER = new ProvidesKey<ServiceTestStepPojo>() {
+		@Override
+		public Object getKey(ServiceTestStepPojo item) {
+			return item == null ? null : item.getSequenceNumber();
+		}
+	};
 	public ServiceTestStepPojo() {
 		// TODO Auto-generated constructor stub
 	}
@@ -49,4 +56,8 @@ ServiceTestStepId, ServiceTestId, SequenceNumber, Description
 		this.description = description;
 	}
 
+	@Override
+	public String toString() {
+		return "Step: " + Integer.toString(sequenceNumber) + "-" + description;
+	}
 }

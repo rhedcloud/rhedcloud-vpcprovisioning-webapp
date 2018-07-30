@@ -61,11 +61,7 @@
 				</g:row>
 			</g:Grid>
 		</g:cell>
-<!-- 		<g:cell horizontalAlignment="ALIGN_LEFT"
-			verticalAlignment="ALIGN_MIDDLE">
-
-		</g:cell>
- -->		<g:cell horizontalAlignment="ALIGN_LEFT"
+		<g:cell horizontalAlignment="ALIGN_LEFT"
 			verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
 				<g:row>
@@ -78,6 +74,11 @@
 						<g:Button
 							addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+					</g:customCell>
+					<g:customCell>
+						<g:Button
+							addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="viewReportButton" debugId="viewReportButton">View Assessment Report</g:Button>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

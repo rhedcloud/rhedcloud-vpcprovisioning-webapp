@@ -25,7 +25,6 @@ public class AccountNotificationPojo extends SharedObject implements IsSerializa
 	AccountNotificationPojo baseline;
 	
 	public AccountNotificationPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getAccountNotificationId() {

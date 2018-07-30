@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -46,6 +48,10 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 	@UiField Label createInfoLabel;
 	@UiField Label updateInfoLabel;
 	
+	@UiHandler("referenceIdAnchor")
+	void referenceIdAnchorClick(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SRD, presenter.getNotification());
+	}
 	@UiHandler("okayButton")
 	void okayClick(ClickEvent e) {
 		// TODO: populate/save the notification

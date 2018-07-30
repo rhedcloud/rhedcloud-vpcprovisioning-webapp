@@ -1,6 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;

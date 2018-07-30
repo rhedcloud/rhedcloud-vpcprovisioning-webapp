@@ -1,8 +1,6 @@
 package edu.emory.oit.vpcprovisioning.client.common;
 
 import java.util.List;
-import java.util.logging.Logger;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SuggestOracle;

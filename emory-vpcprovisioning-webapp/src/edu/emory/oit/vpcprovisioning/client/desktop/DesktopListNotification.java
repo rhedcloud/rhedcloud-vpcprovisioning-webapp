@@ -52,7 +52,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
 
-	@UiField(provided=true) CellTable<UserNotificationPojo> listTable = new CellTable<UserNotificationPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<UserNotificationPojo> listTable = new CellTable<UserNotificationPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	public interface MyCellTableResources extends CellTable.Resources {
 
 	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
@@ -270,7 +270,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		listTable.setVisibleRange(0, 5);
+		listTable.setVisibleRange(0, 15);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<UserNotificationPojo>();
@@ -475,6 +475,30 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		fullTextColumn.setCellStyleNames("productAnchor");
 		listTable.addColumn(fullTextColumn, "Text");
 		
+		// Reference id column
+		Column<UserNotificationPojo, String> referenceId = 
+			new Column<UserNotificationPojo, String> (new ClickableTextCell()) {
+			
+			@Override
+			public String getValue(UserNotificationPojo object) {
+				return object.getReferenceId();
+			}
+		};
+		referenceId.setSortable(true);
+		sortHandler.setComparator(referenceId, new Comparator<UserNotificationPojo>() {
+			public int compare(UserNotificationPojo o1, UserNotificationPojo o2) {
+				return o1.getReferenceId().compareTo(o2.getReferenceId());
+			}
+		});
+		referenceId.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, UserNotificationPojo object, String value) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SRD, object);
+	    	}
+	    });
+		referenceId.setCellStyleNames("productAnchor");
+		listTable.addColumn(referenceId, "Reference ID");
+
 		// create time
 		Column<UserNotificationPojo, String> createTimeColumn = 
 				new Column<UserNotificationPojo, String> (new ClickableTextCell()) {

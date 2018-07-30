@@ -2,6 +2,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.ClickableTextCell;
@@ -9,6 +10,7 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
@@ -20,7 +22,9 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -89,10 +93,107 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	@UiField(provided=true) SuggestBox assessorLookupSB = new SuggestBox(assessorSuggestions, new TextBox());
 	@UiField DateBox assessmentDB;
 
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+		actionsPopup.setAutoHideEnabled(true);
+		actionsPopup.setAnimationEnabled(true);
+		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid;
+		if (userLoggedIn.isCentralAdmin()) {
+			grid =  new Grid(2, 1);
+		}
+		else {
+			grid = new Grid(1,1);
+		}
+
+		grid.setCellSpacing(8);
+		actionsPopup.add(grid);
+
+		Anchor editAnchor = new Anchor("View/Maintain Counter Measure");
+		editAnchor.addStyleName("productAnchor");
+		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editAnchor.setTitle("View/Maintain selected Counter Measure");
+		editAnchor.ensureDebugId(editAnchor.getText());
+		editAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				if (selectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select one Notification to view");
+					return;
+				}
+				Iterator<CounterMeasurePojo> nIter = selectionModel.getSelectedSet().iterator();
+				
+				CounterMeasurePojo m = nIter.next();
+				if (m != null) {
+					// TODO:
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_COUNTER_MEASURE, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityRisk(), m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, editAnchor);
+
+		if (userLoggedIn.isCentralAdmin()) {
+			Anchor deleteAnchor = new Anchor("Delete Security Risk");
+			deleteAnchor.addStyleName("productAnchor");
+			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			deleteAnchor.setTitle("Delete selected Security Risk");
+			deleteAnchor.ensureDebugId(deleteAnchor.getText());
+			deleteAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					actionsPopup.hide();
+					if (selectionModel.getSelectedSet().size() == 0) {
+						showMessageToUser("Please select one or more item(s) from the list");
+						return;
+					}
+					Iterator<CounterMeasurePojo> nIter = selectionModel.getSelectedSet().iterator();
+					while (nIter.hasNext()) {
+						CounterMeasurePojo m = nIter.next();
+						if (m != null) {
+							// update the status of the notification
+							presenter.deleteCounterMeasure(m);
+						}
+						else {
+							showMessageToUser("Please select one or more item(s) from the list");
+						}
+					}
+				}
+			});
+			grid.setWidget(1, 0, deleteAnchor);
+		}
+
+		actionsPopup.showRelativeTo(actionsButton);
+	}
+
+	@UiHandler ("createButton")
+	void createCounterMeasureClicked(ClickEvent e) {
+		// TODO:
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_COUNTER_MEASURE, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityRisk());
+	}
+
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		populateRiskWithFormData();
-		presenter.saveAssessment();
+		if (userLoggedIn.isCentralAdmin()) {
+			populateRiskWithFormData();
+			presenter.saveAssessment();
+		}
+		else {
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
+		}
+	}
+	@UiHandler ("cancelButton")
+	void cancelButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
 	}
 	private void populateRiskWithFormData() {
 		// populate/save service
@@ -149,20 +250,38 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		createButton.setEnabled(true);
+		riskLevelLB.setEnabled(true);
+		serviceNameTB.setEnabled(true);
+		sequenceNumberTB.setEnabled(true);
+		riskNameTB.setEnabled(true);
+		riskDescriptionTA.setEnabled(true);
+		assessorLookupSB.setEnabled(true);
+		assessmentDB.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
-		
+		createButton.setEnabled(false);
+		riskLevelLB.setEnabled(false);
+		serviceNameTB.setEnabled(false);
+		sequenceNumberTB.setEnabled(false);
+		riskNameTB.setEnabled(false);
+		riskDescriptionTA.setEnabled(false);
+		assessorLookupSB.setEnabled(false);
+		assessmentDB.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		createButton.setEnabled(false);
+		riskLevelLB.setEnabled(false);
+		serviceNameTB.setEnabled(false);
+		sequenceNumberTB.setEnabled(false);
+		riskNameTB.setEnabled(false);
+		riskDescriptionTA.setEnabled(false);
+		assessorLookupSB.setEnabled(false);
+		assessmentDB.setEnabled(false);
 	}
 
 	@Override

@@ -1,19 +1,28 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class ServiceTestPojo extends SharedObject implements IsSerializable {
 	/*
-ServiceTestId, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpectedResult
+<!ELEMENT ServiceTest (ServiceTestId?, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpectedResult)>
 	 */
 
 	String serviceTestId;
 	int sequenceNumber;
 	String description;
-	ServiceTestStepPojo serviceTestStep;
+	List<ServiceTestStepPojo> serviceTestSteps = new java.util.ArrayList<ServiceTestStepPojo>();
 	String serviceTestExpectedResult;
 	
+	public static final ProvidesKey<ServiceTestPojo> KEY_PROVIDER = new ProvidesKey<ServiceTestPojo>() {
+		@Override
+		public Object getKey(ServiceTestPojo item) {
+			return item == null ? null : item.getSequenceNumber();
+		}
+	};
 	public ServiceTestPojo() {
 		// TODO Auto-generated constructor stub
 	}
@@ -42,14 +51,6 @@ ServiceTestId, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpecte
 		this.description = description;
 	}
 
-	public ServiceTestStepPojo getServiceTestStep() {
-		return serviceTestStep;
-	}
-
-	public void setServiceTestStep(ServiceTestStepPojo serviceTestStep) {
-		this.serviceTestStep = serviceTestStep;
-	}
-
 	public String getServiceTestExpectedResult() {
 		return serviceTestExpectedResult;
 	}
@@ -58,4 +59,28 @@ ServiceTestId, SequenceNumber, Description, ServiceTestStep*, ServiceTestExpecte
 		this.serviceTestExpectedResult = serviceTestExpectedResult;
 	}
 
+	public List<ServiceTestStepPojo> getServiceTestSteps() {
+		return serviceTestSteps;
+	}
+
+	public void setServiceTestSteps(List<ServiceTestStepPojo> serviceTestSteps) {
+		this.serviceTestSteps = serviceTestSteps;
+	}
+
+	@Override
+	public String toString() {
+		return "Test: " + Integer.toString(sequenceNumber) + "-" + description + "  Expected to: " + serviceTestExpectedResult;
+	}
+
+	public boolean hasStep(int sequenceNumber) {
+		for (ServiceTestStepPojo str : serviceTestSteps) {
+			if (str.getSequenceNumber() == sequenceNumber) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public void removeServiceTestStep(ServiceTestStepPojo sts) {
+		serviceTestSteps.remove(sts);
+	}
 }

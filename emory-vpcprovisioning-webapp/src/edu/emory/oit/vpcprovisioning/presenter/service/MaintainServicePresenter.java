@@ -1,6 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
@@ -27,8 +26,6 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	private EventBus eventBus;
 	private String serviceId;
 	private AWSServicePojo service;
-	private String awsServicesURL = "Cannot retrieve AWS Services URL";
-	private String awsBillingManagementURL = "Cannot retrieve AWS Billing Management URL";
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -38,7 +35,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	private final boolean clearList;
 
 	/**
-	 * For creating a new ACCOUNT.
+	 * For creating a new service.
 	 */
 	public MaintainServicePresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
@@ -50,7 +47,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	}
 
 	/**
-	 * For editing an existing ACCOUNT.
+	 * For editing an existing service.
 	 */
 	public MaintainServicePresenter(ClientFactory clientFactory, AWSServicePojo service) {
 		this.isEditing = true;
@@ -63,7 +60,6 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -114,7 +110,6 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 						}
 
 						getView().setUserLoggedIn(user);
-//						setAssessmentList(Collections.<ServiceSecurityAssessmentPojo> emptyList());
 
 						// Request the service list now.
 						refreshList(user);
@@ -184,7 +179,6 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 		GWT.log("Maintain service: edit");
 		isEditing = true;
 		getView().setEditing(true);
-		// Lock the display until the account is loaded.
 		getView().setLocked(true);
 	}
 
@@ -259,11 +253,12 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 				GWT.log("MaintainServicePresenter.saveService - service was saved");
 				getView().hidePleaseWaitDialog();
 				// only go back to service list if true
-				// otherwise let the view decide what happens next.
+				// otherwise we're adding an assessment so go to that view
 				if (listServices) {
 					ActionEvent.fire(eventBus, ActionNames.SERVICE_SAVED, service);
 				}
 				else {
+					GWT.log("Creating assessment for " + result.getAwsServiceCode() + "/" + result.getAwsServiceName());
 					ActionEvent.fire(eventBus, ActionNames.CREATE_SECURITY_ASSESSMENT, result);
 				}
 			}
@@ -285,13 +280,11 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 	@Override
 	public boolean isValidServiceId(String value) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean isValidServiceName(String value) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -324,7 +317,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	}
 
 	@Override
-	public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w) {
+	public void setDirectoryMetaDataTitleOnWidget(final String ppid, final Widget w) {
 		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -344,7 +337,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 					" - from the Identity Service.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(ppid, callback);
 	}
 
 	@Override

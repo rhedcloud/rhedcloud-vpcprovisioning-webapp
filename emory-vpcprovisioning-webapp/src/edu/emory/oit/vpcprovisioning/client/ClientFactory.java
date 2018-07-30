@@ -29,6 +29,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmen
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -102,4 +103,5 @@ public interface ClientFactory {
 	MaintainServiceControlView getMaintainServiceControlView();
 	ListServiceGuidelineView getListServiceGuidelineView();
 	MaintainServiceGuidelineView getMaintainServiceGuidelineView();
+	MaintainServiceTestPlanView getMaintainServiceTestPlanView();
 }

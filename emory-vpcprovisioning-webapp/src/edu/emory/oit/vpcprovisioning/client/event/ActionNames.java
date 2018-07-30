@@ -151,4 +151,10 @@ public interface ActionNames {
 	final String ACCOUNT_NOTIFICATION_SAVED = "acctNotificationSaved";
 	final String MAINTAIN_COUNTER_MEASURE = "maintainCounterMeasure";
 
+	final String SERVICE_TEST_PLAN_EDITING_CANCELED = "serviceTestPlanEditingCancelled";;
+	final String MAINTAIN_SERVICE_TEST_PLAN = "maintainServiceTestPlan";
+	final String CREATE_SERVICE_TEST_PLAN = "createServiceTestPlan";
+	final String SERVICE_TEST_PLAN_SAVED = "ServiceTestPlanSaved";
+	final String VIEW_SRD = "viewSrd";
+
 }

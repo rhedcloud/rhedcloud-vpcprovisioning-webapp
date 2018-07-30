@@ -1,6 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.elasticipassignment;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;

@@ -40,4 +40,9 @@ ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, Securi
 		this.riskLevel = riskLevel;
 	}
 
+	@Override
+	public String toString() {
+		return "Service ID: " + serviceId + ", Risk Level: " + riskLevel;
+	}
+
 }

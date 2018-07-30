@@ -45,6 +45,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPre
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
@@ -129,6 +131,24 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			serviceGuidelinesContainer.setAnimationDuration(500);
 			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE_GUIDELINE, presenter.getService(), presenter.getSecurityAssessment());
 			break;
+		case 3:
+			GWT.log("need to get Service Test Plan content.");
+			firstTestPlanWidget = true;
+			testPlanContainer.clear();
+			GWT.log("getting MaintainServiceTestPlan view.");
+			MaintainServiceTestPlanView maintainView4 = presenter.getClientFactory().getMaintainServiceTestPlanView();
+			GWT.log("got MaintainServiceTestPlan view.");
+			testPlanContainer.add(maintainView4);
+			testPlanContainer.setAnimationDuration(500);
+			if (presenter.getSecurityAssessment().getServiceTestPlan() != null) {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_TEST_PLAN, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityAssessment().getServiceTestPlan());
+				GWT.log("fired MAINTAIN_SERVICE_TEST_PLAN event...");
+			}
+			else {
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_TEST_PLAN, presenter.getService(), presenter.getSecurityAssessment());
+				GWT.log("fired CREATE_SERVICE_TEST_PLAN event...");
+			}
+			break;
 		}
 	}
 
@@ -185,7 +205,12 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	
 	@Override
 	public void addRelatedServiceToView(AWSServicePojo service, String widgetTitle) {
-		addServiceToPanel(service);
+		if (presenter.getSecurityAssessment().getServiceIds().contains(service.getServiceId()) == false) {
+			addRelatedServiceToAssessment(service);
+		}
+		else {
+			addServiceToPanel(service);
+		}
 	}
 
 	void addServiceToPanel(final AWSServicePojo service) {
@@ -246,20 +271,17 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		statusLB.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
-		
+		statusLB.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		statusLB.setEnabled(false);
 	}
 
 	@Override
@@ -346,12 +368,15 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 		servicesTable.clear();
 		serviceLookupSB.setText("");
 		serviceLookupSB.getElement().setPropertyString("placeholder", "enter service name");
-		
-		ListSecurityRiskView listView = presenter.getClientFactory().getListSecurityRiskView();
-		securityRisksContainer.add(listView);
-		securityRisksContainer.setAnimationDuration(500);
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
-		
+
+		if (assessmentTabPanel.getSelectedIndex() != 0) {
+			assessmentTabPanel.selectTab(0);
+		}
+		else {
+			ListSecurityRiskView listView = presenter.getClientFactory().getListSecurityRiskView();
+			securityRisksContainer.add(listView);
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
+		}
 	}
 
 	private void registerHandlers() {
@@ -427,17 +452,16 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			return;
 		}
 		
-		// TODO:
-//		if (w instanceof ListServiceTestPlanPresenter || w instanceof MaintainServiceTestPlanPresenter) {
-//			GWT.log("Maintain Security Assessment, setWidget: Test Plan");
-//			testPlansContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstTestPlanWidget) {
-//				firstTestPlanWidget = false;
-//				testPlanContainer.animate(0);
-//			}
-//			return;
-//		}
+		if (w instanceof MaintainServiceTestPlanPresenter) {
+			GWT.log("Maintain Security Assessment, setWidget: Test Plan");
+			testPlanContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstTestPlanWidget) {
+				firstTestPlanWidget = false;
+				testPlanContainer.animate(0);
+			}
+			return;
+		}
 	}
 	@Override
 	public void disableButtons() {

@@ -793,9 +793,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
 
 		waitForNotificationsDialog.setWidget(vp);
-		waitForNotificationsDialog.setPopupPosition(
-				notificationListPanel.getAbsoluteLeft() + 25, 
-				notificationListPanel.getAbsoluteTop() + 25);
+		waitForNotificationsDialog.center();
 		waitForNotificationsDialog.show();
 	}
 	@Override

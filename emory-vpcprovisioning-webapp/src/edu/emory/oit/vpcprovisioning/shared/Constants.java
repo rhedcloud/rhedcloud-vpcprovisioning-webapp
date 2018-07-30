@@ -107,4 +107,7 @@ public class Constants implements IsSerializable {
 	public static final String PROFILE_SETTING_RECEIVE_NOTIFICATIONS = "send e-mail notifications in addition to in-app notifications";
 	public static final String MOA_SVC_SECURITY_ASSESSMENT = "ServiceSecurityAssessment.v1_0";
 	public static final String MOA_SVC_SECURITY_ASSESSMENT_QUERY_SPEC = "ServiceSecurityAssessmentQuerySpecification.v1_0";
+	public static final String MOA_USER_ACTION = "UserAction.v1_0";
+	public static final String MOA_SECURITY_RISK_DETECTION_QUERY_SPEC = "SecurityRiskDetectionQuerySpecification.v1_0";
+	public static final String MOA_SECURITY_RISK_DETECTION = "SecurityRiskDetection.v1_0";
 }

@@ -69,6 +69,8 @@ import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
@@ -276,4 +278,6 @@ public interface VpcProvisioningServiceAsync {
 	void getAssessmentStatusTypeItems(AsyncCallback<List<String>> callback);
 	void getRiskLevelTypeItems(AsyncCallback<List<String>> callback);
 	void getCounterMeasureStatusTypeItems(AsyncCallback<List<String>> callback);
+	
+	void getSecurityRiskDetectionsForFilter(SecurityRiskDetectionQueryFilterPojo filter, AsyncCallback<SecurityRiskDetectionQueryResultPojo> callback);
 }

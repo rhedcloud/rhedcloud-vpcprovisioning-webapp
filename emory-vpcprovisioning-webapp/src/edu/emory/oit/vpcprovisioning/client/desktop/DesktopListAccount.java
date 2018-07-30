@@ -124,7 +124,6 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	    actionsPopup.setAutoHideEnabled(true);
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    
 	    Grid grid = new Grid(3, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);

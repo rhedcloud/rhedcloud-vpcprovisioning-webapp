@@ -40,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceControl;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceGuideline;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceTestPlan;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
@@ -70,6 +71,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmen
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -125,6 +127,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainServiceControlView maintainServiceControlView;
 	private ListServiceGuidelineView listServiceGuidelineView;
 	private MaintainServiceGuidelineView maintainServiceGuidelineView;
+	private MaintainServiceTestPlanView maintainServiceTestPlanView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -527,5 +530,17 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainServiceGuidelineView createMaintainServiceGuidelineView() {
 		return new DesktopMaintainServiceGuideline();
+	}
+
+	@Override
+	public MaintainServiceTestPlanView getMaintainServiceTestPlanView() {
+//		return createMaintainServiceTestPlanView();
+		if (maintainServiceTestPlanView == null) {
+			maintainServiceTestPlanView = createMaintainServiceTestPlanView();
+		}
+		return maintainServiceTestPlanView;
+	}
+	protected MaintainServiceTestPlanView createMaintainServiceTestPlanView() {
+		return new DesktopMaintainServiceTestPlan();
 	}
 }

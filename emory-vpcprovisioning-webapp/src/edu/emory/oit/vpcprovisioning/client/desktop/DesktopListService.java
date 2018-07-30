@@ -77,7 +77,14 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(2, 1);
+		Grid grid;
+		if (userLoggedIn.isCentralAdmin()) {
+			grid = new Grid(2, 1);
+		}
+		else {
+			grid = new Grid(1,1);
+		}
+
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -101,12 +108,12 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		});
 		grid.setWidget(0, 0, editAnchor);
 
-		Anchor deleteAnchor = new Anchor("Delete Service");
-		deleteAnchor.addStyleName("productAnchor");
-		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deleteAnchor.setTitle("Delete selected Service");
-		deleteAnchor.ensureDebugId(deleteAnchor.getText());
 		if (userLoggedIn.isCentralAdmin()) {
+			Anchor deleteAnchor = new Anchor("Delete Service");
+			deleteAnchor.addStyleName("productAnchor");
+			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			deleteAnchor.setTitle("Delete selected Service");
+			deleteAnchor.ensureDebugId(deleteAnchor.getText());
 			deleteAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
@@ -120,11 +127,8 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 					}
 				}
 			});
+			grid.setWidget(1, 0, deleteAnchor);
 		}
-		else {
-			deleteAnchor.setEnabled(false);
-		}
-		grid.setWidget(1, 0, deleteAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -160,7 +164,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		createServiceButton.setEnabled(false);
-		actionsButton.setEnabled(false);
+		actionsButton.setEnabled(true);
 	}
 
 	@Override

@@ -40,7 +40,7 @@
 						<g:Label addStyleNames="{style.label}">Subject:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+						<g:TextBox addStyleNames="{style.longField} {style.glowing-border}"
 							ui:field="subjectTB" debugId="subjectTB" />
 			    	</g:customCell>
 		    	</g:row>
@@ -58,7 +58,7 @@
 						<g:Label addStyleNames="{style.label}">Reference ID:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-			    		<g:Anchor addStyleNames="{style.systemStatusLink}" 
+			    		<g:Anchor addStyleNames="{style.productAnchor}" 
 			    			ui:field="referenceIdAnchor"/>
 			    	</g:customCell>
 		    	</g:row>

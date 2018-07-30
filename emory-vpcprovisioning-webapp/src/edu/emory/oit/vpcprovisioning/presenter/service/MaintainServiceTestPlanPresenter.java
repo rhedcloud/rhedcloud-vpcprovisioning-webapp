@@ -13,23 +13,24 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
-import edu.emory.oit.vpcprovisioning.shared.UUID;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
-public class MaintainSecurityRiskPresenter extends PresenterBase implements MaintainSecurityRiskView.Presenter {
+public class MaintainServiceTestPlanPresenter extends PresenterBase implements MaintainServiceTestPlanView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private ServiceSecurityAssessmentPojo assessment;
 	private UserAccountPojo userLoggedIn;
 	private AWSServicePojo service;
-	private SecurityRiskPojo securityRisk;
-	private String securityRiskId;
-	private DirectoryPersonPojo directoryPerson;
-	private MaintainSecurityRiskView view;
+	private ServiceTestPlanPojo serviceTestPlan;
+	private MaintainServiceTestPlanView view;
+	private ServiceTestRequirementPojo selectedRequirement;
+	private ServiceTestPojo selectedTest;
+	private ServiceTestStepPojo selectedStep;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -38,27 +39,25 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	private boolean isEditing;
 
 	/**
-	 * For creating a new ACCOUNT.
+	 * For creating a new service testPlan.
 	 */
-	public MaintainSecurityRiskPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
+	public MaintainServiceTestPlanPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
 		this.isEditing = false;
 		this.assessment = assessment;
 		this.clientFactory = clientFactory;
 		this.service = service;
-		this.securityRisk = null;
-		this.securityRiskId = null;
+		this.serviceTestPlan = null;
 	}
 
 	/**
 	 * For editing an existing ACCOUNT.
 	 */
-	public MaintainSecurityRiskPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk) {
+	public MaintainServiceTestPlanPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceTestPlanPojo testPlan) {
 		this.isEditing = true;
 		this.clientFactory = clientFactory;
 		this.assessment = assessment;
 		this.service = service;
-		this.securityRisk = risk;
-		this.securityRiskId = securityRisk.getSecurityRiskId();
+		this.serviceTestPlan = testPlan;
 	}
 
 	@Override
@@ -70,22 +69,22 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		setReleaseInfo(clientFactory);
+		getView().showPleaseWaitDialog("Retrieving Service Test Plan information...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
-		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving Security Risk information...");
 		
-		GWT.log("Maintain Security Risk: service is: " + service);
-		GWT.log("Maintain Security Risk: assessment is: " + assessment);
+		GWT.log("Maintain Service Test Plan: service is: " + service);
+		GWT.log("Maintain Service Test Plan: assessment is: " + assessment);
 
-		if (securityRiskId == null) {
-			clientFactory.getShell().setSubTitle("Create Security Risk");
+		if (serviceTestPlan == null) {
+			clientFactory.getShell().setSubTitle("Create Service Test Plan");
 			startCreate();
 		} 
 		else {
-			clientFactory.getShell().setSubTitle("Edit Security Risk");
+			clientFactory.getShell().setSubTitle("Edit Service Test Plan");
 			startEdit();
-			// get latest version of the security risk from the server
+			// get latest version of the service testPlan from the server
 //			AsyncCallback<ServiceSecurityAssessmentPojo> acct_cb = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
 //				@Override
 //				public void onFailure(Throwable caught) {
@@ -121,72 +120,37 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
-				getView().setCounterMeasures(securityRisk.getCouterMeasures());
+				getView().setFieldViolations(false);
+				List<String> expectedResults = new java.util.ArrayList<String>();
+				expectedResults.add("Pass");
+				expectedResults.add("Fail");
+				getView().setTestExpectedResultItems(expectedResults);
+				getView().initPage();
+				getView().setInitialFocus();
 				
-				AsyncCallback<List<String>> rl_callback = new AsyncCallback<List<String>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-						GWT.log("Exception retrieving risk level types", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving status types.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<String> result) {
-						getView().setRiskLevelItems(result);
-						getView().initPage();
-						getView().setFieldViolations(false);
-						getView().setInitialFocus();
-						
-						// apply authorization mask
-						if (user.isCentralAdmin()) {
-							getView().applyCentralAdminMask();
-						}
-						else {
-							getView().applyAWSAccountAuditorMask();
-						}
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-					}
-				};
-				// risk level types
-				VpcProvisioningService.Util.getInstance().getRiskLevelTypeItems(rl_callback);
-
-				AsyncCallback<List<String>> cm_status_callback = new AsyncCallback<List<String>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-						GWT.log("Exception retrieving counter measure statuses", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving counter measure statuses.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<String> result) {
-						getView().setCounterMeasureStatusItems(result);
-					}
-				};
-				// counter measure status types
-				VpcProvisioningService.Util.getInstance().getCounterMeasureStatusTypeItems(cm_status_callback);
+				// apply authorization mask
+				if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else {
+					getView().applyAWSAccountAuditorMask();
+				}
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 
 	private void startCreate() {
-		GWT.log("Maintain security risk: create");
+		GWT.log("Maintain service testPlan: create");
 		isEditing = false;
 		getView().setEditing(false);
-		securityRisk = new SecurityRiskPojo();
+		serviceTestPlan = new ServiceTestPlanPojo();
 	}
 
 	private void startEdit() {
-		GWT.log("Maintain security risk: edit");
+		GWT.log("Maintain service testPlan: edit");
 		isEditing = true;
 		getView().setEditing(true);
 		// Lock the display until the assessment is loaded.
@@ -196,7 +160,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	@Override
 	public void stop() {
 		eventBus = null;
-		clientFactory.getMaintainSecurityRiskView().setLocked(false);
+		clientFactory.getMaintainServiceTestPlanView().setLocked(false);
 	}
 
 	@Override
@@ -209,17 +173,17 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		return getView().asWidget();
 	}
 
-	private void doCancelSecurityRisk() {
+	private void doCancelServiceTestPlan() {
 		// go back to the maintain assessment page...
-		ActionEvent.fire(eventBus, ActionNames.SECURITY_RISK_EDITING_CANCELED, assessment);
+		ActionEvent.fire(eventBus, ActionNames.SERVICE_TEST_PLAN_EDITING_CANCELED, assessment);
 	}
 
-	private void doDeleteSecurityRisk() {
-		if (securityRisk == null) {
+	private void doDeleteServiceTestPlan() {
+		if (serviceTestPlan == null) {
 			return;
 		}
 
-		// TODO remove the security risk from the assessment and save the assessment
+		// TODO remove the service testPlan from the assessment and save the assessment
 		
 	}
 
@@ -248,28 +212,32 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the Security Assessment.  Message " +
 						"from server is: " + caught.getMessage());
-				assessment.getSecurityRisks().remove(getSecurityRisk());
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+//				assessment.getServiceTestPlan().remove(getServiceTestPlan());
+//				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
 			}
 
 			@Override
 			public void onSuccess(ServiceSecurityAssessmentPojo result) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
-//				ActionEvent.fire(eventBus, ActionNames.SECURITY_ASSESSMENT_SAVED, assessment);
+				getView().refreshDataProvider();
+				getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
+//				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
 			}
 		};
+		this.assessment.setServiceTestPlan(this.serviceTestPlan);
 		if (!isEditing) {
-			getSecurityRisk().setSecurityRiskId(UUID.uuid());
-			getSecurityRisk().setServiceId(service.getServiceId());
-			this.assessment.getSecurityRisks().add(getSecurityRisk());
+			getServiceTestPlan().setServiceId(service.getServiceId());
 		}
 		else {
-			// TODO: have to find the security risk, remove it and then re-add this one to the list
+			// TODO: have to find the service testPlan, remove it and then re-add this one to the list
 		}
 		// it's always an update
-		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
+//		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
+		// TODO: tempoarary until i get the update logic working correctly
+		getView().refreshDataProvider();
+		getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
+		getView().hidePleaseWaitDialog();
 	}
 
 	@Override
@@ -277,12 +245,16 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		return this.assessment;
 	}
 
-	public MaintainSecurityRiskView getView() {
-		if (view == null) {
-			view = clientFactory.getMaintainSecurityRiskView();
-			view.setPresenter(this);
-		}
-		return view;
+	public MaintainServiceTestPlanView getView() {
+//		if (view == null) {
+//			view = clientFactory.getMaintainServiceTestPlanView();
+//			view.setPresenter(this);
+//		}
+//		return view;
+		
+		MaintainServiceTestPlanView v = clientFactory.getMaintainServiceTestPlanView();
+		v.setPresenter(this);
+		return v;
 	}
 
 	public EventBus getEventBus() {
@@ -293,18 +265,6 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		this.eventBus = eventBus;
 	}
 
-	public String getSecurityRiskId() {
-		return securityRiskId;
-	}
-
-	public void setSecurityRiskId(String riskId) {
-		this.securityRiskId = riskId;
-	}
-
-	public ClientFactory getClientFactory() {
-		return clientFactory;
-	}
-
 	@Override
 	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
 		// TODO Auto-generated method stub
@@ -312,11 +272,11 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	}
 
 	@Override
-	public void deleteSecurityRisk(SecurityRiskPojo selected) {
+	public void deleteServiceTestPlan(ServiceTestPlanPojo selected) {
 		if (isEditing) {
-			doDeleteSecurityRisk();
+			doDeleteServiceTestPlan();
 		} else {
-			doCancelSecurityRisk();
+			doCancelServiceTestPlan();
 		}
 	}
 
@@ -336,22 +296,63 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	}
 
 	@Override
-	public SecurityRiskPojo getSecurityRisk() {
-		return this.securityRisk;
+	public ServiceTestPlanPojo getServiceTestPlan() {
+		return this.serviceTestPlan;
+	}
+
+	public ServiceSecurityAssessmentPojo getAssessment() {
+		return assessment;
+	}
+
+	public void setAssessment(ServiceSecurityAssessmentPojo assessment) {
+		this.assessment = assessment;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
+	}
+
+	public void setServiceTestPlan(ServiceTestPlanPojo serviceTestPlan) {
+		this.serviceTestPlan = serviceTestPlan;
 	}
 
 	@Override
-	public void setDirectoryPerson(DirectoryPersonPojo pojo) {
-		this.directoryPerson = pojo;
-	}
-
-	public DirectoryPersonPojo getDirectoryPerson() {
-		return directoryPerson;
+	public ClientFactory getClientFactory() {
+		return this.clientFactory;
 	}
 
 	@Override
-	public void deleteCounterMeasure(CounterMeasurePojo selected) {
-		// TODO Auto-generated method stub
-		
+	public void setSelectedTestRequirement(ServiceTestRequirementPojo selected) {
+		this.selectedRequirement = selected;
 	}
+
+	@Override
+	public ServiceTestRequirementPojo getSelectedTestRequirement() {
+		return this.selectedRequirement;
+	}
+
+	@Override
+	public void setSelectedTest(ServiceTestPojo selected) {
+		this.selectedTest = selected;
+	}
+
+	@Override
+	public ServiceTestPojo getSelectedTest() {
+		return this.selectedTest;
+	}
+
+	@Override
+	public void setSelectedTestStep(ServiceTestStepPojo selected) {
+		this.selectedStep = selected;
+	}
+
+	@Override
+	public ServiceTestStepPojo getSelectedTestStep() {
+		return this.selectedStep;
+	}
+
 }

@@ -42,7 +42,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 		this.assessmentId = null;
 		this.clientFactory = clientFactory;
 		this.service = service;
-		clientFactory.getMaintainSecurityAssessmentView().setPresenter(this);
+		getView().setPresenter(this);
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 		this.clientFactory = clientFactory;
 		this.assessment = assessment;
 		this.service = service;
-		clientFactory.getMaintainSecurityAssessmentView().setPresenter(this);
+		getView().setPresenter(this);
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 				
 				// get all the services that are related to the assessment and add 
 				// them to the view
-				for (String id : assessment.getServiceIds()) {
+				for (final String id : assessment.getServiceIds()) {
 					AsyncCallback<AWSServiceQueryResultPojo> svc_callback = new AsyncCallback<AWSServiceQueryResultPojo>() {
 						@Override
 						public void onFailure(Throwable caught) {
@@ -133,11 +133,16 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 							// TODO: add more info to the widget title (last param)
 							// so when they hover over it, they can see more detail about the
 							// service.
+							AWSServicePojo awsSvc = result.getResults().get(0);
+							GWT.log("Got service " + 
+								awsSvc.getAwsServiceCode() + "/" + 
+								awsSvc.getAwsServiceName() + " for service id: " + id);
 							getView().addRelatedServiceToView(result.getResults().get(0), "");
 						}
 					};
 					AWSServiceQueryFilterPojo filter = new AWSServiceQueryFilterPojo();
 					filter.setServiceId(id);
+					GWT.log("Getting service for service id: " + id);
 					VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, svc_callback);
 				}
 
@@ -180,6 +185,10 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 
 	private void startCreate() {
 		GWT.log("Maintain assessment: create");
+		GWT.log("Service is: " + 
+			service.getServiceId() + "/" + 
+			service.getAwsServiceCode() + "/" + 
+			service.getAwsServiceName());
 		isEditing = false;
 		getView().setEditing(false);
 		assessment = new ServiceSecurityAssessmentPojo();

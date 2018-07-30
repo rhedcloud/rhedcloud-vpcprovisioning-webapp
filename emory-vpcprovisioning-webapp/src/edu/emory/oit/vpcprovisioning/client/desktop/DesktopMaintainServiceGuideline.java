@@ -23,6 +23,8 @@ import com.google.gwt.user.datepicker.client.DateBox;
 
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
@@ -59,8 +61,17 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		populateServiceGuidelineWithFormData();
-		presenter.saveAssessment();
+		if (userLoggedIn.isCentralAdmin()) {
+			populateServiceGuidelineWithFormData();
+			presenter.saveAssessment();
+		}
+		else {
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
+		}
+	}
+	@UiHandler ("cancelButton")
+	void cancelButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
 	}
 	private void populateServiceGuidelineWithFormData() {
 		// populate/save service
@@ -114,20 +125,32 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		serviceNameTB.setEnabled(true);
+		sequenceNumberTB.setEnabled(true);
+		controlNameTB.setEnabled(true);
+		controlDescriptionTA.setEnabled(true);
+		assessorLookupSB.setEnabled(true);
+		assessmentDB.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
-		
+		serviceNameTB.setEnabled(false);
+		sequenceNumberTB.setEnabled(false);
+		controlNameTB.setEnabled(false);
+		controlDescriptionTA.setEnabled(false);
+		assessorLookupSB.setEnabled(false);
+		assessmentDB.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		serviceNameTB.setEnabled(false);
+		sequenceNumberTB.setEnabled(false);
+		controlNameTB.setEnabled(false);
+		controlDescriptionTA.setEnabled(false);
+		assessorLookupSB.setEnabled(false);
+		assessmentDB.setEnabled(false);
 	}
 
 	@Override

@@ -3,11 +3,12 @@ package edu.emory.oit.vpcprovisioning.shared;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class ServiceTestRequirementPojo extends SharedObject implements IsSerializable {
 	/*
-ServiceTestRequirementId, SequenceNumber, Description, ServiceTest*
+<!ELEMENT ServiceTestRequirement (ServiceTestRequirementId?, SequenceNumber, Description, ServiceTest*)>
 	 */
 
 	String serviceTestRequirementId;
@@ -15,6 +16,12 @@ ServiceTestRequirementId, SequenceNumber, Description, ServiceTest*
 	String description;
 	List<ServiceTestPojo> serviceTests = new java.util.ArrayList<ServiceTestPojo>();
 	
+	public static final ProvidesKey<ServiceTestRequirementPojo> KEY_PROVIDER = new ProvidesKey<ServiceTestRequirementPojo>() {
+		@Override
+		public Object getKey(ServiceTestRequirementPojo item) {
+			return item == null ? null : item.getSequenceNumber();
+		}
+	};
 	public ServiceTestRequirementPojo() {
 		// TODO Auto-generated constructor stub
 	}
@@ -51,4 +58,20 @@ ServiceTestRequirementId, SequenceNumber, Description, ServiceTest*
 		this.serviceTests = serviceTests;
 	}
 
+	@Override
+	public String toString() {
+		return "Requirement: " + Integer.toString(sequenceNumber) + "-" + description;
+	}
+
+	public boolean hasTest(int sequenceNumber) {
+		for (ServiceTestPojo str : serviceTests) {
+			if (str.getSequenceNumber() == sequenceNumber) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public void removeServiceTest(ServiceTestPojo st) {
+		serviceTests.remove(st);
+	}
 }

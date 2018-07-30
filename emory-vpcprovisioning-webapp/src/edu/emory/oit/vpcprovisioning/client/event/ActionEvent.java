@@ -236,6 +236,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo assessment, ServiceTestPlanPojo m) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
+	}
+
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
 	}
@@ -422,6 +428,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.awsService = service;
 		this.securityAssessment = assessment;
 		this.serviceGuideline = m;
+	}
+
+	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceTestPlanPojo m) {
+		this.awsService = service;
+		this.securityAssessment = assessment;
+		this.testPlan = m;
 	}
 
 	@Override

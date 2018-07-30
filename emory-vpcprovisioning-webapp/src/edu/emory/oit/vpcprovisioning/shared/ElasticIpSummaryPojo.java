@@ -9,7 +9,6 @@ public class ElasticIpSummaryPojo extends SharedObject implements IsSerializable
 	ElasticIpAssignmentPojo elasticIpAssignment;
 
 	public ElasticIpSummaryPojo() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public static final ProvidesKey<ElasticIpSummaryPojo> KEY_PROVIDER = new ProvidesKey<ElasticIpSummaryPojo>() {
@@ -26,7 +25,6 @@ public class ElasticIpSummaryPojo extends SharedObject implements IsSerializable
 
 	@Override
 	public int compareTo(ElasticIpSummaryPojo o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

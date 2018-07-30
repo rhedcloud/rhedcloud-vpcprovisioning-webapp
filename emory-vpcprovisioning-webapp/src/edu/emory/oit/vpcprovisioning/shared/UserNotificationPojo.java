@@ -23,6 +23,7 @@ public class UserNotificationPojo extends SharedObject implements IsSerializable
 	boolean read;
 	Date readDateTime;
 	String sentToEmailAddress;
+	String referenceId;
 	UserNotificationPojo baseline;
 	
 	public UserNotificationPojo() {
@@ -125,5 +126,13 @@ public class UserNotificationPojo extends SharedObject implements IsSerializable
 
 	public void setBaseline(UserNotificationPojo baseline) {
 		this.baseline = baseline;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceid) {
+		this.referenceId = referenceid;
 	}
 }

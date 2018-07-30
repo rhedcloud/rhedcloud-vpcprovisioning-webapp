@@ -62,6 +62,7 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
+import com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection;
 import com.amazon.aws.moa.jmsobjects.services.v1_0.ServiceSecurityAssessment;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
@@ -70,15 +71,20 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Countermeasure;
+import com.amazon.aws.moa.objects.resources.v1_0.DetectedSecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
+import com.amazon.aws.moa.objects.resources.v1_0.RemediationResult;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk;
+import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceControl;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceGuideline;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceSecurityAssessmentQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestPlan;
+// TODO: this should be actionable so the aws-moa is currently not correct
+import com.amazon.aws.moa.objects.resources.v1_0.UserAction;
 import com.amazon.aws.moa.objects.resources.v1_0.UserNotificationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
@@ -147,6 +153,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
 //	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
+	private static final String SRD_SERVICE_NAME = "SrdRequestService";
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
 	private static final String ROLE_ASSIGNMENT_PROPERTIES = "RoleAssignmentProperties";
@@ -171,6 +178,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool firewallProducerPool = null;
 	private ProducerPool serviceNowProducerPool = null;
 	private ProducerPool elasticIpProducerPool = null;
+	private ProducerPool srdProducerPool = null;
 	private Object lock = new Object();
 	static SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -286,6 +294,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					IDM_SERVICE_NAME);
 			elasticIpProducerPool = (ProducerPool) getAppConfig().getObject(
 					ELASTIC_IP_SERVICE_NAME);
+			srdProducerPool = (ProducerPool) getAppConfig().getObject(
+					SRD_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
@@ -1945,6 +1955,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		this.baseLoginURL = baseLoginURL;
 //	}
 
+	private RequestService getSrdRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) srdProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
 	private RequestService getElasticIpRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) elasticIpProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
@@ -4549,6 +4565,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = 
 					(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
 			ServiceQuerySpecification queryObject = (ServiceQuerySpecification) getObject(Constants.MOA_SERVICE_QUERY_SPEC);
+			
+			if (filter != null) {
+				queryObject.setServiceId(filter.getServiceId());
+				queryObject.setServiceCode(filter.getServiceCode());
+				queryObject.setStatus(filter.getStatus());
+			}
 
 			List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
@@ -4573,6 +4595,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		} catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -4822,6 +4847,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private void populateUserNotificationPojo(UserNotification moa, UserNotificationPojo pojo) throws XmlEnterpriseObjectException {
 		pojo.setUserNotificationId(moa.getUserNotificationId());
+		pojo.setReferenceId(moa.getReferenceId());
 		pojo.setAccountNotificationId(moa.getAccountNotificationId());
 		pojo.setUserId(moa.getUserId());
 		pojo.setType(moa.getType());
@@ -4840,6 +4866,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private void populateUserNotificationMoa(UserNotificationPojo pojo, UserNotification moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 		moa.setUserNotificationId(pojo.getUserNotificationId());
+		moa.setReferenceId(pojo.getReferenceId());
 		moa.setAccountNotificationId(pojo.getAccountNotificationId());
 		moa.setUserId(pojo.getUserId());
 		moa.setType(pojo.getType());
@@ -7021,10 +7048,42 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public UserActionPojo createUserAction(UserActionPojo ua) throws RpcException {
-		// TODO Auto-generated method stub
 		ua.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
-		return null;
+		
+        try {
+            info("creating UserAction on the server...");
+            UserAction newData = (UserAction) getObject(Constants.MOA_USER_ACTION);
+
+            info("populating newData...");
+            populateUserActionMoa(ua, newData);
+
+//            info("doing the create...");
+            // TODO: UserAction that is imported is NOT actionable so this won't work 
+            // as the aws-moa stands right now.
+            // The MOA will need to be updated and then I can support this function.
+//            doCreate(newData, getAWSRequestService());
+//            info("create is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return ua;
+	}
+
+	@SuppressWarnings("unused")
+	private void populateUserActionMoa(UserActionPojo pojo,
+			UserAction moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setUserId(pojo.getUserId());
+		moa.setAction(pojo.getAction());
+		moa.setDescription(pojo.getDescription());
+		moa.setDetail(pojo.getDetail());
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@Override
@@ -7052,7 +7111,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ServiceSecurityAssessmentQueryResultPojo getSecurityAssessmentsForFilter(
 			ServiceSecurityAssessmentQueryFilterPojo filter) throws RpcException {
 		
-		// TODO Auto-generated method stub
 		ServiceSecurityAssessmentQueryResultPojo result = new ServiceSecurityAssessmentQueryResultPojo();
 		result.setFilterUsed(filter);
 		List<ServiceSecurityAssessmentPojo> pojos = new java.util.ArrayList<ServiceSecurityAssessmentPojo>();
@@ -7182,6 +7240,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private void populateSecurityAssessmentMoa(ServiceSecurityAssessmentPojo pojo,
 			ServiceSecurityAssessment moa) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException, EnterpriseFieldException {
 		
+		moa.setServiceSecurityAssessmentId(pojo.getServiceSecurityAssessmentId());
 		moa.setStatus(pojo.getStatus());
 		for (String svcid : pojo.getServiceIds()) {
 			moa.addServiceId(svcid);
@@ -7264,7 +7323,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ServiceSecurityAssessmentPojo createSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
 			throws RpcException {
-		// TODO Auto-generated method stub
 		assessment.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
 		
@@ -7297,10 +7355,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
             info("populating newData...");
             populateSecurityAssessmentMoa(assessment, newData);
+            info(newData.toXmlString());
 
             info("populating baselineData...");
             populateSecurityAssessmentMoa(assessment.getBaseline(), baselineData);
             newData.setBaseline(baselineData);
+            info(baselineData.toXmlString());
 
             info("doing the update...");
             doUpdate(newData, getAWSRequestService());
@@ -7314,8 +7374,54 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service) throws RpcException {
-		// TODO need to implement this...
-		
+		try {
+			info("deleting Security Assessment record on the server...");
+			ServiceSecurityAssessment moa = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+			info("populating moa");
+			this.populateSecurityAssessmentMoa(service, moa);
+
+			
+			info("doing the SecurityAssessment.delete...");
+			this.doDelete(moa, getAWSRequestService());
+			info("SecurityAssessment.delete is complete...");
+
+			return;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
@@ -7388,5 +7494,114 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				Constants.USER_ACCOUNT + getCurrentSessionId());
 		
 		return user;
+	}
+
+	@Override
+	public SecurityRiskDetectionQueryResultPojo getSecurityRiskDetectionsForFilter(
+			SecurityRiskDetectionQueryFilterPojo filter) throws RpcException {
+
+		SecurityRiskDetectionQueryResultPojo result = new SecurityRiskDetectionQueryResultPojo();
+		result.setFilterUsed(filter);
+		List<SecurityRiskDetectionPojo> pojos = new java.util.ArrayList<SecurityRiskDetectionPojo>();
+		try {
+			SecurityRiskDetectionQuerySpecification queryObject = (SecurityRiskDetectionQuerySpecification) getObject(Constants.MOA_SECURITY_RISK_DETECTION_QUERY_SPEC);
+			SecurityRiskDetection actionable = (SecurityRiskDetection) getObject(Constants.MOA_SECURITY_RISK_DETECTION);
+
+			if (filter != null) {
+				queryObject.setSecurityRiskDetectionId(filter.getSecurityRiskDetectionId());
+				queryObject.setAccountId(filter.getAccountId());
+				queryObject.setSecurityRiskDetector(filter.getSecurityRiskDetector());
+				queryObject.setSecurityRiskRemediator(filter.getSecurityRiskRemediator());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<SecurityRiskDetection> moas = actionable.query(queryObject,
+					this.getSrdRequestService());
+			info("[getSecurityRiskDetectionsForFilter] got " + moas.size() + 
+					" objects from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
+			for (SecurityRiskDetection moa : moas) {
+				SecurityRiskDetectionPojo pojo = new SecurityRiskDetectionPojo();
+				SecurityRiskDetectionPojo baseline = new SecurityRiskDetectionPojo();
+				this.populateSecurityRiskDetectionPojo(moa, pojo);
+				this.populateSecurityRiskDetectionPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateSecurityRiskDetectionPojo(SecurityRiskDetection moa, SecurityRiskDetectionPojo pojo) throws XmlEnterpriseObjectException {
+		/*
+		<!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId, SecurityRiskDetector, 
+		SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, 
+		LastUpdateUser?, LastUpdateDatetime?)>
+			 */
+		pojo.setSecurityRiskDetectionId(moa.getSecurityRiskDetectionId());
+		pojo.setSecurityRiskDetector(moa.getSecurityRiskDetector());
+		pojo.setSecurityRiskRemediator(moa.getSecurityRiskRemediator());
+		pojo.setAccountId(moa.getAccountId());
+		if (moa.getDetectedSecurityRisk() != null) {
+			for (DetectedSecurityRisk risk : (List<DetectedSecurityRisk>)moa.getDetectedSecurityRisk()) {
+				DetectedSecurityRiskPojo dsr = new DetectedSecurityRiskPojo();
+				dsr.setType(risk.getType());
+				dsr.setAmazonResourceName(risk.getAmazonResourceName());
+				if (risk.getRemediationResult() != null) {
+					RemediationResult rrm = risk.getRemediationResult();
+					RemediationResultPojo rrp = new RemediationResultPojo();
+					rrp.setStatus(rrm.getStatus());
+					rrp.setDescription(rrm.getDescription());
+					if (rrm.getError() != null) {
+						for (org.openeai.moa.objects.resources.Error error : (List<org.openeai.moa.objects.resources.Error>)rrm.getError()) {
+							ErrorPojo ep = new ErrorPojo();
+							ep.setErrorNumber(error.getErrorNumber());
+							ep.setType(error.getType());
+							ep.setDescription(error.getErrorDescription());
+							rrp.getErrors().add(ep);
+						}
+					}
+					dsr.setRemediationResult(rrp);
+				}
+				pojo.getDetectedSecurityRisks().add(dsr);
+			}
+		}
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	public ProducerPool getSrdProducerPool() {
+		return srdProducerPool;
+	}
+
+	public void setSrdProducerPool(ProducerPool srdProducerPool) {
+		this.srdProducerPool = srdProducerPool;
 	}
 }

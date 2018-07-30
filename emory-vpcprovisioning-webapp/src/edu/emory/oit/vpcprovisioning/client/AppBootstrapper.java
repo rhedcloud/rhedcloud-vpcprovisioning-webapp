@@ -13,8 +13,12 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.UmbrellaException;
 
@@ -54,6 +58,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPrese
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -971,6 +976,44 @@ public class AppBootstrapper {
 				placeController.goTo(MaintainServicePlace.createMaintainServicePlace(event.getAwsService()));
 			}
 		});
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_SERVICE_TEST_PLAN, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper:CreateServiceTestPlan event fired.");
+//				placeController.goTo(MaintainServiceTestPlanPlace.getMaintainServiceTestPlanPlace(event.getAwsService(), event.getSecurityAssessment()));
+				final MaintainServiceTestPlanPresenter presenter = new MaintainServiceTestPlanPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment());
+				presenter.start(eventBus);
+				MaintainSecurityAssessmentView parent = clientFactory.getMaintainSecurityAssessmentView();
+				parent.setWidget(presenter);
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SERVICE_TEST_PLAN, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper:MaintainServiceTestPlan event fired.");
+//				placeController.goTo(MaintainServiceTestPlanPlace.createMaintainServiceTestPlanPlace(event.getAwsService(), event.getSecurityAssessment(), event.getTestPlan()));
+				final MaintainServiceTestPlanPresenter presenter = new MaintainServiceTestPlanPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment(), event.getTestPlan());
+				presenter.start(eventBus);
+				MaintainSecurityAssessmentView parent = clientFactory.getMaintainSecurityAssessmentView();
+				parent.setWidget(presenter);
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_TEST_PLAN_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SERVICE_TEST_PLAN_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainSecurityAssessmentPlace.createMaintainSecurityAssessmentPlace(event.getAwsService(), event.getSecurityAssessment()));
+			}
+		});
 		
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SECURITY_RISK, new ActionEvent.Handler() {
 			@Override
@@ -1122,7 +1165,6 @@ public class AppBootstrapper {
 					@Override
 					public void onClick(ClickEvent event) {
 						db.hide();
-//						ActionEvent.fire(eventBus, ActionNames.MAINTAIN_ACCOUNT, actionEvent.getAccount());
 					}
 				});
 				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
@@ -1131,7 +1173,6 @@ public class AppBootstrapper {
 						if (!presenter.getView().hasFieldViolations()) {
 							// save logic is handled by the presenter
 							db.hide();
-//							ActionEvent.fire(eventBus, ActionNames.MAINTAIN_ACCOUNT);
 						}
 					}
 				});
@@ -1143,46 +1184,66 @@ public class AppBootstrapper {
 			}
 		});
 		
-
-//		ActionEvent.register(eventBus, ActionNames.GO_BACK, new ActionEvent.Handler() {
-//			@Override
-//			public void onAction(ActionEvent event) {
-//				// determine current page and go to the previous page
-//				// based on where we're at.
-//				
-//				Place currentPlace = placeController.getWhere();
-//				if (currentPlace instanceof AddCaseRecordPlace) {
-//					placeController.goTo(new CaseRecordListPlace(false));
-//				}
-//				else if (currentPlace instanceof CalculateProbabilityPlace) {
-//					log.info("going to AddCaseRecordPlace...");
-//					CalculateProbabilityPlace p = (CalculateProbabilityPlace)currentPlace;
-//					if (p.getStatPackId() != null) {
-//						log.info("existing case...case record is " + p.getCaseRecord());
-//						placeController.goTo(AddCaseRecordPlace.createAddPatientPlace(p.getStatPackId(), p.getCaseRecord()));
+		ActionEvent.register(eventBus, ActionNames.VIEW_SRD, new ActionEvent.Handler() {
+			@Override
+			public void onAction(final ActionEvent actionEvent) {
+				boolean isAccountNotification = false;
+				if (actionEvent.getAccountNotification() != null) {
+					isAccountNotification = true;
+				}
+				final DialogBox db = new DialogBox();
+				if (isAccountNotification) {
+					db.setText("View Account Notification SRD");
+				}
+				else {
+					db.setText("View User Notification SRD");
+				}
+				db.setGlassEnabled(true);
+				db.center();
+				// TODO: MaintainSrd view, place, presenter, etc...
+//				final MaintainAccountNotificationPresenter presenter = new MaintainAccountNotificationPresenter(clientFactory, actionEvent.getAccount(), actionEvent.getAccountNotification());
+//				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						db.hide();
 //					}
-//					else {
-//						log.info("new case...");
-//						placeController.goTo(AddCaseRecordPlace.getAddPatientPlace());
+//				});
+//				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						if (!presenter.getView().hasFieldViolations()) {
+//							// save logic is handled by the presenter
+//							db.hide();
+//						}
 //					}
-//				}
-//				else if (currentPlace instanceof CaseRecordOutcomePlace) {
-//					CaseRecordOutcomePlace p = (CaseRecordOutcomePlace)currentPlace;
-//					if (p.getStatPackId() != null) {
-//						placeController.goTo(CalculateProbabilityPlace.createCalculateProbabilityPlace(p.getStatPackId(), p.getCaseRecord()));
-//					}
-//					else {
-//						placeController.goTo(CalculateProbabilityPlace.getCalculateProbabilityPlace());
-//					}
-//				}
-//				else if (currentPlace instanceof CaseRecordSummaryPlace) {
-//					placeController.goTo(new CaseRecordListPlace(false));
-//				}
-//				else {
-//					placeController.goTo(new CaseRecordListPlace(false));
-//				}
-//			}
-//		});
+//				});
+//				presenter.start(eventBus);
+//				db.setWidget(presenter);
+				
+				// TODO: temporary
+				VerticalPanel vp = new VerticalPanel();
+				vp.setSpacing(12);
+				db.setWidget(vp);
+				
+				HTML h = new HTML("Coming soon...");
+				vp.add(h);
+				
+				Button closeButton = new Button("Close");
+				closeButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				vp.add(closeButton);
+				
+				vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+				vp.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_CENTER);
+				
+				db.show();
+				db.center();
+			}
+		});
 
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override
@@ -1200,7 +1261,6 @@ public class AppBootstrapper {
 			}
 		});
 
-		// TODO: change to HomePlace once we have it
 		initBrowserHistory(historyMapper, historyHandler, new HomePlace());
 	}
 
