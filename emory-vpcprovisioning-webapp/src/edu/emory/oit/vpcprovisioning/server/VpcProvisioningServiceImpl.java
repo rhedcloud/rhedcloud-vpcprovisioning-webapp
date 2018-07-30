@@ -7234,6 +7234,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ServiceTestPlanPojo stp = new ServiceTestPlanPojo();
 			stp.setServiceId(moa.getServiceTestPlan().getServiceId());
 			// TODO: test plan requirement list
+			pojo.setServiceTestPlan(stp);
 		}
 	}
 
@@ -7315,8 +7316,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (pojo.getServiceTestPlan() != null) {
 			ServiceTestPlan moa_stp = moa.newServiceTestPlan();
 			moa_stp.setServiceId(pojo.getServiceTestPlan().getServiceId());
-			moa.setServiceTestPlan(moa_stp);
 			// TODO: test plan requirement list
+			moa.setServiceTestPlan(moa_stp);
 		}
 	}
 
@@ -7355,12 +7356,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
             info("populating newData...");
             populateSecurityAssessmentMoa(assessment, newData);
-            info(newData.toXmlString());
 
             info("populating baselineData...");
             populateSecurityAssessmentMoa(assessment.getBaseline(), baselineData);
             newData.setBaseline(baselineData);
-            info(baselineData.toXmlString());
 
             info("doing the update...");
             doUpdate(newData, getAWSRequestService());
