@@ -7369,7 +7369,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					for (ServiceTestStepPojo stsp : stp.getServiceTestSteps()) {
 						ServiceTestStep stsm = stm.newServiceTestStep();
 						stsm.setServiceTestId(stsp.getServiceTestId());
-						stsm.setServiceTestId(stsp.getServiceTestStepId());
+						stsm.setServiceTestStepId(stsp.getServiceTestStepId());
 						stsm.setSequenceNumber(this.toStringFromInt(stsp.getSequenceNumber()));
 						stsm.setDescription(stsm.getDescription());
 						stm.addServiceTestStep(stsm);
