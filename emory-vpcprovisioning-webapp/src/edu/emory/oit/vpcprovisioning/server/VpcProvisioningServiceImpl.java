@@ -6802,6 +6802,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getAccountNotificationForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
+			info("[getAccountNotificationsForFilter] query XML: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
 			List<AccountNotification> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
@@ -7137,6 +7138,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					" Security Assessments from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (ServiceSecurityAssessment moa : moas) {
+				info("[query] assessment as xml string: " + moa.toXmlString());
 				ServiceSecurityAssessmentPojo pojo = new ServiceSecurityAssessmentPojo();
 				ServiceSecurityAssessmentPojo baseline = new ServiceSecurityAssessmentPojo();
 				this.populateSecurityAssessmentPojo(moa, pojo);
@@ -7239,7 +7241,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			stpp.setServiceId(stpm.getServiceId());
 			// test plan requirement list
 			if (stpm.getServiceTestRequirement() != null) {
-				List<ServiceTestRequirementPojo> strPojos = new java.util.ArrayList<ServiceTestRequirementPojo>();
+//				List<ServiceTestRequirementPojo> strPojos = new java.util.ArrayList<ServiceTestRequirementPojo>();
 				for (ServiceTestRequirement strm : (List<ServiceTestRequirement>)stpm.getServiceTestRequirement()) {
 					ServiceTestRequirementPojo strp = new ServiceTestRequirementPojo();
 					strp.setServiceTestRequirementId(strm.getServiceTestRequirementId());
@@ -7265,11 +7267,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							strp.getServiceTests().add(stp);
 						}
 					}
-					strPojos.add(strp);
-//					stpp.getServiceTestRequirements().add(strp);
+//					strPojos.add(strp);
+					stpp.getServiceTestRequirements().add(strp);
 				}
-				Collections.sort(strPojos);
-				stpp.setServiceTestRequirements(strPojos);
+//				Collections.sort(strPojos);
+//				stpp.setServiceTestRequirements(strPojos);
 			}
 			pojo.setServiceTestPlan(stpp);
 		}
@@ -7371,7 +7373,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						stsm.setServiceTestId(stsp.getServiceTestId());
 						stsm.setServiceTestStepId(stsp.getServiceTestStepId());
 						stsm.setSequenceNumber(this.toStringFromInt(stsp.getSequenceNumber()));
-						stsm.setDescription(stsm.getDescription());
+						stsm.setDescription(stsp.getDescription());
 						stm.addServiceTestStep(stsm);
 					}
 					strm.addServiceTest(stm);
@@ -7423,6 +7425,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
             newData.setBaseline(baselineData);
 
             info("doing the update...");
+            info("[update] assessment as xml: " + newData.toXmlString());
             doUpdate(newData, getAWSRequestService());
             info("update is complete...");
         } catch (Throwable t) {

@@ -218,7 +218,6 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
-//				ActionEvent.fire(eventBus, ActionNames.SECURITY_ASSESSMENT_SAVED, assessment);
 			}
 		};
 		if (!isEditing) {

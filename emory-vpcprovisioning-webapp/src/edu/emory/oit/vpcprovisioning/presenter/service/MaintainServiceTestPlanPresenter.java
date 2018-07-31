@@ -244,7 +244,8 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 						getView().hidePleaseWaitDialog();
 						getView().hidePleaseWaitPanel();
 						getView().refreshDataProvider();
-						getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
+//						getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
+						ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
 					}
 				};
 

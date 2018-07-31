@@ -369,14 +369,16 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 		serviceLookupSB.setText("");
 		serviceLookupSB.getElement().setPropertyString("placeholder", "enter service name");
 
-		if (assessmentTabPanel.getSelectedIndex() != 0) {
-			assessmentTabPanel.selectTab(0);
-		}
-		else {
-			ListSecurityRiskView listView = presenter.getClientFactory().getListSecurityRiskView();
-			securityRisksContainer.add(listView);
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
-		}
+		SelectionEvent.fire(assessmentTabPanel, assessmentTabPanel.getSelectedIndex());
+		
+//		if (assessmentTabPanel.getSelectedIndex() != 0) {
+//			assessmentTabPanel.selectTab(0);
+//		}
+//		else {
+//			ListSecurityRiskView listView = presenter.getClientFactory().getListSecurityRiskView();
+//			securityRisksContainer.add(listView);
+//			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
+//		}
 	}
 
 	private void registerHandlers() {

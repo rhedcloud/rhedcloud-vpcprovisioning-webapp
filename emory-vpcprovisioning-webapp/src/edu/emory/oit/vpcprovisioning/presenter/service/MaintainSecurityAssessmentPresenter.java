@@ -16,6 +16,8 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainSecurityAssessmentPresenter extends PresenterBase implements MaintainSecurityAssessmentView.Presenter {
@@ -81,26 +83,33 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 			clientFactory.getShell().setSubTitle("Edit Assessment");
 			startEdit();
 			// get latest version of the assessment from the server
-//			AsyncCallback<ServiceSecurityAssessmentPojo> acct_cb = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
+//			AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
 //				@Override
 //				public void onFailure(Throwable caught) {
-//					getView().hidePleaseWaitDialog();
-//					getView().hidePleaseWaitPanel();
-//					GWT.log("Exception retrieving assessment details", caught);
+//	                getView().hidePleaseWaitPanel();
+//	                getView().hidePleaseWaitDialog();
+//					GWT.log("Exception Retrieving Security Assessments", caught);
 //					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving the details for this assessment.  Message " +
-//							"from server is: " + caught.getMessage());
+//							"server retrieving the list of Security Assessments associated to this Service.  " +
+//							"Message from server is: " + caught.getMessage());
 //				}
 //
 //				@Override
-//				public void onSuccess(ServiceSecurityAssessmentPojo result) {
-//					assessment = result;
+//				public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+//					GWT.log("Got " + result.getResults().size() + " Security Assessments for " + result.getFilterUsed());
+//					for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
+//						if (ssa.getServiceSecurityAssessmentId().equals(assessment.getServiceSecurityAssessmentId())) {
+//							assessment = ssa;
+//							break;
+//						}
+//					}
 //				}
 //			};
+//
+//			GWT.log("refreshing security assessment...");
 //			ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
-//			VpcProvisioningService.Util.getInstance().getAccountById(assessmentId, acct_cb);
-//			getView().setSecurityRisks(assessment.getSecurityRisks());
-//			// TODO: controls, guidelines and test plans
+//			filter.setServiceId(service.getServiceId());
+//			VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
 		}
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {

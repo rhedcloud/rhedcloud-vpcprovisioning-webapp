@@ -257,7 +257,6 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
-//				ActionEvent.fire(eventBus, ActionNames.SECURITY_ASSESSMENT_SAVED, assessment);
 			}
 		};
 		if (!isEditing) {
