@@ -84,11 +84,9 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	void viewUnReadCBClicked(ClickEvent e) {
 		if (viewUnReadCB.getValue()) {
 			presenter.refreshListWithUnReadNotificationsForUser(userLoggedIn);
-			viewUnReadCB.setText("View All Notifications");
 		}
 		else {
 			presenter.refreshListWithAllNotificationsForUser(userLoggedIn);
-			viewUnReadCB.setText("View Un-read Notifications Only");
 		}
 	}
 	@UiHandler("actionsButton")
