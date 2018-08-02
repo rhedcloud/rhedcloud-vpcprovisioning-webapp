@@ -34,6 +34,10 @@
 							ui:field="closeOtherFeaturesButton" debugId="closeOtherFeaturesButton"
 							title="Close page and return home." width="100">Close</g:Button>
 					</g:customCell>
+					<g:customCell>
+						<g:CheckBox ui:field="viewUnReadCB" 
+							title="Toggle between only unread notifications and all notifications">View Un-read Notifications Only</g:CheckBox>
+					</g:customCell>
 				</g:row>
 			</g:Grid>
 		</g:cell>

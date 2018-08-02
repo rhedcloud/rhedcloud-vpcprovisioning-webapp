@@ -7,6 +7,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -31,6 +32,8 @@ public interface ListNotificationView extends IsWidget, View {
 		void saveNotification(UserNotificationPojo selected);
 		void deleteNotification(UserNotificationPojo service);
 		public void logMessageOnServer(final String message);
+		void refreshListWithUnReadNotificationsForUser(UserAccountPojo user);
+		void refreshListWithAllNotificationsForUser(UserAccountPojo user);
 	}
 
 	/**
@@ -53,6 +56,6 @@ public interface ListNotificationView extends IsWidget, View {
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeNotificationFromView(UserNotificationPojo service);
-
+	boolean viewAllNotifications();
 
 }

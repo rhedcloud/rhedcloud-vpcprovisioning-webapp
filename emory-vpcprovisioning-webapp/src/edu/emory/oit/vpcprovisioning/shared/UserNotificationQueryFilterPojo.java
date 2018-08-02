@@ -30,6 +30,7 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 	Date startDate;
 	Date endDate;
 	boolean useQueryLanguage;
+	int maxRows;
 	
 	public UserNotificationQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -127,6 +128,14 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 
 	public void setUseQueryLanguage(boolean useQueryLanguage) {
 		this.useQueryLanguage = useQueryLanguage;
+	}
+
+	public int getMaxRows() {
+		return maxRows;
+	}
+
+	public void setMaxRows(int maxRows) {
+		this.maxRows = maxRows;
 	}
 
 }

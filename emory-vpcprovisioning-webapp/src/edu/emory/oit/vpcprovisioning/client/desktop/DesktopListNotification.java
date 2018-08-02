@@ -28,6 +28,7 @@ import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -77,7 +78,19 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
 	@UiField Button actionsButton;
+	@UiField CheckBox viewUnReadCB;
 
+	@UiHandler("viewUnReadCB")
+	void viewUnReadCBClicked(ClickEvent e) {
+		if (viewUnReadCB.getValue()) {
+			presenter.refreshListWithUnReadNotificationsForUser(userLoggedIn);
+			viewUnReadCB.setText("View All Notifications");
+		}
+		else {
+			presenter.refreshListWithAllNotificationsForUser(userLoggedIn);
+			viewUnReadCB.setText("View Un-read Notifications Only");
+		}
+	}
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
@@ -619,5 +632,10 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@Override
 	public void enableButtons() {
 		actionsButton.setEnabled(true);
+	}
+
+	@Override
+	public boolean viewAllNotifications() {
+		return !viewUnReadCB.getValue();
 	}
 }

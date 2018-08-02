@@ -4745,7 +4745,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					QueryLanguage ql = queryObject.newQueryLanguage();
 					if (filter.getReadStr() != null) {
 						if (filter.isRead() == false) {
-							ql.setName("unreadByUserId");
+							if (filter.getMaxRows() > 5) {
+								ql.setName("unreadMaxByUserId");
+							}
+							else {
+								ql.setName("unreadByUserId");
+							}
 						}
 						else {
 							ql.setName("byUserId");
@@ -4755,6 +4760,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						ql.setName("byUserId");
 					}
 					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
 
 					Parameter userId = ql.newParameter();
 					userId.setValue(filter.getUserId());
@@ -6829,6 +6835,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					QueryLanguage ql = queryObject.newQueryLanguage();
 					ql.setName("byAccountId");
 					ql.setType("hql");
+					info("setting QueryLanguage max rows to: " + filter.getMaxRows());
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
 
 					Parameter accountId = ql.newParameter();
 					accountId.setValue(filter.getAccountId());
@@ -7609,6 +7617,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		filter.setReadStr("false");
 		filter.setRead(false);
 		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(5);
 //		// get notifications created in the last hour
 //		Date now = new Date();
 //		Date yesterday = new Date(now.getTime() - Constants.MILLIS_PER_HR);

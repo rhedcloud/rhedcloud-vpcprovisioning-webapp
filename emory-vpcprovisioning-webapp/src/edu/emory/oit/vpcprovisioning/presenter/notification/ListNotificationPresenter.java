@@ -119,7 +119,12 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 //				setNotificationList(Collections.<UserNotificationPojo> emptyList());
 
 				// Request the Vpc list now.
-				refreshList(user);
+				if (getView().viewAllNotifications()) {
+					refreshListWithAllNotificationsForUser(user);
+				}
+				else {
+					refreshListWithUnReadNotificationsForUser(user);
+				}
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -160,18 +165,33 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		};
 
 		GWT.log("refreshing Notifications list...");
-		if (filter == null) {
-			filter = new UserNotificationQueryFilterPojo();
-		}
+		VpcProvisioningService.Util.getInstance().getUserNotificationsForFilter(filter, callback);
+	}
+
+
+	@Override
+	public void refreshListWithUnReadNotificationsForUser(UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Retrieving Un-Read Notifications from the AWS Account service...");
+		filter = new UserNotificationQueryFilterPojo();
+		filter.setUserId(user.getPublicId());
+		filter.setReadStr("false");
+		filter.setRead(false);
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(200);
+		refreshList(user);
+	}
+
+	@Override
+	public void refreshListWithAllNotificationsForUser(UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Retrieving Notifications from the AWS Account service...");
+
+		filter = new UserNotificationQueryFilterPojo();
 		filter.setUserId(user.getPublicId());
 		filter.setReadStr(null);
 		filter.setUseQueryLanguage(true);
-		// get notifications created in the last 24 hours
-//		Date now = new Date();
-//		Date yesterday = new Date(now.getTime() - Constants.MILLIS_PER_DAY);
-//		filter.setStartDate(yesterday);
-//		filter.setEndDate(now);
-		VpcProvisioningService.Util.getInstance().getUserNotificationsForFilter(filter, callback);
+		filter.setMaxRows(200);
+		
+		refreshList(user);
 	}
 
 	/**
@@ -289,5 +309,4 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		// it's an update
 		VpcProvisioningService.Util.getInstance().updateUserNotification(selected, callback);
 	}
-
 }
