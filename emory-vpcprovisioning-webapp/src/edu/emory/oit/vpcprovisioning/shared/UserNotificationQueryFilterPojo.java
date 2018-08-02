@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
@@ -25,6 +27,9 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 	String priority;
 	boolean read;
 	String readStr;
+	Date startDate;
+	Date endDate;
+	boolean useQueryLanguage;
 	
 	public UserNotificationQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -98,6 +103,30 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 
 	public void setReadStr(String readStr) {
 		this.readStr = readStr;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public boolean isUseQueryLanguage() {
+		return useQueryLanguage;
+	}
+
+	public void setUseQueryLanguage(boolean useQueryLanguage) {
+		this.useQueryLanguage = useQueryLanguage;
 	}
 
 }

@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
@@ -158,6 +160,17 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		};
 
 		GWT.log("refreshing Notifications list...");
+		if (filter == null) {
+			filter = new UserNotificationQueryFilterPojo();
+		}
+		filter.setUserId(user.getPublicId());
+		filter.setReadStr(null);
+		filter.setUseQueryLanguage(true);
+		// get notifications created in the last 24 hours
+//		Date now = new Date();
+//		Date yesterday = new Date(now.getTime() - Constants.MILLIS_PER_DAY);
+//		filter.setStartDate(yesterday);
+//		filter.setEndDate(now);
 		VpcProvisioningService.Util.getInstance().getUserNotificationsForFilter(filter, callback);
 	}
 

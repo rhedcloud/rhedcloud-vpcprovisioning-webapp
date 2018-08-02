@@ -131,6 +131,12 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			};
 			AccountNotificationQueryFilterPojo filter = new AccountNotificationQueryFilterPojo();
 			filter.setAccountId(accountId);
+			filter.setUseQueryLanguage(true);
+			// get notifications created in the last 24 hours
+//			Date now = new Date();
+//			Date yesterday = new Date(now.getTime() - Constants.MILLIS_PER_DAY);
+//			filter.setStartDate(yesterday);
+//			filter.setEndDate(now);
 			VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
 		}
 

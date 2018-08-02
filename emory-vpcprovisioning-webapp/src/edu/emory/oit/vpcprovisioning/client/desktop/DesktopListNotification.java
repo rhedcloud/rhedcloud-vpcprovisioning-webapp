@@ -76,7 +76,6 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@UiField SimplePager listPager;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button closeOtherFeaturesButton;
-//	@UiField Button createNotificationButton;
 	@UiField Button actionsButton;
 
 	@UiHandler("actionsButton")
@@ -180,10 +179,6 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
-//	@UiHandler ("createNotificationButton")
-//	void createButtonClicked(ClickEvent e) {
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_NOTIFICATION);
-//	}
 	@UiHandler ("closeOtherFeaturesButton")
 	void closeOtherFeaturesButtonClicked(ClickEvent e) {
 		presenter.getClientFactory().getShell().hideOtherFeaturesPanel();

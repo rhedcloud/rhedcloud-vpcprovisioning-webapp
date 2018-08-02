@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.view.client.AbstractDataProvider;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -40,8 +40,7 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 		this.testStepSelectionModel = testStepSelectionModel;
 //		requirementDataProvider = new ListDataProvider<ServiceTestRequirementPojo>();
 		this.requirementDataProvider = requirementDataProvider;
-
-
+		
 //		List<HasCell<ServiceTestRequirementPojo, ?>> hasCells = new ArrayList<HasCell<ServiceTestRequirementPojo, ?>>();
 //		hasCells.add(new HasCell<ServiceTestRequirementPojo, Boolean>() {
 //
@@ -94,7 +93,6 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 //
 //			@Override
 //			protected Element getContainerElement(Element parent) {
-//				// TODO Auto-generated method stub
 //				//				return super.getContainerElement(parent);
 //				return parent.getFirstChildElement().getFirstChildElement().getFirstChildElement();
 //			}
@@ -185,8 +183,14 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 	@Override
 	public <T> NodeInfo<?> getNodeInfo(T value) {
 		if (value == null) {
-			return new DefaultNodeInfo<ServiceTestRequirementPojo>(requirementDataProvider, new ServiceTestRequirementCell(), testRequirementSelectionModel, null);
-//			return new DefaultNodeInfo<ServiceTestRequirementPojo>(requirementDataProvider, requirementCell, testRequirementSelectionModel, null);
+			ServiceTestRequirementCell cell = new ServiceTestRequirementCell();
+//		    ListHandler<ServiceTestRequirementPojo> requirementSortHandler = 
+//	        	new ListHandler<ServiceTestRequirementPojo>(getRequirementDataProvider().getList());
+//	    	    accountListTable.addColumnSortHandler(sortHandler);
+			
+			DefaultNodeInfo<ServiceTestRequirementPojo> node = new DefaultNodeInfo<ServiceTestRequirementPojo>(requirementDataProvider, cell, testRequirementSelectionModel, null);
+			return node;
+//			return new DefaultNodeInfo<ServiceTestRequirementPojo>(requirementDataProvider, cell, testRequirementSelectionModel, null);
 		}
 		else if (value instanceof ServiceTestRequirementPojo) {
 			ServiceTestRequirementPojo str = (ServiceTestRequirementPojo) value;
@@ -212,6 +216,14 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 			GWT.log(value + " IS NOT a leaf");
 		}
 		return leaf;
+	}
+
+	public ListDataProvider<ServiceTestRequirementPojo> getRequirementDataProvider() {
+		return requirementDataProvider;
+	}
+
+	public void setRequirementDataProvider(ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider) {
+		this.requirementDataProvider = requirementDataProvider;
 	}
 
 }

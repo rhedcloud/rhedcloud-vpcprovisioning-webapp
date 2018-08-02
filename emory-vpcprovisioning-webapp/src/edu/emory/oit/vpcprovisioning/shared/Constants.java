@@ -3,6 +3,12 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Constants implements IsSerializable {
+	public final static long MILLIS_PER_DAY = 24 * 60 * 60 * 1000;
+	public final static long MILLIS_PER_12HR = 12 * 60 * 60 * 1000;
+	public final static long MILLIS_PER_6HR = 6 * 60 * 60 * 1000;
+	public final static long MILLIS_PER_3HR = 3 * 60 * 60 * 1000;
+	public final static long MILLIS_PER_HR = 60 * 60 * 1000;
+	public final static long MILLIS_PER_HOUR = 60 * 60 * 1000;
 	public static final String CIDR_ASSIGNMENT = "CidrAssignment";
 	public static final String CIDR = "Cidr";
 	public static final String USER_ACCOUNT = "UserAccount";

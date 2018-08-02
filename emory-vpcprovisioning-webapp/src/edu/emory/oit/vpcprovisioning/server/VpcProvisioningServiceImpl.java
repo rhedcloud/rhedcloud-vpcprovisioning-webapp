@@ -50,6 +50,8 @@ import org.openeai.moa.EnterpriseObjectUpdateException;
 import org.openeai.moa.XmlEnterpriseObject;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.moa.objects.resources.Datetime;
+import org.openeai.moa.objects.resources.v1_0.Parameter;
+import org.openeai.moa.objects.resources.v1_0.QueryLanguage;
 import org.openeai.threadpool.ThreadPool;
 import org.openeai.threadpool.ThreadPoolException;
 import org.openeai.transport.RequestService;
@@ -4739,23 +4741,52 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			UserNotification actionable = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
 
 			if (filter != null) {
-				queryObject.setUserId(filter.getUserId());
-				queryObject.setPriority(filter.getPriority());
-				queryObject.setType(filter.getType());
-				queryObject.setUserNotificationId(filter.getUserNotificationId());
-				queryObject.setAccountId(filter.getAccountId());
-				queryObject.setAccountNotificationId(filter.getAccountNotificationId());
-				if (filter.getReadStr() != null) {
-					queryObject.setRead(this.toStringFromBoolean(filter.isRead()));
+				if (filter.isUseQueryLanguage()) {
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					if (filter.getReadStr() != null) {
+						if (filter.isRead() == false) {
+							ql.setName("unreadByUserId");
+						}
+						else {
+							ql.setName("byUserId");
+						}
+					}
+					else {
+						ql.setName("byUserId");
+					}
+					ql.setType("hql");
+
+					Parameter userId = ql.newParameter();
+					userId.setValue(filter.getUserId());
+					userId.setName("UserId");
+					ql.addParameter(userId);
+					queryObject.setQueryLanguage(ql);
+				}
+				else {
+					queryObject.setUserId(filter.getUserId());
+					queryObject.setPriority(filter.getPriority());
+					queryObject.setType(filter.getType());
+					queryObject.setUserNotificationId(filter.getUserNotificationId());
+					queryObject.setAccountId(filter.getAccountId());
+					queryObject.setAccountNotificationId(filter.getAccountNotificationId());
+					if (filter.getReadStr() != null) {
+						queryObject.setRead(this.toStringFromBoolean(filter.isRead()));
+					}
 				}
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			
+			RequestService reqSvc = this.getAWSRequestService();
+			// TODO: if they're asking for ALL notifications, we'll have to bump 
+			// the timeout interval WAY up
+//			((PointToPointProducer) reqSvc)
+//			.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 4);
+			
 			@SuppressWarnings("unchecked")
 			List<UserNotification> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+					reqSvc);
 			info("[getUserNotificationsForFilter] got " + moas.size() + 
 					" UserNotifications from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
@@ -6794,8 +6825,67 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			AccountNotification actionable = (AccountNotification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION);
 
 			if (filter != null) {
-				queryObject.setAccountId(filter.getAccountId());
-				queryObject.setAccountNotificationId(filter.getAccountNotificationId());
+				if (filter.isUseQueryLanguage()) {
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("byAccountId");
+					ql.setType("hql");
+
+					Parameter accountId = ql.newParameter();
+					accountId.setValue(filter.getAccountId());
+					accountId.setName("AccountId");
+					ql.addParameter(accountId);
+					queryObject.setQueryLanguage(ql);
+				}
+				else {
+					queryObject.setAccountId(filter.getAccountId());
+					queryObject.setAccountNotificationId(filter.getAccountNotificationId());
+				}
+
+//				if (filter.getStartDate() != null || filter.getEndDate() != null) {
+//					SimpleDateFormat l_dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//
+//					if (filter.getStartDate() != null && filter.getEndDate() != null) {
+//						QueryLanguage ql = queryObject.newQueryLanguage();
+//						ql.setName("findAccountNotificationsBetweenDates");
+//						ql.setType("hql");
+//
+//						Parameter startDate = ql.newParameter();
+//						startDate.setValue(l_dateFormatter.format(filter.getStartDate()));
+//						startDate.setName("startDate");
+//						ql.addParameter(startDate);
+//
+//						Parameter endDate = ql.newParameter();
+//						endDate.setValue(l_dateFormatter.format(filter.getEndDate()));
+//						endDate.setName("endDate");
+//						ql.addParameter(endDate);
+//						
+//						queryObject.setQueryLanguage(ql);
+//					}
+//					else if (filter.getEndDate() != null) {
+//						QueryLanguage ql = queryObject.newQueryLanguage();
+//						ql.setName("findAccountNotificationsBeforeDate");
+//						ql.setType("hql");
+//
+//						Parameter endDate = ql.newParameter();
+//						endDate.setValue(l_dateFormatter.format(filter.getEndDate()));
+//						endDate.setName("endDate");
+//						ql.addParameter(endDate);
+//						
+//						queryObject.setQueryLanguage(ql);
+//					}
+//					else if (filter.getStartDate() != null) {
+//						QueryLanguage ql = queryObject.newQueryLanguage();
+//						ql.setName("findAccountNotificationsAfterDate");
+//						ql.setType("hql");
+//
+//						Parameter startDate = ql.newParameter();
+//						startDate.setValue(l_dateFormatter.format(filter.getStartDate()));
+//						startDate.setName("startDate");
+//						ql.addParameter(startDate);
+//						
+//						queryObject.setQueryLanguage(ql);
+//					}
+//				}
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
@@ -6803,9 +6893,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getAccountNotificationForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
 			info("[getAccountNotificationsForFilter] query XML: " + queryObject.toXmlString());
+			
+			RequestService reqSvc = this.getAWSRequestService();
+			// TODO: if they're asking for ALL notifications, we'll have to bump 
+			// the timeout interval WAY up
+//			((PointToPointProducer) reqSvc)
+//			.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 2);
+
 			@SuppressWarnings("unchecked")
 			List<AccountNotification> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+					reqSvc);
 			info("[getAccountNotificationsForFilter] got " + moas.size() + 
 					" UserNotifications from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
@@ -7509,8 +7606,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
 		filter.setUserId(user.getPublicId());
+		filter.setReadStr("false");
 		filter.setRead(false);
+		filter.setUseQueryLanguage(true);
+//		// get notifications created in the last hour
+//		Date now = new Date();
+//		Date yesterday = new Date(now.getTime() - Constants.MILLIS_PER_HR);
+//		filter.setStartDate(yesterday);
+//		filter.setEndDate(now);
 		UserNotificationQueryResultPojo result = this.getUserNotificationsForFilter(filter);
+		info("User " + user.getPublicId() + " has " + 
+				result.getResults().size() + " un-read User Notifications in the last day");
 		if (result.getResults().size() > 0) {
 			return true;
 		}

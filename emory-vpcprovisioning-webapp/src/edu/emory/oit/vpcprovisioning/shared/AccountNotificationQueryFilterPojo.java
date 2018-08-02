@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
@@ -18,7 +20,10 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 	String accountId;
 	String type;
 	String priority;
-	
+	Date startDate;
+	Date endDate;
+	boolean useQueryLanguage;
+
 	public AccountNotificationQueryFilterPojo() {
 	}
 
@@ -52,6 +57,30 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 
 	public void setPriority(String priority) {
 		this.priority = priority;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public boolean isUseQueryLanguage() {
+		return useQueryLanguage;
+	}
+
+	public void setUseQueryLanguage(boolean useQueryLanguage) {
+		this.useQueryLanguage = useQueryLanguage;
 	}
 
 }
