@@ -49,7 +49,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	@UiField SimplePager vpcListPager;
 	@UiField Button registerVpcButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<VpcPojo> vpcListTable = new CellTable<VpcPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<VpcPojo> vpcListTable = new CellTable<VpcPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -157,7 +157,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		vpcListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		vpcListTable.setVisibleRange(0, 5);
+		vpcListTable.setVisibleRange(0, 15);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<VpcPojo>();

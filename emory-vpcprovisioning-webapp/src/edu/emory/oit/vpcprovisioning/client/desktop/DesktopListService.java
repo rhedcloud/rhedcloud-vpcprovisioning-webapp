@@ -64,7 +64,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	}
 	/*** FIELDS ***/
 	@UiField SimplePager serviceListPager;
-	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 //	@UiField Button closeOtherFeaturesButton;
 	@UiField Button createServiceButton;
@@ -224,7 +224,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		serviceListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 
 		// set range to display
-		serviceListTable.setVisibleRange(0, 10);
+		serviceListTable.setVisibleRange(0, 15);
 
 		// create dataprovider
 		dataProvider = new ListDataProvider<AWSServicePojo>();

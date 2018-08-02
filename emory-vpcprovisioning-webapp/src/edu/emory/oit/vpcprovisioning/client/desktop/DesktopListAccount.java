@@ -55,7 +55,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	@UiField SimplePager accountListPager;
 	@UiField Button addAccountButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel accountListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 
@@ -260,7 +260,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		accountListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		accountListTable.setVisibleRange(0, 5);
+		accountListTable.setVisibleRange(0, 15);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<AccountPojo>();

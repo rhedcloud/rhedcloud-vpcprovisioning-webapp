@@ -39,7 +39,7 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 	@UiField SimplePager centralAdminListPager;
 //	@UiField Button addCentralAdminButton;
 //	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<RoleAssignmentSummaryPojo> centralAdminListTable = new CellTable<RoleAssignmentSummaryPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<RoleAssignmentSummaryPojo> centralAdminListTable = new CellTable<RoleAssignmentSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel centralAdminListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField HTML introBodyHTML;
@@ -191,7 +191,7 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 		centralAdminListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		centralAdminListTable.setVisibleRange(0, 5);
+		centralAdminListTable.setVisibleRange(0, 15);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<RoleAssignmentSummaryPojo>();

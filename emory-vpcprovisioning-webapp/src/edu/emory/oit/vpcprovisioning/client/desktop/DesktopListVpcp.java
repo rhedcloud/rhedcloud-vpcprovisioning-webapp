@@ -162,7 +162,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		vpcpListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		vpcpListTable.setVisibleRange(0, 5);
+		vpcpListTable.setVisibleRange(0, 15);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<VpcpPojo>();
