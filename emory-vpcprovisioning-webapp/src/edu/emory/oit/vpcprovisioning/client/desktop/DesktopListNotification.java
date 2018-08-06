@@ -32,7 +32,9 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -52,6 +54,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	List<UserNotificationPojo> pojoList = new java.util.ArrayList<UserNotificationPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
+    boolean longRunningProcess;
 
 	@UiField(provided=true) CellTable<UserNotificationPojo> listTable = new CellTable<UserNotificationPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -67,10 +70,10 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	public DesktopListNotification() {
 		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	public DesktopListNotification(String firstName) {
-		initWidget(uiBinder.createAndBindUi(this));
+		Image img = new Image("images/refresh_icon.png");
+		img.setWidth("30px");
+		img.setHeight("30px");
+		refreshButton.getUpFace().setImage(img);
 	}
 
 	/*** FIELDS ***/
@@ -79,7 +82,12 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@UiField Button closeOtherFeaturesButton;
 	@UiField Button actionsButton;
 	@UiField CheckBox viewUnReadCB;
+	@UiField PushButton refreshButton;
 
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		showMessageToUser("The functionality you've requested is coming soon.......");
+	}
 	@UiHandler("viewUnReadCB")
 	void viewUnReadCBClicked(ClickEvent e) {
 		if (viewUnReadCB.getValue()) {
@@ -96,7 +104,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(2, 1);
+	    Grid grid = new Grid(3, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -130,34 +138,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		});
 		grid.setWidget(0, 0, viewAnchor);
 
-//		Anchor deleteAnchor = new Anchor("Delete Notification(s)");
-//		deleteAnchor.addStyleName("productAnchor");
-//		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		deleteAnchor.setTitle("Delete selected Notification(s)");
-//		deleteAnchor.ensureDebugId(deleteAnchor.getText());
-//		deleteAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				actionsPopup.hide();
-//				if (selectionModel.getSelectedSet().size() == 0) {
-//					showMessageToUser("Please select an item from the list");
-//					return;
-//				}
-//				Iterator<UserNotificationPojo> nIter = selectionModel.getSelectedSet().iterator();
-//				while (nIter.hasNext()) {
-//					UserNotificationPojo m = nIter.next();
-//					if (m != null) {
-//						presenter.deleteNotification(m);
-//					}
-//					else {
-//						showMessageToUser("Please select an item from the list");
-//					}
-//				}
-//			}
-//		});
-//		grid.setWidget(1, 0, deleteAnchor);
-
-		Anchor markAnchor = new Anchor("Mark as read");
+		Anchor markAnchor = new Anchor("Mark SELECTED Notifications as read");
 		markAnchor.addStyleName("productAnchor");
 		markAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		markAnchor.setTitle("Mark selected Notification(s) as read");
@@ -186,6 +167,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 			}
 		});
 		grid.setWidget(1, 0, markAnchor);
+
+		Anchor markAllAnchor = new Anchor("Mark ALL Notifications as read");
+		markAllAnchor.addStyleName("productAnchor");
+		markAllAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		markAllAnchor.setTitle("Mark ALL Notification(s) as read");
+		markAllAnchor.ensureDebugId(markAllAnchor.getText());
+		markAllAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				presenter.markAllUnreadNotificationsForUserAsRead(userLoggedIn);
+			}
+		});
+		grid.setWidget(2, 0, markAllAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -635,5 +630,19 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@Override
 	public boolean viewAllNotifications() {
 		return !viewUnReadCB.getValue();
+	}
+
+	@Override
+	public void setLongRunningProcess(boolean isLongRunning) {
+		longRunningProcess = isLongRunning;
+	}
+
+	@Override
+	public boolean isLongRunningProcess() {
+		return longRunningProcess;
+	}
+
+	@Override
+	public void initPage() {
 	}
 }

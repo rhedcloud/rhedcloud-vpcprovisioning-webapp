@@ -151,6 +151,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 			public void onSuccess(UserNotificationQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " Notifications for " + result.getFilterUsed());
 				setNotificationList(result.getResults());
+				getView().initPage();
 				// apply authorization mask
 				// TODO: need to determine the Notification structure so we can apply authorization mask appropriately
 				if (user.isCentralAdmin()) {
@@ -161,6 +162,11 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 				}
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
+                if (getView().isLongRunningProcess()) {
+            		getView().showPleaseWaitPanel("Please wait...");
+            		getView().showPleaseWaitDialog("** STILL ** Marking all un-read notifications to read.  Depending on the "
+            				+ "number of notifications, this could take a while...Please Wait");
+                }
 			}
 		};
 
@@ -308,5 +314,39 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		};
 		// it's an update
 		VpcProvisioningService.Util.getInstance().updateUserNotification(selected, callback);
+	}
+
+	@Override
+	public void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user) {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().setLongRunningProcess(false);
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server marking all un-read notifications as read.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().setLongRunningProcess(false);
+				if (filter == null) {
+					filter = new UserNotificationQueryFilterPojo();
+					filter.setUserId(userLoggedIn.getPublicId());
+				}
+				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, filter);
+			}
+			
+		};
+		getView().setLongRunningProcess(true);
+		getView().showPleaseWaitPanel("Please wait...");
+		getView().showPleaseWaitDialog("Marking all un-read notifications to read.  Depending on the "
+				+ "number of notifications, this could take a while...Please Wait");
+		VpcProvisioningService.Util.getInstance().markAllUnreadNotificationsForUserAsRead(user, callback);
 	}
 }

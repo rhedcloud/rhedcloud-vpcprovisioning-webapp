@@ -223,6 +223,7 @@ public interface VpcProvisioningServiceAsync {
 	void deleteUserNotification(UserNotificationPojo notification, AsyncCallback<Void> callback);
 	void userHasUnreadNotifications(UserAccountPojo user, AsyncCallback<Boolean> callback);
 	void getNotificationCheckIntervalMillis(AsyncCallback<Integer> callback);
+	void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user, AsyncCallback<Void> callback);
 
 	// account notifications
 	void getAccountNotificationsForFilter(AccountNotificationQueryFilterPojo filter, AsyncCallback<AccountNotificationQueryResultPojo> callback);

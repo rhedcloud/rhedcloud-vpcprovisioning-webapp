@@ -34,6 +34,7 @@ public interface ListNotificationView extends IsWidget, View {
 		public void logMessageOnServer(final String message);
 		void refreshListWithUnReadNotificationsForUser(UserAccountPojo user);
 		void refreshListWithAllNotificationsForUser(UserAccountPojo user);
+		void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user);
 	}
 
 	/**
@@ -57,5 +58,7 @@ public interface ListNotificationView extends IsWidget, View {
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeNotificationFromView(UserNotificationPojo service);
 	boolean viewAllNotifications();
-
+	void setLongRunningProcess(boolean isLongRunning);
+	boolean isLongRunningProcess();
+	void initPage();
 }

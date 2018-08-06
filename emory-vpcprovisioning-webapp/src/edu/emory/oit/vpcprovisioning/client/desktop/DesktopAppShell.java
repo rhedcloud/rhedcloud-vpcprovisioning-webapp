@@ -187,6 +187,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					productsPopup.hide();
 					hideOtherFeaturesPanel();
 					showMainTabPanel();
+					mainTabPanel.selectTab(0);
 					ActionEvent.fire(eventBus, ActionNames.GO_HOME);
 				}
 			}
@@ -306,102 +307,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			@Override
 			public void onBrowserEvent(Event event) {
 				if(Event.ONCLICK == event.getTypeInt()) {
-					productsPopup.clear();
-					productsPopup.setAutoHideEnabled(true);
-					productsPopup.setWidth("1200px");
-					productsPopup.setHeight("800px");
-					productsPopup.setAnimationEnabled(true);
-
-					ScrollPanel sp = new ScrollPanel();
-					sp.setHeight("99%");
-					sp.setWidth("100%");
-					productsPopup.add(sp);
-
-					HorizontalPanel hp = new HorizontalPanel();
-					hp.setWidth("100%");
-					sp.add(hp);
-					// 4 columns
-					List<VerticalPanel> vpList = new java.util.ArrayList<VerticalPanel>();
-					vpList.add(new VerticalPanel());
-					vpList.add(new VerticalPanel());
-					vpList.add(new VerticalPanel());
-					vpList.add(new VerticalPanel());
-
-					// only do this for admins...
-					//		            	if (userLoggedIn.isCentralAdmin()) {
-					//	        				Anchor manageSvcsAnchor = new Anchor("Manage Services...");
-					//	        				manageSvcsAnchor.addStyleName("productAnchor");
-					//	        				manageSvcsAnchor.setTitle("Manage meta-data about Emory AWS services");
-					//	        				manageSvcsAnchor.addClickHandler(new ClickHandler() {
-					//							@Override
-					//							public void onClick(ClickEvent event) {
-					//								productsPopup.hide();
-					//								// clear other features panel
-					//								// add list services view
-					//								// add maintain services view
-					//								otherFeaturesPanel.clear();
-					//				        			hideMainTabPanel();
-					//				        			showOtherFeaturesPanel();
-					//				    				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-					//							}
-					//	        				});
-					//
-					//	        				HTMLPanel hrHtml = new HTMLPanel("<hr>");
-					//			            	vpList.get(0).add(manageSvcsAnchor);
-					//			            	vpList.get(0).add(hrHtml);
-					//		            	}
-
-					int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
-					if (catsPerPanel < 5) {
-						catsPerPanel = awsServices.size();
-					}
-					GWT.log("catsPerPanel: " + catsPerPanel);
-					int catCntr = 0;
-					int vpCntr = 0;
-					Iterator<String> keys = awsServices.keySet().iterator();
-					while (keys.hasNext()) {
-						String catName = keys.next();
-						GWT.log("Category is: " + catName);
-						if (catCntr >= catsPerPanel) {
-							catCntr = 0;
-							GWT.log("adding vp number " + vpCntr + " to the HP");
-							hp.add(vpList.get(vpCntr));
-							vpCntr++;
-						}
-						else {
-							GWT.log("using vp number " + vpCntr);
-							VerticalPanel vp = vpList.get(vpCntr);
-							HTMLPanel catHtml = new HTMLPanel(catName);
-							catHtml.addStyleName("productCategory");
-							vp.add(catHtml);
-							List<AWSServicePojo> services = awsServices.get(catName);
-							GWT.log("There are " + services.size() + " services in the " + catName + " category.");
-							for (AWSServicePojo svc : services) {
-								GWT.log("Adding service: " + svc.getAwsServiceName());
-								Anchor svcAnchor = new Anchor(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
-								svcAnchor.addStyleName("productAnchor");
-								svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
-										"  DESCRIPTION: " + svc.getDescription());
-								svcAnchor.setHref(svc.getLandingPageURL());
-								svcAnchor.setTarget("_blank");
-								if (svc.getStatus().toLowerCase().contains("blocked")) {
-									svcAnchor.addStyleName("productAnchorBlocked");
-								}
-								vp.add(svcAnchor);
-							}
-							HTMLPanel html = new HTMLPanel("<hr>");
-							vp.add(html);
-						}
-						catCntr++;
-					}
-					// add last VP to the HP because it gets populated but not added above
-					if (hp.getWidgetCount() < 4) {
-						for (int i=hp.getWidgetCount(); i<4; i++) {
-							hp.add(vpList.get(i));
-						}
-					}
-
-					productsPopup.showRelativeTo(linksPanel);
+					showServices();
 				}
 			}
 		});
@@ -750,6 +656,109 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		VpcProvisioningService.Util.getInstance().getNotificationCheckIntervalMillis(interval_cb);
 	}
 
+	void showServicesPopup() {
+		productsPopup.clear();
+		productsPopup.setAutoHideEnabled(true);
+		productsPopup.setWidth("1200px");
+		productsPopup.setHeight("800px");
+		productsPopup.setAnimationEnabled(true);
+		
+		ScrollPanel sp = new ScrollPanel();
+		sp.setHeight("99%");
+		sp.setWidth("100%");
+		productsPopup.add(sp);
+
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setWidth("100%");
+		sp.add(hp);
+		// 4 columns
+		List<VerticalPanel> vpList = new java.util.ArrayList<VerticalPanel>();
+		vpList.add(new VerticalPanel());
+		vpList.add(new VerticalPanel());
+		vpList.add(new VerticalPanel());
+		vpList.add(new VerticalPanel());
+		
+		int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
+		if (catsPerPanel < 5) {
+			catsPerPanel = awsServices.size();
+		}
+		GWT.log("catsPerPanel: " + catsPerPanel);
+		int catCntr = 0;
+		int vpCntr = 0;
+		Iterator<String> keys = awsServices.keySet().iterator();
+		while (keys.hasNext()) {
+			String catName = keys.next();
+			GWT.log("Category is: " + catName);
+			if (catCntr >= catsPerPanel) {
+				catCntr = 0;
+				GWT.log("adding vp number " + vpCntr + " to the HP");
+				hp.add(vpList.get(vpCntr));
+				vpCntr++;
+			}
+			else {
+				GWT.log("using vp number " + vpCntr);
+				VerticalPanel vp = vpList.get(vpCntr);
+				HTMLPanel catHtml = new HTMLPanel(catName);
+				catHtml.addStyleName("productCategory");
+				vp.add(catHtml);
+				List<AWSServicePojo> services = awsServices.get(catName);
+				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
+				for (AWSServicePojo svc : services) {
+					GWT.log("Adding service: " + svc.getAwsServiceName());
+					Anchor svcAnchor = new Anchor(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+					svcAnchor.addStyleName("productAnchor");
+					svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
+							"  DESCRIPTION: " + svc.getDescription());
+					svcAnchor.setHref(svc.getLandingPageURL());
+					svcAnchor.setTarget("_blank");
+					if (svc.getStatus().toLowerCase().contains("blocked")) {
+						svcAnchor.addStyleName("productAnchorBlocked");
+					}
+					vp.add(svcAnchor);
+				}
+				HTMLPanel html = new HTMLPanel("<hr>");
+				vp.add(html);
+			}
+			catCntr++;
+		}
+		// add last VP to the HP because it gets populated but not added above
+		if (hp.getWidgetCount() < 4) {
+			for (int i=hp.getWidgetCount(); i<4; i++) {
+				hp.add(vpList.get(i));
+			}
+		}
+
+		productsPopup.showRelativeTo(linksPanel);
+	}
+	void showServices() {
+		if (awsServices == null || awsServices.size() == 0) {
+			AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					GWT.log("problem getting services..." + caught.getMessage());
+					showMessageToUser("Unable to display product information at this "
+							+ "time.  Please try again later.");
+				}
+
+				@Override
+				public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
+					awsServices = result;
+					GWT.log("got " + result.size() + " categories of services back.");
+					if (awsServices == null || awsServices.size() == 0) {
+						// there's an issue
+						showMessageToUser("Unable to display product information at this time.  Please try again later.");
+					}
+					else {
+						showServicesPopup();
+					}
+				}
+			};
+			VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+		}
+		else {
+			this.showServicesPopup();
+		}
+	}
 	@Override
 	public void initializeAwsServiceMap() {
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
@@ -758,6 +767,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			@Override
 			public void onFailure(Throwable caught) {
 				GWT.log("problem getting services..." + caught.getMessage());
+				showMessageToUser("Unable to display product information at this "
+						+ "time.  Please try again later.");
 			}
 
 			@Override

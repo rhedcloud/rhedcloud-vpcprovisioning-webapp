@@ -231,6 +231,7 @@ public interface VpcProvisioningService extends RemoteService {
 	void deleteUserNotification(UserNotificationPojo notification) throws RpcException;
 	boolean userHasUnreadNotifications(UserAccountPojo user) throws RpcException;
 	int getNotificationCheckIntervalMillis() throws RpcException;
+	void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user) throws RpcException;
 	
 	// AccountNotifications
 	AccountNotificationQueryResultPojo getAccountNotificationsForFilter(AccountNotificationQueryFilterPojo filter) throws RpcException;

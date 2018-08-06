@@ -4444,29 +4444,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (awsServicesMap.isEmpty()) {
 			svcCnt = servicesResult.getResults().size();
 			for (AWSServicePojo service : servicesResult.getResults()) {
-		    		// see if this category is already in the awsServicesMap
-				String category = service.getConsoleCategories().get(0);
-		    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
-		    		if (servicesForCat == null) {
-		    			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
-		    			servicesForCat.add(service);
-		    			awsServicesMap.put(category, servicesForCat);
-		    		}
-		    		else {
-		    			servicesForCat.add(service);
-		    		}
+		    	// see if this category is already in the awsServicesMap
+				String category = "Unknown";
+				if (service.getCategories() != null && service.getCategories().size() > 0) {
+					category = service.getCategories().get(0);
+				}
+	    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
+	    		if (servicesForCat == null) {
+	    			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
+	    			servicesForCat.add(service);
+	    			awsServicesMap.put(category, servicesForCat);
+	    		}
+	    		else {
+	    			servicesForCat.add(service);
+	    		}
 			}
 		}
 	    else {
-        		Iterator<String> keys = awsServicesMap.keySet().iterator();
-        		while (keys.hasNext()) {
-        			String catName = keys.next();
-    				List<AWSServicePojo> services = awsServicesMap.get(catName);
-    				for (AWSServicePojo svc : services) {
-    					info(catName + ": " + svc.getAwsServiceName());
-    					svcCnt++;
-    				}
-        		}
+    		Iterator<String> keys = awsServicesMap.keySet().iterator();
+    		while (keys.hasNext()) {
+    			String catName = keys.next();
+				List<AWSServicePojo> services = awsServicesMap.get(catName);
+				for (AWSServicePojo svc : services) {
+					info(catName + ": " + svc.getAwsServiceName());
+					svcCnt++;
+				}
+    		}
 	    }
 	    info("returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
 		return awsServicesMap;
@@ -4740,8 +4743,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			UserNotificationQuerySpecification queryObject = (UserNotificationQuerySpecification) getObject(Constants.MOA_USER_NOTIFICATION_QUERY_SPEC);
 			UserNotification actionable = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
 
+			boolean increaseReqSvcTimeout = true;
 			if (filter != null) {
 				if (filter.isUseQueryLanguage()) {
+					increaseReqSvcTimeout = false;
 					QueryLanguage ql = queryObject.newQueryLanguage();
 					if (filter.getReadStr() != null) {
 						if (filter.isRead() == false) {
@@ -4769,6 +4774,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					queryObject.setQueryLanguage(ql);
 				}
 				else {
+					increaseReqSvcTimeout = true;
 					queryObject.setUserId(filter.getUserId());
 					queryObject.setPriority(filter.getPriority());
 					queryObject.setType(filter.getType());
@@ -4785,10 +4791,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			
 			RequestService reqSvc = this.getAWSRequestService();
-			// TODO: if they're asking for ALL notifications, we'll have to bump 
+			// if they're asking for ALL notifications, we'll have to bump 
 			// the timeout interval WAY up
-//			((PointToPointProducer) reqSvc)
-//			.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 4);
+			if (increaseReqSvcTimeout) {
+				info("[getUserNotificationsForFilter] potentially big UserNotification.Query, "
+						+ "increasing RequestService timeout interval."); 
+				((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 10);
+			}
 			
 			@SuppressWarnings("unchecked")
 			List<UserNotification> moas = actionable.query(queryObject,
@@ -7781,5 +7791,41 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	public void setSrdProducerPool(ProducerPool srdProducerPool) {
 		this.srdProducerPool = srdProducerPool;
+	}
+
+	@Override
+	public void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user) throws RpcException {
+		UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
+		filter.setUseQueryLanguage(true);
+		filter.setReadStr("false");
+		filter.setRead(false);
+		filter.setUserId(user.getPublicId());
+		info("[markAllUnreadNotificationsForUserAsRead] getting all un-read "
+				+ "notifications for user " + user.getPublicId());
+		boolean keepChecking = true;
+		int totalUpdates = 0;
+		notificationLoop: while (keepChecking) {
+			UserNotificationQueryResultPojo result = this.getUserNotificationsForFilter(filter);
+			if (result.getResults().size() == 0) {
+				keepChecking = false;
+				break notificationLoop;
+			}
+			else {
+				totalUpdates += result.getResults().size();
+			}
+			info("[markAllUnreadNotificationsForUserAsRead] marking " + 
+					result.getResults().size() + " unread UserNotifications for user " + 
+					user.getPublicId() + " to 'read'");
+			for (UserNotificationPojo unp : result.getResults()) {
+				unp.setRead(true);
+				unp.setReadDateTime(new Date());
+				this.updateUserNotification(unp);
+			}
+			info("[markAllUnreadNotificationsForUserAsRead] " + totalUpdates + 
+					" total updates so far...");
+		}
+		info("[markAllUnreadNotificationsForUserAsRead] DONE marking " + totalUpdates + 
+				" unread UserNotifications for user " + 
+				user.getPublicId() + " to 'read'");
 	}
 }
