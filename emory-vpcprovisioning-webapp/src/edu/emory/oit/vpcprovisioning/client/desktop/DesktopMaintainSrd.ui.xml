@@ -1,0 +1,88 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:ScrollPanel width="100%" height="99%">
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:HTML ui:field="srdHeader" addStyleNames="{style.mediumLabel}">Security Risk Detection Details</g:HTML>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid cellSpacing="8">
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountIdTB" debugId="accountIdTB" 
+							enabled="false"/>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Security Risk Detector:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="detectorTB" debugId="detectorTB"
+							enabled="false"/>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Security Risk Remediator:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="remediatorTB" debugId="remediatorTB"
+							enabled="false"/>
+			    	</g:customCell>
+		    	</g:row>
+			</g:Grid>
+		</g:cell>
+    	<!-- TODO: DetectedSecurityRisk* -> RemediationResult? -> Errors* -->
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid cellSpacing="8">
+				<g:row>
+					<g:customCell>
+						<g:Label addStyleNames="{style.label-left}">Security Risks:</g:Label>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="expandButton" debugId="expandButton" text="++" 
+							width="32px" height="32px"
+							title="Expand all Security Risks"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="collapseButton" debugId="collapseButton" text="--" 
+							width="32px" height="32px"
+							title="Collapse all Security Risks"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+   			<g:DecoratorPanel>
+   				<g:ScrollPanel ui:field="detectedRisksPanel">
+   				</g:ScrollPanel>
+   			</g:DecoratorPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Label ui:field="createInfoLabel" debugId="createInfoLabel" addStyleNames="{style.longField}"/>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Label ui:field="updateInfoLabel" debugId="updateInfoLabel" addStyleNames="{style.longField}"/>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

@@ -1,6 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +17,9 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
@@ -348,5 +349,33 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		getView().showPleaseWaitDialog("Marking all un-read notifications to read.  Depending on the "
 				+ "number of notifications, this could take a while...Please Wait");
 		VpcProvisioningService.Util.getInstance().markAllUnreadNotificationsForUserAsRead(user, callback);
+	}
+
+	@Override
+	public void showSrdForUserNotification(final UserNotificationPojo userNotification) {
+		// get the SRD associated to the notification and pass it
+		AsyncCallback<SecurityRiskDetectionQueryResultPojo> cb = new AsyncCallback<SecurityRiskDetectionQueryResultPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(SecurityRiskDetectionQueryResultPojo result) {
+				if (result.getResults().size() > 0) {
+					SecurityRiskDetectionPojo srd = result.getResults().get(0);
+					ActionEvent.fire(getEventBus(), ActionNames.VIEW_SRD_FOR_USER_NOTIFICATION, srd, userNotification);
+				}
+				else {
+					// TODO: error - no srd found
+				}
+			}
+			
+		};
+		SecurityRiskDetectionQueryFilterPojo filter = new SecurityRiskDetectionQueryFilterPojo();
+		filter.setSecurityRiskDetectionId(userNotification.getReferenceId());
+		VpcProvisioningService.Util.getInstance().getSecurityRiskDetectionsForFilter(filter, cb);
 	}
 }

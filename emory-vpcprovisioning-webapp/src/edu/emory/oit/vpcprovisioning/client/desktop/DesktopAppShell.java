@@ -198,6 +198,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			@Override
 			public void onBrowserEvent(Event event) {
 				if(Event.ONCLICK == event.getTypeInt()) {
+					if (userProfile == null) {
+						showMessageToUser("There does not appear to be anyone logged in.  Please log in and try again.");
+						return;
+					}
 					// TODO: fire event
 					//					ActionEvent.fire(eventBus, ActionNames.MAINTAIN_USER_PROFILE);
 
@@ -206,23 +210,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					db.setText("Maintain User Profile");
 					db.setGlassEnabled(true);
 					db.center();
-					//					final MaintainCidrAssignmentPresenter presenter = new MaintainCidrAssignmentPresenter(clientFactory, event.getCidr());
-					//					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
-					//						@Override
-					//						public void onClick(ClickEvent event) {
-					//							db.hide();
-					//						}
-					//					});
-					//					presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
-					//						@Override
-					//						public void onClick(ClickEvent event) {
-					//							if (!presenter.getView().hasFieldViolations()) {
-					//								db.hide();
-					//							}
-					//						}
-					//					});
-					//					presenter.start(eventBus);
-					//					db.setWidget(presenter);
 					VerticalPanel vp = new VerticalPanel();
 					vp.setSpacing(8);;
 					Grid g = new Grid(userProfile.getProperties().size() + 1, 2);
@@ -285,23 +272,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 		});
 
-		//	    Event.sinkEvents(notificationsElem, Event.ONCLICK);
-		//	    Event.setEventListener(notificationsElem, new EventListener() {
-		//			@Override
-		//			public void onBrowserEvent(Event event) {
-		//				if(Event.ONCLICK == event.getTypeInt()) {
-		//					productsPopup.hide();
-		//					// clear other features panel
-		//					otherFeaturesPanel.clear();
-		//					// add list notifications view
-		//					// add maintain notifications view
-		//					hideMainTabPanel();
-		//					showOtherFeaturesPanel();
-		//					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
-		//				}
-		//			}
-		//	    });
-
 		Event.sinkEvents(productsElem, Event.ONCLICK);
 		Event.setEventListener(productsElem, new EventListener() {
 			@Override
@@ -319,6 +289,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.hide();
 		// clear other features panel
 		otherFeaturesPanel.clear();
+		if (userLoggedIn == null) {
+			showMessageToUser("There does not appear to be anyone logged in at this time.  Please log in and try again.");
+			return;
+		}
 		// add list notifications view
 		// add maintain notifications view
 		hideMainTabPanel();

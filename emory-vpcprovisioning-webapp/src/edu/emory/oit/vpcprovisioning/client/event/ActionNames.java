@@ -155,6 +155,7 @@ public interface ActionNames {
 	final String MAINTAIN_SERVICE_TEST_PLAN = "maintainServiceTestPlan";
 	final String CREATE_SERVICE_TEST_PLAN = "createServiceTestPlan";
 	final String SERVICE_TEST_PLAN_SAVED = "ServiceTestPlanSaved";
-	final String VIEW_SRD = "viewSrd";
+	final String VIEW_SRD_FOR_USER_NOTIFICATION = "viewUserSrd";
+	final String VIEW_SRD_FOR_ACCOUNT_NOTIFICATION = "viewAccountSrd";
 
 }

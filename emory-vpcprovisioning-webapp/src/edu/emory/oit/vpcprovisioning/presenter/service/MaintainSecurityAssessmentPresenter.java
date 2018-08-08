@@ -61,7 +61,6 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

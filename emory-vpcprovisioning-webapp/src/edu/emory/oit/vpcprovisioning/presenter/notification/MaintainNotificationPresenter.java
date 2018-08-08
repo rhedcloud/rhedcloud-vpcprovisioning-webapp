@@ -13,6 +13,9 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -273,5 +276,33 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
+	}
+
+	@Override
+	public void showSrdForUserNotification(final UserNotificationPojo userNotification) {
+		// get the SRD associated to the notification and pass it
+		AsyncCallback<SecurityRiskDetectionQueryResultPojo> cb = new AsyncCallback<SecurityRiskDetectionQueryResultPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(SecurityRiskDetectionQueryResultPojo result) {
+				if (result.getResults().size() > 0) {
+					SecurityRiskDetectionPojo srd = result.getResults().get(0);
+					ActionEvent.fire(getEventBus(), ActionNames.VIEW_SRD_FOR_USER_NOTIFICATION, srd, userNotification);
+				}
+				else {
+					// TODO: error - no srd found
+				}
+			}
+			
+		};
+		SecurityRiskDetectionQueryFilterPojo filter = new SecurityRiskDetectionQueryFilterPojo();
+		filter.setSecurityRiskDetectionId(userNotification.getReferenceId());
+		VpcProvisioningService.Util.getInstance().getSecurityRiskDetectionsForFilter(filter, cb);
 	}
 }

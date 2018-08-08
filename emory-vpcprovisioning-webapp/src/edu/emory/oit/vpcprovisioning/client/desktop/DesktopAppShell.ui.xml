@@ -78,7 +78,7 @@
 			<g:HorizontalPanel>
 				<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
 					<g:HTMLPanel addStyleNames="{style.linksPanelLink}" ui:field='userNameTitleBar'>
-						<div ui:field='userNameElem'>Very Very Long User Name</div>
+						<div ui:field='userNameElem'>[user name]</div>
 					</g:HTMLPanel>
 				</g:cell>
 			</g:HorizontalPanel>

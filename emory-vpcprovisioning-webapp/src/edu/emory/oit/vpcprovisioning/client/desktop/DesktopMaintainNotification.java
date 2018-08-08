@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
@@ -39,10 +40,16 @@ public class DesktopMaintainNotification extends ViewImplBase implements Maintai
 	@UiField TextBox priorityTB;
 	@UiField TextBox subjectTB;
 	@UiField TextArea textTA;
+	@UiField Anchor referenceIdAnchor;
 	@UiField Label createInfoLabel;
 	@UiField Label updateInfoLabel;
 	@UiField Button okayButton;
-//	@UiField Button cancelButton;
+
+	@UiHandler("referenceIdAnchor")
+	void referenceIdAnchorClick(ClickEvent e) {
+		// TODO: let the presenter do this...
+		presenter.showSrdForUserNotification(presenter.getNotification());
+	}
 
 	@UiHandler("okayButton")
 	void okayClick(ClickEvent e) {
@@ -111,6 +118,7 @@ public class DesktopMaintainNotification extends ViewImplBase implements Maintai
 		priorityTB.setText(presenter.getNotification().getPriority());
 		subjectTB.setText(presenter.getNotification().getSubject());
 		textTA.setText(presenter.getNotification().getText());
+		referenceIdAnchor.setText(presenter.getNotification().getReferenceId());
 		String createInfo = "Created by " + presenter.getNotification().getCreateUser() + 
 				" at " + dateFormat.format(presenter.getNotification().getCreateTime());
 		createInfoLabel.setText(createInfo);

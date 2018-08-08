@@ -32,6 +32,7 @@ public interface MaintainNotificationView extends Editor<UserNotificationPojo>, 
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 		public void logMessageOnServer(final String message);
+		void showSrdForUserNotification(UserNotificationPojo userNotification);
 	}
 
 	/**

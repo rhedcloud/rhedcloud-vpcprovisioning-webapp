@@ -35,6 +35,7 @@ public interface ListNotificationView extends IsWidget, View {
 		void refreshListWithUnReadNotificationsForUser(UserAccountPojo user);
 		void refreshListWithAllNotificationsForUser(UserAccountPojo user);
 		void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user);
+		void showSrdForUserNotification(UserNotificationPojo userNotification);
 	}
 
 	/**

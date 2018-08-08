@@ -41,6 +41,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceControl;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceGuideline;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceTestPlan;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSrd;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
@@ -73,6 +74,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlVie
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -128,6 +130,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListServiceGuidelineView listServiceGuidelineView;
 	private MaintainServiceGuidelineView maintainServiceGuidelineView;
 	private MaintainServiceTestPlanView maintainServiceTestPlanView;
+	private MaintainSrdView maintainSrdView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -542,5 +545,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainServiceTestPlanView createMaintainServiceTestPlanView() {
 		return new DesktopMaintainServiceTestPlan();
+	}
+	@Override
+	public MaintainSrdView getMaintainSrdView() {
+		if (maintainSrdView == null) {
+			maintainSrdView = createMaintainSrdView();
+		}
+		return maintainSrdView;
+	}
+	protected MaintainSrdView createMaintainSrdView() {
+		return new DesktopMaintainSrd();
 	}
 }

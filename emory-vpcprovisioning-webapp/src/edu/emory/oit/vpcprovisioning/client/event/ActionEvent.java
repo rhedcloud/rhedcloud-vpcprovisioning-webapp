@@ -36,6 +36,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
@@ -85,6 +86,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private ServiceGuidelinePojo serviceGuideline;
 	private ServiceTestPlanPojo testPlan;
 	private AccountNotificationPojo accountNotification;
+	private SecurityRiskDetectionPojo srd;
 	private QueryFilter filter;
 	private Place nextPlace;
 
@@ -154,6 +156,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName, UserNotificationPojo notification) {
 		eventBus.fireEventFromSource(new ActionEvent(notification), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, SecurityRiskDetectionPojo srd, UserNotificationPojo notification) {
+		eventBus.fireEventFromSource(new ActionEvent(srd, notification), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, SecurityRiskDetectionPojo srd, AccountNotificationPojo notification) {
+		eventBus.fireEventFromSource(new ActionEvent(srd, notification), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, FirewallRulePojo rule) {
@@ -436,6 +446,16 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.testPlan = m;
 	}
 
+	public ActionEvent(SecurityRiskDetectionPojo srd2, UserNotificationPojo notification2) {
+		this.srd = srd2;
+		this.notification = notification2;
+	}
+
+	public ActionEvent(SecurityRiskDetectionPojo srd2, AccountNotificationPojo notification2) {
+		this.srd = srd2;
+		this.accountNotification = notification2;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -612,5 +632,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setCounterMeasure(CounterMeasurePojo counterMeasure) {
 		this.counterMeasure = counterMeasure;
+	}
+
+	public SecurityRiskDetectionPojo getSrd() {
+		return srd;
+	}
+
+	public void setSrd(SecurityRiskDetectionPojo srd) {
+		this.srd = srd;
 	}
 }

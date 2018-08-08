@@ -15,8 +15,6 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
-import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -50,18 +48,14 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 	
 	@UiHandler("referenceIdAnchor")
 	void referenceIdAnchorClick(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SRD, presenter.getNotification());
+		presenter.showSrdForAccountNotification(presenter.getNotification());
 	}
 	@UiHandler("okayButton")
 	void okayClick(ClickEvent e) {
-		// TODO: populate/save the notification
-		// as of 7/12/2018, this is a view only interface so nothing really to save just yet
-//		presenter.saveNotification();
 	}
 
 	@UiHandler("cancelButton")
 	void cancelClick(ClickEvent e) {
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, presenter.getAccount());
 	}
 
 	@Override

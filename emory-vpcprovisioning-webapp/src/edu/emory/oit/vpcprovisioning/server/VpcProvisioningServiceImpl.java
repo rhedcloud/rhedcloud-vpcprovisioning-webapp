@@ -7712,6 +7712,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					" objects from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (SecurityRiskDetection moa : moas) {
+				info("[getSecurityRiskDetectionsForFilter] moa is: " + moa.toXmlString());
 				SecurityRiskDetectionPojo pojo = new SecurityRiskDetectionPojo();
 				SecurityRiskDetectionPojo baseline = new SecurityRiskDetectionPojo();
 				this.populateSecurityRiskDetectionPojo(moa, pojo);
@@ -7768,11 +7769,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					rrp.setStatus(rrm.getStatus());
 					rrp.setDescription(rrm.getDescription());
 					if (rrm.getError() != null) {
-						for (org.openeai.moa.objects.resources.Error error : (List<org.openeai.moa.objects.resources.Error>)rrm.getError()) {
+						for (String error : (List<String>)rrm.getError()) {
 							ErrorPojo ep = new ErrorPojo();
-							ep.setErrorNumber(error.getErrorNumber());
-							ep.setType(error.getType());
-							ep.setDescription(error.getErrorDescription());
+//							ep.setErrorNumber(error.getErrorNumber());
+							ep.setType("SRD");
+							ep.setDescription(error);
 							rrp.getErrors().add(ep);
 						}
 					}

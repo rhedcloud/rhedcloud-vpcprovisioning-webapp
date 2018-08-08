@@ -59,6 +59,7 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopMaintainAccount extends ViewImplBase implements MaintainAccountView {
 	Presenter presenter;
@@ -923,6 +924,30 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		});
 		subjectColumn.setCellStyleNames("productAnchor");
 		listTable.addColumn(subjectColumn, "Subject");
+
+		// Reference id column
+		Column<AccountNotificationPojo, String> referenceId = 
+			new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {
+			
+			@Override
+			public String getValue(AccountNotificationPojo object) {
+				return object.getReferenceid();
+			}
+		};
+		referenceId.setSortable(true);
+		sortHandler.setComparator(referenceId, new Comparator<AccountNotificationPojo>() {
+			public int compare(AccountNotificationPojo o1, AccountNotificationPojo o2) {
+				return o1.getReferenceid().compareTo(o2.getReferenceid());
+			}
+		});
+		referenceId.setFieldUpdater(new FieldUpdater<AccountNotificationPojo, String>() {
+	    	@Override
+	    	public void update(int index, AccountNotificationPojo object, String value) {
+	    		presenter.showSrdForAccountNotification(object);
+	    	}
+	    });
+		referenceId.setCellStyleNames("productAnchor");
+		listTable.addColumn(referenceId, "Reference ID");
 
 		Column<AccountNotificationPojo, String> createTime = 
 				new Column<AccountNotificationPojo, String> (new ClickableTextCell()) {

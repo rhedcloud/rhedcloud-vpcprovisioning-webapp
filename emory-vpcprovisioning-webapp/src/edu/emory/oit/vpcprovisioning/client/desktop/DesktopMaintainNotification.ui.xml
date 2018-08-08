@@ -44,6 +44,15 @@
 							ui:field="textTA" debugId="textTA" />
 			    	</g:customCell>
 		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Reference ID:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+			    		<g:Anchor addStyleNames="{style.productAnchor}" 
+			    			ui:field="referenceIdAnchor"/>
+			    	</g:customCell>
+		    	</g:row>
 			</g:Grid>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">

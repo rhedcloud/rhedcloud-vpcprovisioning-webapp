@@ -494,7 +494,8 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 		referenceId.setFieldUpdater(new FieldUpdater<UserNotificationPojo, String>() {
 	    	@Override
 	    	public void update(int index, UserNotificationPojo object, String value) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SRD, object);
+	    		presenter.showSrdForUserNotification(object);
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SRD_FOR_USER_NOTIFICATION, object);
 	    	}
 	    });
 		referenceId.setCellStyleNames("productAnchor");

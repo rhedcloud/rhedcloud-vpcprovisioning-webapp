@@ -15,6 +15,9 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainAccountNotificationPresenter extends PresenterBase  implements MaintainAccountNotificationView.Presenter {
@@ -273,5 +276,32 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	@Override
 	public AccountPojo getAccount() {
 		return account;
+	}
+
+	@Override
+	public void showSrdForAccountNotification(final AccountNotificationPojo selected) {
+		AsyncCallback<SecurityRiskDetectionQueryResultPojo> cb = new AsyncCallback<SecurityRiskDetectionQueryResultPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(SecurityRiskDetectionQueryResultPojo result) {
+				if (result.getResults().size() > 0) {
+					SecurityRiskDetectionPojo srd = result.getResults().get(0);
+					ActionEvent.fire(getEventBus(), ActionNames.VIEW_SRD_FOR_ACCOUNT_NOTIFICATION, srd, selected);
+				}
+				else {
+					// TODO: error - no srd found
+				}
+			}
+			
+		};
+		SecurityRiskDetectionQueryFilterPojo filter = new SecurityRiskDetectionQueryFilterPojo();
+		filter.setSecurityRiskDetectionId(selected.getReferenceid());
+		VpcProvisioningService.Util.getInstance().getSecurityRiskDetectionsForFilter(filter, cb);
 	}
 }

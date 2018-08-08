@@ -66,7 +66,9 @@ a:visited {
 	white-space: nowrap;
 	cursor: hand;
 	cursor: pointer;
-	
+	width: 250px;
+    max-width: 250px;
+    word-wrap: break-word;
 }
 
 .gwt-Tree .gwt-TreeItem-selected {
@@ -671,3 +673,12 @@ hr {
 	animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate;  
 }
 @keyframes blinker { to { opacity: 0; } }
+.longWrappedLabel {
+	width: 350px !important;
+    word-wrap: break-word !important;
+}
+.longField {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	width: 500px;
+	font-size: 12pt;
+}

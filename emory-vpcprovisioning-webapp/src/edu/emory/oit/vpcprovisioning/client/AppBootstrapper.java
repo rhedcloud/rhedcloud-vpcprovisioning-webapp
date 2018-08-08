@@ -13,12 +13,8 @@ import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.UmbrellaException;
 
@@ -59,6 +55,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPre
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -1184,62 +1181,63 @@ public class AppBootstrapper {
 			}
 		});
 		
-		ActionEvent.register(eventBus, ActionNames.VIEW_SRD, new ActionEvent.Handler() {
+		ActionEvent.register(eventBus, ActionNames.VIEW_SRD_FOR_USER_NOTIFICATION, new ActionEvent.Handler() {
 			@Override
 			public void onAction(final ActionEvent actionEvent) {
-				boolean isAccountNotification = false;
-				if (actionEvent.getAccountNotification() != null) {
-					isAccountNotification = true;
-				}
 				final DialogBox db = new DialogBox();
-				if (isAccountNotification) {
-					db.setText("View Account Notification SRD");
-				}
-				else {
-					db.setText("View User Notification SRD");
-				}
+				db.setText("View User Notification Security Risk Detection Detail");
 				db.setGlassEnabled(true);
 				db.center();
-				// TODO: MaintainSrd view, place, presenter, etc...
-//				final MaintainAccountNotificationPresenter presenter = new MaintainAccountNotificationPresenter(clientFactory, actionEvent.getAccount(), actionEvent.getAccountNotification());
-//				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
-//					@Override
-//					public void onClick(ClickEvent event) {
-//						db.hide();
-//					}
-//				});
-//				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
-//					@Override
-//					public void onClick(ClickEvent event) {
-//						if (!presenter.getView().hasFieldViolations()) {
-//							// save logic is handled by the presenter
-//							db.hide();
-//						}
-//					}
-//				});
-//				presenter.start(eventBus);
-//				db.setWidget(presenter);
-				
-				// TODO: temporary
-				VerticalPanel vp = new VerticalPanel();
-				vp.setSpacing(12);
-				db.setWidget(vp);
-				
-				HTML h = new HTML("Coming soon...");
-				vp.add(h);
-				
-				Button closeButton = new Button("Close");
-				closeButton.addClickHandler(new ClickHandler() {
+				// MaintainSrd view, place, presenter, etc...
+				final MaintainSrdPresenter presenter = new MaintainSrdPresenter(clientFactory, actionEvent.getSrd(), actionEvent.getNotification());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
 						db.hide();
 					}
 				});
-				vp.add(closeButton);
-				
-				vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
-				vp.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_CENTER);
-				
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							// save logic is handled by the presenter
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.VIEW_SRD_FOR_ACCOUNT_NOTIFICATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(final ActionEvent actionEvent) {
+				final DialogBox db = new DialogBox();
+				db.setText("View Account Notification Security Risk Detection Detail");
+				db.setGlassEnabled(true);
+				db.center();
+				// MaintainSrd view, place, presenter, etc...
+				final MaintainSrdPresenter presenter = new MaintainSrdPresenter(clientFactory, actionEvent.getSrd(), actionEvent.getAccountNotification());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							// save logic is handled by the presenter
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
 				db.show();
 				db.center();
 			}

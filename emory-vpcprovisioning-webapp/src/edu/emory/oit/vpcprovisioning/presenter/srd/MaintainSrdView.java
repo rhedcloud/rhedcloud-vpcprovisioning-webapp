@@ -1,6 +1,7 @@
-package edu.emory.oit.vpcprovisioning.presenter.notification;
+package edu.emory.oit.vpcprovisioning.presenter.srd;
 
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -8,39 +9,23 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface MaintainAccountNotificationView extends Editor<AccountNotificationPojo>, IsWidget, View {
+public interface MaintainSrdView extends Editor<SecurityRiskDetectionPojo>, AcceptsOneWidget, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
 	public interface Presenter extends PresentsWidgets {
-		/**
-		 * Delete the current account or cancel the creation of a account.
-		 */
-		void deleteNotification();
-
-		/**
-		 * Create a new account or save the current account based on the values in the
-		 * inputs.
-		 */
-		void saveNotification();
-		AccountNotificationPojo getNotification();
-		public boolean isValidNotificationId(String value);
-		public boolean isValidNotificationName(String value);
+		SecurityRiskDetectionPojo getSrd();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 		public void logMessageOnServer(final String message);
-		public AccountPojo getAccount();
-		void showSrdForAccountNotification(AccountNotificationPojo selected);
+		public AccountNotificationPojo getAccountNotification();
+		public UserNotificationPojo getUserNotification();
 	}
-
-	/**
-	 * Get the driver used to edit tasks in the view.
-	 */
-	//	  RequestFactoryEditorDriver<TaskProxy, ?> getEditorDriver();
 
 	/**
 	 * Specify whether the view is editing an existing account or creating a new
@@ -59,14 +44,6 @@ public interface MaintainAccountNotificationView extends Editor<AccountNotificat
 	void setLocked(boolean locked);
 
 	/**
-	 * The the violation associated with the name.
-	 * 
-	 * @param message the message to show, or null if no violation
-	 */
-	void setNotificationIdViolation(String message);
-	void setNotificationNameViolation(String message);
-
-	/**
 	 * Set the {@link Presenter} for this view.
 	 * 
 	 * @param presenter the presenter
@@ -75,5 +52,4 @@ public interface MaintainAccountNotificationView extends Editor<AccountNotificat
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-
 }

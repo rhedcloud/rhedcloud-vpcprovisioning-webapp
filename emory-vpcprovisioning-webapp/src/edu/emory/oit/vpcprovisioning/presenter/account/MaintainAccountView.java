@@ -54,6 +54,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 //		public void selectAccountNotification
 		void saveNotification(AccountNotificationPojo selected);
 		void deleteNotification(AccountNotificationPojo selected);
+		void showSrdForAccountNotification(AccountNotificationPojo selected);
 	}
 
 	/**
