@@ -65,17 +65,17 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 	@UiHandler("expandButton")
 	void expandButtonClicked(ClickEvent e) {
 		// TODO: expand all child tree items
-		if (cdr_tree != null && cdr_tree.getItemCount() > 0) {
-			int rootItemCount = cdr_tree.getItemCount();
-			for (int i=0; i<rootItemCount; i++) {
-				TreeItem ti = cdr_tree.getItem(i);
-				ti.getChild(0).getChild(0).setState(true, false);
-				ti.getChild(0).setState(true, false);
-				ti.setState(true, false);
-//				expandAll(ti);
-			}
-		}
-//		showMessageToUser("This functionality is comming soon.........");
+//		if (cdr_tree != null && cdr_tree.getItemCount() > 0) {
+//			int rootItemCount = cdr_tree.getItemCount();
+//			for (int i=0; i<rootItemCount; i++) {
+//				TreeItem ti = cdr_tree.getItem(i);
+//				ti.getChild(0).getChild(0).setState(true, false);
+//				ti.getChild(0).setState(true, false);
+//				ti.setState(true, false);
+////				expandAll(ti);
+//			}
+//		}
+		showMessageToUser("This functionality is comming soon.........");
 	}
 //	void expandAll(TreeItem ti) {
 //		int childCount = ti.getChildCount();
