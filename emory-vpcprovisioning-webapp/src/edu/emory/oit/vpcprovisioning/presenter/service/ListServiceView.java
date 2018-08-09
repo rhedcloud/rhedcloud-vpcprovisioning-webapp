@@ -9,6 +9,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListServiceView extends IsWidget, View {
@@ -25,6 +26,7 @@ public interface ListServiceView extends IsWidget, View {
 		 */
 		void deleteService(AWSServicePojo service);
 		public void logMessageOnServer(final String message);
+		void refreshList(final UserAccountPojo user);
 	}
 
 	/**

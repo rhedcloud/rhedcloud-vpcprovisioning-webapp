@@ -280,16 +280,22 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 
 	@Override
 	public void showSrdForAccountNotification(final AccountNotificationPojo selected) {
+		getView().showPleaseWaitDialog("Retrieving Security Risk Detection from the SRD service...");
 		AsyncCallback<SecurityRiskDetectionQueryResultPojo> cb = new AsyncCallback<SecurityRiskDetectionQueryResultPojo>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Security Risk Detection.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(SecurityRiskDetectionQueryResultPojo result) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 				if (result.getResults().size() > 0) {
 					SecurityRiskDetectionPojo srd = result.getResults().get(0);
 					ActionEvent.fire(getEventBus(), ActionNames.VIEW_SRD_FOR_ACCOUNT_NOTIFICATION, srd, selected);

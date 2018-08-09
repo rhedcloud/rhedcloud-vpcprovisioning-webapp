@@ -7,6 +7,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -30,6 +31,7 @@ public interface ListVpcView extends IsWidget, View {
 		 */
 		void deleteVpc(VpcPojo Vpc);
 		public void logMessageOnServer(final String message);
+		void refreshList(final UserAccountPojo user);
 	}
 
 	/**

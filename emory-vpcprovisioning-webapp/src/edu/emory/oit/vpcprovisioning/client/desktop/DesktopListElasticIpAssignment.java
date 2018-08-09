@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -53,6 +54,12 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button allocateAddressButton;
 	@UiField Button actionsButton;
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshList(userLoggedIn);
+	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
 
@@ -192,6 +199,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 	public DesktopListElasticIpAssignment() {
 		initWidget(uiBinder.createAndBindUi(this));
+		setRefreshButtonImage(refreshButton);
 	}
 
 	@Override

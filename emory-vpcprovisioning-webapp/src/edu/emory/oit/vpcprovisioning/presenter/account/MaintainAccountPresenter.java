@@ -85,7 +85,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitPanel(null);
 		getView().disableAdminMaintenance();
-		getView().showWaitForNotificationsDialog("Retreiving Account Notifications...");
 
 		if (accountId == null) {
 			clientFactory.getShell().setSubTitle("Create Account");
@@ -113,35 +112,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				}
 			};
 			VpcProvisioningService.Util.getInstance().getAccountById(accountId, acct_cb);
-			
-			// get account notifications for this account
-			AsyncCallback<AccountNotificationQueryResultPojo> acct_not_cb = new AsyncCallback<AccountNotificationQueryResultPojo>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					GWT.log("Exception retrieving account notifications", caught);
-					getView().hidWaitForNotificationsDialog();
-					getView().showMessageToUser("There was an exception on the " +
-							"server retrieving the notifications for this account.  "
-							+ "Processing will continue.  Message " +
-							"from server is: " + caught.getMessage());
-				}
-
-				@Override
-				public void onSuccess(AccountNotificationQueryResultPojo result) {
-					getView().setAccountNotifications(result.getResults());
-					getView().hidWaitForNotificationsDialog();
-				}
-			};
-			AccountNotificationQueryFilterPojo filter = new AccountNotificationQueryFilterPojo();
-			filter.setAccountId(accountId);
-			filter.setUseQueryLanguage(true);
-			filter.setMaxRows(100);
-			// get notifications created in the last 24 hours
-//			Date now = new Date();
-//			Date yesterday = new Date(now.getTime() - Constants.MILLIS_PER_DAY);
-//			filter.setStartDate(yesterday);
-//			filter.setEndDate(now);
-			VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
 		}
 
 		// get awsAccountsURL and awsBillingManagementURL in parallel
@@ -190,6 +160,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
+				refreshAccountNotificationList(user);
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -684,22 +655,32 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void showSrdForAccountNotification(final AccountNotificationPojo selected) {
+		getView().showPleaseWaitDialog("Retrieving Security Risk Detection from the SRD service...");
 		AsyncCallback<SecurityRiskDetectionQueryResultPojo> cb = new AsyncCallback<SecurityRiskDetectionQueryResultPojo>() {
-
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Security Risk Detection.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(SecurityRiskDetectionQueryResultPojo result) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 				if (result.getResults().size() > 0) {
 					SecurityRiskDetectionPojo srd = result.getResults().get(0);
 					ActionEvent.fire(getEventBus(), ActionNames.VIEW_SRD_FOR_ACCOUNT_NOTIFICATION, srd, selected);
 				}
 				else {
-					// TODO: error - no srd found
+					getView().hidePleaseWaitDialog();
+					getView().hidePleaseWaitPanel();
+					getView().showMessageToUser("An unexpected result was returned from the server." +
+							"  Could not find any Security Risk Detection objects for the reference id: " + 
+							selected.getReferenceid() +
+							" this is likely a data issue on the backend.");
 				}
 			}
 			
@@ -707,5 +688,33 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		SecurityRiskDetectionQueryFilterPojo filter = new SecurityRiskDetectionQueryFilterPojo();
 		filter.setSecurityRiskDetectionId(selected.getReferenceid());
 		VpcProvisioningService.Util.getInstance().getSecurityRiskDetectionsForFilter(filter, cb);
+	}
+
+	@Override
+	public void refreshAccountNotificationList(UserAccountPojo user) {
+		getView().showWaitForNotificationsDialog("Retreiving Account Notifications...");
+		// get account notifications for this account
+		AsyncCallback<AccountNotificationQueryResultPojo> acct_not_cb = new AsyncCallback<AccountNotificationQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception retrieving account notifications", caught);
+				getView().hidWaitForNotificationsDialog();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the notifications for this account.  "
+						+ "Processing will continue.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(AccountNotificationQueryResultPojo result) {
+				getView().setAccountNotifications(result.getResults());
+				getView().hidWaitForNotificationsDialog();
+			}
+		};
+		AccountNotificationQueryFilterPojo filter = new AccountNotificationQueryFilterPojo();
+		filter.setAccountId(accountId);
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(100);
+		VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
 	}
 }

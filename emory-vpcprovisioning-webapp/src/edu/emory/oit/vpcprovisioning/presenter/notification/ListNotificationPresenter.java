@@ -137,6 +137,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	 */
 	private void refreshList(final UserAccountPojo user) {
 		// use RPC to get all Notifications for the current filter being used
+		getView().showPleaseWaitDialog("Retrieving Notifications from the AWS Account service...");
 		AsyncCallback<UserNotificationQueryResultPojo> callback = new AsyncCallback<UserNotificationQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -354,16 +355,22 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	@Override
 	public void showSrdForUserNotification(final UserNotificationPojo userNotification) {
 		// get the SRD associated to the notification and pass it
+		getView().showPleaseWaitDialog("Retrieving Security Risk Detection from the SRD service...");
 		AsyncCallback<SecurityRiskDetectionQueryResultPojo> cb = new AsyncCallback<SecurityRiskDetectionQueryResultPojo>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the Security Risk Detection.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(SecurityRiskDetectionQueryResultPojo result) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 				if (result.getResults().size() > 0) {
 					SecurityRiskDetectionPojo srd = result.getResults().get(0);
 					ActionEvent.fire(getEventBus(), ActionNames.VIEW_SRD_FOR_USER_NOTIFICATION, srd, userNotification);

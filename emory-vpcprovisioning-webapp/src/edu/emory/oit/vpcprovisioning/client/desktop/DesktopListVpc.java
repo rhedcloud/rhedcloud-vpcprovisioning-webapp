@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -51,6 +52,12 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<VpcPojo> vpcListTable = new CellTable<VpcPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshList(userLoggedIn);
+	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
 
@@ -64,7 +71,8 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 	public DesktopListVpc() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+		setRefreshButtonImage(refreshButton);
+
 		registerVpcButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

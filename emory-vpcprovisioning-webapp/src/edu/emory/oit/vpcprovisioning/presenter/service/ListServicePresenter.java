@@ -121,7 +121,8 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	/**
 	 * Refresh the CIDR list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
 		// use RPC to get all Services for the current filter being used
 		AsyncCallback<AWSServiceQueryResultPojo> callback = new AsyncCallback<AWSServiceQueryResultPojo>() {
 			@Override

@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -54,7 +55,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	public DesktopListService() {
 		initWidget(uiBinder.createAndBindUi(this));
-		GWT.log("List services desktop view implementation...");
+		setRefreshButtonImage(refreshButton);
 	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -69,6 +70,12 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 //	@UiField Button closeOtherFeaturesButton;
 	@UiField Button createServiceButton;
 	@UiField Button actionsButton;
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshList(userLoggedIn);
+	}
 
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {

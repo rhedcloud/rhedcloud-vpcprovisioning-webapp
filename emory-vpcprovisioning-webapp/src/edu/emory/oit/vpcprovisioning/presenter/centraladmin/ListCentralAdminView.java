@@ -8,6 +8,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListCentralAdminView extends IsWidget, View {
@@ -31,6 +32,7 @@ public interface ListCentralAdminView extends IsWidget, View {
 		
 //		void filterByAccountId(String accountId);
 //		void clearFilter();
+		void refreshList(final UserAccountPojo user);
 	}
 
 	/**

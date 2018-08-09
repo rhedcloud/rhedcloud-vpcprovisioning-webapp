@@ -118,7 +118,8 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	/**
 	 * Refresh the CIDR assignment list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
+        getView().showPleaseWaitDialog("Retrieving Elastic IP Assignments");
 		// use RPC to get all accounts for the current filter being used
 		AsyncCallback<ElasticIpAssignmentQueryResultPojo> callback = new AsyncCallback<ElasticIpAssignmentQueryResultPojo>() {
 			@Override

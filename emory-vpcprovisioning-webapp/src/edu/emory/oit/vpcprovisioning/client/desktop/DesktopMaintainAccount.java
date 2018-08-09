@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
@@ -59,7 +60,6 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopMaintainAccount extends ViewImplBase implements MaintainAccountView {
 	Presenter presenter;
@@ -119,6 +119,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
 	@UiField VerticalPanel sensitiveDataPanel;
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshAccountNotificationList(userLoggedIn);
+	}
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -263,6 +269,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	public DesktopMaintainAccount() {
 		initWidget(uiBinder.createAndBindUi(this));
+		setRefreshButtonImage(refreshButton);
 		GWT.log("maintain account view init...");
 		cancelButton.addDomHandler(new ClickHandler() {
 			@Override

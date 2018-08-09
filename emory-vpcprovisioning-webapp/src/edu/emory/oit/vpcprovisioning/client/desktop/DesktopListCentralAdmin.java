@@ -5,9 +5,11 @@ import java.util.List;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
@@ -16,6 +18,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -48,6 +51,13 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 //	@UiField Button clearFilterButton;
 //	@UiField TextBox centralAdminIdTB;
 
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshList(userLoggedIn);
+	}
+
 	public interface MyCellTableResources extends CellTable.Resources {
 
 	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
@@ -61,10 +71,7 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 
 	public DesktopListCentralAdmin() {
 		initWidget(uiBinder.createAndBindUi(this));
-	}
-
-	public DesktopListCentralAdmin(String firstName) {
-		initWidget(uiBinder.createAndBindUi(this));
+		setRefreshButtonImage(refreshButton);
 	}
 
 	@Override
@@ -191,7 +198,7 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 		centralAdminListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		centralAdminListTable.setVisibleRange(0, 15);
+		centralAdminListTable.setVisibleRange(0, 20);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<RoleAssignmentSummaryPojo>();

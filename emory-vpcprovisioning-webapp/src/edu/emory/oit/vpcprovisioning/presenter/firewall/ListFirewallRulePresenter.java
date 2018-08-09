@@ -125,7 +125,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				// Request the firewallRule list now.
 				// this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
 				// the user enter a VPC id in order to filter the list down.
-				refreshFirewallRuleList(userLoggedIn);
+				refreshList(userLoggedIn);
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -136,7 +136,8 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	 * Refresh the Firewall Rule list.
 	 */
 	@Override
-	public void refreshFirewallRuleList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Retrieving firewall rules from the Firewall service...");
 		// use RPC to get all firewallRules for the current filter being used
 		AsyncCallback<FirewallRuleQueryResultPojo> callback = new AsyncCallback<FirewallRuleQueryResultPojo>() {
 			@Override
@@ -343,7 +344,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			@Override
 			public void onSuccess(UserAccountPojo result) {
 				getView().setUserLoggedIn(result);
-				refreshFirewallRuleList(result);
+				refreshList(result);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);

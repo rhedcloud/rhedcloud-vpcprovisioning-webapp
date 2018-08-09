@@ -58,6 +58,11 @@
 						<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
 					</g:customCell>
 			    	<!-- END TEMPORARY -->
+					<g:customCell>
+						<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
+							addStyleNames="{style.refreshButton}"
+							title="Refresh table content"/>
+					</g:customCell>
 				</g:row>
 			</g:Grid>
 		</g:cell>

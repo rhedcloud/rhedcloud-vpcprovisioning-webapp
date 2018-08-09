@@ -28,6 +28,7 @@ public interface ListSecurityRiskView extends IsWidget, View {
 		public void setUserLoggedIn(UserAccountPojo user);
 		public UserAccountPojo getUserLoggedIn();
 		public AWSServicePojo getService();
+		void refreshList(final UserAccountPojo user);
 	}
 
 	/**

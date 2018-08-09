@@ -119,7 +119,8 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 	/**
 	 * Refresh the CIDR list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
 		// use RPC to get all Vpcs for the current filter being used
 		AsyncCallback<VpcpQueryResultPojo> callback = new AsyncCallback<VpcpQueryResultPojo>() {
 			@Override

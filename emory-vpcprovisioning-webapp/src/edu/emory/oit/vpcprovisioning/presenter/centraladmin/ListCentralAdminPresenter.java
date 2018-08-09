@@ -133,7 +133,8 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 	/**
 	 * Refresh the CIDR list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Retrieving Central Administrators from the IDM Service...");
 		// use RPC to get all accounts for the current filter being used
 		AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
 			@Override

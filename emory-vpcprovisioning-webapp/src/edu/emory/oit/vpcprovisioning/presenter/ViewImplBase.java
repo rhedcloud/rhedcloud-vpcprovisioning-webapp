@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,6 +24,13 @@ public abstract class ViewImplBase extends Composite {
 	protected final DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
 	PopupPanel pleaseWaitDialog;
 	protected boolean fieldViolations = false;
+	
+	public void setRefreshButtonImage(PushButton refreshButton) {
+		Image img = new Image("images/refresh_icon.png");
+		img.setWidth("30px");
+		img.setHeight("30px");
+		refreshButton.getUpFace().setImage(img);
+	}
 	
 	public void applyStyleToMissingFields(List<Widget> fields) {
 		for (Widget w : fields) {

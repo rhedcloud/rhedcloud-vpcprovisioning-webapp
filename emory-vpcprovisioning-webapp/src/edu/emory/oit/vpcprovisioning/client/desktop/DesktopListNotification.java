@@ -32,7 +32,6 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -70,10 +69,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	public DesktopListNotification() {
 		initWidget(uiBinder.createAndBindUi(this));
-		Image img = new Image("images/refresh_icon.png");
-		img.setWidth("30px");
-		img.setHeight("30px");
-		refreshButton.getUpFace().setImage(img);
+		setRefreshButtonImage(refreshButton);
 	}
 
 	/*** FIELDS ***/
@@ -86,7 +82,12 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
-		showMessageToUser("The functionality you've requested is coming soon.......");
+		if (viewUnReadCB.getValue()) {
+			presenter.refreshListWithUnReadNotificationsForUser(userLoggedIn);
+		}
+		else {
+			presenter.refreshListWithAllNotificationsForUser(userLoggedIn);
+		}
 	}
 	@UiHandler("viewUnReadCB")
 	void viewUnReadCBClicked(ClickEvent e) {

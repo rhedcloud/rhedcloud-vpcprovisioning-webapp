@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -70,6 +71,12 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@UiField VerticalPanel firewallRuleListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField TabLayoutPanel firewallRuleTabPanel;
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshList(userLoggedIn);
+	}
 
 //	@UiField Button filterButton;
 //	@UiField Button clearFilterButton;
@@ -95,13 +102,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	public DesktopListFirewallRule() {
 		initWidget(uiBinder.createAndBindUi(this));
 
-//		firewallExceptionRequestButton.addDomHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				GWT.log("Should go to maintain firewallexceptionrequest here...");
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST);
-//			}
-//		}, ClickEvent.getType());
+		setRefreshButtonImage(refreshButton);
 	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -114,7 +115,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
 			case 0:
-				presenter.refreshFirewallRuleList(userLoggedIn);
+				presenter.refreshList(userLoggedIn);
 				break;
 			case 1:
 				presenter.refreshFirewallRuleExceptionRequestList(userLoggedIn);

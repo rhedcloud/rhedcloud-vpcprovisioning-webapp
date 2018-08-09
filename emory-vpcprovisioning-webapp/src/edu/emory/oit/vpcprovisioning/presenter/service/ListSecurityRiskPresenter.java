@@ -126,7 +126,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	/**
 	 * Refresh the CIDR list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
 		setSecurityRiskList(assessment.getSecurityRisks());
         getView().hidePleaseWaitDialog();
 	}

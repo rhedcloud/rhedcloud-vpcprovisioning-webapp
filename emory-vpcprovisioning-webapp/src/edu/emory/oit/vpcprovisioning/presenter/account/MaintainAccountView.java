@@ -15,6 +15,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View {
@@ -55,6 +56,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		void saveNotification(AccountNotificationPojo selected);
 		void deleteNotification(AccountNotificationPojo selected);
 		void showSrdForAccountNotification(AccountNotificationPojo selected);
+		void refreshAccountNotificationList(final UserAccountPojo user);
 	}
 
 	/**

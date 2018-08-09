@@ -9,6 +9,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
@@ -34,6 +35,7 @@ public interface ListElasticIpAssignmentView extends IsWidget, View {
 		public void setVpc(VpcPojo vpc);
 		public void generateElasticIpAssignment();
 		void saveElasticIpAssignment(ElasticIpAssignmentPojo selected);
+		void refreshList(final UserAccountPojo user);
 	}
 
 	/**

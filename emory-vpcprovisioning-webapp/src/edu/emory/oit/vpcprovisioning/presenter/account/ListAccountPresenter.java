@@ -121,8 +121,9 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	/**
 	 * Refresh the Account list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
 		// use RPC to get all accounts for the current filter being used
+		getView().showPleaseWaitDialog("Retrieving accounts from the AWS Account Service...");
 		AsyncCallback<AccountQueryResultPojo> callback = new AsyncCallback<AccountQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

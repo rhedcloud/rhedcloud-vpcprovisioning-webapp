@@ -22,10 +22,15 @@
 		Central Administrators in this environment.  NOTE:  to manage this list 
 		please visit Emory's <a target="_blank" href="MY_NET_ID_URL">MyNetId</a> system.
 		</g:HTML>
-		<!-- 
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>
+					<g:customCell>
+						<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
+							addStyleNames="{style.refreshButton}"
+							title="Refresh table content"/>
+					</g:customCell>
+					<!-- 
 					<g:customCell>
 						<g:Button ui:field="addCentralAdminButton" debugId="addCentralAdminButton" text="Add CentralAdmin" addStyleNames="{style.glowing-border} {style.actionButton}"/>
 					</g:customCell>
@@ -42,10 +47,10 @@
 					<g:customCell>
 						<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by centralAdmin id"/>
 					</g:customCell>
+					 -->
 				</g:row>
 			</g:Grid>
 		</g:cell>
-		 -->
 		<g:VerticalPanel ui:field="centralAdminListPanel" width="100%">
 			<g:Grid>
 				<g:row>

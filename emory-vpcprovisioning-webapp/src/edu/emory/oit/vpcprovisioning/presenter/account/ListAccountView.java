@@ -9,6 +9,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListAccountView extends IsWidget, View {
@@ -33,6 +34,7 @@ public interface ListAccountView extends IsWidget, View {
 		
 		void filterByAccountId(String accountId);
 		void clearFilter();
+		void refreshList(final UserAccountPojo user);
 	}
 
 	/**

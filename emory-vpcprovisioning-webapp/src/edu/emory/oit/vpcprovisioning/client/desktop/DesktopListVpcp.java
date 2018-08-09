@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -52,8 +53,14 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@UiField SimplePager vpcpListPager;
 	@UiField Button generateVpcButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<VpcpPojo> vpcpListTable = new CellTable<VpcpPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<VpcpPojo> vpcpListTable = new CellTable<VpcpPojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshList(userLoggedIn);
+	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
 
@@ -67,7 +74,8 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	public DesktopListVpcp() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+		setRefreshButtonImage(refreshButton);
+
 		generateVpcButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -162,7 +170,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		vpcpListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		vpcpListTable.setVisibleRange(0, 15);
+		vpcpListTable.setVisibleRange(0, 20);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<VpcpPojo>();

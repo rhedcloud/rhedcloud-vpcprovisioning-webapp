@@ -37,7 +37,7 @@ public interface ListFirewallRuleView extends IsWidget, View {
 		 */
 		void deleteFirewallRule(FirewallRulePojo firewallRule);
 		public void logMessageOnServer(final String message);
-		public void refreshFirewallRuleList(final UserAccountPojo user);
+		public void refreshList(final UserAccountPojo user);
 		public void refreshFirewallRuleExceptionRequestList(final UserAccountPojo user);
 		
 		void filterByVPCId(String vpcId);

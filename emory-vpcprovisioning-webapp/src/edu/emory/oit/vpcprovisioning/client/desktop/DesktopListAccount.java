@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -62,6 +63,12 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox accountIdTB;
+	@UiField PushButton refreshButton;
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		presenter.refreshList(userLoggedIn);
+	}
 
 	private static DesktopListAccountUiBinder uiBinder = GWT.create(DesktopListAccountUiBinder.class);
 
@@ -76,28 +83,9 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	
 	public DesktopListAccount() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-//		refreshPropertyButton.addDomHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				AsyncCallback<String> callback = new AsyncCallback<String>() {
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						showMessageToUser("There was an exception on the " +
-//								"server refreshing the property.  " +
-//								"Message from server is: " + caught.getMessage());
-//					}
-//
-//					@Override
-//					public void onSuccess(String result) {
-//						showStatus(refreshPropertyButton, "refreshableProperty is now:" + result);
-//					}
-//				};
-//				GWT.log("testing property refresh.");
-//				VpcProvisioningService.Util.getInstance().testPropertyReload(callback);
-//			}
-//		}, ClickEvent.getType());
 
+		setRefreshButtonImage(refreshButton);
+		
 		addAccountButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
