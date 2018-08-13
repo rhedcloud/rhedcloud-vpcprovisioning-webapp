@@ -84,6 +84,7 @@ import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserActionPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserActionQueryFilterPojo;
@@ -290,6 +291,7 @@ public interface VpcProvisioningService extends RemoteService {
 	TermsOfUseQueryResultPojo getTermsOfUseForFilter(TermsOfUseQueryFilterPojo filter) throws RpcException;
 	TermsOfUseAgreementQueryResultPojo getTermsOfUseAgreementsForFilter(TermsOfUseAgreementQueryFilterPojo filter) throws RpcException;
 	TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo notification) throws RpcException;
+	TermsOfUseSummaryPojo getTermsOfUseSummaryForUser(UserAccountPojo user) throws RpcException;
 
 	// security assessments
 	ServiceSecurityAssessmentQueryResultPojo getSecurityAssessmentsForFilter(ServiceSecurityAssessmentQueryFilterPojo filter) throws RpcException;

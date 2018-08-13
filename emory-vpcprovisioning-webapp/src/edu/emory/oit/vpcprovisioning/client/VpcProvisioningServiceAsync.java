@@ -82,6 +82,7 @@ import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserActionPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserActionQueryFilterPojo;
@@ -271,6 +272,7 @@ public interface VpcProvisioningServiceAsync {
 	void getTermsOfUseForFilter(TermsOfUseQueryFilterPojo filter, AsyncCallback<TermsOfUseQueryResultPojo> callback);
 	void getTermsOfUseAgreementsForFilter(TermsOfUseAgreementQueryFilterPojo filter, AsyncCallback<TermsOfUseAgreementQueryResultPojo> callback);
 	void createTermsOfUseAgreement(TermsOfUseAgreementPojo profile, AsyncCallback<TermsOfUseAgreementPojo> callback);
+	void getTermsOfUseSummaryForUser(UserAccountPojo user, AsyncCallback<TermsOfUseSummaryPojo> callback);
 
 	void getSecurityAssessmentsForFilter(ServiceSecurityAssessmentQueryFilterPojo filter, AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback);
 	void createSecurityAssessment(ServiceSecurityAssessmentPojo service, AsyncCallback<ServiceSecurityAssessmentPojo> callback);

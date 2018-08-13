@@ -14,7 +14,7 @@
 					<g:HorizontalPanel spacing="8">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 							<g:HTMLPanel addStyleNames="{style.logo}" ui:field='logoTitleBar' title="Home">
-								<div style="padding-left: 4px; padding-right: 4px" ui:field='logoElem'><img src="images/emory-logo.png"/></div>
+								<div style="padding-left: 4px; padding-right: 4px" ui:field='logoElem'><img src="images/emory-logo-155x45.png"/></div>
 							</g:HTMLPanel>
 						</g:cell>
 						<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
@@ -89,7 +89,7 @@
 					<g:HorizontalPanel spacing="8">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 							<g:HTMLPanel addStyleNames="{style.logo}" ui:field='awsLogoTitleBar' title="Home">
-								<div style="padding: 6px" ui:field='awsLogoElem'><img src="images/powered-by-aws-white.png" width="82" height="30"/></div>
+								<div style="padding: 6px" ui:field='awsLogoElem'><img src="images/powered-by-aws-white-126x45.png"/></div>
 							</g:HTMLPanel>
 						</g:cell>
 					</g:HorizontalPanel>

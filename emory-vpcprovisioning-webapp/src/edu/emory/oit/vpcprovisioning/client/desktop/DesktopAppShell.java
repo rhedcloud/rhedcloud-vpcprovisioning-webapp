@@ -77,6 +77,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
@@ -91,6 +92,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	UserAccountPojo userLoggedIn;
 	UserProfilePojo userProfile;
 	HashMap<String, List<AWSServicePojo>> awsServices;
+
 	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
 	interface DesktopAppShellUiBinder extends UiBinder<Widget, DesktopAppShell> {
@@ -863,5 +865,35 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 		};
 		VpcProvisioningService.Util.getInstance().updateUserProfile(profile, update_profile_cb);
+	}
+
+	@Override
+	public void validateTermsOfUse() {
+		if (userLoggedIn != null) {
+			// must agree to the current terms of use
+			AsyncCallback<TermsOfUseSummaryPojo> cb = new AsyncCallback<TermsOfUseSummaryPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					showMessageToUser("There was an exception on the " +
+							"server determining your Terms of Use Agreement status.  Processing CANNOT "
+							+ "continue.  Message " +
+							"from server is: " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(TermsOfUseSummaryPojo result) {
+//					if (!result.hasValidTermsOfUseAgreement()) {
+//						showMessageToUser("You must agree to the latest terms of use:  " + result.getLatestTerms().toString());
+//					}
+//					else {
+//						showMessageToUser("You're all set regarding the terms of use.");
+//					}
+				}
+			};
+			VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(userLoggedIn, cb);
+		}
+		else {
+			// TODO: error, cannot continue
+		}
 	}
 }

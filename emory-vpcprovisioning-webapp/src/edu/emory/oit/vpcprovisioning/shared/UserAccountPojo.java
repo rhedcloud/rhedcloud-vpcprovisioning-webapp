@@ -13,6 +13,7 @@ public class UserAccountPojo implements IsSerializable {
 	List<AccountRolePojo> accountRoles = new ArrayList<AccountRolePojo>();
 	PersonalNamePojo personalName = new PersonalNamePojo();
 	boolean superUser=false;
+	boolean hasValidTermsOfUseAgreement;
 
 	public UserAccountPojo() {
 		// TODO Auto-generated constructor stub
@@ -178,5 +179,13 @@ public class UserAccountPojo implements IsSerializable {
 		if (!roleExists) {
 			accountRoles.add(arp);
 		}
+	}
+
+	public boolean hasValidTermsOfUseAgreement() {
+		return hasValidTermsOfUseAgreement;
+	}
+
+	public void setHasValidTermsOfUseAgreement(boolean hasValidTermsOfUseAgreement) {
+		this.hasValidTermsOfUseAgreement = hasValidTermsOfUseAgreement;
 	}
 }

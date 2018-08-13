@@ -295,4 +295,10 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		
 	}
 
+	@Override
+	public void validateTermsOfUse() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

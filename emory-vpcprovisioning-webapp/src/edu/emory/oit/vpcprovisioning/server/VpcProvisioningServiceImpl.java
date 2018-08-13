@@ -50,6 +50,7 @@ import org.openeai.moa.EnterpriseObjectUpdateException;
 import org.openeai.moa.XmlEnterpriseObject;
 import org.openeai.moa.XmlEnterpriseObjectException;
 import org.openeai.moa.objects.resources.Datetime;
+import org.openeai.moa.objects.resources.v1_0.Comparison;
 import org.openeai.moa.objects.resources.v1_0.Parameter;
 import org.openeai.moa.objects.resources.v1_0.QueryLanguage;
 import org.openeai.threadpool.ThreadPool;
@@ -66,6 +67,8 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection;
 import com.amazon.aws.moa.jmsobjects.services.v1_0.ServiceSecurityAssessment;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUse;
+import com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUseAgreement;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
@@ -88,6 +91,8 @@ import com.amazon.aws.moa.objects.resources.v1_0.ServiceTest;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestPlan;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestRequirement;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceTestStep;
+import com.amazon.aws.moa.objects.resources.v1_0.TermsOfUseAgreementQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.TermsOfUseQuerySpecification;
 // TODO: this should be actionable so the aws-moa is currently not correct
 import com.amazon.aws.moa.objects.resources.v1_0.UserAction;
 import com.amazon.aws.moa.objects.resources.v1_0.UserNotificationQuerySpecification;
@@ -7192,23 +7197,207 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public TermsOfUseQueryResultPojo getTermsOfUseForFilter(TermsOfUseQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		TermsOfUseQueryResultPojo result = new TermsOfUseQueryResultPojo();
+		result.setFilterUsed(filter);
+		List<TermsOfUsePojo> pojos = new java.util.ArrayList<TermsOfUsePojo>();
+		try {
+			TermsOfUseQuerySpecification queryObject = (TermsOfUseQuerySpecification) getObject(Constants.MOA_TERMS_OF_USE_QUERY_SPECIFICATION);
+			TermsOfUse actionable = (TermsOfUse) getObject(Constants.MOA_TERMS_OF_USE);
+
+			if (filter != null) {
+				queryObject.setTermsOfUseId(filter.getTermsOfUseId());
+				queryObject.setRevision(filter.getRevision());
+
+				if (filter.getEffectiveDate() != null) {
+					org.openeai.moa.objects.resources.Date effectiveDate = queryObject.newEffectiveDate();
+					this.populateDate(effectiveDate, filter.getEffectiveDate());
+					queryObject.setEffectiveDate(effectiveDate);
+				}
+				if (filter.getExpirationDate() != null) {
+					org.openeai.moa.objects.resources.Date expirationDate = queryObject.newExpirationDate();
+					this.populateDate(expirationDate, filter.getExpirationDate());
+					queryObject.setExpirationDate(expirationDate);
+				}
+
+				if (filter.isEffectiveTerms()) {
+					// get the terms of use that are currently in effect
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("inEffectTermsOfUse");
+					ql.setType("hql");
+
+					Parameter p_currentDate = ql.newParameter();
+					SimpleDateFormat l_dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+					p_currentDate.setValue(l_dateFormatter.format(new Date()));
+					p_currentDate.setName("currentDate");
+					ql.addParameter(p_currentDate);
+					queryObject.setQueryLanguage(ql);
+				}
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<TermsOfUse> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getTermsOfUseForFilter] got " + moas.size() + 
+					" Terms of Use objects from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
+			for (TermsOfUse moa : moas) {
+				TermsOfUsePojo pojo = new TermsOfUsePojo();
+				TermsOfUsePojo baseline = new TermsOfUsePojo();
+				this.populateTermsOfUsePojo(moa, pojo);
+				this.populateTermsOfUsePojo(moa, baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	private void populateTermsOfUsePojo(TermsOfUse moa, TermsOfUsePojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setTermsOfUseId(moa.getTermsOfUseId());
+		pojo.setRevision(moa.getRevision());
+		pojo.setEffectiveDate(this.toDateFromDate(moa.getEffectiveDate()));
+		pojo.setExpirationDate(this.toDateFromDate(moa.getExpirationDate()));
+		pojo.setText(moa.getText());
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@Override
 	public TermsOfUseAgreementQueryResultPojo getTermsOfUseAgreementsForFilter(
 			TermsOfUseAgreementQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+
+		TermsOfUseAgreementQueryResultPojo result = new TermsOfUseAgreementQueryResultPojo();
+		result.setFilterUsed(filter);
+		List<TermsOfUseAgreementPojo> pojos = new java.util.ArrayList<TermsOfUseAgreementPojo>();
+		try {
+			TermsOfUseAgreementQuerySpecification queryObject = (TermsOfUseAgreementQuerySpecification) getObject(Constants.MOA_TERMS_OF_USE_AGREEMENT_QUERY_SPECIFICATION);
+			TermsOfUseAgreement actionable = (TermsOfUseAgreement) getObject(Constants.MOA_TERMS_OF_USE_AGREEMENT);
+
+			if (filter != null) {
+				queryObject.setTermsOfUseId(filter.getTermsOfUseId());
+				queryObject.setTermsOfUseAgreementId(filter.getTermsOfUseAgreementId());
+				queryObject.setUserId(filter.getUserId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<TermsOfUseAgreement> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getTermsOfUseAgreementForFilter] got " + moas.size() + 
+					" Terms of Use Agreement objects from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
+			for (TermsOfUseAgreement moa : moas) {
+				TermsOfUseAgreementPojo pojo = new TermsOfUseAgreementPojo();
+				TermsOfUseAgreementPojo baseline = new TermsOfUseAgreementPojo();
+				this.populateTermsOfUseAgreementPojo(moa, pojo);
+				this.populateTermsOfUseAgreementPojo(moa, baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	private void populateTermsOfUseAgreementPojo(TermsOfUseAgreement moa, TermsOfUseAgreementPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setTermsOfUseAgreementId(moa.getTermsOfUseAgreementId());
+		pojo.setTermsOfUseId(moa.getTermsOfUseId());
+		pojo.setUserId(moa.getUserId());
+		pojo.setStatus(moa.getStatus());
+		pojo.setPresentedDate(this.toDateFromDatetime(moa.getPresentedDatetime()));
+		pojo.setAgreedDate(this.toDateFromDatetime(moa.getAgreedDatetime()));
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@Override
 	public TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo toua) throws RpcException {
-		// TODO Auto-generated method stub
 		toua.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
-		return null;
+		
+        try {
+            info("creating TermsOfUseAgreement on the server...");
+            TermsOfUseAgreement newData = (TermsOfUseAgreement) getObject(Constants.MOA_TERMS_OF_USE_AGREEMENT);
+
+            info("populating newData...");
+            populateTermsOfUseAgreementMoa(toua, newData);
+
+            info("doing the create...");
+            doCreate(newData, getAWSRequestService());
+            info("create is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return toua;
+	}
+
+	private void populateTermsOfUseAgreementMoa(TermsOfUseAgreementPojo pojo, TermsOfUseAgreement moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+		moa.setTermsOfUseAgreementId(pojo.getTermsOfUseAgreementId());
+		moa.setTermsOfUseId(pojo.getTermsOfUseId());
+		moa.setUserId(pojo.getUserId());
+		moa.setStatus(pojo.getStatus());
+		
+		org.openeai.moa.objects.resources.Datetime presentedDT = moa.newPresentedDatetime();
+		this.populateDatetime(presentedDT, pojo.getPresentedDate());
+		moa.setPresentedDatetime(presentedDT);
+		
+		org.openeai.moa.objects.resources.Datetime agreedDT = moa.newAgreedDatetime();
+		this.populateDatetime(agreedDT, pojo.getAgreedDate());
+		moa.setAgreedDatetime(agreedDT);
+		
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@Override
@@ -7813,5 +8002,33 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("[markAllUnreadNotificationsForUserAsRead] DONE marking " + totalUpdates + 
 				" unread UserNotifications for user " + 
 				user.getPublicId() + " to 'read'");
+	}
+
+	@Override
+	public TermsOfUseSummaryPojo getTermsOfUseSummaryForUser(UserAccountPojo user) throws RpcException {
+		TermsOfUseSummaryPojo summary = new TermsOfUseSummaryPojo();
+		summary.setHasValidTermsOfUseAgreement(false);
+		
+		TermsOfUseQueryFilterPojo tou_filter = new TermsOfUseQueryFilterPojo();
+		tou_filter.setEffectiveTerms(true);
+		TermsOfUseQueryResultPojo tou_result = this.getTermsOfUseForFilter(tou_filter);
+		
+		TermsOfUseAgreementQueryFilterPojo toua_filter = new TermsOfUseAgreementQueryFilterPojo();
+		toua_filter.setUserId(user.getPublicId());
+		TermsOfUseAgreementQueryResultPojo toua_result = this.getTermsOfUseAgreementsForFilter(toua_filter);
+		
+		if (tou_result.getResults().size() == 1) {
+			summary.setLatestTerms(tou_result.getResults().get(0));
+			for (TermsOfUseAgreementPojo toua : toua_result.getResults()) {
+				summary.getTermsOfUseAgreements().add(toua);
+				if (toua.getTermsOfUseId().equals(summary.getLatestTerms().getTermsOfUseId())) {
+					summary.setHasValidTermsOfUseAgreement(true);
+				}
+			}
+		}
+		else {
+			// TODO: error, unexpected number of effective TermsOfUse objects.
+		}
+		return summary;
 	}
 }

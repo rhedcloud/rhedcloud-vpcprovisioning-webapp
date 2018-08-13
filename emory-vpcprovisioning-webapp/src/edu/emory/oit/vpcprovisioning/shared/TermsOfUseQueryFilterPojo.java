@@ -19,6 +19,7 @@ public class TermsOfUseQueryFilterPojo extends SharedObject implements IsSeriali
 	String revision;
 	Date effectiveDate;
 	Date expirationDate;
+	boolean effectiveTerms;
 	
 	public TermsOfUseQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -54,6 +55,14 @@ public class TermsOfUseQueryFilterPojo extends SharedObject implements IsSeriali
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+	public boolean isEffectiveTerms() {
+		return effectiveTerms;
+	}
+
+	public void setEffectiveTerms(boolean effectiveTerms) {
+		this.effectiveTerms = effectiveTerms;
 	}
 
 }

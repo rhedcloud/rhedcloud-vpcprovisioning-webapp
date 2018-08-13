@@ -31,5 +31,5 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void startNotificationTimer();
 	void initializeAwsServiceMap();
 	void initiliizeUserProfile();
-	
+	void validateTermsOfUse();
 }

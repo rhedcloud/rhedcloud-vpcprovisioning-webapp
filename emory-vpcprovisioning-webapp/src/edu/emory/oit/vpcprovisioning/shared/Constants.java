@@ -116,4 +116,8 @@ public class Constants implements IsSerializable {
 	public static final String MOA_USER_ACTION = "UserAction.v1_0";
 	public static final String MOA_SECURITY_RISK_DETECTION_QUERY_SPEC = "SecurityRiskDetectionQuerySpecification.v1_0";
 	public static final String MOA_SECURITY_RISK_DETECTION = "SecurityRiskDetection.v1_0";
+	public static final String MOA_TERMS_OF_USE = "TermsOfUse.v1_0";
+	public static final String MOA_TERMS_OF_USE_QUERY_SPECIFICATION = "TermsOfUseQuerySpecification.v1_0";
+	public static final String MOA_TERMS_OF_USE_AGREEMENT = "TermsOfUseAgreement.v1_0";
+	public static final String MOA_TERMS_OF_USE_AGREEMENT_QUERY_SPECIFICATION = "TermsOfUseAgreementQuerySpecification.v1_0";
 }

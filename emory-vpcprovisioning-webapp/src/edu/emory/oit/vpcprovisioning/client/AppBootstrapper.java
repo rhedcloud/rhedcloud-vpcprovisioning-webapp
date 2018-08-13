@@ -135,6 +135,7 @@ public class AppBootstrapper {
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 				shell.setUserLoggedIn(userLoggedIn);
+				shell.validateTermsOfUse();
 				shell.startNotificationTimer();
 				shell.initializeAwsServiceMap();
 				shell.initiliizeUserProfile();

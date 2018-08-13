@@ -5,15 +5,7 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class TermsOfUsePojo extends SharedObject implements IsSerializable {
-	/*
-		<!ELEMENT TermsOfUse (
-			TermsOfUseId?, 
-			Revision, 
-			EffectiveDate, 
-			ExpirationDate?, 
-			Text, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-	 */
+public class TermsOfUsePojo extends SharedObject implements IsSerializable, Comparable<TermsOfUsePojo> {
 	String termsOfUseId;
 	String revision;
 	Date effectiveDate;
@@ -53,6 +45,17 @@ public class TermsOfUsePojo extends SharedObject implements IsSerializable {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	@Override
+	public int compareTo(TermsOfUsePojo o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String toString() {
+		return this.termsOfUseId + "-" + this.text;
 	}
 
 }
