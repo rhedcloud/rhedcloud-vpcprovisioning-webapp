@@ -6,7 +6,7 @@
 	
 	<g:LayoutPanel ui:field='layoutPanel' width="100%" height="100%">
 		<!-- header -->
-		<g:layer top='0px' height='7.0em' left='0px' right='0px'>
+		<g:layer top='0px' height='8.5em' left='0px' right='0px'>
 			<g:HorizontalPanel ui:field="linksPanel" addStyleNames="{style.linksPanel}" width="100%" height="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 			<g:VerticalPanel>
@@ -105,7 +105,7 @@
 		</g:layer>
 		
 		<!-- Content -->
-		<g:layer top='7.5em' bottom='0px' left='0px' right='0px'>
+		<g:layer top='9.0em' bottom='0px' left='0px' right='0px'>
 			<g:ScrollPanel width="100%" height="99%">
 			<g:HorizontalPanel width="100%">
 				<g:cell horizontalAlignment="ALIGN_LEFT" width="1%"><g:HTML></g:HTML></g:cell>
