@@ -83,9 +83,24 @@
 				</g:cell>
 			</g:HorizontalPanel>
 			</g:cell>
-			<g:HTMLPanel addStyleNames="{style.logo}" ui:field='awsLogoTitleBar' title="Home">
-				<div style="padding: 6px" ui:field='awsLogoElem'><img src="images/powered-by-aws-white.png" width="82" height="30"/></div>
-			</g:HTMLPanel>
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+			<g:VerticalPanel>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+					<g:HorizontalPanel spacing="8">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:HTMLPanel addStyleNames="{style.logo}" ui:field='awsLogoTitleBar' title="Home">
+								<div style="padding: 6px" ui:field='awsLogoElem'><img src="images/powered-by-aws-white.png" width="82" height="30"/></div>
+							</g:HTMLPanel>
+						</g:cell>
+					</g:HorizontalPanel>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+					<g:HTMLPanel styleName="{style.releaseInfoPanel}">
+						<div><p></p></div>
+					</g:HTMLPanel>
+				</g:cell>
+			</g:VerticalPanel>
+			</g:cell>
 			</g:HorizontalPanel>
 		</g:layer>
 		
