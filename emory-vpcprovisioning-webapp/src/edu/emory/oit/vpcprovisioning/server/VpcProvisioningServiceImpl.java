@@ -4554,21 +4554,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
 		result.setFilterUsed(filter);
 		
-		// TEMPORARY
-//		if (true) {
-//			for (AWSServicePojo svc : serviceList) {
-//				if (filter == null) {
-//					result.getResults().add(svc);
-//				}
-//				else {
-//					if (svc.getServiceId().equalsIgnoreCase(filter.getServiceId())) {
-//						result.getResults().add(svc);
-//					}
-//				}
-//			}
-//			return result;
-//		}
-		
 		try {
 			com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = 
 					(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);

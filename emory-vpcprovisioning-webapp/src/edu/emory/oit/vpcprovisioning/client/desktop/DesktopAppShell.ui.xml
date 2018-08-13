@@ -84,7 +84,7 @@
 			</g:HorizontalPanel>
 			</g:cell>
 			<g:HTMLPanel addStyleNames="{style.logo}" ui:field='awsLogoTitleBar' title="Home">
-				<div style="padding: 6px" ui:field='awsLogoElem'><img src="images/aws-logo.png"/></div>
+				<div style="padding: 6px" ui:field='awsLogoElem'><img src="images/powered-by-aws-white.png" width="82" height="30"/></div>
 			</g:HTMLPanel>
 			</g:HorizontalPanel>
 		</g:layer>

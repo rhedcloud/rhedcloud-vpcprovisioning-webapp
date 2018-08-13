@@ -159,6 +159,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField Element userNameElem;
 
 	PopupPanel productsPopup = new PopupPanel(true);
+    boolean productsShowing=false;
 	@UiField Element releaseInfoElem;
 	@UiField Element productsElem;
 	//	@UiField Element notificationsElem;
@@ -202,10 +203,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						showMessageToUser("There does not appear to be anyone logged in.  Please log in and try again.");
 						return;
 					}
-					// TODO: fire event
-					//					ActionEvent.fire(eventBus, ActionNames.MAINTAIN_USER_PROFILE);
-
-					// TEMP:  just display a dialog with the contents of the current user profile
+					// display a dialog with the contents of the current user profile
 					final DialogBox db = new DialogBox();
 					db.setText("Maintain User Profile");
 					db.setGlassEnabled(true);
@@ -705,6 +703,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.showRelativeTo(linksPanel);
 	}
 	void showServices() {
+	   	 if (!productsShowing) {
+			 productsShowing = true;
+		 }
+		 else {
+			 productsShowing = false;
+			 productsPopup.hide();
+			 return;
+		 }
 		if (awsServices == null || awsServices.size() == 0) {
 			AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 				@Override
