@@ -45,9 +45,13 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 		public SpeedChartPojo getSpeedType();
 		public void logMessageOnServer(final String message);
 		public void setSelectedAccount(AccountPojo account);
-		public void setDirectoryPerson(DirectoryPersonPojo pojo);
-		public DirectoryPersonPojo getDirectoryPerson();
+		public void setAdminDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getAdminDirectoryPerson();
+		public void setOwnerDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getOwnerDirectoryPerson();
 		public void addAdminDirectoryPersonToVpcp();
+		public void setRequestorDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getRequestorDirectoryPerson();
 //		public void getAdminsForAccount();
 	}
 
@@ -96,5 +100,5 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 	Widget getSpeedTypeWidget();
 	void setSpeedTypeConfirmed(boolean confirmed);
 	boolean isSpeedTypeConfirmed();
-	void addAdminNetId(String netId);
+	void addAdminUserId(String userId, String title);
 }

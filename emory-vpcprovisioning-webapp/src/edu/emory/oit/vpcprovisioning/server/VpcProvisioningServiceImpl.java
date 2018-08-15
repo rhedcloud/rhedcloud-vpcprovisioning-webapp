@@ -1149,12 +1149,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setAccountOwnerUserId(pojo.getAccountOwnerUserId());
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setType(pojo.getType());
-		// admin net ids
-//        for (String p : pojo.getCustomerAdminNetIdList()) {
-//            moa.addCustomerAdminNetId(p);
-//        }
+		// admin user ids
+        for (String p : pojo.getCustomerAdminUserIdList()) {
+            moa.addCustomerAdminUserId(p);
+        }
 //        moa.setTicketId(pojo.getTicketId());
-//        moa.setAuthenticatedRequestorNetId(pojo.getAuthenticatedRequestorNetId());
+        moa.setAuthenticatedRequestorUserId(pojo.getAuthenticatedRequestorUserId());
         moa.setComplianceClass(pojo.getComplianceClass());
         moa.setNotifyAdmins(this.toStringFromBoolean(pojo.isNotifyAdmins()));
         moa.setPurpose(pojo.getPurpose());

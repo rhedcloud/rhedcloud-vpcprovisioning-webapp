@@ -94,11 +94,10 @@
 			<g:Grid cellSpacing="12">
 			    <g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account Owner NetId:</g:Label>
+						<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqOwnerNetIdTB" debugId="vpcpReqOwnerNetIdTB" />
+						<g:SuggestBox ui:field="ownerLookupSB" debugId="ownerLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -112,11 +111,10 @@
 			    	</g:row>
 			    	<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Requestor NetId:</g:Label>
+						<g:Label addStyleNames="{style.label}">Requestor:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqRequestorNetIdTB" debugId="vpcpReqRequestorNetIdTB" />
+						<g:SuggestBox ui:field="requestorLookupSB" debugId="requestorLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -149,6 +147,7 @@
 							ui:field="vpcpReqComplianceClassLB" debugId="vpcpReqComplianceClassLB" />
 			    	</g:customCell>
 				</g:row>
+				<!-- 
 				<g:row>
 					<g:customCell><g:HTML></g:HTML></g:customCell>
 			    	<g:customCell>
@@ -177,6 +176,7 @@
 			    		</g:CaptionPanel>
 			    	</g:customCell>
 				</g:row>
+				 -->
 		    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
@@ -205,7 +205,7 @@
 								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
 								<g:HorizontalPanel ui:field="addAdminHP" spacing="16">
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
+										<g:SuggestBox ui:field="adminLookupSB" debugId="adminLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
 									</g:cell>
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 										<g:Button ui:field="addAdminButton" debugId="addAdminButton"

@@ -78,13 +78,15 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	// used when generating vpc
 	@UiField VerticalPanel generateVpcpPanel;
 	@UiField TextBox vpcpReqTicketIdTB;
-	@UiField TextBox vpcpReqRequestorNetIdTB;
-	@UiField TextBox vpcpReqOwnerNetIdTB;
+//	@UiField TextBox vpcpReqRequestorNetIdTB;
+	@UiField(provided=true) SuggestBox requestorLookupSB = new SuggestBox(personSuggestions, new TextBox());
+//	@UiField TextBox vpcpReqOwnerNetIdTB;
+	@UiField(provided=true) SuggestBox ownerLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField TextBox vpcpReqSpeedTypeTB;
 	@UiField ListBox vpcpReqTypeLB;
 	@UiField ListBox vpcpReqComplianceClassLB;
-	@UiField CheckBox fismaCB;
-	@UiField CheckBox pciCB;
+//	@UiField CheckBox fismaCB;
+//	@UiField CheckBox pciCB;
 	@UiField CheckBox vpcpReqNotifyAdminsCB;
 	@UiField ListBox accountLB;
 	@UiField CaptionPanel accountCP;
@@ -92,7 +94,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField TextArea vpcpReqPurposeTA;
 
 	@UiField VerticalPanel adminVP;
-	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
+	@UiField(provided=true) SuggestBox adminLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField Button addAdminButton;
 	@UiField FlexTable adminTable;
 
@@ -130,8 +132,15 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
 	}
 
-	@UiHandler ("directoryLookupSB")
-	void directoryLookupSBKeyPressed(KeyPressEvent e) {
+//	@UiHandler ("ownerLookupSB")
+//	void ownerLookupSBKeyPressed(KeyPressEvent e) {
+//        int keyCode = e.getNativeEvent().getKeyCode();
+//        if (keyCode == KeyCodes.KEY_ENTER) {
+//    		presenter.getVpcRequisition().setAccountOwnerUserId(ownerLookupSB.getd);
+//        }
+//	}
+	@UiHandler ("adminLookupSB")
+	void adminLookupSBKeyPressed(KeyPressEvent e) {
         int keyCode = e.getNativeEvent().getKeyCode();
         if (keyCode == KeyCodes.KEY_ENTER) {
     		presenter.addAdminDirectoryPersonToVpcp();
@@ -153,15 +162,15 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		okayButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				if (fismaCB.getValue() || pciCB.getValue()) {
-					showMessageToUser("Please contact LITS Security.");
-					return;
-				}
+//				if (fismaCB.getValue() || pciCB.getValue()) {
+//					showMessageToUser("Please contact LITS Security.");
+//					return;
+//				}
 				// populate vpcrequisition that will be used as seed data
 				// for the vpcp.generate
 				presenter.getVpcRequisition().setTicketId(vpcpReqTicketIdTB.getText());
-				presenter.getVpcRequisition().setAuthenticatedRequestorUserId(vpcpReqRequestorNetIdTB.getText());
-				presenter.getVpcRequisition().setAccountOwnerUserId(vpcpReqOwnerNetIdTB.getText());
+				presenter.getVpcRequisition().setAuthenticatedRequestorUserId(presenter.getRequestorDirectoryPerson().getKey());
+				presenter.getVpcRequisition().setAccountOwnerUserId(presenter.getOwnerDirectoryPerson().getKey());
 				presenter.getVpcRequisition().setSpeedType(vpcpReqSpeedTypeTB.getText());
 				presenter.getVpcRequisition().setComplianceClass(vpcpReqComplianceClassLB.getSelectedValue());
 				presenter.getVpcRequisition().setNotifyAdmins(vpcpReqNotifyAdminsCB.getValue());
@@ -191,13 +200,33 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	}
 
 	private void registerHandlers() {
-		directoryLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+		adminLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
 				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
 				if (dp_suggestion.getDirectoryPerson() != null) {
-					presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
-					directoryLookupSB.setTitle(presenter.getDirectoryPerson().toString());
+					presenter.setAdminDirectoryPerson(dp_suggestion.getDirectoryPerson());
+					adminLookupSB.setTitle(presenter.getAdminDirectoryPerson().toString());
+				}
+			}
+		});
+		ownerLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (dp_suggestion.getDirectoryPerson() != null) {
+					presenter.setOwnerDirectoryPerson(dp_suggestion.getDirectoryPerson());
+					ownerLookupSB.setTitle(presenter.getOwnerDirectoryPerson().toString());
+				}
+			}
+		});
+		requestorLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (dp_suggestion.getDirectoryPerson() != null) {
+					presenter.setRequestorDirectoryPerson(dp_suggestion.getDirectoryPerson());
+					requestorLookupSB.setTitle(presenter.getOwnerDirectoryPerson().toString());
 				}
 			}
 		});
@@ -221,32 +250,15 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		}
 	}
 
-	/*
-	 * Admin net id helper methods
-	 */
-//	private void addNetIdToVpcp(String netId) {
-//		if (netId != null && netId.trim().length() > 0) {
-//			final String trimmedNetId = netId.trim().toLowerCase();
-//			if (presenter.getVpcRequisition().getCustomerAdminNetIdList().contains(trimmedNetId)) {
-//				showStatus(addNetIdButton, "That net id is alreay in the list, please enter a unique net id.");
-//			}
-//			else {
-//				presenter.getVpcRequisition().getCustomerAdminNetIdList().add(trimmedNetId);
-//				addNetIdToPanel(trimmedNetId);
-//			}
-//		}
-//		else {
-//			showStatus(addNetIdButton, "Please enter a valid net id.");
-//		}
-//	}
-	private void addNetIdToPanel(final String netId) {
+	private void addAdminToPanel(final String userId, String title) {
 		int numRows = adminTable.getRowCount();
-		final Label netIdLabel = new Label(netId);
+		final Label netIdLabel = new Label(userId);
+		netIdLabel.setTitle(title);
 		netIdLabel.addStyleName("emailLabel");
 		netIdLabel.addMouseOverHandler(new MouseOverHandler() {
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
-				presenter.setDirectoryMetaDataTitleOnWidget(netId, netIdLabel);
+				presenter.setDirectoryMetaDataTitleOnWidget(userId, netIdLabel);
 			}
 		});
 		final Button removeNetIdButton = new Button("Remove");
@@ -263,12 +275,12 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		removeNetIdButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.getVpcRequisition().getCustomerAdminUserIdList().remove(netId);
+				presenter.getVpcRequisition().getCustomerAdminUserIdList().remove(userId);
 				adminTable.remove(netIdLabel);
 				adminTable.remove(removeNetIdButton);
 			}
 		});
-		directoryLookupSB.setText("");
+		adminLookupSB.setText("");
 		if (numRows > 6) {
 			if (netIdRowNum > 5) {
 				netIdRowNum = 0;
@@ -288,12 +300,12 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 
 	void initializeNetIdPanel() {
 		adminTable.removeAllRows();
-		if (presenter.getVpcRequisition() != null) {
-			GWT.log("Adding " + presenter.getVpcRequisition().getCustomerAdminUserIdList().size() + " net ids to the panel (update).");
-			for (String netId : presenter.getVpcRequisition().getCustomerAdminUserIdList()) {
-				addNetIdToPanel(netId);
-			}
-		}
+//		if (presenter.getVpcRequisition() != null) {
+//			GWT.log("Adding " + presenter.getVpcRequisition().getCustomerAdminUserIdList().size() + " net ids to the panel (update).");
+//			for (String netId : presenter.getVpcRequisition().getCustomerAdminUserIdList()) {
+//				addAdminToPanel(netId);
+//			}
+//		}
 	}
 
 
@@ -347,8 +359,8 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public void initPage() {
 		this.setFieldViolations(false);
 		this.registerHandlers();
-		directoryLookupSB.setText("");
-		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
+		adminLookupSB.setText("");
+		adminLookupSB.getElement().setPropertyString("placeholder", "enter name");
 		if (editing) {
 			GWT.log("maintain VPCP view initPage.  editing");
 			// hide generate grid, show maintain grid
@@ -365,13 +377,17 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		}
 		else {
 			GWT.log("maintain VPCP view initPage.  generate");
+			initializeNetIdPanel();
+
 			// hide maintain grid, show generate grid
 			maintainVpcpGrid.setVisible(false);
 			generateVpcpPanel.setVisible(true);
-			vpcpReqOwnerNetIdTB.setText("");
+			ownerLookupSB.setText("");
+			ownerLookupSB.getElement().setPropertyString("placeholder", "enter name");
 			vpcpReqSpeedTypeTB.setText("");
 			vpcpReqTicketIdTB.setText("");
-			vpcpReqRequestorNetIdTB.setText("");
+			requestorLookupSB.setText("");
+			requestorLookupSB.getElement().setPropertyString("placeholder", "enter name");
 			vpcpReqPurposeTA.setText("");
 			
 			vpcpReqTypeLB.setSelectedIndex(0);
@@ -379,9 +395,6 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			vpcpReqComplianceClassLB.setSelectedIndex(0);
 			vpcpReqNotifyAdminsCB.setValue(false);
 			accountCP.clear();
-			
-			// populate admin net id fields if appropriate
-			initializeNetIdPanel();
 		}
 	}
 
@@ -481,11 +494,11 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		VpcRequisitionPojo vpcr = presenter.getVpcRequisition();
 		if (vpcr.getAuthenticatedRequestorUserId() == null || vpcr.getAuthenticatedRequestorUserId().length() == 0) {
 			this.setFieldViolations(true);
-			fields.add(vpcpReqRequestorNetIdTB);
+			fields.add(requestorLookupSB);
 		}
 		if (vpcr.getAccountOwnerUserId() == null || vpcr.getAccountOwnerUserId().length() == 0) {
 			this.setFieldViolations(true);
-			fields.add(vpcpReqOwnerNetIdTB);
+			fields.add(ownerLookupSB);
 		}
 		if (vpcr.getSpeedType() == null || vpcr.getSpeedType().length() == 0) {
 			this.setFieldViolations(true);
@@ -493,7 +506,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		}
 		if (vpcr.getCustomerAdminUserIdList() == null || vpcr.getCustomerAdminUserIdList().size() == 0) {
 			this.setFieldViolations(true);
-			fields.add(directoryLookupSB);
+			fields.add(adminLookupSB);
 		}
 		if (vpcr.getType() == null || vpcr.getType().length() == 0) {
 			this.setFieldViolations(true);
@@ -508,10 +521,10 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@Override
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		fields.add(vpcpReqRequestorNetIdTB);
-		fields.add(vpcpReqOwnerNetIdTB);
+		fields.add(requestorLookupSB);
+		fields.add(ownerLookupSB);
 		fields.add(vpcpReqSpeedTypeTB);
-		fields.add(directoryLookupSB);
+		fields.add(adminLookupSB);
 		fields.add(vpcTypeLB);
 		fields.add(vpcpReqComplianceClassLB);
 		this.resetFieldStyles(fields);
@@ -543,8 +556,8 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		return this.speedTypeConfirmed;
 	}
 	@Override
-	public void addAdminNetId(String netId) {
-		this.addNetIdToPanel(netId);
+	public void addAdminUserId(String userId, String title) {
+		this.addAdminToPanel(userId, title);
 	}
 	@Override
 	public void applyCentralAdminMask() {
