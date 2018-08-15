@@ -92,6 +92,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	UserAccountPojo userLoggedIn;
 	UserProfilePojo userProfile;
 	HashMap<String, List<AWSServicePojo>> awsServices;
+	HomeView homeView;
 
 	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -111,7 +112,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		this.eventBus = eventBus;
 
 
-		HomeView homeView = clientFactory.getHomeView();
+		homeView = clientFactory.getHomeView();
 		homeContentContainer.add(homeView);
 
 		mainTabPanel.addStyleName("tab-style-content");
@@ -877,6 +878,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
 							+ "continue.  Message " +
 							"from server is: " + caught.getMessage());
+					
+					// TODO: probably need to fire something off so the user can't do anything.
+					// just a modal dialog that prevents them from doing anything...
 				}
 
 				@Override
@@ -895,5 +899,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		else {
 			// TODO: error, cannot continue
 		}
+	}
+
+	@Override
+	public void lockView() {
 	}
 }

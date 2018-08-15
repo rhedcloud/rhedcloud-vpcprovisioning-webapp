@@ -73,6 +73,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
+		getView().showPleaseWaitPanel("Retrieving VPC Provisioning items...");
 		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {

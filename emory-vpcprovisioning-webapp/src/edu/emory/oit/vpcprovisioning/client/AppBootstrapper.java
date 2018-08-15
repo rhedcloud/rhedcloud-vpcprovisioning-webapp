@@ -64,7 +64,6 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
-import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class AppBootstrapper {
@@ -1273,7 +1272,7 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.CREATE_TERMS_OF_USE_AGREEMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(final ActionEvent actionEvent) {
-				final DialogBox db = new DialogBox();
+				final DialogBox db = new DialogBox(false, true);
 				db.setText("Rules of Behavior Agreement");
 				db.setGlassEnabled(true);
 				db.center();
@@ -1296,7 +1295,6 @@ public class AppBootstrapper {
 				presenter.start(eventBus);
 				db.setWidget(presenter);
 				db.show();
-				db.center();
 			}
 		});
 

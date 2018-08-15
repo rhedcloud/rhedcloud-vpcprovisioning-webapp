@@ -100,6 +100,7 @@
 						<g:SuggestBox ui:field="ownerLookupSB" debugId="ownerLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
 			    	</g:customCell>
 				</g:row>
+				<!-- 
 				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Ticket ID:</g:Label>
@@ -108,8 +109,9 @@
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="vpcpReqTicketIdTB" debugId="vpcpReqTicketIdTB" />
 			    	</g:customCell>
-			    	</g:row>
-			    	<g:row>
+		    	</g:row>
+				 -->
+		    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Requestor:</g:Label>
 			    	</g:customCell>

@@ -384,8 +384,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		emailLabel.addStyleName("emailLabel");
 		final Button removeEmailButton = new Button("Remove");
 		// disable remove button if userLoggedIn is NOT an admin
-		if (this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId()) ||
-			this.userLoggedIn.isCentralAdmin()) {
+		if (this.userLoggedIn.isCentralAdmin()) {
 				
 			removeEmailButton.setEnabled(true);
 		}
@@ -588,7 +587,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public void applyAWSAccountAdminMask() {
 		GWT.log("Applying account admin mask...");
-		okayButton.setEnabled(false);
+		okayButton.setEnabled(true);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
 		ownerIdSB.setEnabled(false);

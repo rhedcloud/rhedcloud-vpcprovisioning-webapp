@@ -301,4 +301,10 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		
 	}
 
+	@Override
+	public void lockView() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

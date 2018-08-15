@@ -265,4 +265,10 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 		directoryInfoButton.setEnabled(true);
 		personInfoButton.setEnabled(true);
 	}
+	@Override
+	public void lockView() {
+		roleInfoButton.setEnabled(false);
+		directoryInfoButton.setEnabled(false);
+		personInfoButton.setEnabled(false);
+	}
 }

@@ -77,7 +77,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	
 	// used when generating vpc
 	@UiField VerticalPanel generateVpcpPanel;
-	@UiField TextBox vpcpReqTicketIdTB;
+//	@UiField TextBox vpcpReqTicketIdTB;
 //	@UiField TextBox vpcpReqRequestorNetIdTB;
 	@UiField(provided=true) SuggestBox requestorLookupSB = new SuggestBox(personSuggestions, new TextBox());
 //	@UiField TextBox vpcpReqOwnerNetIdTB;
@@ -168,7 +168,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 //				}
 				// populate vpcrequisition that will be used as seed data
 				// for the vpcp.generate
-				presenter.getVpcRequisition().setTicketId(vpcpReqTicketIdTB.getText());
+//				presenter.getVpcRequisition().setTicketId(vpcpReqTicketIdTB.getText());
 				presenter.getVpcRequisition().setAuthenticatedRequestorUserId(presenter.getRequestorDirectoryPerson().getKey());
 				presenter.getVpcRequisition().setAccountOwnerUserId(presenter.getOwnerDirectoryPerson().getKey());
 				presenter.getVpcRequisition().setSpeedType(vpcpReqSpeedTypeTB.getText());
@@ -385,7 +385,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			ownerLookupSB.setText("");
 			ownerLookupSB.getElement().setPropertyString("placeholder", "enter name");
 			vpcpReqSpeedTypeTB.setText("");
-			vpcpReqTicketIdTB.setText("");
+//			vpcpReqTicketIdTB.setText("");
 			requestorLookupSB.setText("");
 			requestorLookupSB.getElement().setPropertyString("placeholder", "enter name");
 			vpcpReqPurposeTA.setText("");
