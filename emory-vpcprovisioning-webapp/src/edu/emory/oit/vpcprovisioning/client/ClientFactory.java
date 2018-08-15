@@ -32,6 +32,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineV
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
+import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -106,4 +107,5 @@ public interface ClientFactory {
 	MaintainServiceGuidelineView getMaintainServiceGuidelineView();
 	MaintainServiceTestPlanView getMaintainServiceTestPlanView();
 	MaintainSrdView getMaintainSrdView();
+	MaintainTermsOfUseAgreementView getMaintainTermsOfUseAgreementView();
 }

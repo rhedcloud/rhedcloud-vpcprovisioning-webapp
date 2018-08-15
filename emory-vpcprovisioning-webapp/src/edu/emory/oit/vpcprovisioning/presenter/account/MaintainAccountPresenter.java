@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
+
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
@@ -42,6 +43,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	private UserAccountPojo userLoggedIn;
 	private DirectoryPersonPojo directoryPerson;
 	private List<RoleAssignmentSummaryPojo> accountRoleAssignmentSummaries = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
+	private AccountNotificationQueryFilterPojo filter;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -99,7 +101,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				public void onFailure(Throwable caught) {
 					getView().hidePleaseWaitDialog();
 					getView().hidePleaseWaitPanel();
-					getView().enableAdminMaintenance();
+					getView().disableAdminMaintenance();
 					GWT.log("Exception retrieving account details", caught);
 					getView().showMessageToUser("There was an exception on the " +
 							"server retrieving the details for this account.  Message " +
@@ -149,7 +151,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				getView().enableAdminMaintenance();
+				getView().disableAdminMaintenance();
 				GWT.log("Exception retrieving user logged in", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  Message " +
@@ -166,7 +168,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					public void onFailure(Throwable caught) {
 						getView().hidePleaseWaitDialog();
 						getView().hidePleaseWaitPanel();
-						getView().enableAdminMaintenance();
+						getView().disableAdminMaintenance();
 						GWT.log("Exception retrieving e-mail types", caught);
 						getView().showMessageToUser("There was an exception on the " +
 								"server retrieving e-mail types.  Message " +
@@ -191,14 +193,23 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						
 						// apply authorization mask
 						if (user.isCentralAdmin()) {
+							GWT.log("[maintain account] " + userLoggedIn.getPersonalName().toString() + 
+								" IS a CentrlAdmin");
 							getView().applyCentralAdminMask();
+							getView().enableAdminMaintenance();
 						}
 						else if (account != null) {
 							if (user.isAdminForAccount(account.getAccountId())) {
+								GWT.log("[maintain account] " + userLoggedIn.getPersonalName().toString() + 
+									" IS an AccountAdmin for account: " + account.getAccountId());
 								getView().applyAWSAccountAdminMask();
+								getView().enableAdminMaintenance();
 							}
 							else if (user.isAuditorForAccount(account.getAccountId())) {
+								GWT.log("[maintain account] " + userLoggedIn.getPersonalName().toString() + 
+									" IS an AccountAuditor for account: " + account.getAccountId());
 								getView().applyAWSAccountAuditorMask();
+								getView().disableAdminMaintenance();
 							}
 						}
 					}
@@ -572,7 +583,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving Administrators.  Message " +
 						"from server is: " + caught.getMessage());
-				getView().enableAdminMaintenance();
+//				getView().enableAdminMaintenance();
 			}
 
 			@Override
@@ -586,7 +597,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 							ra_summary.getDirectoryPerson().getEmail().getEmailAddress(), roleName,  
 							ra_summary.getDirectoryPerson().toString());
 				}
-				getView().enableAdminMaintenance();
+//				getView().enableAdminMaintenance();
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 			}
@@ -711,10 +722,31 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				getView().hidWaitForNotificationsDialog();
 			}
 		};
-		AccountNotificationQueryFilterPojo filter = new AccountNotificationQueryFilterPojo();
+		if (filter == null) {
+			filter = new AccountNotificationQueryFilterPojo();
+			filter.setAccountId(accountId);
+			filter.setUseQueryLanguage(true);
+			filter.setMaxRows(100);
+		}
+		VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
+	}
+
+	@Override
+	public void filterBySearchString(String searchString) {
+		getView().showPleaseWaitDialog("Filtering notifications...");
+		
+		if (searchString == null || searchString.length() == 0) {
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please enter a search string");
+			return;
+		}
+
+		getView().showFilteredStatus();
+		filter = new AccountNotificationQueryFilterPojo();
 		filter.setAccountId(accountId);
 		filter.setUseQueryLanguage(true);
-		filter.setMaxRows(100);
-		VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
+		filter.setMaxRows(200);
+		filter.setSearchString(searchString);
+		refreshAccountNotificationList(userLoggedIn);
 	}
 }

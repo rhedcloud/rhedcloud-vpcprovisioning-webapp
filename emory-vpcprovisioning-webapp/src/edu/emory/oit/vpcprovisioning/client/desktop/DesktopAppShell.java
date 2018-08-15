@@ -870,24 +870,24 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void validateTermsOfUse() {
 		if (userLoggedIn != null) {
-			// must agree to the current terms of use
 			AsyncCallback<TermsOfUseSummaryPojo> cb = new AsyncCallback<TermsOfUseSummaryPojo>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					showMessageToUser("There was an exception on the " +
-							"server determining your Terms of Use Agreement status.  Processing CANNOT "
+							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
 							+ "continue.  Message " +
 							"from server is: " + caught.getMessage());
 				}
 
 				@Override
 				public void onSuccess(TermsOfUseSummaryPojo result) {
-//					if (!result.hasValidTermsOfUseAgreement()) {
-//						showMessageToUser("You must agree to the latest terms of use:  " + result.getLatestTerms().toString());
-//					}
-//					else {
-//						showMessageToUser("You're all set regarding the terms of use.");
-//					}
+					if (!result.hasValidTermsOfUseAgreement()) {
+						// must agree to the current terms of use
+						ActionEvent.fire(eventBus, ActionNames.CREATE_TERMS_OF_USE_AGREEMENT);
+					}
+					else {
+						// user has a valid TermsOfUseAgreement in place
+					}
 				}
 			};
 			VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(userLoggedIn, cb);

@@ -157,5 +157,7 @@ public interface ActionNames {
 	final String SERVICE_TEST_PLAN_SAVED = "ServiceTestPlanSaved";
 	final String VIEW_SRD_FOR_USER_NOTIFICATION = "viewUserSrd";
 	final String VIEW_SRD_FOR_ACCOUNT_NOTIFICATION = "viewAccountSrd";
-
+	final String MAINTAIN_TERMS_OF_USE_AGREEMENT = "maintainTermsOfUseAgreement";
+	final String CREATE_TERMS_OF_USE_AGREEMENT = "createTermsOfUseAgreement";
+	final String TERMS_OF_USE_AGREEMENT_SAVED = "termsOfUseAgreementSaved";
 }

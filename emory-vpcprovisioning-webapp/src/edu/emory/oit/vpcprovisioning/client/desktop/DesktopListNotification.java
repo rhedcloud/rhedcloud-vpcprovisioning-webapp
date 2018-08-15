@@ -34,6 +34,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -78,10 +79,35 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@UiField Button closeOtherFeaturesButton;
 	@UiField Button actionsButton;
 	@UiField CheckBox viewUnReadCB;
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
 	@UiField PushButton refreshButton;
+	@UiField HTML filteredHTML;
 
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		if (viewUnReadCB.getValue()) {
+			presenter.filterBySearchString(false, filterTB.getText());
+		}
+		else {
+			presenter.filterBySearchString(true, filterTB.getText());
+		}
+	}
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		filterTB.setText("");
+		if (viewUnReadCB.getValue()) {
+			presenter.refreshListWithUnReadNotificationsForUser(userLoggedIn);
+		}
+		else {
+			presenter.refreshListWithAllNotificationsForUser(userLoggedIn);
+		}
+		this.hideFilteredStatus();
+	}
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
+		filterTB.setText("");
 		if (viewUnReadCB.getValue()) {
 			presenter.refreshListWithUnReadNotificationsForUser(userLoggedIn);
 		}
@@ -91,6 +117,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	}
 	@UiHandler("viewUnReadCB")
 	void viewUnReadCBClicked(ClickEvent e) {
+		filterTB.setText("");
 		if (viewUnReadCB.getValue()) {
 			presenter.refreshListWithUnReadNotificationsForUser(userLoggedIn);
 		}
@@ -646,5 +673,19 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	@Override
 	public void initPage() {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter search string");
+	}
+	@Override
+	public List<UserNotificationPojo> getNotifications() {
+		return this.pojoList;
+	}
+	@Override
+	public void showFilteredStatus() {
+		filteredHTML.setVisible(true);
+	}
+	@Override
+	public void hideFilteredStatus() {
+		filteredHTML.setVisible(false);
 	}
 }

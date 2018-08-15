@@ -48,6 +48,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineP
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPlace;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPlace;
+import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -342,6 +343,11 @@ public class AppActivityMapper implements ActivityMapper {
 		if (place instanceof MaintainSrdPlace) {
 			// View/Maintain srd
 			return new MaintainSrdActivity(clientFactory, (MaintainSrdPlace) place);
+		}
+
+		if (place instanceof MaintainTermsOfUseAgreementPlace) {
+			// View/Maintain srd
+			return new MaintainTermsOfUseAgreementActivity(clientFactory, (MaintainTermsOfUseAgreementPlace) place);
 		}
 
 		return null;

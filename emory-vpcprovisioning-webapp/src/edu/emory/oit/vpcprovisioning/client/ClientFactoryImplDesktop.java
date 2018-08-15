@@ -42,6 +42,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceContro
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceGuideline;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceTestPlan;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSrd;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainTermsOfUseAgreement;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
@@ -75,6 +76,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineV
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
+import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -131,6 +133,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainServiceGuidelineView maintainServiceGuidelineView;
 	private MaintainServiceTestPlanView maintainServiceTestPlanView;
 	private MaintainSrdView maintainSrdView;
+	private MaintainTermsOfUseAgreementView maintainTermsOfUseAgreementView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -555,5 +558,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainSrdView createMaintainSrdView() {
 		return new DesktopMaintainSrd();
+	}
+	@Override
+	public MaintainTermsOfUseAgreementView getMaintainTermsOfUseAgreementView() {
+		if (maintainTermsOfUseAgreementView == null) {
+			maintainTermsOfUseAgreementView = createMaintainTermsOfUseAgreementView();
+		}
+		return maintainTermsOfUseAgreementView;
+	}
+	protected MaintainTermsOfUseAgreementView createMaintainTermsOfUseAgreementView() {
+		return new DesktopMaintainTermsOfUseAgreement();
 	}
 }

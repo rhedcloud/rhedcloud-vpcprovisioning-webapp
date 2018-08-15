@@ -40,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineV
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
+import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -93,6 +94,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ListServiceGuidelineView listServiceGuidelineView;
 	private MaintainServiceGuidelineView maintainServiceGuidelineView;
 	private MaintainSrdView maintainSrdView;
+	private MaintainTermsOfUseAgreementView maintainTermsOfUseAgreementView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -313,6 +315,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainSrdView getMaintainSrdView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainTermsOfUseAgreementView getMaintainTermsOfUseAgreementView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

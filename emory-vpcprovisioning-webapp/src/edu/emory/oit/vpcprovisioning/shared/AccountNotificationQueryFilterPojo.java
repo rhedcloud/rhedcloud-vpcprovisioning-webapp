@@ -24,6 +24,7 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 	Date endDate;
 	boolean useQueryLanguage;
 	int maxRows;
+	String searchString;
 
 	public AccountNotificationQueryFilterPojo() {
 	}
@@ -90,6 +91,14 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 
 	public void setMaxRows(int maxRows) {
 		this.maxRows = maxRows;
+	}
+
+	public String getSearchString() {
+		return searchString;
+	}
+
+	public void setSearchString(String searchString) {
+		this.searchString = searchString;
 	}
 
 }

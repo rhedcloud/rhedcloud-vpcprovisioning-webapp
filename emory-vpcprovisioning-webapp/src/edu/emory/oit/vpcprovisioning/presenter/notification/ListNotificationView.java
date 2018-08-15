@@ -36,6 +36,7 @@ public interface ListNotificationView extends IsWidget, View {
 		void refreshListWithAllNotificationsForUser(UserAccountPojo user);
 		void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user);
 		void showSrdForUserNotification(UserNotificationPojo userNotification);
+		void filterBySearchString(boolean includeAllNotifications, String searchString);
 	}
 
 	/**
@@ -55,6 +56,7 @@ public interface ListNotificationView extends IsWidget, View {
 	 * @param cidrs the list of caseRecords
 	 */
 	void setNotifications(List<UserNotificationPojo> services);
+	List<UserNotificationPojo> getNotifications();
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeNotificationFromView(UserNotificationPojo service);
@@ -62,4 +64,6 @@ public interface ListNotificationView extends IsWidget, View {
 	void setLongRunningProcess(boolean isLongRunning);
 	boolean isLongRunningProcess();
 	void initPage();
+	void showFilteredStatus();
+	void hideFilteredStatus();
 }

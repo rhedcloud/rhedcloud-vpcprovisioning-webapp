@@ -57,6 +57,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		void deleteNotification(AccountNotificationPojo selected);
 		void showSrdForAccountNotification(AccountNotificationPojo selected);
 		void refreshAccountNotificationList(final UserAccountPojo user);
+		void filterBySearchString(String searchString);
 	}
 
 	/**
@@ -119,4 +120,6 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	
 	void setAccountNotifications(List<AccountNotificationPojo> pojos);
 	void removeAccountNotificationFromView(AccountNotificationPojo pojo);
+	void showFilteredStatus();
+	void hideFilteredStatus();
 }

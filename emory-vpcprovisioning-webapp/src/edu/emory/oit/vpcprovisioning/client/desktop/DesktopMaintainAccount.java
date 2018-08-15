@@ -120,6 +120,22 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
 	@UiField VerticalPanel sensitiveDataPanel;
 	@UiField PushButton refreshButton;
+	
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
+	@UiField HTML filteredHTML;
+
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		presenter.filterBySearchString(filterTB.getText());
+	}
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		filterTB.setText("");
+		presenter.refreshAccountNotificationList(userLoggedIn);
+		this.hideFilteredStatus();
+	}
 
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
@@ -446,8 +462,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailTF.setText("");
 		addEmailTypeLB.setSelectedIndex(0);
 
-//		addNetIdTF.setText("");
-//		addNetIdTF.getElement().setPropertyString("placeholder", "enter net id");
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter search string");
 
 		addEmailTF.setText("");
 		addEmailTF.getElement().setPropertyString("placeholder", "enter e-mail");
@@ -571,6 +587,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void applyAWSAccountAdminMask() {
+		GWT.log("Applying account admin mask...");
 		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
@@ -598,6 +615,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void applyAWSAccountAuditorMask() {
+		GWT.log("Applying account auditor mask...");
 		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
@@ -741,6 +759,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void applyCentralAdminMask() {
+		GWT.log("Applying central admin mask...");
 		okayButton.setEnabled(true);
 		accountIdTB.setEnabled(true);
 		accountNameTB.setEnabled(true);
@@ -777,12 +796,14 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void enableAdminMaintenance() {
+		GWT.log("enabling admin maintenance...");
 		addAdminButton.setEnabled(true);
 		directoryLookupSB.setEnabled(true);
 	}
 	
 	@Override
 	public void disableAdminMaintenance() {
+		GWT.log("disabling admin maintenance...");
 		addAdminButton.setEnabled(false);
 		directoryLookupSB.setEnabled(false);
 	}
@@ -1024,5 +1045,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void enableButtons() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public void showFilteredStatus() {
+		filteredHTML.setVisible(true);
+	}
+	@Override
+	public void hideFilteredStatus() {
+		filteredHTML.setVisible(false);
 	}
 }

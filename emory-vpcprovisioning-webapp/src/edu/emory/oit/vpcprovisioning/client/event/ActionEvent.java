@@ -42,6 +42,7 @@ import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
+import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
@@ -88,6 +89,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private AccountNotificationPojo accountNotification;
 	private SecurityRiskDetectionPojo srd;
 	private QueryFilter filter;
+	private TermsOfUseAgreementPojo termsOfUseAgreement;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -252,6 +254,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, TermsOfUseAgreementPojo toua) {
+		eventBus.fireEventFromSource(new ActionEvent(toua), sourceName);
+	}
+	
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
 	}
@@ -454,6 +460,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public ActionEvent(SecurityRiskDetectionPojo srd2, AccountNotificationPojo notification2) {
 		this.srd = srd2;
 		this.accountNotification = notification2;
+	}
+
+	public ActionEvent(TermsOfUseAgreementPojo toua) {
+		this.termsOfUseAgreement = toua;
 	}
 
 	@Override

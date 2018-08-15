@@ -585,6 +585,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("useShibboleth from config doc: " + shib);
 				useShibboleth = Boolean.parseBoolean(shib);
 				String testUserEppn = generalProps.getProperty("testUserEppn", "jtjacks@emory.edu");
+				String testUserPpid = generalProps.getProperty("testUserPpid", "P7247525");
+				String testUserFirstName = generalProps.getProperty("testUserFirstName", "Tod");
+				String testUserLastName = generalProps.getProperty("testUserLastName", "Jackson");
 
 				if (useShibboleth) {
 					// error condition, somehow they've got to the app
@@ -600,11 +603,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						"Using testUserEppn for development purposes");
 					user = new UserAccountPojo();
 					user.setEppn(testUserEppn);
+					user.setPublicId(testUserPpid);
 					PersonalNamePojo pnp = new PersonalNamePojo();
-					pnp.setFirstName("Tod");
-					pnp.setLastName("Jackson");
+					pnp.setFirstName(testUserFirstName);
+					pnp.setLastName(testUserLastName);
 					user.setPersonalName(pnp);
-					user.setPublicId("P7247525");
 
 					if (useAuthzService) {
 						// get permissions
@@ -803,8 +806,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
 			if (ra_result != null) {
-				info("[getRolesForUser] got " + ra_result.getResults().size() + 
-					" RoleAssignment objects back for userDN: " + ra_filter.getUserDN());
+//				info("[getRolesForUser] got " + ra_result.getResults().size() + 
+//					" RoleAssignment objects back for userDN: " + ra_filter.getUserDN());
 			}
 			else {
 				// error
@@ -825,12 +828,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						continue;
 					}
 					if (roleDn.indexOf("RGR_AWS") >= 0) {
-						info("[getRolesForUser] roleDn: " + roleDn);
 						String[] cns = roleDn.split(",");
 						String acctCn = cns[0];
 						String[] idRoles = acctCn.split("-");
 						if (idRoles.length != 3) {
-							info("roleDn doesn't have 3 'idRoles', continuing to next roleDn");
 							continue;
 						}
 						String acctId = idRoles[1];
@@ -3508,9 +3509,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpcpsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = generalProps.getProperty("vpcpListTimeoutMillis", "30000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getAWSRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
 			@SuppressWarnings("unchecked")
-			List<VirtualPrivateCloudProvisioning> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+			List<VirtualPrivateCloudProvisioning> moas = 
+				actionable.query(queryObject, reqSvc);
+			
 			info("[getVpcpsForFilter] got " + moas.size() + " VPCPs back from the server.");
 			for (VirtualPrivateCloudProvisioning moa : moas) {
 //				info("VPCP returned: " + moa.toXmlString());
@@ -4799,10 +4810,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			for (UserNotification moa : moas) {
 				UserNotificationPojo pojo = new UserNotificationPojo();
 				UserNotificationPojo baseline = new UserNotificationPojo();
-				this.populateUserNotificationPojo(moa, pojo);
-				this.populateUserNotificationPojo(moa, baseline);
-				pojo.setBaseline(baseline);
-				pojos.add(pojo);
+
+				if (filter.getSearchString() != null && filter.getSearchString().length() > 0) {
+					// only add notifications that contain the search string
+					if (moa.getSubject().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+						this.populateUserNotificationPojo(moa, pojo);
+						this.populateUserNotificationPojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}
+					else if (moa.getText().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+						this.populateUserNotificationPojo(moa, pojo);
+						this.populateUserNotificationPojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}
+				}
+				else {
+					// add them all
+					this.populateUserNotificationPojo(moa, pojo);
+					this.populateUserNotificationPojo(moa, baseline);
+					pojo.setBaseline(baseline);
+					pojos.add(pojo);
+				}
 			}
 
 			Collections.sort(pojos);
@@ -5581,16 +5611,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setRoleDN(moa.getRoleDN());
 		
 		if (moa.getExplicitIdentityDNs() != null) {
-			info("RoleAssignment HAS ExplicityIdentityDNs field.  Need to add " + 
-				moa.getExplicitIdentityDNs().getDistinguishedNameLength() + " DNs to the pojo");
+//			info("RoleAssignment HAS ExplicityIdentityDNs field.  Need to add " + 
+//				moa.getExplicitIdentityDNs().getDistinguishedNameLength() + " DNs to the pojo");
 			pojo.setExplicityIdentitiyDNs(new ExplicitIdentityDNsPojo());
 			for (String moa_dn : (List<String>)moa.getExplicitIdentityDNs().getDistinguishedName()) {
 				pojo.getExplicityIdentitiyDNs().getDistinguishedNames().add(moa_dn);
-				info("Added the DN " + moa_dn + " To the RoleAssignmentPojo");
+//				info("Added the DN " + moa_dn + " To the RoleAssignmentPojo");
 			}
 		}
 		else {
-			info("RoleAssignment DOES NOT HAVE ExplicityIdentityDNs field.");
+//			info("RoleAssignment DOES NOT HAVE ExplicityIdentityDNs field.");
 		}
 		pojo.setExpirationDate(this.toDateFromDatetime(moa.getExpirationDatetime()));
 		pojo.setEffectiveDate(this.toDateFromDatetime(moa.getEffectiveDatetime()));
@@ -6010,7 +6040,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setIdentityType(filter.getIdentityType());
 				queryObject.setDirectAssignOnly(this.toStringFromBoolean(filter.isDirectAssignOnly()));
 				queryObject.setUserDN(filter.getUserDN());
-				info("[getRoleAssignmentsForFilter] query spec: " + queryObject.toXmlString());
+//				info("[getRoleAssignmentsForFilter] query spec: " + queryObject.toXmlString());
 			}
 
 			// TODO: need to figure out how to do this without going back to getUserLoggedIn
@@ -6023,9 +6053,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			@SuppressWarnings("unchecked")
 			List<RoleAssignment> moas = actionable.query(queryObject,
 					this.getIDMRequestService());
-			info("[getRoleAssignmentsForFilter] got " + moas.size() + " RoleAssignments back from ESB service.");
+//			info("[getRoleAssignmentsForFilter] got " + moas.size() + " RoleAssignments back from ESB service.");
 			for (RoleAssignment moa : moas) {
-				info("[getRoleAssignmentsForFilter] RoleAssignment.toXmlString: " + moa.toXmlString());
+//				info("[getRoleAssignmentsForFilter] RoleAssignment.toXmlString: " + moa.toXmlString());
 				String roleDn = moa.getRoleDN();
 				if (roleDn != null) {
 					if (roleDn.indexOf("RGR_AWS") >= 0 || 
@@ -6228,7 +6258,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
 				RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
-				info("[getRoleAssignmentsForAccount] filter.roleDN: " + roleDN);
+//				info("[getRoleAssignmentsForAccount] filter.roleDN: " + roleDN);
 				filter.setRoleDN(roleDN);
 				filter.setIdentityType("USER");
 				filter.setDirectAssignOnly(true);
@@ -6238,13 +6268,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						for (RoleAssignmentPojo ra : ra_result.getResults()) {
 							if (ra.getExplicityIdentitiyDNs() != null) {
 								for (String dn : ra.getExplicityIdentitiyDNs().getDistinguishedNames()) {
-									info("[getAdminRoleAssignmentsForAccount] dn: " + dn);
+//									info("[getAdminRoleAssignmentsForAccount] dn: " + dn);
 									String[] cns = dn.split(",");
-									info("[getAdminRoleAssignmentsForAccount] cns: " + cns);
+//									info("[getAdminRoleAssignmentsForAccount] cns: " + cns);
 									String publicIdCn = cns[0];
-									info("[getAdminRoleAssignmentsForAccount] publicIdCn: " + publicIdCn);
+//									info("[getAdminRoleAssignmentsForAccount] publicIdCn: " + publicIdCn);
 									String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
-									info("[getAdminRoleAssignmentsForAccount] publicId: " + publicId);
+//									info("[getAdminRoleAssignmentsForAccount] publicId: " + publicId);
 									
 									// get directoryperson for publicid
 									// check cache to see if the DirectoryPerson is already in the cache
@@ -6255,8 +6285,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 										DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 										dp_filter.setKey(publicId);
 										DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-										info("[getAdminRoleAssignmentsForAccount] got " + dp_result.getResults().size() + 
-												" DirectoryPerson objects back for key=" + publicId);
+//										info("[getAdminRoleAssignmentsForAccount] got " + dp_result.getResults().size() + 
+//												" DirectoryPerson objects back for key=" + publicId);
 										if (dp_result.getResults().size() > 0) {
 											cached_dp = dp_result.getResults().get(0);
 											// add to cache
@@ -6267,7 +6297,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 										}
 									}
 									else {
-										info("[getAdminRoleAssignmentsForAccount] got DirectoryPerson (" + publicId + ") from cache.");
+//										info("[getAdminRoleAssignmentsForAccount] got DirectoryPerson (" + publicId + ") from cache.");
 									}
 									
 									// create RoleAssignmentSummaryPojo and add it to the results
@@ -6848,52 +6878,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					queryObject.setAccountId(filter.getAccountId());
 					queryObject.setAccountNotificationId(filter.getAccountNotificationId());
 				}
-
-//				if (filter.getStartDate() != null || filter.getEndDate() != null) {
-//					SimpleDateFormat l_dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//
-//					if (filter.getStartDate() != null && filter.getEndDate() != null) {
-//						QueryLanguage ql = queryObject.newQueryLanguage();
-//						ql.setName("findAccountNotificationsBetweenDates");
-//						ql.setType("hql");
-//
-//						Parameter startDate = ql.newParameter();
-//						startDate.setValue(l_dateFormatter.format(filter.getStartDate()));
-//						startDate.setName("startDate");
-//						ql.addParameter(startDate);
-//
-//						Parameter endDate = ql.newParameter();
-//						endDate.setValue(l_dateFormatter.format(filter.getEndDate()));
-//						endDate.setName("endDate");
-//						ql.addParameter(endDate);
-//						
-//						queryObject.setQueryLanguage(ql);
-//					}
-//					else if (filter.getEndDate() != null) {
-//						QueryLanguage ql = queryObject.newQueryLanguage();
-//						ql.setName("findAccountNotificationsBeforeDate");
-//						ql.setType("hql");
-//
-//						Parameter endDate = ql.newParameter();
-//						endDate.setValue(l_dateFormatter.format(filter.getEndDate()));
-//						endDate.setName("endDate");
-//						ql.addParameter(endDate);
-//						
-//						queryObject.setQueryLanguage(ql);
-//					}
-//					else if (filter.getStartDate() != null) {
-//						QueryLanguage ql = queryObject.newQueryLanguage();
-//						ql.setName("findAccountNotificationsAfterDate");
-//						ql.setType("hql");
-//
-//						Parameter startDate = ql.newParameter();
-//						startDate.setValue(l_dateFormatter.format(filter.getStartDate()));
-//						startDate.setName("startDate");
-//						ql.addParameter(startDate);
-//						
-//						queryObject.setQueryLanguage(ql);
-//					}
-//				}
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
@@ -6917,10 +6901,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			for (AccountNotification moa : moas) {
 				AccountNotificationPojo pojo = new AccountNotificationPojo();
 				AccountNotificationPojo baseline = new AccountNotificationPojo();
-				this.populateAccountNotificationPojo(moa, pojo);
-				this.populateAccountNotificationPojo(moa, baseline);
-				pojo.setBaseline(baseline);
-				pojos.add(pojo);
+				if (filter.getSearchString() != null && filter.getSearchString().length() > 0) {
+					// only add notifications that contain the search string
+					if (moa.getSubject().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+						this.populateAccountNotificationPojo(moa, pojo);
+						this.populateAccountNotificationPojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}
+					else if (moa.getText().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+						this.populateAccountNotificationPojo(moa, pojo);
+						this.populateAccountNotificationPojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}
+				}
+				else {
+					// add them all
+					this.populateAccountNotificationPojo(moa, pojo);
+					this.populateAccountNotificationPojo(moa, baseline);
+					pojo.setBaseline(baseline);
+					pojos.add(pojo);
+				}
 			}
 
 			Collections.sort(pojos);
