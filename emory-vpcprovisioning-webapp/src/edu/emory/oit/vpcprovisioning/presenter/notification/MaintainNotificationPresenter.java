@@ -255,30 +255,6 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 	}
 
 	@Override
-	public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w) {
-		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(DirectoryMetaDataPojo result) {
-				if (result.getFirstName() == null) {
-					result.setFirstName("Unknown");
-				}
-				if (result.getLastName() == null) {
-					result.setLastName("Net ID");
-				}
-				w.setTitle(result.getFirstName() + " " + result.getLastName() + 
-					" - from the Identity Notification.");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
-	}
-
-	@Override
 	public void showSrdForUserNotification(final UserNotificationPojo userNotification) {
 		getView().showPleaseWaitDialog("Retrieving Security Risk Detection from the SRD service...");
 		// get the SRD associated to the notification and pass it

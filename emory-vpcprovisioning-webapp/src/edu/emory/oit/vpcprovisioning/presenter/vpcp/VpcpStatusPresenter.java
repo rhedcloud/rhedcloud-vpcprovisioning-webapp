@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
@@ -252,26 +253,46 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 	}
 
 	@Override
-	public void setDirectoryMetaDataTitleOnWidget(String netId, final Widget w) {
-		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
+	public void setSpeedChartStatusForKeyOnWidget(final String speedChartNumber, final Widget w) {
+		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
+				GWT.log("Server exception validating speedtype", caught);
+				w.setTitle("Server exception validating speedtype");
 			}
 
 			@Override
-			public void onSuccess(DirectoryMetaDataPojo result) {
-				if (result.getFirstName() == null) {
-					result.setFirstName("Unknown");
+			public void onSuccess(SpeedChartPojo scp) {
+				if (scp == null) {
+					w.setTitle("Invalid account number (" + speedChartNumber + "), can't validate this number");
+					w.getElement().getStyle().setBackgroundColor("#efbebe");
 				}
-				if (result.getLastName() == null) {
-					result.setLastName("Net ID");
+				else {
+					String deptId = scp.getDepartmentId();
+					String deptDesc = scp.getDepartmentDescription();
+					String desc = scp.getDescription();
+				    String euValidityDesc = scp.getEuValidityDescription();
+				    String statusDescString = euValidityDesc + "\n" + 
+				    		deptId + " | " + deptDesc + "\n" +
+				    		desc;
+					w.setTitle(statusDescString);
+					if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
+						w.getElement().getStyle().setBackgroundColor(null);
+					}
+					else if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_INVALID)) {
+						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);
+					}
+					else {
+						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_FIELD_WARNING);
+					}
 				}
-				w.setTitle(result.getFirstName() + " " + result.getLastName() + 
-					" - from the Identity Service.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
+		if (speedChartNumber != null && speedChartNumber.length() > 0) {
+			VpcProvisioningService.Util.getInstance().getSpeedChartForFinancialAccountNumber(speedChartNumber, callback);
+		}
+		else {
+			GWT.log("null key, can't validate yet");
+		}
 	}
 }

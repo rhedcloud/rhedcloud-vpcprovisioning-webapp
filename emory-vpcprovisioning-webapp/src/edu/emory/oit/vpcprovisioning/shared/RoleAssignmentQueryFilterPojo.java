@@ -9,6 +9,7 @@ public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSer
 	String identityType;
 	boolean directAssignOnly;
 	String userDN;
+	UserAccountPojo userLoggedIn;
 
 	public RoleAssignmentQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -49,6 +50,14 @@ public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSer
 	@Override
 	public String toString() {
 		return "roleDN: " + roleDN + ", identityType: " + identityType + ", userDN: " + userDN;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 
 }

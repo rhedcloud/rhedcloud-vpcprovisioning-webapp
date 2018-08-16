@@ -4,9 +4,11 @@ import java.util.logging.Logger;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 
 public abstract class PresenterBase {
@@ -75,5 +77,27 @@ public abstract class PresenterBase {
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getReleaseInfo(riCallback);
+	}
+	
+	public void setDirectoryMetaDataTitleOnWidget(final String ppid, final Widget w) {
+		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				w.setTitle("Can't get directory meta-data from server.");
+			}
+
+			@Override
+			public void onSuccess(DirectoryMetaDataPojo result) {
+				if (result.getFirstName() == null) {
+					result.setFirstName("Unknown");
+				}
+				if (result.getLastName() == null) {
+					result.setLastName("Net ID");
+				}
+				w.setTitle(result.getPublicId() + ": " + result.getFirstName() + " " + result.getLastName() + 
+					" - from the Identity Service.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(ppid, callback);
 	}
 }

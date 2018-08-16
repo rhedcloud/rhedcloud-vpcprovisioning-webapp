@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -13,9 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
-import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -26,7 +25,9 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 	private TermsOfUseAgreementPojo termsOfUseAgreement;
 	private UserAccountPojo userLoggedIn;
 	private TermsOfUseSummaryPojo summary;
-
+	boolean termsOfUseAgreementSaved;
+	DialogBox termsOfUseDialog;
+	
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
 	 * new case record.
@@ -190,7 +191,7 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 
 	@Override
 	public void saveTermsOfUseAgreement() {
-		getView().showPleaseWaitDialog("Saving TermsOfUseAgreement...");
+		getView().showPleaseWaitDialog("Saving Rules of Behavior Agreement...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);
@@ -201,25 +202,28 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 		else {
 			getView().resetFieldStyles();
 		}
+		
 		AsyncCallback<TermsOfUseAgreementPojo> callback = new AsyncCallback<TermsOfUseAgreementPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				setTermsOfUseAgreementSaved(false);
 				getView().hidePleaseWaitDialog();
 				GWT.log("Exception saving the TermsOfUseAgreement", caught);
-				getView().showMessageToUser("There was an exception on the " +
-						"server saving the TermsOfUseAgreement.  Message " +
-						"from server is: " + caught.getMessage());
+				getView().showMessageToUser("Rules of Behavior Agreement was not "
+						+ "saved successfully.  You cannot close this window yet.  If the "
+						+ "problem persists, please take note of the error you're getting and "
+						+ "contact the help desk.  Error from the server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(TermsOfUseAgreementPojo result) {
+				setTermsOfUseAgreementSaved(true);
 				getView().hidePleaseWaitDialog();
-//				TermsOfUseAgreementQueryFilterPojo filter = new TermsOfUseAgreementQueryFilterPojo();
-//				filter.setUserId(userLoggedIn.getPublicId());
-//				ActionEvent.fire(getEventBus(), ActionNames.TERMS_OF_USE_AGREEMENT_SAVED, filter);
+				termsOfUseDialog.hide();
 			}
 		};
 		termsOfUseAgreement = new TermsOfUseAgreementPojo();
+		termsOfUseAgreement.setUserId(userLoggedIn.getPublicId());
 		termsOfUseAgreement.setAgreedDate(new Date());
 		termsOfUseAgreement.setPresentedDate(new Date());
 		termsOfUseAgreement.setStatus("Agreed");
@@ -227,6 +231,22 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 		termsOfUseAgreement.setCreateUser(userLoggedIn.getPublicId());
 		termsOfUseAgreement.setCreateTime(new Date());
 		VpcProvisioningService.Util.getInstance().createTermsOfUseAgreement(termsOfUseAgreement, callback);
+		
+		// TODO: temporary
+//		setTermsOfUseAgreementSaved(true);
+//		if (this.isTermsOfUseAgreementSaved()) {
+//			final Timer t = new Timer() {
+//				@Override
+//				public void run() {
+//					getView().hidePleaseWaitDialog();
+//				}
+//			};
+//			t.schedule(1500);
+//		}
+//		else {
+//			getView().hidePleaseWaitDialog();
+//		}
+		// end temporary
 	}
 
 	@Override
@@ -274,30 +294,6 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 		this.termsOfUseAgreement = termsOfUseAgreement;
 	}
 
-	@Override
-	public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w) {
-		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(DirectoryMetaDataPojo result) {
-				if (result.getFirstName() == null) {
-					result.setFirstName("Unknown");
-				}
-				if (result.getLastName() == null) {
-					result.setLastName("Net ID");
-				}
-				w.setTitle(result.getFirstName() + " " + result.getLastName() + 
-					" - from the Identity TermsOfUseAgreement.");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
-	}
-
 	public UserAccountPojo getUserLoggedIn() {
 		return userLoggedIn;
 	}
@@ -314,5 +310,21 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 	@Override
 	public TermsOfUseSummaryPojo getTermsOfUseSummary() {
 		return summary;
+	}
+
+	public boolean isTermsOfUseAgreementSaved() {
+		return termsOfUseAgreementSaved;
+	}
+
+	public void setTermsOfUseAgreementSaved(boolean termsOfUseAgreementSaved) {
+		this.termsOfUseAgreementSaved = termsOfUseAgreementSaved;
+	}
+
+	public DialogBox getTermsOfUseDialog() {
+		return termsOfUseDialog;
+	}
+
+	public void setTermsOfUseDialog(DialogBox termsOfUseDialog) {
+		this.termsOfUseDialog = termsOfUseDialog;
 	}
 }

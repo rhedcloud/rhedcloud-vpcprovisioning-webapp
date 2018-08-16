@@ -21,7 +21,6 @@ import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
@@ -365,29 +364,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	public void setAccount(AccountPojo account) {
 		this.account = account;
-	}
-
-	@Override
-	public void setDirectoryMetaDataTitleOnWidget(final String publicId, final Widget w) {
-		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log("Server exception retrieving directory meta data", caught);
-			}
-
-			@Override
-			public void onSuccess(DirectoryMetaDataPojo result) {
-				if (result.getFirstName() == null) {
-					result.setFirstName("Unknown");
-				}
-				if (result.getLastName() == null) {
-					result.setLastName("Net ID");
-				}
-				w.setTitle(result.getFirstName() + " " + result.getLastName() + 
-					" - from the Identity Service.");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(publicId, callback);
 	}
 
 	@Override

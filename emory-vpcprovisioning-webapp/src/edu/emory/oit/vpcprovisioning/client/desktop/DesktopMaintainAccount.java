@@ -479,6 +479,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			if (presenter.getAccount().getAccountOwnerDirectoryMetaData() != null) {
 				ownerIdSB.setText(presenter.getAccount().getAccountOwnerDirectoryMetaData().getFirstName() + 
 						" " + presenter.getAccount().getAccountOwnerDirectoryMetaData().getLastName());
+				presenter.setDirectoryMetaDataTitleOnWidget(presenter.getAccount().getAccountOwnerDirectoryMetaData().getPublicId(), ownerIdSB);
 			}
 			else {
 				// enter placeholder text on ownerIdSB

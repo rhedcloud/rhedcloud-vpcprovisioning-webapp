@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.tou;
 
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -35,6 +36,8 @@ public interface MaintainTermsOfUseAgreementView extends Editor<TermsOfUseAgreem
 		public void logMessageOnServer(final String message);
 		public void setTermsOfUseSummary(TermsOfUseSummaryPojo summary);
 		public TermsOfUseSummaryPojo getTermsOfUseSummary();
+		public boolean isTermsOfUseAgreementSaved();
+		public void setTermsOfUseDialog(DialogBox termsOfUseDialog);
 	}
 
 	/**

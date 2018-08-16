@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
@@ -47,7 +48,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	private SingleSelectionModel<VpcpPojo> selectionModel;
 	List<VpcpPojo> vpcpList = new java.util.ArrayList<VpcpPojo>();
 	UserAccountPojo userLoggedIn;
-    PopupPanel actionsPopup = new PopupPanel(true);
+	PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
 	@UiField SimplePager vpcpListPager;
@@ -64,8 +65,8 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	public interface MyCellTableResources extends CellTable.Resources {
 
-	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
-	     public CellTable.Style cellTableStyle();
+		@Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+		public CellTable.Style cellTableStyle();
 	}
 	private static DesktopListVpcpUiBinder uiBinder = GWT.create(DesktopListVpcpUiBinder.class);
 
@@ -88,14 +89,14 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
-	    actionsPopup.setAutoHideEnabled(true);
-	    actionsPopup.setAnimationEnabled(true);
-	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    
-	    Grid grid = new Grid(1, 1);
-	    grid.setCellSpacing(8);
-	    actionsPopup.add(grid);
-	    
+		actionsPopup.setAutoHideEnabled(true);
+		actionsPopup.setAnimationEnabled(true);
+		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid = new Grid(1, 1);
+		grid.setCellSpacing(8);
+		actionsPopup.add(grid);
+
 		Anchor assignAnchor = new Anchor("View Status");
 		assignAnchor.addStyleName("productAnchor");
 		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
@@ -122,7 +123,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@Override
 	public void setInitialFocus() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -161,64 +162,87 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	public void setVpcps(List<VpcpPojo> vpcps) {
 		this.vpcpList = vpcps;
 		this.initializeVpcpListTable();
-	    vpcpListPager.setDisplay(vpcpListTable);
+		vpcpListPager.setDisplay(vpcpListTable);
 	}
 
 	private Widget initializeVpcpListTable() {
 		GWT.log("initializing VPCP list table...");
 		vpcpListTable.setTableLayoutFixed(false);
 		vpcpListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
-		
+
 		// set range to display
 		vpcpListTable.setVisibleRange(0, 20);
-		
+
 		// create dataprovider
 		dataProvider = new ListDataProvider<VpcpPojo>();
 		dataProvider.addDataDisplay(vpcpListTable);
 		dataProvider.getList().clear();
 		dataProvider.getList().addAll(this.vpcpList);
-		
+
 		selectionModel = 
-	    	new SingleSelectionModel<VpcpPojo>(VpcpPojo.KEY_PROVIDER);
+				new SingleSelectionModel<VpcpPojo>(VpcpPojo.KEY_PROVIDER);
 		vpcpListTable.setSelectionModel(selectionModel);
-	    
-	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-	    	@Override
-	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		VpcpPojo m = selectionModel.getSelectedObject();
-	    		GWT.log("Selected vpcp is: " + m.getProvisioningId());
-	    	}
-	    });
 
-	    ListHandler<VpcpPojo> sortHandler = 
-	    	new ListHandler<VpcpPojo>(dataProvider.getList());
-	    vpcpListTable.addColumnSortHandler(sortHandler);
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				VpcpPojo m = selectionModel.getSelectedObject();
+				GWT.log("Selected vpcp is: " + m.getProvisioningId());
+			}
+		});
 
-	    if (vpcpListTable.getColumnCount() == 0) {
-		    initVpcpListTableColumns(sortHandler);
-	    }
-		
+		ListHandler<VpcpPojo> sortHandler = 
+				new ListHandler<VpcpPojo>(dataProvider.getList());
+		vpcpListTable.addColumnSortHandler(sortHandler);
+
+		if (vpcpListTable.getColumnCount() == 0) {
+			initVpcpListTableColumns(sortHandler);
+		}
+
 		return vpcpListTable;
 	}
 
 	private void initVpcpListTableColumns(ListHandler<VpcpPojo> sortHandler) {
 		GWT.log("initializing VPCP list table columns...");
-		
-	    Column<VpcpPojo, Boolean> checkColumn = new Column<VpcpPojo, Boolean>(
-		        new CheckboxCell(true, false)) {
-		      @Override
-		      public Boolean getValue(VpcpPojo object) {
-		        // Get the value from the selection model.
-		        return selectionModel.isSelected(object);
-		      }
-		    };
-		    vpcpListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-		    vpcpListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		Column<VpcpPojo, Boolean> checkColumn = new Column<VpcpPojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(VpcpPojo object) {
+				// Get the value from the selection model.
+				return selectionModel.isSelected(object);
+			}
+		};
+		vpcpListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		vpcpListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		// create time
+		Column<VpcpPojo, String> createTimeColumn = 
+				new Column<VpcpPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(VpcpPojo object) {
+				Date createTime = object.getCreateTime();
+				return createTime != null ? dateFormat.format(createTime) : "Unknown";
+			}
+		};
+		createTimeColumn.setSortable(true);
+		sortHandler.setComparator(createTimeColumn, new Comparator<VpcpPojo>() {
+			public int compare(VpcpPojo o1, VpcpPojo o2) {
+				Date c1 = o1.getCreateTime();
+				Date c2 = o2.getCreateTime();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
+		vpcpListTable.addColumn(createTimeColumn, "Create Time");
 
 		// Provisioning id column
 		Column<VpcpPojo, String> provIdColumn = 
-			new Column<VpcpPojo, String> (new TextCell()) {
-			
+				new Column<VpcpPojo, String> (new TextCell()) {
+
 			@Override
 			public String getValue(VpcpPojo object) {
 				return object.getProvisioningId();
@@ -231,11 +255,11 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 			}
 		});
 		vpcpListTable.addColumn(provIdColumn, "Provisioning ID");
-		
+
 		// Status
 		Column<VpcpPojo, String> statusColumn = 
-			new Column<VpcpPojo, String> (new TextCell()) {
-			
+				new Column<VpcpPojo, String> (new TextCell()) {
+
 			@Override
 			public String getValue(VpcpPojo object) {
 				return object.getStatus();
@@ -248,15 +272,15 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 			}
 		});
 		vpcpListTable.addColumn(statusColumn, "Status");
-		
+
 		// Provisioning result
 		Column<VpcpPojo, String> resultColumn = 
-			new Column<VpcpPojo, String> (new TextCell()) {
-				
-				@Override
-				public String getValue(VpcpPojo object) {
-					return object.getProvisioningResult();
-				}
+				new Column<VpcpPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(VpcpPojo object) {
+				return object.getProvisioningResult();
+			}
 		};
 		resultColumn.setSortable(true);
 		sortHandler.setComparator(resultColumn, new Comparator<VpcpPojo>() {
@@ -265,15 +289,15 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 			}
 		});
 		vpcpListTable.addColumn(resultColumn, "Provisioning Result");
-		
+
 		// Anticipated time
 		Column<VpcpPojo, String> anticipatedTimeColumn = 
-			new Column<VpcpPojo, String> (new TextCell()) {
-					
-				@Override
-				public String getValue(VpcpPojo object) {
-					return object.getAnticipatedTime();
-				}
+				new Column<VpcpPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(VpcpPojo object) {
+				return object.getAnticipatedTime();
+			}
 		};
 		anticipatedTimeColumn.setSortable(true);
 		sortHandler.setComparator(anticipatedTimeColumn, new Comparator<VpcpPojo>() {
@@ -282,15 +306,15 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 			}
 		});
 		vpcpListTable.addColumn(anticipatedTimeColumn, "Anticipated Time");
-		
+
 		// Actual time
 		Column<VpcpPojo, String> actualTimeColumn = 
-			new Column<VpcpPojo, String> (new TextCell()) {
-						
-				@Override
-				public String getValue(VpcpPojo object) {
-					return object.getActualTime();
-				}
+				new Column<VpcpPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(VpcpPojo object) {
+				return object.getActualTime();
+			}
 		};
 		actualTimeColumn.setSortable(true);
 		sortHandler.setComparator(actualTimeColumn, new Comparator<VpcpPojo>() {
@@ -303,22 +327,22 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		// Provisioning steps progress status
 		final SafeHtmlCell stepProgressCell = new SafeHtmlCell();
 
-	    Column<VpcpPojo, SafeHtml> stepProgressCol = new Column<VpcpPojo, SafeHtml>(
-	            stepProgressCell) {
-	
-	        @Override
-	        public SafeHtml getValue(VpcpPojo value) {
-	            SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getTotalStepCount(), value.getCompletedStepCount());
-	            return sh;
-	        }
-	    };		 
+		Column<VpcpPojo, SafeHtml> stepProgressCol = new Column<VpcpPojo, SafeHtml>(
+				stepProgressCell) {
+
+			@Override
+			public SafeHtml getValue(VpcpPojo value) {
+				SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getTotalStepCount(), value.getCompletedStepCount());
+				return sh;
+			}
+		};		 
 		vpcpListTable.addColumn(stepProgressCol, "Progress");
 	}
-	
+
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -352,7 +376,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@Override
 	public void resetFieldStyles() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -374,25 +398,25 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

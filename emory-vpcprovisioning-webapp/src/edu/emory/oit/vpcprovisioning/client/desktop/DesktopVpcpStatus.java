@@ -73,6 +73,12 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		presenter.setDirectoryMetaDataTitleOnWidget(presenter.getVpcp().getVpcRequisition().getAccountOwnerUserId(), ownerNetIdLabel);
 	}
 
+	@UiHandler ("speedTypeLabel")
+	void speedTypeMouseOver(MouseOverEvent e) {
+		String speedChartNumber = speedTypeLabel.getText();
+		presenter.setSpeedChartStatusForKeyOnWidget(speedChartNumber, speedTypeLabel);
+	}
+
 	@UiHandler ("requestorNetIdLabel")
 	void requestorNetIdTBMouseOver(MouseOverEvent e) {
 		presenter.setDirectoryMetaDataTitleOnWidget(presenter.getVpcp().getVpcRequisition().getAuthenticatedRequestorUserId(), requestorNetIdLabel);
@@ -223,7 +229,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	}
 
 	private void refreshProvisioningStepInformation() {
-		Grid stepsGrid = new Grid(presenter.getVpcp().getProvisioningSteps().size() + 1, 7);
+		Grid stepsGrid = new Grid(presenter.getVpcp().getProvisioningSteps().size() + 1, 8);
 		stepsGrid.setCellPadding(8);
 		vpcpStepsPanel.clear();
 
@@ -231,9 +237,10 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		stepsGrid.setWidget(0, 1, new HTML("<b>Type</b>"));
 		stepsGrid.setWidget(0, 2, new HTML("<b>Description</b>"));
 		stepsGrid.setWidget(0, 3, new HTML("<b>Status</b>"));
-		stepsGrid.setWidget(0, 4, new HTML("<b>Actual Time</b>"));
+		stepsGrid.setWidget(0, 4, new HTML("<b>Result</b>"));
 		stepsGrid.setWidget(0, 5, new HTML("<b>Anticipated Time</b>"));
-		stepsGrid.setWidget(0, 6, new HTML("<b>Properties</b>"));
+		stepsGrid.setWidget(0, 6, new HTML("<b>Actual Time</b>"));
+		stepsGrid.setWidget(0, 7, new HTML("<b>Properties</b>"));
 
 		int gridRow = 1;
 		for (int i=0; i<presenter.getVpcp().getProvisioningSteps().size(); i++) {
@@ -243,14 +250,16 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 			HTML hType = new HTML(psp.getType());
 			HTML hDescription = new HTML(psp.getDescription());
 			HTML hStatus = new HTML(psp.getStatus());
-			HTML hActualTime = new HTML(psp.getActualTime());
+			HTML hResult = new HTML(psp.getStepResult());
 			HTML hAnticipatedTime = new HTML(psp.getAnticipatedTime());
+			HTML hActualTime = new HTML(psp.getActualTime());
 			stepsGrid.setWidget(gridRow, 0, hStepId);
 			stepsGrid.setWidget(gridRow, 1, hType);
 			stepsGrid.setWidget(gridRow, 2, hDescription);
 			stepsGrid.setWidget(gridRow, 3, hStatus);
-			stepsGrid.setWidget(gridRow, 4, hActualTime);
+			stepsGrid.setWidget(gridRow, 4, hResult);
 			stepsGrid.setWidget(gridRow, 5, hAnticipatedTime);
+			stepsGrid.setWidget(gridRow, 6, hActualTime);
 			if (psp.getProperties().size() > 0) {
 				StringBuffer sProps = new StringBuffer();
 				Iterator<String> iter = psp.getProperties().keySet().iterator();
@@ -267,11 +276,11 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 					}
 				}
 				HTML hProps = new HTML(sProps.toString());
-				stepsGrid.setWidget(gridRow, 6, hProps);
+				stepsGrid.setWidget(gridRow, 7, hProps);
 			}
 			else {
 				HTML hProps = new HTML("none");
-				stepsGrid.setWidget(gridRow, 6, hProps);
+				stepsGrid.setWidget(gridRow, 7, hProps);
 			}
 
 			if (psp.getStatus().equalsIgnoreCase(Constants.VPCP_STEP_STATUS_COMPLETED)) {

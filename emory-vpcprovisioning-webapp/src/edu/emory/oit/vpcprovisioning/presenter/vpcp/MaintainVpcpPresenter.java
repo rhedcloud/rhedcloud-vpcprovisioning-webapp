@@ -365,30 +365,6 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	}
 
 	@Override
-	public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w) {
-		AsyncCallback<DirectoryMetaDataPojo> callback = new AsyncCallback<DirectoryMetaDataPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onSuccess(DirectoryMetaDataPojo result) {
-				if (result.getFirstName() == null) {
-					result.setFirstName("Unknown");
-				}
-				if (result.getLastName() == null) {
-					result.setLastName("Net ID");
-				}
-				w.setTitle(result.getFirstName() + " " + result.getLastName() + 
-					" - from the Identity Service.");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getDirectoryMetaDataForPublicId(netId, callback);
-	}
-
-	@Override
 	public void setSpeedChartStatusForKeyOnWidget(final String key, final Widget w, final boolean confirmSpeedType) {
 		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
 			@Override

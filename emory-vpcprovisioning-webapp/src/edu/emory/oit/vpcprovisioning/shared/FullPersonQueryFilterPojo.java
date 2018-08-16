@@ -9,6 +9,7 @@ public class FullPersonQueryFilterPojo extends SharedObject implements IsSeriali
 	String emplId;
 	String prsni;
 	String code;
+	UserAccountPojo userLoggedIn;
 
 	public FullPersonQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -52,6 +53,14 @@ public class FullPersonQueryFilterPojo extends SharedObject implements IsSeriali
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 
 }

@@ -166,6 +166,7 @@ public class AppBootstrapper {
 				shell.initiliizeUserProfile();
 			}
 		};
+		GWT.log("[AppBootstrapper] getting user logged in...");
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 
 		activityManager.setDisplay(shell);
@@ -1277,24 +1278,28 @@ public class AppBootstrapper {
 				db.setGlassEnabled(true);
 				db.center();
 				final MaintainTermsOfUseAgreementPresenter presenter = new MaintainTermsOfUseAgreementPresenter(clientFactory);
-				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						db.hide();
-					}
-				});
-				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						if (!presenter.getView().hasFieldViolations()) {
-							// save logic is handled by the presenter
-							db.hide();
-						}
-					}
-				});
+//				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						if (!presenter.getView().hasFieldViolations()) {
+//							// save logic is handled by the presenter
+//							if (presenter.isTermsOfUseAgreementSaved()) {
+//								db.hide();
+//							}
+//							else {
+//								presenter.getView().showMessageToUser("Rules of Behavior Agreement was not "
+//										+ "saved successfully.  You cannot close this window yet.  If the "
+//										+ "problem persists, please take note of the error you're getting and "
+//										+ "contact the help desk.");
+//							}
+//						}
+//					}
+//				});
+				presenter.setTermsOfUseDialog(db);
 				presenter.start(eventBus);
 				db.setWidget(presenter);
 				db.show();
+				db.center();
 			}
 		});
 

@@ -14,6 +14,7 @@ public class UserAccountPojo implements IsSerializable {
 	PersonalNamePojo personalName = new PersonalNamePojo();
 	boolean superUser=false;
 	boolean hasValidTermsOfUseAgreement;
+	String authUserIdForHALS;
 
 	public UserAccountPojo() {
 		// TODO Auto-generated constructor stub
@@ -187,5 +188,13 @@ public class UserAccountPojo implements IsSerializable {
 
 	public void setHasValidTermsOfUseAgreement(boolean hasValidTermsOfUseAgreement) {
 		this.hasValidTermsOfUseAgreement = hasValidTermsOfUseAgreement;
+	}
+
+	public String getAuthUserIdForHALS() {
+		return authUserIdForHALS;
+	}
+
+	public void setAuthUserIdForHALS(String authUserIdForHALS) {
+		this.authUserIdForHALS = authUserIdForHALS;
 	}
 }
