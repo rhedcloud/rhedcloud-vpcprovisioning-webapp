@@ -325,6 +325,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
 		case 0:
+			clientFactory.getVpcpStatusView().stopTimer();
 			firstHomeContentWidget = true;
 			homeContentContainer.clear();
 			HomeView view = clientFactory.getHomeView();
@@ -333,6 +334,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 1:
 			GWT.log("need to get Account Maintenance Content.");
+			clientFactory.getVpcpStatusView().stopTimer();
 			firstAccountContentWidget = true;
 			accountContentContainer.clear();
 			ListAccountView listAccountView = clientFactory.getListAccountView();
@@ -346,6 +348,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 2:
 			GWT.log("need to get VPC Maintentenance content.");
+			clientFactory.getVpcpStatusView().stopTimer();
 			firstVpcContentWidget = true;
 			vpcContentContainer.clear();
 			ListVpcView listVpcView = clientFactory.getListVpcView();
@@ -357,6 +360,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 3:
 			GWT.log("need to get VPCP Maintentenance content.");
+			clientFactory.getVpcpStatusView().stopTimer();
 			firstVpcpContentWidget = true;
 			vpcpContentContainer.clear();
 			ListVpcpView listVpcpView = clientFactory.getListVpcpView();
@@ -370,6 +374,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 4:
 			GWT.log("need to get Services content.");
+			clientFactory.getVpcpStatusView().stopTimer();
 			firstServicesContentWidget = true;
 			servicesContentContainer.clear();
 			ListServiceView listServiceView = clientFactory.getListServiceView();
@@ -381,6 +386,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 5:
 			GWT.log("need to get Central Admin Content.");
+			clientFactory.getVpcpStatusView().stopTimer();
 			firstCentralAdminContentWidget = true;
 			centralAdminContentContainer.clear();
 			ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();

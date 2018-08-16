@@ -90,7 +90,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		doneButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				startTimer = false;
+				stopTimer();
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.VPCP_EDITING_CANCELED);
 			}
 		}, ClickEvent.getType());

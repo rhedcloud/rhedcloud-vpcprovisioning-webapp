@@ -3503,6 +3503,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setType(moa.getType());
 		pojo.setDescription(moa.getDescription());
 		pojo.setStatus(moa.getStatus());
+		pojo.setStepResult(moa.getStepResult());
 		pojo.setActualTime(moa.getActualTime());
 		pojo.setAnticipatedTime(moa.getAnticipatedTime());
 		if (moa.getProperty() != null) {
