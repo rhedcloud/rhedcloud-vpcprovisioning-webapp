@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -237,7 +238,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	    p.setAnimationEnabled(true);
 	    p.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    VerticalPanel vp = new VerticalPanel();
-	    vp.setSpacing(8);
+	    vp.setSpacing(4);
 		p.setWidget(vp);
 		vp.add(h2);
 		vp.add(h);
@@ -271,6 +272,12 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 		});
 		g.setWidget(1, 1, lookupButton);
 		p.showRelativeTo(personInfoButton);
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	directoryLookupSB.setFocus(true);
+	        }
+	    });
+
 	}
 	@Override
 	public void showPersonSummaryLookupPopup(String personInfoHTML) {
