@@ -25,6 +25,7 @@ public class VpcpAlert extends DialogBox {
 		vp.setWidth("100%");
 		vp.setSpacing(12);
 		HTML h = new HTML(message);
+		h.addStyleName("alertMessage");
 		h.setWidth("100%");
 		vp.add(h);
 

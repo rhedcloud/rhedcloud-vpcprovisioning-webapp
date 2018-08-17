@@ -303,15 +303,27 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 //						}
 //					});
 					
+					boolean addedError = false;
 					for (ErrorPojo error : rr.getErrors()) {
-						TextArea ta = new TextArea();
-						ta.setEnabled(false);
-						ta.setText(error.getDescription());
-						ta.setWidth("500px");
-						ta.setHeight("100px");
-						remediatorItem.addItem(ta);
+						if (error.getDescription() != null && error.getDescription().length() > 0) {
+							addedError=true;
+							TextArea ta = new TextArea();
+							ta.setEnabled(false);
+							ta.setText(error.getDescription());
+							ta.setWidth("500px");
+							ta.setHeight("100px");
+							remediatorItem.addItem(ta);
+						}
+						else {
+							GWT.log("No Error Description");
+						}
 					}
-					remediatorItem.addTextItem("");
+					if (addedError) {
+						remediatorItem.addTextItem("");
+					}
+					else {
+						GWT.log("No Errors");
+					}
 					
 					dsrItem.getChild(0).remove();
 					
