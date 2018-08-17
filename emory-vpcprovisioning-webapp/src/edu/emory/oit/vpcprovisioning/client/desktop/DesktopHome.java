@@ -228,6 +228,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	}
 	@Override
 	public void showPersonSummaryPopup(String personSummaryHTML) {
+		HTML h2 = new HTML("<b>Lookup Someone Else</b>");
 		HTML h = new HTML(personSummaryHTML);
 		h.addStyleName("body");
 		final PopupPanel p = new PopupPanel();
@@ -238,9 +239,11 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	    VerticalPanel vp = new VerticalPanel();
 	    vp.setSpacing(8);
 		p.setWidget(vp);
+		vp.add(h2);
 		vp.add(h);
-		Grid g = new Grid(1,2);
+		Grid g = new Grid(2,2);
 		vp.add(g);
+		g.setWidget(0, 0, h2);
 		final SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 		directoryLookupSB.addStyleName("field");
 		directoryLookupSB.addStyleName("glowing-border");
@@ -255,7 +258,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 				}
 			}
 		});
-		g.setWidget(0, 0, directoryLookupSB);
+		g.setWidget(1, 0, directoryLookupSB);
 		Button lookupButton = new Button("Lookup");
 		lookupButton.addStyleName("actionButton");
 		lookupButton.addStyleName("glowing-border");
@@ -266,7 +269,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 				presenter.lookupPersonInfoHTML(presenter.getDirectoryPerson());
 			}
 		});
-		g.setWidget(0, 1, lookupButton);
+		g.setWidget(1, 1, lookupButton);
 		p.showRelativeTo(personInfoButton);
 	}
 	@Override
