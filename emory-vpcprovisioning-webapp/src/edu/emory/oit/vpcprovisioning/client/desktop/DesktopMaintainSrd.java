@@ -323,6 +323,8 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 					}
 					else {
 						GWT.log("No Errors");
+						remediatorItem.addTextItem("No Error Information Available");
+						remediatorItem.addTextItem("");
 					}
 					
 					dsrItem.getChild(0).remove();
