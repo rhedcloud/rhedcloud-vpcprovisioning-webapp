@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 
 public class ListAccountPlace extends Place {
 
@@ -12,7 +13,7 @@ public class ListAccountPlace extends Place {
 	 * The tokenizer for this place. case recordList doesn't have any state, so we don't
 	 * have anything to encode.
 	 */
-	@Prefix("accountList")
+	@Prefix(Constants.LIST_ACCOUNT)
 	public static class Tokenizer implements PlaceTokenizer<ListAccountPlace> {
 
 		public ListAccountPlace getPlace(String token) {

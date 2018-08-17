@@ -5,25 +5,37 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopHome extends ViewImplBase implements HomeView {
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
 	List<AccountRolePojo> accountRoles;
+	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField HTML introBodyHTML;
@@ -215,14 +227,63 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 		p.showRelativeTo(directoryInfoButton);
 	}
 	@Override
-	public void showFullPersonInfoPopup(String fullPersonInfoHTML) {
-		HTML h = new HTML(fullPersonInfoHTML);
+	public void showPersonSummaryPopup(String personSummaryHTML) {
+		HTML h = new HTML(personSummaryHTML);
 		h.addStyleName("body");
-		PopupPanel p = new PopupPanel();
+		final PopupPanel p = new PopupPanel();
+		p.setWidth("750px");
 	    p.setAutoHideEnabled(true);
 	    p.setAnimationEnabled(true);
 	    p.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		p.setWidget(h);
+	    VerticalPanel vp = new VerticalPanel();
+	    vp.setSpacing(8);
+		p.setWidget(vp);
+		vp.add(h);
+		Grid g = new Grid(1,2);
+		vp.add(g);
+		final SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
+		directoryLookupSB.addStyleName("field");
+		directoryLookupSB.addStyleName("glowing-border");
+		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
+		directoryLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (dp_suggestion.getDirectoryPerson() != null) {
+					presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
+					directoryLookupSB.setTitle(presenter.getDirectoryPerson().toString());
+				}
+			}
+		});
+		g.setWidget(0, 0, directoryLookupSB);
+		Button lookupButton = new Button("Lookup");
+		lookupButton.addStyleName("actionButton");
+		lookupButton.addStyleName("glowing-border");
+		lookupButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				p.hide();
+				presenter.lookupPersonInfoHTML(presenter.getDirectoryPerson());
+			}
+		});
+		g.setWidget(0, 1, lookupButton);
+		p.showRelativeTo(personInfoButton);
+	}
+	@Override
+	public void showPersonSummaryLookupPopup(String personInfoHTML) {
+		HTML hl = new HTML("<b>Lookup Results</b>");
+		HTML h = new HTML(personInfoHTML);
+		h.addStyleName("body");
+		PopupPanel p = new PopupPanel();
+		p.setWidth("750px");
+	    p.setAutoHideEnabled(true);
+	    p.setAnimationEnabled(true);
+	    p.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    VerticalPanel vp = new VerticalPanel();
+	    vp.setSpacing(8);
+		p.setWidget(vp);
+		vp.add(hl);
+		vp.add(h);
 		p.showRelativeTo(personInfoButton);
 	}
 	@Override

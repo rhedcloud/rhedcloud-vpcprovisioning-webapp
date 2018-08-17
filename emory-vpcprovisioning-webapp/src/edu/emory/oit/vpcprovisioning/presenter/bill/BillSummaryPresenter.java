@@ -101,7 +101,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 					}
 				};
 
-				GWT.log("refreshing Account list...");
+				GWT.log("[BillSummaryPresenter] refreshing Account list...");
 				VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, accoutCallback);
 				
 				// refresh bill information for account passed in.

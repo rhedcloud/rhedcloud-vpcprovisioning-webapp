@@ -4,6 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
 
 public class ListCentralAdminPlace extends Place {
@@ -12,7 +13,7 @@ public class ListCentralAdminPlace extends Place {
 	 * The tokenizer for this place. case recordList doesn't have any state, so we don't
 	 * have anything to encode.
 	 */
-	@Prefix("centralAdminList")
+	@Prefix(Constants.LIST_CENTRAL_ADMIN)
 	public static class Tokenizer implements PlaceTokenizer<ListCentralAdminPlace> {
 
 		public ListCentralAdminPlace getPlace(String token) {

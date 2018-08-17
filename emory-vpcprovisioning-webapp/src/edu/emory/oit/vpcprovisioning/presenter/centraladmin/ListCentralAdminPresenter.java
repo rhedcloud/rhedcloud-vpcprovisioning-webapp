@@ -166,7 +166,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 			}
 		};
 
-		GWT.log("refreshing Account list...");
+		GWT.log("refreshing Central Admin list...");
 		if (filter == null) {
 			filter = new RoleAssignmentQueryFilterPojo();
 		}

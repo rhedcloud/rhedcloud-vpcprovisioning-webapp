@@ -62,6 +62,7 @@ import org.openeai.utils.config.SimpleAppConfigFactory;
 import com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection;
@@ -71,6 +72,7 @@ import com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUseAgreement;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
@@ -99,6 +101,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
@@ -7913,6 +7916,86 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			// TODO: error, unexpected number of effective TermsOfUse objects.
 		}
+		return summary;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public AccountProvisioningAuthorizationQueryResultPojo getAccountProvisioningAuthorizationsForFilter(
+			AccountProvisioningAuthorizationQueryFilterPojo filter) throws RpcException {
+
+		AccountProvisioningAuthorizationQueryResultPojo result = new AccountProvisioningAuthorizationQueryResultPojo();
+		result.setFilterUsed(filter);
+		List<AccountProvisioningAuthorizationPojo> pojos = new java.util.ArrayList<AccountProvisioningAuthorizationPojo>();
+		try {
+			AccountProvisioningAuthorizationQuerySpecification queryObject = (AccountProvisioningAuthorizationQuerySpecification) getObject(Constants.MOA_ACCOUNT_PROVISIONING_AUTHORIZATION_QUERY_SPECIFICATION);
+			AccountProvisioningAuthorization actionable = (AccountProvisioningAuthorization) getObject(Constants.MOA_ACCOUNT_PROVISIONING_AUTHORIZATION);
+
+			if (filter != null) {
+				queryObject.setUserId(filter.getUserId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getAccountProvisioningAuthorizationsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+
+			List<AccountProvisioningAuthorization> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getAccountProvisioningAuthorizationsForFilter] got " + moas.size() + 
+					" Provisioing Authorization objects from ESB service" + 
+					(filter != null ? " for filter: " + filter.toString() : ""));
+			for (AccountProvisioningAuthorization moa : moas) {
+				AccountProvisioningAuthorizationPojo pojo = new AccountProvisioningAuthorizationPojo();
+				pojo.setUserId(moa.getUserId());
+				pojo.setAuthorized(this.toBooleanFromString(moa.getIsAuthorized()));
+				pojo.setAuthorizedUserDescription(moa.getAuthorizedUserDescription());
+				for (String desc : (List<String>)moa.getUnauthorizedReason()) {
+					pojo.getUnauthorizedReasons().add(desc);
+				}
+				pojos.add(pojo);
+			}
+
+//			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@Override
+	public PersonInfoSummaryPojo getPersonInfoSummaryForPublicId(String publicId) throws RpcException {
+		PersonInfoSummaryPojo summary = new PersonInfoSummaryPojo();
+		
+		FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
+		fp_filter.setPublicId(publicId);
+		FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
+		if (fp_result.getResults().size() >= 0) {
+			summary.setFullPerson(fp_result.getResults().get(0));
+		}
+		
+		AccountProvisioningAuthorizationQueryFilterPojo apa_filter = new AccountProvisioningAuthorizationQueryFilterPojo();
+		apa_filter.setUserId(publicId);
+		AccountProvisioningAuthorizationQueryResultPojo apa_result = this.getAccountProvisioningAuthorizationsForFilter(apa_filter);
+		if (apa_result.getResults().size() >= 0) {
+			summary.setAccountProvisioningAuthorization(apa_result.getResults().get(0));
+		}
+		
 		return summary;
 	}
 }

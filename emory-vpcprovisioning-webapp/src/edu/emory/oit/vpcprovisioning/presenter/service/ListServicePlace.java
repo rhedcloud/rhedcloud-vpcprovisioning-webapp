@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 
 public class ListServicePlace extends Place {
 
@@ -12,7 +13,7 @@ public class ListServicePlace extends Place {
 	 * The tokenizer for this place. case recordList doesn't have any state, so we don't
 	 * have anything to encode.
 	 */
-	@Prefix("ServiceList")
+	@Prefix(Constants.LIST_SERVICES)
 	public static class Tokenizer implements PlaceTokenizer<ListServicePlace> {
 
 		public ListServicePlace getPlace(String token) {

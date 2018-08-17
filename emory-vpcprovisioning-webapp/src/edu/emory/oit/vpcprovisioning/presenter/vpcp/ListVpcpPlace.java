@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 
 public class ListVpcpPlace extends Place {
@@ -13,7 +14,7 @@ public class ListVpcpPlace extends Place {
 	 * The tokenizer for this place. case recordList doesn't have any state, so we don't
 	 * have anything to encode.
 	 */
-	@Prefix("VpcpList")
+	@Prefix(Constants.LIST_VPCP)
 	public static class Tokenizer implements PlaceTokenizer<ListVpcpPlace> {
 
 		public ListVpcpPlace getPlace(String token) {

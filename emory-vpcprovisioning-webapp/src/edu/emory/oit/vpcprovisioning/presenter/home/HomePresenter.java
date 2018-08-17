@@ -14,15 +14,14 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningAuthorizationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.PersonInfoSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -31,6 +30,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	private EventBus eventBus;
 	private UserAccountPojo userLoggedIn;
 	private boolean finishedDirectoryPersonCache=false;
+	private DirectoryPersonPojo directoryPerson;
 
 	public HomePresenter(ClientFactory clientFactory) {
 		this.clientFactory = clientFactory;
@@ -342,41 +342,141 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 	@Override
 	public String getDetailedPersonInfoHTML() {
-		AsyncCallback<FullPersonQueryResultPojo> srvrCallback = new AsyncCallback<FullPersonQueryResultPojo>() {
+		AsyncCallback<PersonInfoSummaryPojo> srvrCallback = new AsyncCallback<PersonInfoSummaryPojo>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitPanel();
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception retrieving FullPerson information.", caught);
-				getView().showFullPersonInfoPopup("Exception retrieving FullPerson info.  "
+				GWT.log("Exception retrieving Person Summary information.", caught);
+				getView().showPersonSummaryPopup("Exception retrieving Person Summary info.  "
 						+ "Exception: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(FullPersonQueryResultPojo result) {
+			public void onSuccess(PersonInfoSummaryPojo result) {
 				getView().hidePleaseWaitPanel();
 				getView().hidePleaseWaitDialog();
 				if (result == null) {
-					getView().showDirectoryPersonInfoPopup("NULL FirstPerson "
-							+ "object returned from server");
-				}
-				else if (result.getResults().size() != 1) {
-					getView().showDirectoryPersonInfoPopup("Invalid number of FirstPerson objects "
-							+ "returned from server.  Got " + result.getResults().size() + " expected 1");
+					getView().showDirectoryPersonInfoPopup("NULL Person Summary "
+							+ "info returned from server");
 				}
 				else {
-					FullPersonPojo fp = result.getResults().get(0);
-					getView().showFullPersonInfoPopup(fp.toString());
+					StringBuffer html = new StringBuffer();
+					if (result.getFullPerson() != null) {
+						html.append(result.getFullPerson().toString());
+					}
+					else {
+						html.append("No FullPerson info available");
+					}
+					
+					html.append("</br>");
+					
+					AccountProvisioningAuthorizationPojo apa = result.getAccountProvisioningAuthorization();
+					if (apa != null) {
+						if (apa.isAuthorized()) {
+							html.append("<p>You ARE authorized to perform Account Provisioning");
+							html.append("</br>");
+							html.append(apa.getAuthorizedUserDescription() + "</p>");
+						}
+						else {
+							html.append("<p>You ARE NOT authorized to perform Account Provisioning</p>");
+							html.append("<ul>");
+							for (String desc : apa.getUnauthorizedReasons()) {
+								html.append("<li>" + desc + "</li>");
+							}
+							html.append("</ul>");
+						}
+					}
+					else {
+						html.append("No AccountProvisioningAuthorization info available.");
+					}
+
+					getView().showPersonSummaryPopup(html.toString());
 				}
 			}
 			
 		};
-		FullPersonQueryFilterPojo filter = new FullPersonQueryFilterPojo();
-		GWT.log("Getting FullPerson for public id: " + userLoggedIn.getPublicId());
-		filter.setPublicId(userLoggedIn.getPublicId());
+		GWT.log("Getting person info summary for public id: " + userLoggedIn.getPublicId());
 		getView().showPleaseWaitDialog("Getting person meta data from the Identity Service...");
-		VpcProvisioningService.Util.getInstance().getFullPersonsForFilter(filter, srvrCallback);
+		VpcProvisioningService.Util.getInstance().getPersonInfoSummaryForPublicId(userLoggedIn.getPublicId(), srvrCallback);
+		return null;
+	}
+
+	public DirectoryPersonPojo getDirectoryPerson() {
+		return directoryPerson;
+	}
+
+	public void setDirectoryPerson(DirectoryPersonPojo directoryPerson) {
+		this.directoryPerson = directoryPerson;
+	}
+
+	@Override
+	public String lookupPersonInfoHTML(final DirectoryPersonPojo directoryPerson) {
+		if (directoryPerson == null) {
+			getView().showMessageToUser("Please enter a person's name to lookup.");
+			return null;
+		}
+		AsyncCallback<PersonInfoSummaryPojo> srvrCallback = new AsyncCallback<PersonInfoSummaryPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception retrieving Person Summary information.", caught);
+				getView().showPersonSummaryPopup("Exception retrieving Person Summary info.  "
+						+ "Exception: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(PersonInfoSummaryPojo result) {
+				getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
+				if (result == null) {
+					getView().showPersonSummaryLookupPopup("NULL Person Summary "
+							+ "info returned from server");
+				}
+				else {
+					StringBuffer html = new StringBuffer();
+//					if (result.getFullPerson() != null) {
+//						html.append(result.getFullPerson().toString());
+//					}
+//					else {
+//						html.append("No FullPerson info available");
+//					}
+//					
+//					html.append("</br>");
+					
+					AccountProvisioningAuthorizationPojo apa = result.getAccountProvisioningAuthorization();
+					if (apa != null) {
+						if (apa.isAuthorized()) {
+							html.append("<p>" + directoryPerson.getFullName() + 
+								" (" + directoryPerson.getKey() + ") IS authorized to perform Account Provisioning");
+							html.append("</br>");
+							html.append(apa.getAuthorizedUserDescription() + "</p>");
+						}
+						else {
+							html.append("<p>" + directoryPerson.getFullName() + 
+									" (" + directoryPerson.getKey() + ") IS NOT authorized to perform Account Provisioning</p>");
+							html.append("<ul>");
+							for (String desc : apa.getUnauthorizedReasons()) {
+								html.append("<li>" + desc + "</li>");
+							}
+							html.append("</ul>");
+						}
+					}
+					else {
+						html.append("No AccountProvisioningAuthorization info available.");
+					}
+
+					getView().showPersonSummaryLookupPopup(html.toString());
+				}
+			}
+			
+		};
+		GWT.log("Looking up person info summary for public id: " + directoryPerson.getKey());
+		getView().showPleaseWaitDialog("Looking up person meta data from the Identity Service...");
+		VpcProvisioningService.Util.getInstance().getPersonInfoSummaryForPublicId(directoryPerson.getKey(), srvrCallback);
 		return null;
 	}
 

@@ -180,6 +180,7 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME.onAction");
 				placeController.goTo(new HomePlace());
 			}
 		});
@@ -230,6 +231,7 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
 				// TODO via dialog box (only for LITS admins)
+				GWT.log("Bootstrapper, GO_HOME_ELASTIC_IP.onAction");
 				placeController.goTo(new ListElasticIpPlace(false));
 			}
 		});
@@ -237,6 +239,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_CIDR.onAction");
 				placeController.goTo(new ListCidrPlace(false));
 			}
 		});
@@ -257,6 +260,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_ACCOUNT.onAction");
 				placeController.goTo(new ListAccountPlace(false));
 			}
 		});
@@ -264,6 +268,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_CENTRAL_ADMIN.onAction");
 				placeController.goTo(new ListCentralAdminPlace(false));
 			}
 		});
@@ -284,6 +289,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_VPC.onAction");
 				placeController.goTo(new ListVpcPlace(false));
 			}
 		});
@@ -291,6 +297,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_VPCP.onAction");
 				placeController.goTo(new ListVpcpPlace(false));
 			}
 		});
@@ -298,6 +305,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_SERVICE.onAction");
 				placeController.goTo(new ListServicePlace(false));
 			}
 		});
@@ -305,6 +313,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_NOTIFICATION.onAction");
 				placeController.goTo(new ListNotificationPlace(false, event.getFilter()));
 			}
 		});
@@ -1329,6 +1338,7 @@ public class AppBootstrapper {
 	private void initBrowserHistory(final AppPlaceHistoryMapper historyMapper,
 			PlaceHistoryHandler historyHandler, HomePlace defaultPlace) {
 
+		GWT.log("Bootstrapper, initBrowserHistory");
 		Place savedPlace = null;
 //		if (storage != null) {
 //			try {

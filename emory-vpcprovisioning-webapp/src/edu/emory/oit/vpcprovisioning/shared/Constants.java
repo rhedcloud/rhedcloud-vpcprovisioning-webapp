@@ -120,4 +120,12 @@ public class Constants implements IsSerializable {
 	public static final String MOA_TERMS_OF_USE_QUERY_SPECIFICATION = "TermsOfUseQuerySpecification.v1_0";
 	public static final String MOA_TERMS_OF_USE_AGREEMENT = "TermsOfUseAgreement.v1_0";
 	public static final String MOA_TERMS_OF_USE_AGREEMENT_QUERY_SPECIFICATION = "TermsOfUseAgreementQuerySpecification.v1_0";
+	
+	public static final String LIST_ACCOUNT = "listAccount";
+	public static final String LIST_VPC = "listVpc";
+	public static final String LIST_VPCP = "listVpcp";
+	public static final String LIST_SERVICES = "listServices";
+	public static final String LIST_CENTRAL_ADMIN = "listCentralAdmin";
+	public static final String MOA_ACCOUNT_PROVISIONING_AUTHORIZATION_QUERY_SPECIFICATION = "AccountProvisioningAuthorizationQuerySpecification.v1_0";
+	public static final String MOA_ACCOUNT_PROVISIONING_AUTHORIZATION = "AccountProvisioningAuthorization.v1_0";
 }

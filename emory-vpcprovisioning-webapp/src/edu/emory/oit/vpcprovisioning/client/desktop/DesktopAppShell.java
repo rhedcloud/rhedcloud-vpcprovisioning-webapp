@@ -93,6 +93,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	UserProfilePojo userProfile;
 	HashMap<String, List<AWSServicePojo>> awsServices;
 	HomeView homeView;
+	String hash=null;
 
 	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -106,43 +107,60 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 
+		GWT.log("DesktopAppShell:  constructor");
+		
+//		String protocol = com.google.gwt.user.client.Window.Location.getProtocol();
+//		GWT.log("DesktopAppShell:  protocol: " + protocol);
+//		String hostAndPort = com.google.gwt.user.client.Window.Location.getHost();
+//		GWT.log("DesktopAppShell:  hostAndPort: " + hostAndPort);
+//		String path = com.google.gwt.user.client.Window.Location.getPath();
+//		GWT.log("DesktopAppShell:  path: " + path);
+		hash = com.google.gwt.user.client.Window.Location.getHash();
+		GWT.log("DesktopAppShell:  hash: " + hash);
+//		String queryString = com.google.gwt.user.client.Window.Location.getQueryString();
+//		GWT.log("DesktopAppShell:  queryString: " + queryString);
 
-		//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 
-
-		homeView = clientFactory.getHomeView();
-		homeContentContainer.add(homeView);
+		// TODO: find a better way to handle history and browser refreshes
+		if (hash == null) {
+			GWT.log("null hash: home tab");
+			homeView = clientFactory.getHomeView();
+			homeContentContainer.add(homeView);
+		}
+		else {
+			if (hash.trim().equals("#" + Constants.LIST_ACCOUNT + ":")) {
+				GWT.log("Need to go to Account Maintenance tab");
+				mainTabPanel.selectTab(1);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_VPC + ":")) {
+				GWT.log("Need to go to VPC Maintenance tab");
+				mainTabPanel.selectTab(2);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_VPCP + ":")) {
+				GWT.log("Need to go to VPCP Maintenance tab");
+				mainTabPanel.selectTab(3);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_SERVICES + ":")) {
+				GWT.log("Need to go to Services tab");
+				mainTabPanel.selectTab(4);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_CENTRAL_ADMIN + ":")) {
+				GWT.log("Need to go to Cetnral Admin tab");
+				mainTabPanel.selectTab(5);
+			}
+			else {
+				GWT.log("[default] home tab");
+				homeView = clientFactory.getHomeView();
+				homeContentContainer.add(homeView);
+				mainTabPanel.selectTab(0);
+			}
+		}
 
 		mainTabPanel.addStyleName("tab-style-content");
 
 		registerEvents();
-
-		//		HTML notificationsHtml = new HTML(
-		//			"<div ui:field='notificationsElem' style=\"background: url('images/bell-512.png'); width: 24px; height:24px;\">" +
-		//			"<div style=\"font-weight: bold; color: red;\">" +
-		//			"3" +
-		//			"</div>" +
-		//			"</div>");
-		//		notificationsHTML.clear();
-		//		notificationsHTML.add(notificationsHtml);
-
-		/*
-			<div ui:field='notificationsElem'><img src="images/bell-512.png" width="24" height="24"/></div>
-			if (notificationCount > 0) {
-				notificationsHtml =
-					"<div style=\"position: relative; background: url('images/notifications.png'); width: 32px; height:32px;\">" +
-					"<div style=\"position: relative; top: 6px; font-weight: bold; color: red;\">" +
-					"<p>" + result.size() + "</p>" +
-					"</div>" +
-					"</div>";
-			}
-			else {
-				notificationsHtml =
-					"<div style=\"position: relative; background: url('images/notifications.png'); width: 32px; height:32px;\"/>";
-			}
-		 */
 	}
 
 	/*** FIELDS ***/
@@ -750,7 +768,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 	@Override
 	public void initializeAwsServiceMap() {
-		GWT.log("Desktop shell...need to get Account Maintenance Content");
+		GWT.log("Desktop shell...initializing AWS Service map");
 
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 			@Override

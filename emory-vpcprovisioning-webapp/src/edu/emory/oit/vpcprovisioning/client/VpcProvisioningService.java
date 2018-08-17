@@ -28,6 +28,8 @@ import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningAuthorizationQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningAuthorizationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.BillPojo;
@@ -65,6 +67,7 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.PersonInfoSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentQueryFilterPojo;
@@ -301,7 +304,10 @@ public interface VpcProvisioningService extends RemoteService {
 	List<String> getAssessmentStatusTypeItems();
 	List<String> getRiskLevelTypeItems();
 	List<String> getCounterMeasureStatusTypeItems();
-	
-	
 	SecurityRiskDetectionQueryResultPojo getSecurityRiskDetectionsForFilter(SecurityRiskDetectionQueryFilterPojo filter) throws RpcException;
+
+	// AccountProvisioningAuthorization
+	AccountProvisioningAuthorizationQueryResultPojo getAccountProvisioningAuthorizationsForFilter(AccountProvisioningAuthorizationQueryFilterPojo filter) throws RpcException;
+
+	PersonInfoSummaryPojo getPersonInfoSummaryForPublicId(String publicId) throws RpcException;
 }

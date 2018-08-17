@@ -247,13 +247,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@UiHandler ("okayButton")
 	void okayButtonClick(ClickEvent e) {
-		if (this.hasFieldViolations() == false) {
+//		if (this.hasFieldViolations() == false) {
 			presenter.getAccount().setAccountId(accountIdTB.getText());
 			presenter.getAccount().setAccountName(accountNameTB.getText());
-//			if (presenter.getAccount().getAccountOwnerDirectoryMetaData() == null) {
-//				presenter.getAccount().setAccountOwnerDirectoryMetaData(new DirectoryMetaDataPojo());
-//			}
-//			presenter.getAccount().getAccountOwnerDirectoryMetaData().setNetId(ownerIdTB.getText());
 			presenter.getAccount().setComplianceClass(complianceClassLB.getSelectedValue());
 			presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
 			presenter.getAccount().setSpeedType(speedTypeTB.getText());
@@ -272,10 +268,10 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 					GWT.log("SpeedType has not been confirmed. Can't save account until SpeedType is confirmed.");
 				}
 			}
-		}
-		else {
-			showMessageToUser("Please correct any field violations.");
-		}
+//		}
+//		else {
+//			showMessageToUser("Please correct any field violations.");
+//		}
 	}
 
 	private static DesktopMaintainAccountUiBinder uiBinder = GWT.create(DesktopMaintainAccountUiBinder.class);
