@@ -939,7 +939,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		db.setGlassEnabled(true);
 		db.center();
 		HTML h = new HTML("<p>A system error has occurred and the application cannot "
-				+ "continue.  There is another dialog box behind this one with more details regarding "
+				+ "continue.  The application was unable to verify your Emory Rules of Behavior agreement "
+				+ "status.</p><p>There is another dialog box behind this one with more details regarding "
 				+ "the error that occurred.  You can drag this window out of the way to see that error "
 				+ "message.</p><p>Please try refreshing your browser to start over and if "
 				+ "the problem persists, contact the help desk.</p>");
