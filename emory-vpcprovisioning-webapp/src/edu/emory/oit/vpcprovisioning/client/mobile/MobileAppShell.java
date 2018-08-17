@@ -35,6 +35,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
 
@@ -188,7 +189,7 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void setReleaseInfo(String releaseInfo) {
+	public void setReleaseInfo(ReleaseInfo releaseInfo) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -305,6 +306,12 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	public void lockView() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public ReleaseInfo getReleaseInfo() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

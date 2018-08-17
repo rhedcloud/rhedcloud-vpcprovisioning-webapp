@@ -1,10 +1,12 @@
 package edu.emory.oit.vpcprovisioning.client.common;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Focusable;
@@ -25,6 +27,20 @@ public class VpcpAlert extends DialogBox {
 		HTML h = new HTML(message);
 		h.setWidth("100%");
 		vp.add(h);
+
+		// TODO: only do this in dev, test and stage
+		GWT.log("[VpcAlert] hostPageBaseURL: " + GWT.getHostPageBaseURL());
+		final String sessionTarget = GWT.getHostPageBaseURL() + "Shibboleth.sso/Session";
+		Anchor sessionAnchor = new Anchor("Click to check your session info");
+		sessionAnchor.addStyleName("productAnchor");
+		sessionAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.open(sessionTarget, "_blank", "");
+			}
+		});
+		vp.add(sessionAnchor);
+		
 		Button okayButton = new Button("Okay");
 		okayButton.addStyleName("normalButton");
 		okayButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);

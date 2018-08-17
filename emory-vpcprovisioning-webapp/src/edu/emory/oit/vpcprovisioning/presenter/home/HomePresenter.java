@@ -457,12 +457,14 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 						}
 						else {
 							html.append("<p>" + directoryPerson.getFullName() + 
-									" (" + directoryPerson.getKey() + ") IS NOT authorized to perform Account Provisioning</p>");
-							html.append("<ul>");
-							for (String desc : apa.getUnauthorizedReasons()) {
-								html.append("<li>" + desc + "</li>");
-							}
-							html.append("</ul>");
+									" (" + directoryPerson.getKey() + ") IS NOT authorized to perform Account Provisioning");
+							html.append("</br>");
+							html.append(apa.getAuthorizedUserDescription() + "</p>");
+//							html.append("<ul>");
+//							for (String desc : apa.getUnauthorizedReasons()) {
+//								html.append("<li>" + desc + "</li>");
+//							}
+//							html.append("</ul>");
 						}
 					}
 					else {

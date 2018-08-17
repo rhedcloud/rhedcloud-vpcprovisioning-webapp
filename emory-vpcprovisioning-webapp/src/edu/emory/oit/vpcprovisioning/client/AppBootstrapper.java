@@ -64,6 +64,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class AppBootstrapper {
@@ -136,6 +137,20 @@ public class AppBootstrapper {
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 				shell.setUserLoggedIn(userLoggedIn);
+				AsyncCallback<ReleaseInfo> riCallback = new AsyncCallback<ReleaseInfo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("Error getting release info", caught);
+						shell.setReleaseInfo(null);
+					}
+
+					@Override
+					public void onSuccess(ReleaseInfo result) {
+						shell.setReleaseInfo(result);
+					}
+				};
+				VpcProvisioningService.Util.getInstance().getReleaseInfo(riCallback);
+
 				// TODO: may need to do this here so we can respond to any
 				// terms of use errors and stuff
 //				AsyncCallback<TermsOfUseSummaryPojo> cb = new AsyncCallback<TermsOfUseSummaryPojo>() {

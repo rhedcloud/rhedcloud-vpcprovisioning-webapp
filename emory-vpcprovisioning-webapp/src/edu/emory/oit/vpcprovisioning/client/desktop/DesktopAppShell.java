@@ -77,6 +77,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
@@ -94,6 +95,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	HashMap<String, List<AWSServicePojo>> awsServices;
 	HomeView homeView;
 	String hash=null;
+	ReleaseInfo releaseInfo;
 
 	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -525,11 +527,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void setReleaseInfo(String releaseInfo) {
-		super.setTitle(releaseInfo);
-		GWT.log("setting release info to " + releaseInfo);
-		releaseInfoElem.setInnerHTML(releaseInfo);
-		GWT.log("set release info to " + releaseInfo);
+	public void setReleaseInfo(ReleaseInfo releaseInfo) {
+		this.releaseInfo = releaseInfo;
+		if (releaseInfo != null) {
+			super.setTitle(releaseInfo.toString());
+			GWT.log("setting release info to " + releaseInfo);
+			releaseInfoElem.setInnerHTML(releaseInfo.toString());
+			GWT.log("set release info to " + releaseInfo.toString());
+		}
 	}
 
 	@Override
@@ -927,5 +932,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void lockView() {
+	}
+
+	@Override
+	public ReleaseInfo getReleaseInfo() {
+		return releaseInfo;
 	}
 }

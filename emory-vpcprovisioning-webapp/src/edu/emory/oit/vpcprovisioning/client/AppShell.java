@@ -3,13 +3,15 @@ package edu.emory.oit.vpcprovisioning.client;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
 
 public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void setTitle(String title);
 	void setSubTitle(String subTitle);
-	void setReleaseInfo(String releaseInfo);
+	void setReleaseInfo(ReleaseInfo releaseInfo);
+	ReleaseInfo getReleaseInfo();
 	void setUserName(String userName);
 
 	void showOtherFeaturesPanel();

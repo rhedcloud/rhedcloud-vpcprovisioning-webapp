@@ -7945,6 +7945,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					" Provisioing Authorization objects from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (AccountProvisioningAuthorization moa : moas) {
+				info("AccountProvisioningAuthorization: " + moa.toXmlString());
 				AccountProvisioningAuthorizationPojo pojo = new AccountProvisioningAuthorizationPojo();
 				pojo.setUserId(moa.getUserId());
 				pojo.setAuthorized(this.toBooleanFromString(moa.getIsAuthorized()));
@@ -7973,6 +7974,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		} 
 		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 

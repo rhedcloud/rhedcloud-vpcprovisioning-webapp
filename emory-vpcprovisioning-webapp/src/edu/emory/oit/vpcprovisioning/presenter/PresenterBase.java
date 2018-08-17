@@ -68,12 +68,12 @@ public abstract class PresenterBase {
 			@Override
 			public void onFailure(Throwable caught) {
 				GWT.log("Error getting release info", caught);
-				clientFactory.getShell().setReleaseInfo("Error getting release info");
+				clientFactory.getShell().setReleaseInfo(null);
 			}
 
 			@Override
 			public void onSuccess(ReleaseInfo result) {
-				clientFactory.getShell().setReleaseInfo(result.toString());
+				clientFactory.getShell().setReleaseInfo(result);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getReleaseInfo(riCallback);
