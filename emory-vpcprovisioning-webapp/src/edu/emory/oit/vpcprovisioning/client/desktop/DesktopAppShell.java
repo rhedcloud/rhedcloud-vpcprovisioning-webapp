@@ -908,8 +908,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							+ "continue.  Message " +
 							"from server is: " + caught.getMessage());
 					
-					// TODO: probably need to fire something off so the user can't do anything.
 					// just a modal dialog that prevents them from doing anything...
+					lockView();
 				}
 
 				@Override
@@ -932,6 +932,20 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void lockView() {
+		final DialogBox db = new DialogBox(false, true);
+		db.setWidth("450px");
+		db.setHeight("200px");
+		db.setText("Rules of Behavior Agreement - Sytem Error");
+		db.setGlassEnabled(true);
+		db.center();
+		HTML h = new HTML("<p>A system error has occurred and the application cannot "
+				+ "continue.  There is another dialog box behind this one with more details regarding "
+				+ "the error that occurred.  You can drag this window out of the way to see that error "
+				+ "message.</p><p>Please try refreshing your browser to start over and if "
+				+ "the problem persists, contact the help desk.</p>");
+		db.setWidget(h);
+		db.show();
+		db.center();
 	}
 
 	@Override
