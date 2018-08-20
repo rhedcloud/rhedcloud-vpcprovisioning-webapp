@@ -61,7 +61,9 @@
 		<url-pattern>/edu.emory.oit.vpcprovisioning.VpcProvisioningEntryPoint/VpcProvisioningService</url-pattern>
 	</servlet-mapping>
 
-	<!-- <session-config> <session-timeout>460</session-timeout> </session-config> -->
+	<session-config>
+		<session-timeout>480</session-timeout>
+	</session-config>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>
