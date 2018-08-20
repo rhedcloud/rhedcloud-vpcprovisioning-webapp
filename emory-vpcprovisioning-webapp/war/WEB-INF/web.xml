@@ -4,6 +4,19 @@
 	"http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
+	<filter>
+		<filter-name>NoCacheFilter</filter-name>
+		<filter-class>edu.emory.oit.vpcprovisioning.server.filter.NoCacheFilter</filter-class>
+		<init-param>
+			<param-name>welcomeFileName</param-name>
+			<param-value>VpcProvisioningEntryPoint.html</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>NoCacheFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>VpcProvisioningService</servlet-name>
@@ -16,8 +29,9 @@
 			<param-name>configDocPath</param-name>
 			<!-- Local testing -->
 			<!-- <param-value>file:///Users/jtjacks/Development/oxygen-workspace/deployment-esb-dev/Deployments/VpcProvisioningWebApplication.xml</param-value> -->
-			
-			<!-- for ALL EAP environments (value is turned into a URL by start scripts on server) -->
+
+			<!-- for ALL EAP environments (value is turned into a URL by start scripts 
+				on server) -->
 			<!-- Also used for AWS deployment and testing -->
 			<param-value>configs/messaging/Environments/Examples/Deployments/VpcProvisioningWebApplication.xml</param-value>
 		</init-param>
@@ -29,23 +43,25 @@
 	</servlet>
 
 	<servlet>
-	    <servlet-name>restServlet</servlet-name>
-	    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-	    <init-param>
-	        <param-name>jersey.config.server.provider.packages</param-name>
-	        <param-value>edu.emory.oit.vpcprovisioning.server</param-value>
-	    </init-param>
+		<servlet-name>restServlet</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>jersey.config.server.provider.packages</param-name>
+			<param-value>edu.emory.oit.vpcprovisioning.server</param-value>
+		</init-param>
 	</servlet>
 
 	<servlet-mapping>
-	    <servlet-name>restServlet</servlet-name>
-	    <url-pattern>/api/*</url-pattern>
+		<servlet-name>restServlet</servlet-name>
+		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>VpcProvisioningService</servlet-name>
 		<url-pattern>/edu.emory.oit.vpcprovisioning.VpcProvisioningEntryPoint/VpcProvisioningService</url-pattern>
 	</servlet-mapping>
+
+	<!-- <session-config> <session-timeout>460</session-timeout> </session-config> -->
 
 	<!-- Default page to serve -->
 	<welcome-file-list>

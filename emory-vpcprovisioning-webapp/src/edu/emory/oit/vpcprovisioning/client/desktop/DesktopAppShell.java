@@ -326,9 +326,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		AsyncCallback<String> callback = new AsyncCallback<String>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				String msg = "Exception getting ESB service status URL"; 
+				String msg = "Exception getting ESB service status URL."; 
 				GWT.log(msg, caught);
-				showMessageToUser(msg + " "	 + caught.getMessage());
+				showMessageToUser(msg + "  Message from server is: "	 + caught.getMessage());
 			}
 
 			@Override
@@ -749,7 +749,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				public void onFailure(Throwable caught) {
 					GWT.log("problem getting services..." + caught.getMessage());
 					showMessageToUser("Unable to display product information at this "
-							+ "time.  Please try again later.");
+							+ "time.  Please try again later.  Message from server is: " + caught.getMessage());
 				}
 
 				@Override
@@ -780,7 +780,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			public void onFailure(Throwable caught) {
 				GWT.log("problem getting services..." + caught.getMessage());
 				showMessageToUser("Unable to display product information at this "
-						+ "time.  Please try again later.");
+						+ "time.  Please try again later.  Message from server is: " + caught.getMessage());
 			}
 
 			@Override
@@ -867,8 +867,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		AsyncCallback<UserProfilePojo> update_profile_cb = new AsyncCallback<UserProfilePojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
-
+				GWT.log("Exception updating user profile", caught);
+				showMessageToUser("There was an exception on the " +
+						"server updating your user profile.  Processing can continue.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
@@ -905,8 +907,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				public void onFailure(Throwable caught) {
 					showMessageToUser("There was an exception on the " +
 							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
-							+ "continue.  Message " +
-							"from server is: " + caught.getMessage());
+							+ "continue.  Message from server is: " + caught.getMessage());
 					
 					// just a modal dialog that prevents them from doing anything...
 					lockView();
