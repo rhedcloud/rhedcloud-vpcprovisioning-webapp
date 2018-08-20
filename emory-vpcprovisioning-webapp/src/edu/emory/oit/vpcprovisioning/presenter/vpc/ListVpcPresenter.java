@@ -237,9 +237,10 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 					getView().removeVpcFromView(vpc);
 					getView().hidePleaseWaitDialog();
 					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Vpc was deleted.");
+					getView().showStatus(getView().getStatusMessageSource(), "VPC was deleted.");
 					
-					// TODO fire list Vpcs event...
+					// TODO: fire list Vpcs event???
+//					eventBus.fireEventFromSource(new VpcListUpdateEvent(Vpcs), this);
 				}
 			};
 			VpcProvisioningService.Util.getInstance().deleteVpc(vpc, callback);

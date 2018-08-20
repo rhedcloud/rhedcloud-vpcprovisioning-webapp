@@ -33,6 +33,14 @@ a:visited {
 	cursor: default;
 }
 
+.gwt-MenuBar-vertical .subMenuIcon-selected {
+  background: #fff;
+}		
+
+.gwt-MenuBar-vertical .subMenuIcon {
+  background: #fff;
+}		
+
 .gwt-MenuItem {
 	font-size: 80%;
 	margin: 1px;
@@ -47,15 +55,21 @@ a:visited {
 }
 
 .gwt-Tree .gwt-TreeItem {
+	/*
+	font-size: 80%;
+	cursor: default;
+	*/
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 18px;
-/* 	font-size: 99%;
- */	padding: 1px 0px;
+    font-size: 14px;
+	padding: 1px 0px;
 	margin: 0px;
 	white-space: nowrap;
 	cursor: hand;
 	cursor: pointer;
- }
+	width: 250px;
+    max-width: 250px;
+    word-wrap: break-word;
+}
 
 .gwt-Tree .gwt-TreeItem-selected {
 	background-color: #C3D9FF;
@@ -293,94 +307,50 @@ a:visited {
 }
 
 .gwt-DisclosurePanel {
-	border: 2px solid #C3D9FF;
+    border: 2px solid #dadada;
+    border-radius: 7px;
 }
 
 .gwt-DisclosurePanel .header {
-	background-color: #e8eef7;
+	background: -moz-linear-gradient(top, #f6f6f6 0%, #e0e0e0);
+    color: black;
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 14px;
+	font-weight: bold;
 	cursor: hand;
 }
 
-/** MY STUFF **/
-
-.header-container {
-	background-color: #353535;
-	/*
-    background-image: url("images/blue_gold_gradient.gif");
-    background-repeat: repeat-x;
-    */
-    color: #CCCCCC;
-    height: 100%;
-    width: 100%;
+/** My Stuff **/
+.gridRow-even {
+  background-color:AliceBlue;
 }
-.footer-container {
-    /*
-	background-color: #353535;
-    */
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-    height: 100%;
-    width: 100%;
-    /*
-    color: #CCCCCC;
-    */
-    font-family: Tahoma,Verdana,Arial,Helvetica;
-    font-size: 13px;
-    height: 50px;
-    position: relative;
-    text-align: center;
+.gridRow-odd {
+  background-color:AntiqueWhite;
 }
-.header-divider { 
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-    height: 6px;
-    width: 100%;
+.field {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	width: 250px;
+	font-size: 12pt;
 }
-.header-spacer { 
-    height: 10px;
-    width: 100%;
+.longField {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	width: 500px;
+	font-size: 12pt;
 }
-.footer-divider { 
-	/*
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-    */
-    height: 11px;
-    width: 100%;
+.listBoxField {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	width: 250px;
+	font-size: 12pt;
+	padding: 5px;
 }
-.divider { 
-    background-color: green;
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-    height: 11px;
-    width: 100%;
+.glowing-border {
+    border: 2px solid #dadada;
+    border-radius: 7px;
 }
-.thin-divider { 
-	/*
-    background-image: url("images/emblue_gradient.gif");
-    background-repeat: repeat-x;
-    */
-	background-color: #353535;
-    height: 1px;
-    width: 100%;
-}
-.navLink {
-	color: grey;
-	cursor: pointer;
-	font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 13px;
-}
-.dotted {
-	border-top: 1px dotted #BBBBBB;
-	border-right: 1px dotted #BBBBBB;
-	border-bottom: 1px dotted #BBBBBB;
-	border-left: 1px dotted #BBBBBB;
-}
-.linkBar {
-	/*
-	border-right: 1px solid #BBBBBB;
-    padding: 8px;
-    */
+.glowing-border:focus { 
+    outline: none;
+    border-color: #e47911;
+    box-shadow: 0 0 5px #e47911;
 }
 .heavy-captionpanel {
     background-color: #FCFCFC;
@@ -407,242 +377,45 @@ a:visited {
     border-color: #9ecaed;
     box-shadow: 0 0 10px #9ecaed;
 }
-.medium-captionpanel a {
-	color: green;
-}
 .light-captionpanel {
     background-color: #FCFCFC;
-    border: 1px solid #a8cfec;
+    border: 2px solid #a8cfec;
     color: black;
     font-weight: normal;
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
     font-size: 18px;
     margin: 0 0 15px;
-    padding: 10px 10px 10px 10px;
+    padding: 0 12px 12px;
     border-radius: 7px;
     outline: none;
-    border-color: #e47911;
-    box-shadow: 0 0 5px #e47911;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
 }
-.signInLabel {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 16px;
-	font-style: normal;
-	font-weight: bold;
-}
-.redSignInLabel {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 16px;
-	font-style: normal;
-	font-weight: bold;
-	color: red;
-}
-.mediumLabel {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 16px;
-	font-style: normal;
-	font-weight: bold;
-	color: #e47911;
-}
-.introHeading {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 24px;
-	font-style: normal;
-	font-weight: bold;
-	color: black;
-}
-.body {
-    color: black;
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 12pt;
-	font-weight: normal;
-    margin: 0 0 5px;
-    padding: 5px 8px 8px;
-}
-.label {
-    color: black;
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 14px;
-	font-weight: bold;
-    margin: 0 0 0;
-    padding: 0 0 0;
-    text-align: right;
-    vertical-align: middle;
-}
-.label-left {
-    color: black;
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 14px;
-	font-weight: bold;
-    margin: 0 0 0;
-    padding: 0 0 0;
-    text-align: left;
-    vertical-align: middle;
-}
-.heading_label {
-    color: black;
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-    font-size: 14px;
-	font-weight: bold;
-    margin: 0 0 0;
-    padding: 0 0 0;
-    text-align: left;
-    vertical-align: middle;
-}
-.content {
-	color: grey;
-	font-size: 14pt;
-	padding-bottom: 3px;
-	font-weight: normal;
-}
-
-.wizardPanel {
+.webEase-title {
     background-color: #FCFCFC;
-    /*border: 3px solid #a8cfec;*/
+    border: 2px solid #a8cfec;
     color: black;
-	font-weight: bold;
+    font-weight: normal;
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
     font-size: 18px;
     margin: 0 0 15px;
-    padding: 0 12px 12px;
+    padding: 12px 12px 12px;
+    border-radius: 7px;
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+    font-variant: small-caps;
+    letter-spacing:0.1em;
+    font-weight: bold;
 }
-.listPanel {
-	border-bottom: 2px solid #BBBBBB;
-    padding: 0 12px 12px;
-}
-.important {
-	font-weight: bold;
-}
-.cool_list {
-    color: #444444;
-    font-size: 16px;
-    list-style: circle outside none !important;
-    margin: 0 0 10px 15px;
-    padding: 0;
-}
-.deleteButton {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	font-size: 12pt;
-	color: white;
-	background-color: darkRed;
-    background-image: url("images/red_gradient.gif");
-    background-repeat: repeat-x;
-    min-width: 150px;
-    max-width: 250px;
-}
-.cancelButton {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	font-size: 12pt;
-	color: white;
-	background-color: darkRed;
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-    min-width: 150px;
-    max-width: 250px;
-}
-.saveButton {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	font-size: 12pt;
-	color: white;
-	background-color: darkGreen;
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-    min-width: 150px;
-    max-width: 250px;
-}
-.addButton {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	font-size: 12pt;
-	color: white;
-	background-color: darkBlue;
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-    min-width: 150px;
-    max-width: 250px;
-}
-.searchTextBox {
-    color: grey;
-    /*
-	border-top: 1px dotted #BBBBBB;
-	border-bottom: 1px dotted #BBBBBB;
-	border-left: 1px dotted #BBBBBB;
-	border-style: solid;
-	border-right: thick black;
-	*/
-}
-.logEntryPanel {
-	border-top: 1px dotted #BBBBBB;
-	border-bottom: 1px dotted #BBBBBB;
-	border-left: 1px dotted #BBBBBB;
+.bordered-popupPanel {
+    border: 3px solid #9ecaed;;
+    border-radius: 7px;    
+    outline: none;
+	box-shadow: 0 0 10px #9ecaed;
 }
 .informationalPopupMessage {
 	background-color: #f8f5c4;
-}
-.informationalPopupAnchor {
-	text-decoration:underline;
-}
-.maintenanceDialog {
-	background-color: #353535;
-    /*background-color: green;*/
-    background-image: url("images/blue_gradient.gif");
-    background-repeat: repeat-x;
-}
-.roundedTextBox {
-  border:2px solid;
-  border-radius:25px;
-}
-.glowing-border {
-    border: 2px solid #dadada;
-    border-radius: 7px;
-}
-.glowing-border:focus { 
-    outline: none;
-    border-color: #e47911;
-    box-shadow: 0 0 5px #e47911;
-    /*
-    border-color: #b6bdc3;
-    box-shadow: 0 0 10px #b6bdc3;
-    */
-}
-.bannerImage {
-	cursor: pointer;
-	background-image: url(images/banner-bckgrd.png); 
-	background-position:center; 
-	height:100px;
-}
-.flowPanel_inline {
-  float: left;
-  display: inline;
-  margin-right: 4px;
-}
-.tab-style-content .gwt-TabLayoutPanelContent
-{
-	overflow: auto !important;     
-}
-.field {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	width: 250px;
-	font-size: 12pt;
-}
-.longField {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	width: 500px;
-	font-size: 12pt;
-}
-.listBoxField {
-    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
-	width: 250px;
-	font-size: 12pt;
-	padding: 5px;
-}
-.fieldGrid {
-	padding: 5px !important;
-}
-.textBoxWrapper {
-	margin-right: 10px;
-}
-.nameBox {
-	height: 2.2em;
 }
 .emailLabel {
 	color: grey;
@@ -653,6 +426,48 @@ a:visited {
 	border: 2px solid;
     border-radius: 7px;
 }
+.body {
+    color: black;
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 12pt;
+	font-weight: normal;
+    margin: 0 0 5px;
+    padding: 5px 8px 8px;
+}
+.tableBody {
+    color: black;
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 11pt;
+	font-weight: normal;
+    margin: 0 0 0;
+    padding: 0 0 0;
+}
+.tableDeleteButton {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	font-size: 12pt;
+	color: white;
+	background-color: darkRed;
+    background-image: url("images/red_gradient.gif");
+    background-repeat: repeat-x;
+    min-width: 150px;
+    max-width: 250px;
+}
+/* 
+.gwtButton button {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	font-size: 12pt;
+	color: white;
+	background-color: darkRed;
+    background-image: url("images/red_gradient.gif");
+    background-repeat: repeat-x;
+    min-width: 150px;
+    max-width: 250px;
+}
+ */
+.tab-style-content .gwt-TabLayoutPanelContent
+{
+	overflow: auto !important;     
+}
 .statusLabel {
 	color: grey;
 	font-size: 10pt;
@@ -662,123 +477,25 @@ a:visited {
 	border: 2px solid;
     border-radius: 5px;
 }
-.statusPanel {
-	color: grey;
-	border: 2px solid;
-    border-radius: 5px;
+.gridRow-even {
+  background-color:AliceBlue;
 }
-.systemStatusLink {
-	background: #232f3e;
-	color: #fff;
-	font-size: 14px;
-	text-align: center;
-	cursor: pointer;
-	padding-right: 5px;
-	padding-left: 12px;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+.gridRow-odd {
+  background-color:AntiqueWhite;
 }
-
-/* AWS styles */
-.header {
-	background: black;
-	color: white;
-	font-size: 2.8em;
-	line-height: 25pt;
-	text-align: center;
-	font-weight: bold;
+.pspGridRow-success {
+  background-color:LightGreen;
 }
-
-.subTitle {
-	background: black;
-	color: white;
-	font-size: 14pt;
-	text-align: center;
-	font-weight: bold;
+.pspGridRow-failure {
+  background-color:Crimson;
 }
-
-.releaseInfo {
-	background: #232f3e;
-	color: #fff;
-	font-size: 14px;
-	text-align: center;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-}
-
-.logo {
-	background: #232f3e;
-	color: #fff;
-	font-size: 14px;
-	text-align: left;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	cursor: pointer;
-}
-
-.linksPanel {
-	padding: 10px;
-	background: #232f3e;
-	color: #fff;
+.productCategory {
 	font-size: 14px;
 	font-weight: bold;
 	text-align: left;
 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	cursor: pointer;
+	padding-bottom: 3px;
 }
-
-.products {
-	background: #232f3e;
-	color: #fff;
-	font-size: 14px;
-	text-align: center;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	cursor: pointer;
-}
-
-.linksMenu {
-	background: #232f3e;
-	color: #fff;
-	font-size: 14px;
-	text-align: center;
-	cursor: pointer;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	padding-left: 25px;
-}
-
-.linksMenuHeader {
-	background: #232f3e;
-	color: #fff;
-	font-size: 14px;
-	text-align: center;
-	cursor: pointer;
-	padding-right: 5px;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-}
-
-.linksMenuHeader:hover {
-	color: orange;
-}
-
-.linksMenuItem {
-	background: #fff;
-	color: #232f3e;
-	font-size: 14px;
-	text-align: left;
-	cursor: pointer;
-	padding-right: 10px;
-	padding-left: 10px;
-	padding-bottom: 2px;
-	padding-top: 3px;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-}
-
-.releaseInfoPanel {
-	padding-top: 10px;
-	cursor: default;
-}
-
-.linksMenuItem:hover {
-	color: orange !important;
-}
-
 .productAnchor {
 /*	margin-right: 20px; */
 	color: #232f3e;
@@ -793,72 +510,21 @@ a:visited {
 .productAnchor:hover {
 	color: orange;
 }
-
-.productsMenuHeader {
-	background: #232f3e;
-	color: #fff;
-	font-size: 14px;
-	text-align: center;
-	cursor: pointer;
-	padding-right: 15px;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+.productAnchorBlocked {
+	text-decoration: line-through;
+}
+.productAnchorBlocked:hover {
+	text-decoration: line-through;
 }
 
-.productsMenuHeader:hover {
-	color: orange;
+.sideCarousel {
+    z-index: 0;
 }
 
-.menuItemSeparator {
-	width: 1px;
-		height: 1px;
-		background: white;
+.centerCarousel {
+    z-index: 1;
 }
 
-a {
-	background: #fff;
-	color: #232f3e;
-	font-size: 14px;
-	text-align: left;
-	cursor: pointer;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-}
-
-a:hover {
-	color: orange !important;
-	text-decoration: none;
-}
-
-a:active {
-	color: orange !important;
-	text-decoration: none;
-}
-
-.notifications {
-	background: #232f3e;
-	color: white;
-	font-size: 12pt;
-	text-align: center;
-	font-weight: bold;
-	cursor: pointer;
-}
-
-.deckPanel {
-	color: black;
-	font-size: 14px;
-	text-align: center;
-	font-weight: bold;
-	line-height: 200%;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	border-style: solid;
-}
-.content {
-	color: black;
-	font-size: 14px;
-	text-align: center;
-	line-height: 200%;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	border-style: solid;
-}
 .awsButton {
 	border: 1px solid;
 	border-color: #be952c #a68226 #9b7924;
@@ -877,81 +543,12 @@ a:active {
 	box-shadow: inset 0 1px 0 hsla(0,0%,100%,.6);
 	color: #333;
 }
-.linksPanelLink {
-	padding-left: 25px;
-}
-.linksPanelLink:hover {
-	color: orange;
-}
-.editorialImageCell {
-	color: grey;
-	font-size: 14px;
-	text-align: center;
-	line-height: 200%;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
-	border-style: solid;
-	box-sizing: border-box;
-	width: 150px;
-}
-.editorialImageCell:hover {
-	border-color: #be952c #a68226 #9b7924;
-	box-shadow: #e6e6e6 2px 2px 3px;
-	cursor: pointer;
-}
-.h1 {
-	font-size: 2.4em;
-	color: #e47911;
-	font-weight: 300;
-	font-family: Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,sans-serif;
-	text-align: center;
-	line-height: 1.3em;
-	
-}
-.servicesGrid {
-	vertical-align: top;
-}
-.servicesCellHeading {
-	font-size: 1.5em;
-	color: #e47911;
-	font-weight: 300;
-	font-family: Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,sans-serif;
-	text-align: center;
-	line-height: 1.3em;
-	width: 350px;
-	padding: 10px;
-}
-.servicesCellContent {
-	width: 350px;
-	font-size: 14px;
-	font-family: Helvetica Neue Light,Helvetica Neue,Helvetica,Arial,sans-serif;
-	padding: 10px;
-	border-right-style: dotted;
-	vertical-align: top;
-	text-align: left;
-}
-/*
-	border: 1px solid;
-	border-color: #be952c #a68226 #9b7924;
-	border-radius: 3px;
-	vertical-align: middle;
-	text-align: center;
-	font-size: 14px;
-	font-weight: 500;
-	text-shadow: hsla(0,0%100%.0 0 1px 0;
-	background: #eeba37;
-	background-image: linear-gradient(180deg,#fee6b0 0,#eeba37);
-	font-family: Helvetica Neue Bold,Helvetica Neue,Helvetica,Arial,sans-serif;
-	min-width: 105px;
-	display: inline-block;
-	height: 35px;
-	box-shadow: inset 0 1px 0 hsla(0,0%,100%,.6);
-	color: #333;
-*/
-
-.refreshButton {
-	border-radius: 3px;
-	height: 30px;
-	width: 30px;
+hr {
+    border: none;
+    height: 1px;
+    /* Set the hr color */
+    color: #333; /* old IE */
+    background-color: #333; /* Modern Browsers */
 }
 .normalButton {
 	border: 1px solid #ccc;
@@ -1001,26 +598,22 @@ a:active {
 	font-size: 14px;
 	color: #fff;
 }
-/* END AWS Styles */
-
-.alertMessage {
-	color: #232f3e;
-	font-size: 14px;
-	text-align: left;
-	cursor: pointer;
-	padding-right: 10px;
-	padding-bottom: 2px;
-	padding-top: 3px;
-	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+.infoLabel {
+	
 }
-.waitingForWork {
-  animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate;  
+.warningLabel {
+	
+}
+.errorLabel {
+	color: red !important;
+}
+.missingRequiredField {
+	background-color: #efbebe;
 }
 .notification {
   animation: blinker .7s cubic-bezier(.5, 0, 1, 1) 10 alternate;  
 }
 @keyframes blinker { to { opacity: 0; } }
-
 /* Firefox old*/
 @-moz-keyframes blink {
     0% {
@@ -1075,8 +668,44 @@ a:active {
     -ms-animation: blink normal 2s infinite ease-in-out; /* IE */
     animation: blink normal 2s infinite ease-in-out; /* Opera and prob css3 final iteration */
 }
+.accountNotificationAnchor {
+	color: #232f3e;
+	font-size: 14px;
+	text-align: left;
+	cursor: pointer;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+.accountNotificationAnchor:hover {
+	color: orange;
+}
+.accountNotificationText {
+	color: #232f3e;
+	font-size: 14px;
+	text-align: left;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+.mediumLabel {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+    font-size: 16px;
+	font-style: normal;
+	font-weight: bold;
+	color: #e47911;
+}
 .skeletonService {
 	background: red important!;
 	color: white important!;
 	/*animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate !important;*/  
+}
+.waitingForWork {
+	animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) 50 alternate;  
+}
+@keyframes blinker { to { opacity: 0; } }
+.longWrappedLabel {
+	width: 350px !important;
+    word-wrap: break-word !important;
+}
+.longField {
+    font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	width: 500px;
+	font-size: 12pt;
 }

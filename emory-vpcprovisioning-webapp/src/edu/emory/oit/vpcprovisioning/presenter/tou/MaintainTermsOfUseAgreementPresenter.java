@@ -231,22 +231,6 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 		termsOfUseAgreement.setCreateUser(userLoggedIn.getPublicId());
 		termsOfUseAgreement.setCreateTime(new Date());
 		VpcProvisioningService.Util.getInstance().createTermsOfUseAgreement(termsOfUseAgreement, callback);
-		
-		// TODO: temporary
-//		setTermsOfUseAgreementSaved(true);
-//		if (this.isTermsOfUseAgreementSaved()) {
-//			final Timer t = new Timer() {
-//				@Override
-//				public void run() {
-//					getView().hidePleaseWaitDialog();
-//				}
-//			};
-//			t.schedule(1500);
-//		}
-//		else {
-//			getView().hidePleaseWaitDialog();
-//		}
-		// end temporary
 	}
 
 	@Override

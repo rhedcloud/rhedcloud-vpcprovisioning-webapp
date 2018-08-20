@@ -154,9 +154,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			else {
 				GWT.log("[default] home tab");
-				homeView = clientFactory.getHomeView();
-				homeContentContainer.add(homeView);
 				mainTabPanel.selectTab(0);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME);
 			}
 		}
 
@@ -345,6 +344,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	void tabSelected(SelectionEvent<Integer> e) {
 		switch (e.getSelectedItem()) {
 		case 0:
+			GWT.log("need to get Home Content.");
 			clientFactory.getVpcpStatusView().stopTimer();
 			firstHomeContentWidget = true;
 			homeContentContainer.clear();
