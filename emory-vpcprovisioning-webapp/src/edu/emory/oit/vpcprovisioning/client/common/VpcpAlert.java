@@ -24,16 +24,18 @@ public class VpcpAlert extends DialogBox {
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("100%");
 		vp.setSpacing(12);
+		
 		HTML h = new HTML(message);
-		h.addStyleName("alertMessage");
+//		h.addStyleName("alertMessage");
 		h.setWidth("100%");
 		vp.add(h);
 
-		// TODO: only do this in dev, test and stage
-		GWT.log("[VpcAlert] hostPageBaseURL: " + GWT.getHostPageBaseURL());
-		final String sessionTarget = GWT.getHostPageBaseURL() + "Shibboleth.sso/Session";
-		Anchor sessionAnchor = new Anchor("Click to check your session info");
-		sessionAnchor.addStyleName("productAnchor");
+		final String hostPageBaseURL = GWT.getHostPageBaseURL();
+		// only do this in dev, test and stage
+		GWT.log("[VpcAlert] hostPageBaseURL: " + hostPageBaseURL);
+		final String sessionTarget = hostPageBaseURL + "Shibboleth.sso/Session";
+		Anchor sessionAnchor = new Anchor("Click here to check your session info");
+		sessionAnchor.addStyleName("checkSessionAnchor");
 		sessionAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -41,6 +43,20 @@ public class VpcpAlert extends DialogBox {
 			}
 		});
 		vp.add(sessionAnchor);
+		
+		if (message.trim().toLowerCase().endsWith("is: 0")) {
+			Anchor newSessionAnchor = new Anchor("It appears as though your session has expired.  "
+				+ "Please click here to start a new session.");
+			newSessionAnchor.addStyleName("errorAnchor");
+			newSessionAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					vpcpAlert.hide();
+					Window.Location.assign(hostPageBaseURL);
+				}
+			});
+			vp.add(newSessionAnchor);
+		}
 		
 		Button okayButton = new Button("Okay");
 		okayButton.addStyleName("normalButton");

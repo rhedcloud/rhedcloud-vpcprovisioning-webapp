@@ -524,7 +524,34 @@ a:visited {
 .centerCarousel {
     z-index: 1;
 }
-
+.errorAnchor {
+	color: red;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: left;
+	cursor: pointer;
+	padding-right: 10px;
+	padding-bottom: 6px;
+	padding-top: 3px;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+.errorAnchor:hover {
+	color: orange;
+}
+.checkSessionAnchor {
+	color: blue;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: left;
+	cursor: pointer;
+	padding-right: 10px;
+	padding-bottom: 6px;
+	padding-top: 3px;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+.checkSessionAnchor:hover {
+	color: orange;
+}
 .awsButton {
 	border: 1px solid;
 	border-color: #be952c #a68226 #9b7924;
@@ -708,4 +735,22 @@ hr {
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
 	width: 500px;
 	font-size: 12pt;
+}
+.gwt-HTML {
+	color: #232f3e !important;
+	font-size: 14px !important;
+	text-align: left !important;
+	padding-right: 10px !important;
+	padding-bottom: 2px !important;
+	padding-top: 3px !important;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important;
+}
+.alertMessage {
+	color: #232f3e !important;
+	font-size: 14px !important;
+	text-align: left !important;
+	padding-right: 10px !important;
+	padding-bottom: 2px !important;
+	padding-top: 3px !important;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important;
 }
