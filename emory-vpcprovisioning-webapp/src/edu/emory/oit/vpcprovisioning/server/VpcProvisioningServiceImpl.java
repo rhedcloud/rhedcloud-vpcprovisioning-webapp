@@ -7129,9 +7129,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (TermsOfUse moa : moas) {
 				TermsOfUsePojo pojo = new TermsOfUsePojo();
-				TermsOfUsePojo baseline = new TermsOfUsePojo();
+//				TermsOfUsePojo baseline = new TermsOfUsePojo();
 				this.populateTermsOfUsePojo(moa, pojo);
-				this.populateTermsOfUsePojo(moa, baseline);
+//				this.populateTermsOfUsePojo(moa, baseline);
 				pojos.add(pojo);
 			}
 

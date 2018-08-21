@@ -73,7 +73,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel("Retrieving VPC Provisioning items...");
+		getView().showPleaseWaitPanel("Retrieving VPC Provisioning items...please wait (this operation could take a while)");
 		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -85,14 +85,6 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your user information.  " +
 						"Message from server is: " + caught.getMessage());
-//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-//					log.log(Level.SEVERE, 
-//							"Exception getting user logged in on server", 
-//							caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving information about the user logged " +
-//							"in.  Message from server is: " + caught.getMessage());
-//				}
 			}
 
 			@Override
