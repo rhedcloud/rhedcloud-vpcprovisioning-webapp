@@ -41,6 +41,7 @@ import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
+import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
@@ -1320,6 +1321,132 @@ public class AppBootstrapper {
 //					}
 //				});
 				presenter.setTermsOfUseDialog(db);
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.GENERATE_INCIDENT, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				// TODO: will probably use a dialog
+//				placeController.goTo(MaintainIncidentPlace.getMaintainIncidentPlace());
+				
+				final DialogBox db = new DialogBox();
+				if (event.getIncident() == null) {
+					db.setText("Generate Incident");
+				}
+				else {
+					db.setText("Edit Incident");
+				}
+				db.setGlassEnabled(true);
+				db.center();
+				// MaintainSrd view, place, presenter, etc...
+				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory, event.getIncident());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							// save logic is handled by the presenter
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+		
+		ActionEvent.register(eventBus, ActionNames.INCIDENT_TERMINATE_ACCOUNT, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				final DialogBox db = new DialogBox();
+				db.setText("Terminate Account: " + event.getAccount().getAccountName() + 
+					" (" + event.getAccount().getAccountId() + ")");
+				db.setGlassEnabled(true);
+				db.center();
+				// MaintainSrd view, place, presenter, etc...
+				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
+				presenter.setAccount(event.getAccount());
+				presenter.setTerminateAccount(true);
+				presenter.setShortDescription("Emory AWS Service - Account Termination Request: " + presenter.getAccount().getAccountId());
+				presenter.setUrgency("3");
+				presenter.setImpact("3");
+				presenter.setBusinessService("Application Management");
+				presenter.setCategory("Access");
+				presenter.setSubCategory("Remove");
+				presenter.setRecordType("Service Request");
+				presenter.setContactType("Integration");
+				presenter.setCmdbCi("Emory AWS Service");
+				presenter.setAssignmentGroup("LITS: Systems Support - Tier 3");
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							// save logic is handled by the presenter
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.INCIDENT_CREATE_SERVICE_ACCOUNT, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				final DialogBox db = new DialogBox();
+				db.setText("Create Service Account for AWS Account: " + event.getAccount().getAccountName() + 
+					" (" + event.getAccount().getAccountId() + ")");
+				db.setGlassEnabled(true);
+				db.center();
+				// MaintainSrd view, place, presenter, etc...
+				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
+				presenter.setAccount(event.getAccount());
+				presenter.setShortDescription("Emory AWS Service - Create Service Account for: " + presenter.getAccount().getAccountId());
+				presenter.setUrgency("3");
+				presenter.setImpact("3");
+				presenter.setBusinessService("Application Management");
+				presenter.setCategory("Access");
+				presenter.setSubCategory("Add");
+				presenter.setRecordType("Service Request");
+				presenter.setContactType("Integration");
+				presenter.setCmdbCi("Emory AWS Service");
+				presenter.setAssignmentGroup("LITS: Systems Support - Tier 3");
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							// save logic is handled by the presenter
+							db.hide();
+						}
+					}
+				});
 				presenter.start(eventBus);
 				db.setWidget(presenter);
 				db.show();

@@ -67,6 +67,10 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.PersonInfoSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
@@ -308,6 +312,12 @@ public interface VpcProvisioningService extends RemoteService {
 
 	// AccountProvisioningAuthorization
 	AccountProvisioningAuthorizationQueryResultPojo getAccountProvisioningAuthorizationsForFilter(AccountProvisioningAuthorizationQueryFilterPojo filter) throws RpcException;
-
 	PersonInfoSummaryPojo getPersonInfoSummaryForPublicId(String publicId) throws RpcException;
+	
+	// Incident
+	IncidentQueryResultPojo getIncidentsForFilter(IncidentQueryFilterPojo filter) throws RpcException;
+	void deleteIncident(IncidentPojo incident) throws RpcException;
+	IncidentPojo generateIncident(IncidentRequisitionPojo incidentRequisition) throws RpcException;
+	IncidentPojo updateIncident(IncidentPojo indident) throws RpcException;
+	
 }

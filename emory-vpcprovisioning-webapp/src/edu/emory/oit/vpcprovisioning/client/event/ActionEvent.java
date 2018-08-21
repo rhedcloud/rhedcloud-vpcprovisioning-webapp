@@ -35,6 +35,7 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
@@ -90,6 +91,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private SecurityRiskDetectionPojo srd;
 	private QueryFilter filter;
 	private TermsOfUseAgreementPojo termsOfUseAgreement;
+	private IncidentPojo incident;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -112,6 +114,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName, CidrPojo cidr, CidrAssignmentPojo cidrAssignment, Place nextPlace) {
 		eventBus.fireEventFromSource(new ActionEvent(cidr, cidrAssignment, nextPlace), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, IncidentPojo incident) {
+		eventBus.fireEventFromSource(new ActionEvent(incident), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, CidrPojo cidr) {
@@ -466,6 +472,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.termsOfUseAgreement = toua;
 	}
 
+	public ActionEvent(IncidentPojo incident2) {
+		this.incident = incident2;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -650,5 +660,21 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setSrd(SecurityRiskDetectionPojo srd) {
 		this.srd = srd;
+	}
+
+	public TermsOfUseAgreementPojo getTermsOfUseAgreement() {
+		return termsOfUseAgreement;
+	}
+
+	public void setTermsOfUseAgreement(TermsOfUseAgreementPojo termsOfUseAgreement) {
+		this.termsOfUseAgreement = termsOfUseAgreement;
+	}
+
+	public IncidentPojo getIncident() {
+		return incident;
+	}
+
+	public void setIncident(IncidentPojo incident) {
+		this.incident = incident;
 	}
 }

@@ -112,7 +112,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	    actionsPopup.setAutoHideEnabled(true);
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    Grid grid = new Grid(3, 1);
+	    Grid grid = new Grid(4, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -195,6 +195,32 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		grid.setWidget(1, 0, billSummaryAnchor);
 
+		Anchor createServiceAccountAnchor = new Anchor("Create Service Account");
+		createServiceAccountAnchor.addStyleName("productAnchor");
+		createServiceAccountAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		createServiceAccountAnchor.setTitle("Create Service Account");
+		createServiceAccountAnchor.ensureDebugId(createServiceAccountAnchor.getText());
+		createServiceAccountAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AccountPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+						// dialog for creating a service account
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.INCIDENT_CREATE_SERVICE_ACCOUNT, m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, createServiceAccountAnchor);
+
 		Anchor terminateAnchor = new Anchor("Terminate Account");
 		terminateAnchor.addStyleName("productAnchor");
 		terminateAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
@@ -207,9 +233,8 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				AccountPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
-						// TODO: dialog for terminating account
-						showMessageToUser("Terminate account dialog and logic here.");
-//						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, m);
+						// dialog for terminating account
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.INCIDENT_TERMINATE_ACCOUNT, m);
 					}
 					else {
 						showMessageToUser("You are not authorized to perform this function for this account.");
@@ -220,7 +245,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				}
 			}
 		});
-		grid.setWidget(2, 0, terminateAnchor);
+		grid.setWidget(3, 0, terminateAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}

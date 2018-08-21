@@ -101,7 +101,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
@@ -119,7 +118,15 @@ import com.paloaltonetworks.moa.objects.resources.v1_0.SourceUser;
 import com.paloaltonetworks.moa.objects.resources.v1_0.Tag;
 import com.paloaltonetworks.moa.objects.resources.v1_0.To;
 import com.service_now.moa.jmsobjects.customrequests.v1_0.FirewallExceptionRequest;
+import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
 import com.service_now.moa.objects.resources.v1_0.FirewallExceptionRequestQuerySpecification;
+import com.service_now.moa.objects.resources.v2_0.AssignedTo;
+import com.service_now.moa.objects.resources.v2_0.ConfigurationItem;
+import com.service_now.moa.objects.resources.v2_0.IncidentQuerySpecification;
+import com.service_now.moa.objects.resources.v2_0.IncidentRequisition;
+import com.service_now.moa.objects.resources.v2_0.PersonalName;
+import com.service_now.moa.objects.resources.v2_0.ServiceOwner;
+import com.service_now.moa.objects.resources.v2_0.SupportGroup;
 
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
@@ -2979,8 +2986,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("doing the Vpc.delete...");
 				this.doDelete(moa, getAWSRequestService());
 				info("Vpc.delete is complete...");
-
-//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return;
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
@@ -8001,5 +8006,288 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		
 		return summary;
+	}
+
+	@Override
+	public IncidentQueryResultPojo getIncidentsForFilter(IncidentQueryFilterPojo filter) throws RpcException {
+		IncidentQueryResultPojo result = new IncidentQueryResultPojo();
+		List<IncidentPojo> pojos = new java.util.ArrayList<IncidentPojo>();
+		try {
+			IncidentQuerySpecification queryObject = (IncidentQuerySpecification) getObject(Constants.MOA_INCIDENT_QUERY_SPEC);
+			Incident actionable = (Incident) getObject(Constants.MOA_INCIDENT_MAINTAIN);
+
+			if (filter != null) {
+				queryObject.setNumber(filter.getNumber());
+				queryObject.setAssignmentGroup(filter.getAssignmentGroup());
+				queryObject.setIncidentAssignmentGroup(filter.getIncidentAssignedTo());
+				queryObject.setNocAlarmId(filter.getNocAlarmId());
+				queryObject.setCallerId(filter.getCallerId());
+				queryObject.setCategory(filter.getCategory());
+				queryObject.setSubCategory(filter.getSubCategory());
+				queryObject.setRecordType(filter.getRecordType());
+				queryObject.setCmdbCi(filter.getCmdbCi());
+				queryObject.setIncidentState(filter.getIncidentState());
+				if (filter.getConfigurationItem() != null) {
+					ConfigurationItem ci = queryObject.newConfigurationItem();
+					ci.setAmcomEventId(filter.getConfigurationItem().getAmcomEventId());
+					ci.setName(filter.getConfigurationItem().getName());
+					ci.setServiceOwnerEventId(filter.getConfigurationItem().getServiceOwnerEventId());
+					if (filter.getConfigurationItem().getServiceOwner() != null) {
+						ServiceOwner so = ci.newServiceOwner();
+						so.setPublicId(filter.getConfigurationItem().getServiceOwner().getPublicId());
+						if (filter.getConfigurationItem().getServiceOwner().getPersonalName() != null) {
+							PersonalName pn = so.newPersonalName();
+							pn.setFirstName(filter.getConfigurationItem().getServiceOwner().getPersonalName().getFirstName());
+							pn.setLastName(filter.getConfigurationItem().getServiceOwner().getPersonalName().getLastName());
+							pn.setMiddleName(filter.getConfigurationItem().getServiceOwner().getPersonalName().getMiddleName());
+							so.setPersonalName(pn);
+						}
+						ci.setServiceOwner(so);
+					}
+					if (filter.getConfigurationItem().getSupportGroup() != null) {
+						SupportGroup sg = ci.newSupportGroup();
+						sg.setName(filter.getConfigurationItem().getSupportGroup().getName());
+						ci.setSupportGroup(sg);
+					}
+				}
+				info("[getIncidentssForFilter] getting Incidents for filter: " + queryObject.toXmlString());
+			}
+			else {
+				info("[getIncidentssForFilter] no filter passed in.  Getting all Incidents");
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getIncidentssForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			RequestService reqSvc = this.getServiceNowRequestService();
+
+			@SuppressWarnings("unchecked")
+			List<Incident> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getIncidentssForFilter] got " + moas.size() + " Incidents back from the server.");
+			for (Incident moa : moas) {
+				IncidentPojo pojo = new IncidentPojo();
+				IncidentPojo baseline = new IncidentPojo();
+				this.populateIncidentPojo(moa, pojo);
+				this.populateIncidentPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateIncidentPojo(Incident moa, IncidentPojo pojo) throws XmlEnterpriseObjectException {
+		/*
+		<!ELEMENT Incident (Number?, ConfigurationItem?, AssignmentGroup?, AssignedTo?, NocAlarmId?, 
+			ShortDescription?, Description?, WorkNotes*, Urgency?, Priority?, Impact?, BusinessService?, 
+			Category?, SubCategory?, RecordType?, ContactType?, CallerId?, FunctionalEscalation?,CmdbCi?,
+			SystemId?,IncidentState?)>
+			 */
+		pojo.setNumber(moa.getNumber());
+		if (moa.getConfigurationItem() != null) {
+			ConfigurationItemPojo cip = new ConfigurationItemPojo();
+			cip.setAmcomEventId(moa.getConfigurationItem().getAmcomEventId());
+			cip.setName(moa.getConfigurationItem().getName());
+			cip.setServiceOwnerEventId(moa.getConfigurationItem().getServiceOwnerEventId());
+			if (moa.getConfigurationItem().getServiceOwner() != null) {
+				ServiceOwnerPojo sop = new ServiceOwnerPojo();
+				sop.setPublicId(moa.getConfigurationItem().getServiceOwner().getPublicId());
+				if (moa.getConfigurationItem().getServiceOwner().getPersonalName() != null) {
+					PersonalNamePojo snp = new PersonalNamePojo();
+					snp.setFirstName(moa.getConfigurationItem().getServiceOwner().getPersonalName().getFirstName());
+					snp.setLastName(moa.getConfigurationItem().getServiceOwner().getPersonalName().getLastName());
+					snp.setMiddleName(moa.getConfigurationItem().getServiceOwner().getPersonalName().getMiddleName());
+					sop.setPersonalName(snp);
+				}
+				cip.setServiceOwner(sop);
+			}
+		}
+		pojo.setAssignmentGroup(moa.getAssignmentGroup());
+		if (moa.getAssignedTo() != null) {
+			AssignedToPojo atp = new AssignedToPojo();
+			atp.setPublicId(moa.getAssignedTo().getPublicId());
+			if (moa.getAssignedTo().getPersonalName() != null) {
+				PersonalNamePojo snp = new PersonalNamePojo();
+				snp.setFirstName(moa.getAssignedTo().getPersonalName().getFirstName());
+				snp.setLastName(moa.getAssignedTo().getPersonalName().getLastName());
+				snp.setMiddleName(moa.getAssignedTo().getPersonalName().getMiddleName());
+				atp.setPersonalName(snp);
+			}
+			pojo.setAssignedTo(atp);
+		}
+		pojo.setNocAlarmId(moa.getNocAlarmId());
+		pojo.setShortDescription(moa.getShortDescription());
+		pojo.setDescription(moa.getDescription());
+		if (moa.getWorkNotes() != null && moa.getWorkNotesLength() > 0) {
+			for (String note : (List<String>) moa.getWorkNotes()) {
+				pojo.getWorkNotes().add(note);
+			}
+		}
+		pojo.setUrgency(moa.getUrgency());
+		pojo.setPriority(moa.getPriority());
+		pojo.setImpact(moa.getImpact());
+		pojo.setBusinessService(moa.getBusinessService());
+		pojo.setCategory(moa.getCategory());
+		pojo.setSubCategory(moa.getSubCategory());
+		pojo.setRecordType(moa.getRecordType());
+		pojo.setContactType(moa.getContactType());
+		pojo.setCallerId(moa.getCallerId());
+		pojo.setFunctionalEscalation(moa.getFunctionalEscalation());
+		pojo.setCmdbCi(moa.getCmdbCi());
+		pojo.setSystemId(moa.getSystemId());
+		pojo.setIncidentState(moa.getIncidentState());
+		
+//		this.setPojoCreateInfo(pojo, moa);
+//		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@Override
+	public void deleteIncident(IncidentPojo incident) throws RpcException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public IncidentPojo generateIncident(IncidentRequisitionPojo incidentRequisition) throws RpcException {
+		try {
+			info("generating Incident on the server...");
+			Incident actionable = (Incident) getObject(Constants.MOA_INCIDENT_GENERATE);
+			IncidentRequisition seed = (IncidentRequisition) getObject(Constants.MOA_INCIDENT_REQUISITION);
+			info("populating moa");
+			this.populateIncidentRequisitionMoa(incidentRequisition, seed);
+
+			
+			info("doing the Incident.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("Incident.generate seed data is: " + seed.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<Incident> result = actionable.generate(seed, this.getServiceNowRequestService());
+			// TODO if more than one returned, it's an error...
+			IncidentPojo pojo = new IncidentPojo();
+			for (Incident moa : result) {
+				info("generated Incident is: " + moa.toXmlString());
+				this.populateIncidentPojo(moa, pojo);
+			}
+			info("Incident.generate is complete...");
+
+			return pojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	private void populateIncidentRequisitionMoa(IncidentRequisitionPojo pojo, IncidentRequisition moa) throws EnterpriseFieldException {
+		if (pojo.getConfigurationItem() != null) {
+			ConfigurationItem cip = moa.newConfigurationItem();
+			cip.setAmcomEventId(pojo.getConfigurationItem().getAmcomEventId());
+			cip.setName(pojo.getConfigurationItem().getName());
+			cip.setServiceOwnerEventId(pojo.getConfigurationItem().getServiceOwnerEventId());
+			if (pojo.getConfigurationItem().getServiceOwner() != null) {
+				ServiceOwner sop = cip.newServiceOwner();
+				sop.setPublicId(pojo.getConfigurationItem().getServiceOwner().getPublicId());
+				if (pojo.getConfigurationItem().getServiceOwner().getPersonalName() != null) {
+					PersonalName snp = sop.newPersonalName();
+					snp.setFirstName(pojo.getConfigurationItem().getServiceOwner().getPersonalName().getFirstName());
+					snp.setLastName(pojo.getConfigurationItem().getServiceOwner().getPersonalName().getLastName());
+					snp.setMiddleName(pojo.getConfigurationItem().getServiceOwner().getPersonalName().getMiddleName());
+					sop.setPersonalName(snp);
+				}
+				cip.setServiceOwner(sop);
+			}
+		}
+		moa.setAssignmentGroup(pojo.getAssignmentGroup());
+		if (pojo.getAssignedTo() != null) {
+			AssignedTo atp = moa.newAssignedTo();
+			atp.setPublicId(pojo.getAssignedTo().getPublicId());
+			if (pojo.getAssignedTo().getPersonalName() != null) {
+				PersonalName snp = atp.newPersonalName();
+				snp.setFirstName(pojo.getAssignedTo().getPersonalName().getFirstName());
+				snp.setLastName(pojo.getAssignedTo().getPersonalName().getLastName());
+				snp.setMiddleName(pojo.getAssignedTo().getPersonalName().getMiddleName());
+				atp.setPersonalName(snp);
+			}
+			moa.setAssignedTo(atp);
+		}
+		moa.setShortDescription(pojo.getShortDescription());
+		moa.setDescription(pojo.getDescription());
+		if (pojo.getWorkNotes() != null && pojo.getWorkNotes().size() > 0) {
+			for (String note : (List<String>) pojo.getWorkNotes()) {
+				moa.addWorkNotes(note);
+			}
+		}
+		moa.setUrgency(pojo.getUrgency());
+		moa.setImpact(pojo.getImpact());
+		moa.setBusinessService(pojo.getBusinessService());
+		moa.setCategory(pojo.getCategory());
+		moa.setSubCategory(pojo.getSubCategory());
+		moa.setRecordType(pojo.getRecordType());
+		moa.setContactType(pojo.getContactType());
+		moa.setCallerId(pojo.getCallerId());
+		moa.setFunctionalEscalation(pojo.getFunctionalEscalation());
+		moa.setCmdbCi(pojo.getCmdbCi());
+		
+//		this.setPojoCreateInfo(pojo, moa);
+//		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@Override
+	public IncidentPojo updateIncident(IncidentPojo indident) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

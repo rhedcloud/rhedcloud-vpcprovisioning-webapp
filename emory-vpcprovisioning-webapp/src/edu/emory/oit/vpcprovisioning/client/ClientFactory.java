@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElast
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
+import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
@@ -108,4 +109,5 @@ public interface ClientFactory {
 	MaintainServiceTestPlanView getMaintainServiceTestPlanView();
 	MaintainSrdView getMaintainSrdView();
 	MaintainTermsOfUseAgreementView getMaintainTermsOfUseAgreementView();
+	MaintainIncidentView getMaintainIncidentView();
 }

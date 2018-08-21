@@ -128,4 +128,8 @@ public class Constants implements IsSerializable {
 	public static final String LIST_CENTRAL_ADMIN = "listCentralAdmin";
 	public static final String MOA_ACCOUNT_PROVISIONING_AUTHORIZATION_QUERY_SPECIFICATION = "AccountProvisioningAuthorizationQuerySpecification.v1_0";
 	public static final String MOA_ACCOUNT_PROVISIONING_AUTHORIZATION = "AccountProvisioningAuthorization.v1_0";
+	public static final String MOA_INCIDENT_GENERATE = "GenerateIncident.v2_0";
+	public static final String MOA_INCIDENT_MAINTAIN = "MaintainIncident.v2_0";
+	public static final String MOA_INCIDENT_QUERY_SPEC = "IncidentQuerySpecification.v2_0";
+	public static final String MOA_INCIDENT_REQUISITION = "IncidentRequisition.v2_0";
 }

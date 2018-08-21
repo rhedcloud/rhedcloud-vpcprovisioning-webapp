@@ -65,6 +65,10 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FullPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.IncidentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.PersonInfoSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
@@ -288,4 +292,11 @@ public interface VpcProvisioningServiceAsync {
 
 	void getAccountProvisioningAuthorizationsForFilter(AccountProvisioningAuthorizationQueryFilterPojo filter, AsyncCallback<AccountProvisioningAuthorizationQueryResultPojo> callback);
 	void getPersonInfoSummaryForPublicId(String publicId, AsyncCallback<PersonInfoSummaryPojo> callback);
+	
+	// incident
+	void getIncidentsForFilter(IncidentQueryFilterPojo filter, AsyncCallback<IncidentQueryResultPojo> callback);
+	void deleteIncident(IncidentPojo incident, AsyncCallback<Void> callback);
+	void generateIncident(IncidentRequisitionPojo incidentRequisition, AsyncCallback<IncidentPojo> callback);
+	void updateIncident(IncidentPojo incident, AsyncCallback<IncidentPojo> callback);
+	
 }

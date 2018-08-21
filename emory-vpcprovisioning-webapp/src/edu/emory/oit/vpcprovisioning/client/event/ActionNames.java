@@ -160,4 +160,12 @@ public interface ActionNames {
 	final String MAINTAIN_TERMS_OF_USE_AGREEMENT = "maintainTermsOfUseAgreement";
 	final String CREATE_TERMS_OF_USE_AGREEMENT = "createTermsOfUseAgreement";
 	final String TERMS_OF_USE_AGREEMENT_SAVED = "termsOfUseAgreementSaved";
+
+	final String GENERATE_INCIDENT = "generateIncident";
+	final String MAINTAIN_INCIDENT = "maintainIncident";
+	final String INCIDENT_SAVED = "incidentSaved";
+	final String INCIDENT_EDITING_CANCELED = "incidentEditingCanceled";
+	final String VIEW_INCIDENT_STATUS = "viewIncidentStatus";
+	final String INCIDENT_TERMINATE_ACCOUNT = "terminateAccount";
+	final String INCIDENT_CREATE_SERVICE_ACCOUNT = "createServiceAccount";
 }

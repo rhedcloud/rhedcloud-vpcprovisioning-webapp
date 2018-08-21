@@ -29,6 +29,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElast
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
+import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPlace;
@@ -348,6 +349,11 @@ public class AppActivityMapper implements ActivityMapper {
 		if (place instanceof MaintainTermsOfUseAgreementPlace) {
 			// View/Maintain srd
 			return new MaintainTermsOfUseAgreementActivity(clientFactory, (MaintainTermsOfUseAgreementPlace) place);
+		}
+
+		if (place instanceof MaintainIncidentPlace) {
+			// View/Maintain srd
+			return new MaintainIncidentActivity(clientFactory, (MaintainIncidentPlace) place);
 		}
 
 		return null;

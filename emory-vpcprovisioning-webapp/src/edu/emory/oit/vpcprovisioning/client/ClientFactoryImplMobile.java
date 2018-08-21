@@ -26,6 +26,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElast
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
+import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
@@ -320,6 +321,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainTermsOfUseAgreementView getMaintainTermsOfUseAgreementView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainIncidentView getMaintainIncidentView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

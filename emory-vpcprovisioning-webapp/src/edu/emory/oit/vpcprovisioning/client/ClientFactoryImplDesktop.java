@@ -34,6 +34,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidrAssignmen
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIpAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainFirewallExceptionRequest;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainIncident;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityAssessment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityRisk;
@@ -62,6 +63,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElast
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
+import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
@@ -134,6 +136,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainServiceTestPlanView maintainServiceTestPlanView;
 	private MaintainSrdView maintainSrdView;
 	private MaintainTermsOfUseAgreementView maintainTermsOfUseAgreementView;
+	private MaintainIncidentView maintainIncidentView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -568,5 +571,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	protected MaintainTermsOfUseAgreementView createMaintainTermsOfUseAgreementView() {
 		return new DesktopMaintainTermsOfUseAgreement();
+	}
+	@Override
+	public MaintainIncidentView getMaintainIncidentView() {
+		if (maintainIncidentView == null) {
+			maintainIncidentView = createMaintainIncidentView();
+		}
+		return maintainIncidentView;
+	}
+	protected MaintainIncidentView createMaintainIncidentView() {
+		return new DesktopMaintainIncident();
 	}
 }
