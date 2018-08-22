@@ -7,17 +7,17 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.presenter.VpcpPresenter;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListElasticIpAssignmentView extends IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends VpcpPresenter {
 		/**
 		 * Select a caseRecord.
 		 * 

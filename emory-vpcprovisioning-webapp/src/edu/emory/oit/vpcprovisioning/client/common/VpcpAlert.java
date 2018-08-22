@@ -21,6 +21,7 @@ public class VpcpAlert extends DialogBox {
 		vpcpAlert.setAutoHideEnabled(false);
 		vpcpAlert.setModal(true);
 		vpcpAlert.setHTML(title);
+		
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("100%");
 		vp.setSpacing(12);

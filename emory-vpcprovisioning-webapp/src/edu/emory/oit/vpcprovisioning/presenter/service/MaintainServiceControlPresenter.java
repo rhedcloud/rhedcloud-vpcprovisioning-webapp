@@ -85,25 +85,6 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 		else {
 			clientFactory.getShell().setSubTitle("Edit Service Control");
 			startEdit();
-			// get latest version of the service control from the server
-//			AsyncCallback<ServiceSecurityAssessmentPojo> acct_cb = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					getView().hidePleaseWaitDialog();
-//					getView().hidePleaseWaitPanel();
-//					GWT.log("Exception retrieving assessment details", caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving the details for this assessment.  Message " +
-//							"from server is: " + caught.getMessage());
-//				}
-//
-//				@Override
-//				public void onSuccess(ServiceSecurityAssessmentPojo result) {
-//					assessment = result;
-//				}
-//			};
-//			ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
-//			VpcProvisioningService.Util.getInstance().getAccountById(assessmentId, acct_cb);
 		}
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {

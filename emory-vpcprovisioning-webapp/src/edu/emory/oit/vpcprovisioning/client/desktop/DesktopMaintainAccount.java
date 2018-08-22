@@ -415,6 +415,10 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public void setEditing(boolean isEditing) {
 		this.editing = isEditing;
+		if (isEditing) {
+			// account id is immutable when/if the account is being edited
+			accountIdTB.setEnabled(false);
+		}
 	}
 
 	@Override
@@ -757,7 +761,11 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void applyCentralAdminMask() {
 		GWT.log("Applying central admin mask...");
 		okayButton.setEnabled(true);
-		accountIdTB.setEnabled(true);
+		if (!editing) {
+			// account id is immutable when/if the account is being edited
+			// so, only enable the account id field if it's a new account
+			accountIdTB.setEnabled(true);
+		}
 		accountNameTB.setEnabled(true);
 		ownerIdSB.setEnabled(true);
 		passwordLocationTB.setEnabled(true);

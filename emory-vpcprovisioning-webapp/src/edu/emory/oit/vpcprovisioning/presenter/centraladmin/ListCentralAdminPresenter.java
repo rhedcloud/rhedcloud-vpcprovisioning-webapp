@@ -226,48 +226,8 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 
 	@Override
 	public void deleteCentralAdmin(final RoleAssignmentSummaryPojo centralAdmin) {
-//		if (Window.confirm("Delete the Central Admin " + "?")) {
-//			getView().showPleaseWaitDialog("Deleting central admin");
-//			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server deleting the central administrator.  Message " +
-//							"from server is: " + caught.getMessage());
-//					getView().hidePleaseWaitDialog();
-//				}
-//
-//				@Override
-//				public void onSuccess(Void result) {
-//					// remove from dataprovider
-//					getView().removeCentralAdminFromView(centralAdmin);
-//					getView().hidePleaseWaitDialog();
-//					// status message
-//					getView().showStatus(getView().getStatusMessageSource(), "Account was deleted.");
-//					
-//					// TODO fire list accounts event...
-//				}
-//			};
-//			VpcProvisioningService.Util.getInstance().deleteCentralAdmin(centralAdmin, callback);
-//		}
 	}
 
-//	@Override
-//	public void filterByAccountId(String accountId) {
-//		getView().showPleaseWaitDialog("Filtering accounts");
-//		filter = new RoleAssignmentQueryFilterPojo();
-//		filter.setAccountId(accountId);
-//		this.getUserAndRefreshList();
-//	}
-//
-//	@Override
-//	public void clearFilter() {
-//		getView().showPleaseWaitDialog("Clearing filter");
-//		filter = null;
-//		this.getUserAndRefreshList();
-//	}
-	
 	private void getUserAndRefreshList() {
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override

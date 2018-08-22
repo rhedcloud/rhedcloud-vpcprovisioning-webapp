@@ -154,7 +154,7 @@ public class DesktopListServiceGuideline extends ViewImplBase implements ListSer
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return this.createButton;
+		return this.actionsButton;
 	}
 
 	@Override
@@ -305,10 +305,15 @@ public class DesktopListServiceGuideline extends ViewImplBase implements ListSer
 		sequenceNumber.setCellStyleNames("tableBody");
 		sortHandler.setComparator(sequenceNumber, new Comparator<ServiceGuidelinePojo>() {
 			public int compare(ServiceGuidelinePojo o1, ServiceGuidelinePojo o2) {
-				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
-					return 1;
+				int seq1 = o1.getSequenceNumber();
+				int seq2 = o2.getSequenceNumber();
+				if (seq1 == seq2) {
+					return 0;
 				}
-				return 0;
+				if (seq1 > seq2) {
+					return -1;
+				}
+				return 1;
 			}
 		});
 		listTable.addColumn(sequenceNumber, "Sequence Number");

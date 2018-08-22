@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -286,30 +285,30 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 	@Override
 	public void deleteNotification(final UserNotificationPojo notification) {
-		if (Window.confirm("Delete the AWS Notification " + notification.getUserNotificationId() + "?")) {
-			getView().showPleaseWaitDialog("Deleting Notification...");
-			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Notification.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
-
-				@Override
-				public void onSuccess(Void result) {
-					// remove from dataprovider
-					getView().removeNotificationFromView(notification);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Notification was deleted.");
-					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteUserNotification(notification, callback);
-		}
+//		if (Window.confirm("Delete the AWS Notification " + notification.getUserNotificationId() + "?")) {
+//			getView().showPleaseWaitDialog("Deleting Notification...");
+//			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+//
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server deleting the Notification.  Message " +
+//							"from server is: " + caught.getMessage());
+//					getView().hidePleaseWaitDialog();
+//				}
+//
+//				@Override
+//				public void onSuccess(Void result) {
+//					// remove from dataprovider
+//					getView().removeNotificationFromView(notification);
+//					getView().hidePleaseWaitDialog();
+//					// status message
+//					getView().showStatus(getView().getStatusMessageSource(), "Notification was deleted.");
+//					ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION);
+//				}
+//			};
+//			VpcProvisioningService.Util.getInstance().deleteUserNotification(notification, callback);
+//		}
 	}
 
 	@Override

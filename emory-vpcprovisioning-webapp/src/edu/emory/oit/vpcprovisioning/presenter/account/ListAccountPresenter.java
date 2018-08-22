@@ -5,13 +5,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.AccountListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
@@ -38,6 +38,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	
 	AccountQueryFilterPojo filter;
 	AccountPojo account;
+	AccountPojo selectedAccount;
 
 	/**
 	 * The refresh timer used to periodically refresh the account list.
@@ -235,31 +236,12 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 	@Override
 	public void deleteAccount(final AccountPojo account) {
-		if (Window.confirm("Delete the AWS Account " + account.getAccountId() + "/" + account.getAccountName() + "?")) {
-			getView().showPleaseWaitDialog("Deleting account");
-			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Account.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
-
-				@Override
-				public void onSuccess(Void result) {
-					// remove from dataprovider
-					getView().removeAccountFromView(account);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Account was deleted.");
-					
-					// TODO fire list accounts event...
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteAccount(account, callback);
-		}
+		selectedAccount = account;
+		VpcpConfirm.confirm(
+			ListAccountPresenter.this, 
+			"Confirm Delete Account Metadata", 
+			"Delete the metadata for the account " + selectedAccount.getAccountId() + "/" + selectedAccount.getAccountName() + "?  "
+				+ "<b>NOTE: this WILL NOT remove the account from AWS.</b>");
 	}
 
 	@Override
@@ -291,5 +273,38 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting Account Metadata for " + 
+			selectedAccount.getAccountId() + "/" + selectedAccount.getAccountName() + "...");
+		
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the Account metadata.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// remove from dataprovider
+				getView().removeAccountFromView(selectedAccount);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "Account metadata was deleted.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().deleteAccount(selectedAccount, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Account metadata for " + 
+				selectedAccount.getAccountId() + "/" + selectedAccount.getAccountName() + " was not deleted.");
 	}
 }

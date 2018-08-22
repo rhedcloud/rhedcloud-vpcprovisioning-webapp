@@ -7303,8 +7303,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			if (filter != null) {
 				queryObject.setServiceId(filter.getServiceId());
-				queryObject.setRiskLevel(filter.getRiskLevel());
-				queryObject.setSecurityRiskId(filter.getSecurityRiskId());
+				queryObject.setServiceSecurityAssessmentId(filter.getAssessmentId());
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();

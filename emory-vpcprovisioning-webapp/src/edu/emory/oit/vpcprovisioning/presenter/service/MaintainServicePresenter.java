@@ -3,19 +3,18 @@ package edu.emory.oit.vpcprovisioning.presenter.service;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.AssessmentListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
@@ -26,6 +25,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	private EventBus eventBus;
 	private String serviceId;
 	private AWSServicePojo service;
+	private ServiceSecurityAssessmentPojo selectedSSA;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -318,28 +318,43 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 	@Override
 	public void deleteSecurityAssessment(final ServiceSecurityAssessmentPojo selected) {
-		if (Window.confirm("Delete the Service Security Assessment " + selected.getServiceSecurityAssessmentId() + "?")) {
-			getView().showPleaseWaitDialog("Deleting service...");
-			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		selectedSSA = selected;
+		VpcpConfirm.confirm(
+				MaintainServicePresenter.this, 
+				"Confirm Delete Security Assessment", 
+				"Delete the Security Assessment " + selectedSSA.getServiceSecurityAssessmentId() + "?");
+	}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Security Assessment.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting Security Assessment " + 
+			selectedSSA.getServiceSecurityAssessmentId() + "...");
+		
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the Security Assessment.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
 
-				@Override
-				public void onSuccess(Void result) {
-					// remove from dataprovider
-					getView().removeAssessmentFromView(selected);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Security Assessment was deleted.");
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteSecurityAssessment(selected, callback);
-		}
+			@Override
+			public void onSuccess(Void result) {
+				// remove from dataprovider
+				getView().removeAssessmentFromView(selectedSSA);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "Security Assessment " + 
+					selectedSSA.getServiceSecurityAssessmentId() + " was deleted.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().deleteSecurityAssessment(selectedSSA, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Security Assessment " + 
+				selectedSSA.getServiceSecurityAssessmentId() + " was not deleted.");
 	}
 }

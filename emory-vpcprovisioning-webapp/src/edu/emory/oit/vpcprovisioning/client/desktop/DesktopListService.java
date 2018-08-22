@@ -159,7 +159,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return serviceListTable;
+		return refreshButton;
 	}
 
 	@Override

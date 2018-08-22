@@ -3,13 +3,15 @@ package edu.emory.oit.vpcprovisioning.presenter.service;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceGuidelineListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -31,6 +33,7 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 	private ServiceSecurityAssessmentPojo assessment;
 	private AWSServicePojo service;
 	private UserAccountPojo userLoggedIn;
+	private ServiceGuidelinePojo selectedServiceGuideline;
 	
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -169,30 +172,11 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 
 	@Override
 	public void deleteServiceGuideline(final ServiceGuidelinePojo serviceGuideline) {
-		if (Window.confirm("Delete the  ServiceGuideline " + serviceGuideline.getServiceGuidelineName() + "?")) {
-			getView().showPleaseWaitDialog("Deleting service control...");
-			assessment.getServiceGuidelines().remove(serviceGuideline);
-			AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the ServiceGuideline.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
-
-				@Override
-				public void onSuccess(ServiceSecurityAssessmentPojo result) {
-					// remove from dataprovider
-					getView().removeServiceGuidelineFromView(serviceGuideline);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "ServiceGuideline was deleted.");
-				}
-			};
-			VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
-		}
+		selectedServiceGuideline = serviceGuideline;
+		VpcpConfirm.confirm(
+				ListServiceGuidelinePresenter.this, 
+				"Confirm Delete Service Guideline", 
+				"Delete the Service Guideline " + selectedServiceGuideline.getServiceGuidelineName() + "?");
 	}
 
 	@Override
@@ -221,6 +205,40 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 
 	public void setService(AWSServicePojo service) {
 		this.service = service;
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting service guideline " + selectedServiceGuideline.getServiceGuidelineName() + "...");
+		assessment.getServiceGuidelines().remove(selectedServiceGuideline);
+		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the ServiceGuideline.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(ServiceSecurityAssessmentPojo result) {
+				// remove from dataprovider
+				getView().removeServiceGuidelineFromView(selectedServiceGuideline);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "Service Guideline " + 
+						selectedServiceGuideline.getServiceGuidelineName() + " was deleted.");
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Service Guideline " + 
+				selectedServiceGuideline.getServiceGuidelineName() + " was not deleted.");
 	}
 
 }

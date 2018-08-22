@@ -95,6 +95,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
 				SecurityRiskPojo m = selectionModel.getSelectedObject();
+				GWT.log("selected security risk is: " + m.getSecurityRiskId());
 				if (m != null) {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK, presenter.getService(), presenter.getAssessment(), m);
 				}
@@ -153,7 +154,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return this.createButton;
+		return this.actionsButton;
 	}
 
 	@Override
@@ -291,6 +292,48 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		};
 		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
 		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+//		Column<SecurityRiskPojo, String> idColumn = 
+//				new Column<SecurityRiskPojo, String> (new TextCell()) {
+//
+//			@Override
+//			public String getValue(SecurityRiskPojo object) {
+//				return object.getSecurityRiskId();
+//			}
+//		};
+//		idColumn.setSortable(true);
+//		idColumn.setCellStyleNames("tableBody");
+//		sortHandler.setComparator(idColumn, new Comparator<SecurityRiskPojo>() {
+//			public int compare(SecurityRiskPojo o1, SecurityRiskPojo o2) {
+//				return o1.getSecurityRiskId().compareTo(o2.getSecurityRiskId());
+//			}
+//		});
+//		listTable.addColumn(idColumn, "ID");
+
+		Column<SecurityRiskPojo, String> sequenceColumn = 
+				new Column<SecurityRiskPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(SecurityRiskPojo object) {
+				return Integer.toString(object.getSequenceNumber());
+			}
+		};
+		sequenceColumn.setSortable(true);
+		sequenceColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(sequenceColumn, new Comparator<SecurityRiskPojo>() {
+			public int compare(SecurityRiskPojo o1, SecurityRiskPojo o2) {
+				int seq1 = o1.getSequenceNumber();
+				int seq2 = o2.getSequenceNumber();
+				if (seq1 == seq2) {
+					return 0;
+				}
+				if (seq1 > seq2) {
+					return -1;
+				}
+				return 1;
+			}
+		});
+		listTable.addColumn(sequenceColumn, "Sequence Number");
 
 		Column<SecurityRiskPojo, String> nameColumn = 
 				new Column<SecurityRiskPojo, String> (new TextCell()) {

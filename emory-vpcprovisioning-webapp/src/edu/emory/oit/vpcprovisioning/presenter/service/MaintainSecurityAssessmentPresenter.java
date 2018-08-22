@@ -81,34 +81,6 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 		else {
 			clientFactory.getShell().setSubTitle("Edit Assessment");
 			startEdit();
-			// get latest version of the assessment from the server
-//			AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//	                getView().hidePleaseWaitPanel();
-//	                getView().hidePleaseWaitDialog();
-//					GWT.log("Exception Retrieving Security Assessments", caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving the list of Security Assessments associated to this Service.  " +
-//							"Message from server is: " + caught.getMessage());
-//				}
-//
-//				@Override
-//				public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
-//					GWT.log("Got " + result.getResults().size() + " Security Assessments for " + result.getFilterUsed());
-//					for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
-//						if (ssa.getServiceSecurityAssessmentId().equals(assessment.getServiceSecurityAssessmentId())) {
-//							assessment = ssa;
-//							break;
-//						}
-//					}
-//				}
-//			};
-//
-//			GWT.log("refreshing security assessment...");
-//			ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
-//			filter.setServiceId(service.getServiceId());
-//			VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
 		}
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -127,68 +99,107 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
 				
-				// get all the services that are related to the assessment and add 
-				// them to the view
-				for (final String id : assessment.getServiceIds()) {
-					AsyncCallback<AWSServiceQueryResultPojo> svc_callback = new AsyncCallback<AWSServiceQueryResultPojo>() {
+				if (isEditing) {
+					// get latest version of the assessment from the server
+					AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> callback = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
 						@Override
 						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
+			                getView().hidePleaseWaitPanel();
+			                getView().hidePleaseWaitDialog();
+							GWT.log("Exception Retrieving Security Assessments", caught);
+							getView().showMessageToUser("There was an exception on the " +
+									"server retrieving the Security Assessment.  " +
+									"Message from server is: " + caught.getMessage());
 						}
 
 						@Override
-						public void onSuccess(AWSServiceQueryResultPojo result) {
-							// TODO: add more info to the widget title (last param)
-							// so when they hover over it, they can see more detail about the
-							// service.
-							AWSServicePojo awsSvc = result.getResults().get(0);
-							GWT.log("Got service " + 
-								awsSvc.getAwsServiceCode() + "/" + 
-								awsSvc.getAwsServiceName() + " for service id: " + id);
-							getView().addRelatedServiceToView(result.getResults().get(0), "");
+						public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+							GWT.log("Got " + result.getResults().size() + " Security Assessments for " + result.getFilterUsed());
+							for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
+								if (ssa.getServiceSecurityAssessmentId().equals(assessment.getServiceSecurityAssessmentId())) {
+									assessment = ssa;
+									break;
+								}
+							}
+							addRelatedServicesToView(assessment);
+							completeViewInitialization();
 						}
 					};
-					AWSServiceQueryFilterPojo filter = new AWSServiceQueryFilterPojo();
-					filter.setServiceId(id);
-					GWT.log("Getting service for service id: " + id);
-					VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, svc_callback);
+
+					GWT.log("refreshing security assessment...");
+					ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+//					filter.setAssessmentId(assessmentId);
+					filter.setServiceId(service.getServiceId());
+					VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
 				}
-
-				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-						GWT.log("Exception retrieving status types", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving status types.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<String> result) {
-						getView().setAssessmentStatusItems(result);
-						getView().initPage();
-						getView().setFieldViolations(false);
-						getView().setInitialFocus();
-						
-						// apply authorization mask
-						if (user.isCentralAdmin()) {
-							getView().applyCentralAdminMask();
-						}
-						else {
-							getView().applyAWSAccountAuditorMask();
-						}
-
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-					}
-				};
-				// assessment status items here
-				VpcProvisioningService.Util.getInstance().getAssessmentStatusTypeItems(callback);
+				else {
+					addRelatedServicesToView(assessment);
+					completeViewInitialization();
+				}
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+	}
+	
+	void completeViewInitialization() {
+		AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				GWT.log("Exception retrieving status types", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving status types.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<String> result) {
+				getView().setAssessmentStatusItems(result);
+				getView().initPage();
+				getView().setFieldViolations(false);
+				getView().setInitialFocus();
+				
+				// apply authorization mask
+				if (userLoggedIn.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else {
+					getView().applyAWSAccountAuditorMask();
+				}
+
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+			}
+		};
+		// assessment status items here
+		VpcProvisioningService.Util.getInstance().getAssessmentStatusTypeItems(callback);
+	}
+	void addRelatedServicesToView(ServiceSecurityAssessmentPojo ssa) {
+		// get all the services that are related to the assessment and add 
+		// them to the view
+		for (final String id : ssa.getServiceIds()) {
+			AsyncCallback<AWSServiceQueryResultPojo> svc_callback = new AsyncCallback<AWSServiceQueryResultPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					getView().showMessageToUser("There was an exception on the " +
+							"server retrieving the list of services related to this assessment.  " +
+							"Message from server is: " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(AWSServiceQueryResultPojo result) {
+					// TODO: add more info to the widget title (last param)
+					// so when they hover over it, they can see more detail about the
+					// service.
+					AWSServicePojo awsSvc = result.getResults().get(0);
+					getView().addRelatedServiceToView(result.getResults().get(0), "");
+				}
+			};
+			AWSServiceQueryFilterPojo filter = new AWSServiceQueryFilterPojo();
+			filter.setServiceId(id);
+			VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, svc_callback);
+		}
 	}
 
 	private void startCreate() {
@@ -206,6 +217,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 	private void startEdit() {
 		GWT.log("Maintain assessment: edit");
 		isEditing = true;
+
 		getView().setEditing(true);
 		// Lock the display until the assessment is loaded.
 		getView().setLocked(true);

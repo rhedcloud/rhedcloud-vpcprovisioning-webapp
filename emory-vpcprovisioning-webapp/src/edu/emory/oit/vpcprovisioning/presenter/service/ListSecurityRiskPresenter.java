@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.SecurityRiskListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -38,6 +40,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	private ServiceSecurityAssessmentPojo assessment;
 	private AWSServicePojo service;
 	private UserAccountPojo userLoggedIn;
+	SecurityRiskPojo selectedSecurityRisk;
 	
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -176,30 +179,11 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 
 	@Override
 	public void deleteSecurityRisk(final SecurityRiskPojo securityRisk) {
-		if (Window.confirm("Delete the  SecurityRisk " + securityRisk.getSecurityRiskName() + "?")) {
-			getView().showPleaseWaitDialog("Deleting security risk...");
-			assessment.getSecurityRisks().remove(securityRisk);
-			AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the SecurityRisk.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
-
-				@Override
-				public void onSuccess(ServiceSecurityAssessmentPojo result) {
-					// remove from dataprovider
-					getView().removeSecurityRiskFromView(securityRisk);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "SecurityRisk was deleted.");
-				}
-			};
-			VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
-		}
+		selectedSecurityRisk = securityRisk;
+		VpcpConfirm.confirm(
+			ListSecurityRiskPresenter.this, 
+			"Confirm Delete Security Risk", 
+			"Delete the Security Risk " + selectedSecurityRisk.getSecurityRiskName() + "?");
 	}
 
 	@Override
@@ -228,5 +212,39 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 
 	public void setService(AWSServicePojo service) {
 		this.service = service;
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting security risk...");
+		assessment.getSecurityRisks().remove(selectedSecurityRisk);
+		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the SecurityRisk.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(ServiceSecurityAssessmentPojo result) {
+				// remove from dataprovider
+				getView().removeSecurityRiskFromView(selectedSecurityRisk);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "Security Risk " + 
+						selectedSecurityRisk.getSecurityRiskName() + " was deleted.");
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPC " + 
+				selectedSecurityRisk.getSecurityRiskName() + " was not deleted.");
 	}
 }

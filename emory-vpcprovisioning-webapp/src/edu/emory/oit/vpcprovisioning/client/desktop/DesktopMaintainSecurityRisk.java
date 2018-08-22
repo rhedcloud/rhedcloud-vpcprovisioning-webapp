@@ -390,6 +390,10 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 			assessorLookupSB.setText(srp.getAssessorId());
 			assessmentDB.setValue(srp.getAssessmentDate());
 		}
+		else {
+			assessorLookupSB.setText("");
+			assessorLookupSB.getElement().setPropertyString("placeholder", "enter name");
+		}
 		serviceNameTB.setText(presenter.getService().getAwsServiceName());
 	}
 

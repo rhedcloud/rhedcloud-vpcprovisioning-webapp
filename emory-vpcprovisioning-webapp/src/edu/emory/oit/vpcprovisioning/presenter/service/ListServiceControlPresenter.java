@@ -3,13 +3,15 @@ package edu.emory.oit.vpcprovisioning.presenter.service;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceControlListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -31,6 +33,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	private ServiceSecurityAssessmentPojo assessment;
 	private AWSServicePojo service;
 	private UserAccountPojo userLoggedIn;
+	private ServiceControlPojo selectedServiceControl;
 	
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -169,30 +172,11 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 
 	@Override
 	public void deleteServiceControl(final ServiceControlPojo serviceControl) {
-		if (Window.confirm("Delete the  ServiceControl " + serviceControl.getServiceControlName() + "?")) {
-			getView().showPleaseWaitDialog("Deleting service control...");
-			assessment.getServiceControls().remove(serviceControl);
-			AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the ServiceControl.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
-
-				@Override
-				public void onSuccess(ServiceSecurityAssessmentPojo result) {
-					// remove from dataprovider
-					getView().removeServiceControlFromView(serviceControl);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "ServiceControl was deleted.");
-				}
-			};
-			VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
-		}
+		selectedServiceControl = serviceControl;
+		VpcpConfirm.confirm(
+			ListServiceControlPresenter.this, 
+			"Confirm Delete Service Control", 
+			"Delete the Service Control " + selectedServiceControl.getServiceControlName() + "?");
 	}
 
 	@Override
@@ -221,5 +205,39 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 
 	public void setService(AWSServicePojo service) {
 		this.service = service;
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting service control " + selectedServiceControl.getServiceControlName() + "...");
+		assessment.getServiceControls().remove(selectedServiceControl);
+		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the ServiceControl.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(ServiceSecurityAssessmentPojo result) {
+				// remove from dataprovider
+				getView().removeServiceControlFromView(selectedServiceControl);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "Service Control " + 
+						selectedServiceControl.getServiceControlName() + " was deleted.");
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Service Control " + 
+				selectedServiceControl.getServiceControlName() + " was not deleted.");
 	}
 }

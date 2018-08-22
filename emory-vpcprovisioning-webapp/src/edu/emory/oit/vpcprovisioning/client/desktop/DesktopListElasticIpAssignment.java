@@ -120,7 +120,6 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				// elasticip assignment update with the new private ip which comes from somewhere
 				// for now, they can type it in (prompt for private IP address).
 				actionsPopup.hide();
-//				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				selectedEia = selectionModel.getSelectedObject();
 				if (selectedEia == null) {
 					showMessageToUser("Please select an item from the list");
@@ -128,28 +127,6 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				else {
 					VpcpPrompt.prompt(DesktopListElasticIpAssignment.this, "Please Enter a Private IP", "Enter a Private IP Address to associate to this Elastic IP",  "In the form IP/bits");
 				}
-//				if (m != null) {
-//					String privateIp = Window.prompt("Enter a Private IP Address to associate to this Elastic IP", "");
-//					GWT.log("Private IP is: " + privateIp);
-//					if (privateIp != null && privateIp.length() > 0) {
-//						boolean confirmed = Window.confirm("Use the Private IP address: " + privateIp + "?");
-//						GWT.log("Confirmed is: " + confirmed);
-//						if (confirmed) {
-//							if (m.getElasticIp() != null) {
-//								m.getElasticIp().setAssociatedIpAddress(privateIp);
-//							}
-//							else {
-//								ElasticIpPojo eip = new ElasticIpPojo();
-//								eip.setAssociatedIpAddress(privateIp);
-//								m.setElasticIp(eip);
-//							}
-//							presenter.saveElasticIpAssignment(m);
-//						}
-//					}
-//				}
-//				else {
-//					showMessageToUser("Please select an item from the list");
-//				}
 			}
 		});
 		associateAddressesAnchor.setEnabled(false);
@@ -208,7 +185,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return elasticIpAssignmentListTable;
+		return refreshButton;
 	}
 
 	@Override

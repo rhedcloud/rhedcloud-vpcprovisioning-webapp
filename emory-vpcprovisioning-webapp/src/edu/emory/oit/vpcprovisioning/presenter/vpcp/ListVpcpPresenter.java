@@ -199,31 +199,31 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 	@Override
 	public void deleteVpcp(final VpcpPojo vpcp) {
-		if (Window.confirm("Delete the AWS Vpcp " + vpcp.getProvisioningId() + "?")) {
-			getView().showPleaseWaitDialog("Deleting VPC Provisioning item...");
-			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Vpc.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
-
-				@Override
-				public void onSuccess(Void result) {
-					// remove from dataprovider
-					getView().removeVpcpFromView(vpcp);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Vpcp was deleted.");
-					
-					// TODO fire list Vpcs event...
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteVpcp(vpcp, callback);
-		}
+//		if (Window.confirm("Delete the AWS Vpcp " + vpcp.getProvisioningId() + "?")) {
+//			getView().showPleaseWaitDialog("Deleting VPC Provisioning item...");
+//			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+//
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server deleting the Vpc.  Message " +
+//							"from server is: " + caught.getMessage());
+//					getView().hidePleaseWaitDialog();
+//				}
+//
+//				@Override
+//				public void onSuccess(Void result) {
+//					// remove from dataprovider
+//					getView().removeVpcpFromView(vpcp);
+//					getView().hidePleaseWaitDialog();
+//					// status message
+//					getView().showStatus(getView().getStatusMessageSource(), "Vpcp was deleted.");
+//					
+//					// TODO fire list Vpcs event...
+//				}
+//			};
+//			VpcProvisioningService.Util.getInstance().deleteVpcp(vpcp, callback);
+//		}
 	}
 
 }

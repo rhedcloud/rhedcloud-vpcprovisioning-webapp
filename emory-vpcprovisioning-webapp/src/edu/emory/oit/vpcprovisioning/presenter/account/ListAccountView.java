@@ -7,16 +7,16 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.presenter.VpcpPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListAccountView extends IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends VpcpPresenter {
 		/**
 		 * Select a caseRecord.
 		 * 

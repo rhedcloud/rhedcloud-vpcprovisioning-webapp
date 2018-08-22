@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.account;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -161,7 +162,12 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
-				refreshAccountNotificationList(user);
+				if (isEditing) {
+					refreshAccountNotificationList(user);
+				}
+				else {
+					getView().setAccountNotifications(Collections.<AccountNotificationPojo> emptyList());
+				}
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -210,6 +216,11 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 								getView().applyAWSAccountAuditorMask();
 								getView().disableAdminMaintenance();
 							}
+						}
+						
+						if (!isEditing) {
+							getView().hidePleaseWaitDialog();
+							getView().hidePleaseWaitPanel();
 						}
 					}
 				};
@@ -679,8 +690,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void refreshAccountNotificationList(UserAccountPojo user) {
-		getView().showWaitForNotificationsDialog("Retreiving Account Notifications...");
-		// get account notifications for this account
 		AsyncCallback<AccountNotificationQueryResultPojo> acct_not_cb = new AsyncCallback<AccountNotificationQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -698,6 +707,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				getView().hidWaitForNotificationsDialog();
 			}
 		};
+		getView().showWaitForNotificationsDialog("Retreiving Account Notifications...");
+		// get account notifications for this account
 		if (filter == null) {
 			filter = new AccountNotificationQueryFilterPojo();
 			filter.setAccountId(accountId);

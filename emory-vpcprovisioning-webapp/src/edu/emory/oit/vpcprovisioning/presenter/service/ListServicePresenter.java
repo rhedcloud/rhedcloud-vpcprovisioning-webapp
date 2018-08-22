@@ -5,13 +5,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -38,6 +38,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	private EventBus eventBus;
 	
 	AWSServiceQueryFilterPojo filter;
+	AWSServicePojo selectedService;
 
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -209,30 +210,48 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 
 	@Override
 	public void deleteService(final AWSServicePojo service) {
-		if (Window.confirm("Delete the AWS Service " + service.getAwsServiceName() + "?")) {
-			getView().showPleaseWaitDialog("Deleting service...");
-			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		selectedService = service;
+		VpcpConfirm.confirm(
+			ListServicePresenter.this, 
+			"Confirm Delete Service", 
+			"Delete the AWS Service " + selectedService.getAwsServiceName() + 
+				" (" + selectedService.getAwsServiceCode() + ")" + "?");
+	}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Service.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting service " + selectedService.getAwsServiceName() + 
+				" (" + selectedService.getAwsServiceCode() + ")...");
+		
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
 
-				@Override
-				public void onSuccess(Void result) {
-					// remove from dataprovider
-					getView().removeServiceFromView(service);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Service was deleted.");
-					
-					// TODO fire list Vpcs event...
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteService(service, callback);
-		}
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the Service.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// remove from dataprovider
+				getView().removeServiceFromView(selectedService);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), 
+						"Service " + selectedService.getAwsServiceName() + 
+						"(" + selectedService.getAwsServiceCode() + ") was deleted.");
+				
+			}
+		};
+		VpcProvisioningService.Util.getInstance().deleteService(selectedService, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Service " + 
+				selectedService.getAwsServiceName() + 
+				" (" + selectedService.getAwsServiceCode() + ") was not deleted.");
 	}
 }

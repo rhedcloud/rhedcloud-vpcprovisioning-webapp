@@ -5,13 +5,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.VpcListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -37,6 +37,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	private EventBus eventBus;
 	
 	VpcQueryFilterPojo filter;
+	VpcPojo selectedVpc;
 
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -106,7 +107,6 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-//				setVpcList(Collections.<VpcPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);
@@ -219,31 +219,53 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 
 	@Override
 	public void deleteVpc(final VpcPojo vpc) {
-		if (Window.confirm("Delete the AWS Vpc " + vpc.getAccountId() + "/" + vpc.getVpcId() + "?")) {
-			getView().showPleaseWaitDialog("Deleting VPC...");
-			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+		selectedVpc = vpc;
+		VpcpConfirm.confirm(
+			ListVpcPresenter.this, 
+			"Confirm Delete VPC", 
+			"Delete the AWS Vpc " + vpc.getAccountId() + "/" + vpc.getVpcId() + "?  "
+				+ "<b>NOTE: this VPC will be removed from AWS.</b>");
+	}
 
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Vpc.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting VPC " + selectedVpc.getVpcId() + "...");
+		
+		// TEMP
+//		Timer t = new Timer() {
+//            @Override
+//            public void run() {
+//				getView().hidePleaseWaitDialog();
+//				getView().showStatus(getView().getStatusMessageSource(), "VPC was deleted (not really).");
+//            }
+//        };
+//        t.schedule(3000);
+        // end temp
+        
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the VPC metadata.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
 
-				@Override
-				public void onSuccess(Void result) {
-					// remove from dataprovider
-					getView().removeVpcFromView(vpc);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "VPC was deleted.");
-					
-					// TODO: fire list Vpcs event???
-//					eventBus.fireEventFromSource(new VpcListUpdateEvent(Vpcs), this);
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteVpc(vpc, callback);
-		}
+			@Override
+			public void onSuccess(Void result) {
+				// remove from dataprovider
+				getView().removeVpcFromView(selectedVpc);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "VPC metadata was deleted.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().deleteVpc(selectedVpc, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPC " + 
+			selectedVpc.getVpcId() + " was not deleted.");
 	}
 }

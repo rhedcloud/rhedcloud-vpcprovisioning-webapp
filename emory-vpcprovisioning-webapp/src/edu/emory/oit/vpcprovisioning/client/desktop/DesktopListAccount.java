@@ -112,7 +112,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	    actionsPopup.setAutoHideEnabled(true);
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    Grid grid = new Grid(4, 1);
+	    Grid grid = new Grid(5, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -142,30 +142,30 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		grid.setWidget(0, 0, maintainAnchor);
 
-//		Anchor deleteAnchor = new Anchor("Delete Account");
-//		deleteAnchor.addStyleName("productAnchor");
-//		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		deleteAnchor.setTitle("Remove selected Account");
-//		deleteAnchor.ensureDebugId(deleteAnchor.getText());
-//		deleteAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				actionsPopup.hide();
-//				AccountPojo m = selectionModel.getSelectedObject();
-//				if (m != null) {
-//					if (userLoggedIn.isLitsAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
-//						presenter.deleteAccount(m);
-//					}
-//					else {
-//						showMessageToUser("You are not authorized to perform this function for this account.");
-//					}
-//				}
-//				else {
-//					showMessageToUser("Please select an item from the list");
-//				}
-//			}
-//		});
-//		grid.setWidget(1, 0, deleteAnchor);
+		Anchor deleteAnchor = new Anchor("Delete Account Metadata");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete the metadata for the selected account.  NOTE:  this is different than the 'Terminate Account' action as this only deletes the account metadata and does NOT remove the account from AWS.");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AccountPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (userLoggedIn.isCentralAdmin()) {
+						presenter.deleteAccount(m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
 
 		Anchor billSummaryAnchor = new Anchor("View Bill Summary");
 		billSummaryAnchor.addStyleName("productAnchor");
@@ -193,7 +193,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				}
 			}
 		});
-		grid.setWidget(1, 0, billSummaryAnchor);
+		grid.setWidget(2, 0, billSummaryAnchor);
 
 		Anchor createServiceAccountAnchor = new Anchor("Create Service Account");
 		createServiceAccountAnchor.addStyleName("productAnchor");
@@ -219,7 +219,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				}
 			}
 		});
-		grid.setWidget(2, 0, createServiceAccountAnchor);
+		grid.setWidget(3, 0, createServiceAccountAnchor);
 
 		Anchor terminateAnchor = new Anchor("Terminate Account");
 		terminateAnchor.addStyleName("productAnchor");
@@ -245,7 +245,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				}
 			}
 		});
-		grid.setWidget(3, 0, terminateAnchor);
+		grid.setWidget(4, 0, terminateAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -588,7 +588,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return addAccountButton;
+		return refreshButton;
 	}
 
 	@Override

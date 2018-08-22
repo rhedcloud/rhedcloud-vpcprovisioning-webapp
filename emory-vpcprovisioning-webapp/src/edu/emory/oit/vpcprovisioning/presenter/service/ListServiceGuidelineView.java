@@ -7,17 +7,17 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.presenter.VpcpPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListServiceGuidelineView extends IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends VpcpPresenter {
 		void selectServiceGuideline(ServiceGuidelinePojo selected);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();

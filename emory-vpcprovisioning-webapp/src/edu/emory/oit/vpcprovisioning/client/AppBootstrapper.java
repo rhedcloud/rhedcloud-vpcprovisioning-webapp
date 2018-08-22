@@ -1072,6 +1072,7 @@ public class AppBootstrapper {
 				db.setText("Maintain Security Risk");
 				db.setGlassEnabled(true);
 				db.center();
+				GWT.log("MAINTAIN_SECURITY_RISK security risk from ActionEvent is: " + event.getSecurityRisk().getSecurityRiskId());
 				final MaintainSecurityRiskPresenter presenter = new MaintainSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment(), event.getSecurityRisk());
 				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 					@Override

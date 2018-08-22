@@ -106,7 +106,12 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				actionsPopup.hide();
 				VpcPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, m);
+					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this action for this VPC.");
+					}
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -115,10 +120,10 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		});
 		grid.setWidget(0, 0, maintainAnchor);
 
-		Anchor deleteAnchor = new Anchor("Remove VPC");
+		Anchor deleteAnchor = new Anchor("Delete VPC Metadata");
 		deleteAnchor.addStyleName("productAnchor");
 		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deleteAnchor.setTitle("Remove selected VPC");
+		deleteAnchor.setTitle("Remove metadata for the selected VPC");
 		deleteAnchor.ensureDebugId(deleteAnchor.getText());
 		deleteAnchor.addClickHandler(new ClickHandler() {
 			@Override
@@ -126,11 +131,12 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				actionsPopup.hide();
 				VpcPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+//					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+					if (userLoggedIn.isCentralAdmin()) {
 						presenter.deleteVpc(m);
 					}
 					else {
-						showMessageToUser("You are not authorized to perform this function for this vpc.");
+						showMessageToUser("You are not authorized to perform this action for this vpc.");
 					}
 				}
 				else {
@@ -495,7 +501,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return vpcListTable;
+		return refreshButton;
 	}
 
 	@Override

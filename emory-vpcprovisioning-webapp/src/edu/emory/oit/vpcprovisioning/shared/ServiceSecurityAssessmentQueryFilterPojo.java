@@ -8,20 +8,19 @@ public class ServiceSecurityAssessmentQueryFilterPojo extends SharedObject imple
 ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, SecurityRiskId?, ServiceId?, RiskLevel?)>
 	 */
 
-	String securityRiskId;
+	String assessmentId;
 	String serviceId;
-	String riskLevel;
 	
 	public ServiceSecurityAssessmentQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public String getSecurityRiskId() {
-		return securityRiskId;
+	public String getAssessmentId() {
+		return assessmentId;
 	}
 
-	public void setSecurityRiskId(String securityRiskId) {
-		this.securityRiskId = securityRiskId;
+	public void setAssessmentId(String assessmentId) {
+		this.assessmentId = assessmentId;
 	}
 
 	public String getServiceId() {
@@ -32,17 +31,9 @@ ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, Securi
 		this.serviceId = serviceId;
 	}
 
-	public String getRiskLevel() {
-		return riskLevel;
-	}
-
-	public void setRiskLevel(String riskLevel) {
-		this.riskLevel = riskLevel;
-	}
-
 	@Override
 	public String toString() {
-		return "Service ID: " + serviceId + ", Risk Level: " + riskLevel;
+		return "Assessment Id: " + assessmentId + ", Service ID: " + serviceId;
 	}
 
 }

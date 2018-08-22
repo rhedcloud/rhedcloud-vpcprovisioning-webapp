@@ -3,13 +3,13 @@ package edu.emory.oit.vpcprovisioning.presenter.elasticipassignment;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.ElasticIpAssignmentListUpdateEvent;
@@ -36,6 +36,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	ElasticIpAssignmentQueryFilterPojo filter;
 	ElasticIpAssignmentPojo elasticIpAssignment;
+	ElasticIpAssignmentPojo selectedElasticIpAssignment;
 	VpcPojo vpc;
 
 	public ListElasticIpAssignmentPresenter(ClientFactory clientFactory, boolean clearList) {
@@ -204,35 +205,12 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	@Override
 	public void deleteElasticIpAssignment(final ElasticIpAssignmentPojo selected) {
-		if (Window.confirm("Delete the Elastic IP Assignment " + 
-				selected.getAssignmentId() + "/" + 
-				selected.getPurpose() + "?")) {
-			
-			getView().showPleaseWaitDialog("Deleting Elastic IP Assignment");
-			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the Elastic IP Assignment.  Message " +
-							"from server is: " + caught.getMessage());
-					getView().hidePleaseWaitDialog();
-				}
-
-				@Override
-				public void onSuccess(Void result) {
-					// remove from dataprovider
-					getView().removeElasticIpAssignmentFromView(selected);
-					getView().hidePleaseWaitDialog();
-					// status message
-					getView().showStatus(getView().getStatusMessageSource(), "Elastic IP Assignment was deleted.");
-					
-					// fire list elastic ip assignment event...
-//					ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT, vpc);
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteElasticIpAssignment(selected, callback);
-		}
+		selectedElasticIpAssignment = selected;
+		VpcpConfirm.confirm(
+			ListElasticIpAssignmentPresenter.this, 
+			"Confirm Delete Elastic IP Assignment", 
+			"Delete the Elastic IP Assignment " + selected.getOwnerId() + "/" + 
+					selected.getElasticIp().getElasticIpAddress() + "/" + selected.getPurpose() + "?");
 	}
 
 	public VpcPojo getVpc() {
@@ -316,6 +294,39 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 		};
 		// it's an update
 		VpcProvisioningService.Util.getInstance().updateElasticIpAssignment(selected, callback);
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		getView().showPleaseWaitDialog("Deleting Elastic IP Assignment");
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server deleting the Elastic IP Assignment.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// remove from dataprovider
+				getView().removeElasticIpAssignmentFromView(selectedElasticIpAssignment);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "Elastic IP Assignment was deleted.");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().deleteElasticIpAssignment(selectedElasticIpAssignment, callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Elastic IP Assignment " + 
+				selectedElasticIpAssignment.getOwnerId() + "/" + 
+				selectedElasticIpAssignment.getElasticIp().getElasticIpAddress() + "/" + 
+				selectedElasticIpAssignment.getPurpose() + " was not deleted.");
 	}
 
 }
