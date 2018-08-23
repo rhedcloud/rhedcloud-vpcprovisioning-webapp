@@ -141,7 +141,7 @@
 							<g:DeckLayoutPanel ui:field="homeContentContainer" width="100%" height="100%"/>
 						</g:tab>
 						<g:tab>
-							<g:header>AWS Account Maintenance</g:header>
+							<g:header>AWS Accounts</g:header>
 							<g:DeckLayoutPanel ui:field="accountContentContainer" width="100%" height="100%"/>
 						</g:tab>
 						<g:tab>
@@ -149,7 +149,7 @@
 							<g:DeckLayoutPanel ui:field="vpcContentContainer" width="100%" height="100%"/>
 						</g:tab>
 						<g:tab>
-							<g:header>VPC Provisioning Maintenance</g:header>
+							<g:header>VPC Provisioning</g:header>
 							<g:DeckLayoutPanel ui:field="vpcpContentContainer" width="100%" height="100%"/>
 						</g:tab>
 						<g:tab>
@@ -159,6 +159,22 @@
 						<g:tab>
 							<g:header>Central Admin</g:header>
 							<g:DeckLayoutPanel ui:field="centralAdminContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>Elastic IPs</g:header>
+							<g:DeckLayoutPanel ui:field="elasticIpContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>Static NAT</g:header>
+							<g:DeckLayoutPanel ui:field="staticNatContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>VPN Connections</g:header>
+							<g:DeckLayoutPanel ui:field="vpnConnectionContentContainer" width="100%" height="100%"/>
+						</g:tab>
+						<g:tab>
+							<g:header>VPN Connection Profiles</g:header>
+							<g:DeckLayoutPanel ui:field="vpnConnectionProfileContentContainer" width="100%" height="100%"/>
 						</g:tab>
 					</g:TabLayoutPanel>
 					</g:VerticalPanel>

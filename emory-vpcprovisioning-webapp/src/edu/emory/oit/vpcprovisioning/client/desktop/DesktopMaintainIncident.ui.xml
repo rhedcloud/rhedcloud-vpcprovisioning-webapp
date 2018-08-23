@@ -18,125 +18,97 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel ui:field="generateIncidentPanel">
+		<g:HorizontalPanel ui:field="generateTerminateAccountIncidentPanel">
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
-						<g:Label ui:field="incidentTypeLable" addStyleNames="{style.mediumLabel}">Generate an Incident</g:Label>
+						<g:Label ui:field="terminateAccountLabel" addStyleNames="{style.mediumLabel}">Terminate an AWS Account</g:Label>
 			    	</g:customCell>
 				</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Short Description:</g:Label>
+						<g:Label ui:field="tAcctOwnerApprovesLabel" addStyleNames="{style.label}">Please confirm the Account Owner (ACCOUNT_OWNER) is aware and approves the termination of this account:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.longField} {style.glowing-border}"
-							ui:field="shortDescriptionTB" debugId="shortNameTB" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Description:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextArea addStyleNames="{style.longField} {style.glowing-border}"
-							ui:field="descriptionTA" debugId="descriptionTA" />
+						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="tAcctOwnerApprovesCB" debugId="tAcctOwnerApprovesCB"/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Urgency:</g:Label>
+						<g:Label ui:field="tAcctReadyLabel" addStyleNames="{style.label}">Please confirm all services and infrastructure in the account have been terminated:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox ui:field="urgencyTB" debugId="urgencyTB" 
-							addStyleNames="{style.field} {style.glowing-border}" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Impact:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="impactTB" debugId="impactTB" enabled="false" />
-			    	</g:customCell>
-				</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Business Service:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="businessServiceTB" debugId="businessServiceTB" enabled="false"/>
+						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="tAcctReadyCB" debugId="tAcctReadyCB"/>
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Category:</g:Label>
+						<g:Label ui:field="tAcctConfirmLabel" addStyleNames="{style.label}">Terminating an account is a permanent act.  When an account is deleted, it will no longer be accessible.  Are you sure you want to terminate this account?:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="categoryTB" debugId="categoryTB" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Sub-Category:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="subCategoryTB" debugId="categoryTB" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Record Type:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="recordTypeTB" debugId="recordTypeTB" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Contact Type:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="contactTypeTB" debugId="contactTypeTB" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Caller ID:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="callerIdTB" debugId="callerIdTB" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">CMDB Configuration Item:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="cmdbCiTB" debugId="cmdbCiTB" enabled="false"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Assignment Group:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="assignmentGroupTB" debugId="assignmentTypeTB" enabled="false"/>
+						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="tAcctConfirmCB" debugId="tAcctConfirmCB"/>
 			    	</g:customCell>
 		    	</g:row>
 			</g:Grid>
 		</g:cell>
 		</g:HorizontalPanel>
+		<g:VerticalPanel ui:field="generateCreateServiceAccountIncidentPanel">
+			<g:Grid cellSpacing="8">
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="createServiceAccountLabel" addStyleNames="{style.mediumLabel}">Create an AWS Service Account</g:Label>
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="svcAcctDescriptionLabel" addStyleNames="{style.labelLeft}">Please provide a detailed description of how the Service Account/API Keys will be used:</g:Label>
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:TextArea addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="svcAcctDescriptionTA" debugId="svcAcctDescriptionTA" />
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="svcAcctIamPoliciesLabel" addStyleNames="{style.labelLeft}">Please list the desired IAM policy or list of services that will be used with the Service Account/API Keys:</g:Label>
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:TextArea addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="svcAcctIamPoliciesTA" debugId="svcAcctIamPoliciesTA" />
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="svcAcctAlternativeMethodsLabel" addStyleNames="{style.labelLeft}">Please explain why alternative methods cannot be used:</g:Label>
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:TextArea addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="svcAcctAlternativeMethodsTA" debugId="svcAcctAlternativeMethodsTA" />
+			    	</g:customCell>
+		    	</g:row>
+		    </g:Grid>
+			<g:Grid cellSpacing="8">
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="ownerApprovesLabel" addStyleNames="{style.labelLeft}">Please confirm the Account Owner (ACCOUNT_OWNER) is aware and approves of this request:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="ownerApprovesCB" debugId="ownerApprovesCB"/>
+			    	</g:customCell>
+		    	</g:row>
+			</g:Grid>
+		</g:VerticalPanel>
 		<!-- 
 		    <Incident>
 			      <Number>INC12345678</Number>

@@ -72,6 +72,16 @@ public class UserAccountPojo implements IsSerializable {
 		this.accountRoles = accountRoles;
 	}
 	
+	public boolean isNetworkAdmin() {
+		for (AccountRolePojo arp : accountRoles) {
+			if (arp.getRoleName() != null && 
+				(arp.getRoleName().equalsIgnoreCase(Constants.ROLE_NAME_EMORY_NETWORK_ADMIN))) {
+				
+				return true;
+			}
+		}
+		return false;
+	}
 	public boolean isAuditorForAccount(String accountId) {
 		for (AccountRolePojo arp : accountRoles) {
 			if (arp.getAccountId() != null && 

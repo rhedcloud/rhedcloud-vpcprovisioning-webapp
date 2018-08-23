@@ -9,7 +9,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.presenter.VpcpPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.PresentsConfirmation;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 
@@ -17,7 +17,7 @@ public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, V
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends VpcpPresenter {
+	public interface Presenter extends PresentsConfirmation {
 		/**
 		 * Delete the current account or cancel the creation of a account.
 		 */

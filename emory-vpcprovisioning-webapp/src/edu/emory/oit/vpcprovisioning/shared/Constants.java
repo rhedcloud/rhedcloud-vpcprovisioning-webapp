@@ -23,7 +23,8 @@ public class Constants implements IsSerializable {
 	public static final String ROLE_NAME_RHEDCLOUD_AUDITOR = "RHEDcloudAuditorRole";
 	public static final String STATIC_TEXT_ADMINISTRATOR = "Administrator";
 	public static final String STATIC_TEXT_AUDITOR = "Auditor";
-	
+	public static final String ROLE_NAME_EMORY_NETWORK_ADMIN = "NetworkAdmin";
+
 	public static final String[] ACCOUNT_ROLE_NAMES = new String[] {
 			ROLE_NAME_RHEDCLOUD_AWS_ADMIN,
 			ROLE_NAME_RHEDCLOUD_AUDITOR
@@ -132,4 +133,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_INCIDENT_MAINTAIN = "MaintainIncident.v2_0";
 	public static final String MOA_INCIDENT_QUERY_SPEC = "IncidentQuerySpecification.v2_0";
 	public static final String MOA_INCIDENT_REQUISITION = "IncidentRequisition.v2_0";
+	
+	public static final String INCIDENT_TYPE_TERMINATE_ACCOUNT = "terminateAccount";
+	public static final String INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT = "createServiceAccount";
 }

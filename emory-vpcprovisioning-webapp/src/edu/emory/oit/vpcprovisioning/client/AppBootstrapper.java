@@ -34,6 +34,7 @@ import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssign
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
+import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
@@ -65,6 +66,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -138,6 +140,15 @@ public class AppBootstrapper {
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 				shell.setUserLoggedIn(userLoggedIn);
+				if (userLoggedIn.isCentralAdmin() || userLoggedIn.isNetworkAdmin()) {
+//					shell.applyAdminMask();
+					// TODO: temp.  not ready but i need to deploy to dev so everyone will be 
+					// treated like an auditor for this stuff for now.
+					shell.showAuditorTabs();
+				}
+				else {
+					shell.showAuditorTabs();
+				}
 				AsyncCallback<ReleaseInfo> riCallback = new AsyncCallback<ReleaseInfo>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -338,7 +349,30 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.CREATE_ELASTIC_IP, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(MaintainElasticIpPlace.getMaintainElasticIpPlace());
+//				placeController.goTo(MaintainElasticIpPlace.getMaintainElasticIpPlace());
+				final DialogBox db = new DialogBox();
+				db.setText("Create Elastic IP");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainElasticIpPresenter presenter = new MaintainElasticIpPresenter(clientFactory);
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
 			}
 		});
 
@@ -1304,23 +1338,6 @@ public class AppBootstrapper {
 				db.setGlassEnabled(true);
 				db.center();
 				final MaintainTermsOfUseAgreementPresenter presenter = new MaintainTermsOfUseAgreementPresenter(clientFactory);
-//				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
-//					@Override
-//					public void onClick(ClickEvent event) {
-//						if (!presenter.getView().hasFieldViolations()) {
-//							// save logic is handled by the presenter
-//							if (presenter.isTermsOfUseAgreementSaved()) {
-//								db.hide();
-//							}
-//							else {
-//								presenter.getView().showMessageToUser("Rules of Behavior Agreement was not "
-//										+ "saved successfully.  You cannot close this window yet.  If the "
-//										+ "problem persists, please take note of the error you're getting and "
-//										+ "contact the help desk.");
-//							}
-//						}
-//					}
-//				});
 				presenter.setTermsOfUseDialog(db);
 				presenter.start(eventBus);
 				db.setWidget(presenter);
@@ -1378,8 +1395,8 @@ public class AppBootstrapper {
 				db.center();
 				// MaintainSrd view, place, presenter, etc...
 				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
+				presenter.setIncidentType(Constants.INCIDENT_TYPE_TERMINATE_ACCOUNT);
 				presenter.setAccount(event.getAccount());
-				presenter.setTerminateAccount(true);
 				presenter.setShortDescription("Emory AWS Service - Account Termination Request: " + presenter.getAccount().getAccountId());
 				presenter.setUrgency("3");
 				presenter.setImpact("3");
@@ -1390,22 +1407,14 @@ public class AppBootstrapper {
 				presenter.setContactType("Integration");
 				presenter.setCmdbCi("Emory AWS Service");
 				presenter.setAssignmentGroup("LITS: Systems Support - Tier 3");
+				presenter.setIncidentDialog(db);
+				presenter.start(eventBus);
 				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
 						db.hide();
 					}
 				});
-				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						if (!presenter.getView().hasFieldViolations()) {
-							// save logic is handled by the presenter
-							db.hide();
-						}
-					}
-				});
-				presenter.start(eventBus);
 				db.setWidget(presenter);
 				db.show();
 				db.center();
@@ -1422,6 +1431,7 @@ public class AppBootstrapper {
 				db.center();
 				// MaintainSrd view, place, presenter, etc...
 				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
+				presenter.setIncidentType(Constants.INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT);
 				presenter.setAccount(event.getAccount());
 				presenter.setShortDescription("Emory AWS Service - Create Service Account for: " + presenter.getAccount().getAccountId());
 				presenter.setUrgency("3");
@@ -1433,22 +1443,14 @@ public class AppBootstrapper {
 				presenter.setContactType("Integration");
 				presenter.setCmdbCi("Emory AWS Service");
 				presenter.setAssignmentGroup("LITS: Systems Support - Tier 3");
+				presenter.setIncidentDialog(db);
+				presenter.start(eventBus);
 				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
 						db.hide();
 					}
 				});
-				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-						if (!presenter.getView().hasFieldViolations()) {
-							// save logic is handled by the presenter
-							db.hide();
-						}
-					}
-				});
-				presenter.start(eventBus);
 				db.setWidget(presenter);
 				db.show();
 				db.center();

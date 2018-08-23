@@ -4,15 +4,18 @@ import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -25,7 +28,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 	private String incidentNumber;
 	private UserAccountPojo userLoggedIn;
 	private AccountPojo account;
-	private boolean terminateAccount;
+	private DialogBox incidentDialog;
 	
 	private String urgency;
 	private String impact;
@@ -37,6 +40,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 	private String cmdbCi;
 	private String assignmentGroup;
 	private String shortDescription;
+	private String incidentType;
 
 
 	/**
@@ -195,15 +199,30 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 	public void saveIncident() {
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
+			getView().setFieldViolations(true);
 			getView().applyStyleToMissingFields(fields);
 			getView().hidePleaseWaitDialog();
 			getView().showMessageToUser("Please provide data for the required fields.");
 			return;
 		}
 		else {
+			getView().setFieldViolations(false);
 			getView().resetFieldStyles();
 		}
-		
+
+		if (incidentType.equals(Constants.INCIDENT_TYPE_TERMINATE_ACCOUNT)) {
+			VpcpConfirm.confirm(
+					MaintainIncidentPresenter.this, 
+					"Confirm Terminate Account", 
+					"Terminating an account is a permanent act.  When an account is deleted, it will "
+					+ "no longer be accessible.  Are you sure you want to terminate this account?");
+		}
+		else {
+			doSave();
+		}
+	}
+	
+	private void doSave() {
 		AsyncCallback<IncidentPojo> callback = new AsyncCallback<IncidentPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -216,14 +235,18 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 			@Override
 			public void onSuccess(IncidentPojo result) {
 				getView().hidePleaseWaitDialog();
+				GWT.log("IncidentPojo is: " + result);
 				getView().showMessageToUser("An Incident has been created for you.  "
 					+ "The incident number for your reference is: <b>" + result.getNumber() 
 					+ "</b>  The incident has been assigned to the group: <b>" + result.getAssignmentGroup()
 					+ "</b> and is in the following state:  <b>" + result.getIncidentState() + "</b>");
+				incidentDialog.hide();
 			}
 		};
 		if (!isEditing) {
 			getView().showPleaseWaitDialog("Generating an Incident...");
+			incidentRequisition.setCallerId(userLoggedIn.getPrincipal());
+			GWT.log(incidentRequisition.getDescription());
 			VpcProvisioningService.Util.getInstance().generateIncident(incidentRequisition, callback);
 		}
 		else {
@@ -294,14 +317,6 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 		return this.account;
 	}
 
-	@Override
-	public void setTerminateAccount(boolean terminate) {
-		this.terminateAccount = terminate;
-	}
-	public boolean terminateAccount() {
-		return this.terminateAccount;
-	}
-
 	public void setIncidentNumber(String incidentNumber) {
 		this.incidentNumber = incidentNumber;
 	}
@@ -345,6 +360,37 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 	@Override
 	public void setShortDescription(String shortDescription) {
 		this.shortDescription = shortDescription;
+	}
+
+	@Override
+	public void setIncidentType(String incidentType) {
+		this.incidentType = incidentType;
+	}
+
+	@Override
+	public String getIncidentType() {
+		return this.incidentType;
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		doSave();
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Account " + 
+				account.getAccountId() + "/" + account.getAccountName() + " was not terminated.");
+	}
+
+	@Override
+	public void setIncidentDialog(DialogBox incidentDialog) {
+		this.incidentDialog = incidentDialog;
+	}
+
+	@Override
+	public DialogBox getIncidentDialog() {
+		return this.incidentDialog;
 	}
 
 }

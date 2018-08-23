@@ -314,4 +314,16 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		return null;
 	}
 
+	@Override
+	public void showNetworkAdminTabs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showAuditorTabs() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

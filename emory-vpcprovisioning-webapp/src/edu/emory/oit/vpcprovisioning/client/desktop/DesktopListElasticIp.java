@@ -1,11 +1,10 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -54,7 +53,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	@UiField SimplePager elasticIpListPager;
 	@UiField Button allocateAddressButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<ElasticIpSummaryPojo> elasticIpListTable = new CellTable<ElasticIpSummaryPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<ElasticIpSummaryPojo> elasticIpListTable = new CellTable<ElasticIpSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -133,7 +132,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 				actionsPopup.hide();
 				ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					showMessageToUser("Will associate address");
+					showMessageToUser("Will dis-associate address");
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
 				}
 				else {
@@ -198,7 +197,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		elasticIpListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
 		// set range to display
-		elasticIpListTable.setVisibleRange(0, 5);
+		elasticIpListTable.setVisibleRange(0, 15);
 		
 		// create dataprovider
 		dataProvider = new ListDataProvider<ElasticIpSummaryPojo>();
@@ -335,10 +334,12 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 			@Override
 			public String getValue(ElasticIpSummaryPojo object) {
 				if (object.getElasticIp() != null) {
-					return dateFormat.format(object.getElasticIp().getCreateTime());
+					Date createTime = object.getElasticIp().getCreateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
 				}
 				else {
-					return dateFormat.format(object.getElasticIpAssignment().getCreateTime());
+					Date createTime = object.getElasticIpAssignment().getCreateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
 				}
 			}
 		};
@@ -346,11 +347,20 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		sortHandler.setComparator(createTimeColumn, new Comparator<ElasticIpSummaryPojo>() {
 			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
 				if (o1.getElasticIp() != null) {
-					return o1.getElasticIp().getCreateTime().compareTo(o2.getElasticIp().getCreateTime());
+					Date c1 = o1.getElasticIp().getCreateTime();
+					Date c2 = o2.getElasticIp().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
 				}
 				else {
-					return o1.getElasticIpAssignment().getCreateTime().
-							compareTo(o2.getElasticIpAssignment().getCreateTime());
+					Date c1 = o1.getElasticIpAssignment().getCreateTime();
+					Date c2 = o2.getElasticIpAssignment().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
 				}
 			}
 		});
@@ -391,10 +401,12 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 			@Override
 			public String getValue(ElasticIpSummaryPojo object) {
 				if (object.getElasticIp() != null) {
-					return dateFormat.format(object.getElasticIp().getUpdateTime());
+					Date createTime = object.getElasticIp().getUpdateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
 				}
 				else {
-					return dateFormat.format(object.getElasticIpAssignment().getUpdateTime());
+					Date createTime = object.getElasticIpAssignment().getUpdateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
 				}
 			}
 		};
@@ -402,68 +414,24 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		sortHandler.setComparator(updateTimeColumn, new Comparator<ElasticIpSummaryPojo>() {
 			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
 				if (o1.getElasticIp() != null) {
-					return o1.getElasticIp().getUpdateTime().compareTo(o2.getElasticIp().getUpdateTime());
+					Date c1 = o1.getElasticIp().getUpdateTime();
+					Date c2 = o2.getElasticIp().getUpdateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
 				}
 				else {
-					return o1.getElasticIpAssignment().getUpdateTime().
-							compareTo(o2.getElasticIpAssignment().getUpdateTime());
+					Date c1 = o1.getElasticIpAssignment().getUpdateTime();
+					Date c2 = o2.getElasticIpAssignment().getUpdateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
 				}
 			}
 		});
 		elasticIpListTable.addColumn(updateTimeColumn, "Update Time");
-
-		if (userLoggedIn.isCentralAdmin()) {
-			GWT.log(userLoggedIn.getEppn() + " is an admin");
-			// delete row column
-			Column<ElasticIpSummaryPojo, String> deleteRowColumn = new Column<ElasticIpSummaryPojo, String>(
-					new ButtonCell()) {
-				@Override
-				public String getValue(ElasticIpSummaryPojo object) {
-					return "Delete";
-				}
-			};
-			deleteRowColumn.setCellStyleNames("glowing-border");
-			elasticIpListTable.addColumn(deleteRowColumn, "");
-			elasticIpListTable.setColumnWidth(deleteRowColumn, 50.0, Unit.PX);
-			deleteRowColumn
-			.setFieldUpdater(new FieldUpdater<ElasticIpSummaryPojo, String>() {
-				@Override
-				public void update(int index, final ElasticIpSummaryPojo vpc,
-						String value) {
-	
-//					presenter.deleteVpc(vpc);
-				}
-			});
-		}
-
-		// edit row column
-		Column<ElasticIpSummaryPojo, String> editRowColumn = new Column<ElasticIpSummaryPojo, String>(
-				new ButtonCell()) {
-			@Override
-			public String getValue(ElasticIpSummaryPojo object) {
-				if (userLoggedIn.isCentralAdmin()) {
-					GWT.log(userLoggedIn.getEppn() + " is an admin");
-					return "Edit";
-				}
-				else {
-					GWT.log(userLoggedIn.getEppn() + " is NOT an admin");
-					return "View";
-				}
-			}
-		};
-		editRowColumn.setCellStyleNames("glowing-border");
-		elasticIpListTable.addColumn(editRowColumn, "");
-		elasticIpListTable.setColumnWidth(editRowColumn, 50.0, Unit.PX);
-		editRowColumn.setFieldUpdater(new FieldUpdater<ElasticIpSummaryPojo, String>() {
-			@Override
-			public void update(int index, final ElasticIpSummaryPojo vpc,
-					String value) {
-				
-				// fire MAINTAIN_VPC event passing the vpc to be maintained
-				GWT.log("[DesktopListVpc] editing ElasticIP: " + vpc.getElasticIp());
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, vpc);
-			}
-		});
 	}
 
 	@Override

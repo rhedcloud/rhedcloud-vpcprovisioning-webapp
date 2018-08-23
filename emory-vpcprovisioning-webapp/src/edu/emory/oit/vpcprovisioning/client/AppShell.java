@@ -35,4 +35,6 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void initiliizeUserProfile();
 	void validateTermsOfUse();
 	void lockView();
+	void showNetworkAdminTabs();
+	void showAuditorTabs();
 }

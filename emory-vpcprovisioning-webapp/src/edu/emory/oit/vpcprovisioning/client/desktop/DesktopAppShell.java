@@ -54,6 +54,10 @@ import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
+import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
@@ -108,6 +112,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		showAuditorTabs();
 
 		GWT.log("DesktopAppShell:  constructor");
 		
@@ -177,6 +183,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField DeckLayoutPanel homeContentContainer;
 	@UiField DeckLayoutPanel servicesContentContainer;
 	@UiField DeckLayoutPanel centralAdminContentContainer;
+	
+	@UiField DeckLayoutPanel elasticIpContentContainer;
+	@UiField DeckLayoutPanel staticNatContentContainer;
+	@UiField DeckLayoutPanel vpnConnectionContentContainer;
+	@UiField DeckLayoutPanel vpnConnectionProfileContentContainer;
 
 	@UiField Element userNameElem;
 
@@ -200,6 +211,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstHomeContentWidget = true;
 	private boolean firstCentralAdminContentWidget = true;
 	private boolean firstServicesContentWidget = true;
+	private boolean firstElasticIpContentWidget = true;
+	private boolean firstStaticNatContentWidget = true;
+	private boolean firstVpnConnectionContentWidget = true;
+	private boolean firstVpnConnectionProfileContentWidget = true;
 
 	private void registerEvents() {
 		Event.sinkEvents(logoElem, Event.ONCLICK);
@@ -416,6 +431,30 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			centralAdminContentContainer.setAnimationDuration(500);
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
 			break;
+		case 6:
+			GWT.log("need to get Elastic IP content.");
+			clientFactory.getVpcpStatusView().stopTimer();
+			firstElasticIpContentWidget = true;
+			elasticIpContentContainer.clear();
+			ListElasticIpView listElasticIpView = clientFactory.getListElasticIpView();
+			MaintainElasticIpView maintainElasticIpView = clientFactory.getMaintainElasticIpView();
+			elasticIpContentContainer.add(listElasticIpView);
+			elasticIpContentContainer.add(maintainElasticIpView);
+			elasticIpContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
+			break;
+		case 7:
+			GWT.log("need to get Static NAT content.");
+			clientFactory.getVpcpStatusView().stopTimer();
+			break;
+		case 8:
+			GWT.log("need to get VPN Connection content.");
+			clientFactory.getVpcpStatusView().stopTimer();
+			break;
+		case 9:
+			GWT.log("need to get VPN Connection Profile content.");
+			clientFactory.getVpcpStatusView().stopTimer();
+			break;
 		}
 	}
 
@@ -503,6 +542,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		//			otherFeaturesPanel.add(w);
 		//			return;
 		//		}
+
+		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
+			GWT.log("It's the elastic ip presenter...");
+			elasticIpContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstElasticIpContentWidget) {
+				firstElasticIpContentWidget = false;
+				elasticIpContentContainer.animate(0);
+			}
+			return;
+		}
 
 		// if we get here, it's the home tab, just set the widget to what's passed in for now
 		homeContentContainer.setWidget(w);
@@ -953,5 +1003,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public ReleaseInfo getReleaseInfo() {
 		return releaseInfo;
+	}
+
+	@Override
+	public void showNetworkAdminTabs() {
+		mainTabPanel.getTabWidget(6).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(7).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(8).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(9).getParent().setVisible(true);
+	}
+
+	@Override
+	public void showAuditorTabs() {
+		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 }

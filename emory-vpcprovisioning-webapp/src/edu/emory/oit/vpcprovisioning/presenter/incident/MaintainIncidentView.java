@@ -1,22 +1,23 @@
 package edu.emory.oit.vpcprovisioning.presenter.incident;
 
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.presenter.PresentsConfirmation;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentRequisitionPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainIncidentView extends Editor<IncidentPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends PresentsConfirmation {
 		/**
 		 * Delete the current account or cancel the creation of a account.
 		 */
@@ -48,7 +49,10 @@ public interface MaintainIncidentView extends Editor<IncidentPojo>, IsWidget, Vi
 		
 		public void setAccount(AccountPojo account);
 		public AccountPojo getAccount();
-		void setTerminateAccount(boolean terminate);
+		void setIncidentType(String incidentType);
+		String getIncidentType();
+		void setIncidentDialog(DialogBox incidentDialog);
+		DialogBox getIncidentDialog();
 	}
 
 	/**
@@ -86,5 +90,4 @@ public interface MaintainIncidentView extends Editor<IncidentPojo>, IsWidget, Vi
 	void setReleaseInfo(String releaseInfoHTML);
 	void showGenerateWidgets();
 	void showEditWidgets();
-
 }

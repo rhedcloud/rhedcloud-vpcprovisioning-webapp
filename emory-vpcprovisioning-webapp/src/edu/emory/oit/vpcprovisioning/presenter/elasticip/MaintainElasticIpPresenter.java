@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -20,7 +21,8 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	private EventBus eventBus;
 	private String elasticIpId;
 	private ElasticIpPojo elasticIp;
-	
+	private MaintainElasticIpView view;
+
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
 	 * new case record.
@@ -35,7 +37,6 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		this.elasticIp = null;
 		this.elasticIpId = null;
 		this.clientFactory = clientFactory;
-		clientFactory.getMaintainElasticIpView().setPresenter(this);
 	}
 
 	/**
@@ -46,7 +47,6 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		this.elasticIpId = pojo.getElasticIpId();
 		this.clientFactory = clientFactory;
 		this.elasticIp = pojo;
-		clientFactory.getMaintainElasticIpView().setPresenter(this);
 	}
 
 	@Override
@@ -184,8 +184,12 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		return clientFactory;
 	}
 
-	private MaintainElasticIpView getView() {
-		return clientFactory.getMaintainElasticIpView();
+	public MaintainElasticIpView getView() {
+		if (view == null) {
+			view = clientFactory.getMaintainElasticIpView();
+			view.setPresenter(this);
+		}
+		return view;
 	}
 
 	public String getElasticIpId() {

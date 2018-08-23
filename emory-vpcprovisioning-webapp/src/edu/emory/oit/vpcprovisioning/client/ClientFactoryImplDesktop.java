@@ -348,10 +348,11 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	@Override
 	public MaintainElasticIpView getMaintainElasticIpView() {
-        if (maintainElasticIpView == null) {
-        	maintainElasticIpView = createMaintainElasticIpView();
-        }
-        return maintainElasticIpView;
+		return createMaintainElasticIpView();
+//        if (maintainElasticIpView == null) {
+//        	maintainElasticIpView = createMaintainElasticIpView();
+//        }
+//        return maintainElasticIpView;
 	}
 	protected MaintainElasticIpView createMaintainElasticIpView() {
 		return new DesktopMaintainElasticIp();

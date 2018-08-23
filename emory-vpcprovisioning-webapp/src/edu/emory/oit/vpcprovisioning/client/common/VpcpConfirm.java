@@ -13,11 +13,11 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.presenter.VpcpPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.PresentsConfirmation;
 
 public class VpcpConfirm extends DialogBox {
 
-	public static void confirm(final VpcpPresenter presenter, String title, String prompt) {
+	public static void confirm(final PresentsConfirmation presenter, String title, String prompt) {
 		final VpcpConfirm vpcpConfirm = new VpcpConfirm();
 		vpcpConfirm.setAutoHideEnabled(false);
 		vpcpConfirm.setModal(true);
