@@ -67,6 +67,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
@@ -132,7 +134,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		this.eventBus = eventBus;
 
 		// TODO: find a better way to handle history and browser refreshes
-		if (hash == null) {
+		if (hash == null || hash.trim().length() == 0) {
 			GWT.log("null hash: home tab");
 			homeView = clientFactory.getHomeView();
 			homeContentContainer.add(homeView);
@@ -157,6 +159,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			else if (hash.trim().equals("#" + Constants.LIST_CENTRAL_ADMIN + ":")) {
 				GWT.log("Need to go to Cetnral Admin tab");
 				mainTabPanel.selectTab(5);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_STATIC_NAT + ":")) {
+				GWT.log("Need to go to Static Nat tab");
+				mainTabPanel.selectTab(7);
 			}
 			else {
 				GWT.log("[default] home tab");
@@ -425,9 +431,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			firstCentralAdminContentWidget = true;
 			centralAdminContentContainer.clear();
 			ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
-			//				MaintainCentralAdminView maintainCentralAdminView = clientFactory.getMaintainCentralAdminView();
 			centralAdminContentContainer.add(listCentralAdminView);
-			//				centralAdminContentContainer.add(maintainCentralAdminView);
 			centralAdminContentContainer.setAnimationDuration(500);
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
 			break;
@@ -446,6 +450,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		case 7:
 			GWT.log("need to get Static NAT content.");
 			clientFactory.getVpcpStatusView().stopTimer();
+			firstStaticNatContentWidget = true;
+			staticNatContentContainer.clear();
+			ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
+//			StaticNatStatusView snpStatusView = clientFactory.getStaticNatStatusView();
+			staticNatContentContainer.add(listStaticNatView);
+//			staticNatContentContainer.add(snpStatusView);
+			staticNatContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY);
 			break;
 		case 8:
 			GWT.log("need to get VPN Connection content.");
@@ -550,6 +562,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			if (firstElasticIpContentWidget) {
 				firstElasticIpContentWidget = false;
 				elasticIpContentContainer.animate(0);
+			}
+			return;
+		}
+		
+		if (w instanceof ListStaticNatProvisioningSummaryPresenter) {
+			// TODO: or StaticNatStatusPresenter
+			staticNatContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstStaticNatContentWidget) {
+				firstStaticNatContentWidget = false;
+				staticNatContentContainer.animate(0);
 			}
 			return;
 		}
@@ -967,7 +990,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				public void onSuccess(TermsOfUseSummaryPojo result) {
 					if (!result.hasValidTermsOfUseAgreement()) {
 						// must agree to the current terms of use
-						ActionEvent.fire(eventBus, ActionNames.CREATE_TERMS_OF_USE_AGREEMENT);
+						ActionEvent.fire(eventBus, ActionNames.CREATE_TERMS_OF_USE_AGREEMENT, userLoggedIn);
 					}
 					else {
 						// user has a valid TermsOfUseAgreement in place
@@ -977,7 +1000,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(userLoggedIn, cb);
 		}
 		else {
-			// TODO: error, cannot continue
+			showMessageToUser("There doesn't appear to be a user logged in at this time.  Processing cannot continue");
+			lockView();
 		}
 	}
 

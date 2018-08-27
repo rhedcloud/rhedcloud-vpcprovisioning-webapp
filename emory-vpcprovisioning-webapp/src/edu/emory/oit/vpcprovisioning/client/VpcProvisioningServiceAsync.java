@@ -84,6 +84,12 @@ import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResult
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryResultPojo;
@@ -298,5 +304,10 @@ public interface VpcProvisioningServiceAsync {
 	void deleteIncident(IncidentPojo incident, AsyncCallback<Void> callback);
 	void generateIncident(IncidentRequisitionPojo incidentRequisition, AsyncCallback<IncidentPojo> callback);
 	void updateIncident(IncidentPojo incident, AsyncCallback<IncidentPojo> callback);
-	
+
+	// static nat provisioning summaries
+	void getStaticNatProvisioningSummariesForFilter(StaticNatProvisioningSummaryQueryFilterPojo filter, AsyncCallback<StaticNatProvisioningSummaryQueryResultPojo> callback);
+	void getStaticNatProvisioningsForFilter(StaticNatProvisioningQueryFilterPojo filter, AsyncCallback<StaticNatProvisioningQueryResultPojo> callback);
+	void getStaticNatDeprovisioningsForFilter(StaticNatDeprovisioningQueryFilterPojo filter, AsyncCallback<StaticNatDeprovisioningQueryResultPojo> callback);
+
 }

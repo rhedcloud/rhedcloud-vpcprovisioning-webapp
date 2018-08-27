@@ -455,4 +455,10 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 		createButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

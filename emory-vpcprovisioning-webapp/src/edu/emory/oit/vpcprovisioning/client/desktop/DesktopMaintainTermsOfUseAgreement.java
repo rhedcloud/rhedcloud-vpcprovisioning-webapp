@@ -216,4 +216,10 @@ public class DesktopMaintainTermsOfUseAgreement extends ViewImplBase implements 
 		
 	}
 
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -41,6 +41,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineV
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -96,6 +97,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainServiceGuidelineView maintainServiceGuidelineView;
 	private MaintainSrdView maintainSrdView;
 	private MaintainTermsOfUseAgreementView maintainTermsOfUseAgreementView;
+	private ListStaticNatProvisioningSummaryView listStaticNatProvisioningSummaryView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -326,6 +328,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainIncidentView getMaintainIncidentView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListStaticNatProvisioningSummaryView getListStaticNatProvisioningSummaryView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -374,4 +374,10 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 		
 	}
 
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

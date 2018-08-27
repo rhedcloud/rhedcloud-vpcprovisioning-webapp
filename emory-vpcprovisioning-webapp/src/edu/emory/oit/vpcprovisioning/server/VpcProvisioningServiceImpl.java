@@ -141,6 +141,8 @@ import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
 import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIp;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment;
+import edu.emory.moa.jmsobjects.network.v1_0.StaticNatDeprovisioning;
+import edu.emory.moa.jmsobjects.network.v1_0.StaticNatProvisioning;
 import edu.emory.moa.objects.resources.v1_0.AssociatedCidr;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
@@ -154,6 +156,8 @@ import edu.emory.moa.objects.resources.v1_0.Property;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
+import edu.emory.moa.objects.resources.v1_0.StaticNatDeprovisioningQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.StaticNatProvisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.*;
@@ -173,6 +177,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
 	private static final String SRD_SERVICE_NAME = "SrdRequestService";
+	private static final String NETWORK_OPS_SERVICE_NAME = "NetworkOpsRequestService";
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
 	private static final String ROLE_ASSIGNMENT_PROPERTIES = "RoleAssignmentProperties";
@@ -198,6 +203,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool serviceNowProducerPool = null;
 	private ProducerPool elasticIpProducerPool = null;
 	private ProducerPool srdProducerPool = null;
+	private ProducerPool networkOpsProducerPool = null;
 	private Object lock = new Object();
 	static SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -315,6 +321,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					ELASTIC_IP_SERVICE_NAME);
 			srdProducerPool = (ProducerPool) getAppConfig().getObject(
 					SRD_SERVICE_NAME);
+			networkOpsProducerPool = (ProducerPool) getAppConfig().getObject(
+					NETWORK_OPS_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
@@ -1948,14 +1956,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.manageSessionLocally = manageSessionLocally;
 	}
 
-//	public String getBaseLoginURL() {
-//		return baseLoginURL;
-//	}
-//
-//	public void setBaseLoginURL(String baseLoginURL) {
-//		this.baseLoginURL = baseLoginURL;
-//	}
-
+	private RequestService getNetworkOpsRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) networkOpsProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
 	private RequestService getSrdRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) srdProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
@@ -3597,7 +3603,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					ProvisioningStepPojo psp = new ProvisioningStepPojo();
 					psp.setStepId(this.toStringFromInt(i));
 					if (i==1) {
-						psp.setStatus(Constants.VPCP_STEP_STATUS_COMPLETED);
+						psp.setStatus(Constants.PROVISIONING_STEP_STATUS_COMPLETED);
 						psp.setStepResult(Constants.VPCP_STEP_RESULT_SUCCESS);
 					}
 					else {
@@ -4850,10 +4856,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public UserNotificationPojo createUserNotification(UserNotificationPojo notification) throws RpcException {
-		// TODO Auto-generated method stub
 		notification.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
-		return null;
+        try {
+            info("updating UserNotification on the server...");
+            UserNotification newData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+
+            info("populating newData...");
+            populateUserNotificationMoa(notification, newData);
+
+            info("doing the create...");
+            doCreate(newData, getAWSRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return notification;
 	}
 
 	@Override
@@ -5937,6 +5956,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getRoleAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
+			info("[getRoleAssignmentsForFilter] QuerySpec is: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
 			List<RoleAssignment> moas = actionable.query(queryObject,
 					this.getIDMRequestService());
@@ -6145,7 +6165,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
 				RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
-//				info("[getRoleAssignmentsForAccount] filter.roleDN: " + roleDN);
 				filter.setRoleDN(roleDN);
 				filter.setIdentityType("USER");
 				filter.setDirectAssignOnly(true);
@@ -6155,13 +6174,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						for (RoleAssignmentPojo ra : ra_result.getResults()) {
 							if (ra.getExplicityIdentitiyDNs() != null) {
 								for (String dn : ra.getExplicityIdentitiyDNs().getDistinguishedNames()) {
-//									info("[getAdminRoleAssignmentsForAccount] dn: " + dn);
 									String[] cns = dn.split(",");
-//									info("[getAdminRoleAssignmentsForAccount] cns: " + cns);
 									String publicIdCn = cns[0];
-//									info("[getAdminRoleAssignmentsForAccount] publicIdCn: " + publicIdCn);
 									String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
-//									info("[getAdminRoleAssignmentsForAccount] publicId: " + publicId);
 									
 									// get directoryperson for publicid
 									// check cache to see if the DirectoryPerson is already in the cache
@@ -6172,8 +6187,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 										DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 										dp_filter.setKey(publicId);
 										DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-//										info("[getAdminRoleAssignmentsForAccount] got " + dp_result.getResults().size() + 
-//												" DirectoryPerson objects back for key=" + publicId);
 										if (dp_result.getResults().size() > 0) {
 											cached_dp = dp_result.getResults().get(0);
 											// add to cache
@@ -6191,7 +6204,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 									RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
 									ra_summary.setDirectoryPerson(cached_dp);
 									ra_summary.setRoleAssignment(ra);
-									info("[getAdminRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
+									info("[getRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
 									results.add(ra_summary);
 								}
 							}
@@ -6858,11 +6871,40 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	private void populateAccountNotificationMoa(AccountNotificationPojo pojo, AccountNotification moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+		moa.setAccountNotificationId(pojo.getAccountNotificationId());
+		moa.setAccountId(pojo.getAccountId());
+		moa.setType(pojo.getType());
+		moa.setPriority(pojo.getPriority());
+		moa.setSubject(pojo.getSubject());
+		moa.setText(pojo.getText());
+		moa.setReferenceId(moa.getReferenceId());
+		for (AnnotationPojo annotation : pojo.getAnnotations()) {
+			Annotation ap = moa.newAnnotation();
+			ap.setText(annotation.getText());
+			moa.addAnnotation(ap);
+		}
+		
+        this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
 	@Override
 	public AccountNotificationPojo createAccountNotification(AccountNotificationPojo notification) throws RpcException {
-		// TODO temporary until notifications can be edited.
-		notification.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
+        try {
+            info("create AccountNotification on the server...");
+            AccountNotification newData = (AccountNotification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION);
+
+            info("populating newData...");
+            populateAccountNotificationMoa(notification, newData);
+
+            info("doing the create...");
+            doCreate(newData, getAWSRequestService());
+            info("create is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
 		return notification;
 	}
 
@@ -8288,5 +8330,237 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public IncidentPojo updateIncident(IncidentPojo indident) throws RpcException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public StaticNatProvisioningSummaryQueryResultPojo getStaticNatProvisioningSummariesForFilter(
+			StaticNatProvisioningSummaryQueryFilterPojo filter) throws RpcException {
+		
+		StaticNatProvisioningSummaryQueryResultPojo result = new StaticNatProvisioningSummaryQueryResultPojo();
+		if (filter != null) {
+			result.setProvisionedFilterUsed(filter.getProvisionedFilter());
+			result.setDeProvisionedFilterUsed(filter.getDeProvisionedFilter());
+		}
+
+		List<StaticNatProvisioningSummaryPojo> pojos = new java.util.ArrayList<StaticNatProvisioningSummaryPojo>();
+		
+		StaticNatProvisioningQueryResultPojo p_result = 
+			this.getStaticNatProvisioningsForFilter(filter == null ? null : filter.getProvisionedFilter());
+		for (StaticNatProvisioningPojo snp : p_result.getResults()) {
+			StaticNatProvisioningSummaryPojo snps = new StaticNatProvisioningSummaryPojo();
+			snps.setProvisioned(snp);
+			pojos.add(snps);
+		}
+		
+		StaticNatDeprovisioningQueryResultPojo dp_result = 
+			this.getStaticNatDeprovisioningsForFilter(filter == null ? null : filter.getDeProvisionedFilter());
+		for (StaticNatDeprovisioningPojo snd : dp_result.getResults()) {
+			StaticNatProvisioningSummaryPojo snps = new StaticNatProvisioningSummaryPojo();
+			snps.setDeprovisioned(snd);
+			pojos.add(snps);
+		}
+		
+		Collections.sort(pojos);
+		result.setResults(pojos);
+		return result;
+	}
+
+	@Override
+	public StaticNatProvisioningQueryResultPojo getStaticNatProvisioningsForFilter(
+			StaticNatProvisioningQueryFilterPojo filter) throws RpcException {
+
+		StaticNatProvisioningQueryResultPojo result = new StaticNatProvisioningQueryResultPojo();
+		List<StaticNatProvisioningPojo> pojos = new java.util.ArrayList<StaticNatProvisioningPojo>();
+		try {
+			StaticNatProvisioningQuerySpecification queryObject = (StaticNatProvisioningQuerySpecification) getObject(Constants.MOA_STATIC_NAT_PROVISIONING_QUERY_SPEC);
+			StaticNatProvisioning actionable = (StaticNatProvisioning) getObject(Constants.MOA_STATIC_NAT_PROVISIONING);
+
+			if (filter != null) {
+				queryObject.setProvisioningId(filter.getProvisioningId());
+				queryObject.setType(filter.getType());
+				queryObject.setCreateUser(filter.getCreateUser());
+				queryObject.setLastUpdateUser(filter.getUpdateUser());
+				info("[getStaticNatProvisioningsForFilter] getting items for filter: " + queryObject.toXmlString());
+			}
+			else {
+				info("[getStaticNatProvisioningsForFilter] no filter passed in.  Getting all StaticNat Provisioning objects");
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getStaticNatProvisioningsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = generalProps.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getNetworkOpsRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
+			@SuppressWarnings("unchecked")
+			List<StaticNatProvisioning> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getStaticNatProvisioningsForFilter] got " + moas.size() + " Static Nat Provisioning objects back from the server.");
+			for (StaticNatProvisioning moa : moas) {
+				StaticNatProvisioningPojo pojo = new StaticNatProvisioningPojo();
+				this.populateStaticNatProvisioningPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateStaticNatProvisioningPojo(StaticNatProvisioning moa, StaticNatProvisioningPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setProvisioningId(moa.getProvisioningId());
+		pojo.setStatus(moa.getStatus());
+		pojo.setProvisioningResult(moa.getProvisioningResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getStaticNat() != null) {
+			StaticNatPojo snp = new StaticNatPojo();
+			snp.setPrivateIp(moa.getStaticNat().getPrivateIp());
+			snp.setPublicIp(moa.getStaticNat().getPublicIp());
+			pojo.setStaticNat(snp);
+		}
+
+		// provisioningsteps
+		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
+		for (ProvisioningStep ps : (List<ProvisioningStep>) moa.getProvisioningStep()) {
+			ProvisioningStepPojo psp = new ProvisioningStepPojo();
+			this.populateProvisioningStepPojo(ps, psp);
+			pspList.add(psp);
+		}
+		Collections.sort(pspList);
+		pojo.setProvisioningSteps(pspList);
+
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@Override
+	public StaticNatDeprovisioningQueryResultPojo getStaticNatDeprovisioningsForFilter(
+			StaticNatDeprovisioningQueryFilterPojo filter) throws RpcException {
+
+		StaticNatDeprovisioningQueryResultPojo result = new StaticNatDeprovisioningQueryResultPojo();
+		List<StaticNatDeprovisioningPojo> pojos = new java.util.ArrayList<StaticNatDeprovisioningPojo>();
+		try {
+			StaticNatDeprovisioningQuerySpecification queryObject = (StaticNatDeprovisioningQuerySpecification) getObject(Constants.MOA_STATIC_NAT_DEPROVISIONING_QUERY_SPEC);
+			StaticNatDeprovisioning actionable = (StaticNatDeprovisioning) getObject(Constants.MOA_STATIC_NAT_DEPROVISIONING);
+
+			if (filter != null) {
+				queryObject.setProvisioningId(filter.getProvisioningId());
+				queryObject.setType(filter.getType());
+				queryObject.setCreateUser(filter.getCreateUser());
+				queryObject.setLastUpdateUser(filter.getUpdateUser());
+				info("[getStaticNatDeprovisioningsForFilter] getting items for filter: " + queryObject.toXmlString());
+			}
+			else {
+				info("[getStaticNatDeprovisioningsForFilter] no filter passed in.  Getting all StaticNat Provisioning objects");
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getStaticNatDeprovisioningsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = generalProps.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getNetworkOpsRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
+			@SuppressWarnings("unchecked")
+			List<StaticNatDeprovisioning> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getStaticNatDeprovisioningsForFilter] got " + moas.size() + " Static Nat Provisioning objects back from the server.");
+			for (StaticNatDeprovisioning moa : moas) {
+				StaticNatDeprovisioningPojo pojo = new StaticNatDeprovisioningPojo();
+				this.populateStaticNatDeprovisioningPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	private void populateStaticNatDeprovisioningPojo(StaticNatDeprovisioning moa, StaticNatDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setProvisioningId(moa.getProvisioningId());
+		pojo.setStatus(moa.getStatus());
+		pojo.setProvisioningResult(moa.getProvisioningResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getStaticNat() != null) {
+			StaticNatPojo snp = new StaticNatPojo();
+			snp.setPrivateIp(moa.getStaticNat().getPrivateIp());
+			snp.setPublicIp(moa.getStaticNat().getPublicIp());
+			pojo.setStaticNat(snp);
+		}
+
+		// provisioningsteps
+		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
+		for (ProvisioningStep ps : (List<ProvisioningStep>) moa.getProvisioningStep()) {
+			ProvisioningStepPojo psp = new ProvisioningStepPojo();
+			this.populateProvisioningStepPojo(ps, psp);
+			pspList.add(psp);
+		}
+		Collections.sort(pspList);
+		pojo.setProvisioningSteps(pspList);
+
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
 	}
 }

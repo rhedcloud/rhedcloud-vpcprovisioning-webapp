@@ -283,7 +283,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 				stepsGrid.setWidget(gridRow, 7, hProps);
 			}
 
-			if (psp.getStatus().equalsIgnoreCase(Constants.VPCP_STEP_STATUS_COMPLETED)) {
+			if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
 				if (psp.getStepResult() == null) {
 					stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
 				}
@@ -406,6 +406,12 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 
 	@Override
 	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
 	}

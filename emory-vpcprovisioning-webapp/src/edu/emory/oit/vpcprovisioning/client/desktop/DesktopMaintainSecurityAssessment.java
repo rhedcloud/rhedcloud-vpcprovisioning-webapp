@@ -475,4 +475,9 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

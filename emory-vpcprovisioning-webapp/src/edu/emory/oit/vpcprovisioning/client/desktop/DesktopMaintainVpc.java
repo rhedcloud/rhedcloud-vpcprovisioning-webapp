@@ -513,4 +513,10 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

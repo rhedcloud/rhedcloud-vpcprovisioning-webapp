@@ -60,6 +60,7 @@ public interface ActionNames {
 	final String GO_HOME = "goHome";
 	final String GO_HOME_FIREWALL_RULE = "goHomeFirewallRule";
 	final String GO_BACK_FIREWALL_RULE = "goBackFirewallRule";
+	final String GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY = "goHomeSnps";
 	final String GO_HOME_VPCP = "goHomeVpcp";
 	final String GO_BACK_VPCP = "goBackVpcp";
 	final String GO_HOME_VPC = "goHomeVpc";
@@ -114,6 +115,9 @@ public interface ActionNames {
 	final String CONFIRM_PASSCODE_CACHE_CASE = "confirmPasscodeCacheCase";
 	final String PIN_CONFIRMED = "pinConfirmed";
 	final String SHOW_VPCP_STATUS = "showVpcpStatus";
+	final String SHOW_STATIC_NAT_STATUS = "showStaticNatStatus";
+//	final String SHOW_STATIC_NAT_PROVISIONING_STATUS = "showSnpStatus";
+//	final String SHOW_STATIC_NAT_DEPROVISIONING_STATUS = "showSndpStatus";
 	final String SHOW_BILL_SUMMARY_FOR_ACCOUNT = "showBillSummaryForAccount";
 	final String GO_HOME_CENTRAL_ADMIN = "goHomeCentralAdmin";
 	
@@ -168,4 +172,6 @@ public interface ActionNames {
 	final String VIEW_INCIDENT_STATUS = "viewIncidentStatus";
 	final String INCIDENT_TERMINATE_ACCOUNT = "terminateAccount";
 	final String INCIDENT_CREATE_SERVICE_ACCOUNT = "createServiceAccount";
+	final String CREATE_USER_NOTIFICATION = "createUserNotification";
+	final String CREATE_ACCOUNT_NOTIFICATION = "createAccountNotification";
 }

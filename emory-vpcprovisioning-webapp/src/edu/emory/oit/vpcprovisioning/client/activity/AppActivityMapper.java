@@ -49,6 +49,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineP
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPlace;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPlace;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -243,6 +245,23 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
+			};
+		}
+
+		if (place instanceof ListStaticNatProvisioningSummaryPlace) {
+			// The list of case records.
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListStaticNatProvisioningSummaryPresenter presenter = new ListStaticNatProvisioningSummaryPresenter(clientFactory, (ListStaticNatProvisioningSummaryPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+
+				/*
+				 * Note no call to presenter.stop(). The CaseRecordListViews do that
+				 * themselves as a side effect of setPresenter.
+				 */
 			};
 		}
 

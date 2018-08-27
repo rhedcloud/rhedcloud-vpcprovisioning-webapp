@@ -526,4 +526,10 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		allocateAddressButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

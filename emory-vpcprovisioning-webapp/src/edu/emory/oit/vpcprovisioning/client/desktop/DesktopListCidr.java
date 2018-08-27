@@ -665,4 +665,9 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 		filterButton.setEnabled(true);
 		clearFilterButton.setEnabled(true);
 	}
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

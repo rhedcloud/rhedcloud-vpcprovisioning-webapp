@@ -128,7 +128,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 
 					GWT.log("refreshing security assessment...");
 					ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
-//					filter.setAssessmentId(assessmentId);
+					filter.setAssessmentId(assessmentId);
 					filter.setServiceId(service.getServiceId());
 					VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
 				}

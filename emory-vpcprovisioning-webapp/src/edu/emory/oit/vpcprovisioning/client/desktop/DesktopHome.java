@@ -342,4 +342,9 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 		directoryInfoButton.setEnabled(false);
 		personInfoButton.setEnabled(false);
 	}
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

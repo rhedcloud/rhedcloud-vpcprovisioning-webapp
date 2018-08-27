@@ -453,4 +453,10 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 		allocateAddressButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

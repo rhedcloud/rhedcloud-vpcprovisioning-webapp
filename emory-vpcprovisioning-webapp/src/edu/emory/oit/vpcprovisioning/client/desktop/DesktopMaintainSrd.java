@@ -343,4 +343,10 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 		
 	}
 
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

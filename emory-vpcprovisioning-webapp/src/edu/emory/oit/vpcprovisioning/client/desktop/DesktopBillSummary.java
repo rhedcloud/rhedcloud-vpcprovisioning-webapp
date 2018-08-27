@@ -298,4 +298,9 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -1046,4 +1046,9 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		firewallExceptionRequestActionsButton.setEnabled(true);
 		firewallRuleActionsButton.setEnabled(true);
 	}
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

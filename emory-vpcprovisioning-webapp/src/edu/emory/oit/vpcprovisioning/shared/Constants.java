@@ -84,7 +84,7 @@ public class Constants implements IsSerializable {
 	public static final String VPCP_RESULT_SUCCESS = "success";
 	public static final String VPCP_RESULT_FAILURE = "failure";
 
-	public static final String VPCP_STEP_STATUS_COMPLETED = "completed";
+	public static final String PROVISIONING_STEP_STATUS_COMPLETED = "completed";
 	public static final String VPCP_STEP_STATUS_PENDING = "pending";
 	public static final String VPCP_STEP_RESULT_SUCCESS = "success";
 	public static final String VPCP_STEP_RESULT_FAILURE = "failure";
@@ -136,4 +136,9 @@ public class Constants implements IsSerializable {
 	
 	public static final String INCIDENT_TYPE_TERMINATE_ACCOUNT = "terminateAccount";
 	public static final String INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT = "createServiceAccount";
+	public static final String LIST_STATIC_NAT = "listStaticNat";
+	public static final String MOA_STATIC_NAT_PROVISIONING = "StaticNatProvisioning.v1_0";
+	public static final String MOA_STATIC_NAT_PROVISIONING_QUERY_SPEC = "StaticNatProvisioningQuerySpecification.v1_0";
+	public static final String MOA_STATIC_NAT_DEPROVISIONING = "StaticNatDeprovisioning.v1_0";
+	public static final String MOA_STATIC_NAT_DEPROVISIONING_QUERY_SPEC = "StaticNatDeprovisioningQuerySpecification.v1_0";
 }

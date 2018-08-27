@@ -43,7 +43,10 @@ import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
@@ -67,6 +70,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	 * The event type.
 	 */
 	private static final Type<ActionEvent.Handler> TYPE = new Type<ActionEvent.Handler>();
+	private UserAccountPojo userLoggedIn;
 	private CidrPojo cidr;
 	private CidrAssignmentSummaryPojo cidrAssignmentSummary;
 	private CidrAssignmentPojo cidrAssignment;
@@ -92,6 +96,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private QueryFilter filter;
 	private TermsOfUseAgreementPojo termsOfUseAgreement;
 	private IncidentPojo incident;
+	private StaticNatProvisioningPojo staticNatProvisioning;
+	private StaticNatDeprovisioningPojo staticNatDeprovisioning;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -160,6 +166,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	
 	public static void fire(EventBus eventBus, String sourceName, VpcpPojo vpcp) {
 		eventBus.fireEventFromSource(new ActionEvent(vpcp), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, StaticNatProvisioningPojo snp) {
+		eventBus.fireEventFromSource(new ActionEvent(snp), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, StaticNatDeprovisioningPojo sndp) {
+		eventBus.fireEventFromSource(new ActionEvent(sndp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, UserNotificationPojo notification) {
@@ -263,7 +277,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, TermsOfUseAgreementPojo toua) {
 		eventBus.fireEventFromSource(new ActionEvent(toua), sourceName);
 	}
-	
+
+	public static void fire(EventBus eventBus, String sourceName, UserAccountPojo userLoggedIn) {
+		eventBus.fireEventFromSource(new ActionEvent(userLoggedIn), sourceName);
+	}
+
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
 	}
@@ -476,6 +494,18 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.incident = incident2;
 	}
 
+	public ActionEvent(StaticNatProvisioningPojo snp) {
+		this.staticNatProvisioning = snp;
+	}
+
+	public ActionEvent(StaticNatDeprovisioningPojo sndp) {
+		this.staticNatDeprovisioning = sndp;
+	}
+
+	public ActionEvent(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -676,5 +706,29 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setIncident(IncidentPojo incident) {
 		this.incident = incident;
+	}
+
+	public StaticNatProvisioningPojo getStaticNatProvisioning() {
+		return staticNatProvisioning;
+	}
+
+	public void setStaticNatProvisioning(StaticNatProvisioningPojo staticNatProvisioning) {
+		this.staticNatProvisioning = staticNatProvisioning;
+	}
+
+	public StaticNatDeprovisioningPojo getStaticNatDeprovisioning() {
+		return staticNatDeprovisioning;
+	}
+
+	public void setStaticNatDeprovisioning(StaticNatDeprovisioningPojo staticNatDeprovisioning) {
+		this.staticNatDeprovisioning = staticNatDeprovisioning;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 }

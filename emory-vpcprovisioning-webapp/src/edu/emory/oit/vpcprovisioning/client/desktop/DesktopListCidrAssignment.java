@@ -597,4 +597,10 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 		addCidrAssignmentButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

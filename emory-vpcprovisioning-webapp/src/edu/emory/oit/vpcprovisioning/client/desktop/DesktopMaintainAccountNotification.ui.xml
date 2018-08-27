@@ -6,17 +6,34 @@
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notification Details</g:HTML>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+   		<g:VerticalPanel ui:field="selectAccountPanel">
 			<g:Grid cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+   						<g:Label addStyleNames="{style.labelLeft}">Select Account:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="accountLB" debugId="accountLB" />
+			    	</g:customCell>
+			    </g:row>
+			</g:Grid>
+   		</g:VerticalPanel>
+   		<g:VerticalPanel ui:field="enterAccountPanel">
+			<g:Grid cellSpacing="8">
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.labelLeft}">Account ID:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="accountIdTB" debugId="accountIdTB" />
 			    	</g:customCell>
-		    	</g:row>
+			    </g:row>
+			</g:Grid>
+   		</g:VerticalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Type:</g:Label>
@@ -31,8 +48,8 @@
 						<g:Label addStyleNames="{style.label}">Priority:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="priorityTB" debugId="priorityTB" />
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="priorityLB" debugId="priorityLB" />
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>

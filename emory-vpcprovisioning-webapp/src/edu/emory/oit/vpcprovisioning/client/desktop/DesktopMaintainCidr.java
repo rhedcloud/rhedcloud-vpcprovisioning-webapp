@@ -425,4 +425,10 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -20,8 +20,7 @@ public interface View extends IsWidget {
 	void setInitialFocus();
 	public void showStatus(Widget source, String message);
 	public Widget getStatusMessageSource();
-//	public void applyLITSAdminMask();
-//	public void applyLITSAuditorMask();
+	public void applyNetworkAdminMask();
 	public void applyCentralAdminMask();
 	public void applyAWSAccountAdminMask();
 	public void applyAWSAccountAuditorMask();

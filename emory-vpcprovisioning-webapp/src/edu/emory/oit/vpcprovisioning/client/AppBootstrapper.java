@@ -58,6 +58,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineP
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -141,9 +142,7 @@ public class AppBootstrapper {
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
 				shell.setUserLoggedIn(userLoggedIn);
 				if (userLoggedIn.isCentralAdmin() || userLoggedIn.isNetworkAdmin()) {
-//					shell.applyAdminMask();
-					// TODO: temp.  not ready but i need to deploy to dev so everyone will be 
-					// treated like an auditor for this stuff for now.
+//					shell.showNetworkAdminTabs();
 					shell.showAuditorTabs();
 				}
 				else {
@@ -162,30 +161,6 @@ public class AppBootstrapper {
 					}
 				};
 				VpcProvisioningService.Util.getInstance().getReleaseInfo(riCallback);
-
-				// TODO: may need to do this here so we can respond to any
-				// terms of use errors and stuff
-//				AsyncCallback<TermsOfUseSummaryPojo> cb = new AsyncCallback<TermsOfUseSummaryPojo>() {
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						showMessageToUser("There was an exception on the " +
-//								"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
-//								+ "continue.  Message " +
-//								"from server is: " + caught.getMessage());
-//					}
-//
-//					@Override
-//					public void onSuccess(TermsOfUseSummaryPojo result) {
-//						if (!result.hasValidTermsOfUseAgreement()) {
-//							// must agree to the current terms of use
-//							ActionEvent.fire(eventBus, ActionNames.CREATE_TERMS_OF_USE_AGREEMENT);
-//						}
-//						else {
-//							// user has a valid TermsOfUseAgreement in place
-//						}
-//					}
-//				};
-//				VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(userLoggedIn, cb);
 
 				shell.validateTermsOfUse();
 				shell.startNotificationTimer();
@@ -1237,6 +1212,43 @@ public class AppBootstrapper {
 				placeController.goTo(MaintainAccountPlace.createMaintainAccountPlace(event.getAccount()));
 			}
 		});
+		ActionEvent.register(eventBus, ActionNames.CREATE_ACCOUNT_NOTIFICATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(final ActionEvent actionEvent) {
+				final DialogBox db = new DialogBox();
+				db.setText("Create Account Notification");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainAccountNotificationPresenter presenter;
+				if (actionEvent.getAccount() == null) {
+					// account is unknown at this point, user will have to look it up
+					presenter = new MaintainAccountNotificationPresenter(clientFactory);
+				}
+				else {
+					// account is known, user won't be able to change it??
+					presenter = new MaintainAccountNotificationPresenter(clientFactory, actionEvent.getAccount());
+				}
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							// save logic is handled by the presenter
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, new ActionEvent.Handler() {
 			@Override
 			public void onAction(final ActionEvent actionEvent) {
@@ -1264,7 +1276,6 @@ public class AppBootstrapper {
 				db.setWidget(presenter);
 				db.show();
 				db.center();
-//				placeController.goTo(MaintainAccountPlace.createMaintainAccountPlace(event.getAccount()));
 			}
 		});
 		
@@ -1339,6 +1350,7 @@ public class AppBootstrapper {
 				db.center();
 				final MaintainTermsOfUseAgreementPresenter presenter = new MaintainTermsOfUseAgreementPresenter(clientFactory);
 				presenter.setTermsOfUseDialog(db);
+				presenter.setUserLoggedIn(actionEvent.getUserLoggedIn());
 				presenter.start(eventBus);
 				db.setWidget(presenter);
 				db.show();
@@ -1456,6 +1468,15 @@ public class AppBootstrapper {
 				db.center();
 			}
 		});
+		
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY.onAction");
+				placeController.goTo(new ListStaticNatProvisioningSummaryPlace(false));
+			}
+		});
+
 
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override

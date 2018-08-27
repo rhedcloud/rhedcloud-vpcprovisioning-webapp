@@ -626,4 +626,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				presenter.getServiceTestPlan().getServiceTestRequirements());
 		requirementDataProvider.refresh();
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

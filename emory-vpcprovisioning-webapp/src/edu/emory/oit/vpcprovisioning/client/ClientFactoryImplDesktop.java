@@ -25,6 +25,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceControl;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceGuideline;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListStaticNatProvisioningSummary;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainAccount;
@@ -78,6 +79,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineV
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -137,6 +139,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainSrdView maintainSrdView;
 	private MaintainTermsOfUseAgreementView maintainTermsOfUseAgreementView;
 	private MaintainIncidentView maintainIncidentView;
+	private ListStaticNatProvisioningSummaryView listStaticNatProvisioningSummaryView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -583,4 +586,14 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	protected MaintainIncidentView createMaintainIncidentView() {
 		return new DesktopMaintainIncident();
 	}
+	@Override
+	public ListStaticNatProvisioningSummaryView getListStaticNatProvisioningSummaryView() {
+        if (listStaticNatProvisioningSummaryView == null) {
+        	listStaticNatProvisioningSummaryView = createListStaticNatProvisioningSummaryView();
+        }
+        return listStaticNatProvisioningSummaryView;
+	}
+    protected ListStaticNatProvisioningSummaryView createListStaticNatProvisioningSummaryView() {
+        return new DesktopListStaticNatProvisioningSummary();
+    }
 }

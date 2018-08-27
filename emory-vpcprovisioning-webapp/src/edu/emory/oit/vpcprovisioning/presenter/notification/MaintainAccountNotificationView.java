@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -75,5 +77,9 @@ public interface MaintainAccountNotificationView extends Editor<AccountNotificat
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
+	void setAccountItems(List<AccountPojo> accounts);
+	void hideAccountListBox();
+	void showAccountListBox();
 
+	void setPriorityItems(List<String> priorities);
 }

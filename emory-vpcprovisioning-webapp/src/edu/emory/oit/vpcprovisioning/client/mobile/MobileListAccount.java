@@ -167,4 +167,10 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 		
 	}
 
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

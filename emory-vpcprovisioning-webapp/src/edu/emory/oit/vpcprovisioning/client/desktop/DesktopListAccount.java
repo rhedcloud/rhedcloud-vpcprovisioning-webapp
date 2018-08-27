@@ -112,7 +112,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	    actionsPopup.setAutoHideEnabled(true);
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    Grid grid = new Grid(5, 1);
+	    Grid grid = new Grid(6, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -195,6 +195,32 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		grid.setWidget(2, 0, billSummaryAnchor);
 
+		Anchor createAccountNotificationAnchor = new Anchor("Create Account Notification");
+		createAccountNotificationAnchor.addStyleName("productAnchor");
+		createAccountNotificationAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		createAccountNotificationAnchor.setTitle("Create Account Notification");
+		createAccountNotificationAnchor.ensureDebugId(createAccountNotificationAnchor.getText());
+		createAccountNotificationAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				AccountPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (userLoggedIn.isCentralAdmin()) {
+						// dialog for creating a service account
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_ACCOUNT_NOTIFICATION, m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(3, 0, createAccountNotificationAnchor);
+
 		Anchor createServiceAccountAnchor = new Anchor("Create Service Account");
 		createServiceAccountAnchor.addStyleName("productAnchor");
 		createServiceAccountAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
@@ -219,7 +245,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				}
 			}
 		});
-		grid.setWidget(3, 0, createServiceAccountAnchor);
+		grid.setWidget(4, 0, createServiceAccountAnchor);
 
 		Anchor terminateAnchor = new Anchor("Terminate Account");
 		terminateAnchor.addStyleName("productAnchor");
@@ -245,7 +271,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				}
 			}
 		});
-		grid.setWidget(4, 0, terminateAnchor);
+		grid.setWidget(5, 0, terminateAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -688,5 +714,11 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		clearFilterButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 		addAccountButton.setEnabled(true);
+	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
 	}
 }

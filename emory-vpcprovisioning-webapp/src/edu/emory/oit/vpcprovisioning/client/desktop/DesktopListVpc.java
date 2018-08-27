@@ -585,4 +585,10 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		registerVpcButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

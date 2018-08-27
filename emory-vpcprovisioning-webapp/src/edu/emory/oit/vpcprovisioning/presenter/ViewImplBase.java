@@ -51,6 +51,7 @@ public abstract class ViewImplBase extends Composite {
 			pleaseWaitDialog.clear();
 		}
 		VerticalPanel vp = new VerticalPanel();
+		vp.getElement().getStyle().setBackgroundColor("#f1f1f1");
 		Image img = new Image();
 		img.setUrl("images/ajax-loader.gif");
 		vp.add(img);
@@ -87,10 +88,16 @@ public abstract class ViewImplBase extends Composite {
 		popup.addStyleDependentName(Constants.STYLE_INFO_POPUP_MESSAGE);
 		popup.setAnimationEnabled(true);
 		popup.setGlassEnabled(true);
-    	int left = source.getAbsoluteLeft() + source.getOffsetWidth() + 10;
-        int top = source.getAbsoluteTop();
-        popup.setPopupPosition(left, top);
-        popup.show();
+        if (source == null) {
+            popup.show();
+            popup.center();
+        }
+        else {
+        	int left = source.getAbsoluteLeft() + source.getOffsetWidth() + 10;
+            int top = source.getAbsoluteTop();
+            popup.setPopupPosition(left, top);
+            popup.show();
+        }
 	}
 	
 	public void applyGridRowFormat(Grid theGrid, int gridRow) {

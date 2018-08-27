@@ -79,58 +79,68 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 			startEdit();
 		}
 		
-		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+		if (userLoggedIn != null) {
+			GWT.log("[TermsOfUsePresenter] no need to get user logged in.");
+			getView().setUserLoggedIn(userLoggedIn);
+			getLatestTermsOfUse();
+		}
+		else {
+			AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+	                getView().hidePleaseWaitPanel();
+	                getView().hidePleaseWaitDialog();
+	                getView().disableButtons();
+					getView().showMessageToUser("There was an exception on the " +
+							"server retrieving your list of TermsOfUseAgreements.  " +
+							"Message from server is: " + caught.getMessage());
+				}
 
+				@Override
+				public void onSuccess(final UserAccountPojo user) {
+					userLoggedIn = user;
+					getView().setUserLoggedIn(user);
+					getLatestTermsOfUse();
+				}
+			};
+			GWT.log("[TermsOfUsePresenter] must get user logged in.");
+			VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		}
+	}
+	
+	private void getLatestTermsOfUse() {
+		AsyncCallback<TermsOfUseSummaryPojo> summary_cb = new AsyncCallback<TermsOfUseSummaryPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
                 getView().disableButtons();
-				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of TermsOfUseAgreements.  " +
-						"Message from server is: " + caught.getMessage());
+                getView().showMessageToUser("There was an exception on the " +
+						"server determining your Terms of Use Agreement status.  "
+						+ "Processing CANNOT "
+						+ "continue.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(final UserAccountPojo user) {
-				userLoggedIn = user;
-				getView().setUserLoggedIn(user);
-				AsyncCallback<TermsOfUseSummaryPojo> summary_cb = new AsyncCallback<TermsOfUseSummaryPojo>() {
-					@Override
-					public void onFailure(Throwable caught) {
-		                getView().hidePleaseWaitPanel();
-		                getView().hidePleaseWaitDialog();
-		                getView().disableButtons();
-		                getView().showMessageToUser("There was an exception on the " +
-								"server determining your Terms of Use Agreement status.  "
-								+ "Processing CANNOT "
-								+ "continue.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(TermsOfUseSummaryPojo result) {
-						GWT.log("toua presenter, summary is: " + result);
-						GWT.log("toua presenter, summary.latestTerms is: " + result.getLatestTerms());
-						summary = result;
-						getView().initPage();
-						getView().hidePleaseWaitDialog();
-						getView().setInitialFocus();
-						// apply authorization mask
-						if (user.isCentralAdmin()) {
-							getView().applyCentralAdminMask();
-						}
-						else {
-							getView().applyAWSAccountAuditorMask();
-						}
-					}
-				};
-				VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(user, summary_cb);
+			public void onSuccess(TermsOfUseSummaryPojo result) {
+				GWT.log("toua presenter, summary is: " + result);
+				GWT.log("toua presenter, summary.latestTerms is: " + result.getLatestTerms());
+				summary = result;
+				getView().initPage();
+				getView().hidePleaseWaitDialog();
+				getView().setInitialFocus();
+				// apply authorization mask
+//				if (userLoggedIn.isCentralAdmin()) {
+//					getView().applyCentralAdminMask();
+//				}
+//				else {
+//					getView().applyAWSAccountAuditorMask();
+//				}
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(userLoggedIn, summary_cb);
 	}
-
 	private void startCreate() {
 		GWT.log("Maintain termsOfUseAgreement: create");
 		isEditing = false;

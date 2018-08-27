@@ -200,4 +200,9 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 		// TODO Auto-generated method stub
 		
 	}
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

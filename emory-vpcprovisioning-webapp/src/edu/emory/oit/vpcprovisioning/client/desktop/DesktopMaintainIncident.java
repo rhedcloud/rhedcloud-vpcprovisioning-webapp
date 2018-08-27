@@ -344,4 +344,10 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 		generateTerminateAccountIncidentPanel.setVisible(false);
 		editIncidentPanel.setVisible(true);
 	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

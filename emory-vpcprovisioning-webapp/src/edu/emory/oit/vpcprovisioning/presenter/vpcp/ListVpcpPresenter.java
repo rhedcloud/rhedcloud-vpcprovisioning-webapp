@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -89,6 +88,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
+				getView().setUserLoggedIn(userLoggedIn);
 				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPCPs");
@@ -98,8 +98,6 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 					getView().clearList();
 				}
 
-				getView().setUserLoggedIn(userLoggedIn);
-//				setVpcpList(Collections.<VpcpPojo> emptyList());
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);
@@ -113,7 +111,6 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 	 * Refresh the CIDR list.
 	 */
 	public void refreshList(final UserAccountPojo user) {
-		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
 		// use RPC to get all Vpcs for the current filter being used
 		AsyncCallback<VpcpQueryResultPojo> callback = new AsyncCallback<VpcpQueryResultPojo>() {
 			@Override

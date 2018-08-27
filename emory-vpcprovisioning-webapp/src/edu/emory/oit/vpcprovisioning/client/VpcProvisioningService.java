@@ -86,6 +86,12 @@ import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResult
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementQueryResultPojo;
@@ -319,5 +325,10 @@ public interface VpcProvisioningService extends RemoteService {
 	void deleteIncident(IncidentPojo incident) throws RpcException;
 	IncidentPojo generateIncident(IncidentRequisitionPojo incidentRequisition) throws RpcException;
 	IncidentPojo updateIncident(IncidentPojo indident) throws RpcException;
+
+	// StaticNatProvisioningSummary (provisioned and de-provisioned static nats)
+	StaticNatProvisioningSummaryQueryResultPojo getStaticNatProvisioningSummariesForFilter(StaticNatProvisioningSummaryQueryFilterPojo filter) throws RpcException;
+	StaticNatProvisioningQueryResultPojo getStaticNatProvisioningsForFilter(StaticNatProvisioningQueryFilterPojo filter) throws RpcException;
+	StaticNatDeprovisioningQueryResultPojo getStaticNatDeprovisioningsForFilter(StaticNatDeprovisioningQueryFilterPojo filter) throws RpcException;
 	
 }

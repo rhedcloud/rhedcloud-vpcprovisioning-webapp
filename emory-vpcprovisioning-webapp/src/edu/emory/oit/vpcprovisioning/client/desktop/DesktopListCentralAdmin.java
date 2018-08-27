@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -15,6 +16,9 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -25,6 +29,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
@@ -41,7 +47,7 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 	/*** FIELDS ***/
 	@UiField SimplePager centralAdminListPager;
 //	@UiField Button addCentralAdminButton;
-//	@UiField Button actionsButton;
+	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<RoleAssignmentSummaryPojo> centralAdminListTable = new CellTable<RoleAssignmentSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel centralAdminListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -72,6 +78,50 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 	public DesktopListCentralAdmin() {
 		initWidget(uiBinder.createAndBindUi(this));
 		setRefreshButtonImage(refreshButton);
+	}
+
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+		actionsPopup.setAutoHideEnabled(true);
+		actionsPopup.setAnimationEnabled(true);
+		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid = new Grid(2, 1);
+		grid.setCellSpacing(8);
+		actionsPopup.add(grid);
+
+		Anchor userNotificationAnchor = new Anchor("Create User Notification");
+		userNotificationAnchor.addStyleName("productAnchor");
+		userNotificationAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		userNotificationAnchor.setTitle("Create a user notification");
+		userNotificationAnchor.ensureDebugId(userNotificationAnchor.getText());
+		userNotificationAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				RoleAssignmentSummaryPojo m = selectionModel.getSelectedObject();
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_USER_NOTIFICATION, userLoggedIn);
+			}
+		});
+		grid.setWidget(0, 0, userNotificationAnchor);
+
+		Anchor accountNotificationAnchor = new Anchor("Create Account Notification");
+		accountNotificationAnchor.addStyleName("productAnchor");
+		accountNotificationAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		accountNotificationAnchor.setTitle("Create an account notification");
+		accountNotificationAnchor.ensureDebugId(accountNotificationAnchor.getText());
+		accountNotificationAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				RoleAssignmentSummaryPojo m = selectionModel.getSelectedObject();
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_ACCOUNT_NOTIFICATION, userLoggedIn);
+			}
+		});
+		grid.setWidget(1, 0, accountNotificationAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
 	}
 
 	@Override
@@ -353,6 +403,12 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 
 	@Override
 	public void enableButtons() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
 	}

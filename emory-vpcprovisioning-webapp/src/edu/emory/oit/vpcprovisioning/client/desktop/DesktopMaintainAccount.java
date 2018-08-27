@@ -1058,4 +1058,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void hideFilteredStatus() {
 		filteredHTML.setVisible(false);
 	}
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
 }

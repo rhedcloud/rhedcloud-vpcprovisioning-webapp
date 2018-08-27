@@ -421,4 +421,10 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		actionsButton.setEnabled(true);
 	}
 
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

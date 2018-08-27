@@ -27,7 +27,7 @@ public class VpcpPojo extends SharedObject implements IsSerializable, Comparable
 		int completeStepCount = 0;
 		for (ProvisioningStepPojo step : provisioningSteps) {
 			if (step.getStatus() != null) {
-				if (step.getStatus().equalsIgnoreCase(Constants.VPCP_STEP_STATUS_COMPLETED)) {
+				if (step.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
 					
 					completeStepCount++;
 				}

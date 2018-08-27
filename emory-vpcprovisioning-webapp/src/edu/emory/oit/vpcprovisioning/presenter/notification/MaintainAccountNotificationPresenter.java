@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
@@ -14,7 +15,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
@@ -26,6 +27,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	private String notificationId;
 	private AccountNotificationPojo notification;
 	private AccountPojo account;
+	private UserAccountPojo userLoggedIn;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -34,7 +36,19 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	private boolean isEditing;
 
 	/**
-	 * For creating a new ACCOUNT.
+	 * For creating a new ACCOUNT notification for an unknown account.
+	 */
+	public MaintainAccountNotificationPresenter(ClientFactory clientFactory) {
+		this.isEditing = false;
+		this.notification = null;
+		this.notificationId = null;
+		this.account = null;
+		this.clientFactory = clientFactory;
+		getView().setPresenter(this);
+	}
+	
+	/**
+	 * For creating a new ACCOUNT notification for a given account.
 	 */
 	public MaintainAccountNotificationPresenter(ClientFactory clientFactory, AccountPojo account) {
 		this.isEditing = false;
@@ -42,11 +56,11 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 		this.notificationId = null;
 		this.account = account;
 		this.clientFactory = clientFactory;
-		clientFactory.getMaintainAccountNotificationView().setPresenter(this);
+		getView().setPresenter(this);
 	}
 
 	/**
-	 * For editing an existing ACCOUNT.
+	 * For editing an existing ACCOUNT notification.
 	 */
 	public MaintainAccountNotificationPresenter(ClientFactory clientFactory, AccountPojo account, AccountNotificationPojo notification) {
 		this.account = account;
@@ -54,7 +68,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 		this.notificationId = notification.getAccountNotificationId();
 		this.clientFactory = clientFactory;
 		this.notification = notification;
-		clientFactory.getMaintainAccountNotificationView().setPresenter(this);
+		getView().setPresenter(this);
 	}
 
 	@Override
@@ -94,17 +108,62 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
+				if (!isEditing) {
+					notification.setCreateTime(new Date());
+					notification.setCreateUser(userLoggedIn.getPublicId());
+				}
 				getView().setUserLoggedIn(user);
-				getView().initPage();
-				getView().hidePleaseWaitDialog();
-				getView().setInitialFocus();
-				// apply authorization mask
-				// TODO: for now (7/12/2018), this will be view only
-				if (user.isCentralAdmin()) {
-					getView().applyCentralAdminMask();
+				
+				List<String> priorities = new java.util.ArrayList<String>();
+				priorities.add("Low");
+				priorities.add("Medium");
+				priorities.add("High");
+				getView().setPriorityItems(priorities);
+				
+				if (!isEditing && account == null) {
+					AsyncCallback<AccountQueryResultPojo> acct_cb = new AsyncCallback<AccountQueryResultPojo>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							getView().hidePleaseWaitDialog();
+							getView().hidePleaseWaitPanel();
+							GWT.log("Exception retrieving AWS accounts", caught);
+							getView().showMessageToUser("There was an exception on the " +
+									"server retrieving a list of AWS Accounts.  Message " +
+									"from server is: " + caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(AccountQueryResultPojo accountItems) {
+							GWT.log("got " + accountItems.getResults().size() + " accounts.");
+							getView().setAccountItems(accountItems.getResults());
+							getView().initPage();
+							getView().setInitialFocus();
+							// apply authorization mask
+							if (user.isCentralAdmin()) {
+								getView().applyCentralAdminMask();
+							}
+							else {
+								getView().applyAWSAccountAuditorMask();
+							}
+							getView().hidePleaseWaitDialog();
+							getView().hidePleaseWaitPanel();
+						}
+					};
+					GWT.log("getting accounts");
+					VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, acct_cb);
 				}
 				else {
-					getView().applyAWSAccountAuditorMask();
+					getView().initPage();
+					getView().hidePleaseWaitDialog();
+					getView().setInitialFocus();
+					// apply authorization mask
+					if (user.isCentralAdmin()) {
+						getView().applyCentralAdminMask();
+					}
+					else {
+						getView().applyAWSAccountAuditorMask();
+					}
 				}
 			}
 		};
@@ -114,13 +173,22 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	private void startCreate() {
 		GWT.log("Maintain account notification: create");
 		isEditing = false;
-		getView().setEditing(false);
 		notification = new AccountNotificationPojo();
+		notification.setType("Central Admin Initiated");
+		if (this.account == null) {
+			getView().showAccountListBox();
+		}
+		else {
+			notification.setAccountId(account.getAccountId());
+			getView().hideAccountListBox();
+		}
+		getView().setEditing(false);
 	}
 
 	private void startEdit() {
 		GWT.log("Maintain account notification: edit");
 		isEditing = true;
+		getView().hideAccountListBox();
 		getView().setEditing(true);
 		// Lock the display until the notification is loaded.
 		getView().setLocked(true);
@@ -174,8 +242,10 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 		getView().showPleaseWaitDialog("Saving Notification...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
+			getView().setFieldViolations(true);
 			getView().applyStyleToMissingFields(fields);
 			getView().hidePleaseWaitDialog();
+			getView().hidePleaseWaitPanel();
 			getView().showMessageToUser("Please provide data for the required fields.");
 			return;
 		}
@@ -195,7 +265,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 			@Override
 			public void onSuccess(AccountNotificationPojo result) {
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.ACCOUNT_NOTIFICATION_SAVED, notification);
+				getView().showStatus(null, "Notification was saved");
 			}
 		};
 		if (!this.isEditing) {
@@ -285,5 +355,21 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 		SecurityRiskDetectionQueryFilterPojo filter = new SecurityRiskDetectionQueryFilterPojo();
 		filter.setSecurityRiskDetectionId(selected.getReferenceid());
 		VpcProvisioningService.Util.getInstance().getSecurityRiskDetectionsForFilter(filter, cb);
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
+	}
+
+	public void setNotification(AccountNotificationPojo notification) {
+		this.notification = notification;
+	}
+
+	public void setAccount(AccountPojo account) {
+		this.account = account;
 	}
 }

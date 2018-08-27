@@ -128,7 +128,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return vpcpListTable;
+		return actionsButton;
 	}
 
 	@Override
@@ -429,5 +429,11 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	public void enableButtons() {
 		generateVpcButton.setEnabled(true);
 		actionsButton.setEnabled(true);
+	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		// TODO Auto-generated method stub
+		
 	}
 }
