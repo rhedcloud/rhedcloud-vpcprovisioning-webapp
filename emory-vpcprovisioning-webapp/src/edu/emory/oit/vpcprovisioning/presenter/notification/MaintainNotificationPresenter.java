@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
@@ -12,13 +13,13 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainNotificationPresenter extends PresenterBase implements MaintainNotificationView.Presenter {
 	private final ClientFactory clientFactory;
@@ -26,6 +27,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 	private String notificationId;
 	private UserNotificationPojo notification;
 	private UserAccountPojo userLoggedIn;
+	private DirectoryPersonPojo directoryPerson;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -41,7 +43,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		this.notification = null;
 		this.notificationId = null;
 		this.clientFactory = clientFactory;
-		clientFactory.getMaintainNotificationView().setPresenter(this);
+		getView().setPresenter(this);
 	}
 
 	/**
@@ -52,7 +54,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		this.notificationId = notification.getUserNotificationId();
 		this.clientFactory = clientFactory;
 		this.notification = notification;
-		clientFactory.getMaintainNotificationView().setPresenter(this);
+		getView().setPresenter(this);
 	}
 
 	@Override
@@ -93,6 +95,17 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
+				if (!isEditing) {
+					notification.setCreateTime(new Date());
+					notification.setCreateUser(userLoggedIn.getPublicId());
+				}
+				List<String> priorities = new java.util.ArrayList<String>();
+				priorities.add("Low");
+				priorities.add("Medium");
+				priorities.add("High");
+				getView().setPriorityItems(priorities);
+				
+
 				getView().setUserLoggedIn(user);
 				getView().initPage();
 				getView().hidePleaseWaitDialog();
@@ -112,13 +125,18 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 	private void startCreate() {
 		GWT.log("Maintain notification: create");
 		isEditing = false;
-		getView().setEditing(false);
 		notification = new UserNotificationPojo();
+		notification.setType("Central Admin Initiated");
+		getView().showCreateNotificationPanel();
+		getView().showCancelButton();
+		getView().setEditing(false);
 	}
 
 	private void startEdit() {
 		GWT.log("Maintain notification: edit");
 		isEditing = true;
+		getView().hideCreateNotificationPanel();
+		getView().hidCancelButton();
 		getView().setEditing(true);
 		// Lock the display until the notification is loaded.
 		getView().setLocked(true);
@@ -172,8 +190,10 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		getView().showPleaseWaitDialog("Saving Notification...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
+			getView().setFieldViolations(true);
 			getView().applyStyleToMissingFields(fields);
 			getView().hidePleaseWaitDialog();
+			getView().hidePleaseWaitPanel();
 			getView().showMessageToUser("Please provide data for the required fields.");
 			return;
 		}
@@ -193,10 +213,15 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 			@Override
 			public void onSuccess(UserNotificationPojo result) {
 				getView().hidePleaseWaitDialog();
-//				ActionEvent.fire(eventBus, ActionNames.NOTIFICATION_SAVED, notification);
-				UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
-				filter.setUserId(userLoggedIn.getPublicId());
-				ActionEvent.fire(getEventBus(), ActionNames.NOTIFICATION_SAVED, filter);
+				if (!isEditing) {
+					getView().hidePleaseWaitDialog();
+					getView().showStatus(null, "Notification was saved");
+				}
+				else {
+					UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
+					filter.setUserId(userLoggedIn.getPublicId());
+					ActionEvent.fire(getEventBus(), ActionNames.NOTIFICATION_SAVED, filter);
+				}
 			}
 		};
 		if (!this.isEditing) {
@@ -226,7 +251,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		return false;
 	}
 
-	private MaintainNotificationView getView() {
+	public MaintainNotificationView getView() {
 		return clientFactory.getMaintainNotificationView();
 	}
 
@@ -287,4 +312,15 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		filter.setSecurityRiskDetectionId(userNotification.getReferenceId());
 		VpcProvisioningService.Util.getInstance().getSecurityRiskDetectionsForFilter(filter, cb);
 	}
+
+	@Override
+	public void setDirectoryPerson(DirectoryPersonPojo pojo) {
+		directoryPerson = pojo;
+	}
+
+	@Override
+	public DirectoryPersonPojo getDirectoryPerson() {
+		return directoryPerson;
+	}
+
 }

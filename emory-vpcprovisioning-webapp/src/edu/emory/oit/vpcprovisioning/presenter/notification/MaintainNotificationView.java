@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.notification;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -7,6 +9,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
@@ -33,6 +36,8 @@ public interface MaintainNotificationView extends Editor<UserNotificationPojo>, 
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 		public void logMessageOnServer(final String message);
 		void showSrdForUserNotification(UserNotificationPojo userNotification);
+		public void setDirectoryPerson(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getDirectoryPerson();
 	}
 
 	/**
@@ -74,5 +79,14 @@ public interface MaintainNotificationView extends Editor<UserNotificationPojo>, 
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
 
+	void showCreateNotificationPanel();
+
+	void hideCreateNotificationPanel();
+
+	void setPriorityItems(List<String> priorities);
+
+	void showCancelButton();
+
+	void hidCancelButton();
 
 }

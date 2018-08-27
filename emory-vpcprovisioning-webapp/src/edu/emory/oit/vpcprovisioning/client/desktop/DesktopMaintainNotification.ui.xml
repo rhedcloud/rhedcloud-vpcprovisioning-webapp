@@ -6,6 +6,20 @@
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:HTML ui:field="notificationsHeader" addStyleNames="{style.mediumLabel}">User Notification Details</g:HTML>
+   		<g:VerticalPanel ui:field="createNotificationPanel">
+			<g:Grid cellSpacing="8">
+				<g:row>
+			    	<g:customCell>
+   						<g:Label addStyleNames="{style.labelLeft}">Target User:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" 
+							addStyleNames="{style.field} {style.glowing-border}" 
+							title="Who do you want to send this notifcation to?"/>
+			    	</g:customCell>
+			    </g:row>
+			</g:Grid>
+   		</g:VerticalPanel>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="8">
 				<g:row>
@@ -22,8 +36,8 @@
 						<g:Label addStyleNames="{style.label}">Priority:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="priorityTB" debugId="priorityTB" />
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="priorityLB" debugId="priorityLB" />
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -68,12 +82,10 @@
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="okayButton" debugId="okayButton">Okay</g:Button>
 			    	</g:customCell>
-			    	<!-- 
 			    	<g:customCell>
 						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
 							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
 			    	</g:customCell>
-			    	 -->
 				</g:row>
 			</g:Grid>
 		</g:cell>

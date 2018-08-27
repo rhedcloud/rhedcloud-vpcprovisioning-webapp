@@ -46,6 +46,7 @@ import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentPresente
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
+import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePresenter;
@@ -858,6 +859,35 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.CREATE_USER_NOTIFICATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(final ActionEvent actionEvent) {
+				final DialogBox db = new DialogBox();
+				db.setText("Create User Notification");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainNotificationPresenter presenter = new MaintainNotificationPresenter(clientFactory);
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							// save logic is handled by the presenter
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_NOTIFICATION, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
