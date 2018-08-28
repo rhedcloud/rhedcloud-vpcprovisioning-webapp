@@ -13,6 +13,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
@@ -126,7 +127,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 		GWT.log("Maintain notification: create");
 		isEditing = false;
 		notification = new UserNotificationPojo();
-		notification.setType("Central Admin Initiated");
+		notification.setType(Constants.NOTIFICATION_TYPE_CENTRAL_ADMIN);
 		getView().showCreateNotificationPanel();
 		getView().showCancelButton();
 		getView().setEditing(false);

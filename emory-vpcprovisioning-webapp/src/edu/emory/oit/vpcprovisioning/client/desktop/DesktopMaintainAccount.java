@@ -975,7 +975,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		referenceId.setFieldUpdater(new FieldUpdater<AccountNotificationPojo, String>() {
 	    	@Override
 	    	public void update(int index, AccountNotificationPojo object, String value) {
-	    		presenter.showSrdForAccountNotification(object);
+	    		if (object != null && object.getReferenceid() != null && object.getReferenceid().length() > 0) {
+		    		presenter.showSrdForAccountNotification(object);
+	    		}
+	    		else {
+	    			showMessageToUser("Notification doesn't have a reference id to link to.");
+	    		}
 	    	}
 	    });
 		referenceId.setCellStyleNames("productAnchor");

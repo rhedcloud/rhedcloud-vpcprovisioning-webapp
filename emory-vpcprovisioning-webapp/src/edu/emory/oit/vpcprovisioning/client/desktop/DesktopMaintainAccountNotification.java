@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
@@ -51,11 +52,22 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 	@UiField Anchor referenceIdAnchor;
 	@UiField Label createInfoLabel;
 	@UiField Label updateInfoLabel;
+	@UiField CheckBox selectAllAccountsCB;
 	
 	@UiField VerticalPanel selectAccountPanel;
 	@UiField ListBox accountLB;
 	@UiField VerticalPanel enterAccountPanel;
 	
+	@UiHandler("selectAllAccountsCB")
+	void selectAllAccountsCBClick(ClickEvent e) {
+		boolean selected = false;
+		if (selectAllAccountsCB.getValue()) {
+			selected = true;
+		}
+		for (int i=0; i<accounts.size(); i++) {
+			accountLB.setItemSelected(i, selected);
+		}
+	}
 	@UiHandler("referenceIdAnchor")
 	void referenceIdAnchorClick(ClickEvent e) {
 		presenter.showSrdForAccountNotification(presenter.getNotification());
@@ -64,15 +76,35 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 	void okayClick(ClickEvent e) {
 		if (presenter.getAccount() != null) {
 			presenter.getNotification().setAccountId(accountIdTB.getText());
+			presenter.getNotification().setPriority(priorityLB.getSelectedValue());
+			presenter.getNotification().setType(typeTB.getText());
+			presenter.getNotification().setSubject(subjectTB.getText());
+			presenter.getNotification().setText(textTA.getText());
+			presenter.saveNotification();
 		}
 		else {
-			presenter.getNotification().setAccountId(accountLB.getSelectedValue());
+			// doing this just so the presenter will know that all fields have been filled out
+			// since we're created a new notification for each selected account, this is an easy
+			// way to allow the getMissingRequiredFields method (in this class) to remain fairly generic.
+			presenter.getNotification().setPriority(priorityLB.getSelectedValue());
+			presenter.getNotification().setType(typeTB.getText());
+			presenter.getNotification().setSubject(subjectTB.getText());
+			presenter.getNotification().setText(textTA.getText());
+			List<AccountNotificationPojo> notifications = new java.util.ArrayList<AccountNotificationPojo>();
+			for (int i=0; i<accounts.size(); i++) {
+				if (accountLB.isItemSelected(i)) {
+					AccountNotificationPojo not = new AccountNotificationPojo();
+					String accountId = accountLB.getValue(i);
+					not.setAccountId(accountId);
+					not.setPriority(priorityLB.getSelectedValue());
+					not.setType(typeTB.getText());
+					not.setSubject(subjectTB.getText());
+					not.setText(textTA.getText());
+					notifications.add(not);
+				}
+			}
+			presenter.createNotifications(notifications);
 		}
-		presenter.getNotification().setPriority(priorityLB.getSelectedValue());
-		presenter.getNotification().setType(typeTB.getText());
-		presenter.getNotification().setSubject(subjectTB.getText());
-		presenter.getNotification().setText(textTA.getText());
-		presenter.saveNotification();
 	}
 
 	@UiHandler("cancelButton")
@@ -181,7 +213,16 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 				fields.add(accountIdTB);
 			}
 			else {
-				fields.add(accountLB);
+				boolean accountSelected = false;
+				accountLoop: for (int i=0; i<accounts.size(); i++) {
+					if (accountLB.isItemSelected(i)) {
+						accountSelected = true;
+						break accountLoop;
+					}
+				}
+				if (!accountSelected) {
+					fields.add(accountLB);
+				}
 			}
 		}
 		if (n.getPriority() == null || n.getPriority().length() == 0) {
@@ -284,9 +325,9 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 	public void setAccountItems(List<AccountPojo> accounts) {
 		this.accounts = accounts;
 		accountLB.clear();
-		accountLB.addItem("-- Select --", "");
+//		accountLB.addItem("-- Select --", "");
 		if (accounts != null) {
-			int i=1;
+			int i=0;
 			for (AccountPojo account : accounts) {
 				accountLB.addItem(account.getAccountId() + " / " + account.getAccountName(), account.getAccountId());
 				i++;

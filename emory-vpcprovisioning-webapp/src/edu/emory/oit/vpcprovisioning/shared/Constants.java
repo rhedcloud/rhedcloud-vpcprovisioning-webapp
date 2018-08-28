@@ -141,4 +141,6 @@ public class Constants implements IsSerializable {
 	public static final String MOA_STATIC_NAT_PROVISIONING_QUERY_SPEC = "StaticNatProvisioningQuerySpecification.v1_0";
 	public static final String MOA_STATIC_NAT_DEPROVISIONING = "StaticNatDeprovisioning.v1_0";
 	public static final String MOA_STATIC_NAT_DEPROVISIONING_QUERY_SPEC = "StaticNatDeprovisioningQuerySpecification.v1_0";
+	
+	public static final String NOTIFICATION_TYPE_CENTRAL_ADMIN = "Central Admin Initiated";
 }

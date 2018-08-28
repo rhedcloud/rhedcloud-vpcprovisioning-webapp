@@ -28,6 +28,7 @@ public interface MaintainAccountNotificationView extends Editor<AccountNotificat
 		 * inputs.
 		 */
 		void saveNotification();
+		void createNotifications(List<AccountNotificationPojo> notifications);
 		AccountNotificationPojo getNotification();
 		public boolean isValidNotificationId(String value);
 		public boolean isValidNotificationName(String value);

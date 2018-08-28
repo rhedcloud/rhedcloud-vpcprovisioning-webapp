@@ -3,7 +3,9 @@ package edu.emory.oit.vpcprovisioning.presenter.notification;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -16,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
@@ -28,6 +31,9 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	private AccountNotificationPojo notification;
 	private AccountPojo account;
 	private UserAccountPojo userLoggedIn;
+	int createdCount = 0;
+	boolean showStatus = false;
+	boolean startTimer = true;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -174,7 +180,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 		GWT.log("Maintain account notification: create");
 		isEditing = false;
 		notification = new AccountNotificationPojo();
-		notification.setType("Central Admin Initiated");
+		notification.setType(Constants.NOTIFICATION_TYPE_CENTRAL_ADMIN);
 		if (this.account == null) {
 			getView().showAccountListBox();
 		}
@@ -239,18 +245,9 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 
 	@Override
 	public void saveNotification() {
-		getView().showPleaseWaitDialog("Saving Notification...");
-		List<Widget> fields = getView().getMissingRequiredFields();
-		if (fields != null && fields.size() > 0) {
-			getView().setFieldViolations(true);
-			getView().applyStyleToMissingFields(fields);
-			getView().hidePleaseWaitDialog();
-			getView().hidePleaseWaitPanel();
-			getView().showMessageToUser("Please provide data for the required fields.");
+		getView().showPleaseWaitDialog("Saving Notification(s)...");
+		if (!isFormValid()) {
 			return;
-		}
-		else {
-			getView().resetFieldStyles();
 		}
 		AsyncCallback<AccountNotificationPojo> callback = new AsyncCallback<AccountNotificationPojo>() {
 			@Override
@@ -258,8 +255,8 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 				getView().hidePleaseWaitDialog();
 				GWT.log("Exception saving the Notification", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the Notification.  Message " +
-						"from server is: " + caught.getMessage());
+						"server saving the Notification for account (" + notification.getAccountId() + ").  " +
+						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
@@ -270,12 +267,106 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 		};
 		if (!this.isEditing) {
 			// it's a create
+			GWT.log("[MaintainAccountNotificationPresenter] creating notification for account id: " + notification.getAccountId());
 			VpcProvisioningService.Util.getInstance().createAccountNotification(notification, callback);
 		}
 		else {
 			// it's an update
 			VpcProvisioningService.Util.getInstance().updateAccountNotification(notification, callback);
 		}
+	}
+
+	@Override
+	public void createNotifications(List<AccountNotificationPojo> notifications) {
+		createdCount = 0;
+		showStatus = false;
+
+		if (!isFormValid()) {
+			return;
+		}
+		final int totalToCreate = notifications.size();
+		
+		final StringBuffer errors = new StringBuffer();
+		for (int i=0; i<notifications.size(); i++) {
+			final AccountNotificationPojo not = notifications.get(i);
+			not.setCreateTime(new Date());
+			not.setCreateUser(userLoggedIn.getPublicId());
+			final int listCounter = i;
+			
+			AsyncCallback<AccountNotificationPojo> callback = new AsyncCallback<AccountNotificationPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					GWT.log("Exception saving the Notification for account: " + not.getAccountId(), caught);
+					errors.append("There was an exception on the " +
+							"server saving the Notification for account (" + not.getAccountId() + ").  " +
+							"Message from server is: " + caught.getMessage());
+					if (!showStatus) {
+						errors.append("\n");
+					}
+					if (listCounter == totalToCreate - 1) {
+						showStatus = true;
+					}
+				}
+
+				@Override
+				public void onSuccess(AccountNotificationPojo result) {
+					createdCount++;
+					if (listCounter == totalToCreate - 1) {
+						showStatus = true;
+					}
+				}
+			};
+
+			GWT.log("[MaintainAccountNotificationPresenter] creating notification for account id: " + not.getAccountId());
+			VpcProvisioningService.Util.getInstance().createAccountNotification(not, callback);
+		}
+		if (!showStatus) {
+			// wait for all the creates to finish processing
+			int delayMs = 500;
+			Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
+				@Override
+				public boolean execute() {
+					if (showStatus) {
+						startTimer = false;
+						showCreateNotificationsStatus(createdCount, totalToCreate, errors);
+					}
+					return startTimer;
+				}
+			}, delayMs);
+		}
+		else {
+			showCreateNotificationsStatus(createdCount, totalToCreate, errors);
+		}
+	}
+
+	void showCreateNotificationsStatus(int createdCount, int totalToCreate, StringBuffer errors) {
+		if (errors.length() == 0) {
+			getView().hidePleaseWaitDialog();
+			getView().showStatus(null, createdCount + " out of " + totalToCreate + " Notification(s) were created.");
+		}
+		else {
+			getView().hidePleaseWaitDialog();
+			errors.append(createdCount + " out of " + totalToCreate + " Notification(s) were created.  "
+				+ "Below are the errors that occurred:\n\n");
+			getView().showMessageToUser(errors.toString());
+		}
+	}
+	boolean isFormValid() {
+		boolean isValid = true;
+		
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().setFieldViolations(true);
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().hidePleaseWaitPanel();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return false;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
+		return isValid;
 	}
 
 	@Override
