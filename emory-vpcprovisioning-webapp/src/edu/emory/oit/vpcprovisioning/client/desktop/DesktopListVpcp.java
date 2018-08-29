@@ -12,6 +12,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -24,11 +26,13 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -56,12 +60,12 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<VpcpPojo> vpcpListTable = new CellTable<VpcpPojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
 	@UiField PushButton refreshButton;
-
-	@UiHandler("refreshButton")
-	void refreshButtonClicked(ClickEvent e) {
-		presenter.refreshList(userLoggedIn);
-	}
+	@UiField CheckBox viewAllCB;
+	@UiField HTML filteredHTML;
 
 	public interface MyCellTableResources extends CellTable.Resources {
 
@@ -84,6 +88,52 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPCP);
 			}
 		}, ClickEvent.getType());
+	}
+
+	@UiHandler ("filterTB")
+	void addEmailTFKeyPressed(KeyPressEvent e) {
+        int keyCode = e.getNativeEvent().getKeyCode();
+        if (keyCode == KeyCodes.KEY_ENTER) {
+    		presenter.filterByProvisioningId(true, filterTB.getText());
+        }
+	}
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		presenter.filterByProvisioningId(true, filterTB.getText());
+	}
+	
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		filterTB.setText("");
+		if (viewAllCB.getValue()) {
+			presenter.refreshListWithAllVpcps(userLoggedIn);
+		}
+		else {
+			presenter.refreshListWithMaximumVpcps(userLoggedIn);
+		}
+		this.hideFilteredStatus();
+	}
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		filterTB.setText("");
+		if (viewAllCB.getValue()) {
+			presenter.refreshListWithAllVpcps(userLoggedIn);
+		}
+		else {
+			presenter.refreshListWithMaximumVpcps(userLoggedIn);
+		}
+	}
+
+	@UiHandler("viewAllCB")
+	void viewAllCBClicked(ClickEvent e) {
+		filterTB.setText("");
+		if (viewAllCB.getValue()) {
+			presenter.refreshListWithAllVpcps(userLoggedIn);
+		}
+		else {
+			presenter.refreshListWithMaximumVpcps(userLoggedIn);
+		}
 	}
 
 	@UiHandler("actionsButton")
@@ -433,7 +483,26 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	public boolean viewAllVpcps() {
+		return viewAllCB.getValue();
+	}
+
+	@Override
+	public void initPage() {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter a provisioning id");
+	}
+
+	@Override
+	public void showFilteredStatus() {
+		filteredHTML.setVisible(true);
+	}
+	
+	@Override
+	public void hideFilteredStatus() {
+		filteredHTML.setVisible(false);
 	}
 }

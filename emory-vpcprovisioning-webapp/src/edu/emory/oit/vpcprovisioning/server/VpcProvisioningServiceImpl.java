@@ -3413,12 +3413,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP_MAINTAIN);
 
 			if (filter != null) {
-				queryObject.setProvisioningId(filter.getProvisioningId());
-				queryObject.setType(filter.getType());
-				queryObject.setComplianceClass(filter.getComplianceClass());
-				queryObject.setCreateUser(filter.getCreateUser());
-				queryObject.setLastUpdateUser(filter.getUpdateUser());
-				info("[getVpcpsForFilter] getting VPCPs for filter: " + queryObject.toXmlString());
+				if (filter.isDefaultMaxVpcps()) {
+					info("[getVpcpsForFilter] using 'maxVpcps' query language to get VPCPs");
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("maxVpcps");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					queryObject.setQueryLanguage(ql);
+				}
+				else if (filter.isAllVpcps()) {
+					info("[getVpcpsForFilter] using 'allVpcps' query language to get VPCPs");
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("allVpcps");
+					ql.setType("hql");
+					queryObject.setQueryLanguage(ql);
+				}
+				else {
+					queryObject.setProvisioningId(filter.getProvisioningId());
+					queryObject.setType(filter.getType());
+					queryObject.setComplianceClass(filter.getComplianceClass());
+					queryObject.setCreateUser(filter.getCreateUser());
+					queryObject.setLastUpdateUser(filter.getUpdateUser());
+					info("[getVpcpsForFilter] getting VPCPs for filter: " + queryObject.toXmlString());
+				}
 			}
 			else {
 				info("[getVpcpsForFilter] no filter passed in.  Getting all VPCPs");
@@ -3443,7 +3460,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			info("[getVpcpsForFilter] got " + moas.size() + " VPCPs back from the server.");
 			for (VirtualPrivateCloudProvisioning moa : moas) {
-//				info("VPCP returned: " + moa.toXmlString());
 				VpcpPojo pojo = new VpcpPojo();
 				VpcpPojo baseline = new VpcpPojo();
 				this.populateVpcpPojo(moa, pojo);
@@ -8453,9 +8469,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// provisioningsteps
 		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
-		for (ProvisioningStep ps : (List<ProvisioningStep>) moa.getProvisioningStep()) {
+		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa.getProvisioningStep()) {
 			ProvisioningStepPojo psp = new ProvisioningStepPojo();
-			this.populateProvisioningStepPojo(ps, psp);
+			this.populateProvisioningStepPojoFromEmoryMoa(ps, psp);
 			pspList.add(psp);
 		}
 		Collections.sort(pspList);
@@ -8463,6 +8479,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateProvisioningStepPojoFromEmoryMoa(edu.emory.moa.objects.resources.v1_0.ProvisioningStep moa,
+			ProvisioningStepPojo pojo) {
+		
+		pojo.setProvisioningId(moa.getProvisioningId());
+		pojo.setProvisioningStepId(moa.getProvisioningStepId());
+		pojo.setStepId(moa.getStepId());
+		pojo.setType(moa.getType());
+		pojo.setDescription(moa.getDescription());
+		pojo.setStatus(moa.getStatus());
+		pojo.setStepResult(moa.getStepResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getProperty() != null) {
+			for (edu.emory.moa.objects.resources.v1_0.Property stepProps : (List<edu.emory.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+				pojo.getProperties().put(stepProps.getPropertyName(), stepProps.getPropertyValue());
+			}
+		}
 	}
 
 	@Override
@@ -8537,6 +8573,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		} 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void populateStaticNatDeprovisioningPojo(StaticNatDeprovisioning moa, StaticNatDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
 		pojo.setProvisioningId(moa.getProvisioningId());
 		pojo.setStatus(moa.getStatus());
@@ -8552,9 +8589,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// provisioningsteps
 		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
-		for (ProvisioningStep ps : (List<ProvisioningStep>) moa.getProvisioningStep()) {
+		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa.getProvisioningStep()) {
 			ProvisioningStepPojo psp = new ProvisioningStepPojo();
-			this.populateProvisioningStepPojo(ps, psp);
+			this.populateProvisioningStepPojoFromEmoryMoa(ps, psp);
 			pspList.add(psp);
 		}
 		Collections.sort(pspList);

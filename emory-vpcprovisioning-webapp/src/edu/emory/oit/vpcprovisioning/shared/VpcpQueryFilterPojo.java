@@ -8,11 +8,14 @@ public class VpcpQueryFilterPojo extends SharedObject implements IsSerializable,
 <!ELEMENT VirtualPrivateCloudProvisioningQuerySpecification (Comparison*, QueryLanguage?, ProvisioningId?, Type?, ComplianceClass?, CreateUser?, LastUpdateUser?)>
 	 */
 
-	// TODO: Comparison and QueryLanguage
 	String provisioningId;
 	String type;
 	String complianceClass;
-	
+	boolean defaultMaxVpcps;
+	boolean allVpcps;
+	int maxRows;
+	String searchString;
+
 	public VpcpQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
 	}
@@ -39,6 +42,38 @@ public class VpcpQueryFilterPojo extends SharedObject implements IsSerializable,
 
 	public void setComplianceClass(String complianceClass) {
 		this.complianceClass = complianceClass;
+	}
+
+	public int getMaxRows() {
+		return maxRows;
+	}
+
+	public void setMaxRows(int maxRows) {
+		this.maxRows = maxRows;
+	}
+
+	public String getSearchString() {
+		return searchString;
+	}
+
+	public void setSearchString(String searchString) {
+		this.searchString = searchString;
+	}
+
+	public boolean isDefaultMaxVpcps() {
+		return defaultMaxVpcps;
+	}
+
+	public void setDefaultMaxVpcps(boolean defaultMaxVpcps) {
+		this.defaultMaxVpcps = defaultMaxVpcps;
+	}
+
+	public boolean isAllVpcps() {
+		return allVpcps;
+	}
+
+	public void setAllVpcps(boolean allVpcps) {
+		this.allVpcps = allVpcps;
 	}
 
 }

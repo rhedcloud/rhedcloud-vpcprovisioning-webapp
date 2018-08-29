@@ -8,6 +8,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -32,6 +33,10 @@ public interface ListVpcpView extends IsWidget, View {
 		void deleteVpcp(VpcpPojo vpcp);
 		public void logMessageOnServer(final String message);
 		void refreshList(final UserAccountPojo user);
+		
+		void refreshListWithMaximumVpcps(UserAccountPojo user);
+		void refreshListWithAllVpcps(UserAccountPojo user);
+		void filterByProvisioningId(boolean includeAllVpcps, String provisioningId);
 	}
 
 	/**
@@ -54,4 +59,9 @@ public interface ListVpcpView extends IsWidget, View {
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeVpcpFromView(VpcpPojo vpcp);
+	
+	boolean viewAllVpcps();
+	void initPage();
+	void showFilteredStatus();
+	void hideFilteredStatus();
 }

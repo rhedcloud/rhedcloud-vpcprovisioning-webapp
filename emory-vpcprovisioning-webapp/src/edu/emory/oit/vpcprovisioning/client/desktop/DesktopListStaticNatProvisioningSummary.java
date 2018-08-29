@@ -100,9 +100,11 @@ public class DesktopListStaticNatProvisioningSummary extends ViewImplBase implem
 				StaticNatProvisioningSummaryPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					if (m.getProvisioned() != null) {
+						GWT.log("Firing SHOW_STATIC_NAT_STATUS for a StaticNatProvisioning object.");
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_STATIC_NAT_STATUS, m.getProvisioned());
 					}
 					else if (m.getDeprovisioned() != null) {
+						GWT.log("Firing SHOW_STATIC_NAT_STATUS for a StaticNatDeprovisioning object.");
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_STATIC_NAT_STATUS, m.getDeprovisioned());
 					}
 					else {
@@ -278,7 +280,7 @@ public class DesktopListStaticNatProvisioningSummary extends ViewImplBase implem
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
 				StaticNatProvisioningSummaryPojo m = selectionModel.getSelectedObject();
-				GWT.log("Selected summary is: " + m);
+				GWT.log("The summary is a " + (m.getProvisioned() == null ? "De-Provision" : "Provision") + " Summary");
 			}
 		});
 

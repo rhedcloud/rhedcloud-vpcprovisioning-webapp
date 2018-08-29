@@ -37,6 +37,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 	private EventBus eventBus;
 	
 	VpcpQueryFilterPojo filter;
+	UserAccountPojo userLoggedIn;
 
 
 	public ListVpcpPresenter(ClientFactory clientFactory, boolean clearList, VpcpQueryFilterPojo filter) {
@@ -72,7 +73,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel("Retrieving VPC Provisioning items...please wait (this operation could take a while)");
+		getView().showPleaseWaitPanel("Retrieving VPC Provisioning items...please wait");
 		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
@@ -87,8 +88,10 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 			}
 
 			@Override
-			public void onSuccess(final UserAccountPojo userLoggedIn) {
-				getView().setUserLoggedIn(userLoggedIn);
+			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
+				getView().setUserLoggedIn(user);
+				getView().initPage();
 				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPCPs");
@@ -100,7 +103,14 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 
 				// Request the Vpc list now.
-				refreshList(userLoggedIn);
+				if (getView().viewAllVpcps()) {
+					// show all of them
+					refreshListWithAllVpcps(user);
+				}
+				else {
+					// only show the default maximum
+					refreshListWithMaximumVpcps(user);
+				}
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -141,6 +151,50 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 		GWT.log("refreshing Vpcp list...");
 		VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, callback);
+	}
+
+	@Override
+	public void refreshListWithMaximumVpcps(UserAccountPojo user) {
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving the default maximum list of VPCP objects from the AWS Account service...");
+
+		filter = new VpcpQueryFilterPojo();
+		filter.setAllVpcps(false);
+		filter.setDefaultMaxVpcps(true);
+		
+		refreshList(user);
+	}
+
+	@Override
+	public void refreshListWithAllVpcps(UserAccountPojo user) {
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving ALL VPCP objects from the AWS Account service (this could take a while)...");
+
+		filter = new VpcpQueryFilterPojo();
+		filter.setAllVpcps(true);
+		filter.setDefaultMaxVpcps(false);
+		
+		refreshList(user);
+	}
+
+	@Override
+	public void filterByProvisioningId(boolean includeAllVpcps, String provisioningId) {
+		if (provisioningId == null || provisioningId.length() == 0) {
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please enter a provisioning id");
+			return;
+		}
+
+		getView().showFilteredStatus();
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Filtering list by provisioning id " + provisioningId + "...");
+		
+		filter = new VpcpQueryFilterPojo();
+		filter.setAllVpcps(false);
+		filter.setDefaultMaxVpcps(false);
+		filter.setProvisioningId(provisioningId);
+		
+		refreshList(userLoggedIn);
 	}
 
 	/**

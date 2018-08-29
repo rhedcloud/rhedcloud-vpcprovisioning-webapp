@@ -70,6 +70,13 @@ public abstract class ViewImplBase extends Composite {
 		}
 	}
 
+	public static void showMessage(String title, String message, Focusable postFocus) {
+		if (title == null) {
+			title = "Alert";
+		}
+		VpcpAlert.alert(title, message, postFocus);
+	}
+	
 	public void showMessageToUser(String title, String message, Focusable postFocus) {
 		if (title == null) {
 			title = "Alert";

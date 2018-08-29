@@ -21,6 +21,7 @@ import com.google.web.bindery.event.shared.UmbrellaException;
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
@@ -756,6 +757,21 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(VpcpStatusPlace.createVpcpStatusPlace(event.getVpcp()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SHOW_STATIC_NAT_STATUS, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				if (event.getStaticNatProvisioning() != null) {
+					ViewImplBase.showMessage(null, "StaticNatProvisioning status", null);
+				}
+				else if (event.getStaticNatDeprovisioning() != null) {
+					ViewImplBase.showMessage(null, "StaticNatDeprovisioning status", null);
+				}
+				else {
+					ViewImplBase.showMessage(null, "UNKNOWN Static NAT status", null);
+				}
 			}
 		});
 
