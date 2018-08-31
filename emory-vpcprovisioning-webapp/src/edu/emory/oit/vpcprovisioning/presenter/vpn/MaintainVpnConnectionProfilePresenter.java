@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 
@@ -27,6 +28,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 	int createdCount = 0;
 	boolean showStatus = false;
 	boolean startTimer = true;
+	TunnelProfilePojo selectedTunnel;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -299,5 +301,35 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 
 	public void setVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) {
 		this.vpnConnectionProfile = vpnConnectionProfile;
+	}
+
+	@Override
+	public void setSelectedTunnel(TunnelProfilePojo tunnel) {
+		selectedTunnel = tunnel;
+	}
+
+	@Override
+	public TunnelProfilePojo getSelectedTunnel() {
+		return selectedTunnel;
+	}
+
+	@Override
+	public void updateTunnel(TunnelProfilePojo tunnel) {
+		int tunnelIndex = -1;
+		tunnelLoop: for (int i=0; i<vpnConnectionProfile.getTunnelProfiles().size(); i++) {
+			TunnelProfilePojo tpp = vpnConnectionProfile.getTunnelProfiles().get(i);
+			if (tpp.getTunnelId().equalsIgnoreCase(tunnel.getTunnelId())) {
+				tunnelIndex = i;
+				break tunnelLoop;
+			}
+		}
+		if (tunnelIndex >= 0) {
+			GWT.log("Updating tunnel: " + tunnelIndex);
+			vpnConnectionProfile.getTunnelProfiles().remove(tunnelIndex);
+			vpnConnectionProfile.getTunnelProfiles().add(tunnel);
+		}
+		else {
+			GWT.log("Counldn't find a tunnel to update...problem");
+		}
 	}
 }

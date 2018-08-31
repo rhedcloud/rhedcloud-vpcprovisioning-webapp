@@ -144,6 +144,7 @@ import edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatProvisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
 import edu.emory.moa.objects.resources.v1_0.AssociatedCidr;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
@@ -160,6 +161,7 @@ import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v1_0.StaticNatDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.StaticNatProvisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
@@ -4071,7 +4073,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.doDelete(moa, getElasticIpRequestService());
 				info("ElasticIp.delete is complete...");
 
-//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return;
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
@@ -8717,7 +8718,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				new java.util.Date());
 
 		try {
-			info("creating ElasticIp record on the server...");
+			info("creating VpnConnectionProfile record on the server...");
 			VpnConnectionProfile moa = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
 			info("populating moa");
 			this.populateVpnConnectionProfileMoa(vpnConnectionProfile, moa);
@@ -8792,15 +8793,81 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException {
-		// TODO Auto-generated method stub
-		
+		try {
+			// TODO: need to see if there are any assignments to this profile and if so, delete those too
+			info("deleting VpnConnectionProfile record on the server...");
+			VpnConnectionProfile moa = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
+			info("populating moa");
+			this.populateVpnConnectionProfileMoa(vpnConnectionProfile, moa);
+
+			
+			info("doing the VpnConnectionProfilePojo.delete...");
+			this.doDelete(moa, getNetworkOpsRequestService());
+			info("VpnConnectionProfilePojo.delete is complete...");
+
+			return;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
 	public VpnConnectionProfilePojo updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile)
 			throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+
+        try {
+            info("updating VpnConnectionProfile on the server...");
+            VpnConnectionProfile newData = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
+            VpnConnectionProfile baselineData = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
+
+            info("populating newData...");
+            populateVpnConnectionProfileMoa(vpnConnectionProfile, newData);
+
+            info("populating baselineData...");
+            populateVpnConnectionProfileMoa(vpnConnectionProfile.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getNetworkOpsRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return vpnConnectionProfile;
 	}
 
 	@Override
@@ -8808,7 +8875,72 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			VpnConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException {
 		
 		VpnConnectionProfileAssignmentQueryResultPojo result = new VpnConnectionProfileAssignmentQueryResultPojo();
-		
-		return result;
+		List<VpnConnectionProfileAssignmentPojo> pojos = new java.util.ArrayList<VpnConnectionProfileAssignmentPojo>();
+		try {
+			VpnConnectionProfileAssignmentQuerySpecification queryObject = (VpnConnectionProfileAssignmentQuerySpecification) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC);
+			VpnConnectionProfileAssignment actionable = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
+
+			if (filter != null) {
+				// TODO: query language probably
+
+				queryObject.setVpnConnectionProfileId(filter.getVpnConnectionProfileId());
+				queryObject.setOwnerId(filter.getOwnerId());
+				queryObject.setVpnConnectionProfileAssignmentId(filter.getVpnConnectionProfileAssignmentId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getVpnConnectionProfileAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<VpnConnectionProfileAssignment> moas = actionable.query(queryObject,
+					this.getNetworkOpsRequestService());
+			info("[getVpnConnectionProfileAssignmentsForFilter] got " + moas.size() + " VPN Connection profile assignments back from the ESB.");
+			
+			for (VpnConnectionProfileAssignment moa : moas) {
+				VpnConnectionProfileAssignmentPojo pojo = new VpnConnectionProfileAssignmentPojo();
+				VpnConnectionProfileAssignmentPojo baseline = new VpnConnectionProfileAssignmentPojo();
+				this.populateVpnConnectionProfileAssignmentPojo(moa, pojo);
+				this.populateVpnConnectionProfileAssignmentPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	private void populateVpnConnectionProfileAssignmentPojo(VpnConnectionProfileAssignment moa,
+			VpnConnectionProfileAssignmentPojo pojo) {
+
+		pojo.setVpnConnectionProfileAssignmentId(moa.getVpnConnectionProfileAssignmentId());
+		pojo.setVpnConnectionProfileId(moa.getVpnConnectionProfileId());
+		pojo.setOwnerId(moa.getOwnerId());
+		pojo.setDescription(moa.getDescription());
+		pojo.setPurpose(moa.getPurpose());
+		pojo.setDeleteUser(moa.getDeleteUser());
+		if (moa.getDeleteDatetime() != null) {
+			pojo.setDeleteTime(this.toDateFromDatetime(moa.getDeleteDatetime()));
+		}
 	}
 }

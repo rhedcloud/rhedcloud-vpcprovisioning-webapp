@@ -24,7 +24,6 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements MaintainVpnConnectionProfileView {
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
-//	List<VpnConnectionProfilePojo> ipsToCreate = new java.util.ArrayList<VpnConnectionProfilePojo>();
 
 	private static DesktopMaintainVpnConnectionProfileUiBinder uiBinder = GWT
 			.create(DesktopMaintainVpnConnectionProfileUiBinder.class);
@@ -58,6 +57,7 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 //		presenter.getVpnConnectionProfile().setVpnConnectionProfileId(profileIdTB.getText());
 		if (presenter.getVpnConnectionProfile().getTunnelProfiles().size() != 2) {
 			showMessageToUser("You must add exactly two (2) Tunnel Profiles to the VPN Connection Profile.");
+			setFieldViolations(true);
 			return;
 		}
 		// tunnels are added to the profile as they're added
@@ -65,10 +65,21 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 	}
 	@UiHandler ("addTunnelButton")
 	void addElasticIpButtonClick(ClickEvent e) {
-		addTunnel();
+		if (addTunnelButton.getText().equalsIgnoreCase("Add")) {
+			addTunnel();
+		}
+		else {
+			// update existing tunnel
+			TunnelProfilePojo tunnel = createTunnelFromFormData();
+			presenter.updateTunnel(tunnel);
+			initPage();
+		}
 	}
 	private TunnelProfilePojo createTunnelFromFormData() {
 		TunnelProfilePojo tunnel = new TunnelProfilePojo();
+		if (presenter.getSelectedTunnel() != null) {
+			tunnel.setTunnelId(presenter.getSelectedTunnel().getTunnelId());
+		}
 		tunnel.setTunnelDescription(tunnelDescTB.getText());
 		tunnel.setCryptoKeyringName(cryptoKeyringTB.getText());
 		tunnel.setIsakampProfileName(isakampProfileTB.getText());
@@ -79,6 +90,16 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 		tunnel.setVpnInsideIpCidr2(vpnInsideCidr2TB.getText());
 		
 		return tunnel;
+	}
+	private void clearTunnelFields() {
+		vpnInsideCidr2TB.setText("");
+		vpnInsideCidr1TB.setText("");
+		customerGatewayIpTB.setText("");
+		ipsecTransformSetTB.setText("");
+		ipsecProfileTB.setText("");
+		tunnelDescTB.setText("");
+		cryptoKeyringTB.setText("");
+		isakampProfileTB.setText("");
 	}
 	private void addTunnel() {
 		List<Widget> fields = getMissingTunnelFields();
@@ -100,6 +121,9 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 	}
 	private List<Widget> getMissingTunnelFields() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
+		if (presenter.getVpnConnectionProfile().getTunnelProfiles().size() == 2) {
+			return fields;
+		}
 		if (vpnInsideCidr2TB.getText() == null || vpnInsideCidr2TB.getText().length() == 0) {
 			fields.add(vpnInsideCidr2TB);
 		}
@@ -127,33 +151,62 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 		return fields;
 	}
 	private void addTunnelToPanel(final TunnelProfilePojo tunnel) {
-		// TODO: presenter.isValidIpAddress(ipAddress);
 		final int numRows = tunnelTable.getRowCount();
 		final Label descLabel = new Label(tunnel.getTunnelDescription());
 		descLabel.addStyleName("emailLabel");
-		final Button removeIpButton = new Button("Remove");
-		// disable remove button if userLoggedIn is NOT an admin
+		
+		final Button editButton = new Button("Edit");
+		// disable buttons if userLoggedIn is NOT a network admin
 		// TODO: network admin
 		if (this.userLoggedIn.isCentralAdmin()) {
-			removeIpButton.setEnabled(true);
+			editButton.setEnabled(true);
 		}
 		else {
-			removeIpButton.setEnabled(false);
+			editButton.setEnabled(false);
 		}
-		removeIpButton.addStyleName("glowing-border");
-		removeIpButton.addClickHandler(new ClickHandler() {
+		editButton.addStyleName("glowing-border");
+		editButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				tunnelTable.remove(descLabel);
-				tunnelTable.remove(removeIpButton);
-				presenter.getVpnConnectionProfile().getTunnelProfiles().remove(tunnel);
+				presenter.setSelectedTunnel(tunnel);
+				vpnInsideCidr2TB.setText(tunnel.getVpnInsideIpCidr2());
+				vpnInsideCidr1TB.setText(tunnel.getVpnInsideIpCidr1());
+				customerGatewayIpTB.setText(tunnel.getCustomerGatewayIp());
+				ipsecTransformSetTB.setText(tunnel.getIpsecTransformSetName());
+				ipsecProfileTB.setText(tunnel.getIpsecProfileName());
+				tunnelDescTB.setText(tunnel.getTunnelDescription());
+				cryptoKeyringTB.setText(tunnel.getCryptoKeyringName());
+				isakampProfileTB.setText(tunnel.getIsakampProfileName());
+				addTunnelButton.setText("Update");
 			}
 		});
+		
+		final Button removeTunnelButton = new Button("Remove");
+		// disable buttons if userLoggedIn is NOT a network admin
+		// TODO: network admin
+		if (this.userLoggedIn.isCentralAdmin()) {
+			removeTunnelButton.setEnabled(true);
+		}
+		else {
+			removeTunnelButton.setEnabled(false);
+		}
+		removeTunnelButton.addStyleName("glowing-border");
+		removeTunnelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+//				tunnelTable.remove(descLabel);
+//				tunnelTable.remove(removeTunnelButton);
+				presenter.getVpnConnectionProfile().getTunnelProfiles().remove(tunnel);
+				initPage();
+			}
+		});
+		
 		tunnelTable.setWidget(numRows, 0, descLabel);
-		tunnelTable.setWidget(numRows, 1, removeIpButton);
+		tunnelTable.setWidget(numRows, 1, editButton);
+		tunnelTable.setWidget(numRows, 2, removeTunnelButton);
 	}
 
-	void initializeElasticIpPanel() {
+	void initializeTunnelProfilePanel() {
 		tunnelTable.removeAllRows();
 		for (TunnelProfilePojo tunnel : presenter.getVpnConnectionProfile().getTunnelProfiles()) {
 			this.addTunnelToPanel(tunnel);
@@ -310,8 +363,11 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 
 	@Override
 	public void initPage() {
-		// TODO Auto-generated method stub
-		
+		clearTunnelFields();
+		presenter.setSelectedTunnel(null);
+		addTunnelButton.setText("Add");
+		vpcTB.setText(presenter.getVpnConnectionProfile().getVpcNetwork());
+		this.initializeTunnelProfilePanel();
 	}
 
 	@Override

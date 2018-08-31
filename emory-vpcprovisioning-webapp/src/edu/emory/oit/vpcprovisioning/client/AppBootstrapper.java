@@ -404,7 +404,7 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 //				shell.showMessageToUser("Maintain VPN Connecton Profile...coming soon...");
 				final DialogBox db = new DialogBox();
-				db.setText("Create VPN Connection Profile");
+				db.setText("View/Maintain VPN Connection Profile");
 				db.setGlassEnabled(true);
 				db.center();
 				final MaintainVpnConnectionProfilePresenter presenter = new MaintainVpnConnectionProfilePresenter(clientFactory, event.getVpnConnectionProfile());

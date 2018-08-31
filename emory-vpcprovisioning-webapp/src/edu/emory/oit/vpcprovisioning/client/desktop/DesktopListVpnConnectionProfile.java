@@ -45,6 +45,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 
 public class DesktopListVpnConnectionProfile extends ViewImplBase implements ListVpnConnectionProfileView {
@@ -130,19 +131,49 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(1, 1);
+		Grid grid = new Grid(2, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
 		// TODO:
 		// - view/maintain
 
-		Anchor releaseAddressesAnchor = new Anchor("Delete Profile(es)");
-		releaseAddressesAnchor.addStyleName("productAnchor");
-		releaseAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		releaseAddressesAnchor.setTitle("Delete selected profile(es)");
-		releaseAddressesAnchor.ensureDebugId(releaseAddressesAnchor.getText());
-		releaseAddressesAnchor.addClickHandler(new ClickHandler() {
+		Anchor maintainAnchor = new Anchor("View/Maintain Profile");
+		maintainAnchor.addStyleName("productAnchor");
+		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		maintainAnchor.setTitle("View/maintain selected profile");
+		maintainAnchor.ensureDebugId(maintainAnchor.getText());
+		maintainAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				if (selectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select one Profile to view");
+					return;
+				}
+				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				
+				VpnConnectionProfileSummaryPojo m = nIter.next();
+				if (m != null) {
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE, m.getProfile());
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, maintainAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Profile(es)");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected profile(es)");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
@@ -169,7 +200,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				}
 			}
 		});
-		grid.setWidget(0, 0, releaseAddressesAnchor);
+		grid.setWidget(1, 0, deleteAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}

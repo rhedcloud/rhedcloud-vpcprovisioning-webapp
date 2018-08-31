@@ -5,7 +5,7 @@ import java.util.Date;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class VpnConnectionProfileAssignmentPojo extends SharedObject implements IsSerializable {
+public class VpnConnectionProfileAssignmentPojo extends SharedObject implements IsSerializable, Comparable<VpnConnectionProfileAssignmentPojo> {
 
 	String vpnConnectionProfileAssignmentId;
 	String vpnConnectionProfileId;
@@ -14,6 +14,7 @@ public class VpnConnectionProfileAssignmentPojo extends SharedObject implements 
 	String purpose;
 	String deleteUser;
 	Date deleteTime;
+	VpnConnectionProfileAssignmentPojo baseline;
 	
 	public VpnConnectionProfileAssignmentPojo() {
 		// TODO Auto-generated constructor stub
@@ -73,6 +74,20 @@ public class VpnConnectionProfileAssignmentPojo extends SharedObject implements 
 
 	public void setDeleteTime(Date deleteTime) {
 		this.deleteTime = deleteTime;
+	}
+
+	@Override
+	public int compareTo(VpnConnectionProfileAssignmentPojo o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public VpnConnectionProfileAssignmentPojo getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(VpnConnectionProfileAssignmentPojo baseline) {
+		this.baseline = baseline;
 	}
 
 

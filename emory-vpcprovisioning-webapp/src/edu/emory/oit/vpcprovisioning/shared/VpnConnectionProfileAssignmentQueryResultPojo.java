@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @SuppressWarnings("serial")
 public class VpnConnectionProfileAssignmentQueryResultPojo extends SharedObject implements IsSerializable {
 	List<VpnConnectionProfileAssignmentPojo> results = new java.util.ArrayList<VpnConnectionProfileAssignmentPojo>();
-	VpnConnectionProfileAssignmentQueryResultPojo filterUsed;
+	VpnConnectionProfileAssignmentQueryFilterPojo filterUsed;
 	
 	public VpnConnectionProfileAssignmentQueryResultPojo() {
 		// TODO Auto-generated constructor stub
@@ -21,11 +21,11 @@ public class VpnConnectionProfileAssignmentQueryResultPojo extends SharedObject 
 		this.results = results;
 	}
 
-	public VpnConnectionProfileAssignmentQueryResultPojo getFilterUsed() {
+	public VpnConnectionProfileAssignmentQueryFilterPojo getFilterUsed() {
 		return filterUsed;
 	}
 
-	public void setFilterUsed(VpnConnectionProfileAssignmentQueryResultPojo filterUsed) {
+	public void setFilterUsed(VpnConnectionProfileAssignmentQueryFilterPojo filterUsed) {
 		this.filterUsed = filterUsed;
 	}
 
