@@ -14,7 +14,13 @@ import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.UmbrellaException;
 
@@ -69,6 +75,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -128,24 +136,52 @@ public class AppBootstrapper {
 	 * 
 	 * @param parentView where to show the app's widget
 	 */
-	public void run(HasWidgets.ForIsWidget parentView) {
+	public void run(final HasWidgets.ForIsWidget parentView) {
+		final HorizontalPanel pleaseWaitPanel = new HorizontalPanel();
+		pleaseWaitPanel.setWidth("100%");
+		pleaseWaitPanel.setHeight("100%");
+		
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(8);
+		pleaseWaitPanel.add(vp);
+		pleaseWaitPanel.setCellHorizontalAlignment(vp, HasHorizontalAlignment.ALIGN_CENTER);
+		pleaseWaitPanel.setCellVerticalAlignment(vp, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		Image loader = new Image();
+		loader.setUrl("images/ajax-loader.gif");
+		vp.add(loader);
+		
+		HTML message = new HTML();
+		message.setHTML("<p><b>Loading the VPCP Web Application.  Please wait...</b></p>");
+		vp.add(message);
+
+		vp.setCellHorizontalAlignment(loader, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellVerticalAlignment(loader, HasVerticalAlignment.ALIGN_MIDDLE);
+		vp.setCellHorizontalAlignment(message, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellVerticalAlignment(message, HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		parentView.add(pleaseWaitPanel);
+
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				GWT.log("Exception Retrieving User Logged in", caught);
+				parentView.remove(pleaseWaitPanel);
 				shell.hidePleaseWaitDialog();
 				shell.hidePleaseWaitPanel();
-				shell.showMessageToUser("There was an exception on the " +
-						"server retrieving the the user logged in.  " +
+				shell.showMessageToUser("[AppBootstrapper:FATAL] There was an exception on the " +
+						"server retrieving the the user logged in.  Processing cannot continue.  Try " + 
+						"refreshing your browser and if the problem continues, please contact the help desk." +
 						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(final UserAccountPojo userLoggedIn) {
+				parentView.remove(pleaseWaitPanel);
 				shell.setUserLoggedIn(userLoggedIn);
 				if (userLoggedIn.isCentralAdmin() || userLoggedIn.isNetworkAdmin()) {
-//					shell.showNetworkAdminTabs();
-					shell.showAuditorTabs();
+					shell.showNetworkAdminTabs();
+//					shell.showAuditorTabs();
 				}
 				else {
 					shell.showAuditorTabs();
@@ -168,15 +204,18 @@ public class AppBootstrapper {
 				shell.startNotificationTimer();
 				shell.initializeAwsServiceMap();
 				shell.initiliizeUserProfile();
+
+				activityManager.setDisplay(shell);
+
+				parentView.add(shell);
+				registerHandlers();
 			}
 		};
 		GWT.log("[AppBootstrapper] getting user logged in...");
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
-
-		activityManager.setDisplay(shell);
-
-		parentView.add(shell);
-		
+	}
+	
+	private void registerHandlers() {
 		// handling events here so this logic can be shared among different view
 		// implementations.  if we don't use the same flow for desktop views
 		// this code may be moved to the appropriate view implementation and implemented
@@ -321,8 +360,92 @@ public class AppBootstrapper {
 				placeController.goTo(new ListNotificationPlace(false, event.getFilter()));
 			}
 		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPN_CONNECTION_PROFILE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_VPN_CONNECTION_PROFILE.onAction");
+				placeController.goTo(new ListVpnConnectionProfilePlace(false));
+			}
+		});
 		
-		
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_VPN_CONNECTION_PROFILE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				final DialogBox db = new DialogBox();
+				db.setText("Create VPN Connection Profile");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainVpnConnectionProfilePresenter presenter = new MaintainVpnConnectionProfilePresenter(clientFactory);
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+//				placeController.goTo(MaintainVpnConnectionProfilePlace.getMaintainVpnConnectionProfilePlace());
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+//				shell.showMessageToUser("Maintain VPN Connecton Profile...coming soon...");
+				final DialogBox db = new DialogBox();
+				db.setText("Create VPN Connection Profile");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainVpnConnectionProfilePresenter presenter = new MaintainVpnConnectionProfilePresenter(clientFactory, event.getVpnConnectionProfile());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+//				placeController.goTo(MaintainVpnConnectionProfilePlace.createMaintainVpnConnectionProfilePlace(event.getVpnConnectionProfile()));
+			}
+		});
+
+		// TODO: MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT
+		// not sure if we'll use a dialog box or not
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				shell.showMessageToUser("Maintain VPN Connecton Profile Assignment...coming soon...");
+//				placeController.goTo(MaintainVpnConnectionProfileAssignmentPlace.createMaintainVpnConnectionProfileAssignmentPlace(event.getVpnConnectionProfileAssignment()));
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.VPN_CONNECTION_PROFILE_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListVpnConnectionProfilePlace(false));
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.CREATE_ELASTIC_IP, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {

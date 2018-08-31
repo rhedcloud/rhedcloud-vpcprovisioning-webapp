@@ -80,6 +80,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
@@ -160,9 +162,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("Need to go to Cetnral Admin tab");
 				mainTabPanel.selectTab(5);
 			}
+			else if (hash.trim().equals("#" + Constants.LIST_ELASTIC_IP + ":")) {
+				GWT.log("Need to go to Elastic IP tab");
+				mainTabPanel.selectTab(6);
+			}
 			else if (hash.trim().equals("#" + Constants.LIST_STATIC_NAT + ":")) {
 				GWT.log("Need to go to Static Nat tab");
 				mainTabPanel.selectTab(7);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION + ":")) {
+				GWT.log("Need to go to Static Nat tab");
+				mainTabPanel.selectTab(8);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION_PROFILE + ":")) {
+				GWT.log("Need to go to Static Nat tab");
+				mainTabPanel.selectTab(9);
 			}
 			else {
 				GWT.log("[default] home tab");
@@ -466,6 +480,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		case 9:
 			GWT.log("need to get VPN Connection Profile content.");
 			clientFactory.getVpcpStatusView().stopTimer();
+			firstVpnConnectionProfileContentWidget = true;
+			vpnConnectionProfileContentContainer.clear();
+			ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
+//			StaticNatStatusView snpStatusView = clientFactory.getStaticNatStatusView();
+			vpnConnectionProfileContentContainer.add(listVpnConnectionProfileView);
+//			staticNatContentContainer.add(snpStatusView);
+			vpnConnectionProfileContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
 			break;
 		}
 	}
@@ -577,6 +599,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
+//		if (w instanceof ListVpnConnectionProfilePresenter || w instanceof MaintainVpnConnectionProfilePresenter) {
+		if (w instanceof ListVpnConnectionProfilePresenter) {
+			GWT.log("It's the vpn connection profile presenter...");
+			vpnConnectionProfileContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstVpnConnectionProfileContentWidget) {
+				firstVpnConnectionProfileContentWidget = false;
+				vpnConnectionProfileContentContainer.animate(0);
+			}
+			return;
+		}
+		
 		// if we get here, it's the home tab, just set the widget to what's passed in for now
 		homeContentContainer.setWidget(w);
 		// Do not animate the first time we show a widget.

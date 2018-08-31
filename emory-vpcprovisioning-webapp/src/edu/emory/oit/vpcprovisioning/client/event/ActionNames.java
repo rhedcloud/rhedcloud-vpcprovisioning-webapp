@@ -174,4 +174,11 @@ public interface ActionNames {
 	final String INCIDENT_CREATE_SERVICE_ACCOUNT = "createServiceAccount";
 	final String CREATE_USER_NOTIFICATION = "createUserNotification";
 	final String CREATE_ACCOUNT_NOTIFICATION = "createAccountNotification";
+	
+	final String CREATE_VPN_CONNECTION_PROFILE = "createVpnConnectionProfile";
+	final String MAINTAIN_VPN_CONNECTION_PROFILE = "maintainVpnConnectionProfile";
+	final String GO_HOME_VPN_CONNECTION_PROFILE = "goHomeVpnConnectionProfile";
+	final String VPN_CONNECTION_PROFILE_EDITING_CANCELED = "vpnConnectionProfileCanceled";
+	final String VPN_CONNECTION_PROFILE_SAVED = "vpnConnectionProfileSaved";
+	final String MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT = "maintainVpnConnectionProfileAssignment";
 }

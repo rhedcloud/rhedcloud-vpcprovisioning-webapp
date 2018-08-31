@@ -28,6 +28,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceGuideline;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListStaticNatProvisioningSummary;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpcp;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpnConnectionProfile;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainAccount;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainAccountNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainCidr;
@@ -47,6 +48,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSrd;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainTermsOfUseAgreement;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfile;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
@@ -87,6 +89,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
 
 public class ClientFactoryImplDesktop implements ClientFactory {
 	private final EventBus eventBus = new SimpleEventBus();
@@ -140,6 +144,8 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainTermsOfUseAgreementView maintainTermsOfUseAgreementView;
 	private MaintainIncidentView maintainIncidentView;
 	private ListStaticNatProvisioningSummaryView listStaticNatProvisioningSummaryView;
+	private ListVpnConnectionProfileView listVpnConnectionProfileView;
+	private MaintainVpnConnectionProfileView maintainVpnConnectionProfileView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -596,4 +602,21 @@ public class ClientFactoryImplDesktop implements ClientFactory {
     protected ListStaticNatProvisioningSummaryView createListStaticNatProvisioningSummaryView() {
         return new DesktopListStaticNatProvisioningSummary();
     }
+	@Override
+	public ListVpnConnectionProfileView getListVpnConnectionProfileView() {
+        if (listVpnConnectionProfileView == null) {
+        	listVpnConnectionProfileView = createListVpnConnectionProfileView();
+        }
+        return listVpnConnectionProfileView;
+	}
+    protected ListVpnConnectionProfileView createListVpnConnectionProfileView() {
+        return new DesktopListVpnConnectionProfile();
+    }
+	@Override
+	public MaintainVpnConnectionProfileView getMaintainVpnConnectionProfileView() {
+		return createMaintainVpnConnectionProfileView();
+	}
+	protected MaintainVpnConnectionProfileView createMaintainVpnConnectionProfileView() {
+		return new DesktopMaintainVpnConnectionProfile();
+	}
 }

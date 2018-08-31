@@ -60,6 +60,9 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePlace;
 
 public class AppActivityMapper implements ActivityMapper {
 	private final ClientFactory clientFactory;
@@ -265,6 +268,18 @@ public class AppActivityMapper implements ActivityMapper {
 			};
 		}
 
+		if (place instanceof ListVpnConnectionProfilePlace) {
+			// The list of case records.
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListVpnConnectionProfilePresenter presenter = new ListVpnConnectionProfilePresenter(clientFactory, (ListVpnConnectionProfilePlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
 		if (place instanceof BillSummaryPlace) {
 			// Generate/Maintain vpcp
 			return new BillSummaryActivity(clientFactory, (BillSummaryPlace) place);
@@ -371,8 +386,11 @@ public class AppActivityMapper implements ActivityMapper {
 		}
 
 		if (place instanceof MaintainIncidentPlace) {
-			// View/Maintain srd
 			return new MaintainIncidentActivity(clientFactory, (MaintainIncidentPlace) place);
+		}
+
+		if (place instanceof MaintainVpnConnectionProfilePlace) {
+			return new MaintainVpnConnectionProfileActivity(clientFactory, (MaintainVpnConnectionProfilePlace) place);
 		}
 
 		return null;

@@ -143,6 +143,7 @@ import edu.emory.moa.jmsobjects.network.v1_0.ElasticIp;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatProvisioning;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.objects.resources.v1_0.AssociatedCidr;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
@@ -158,6 +159,8 @@ import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v1_0.StaticNatDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.StaticNatProvisioningQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.*;
@@ -3937,12 +3940,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					this.getElasticIpRequestService());
 			for (ElasticIp moa : moas) {
 				ElasticIpSummaryPojo summary = new ElasticIpSummaryPojo();
+				
 				ElasticIpPojo pojo = new ElasticIpPojo();
 				ElasticIpPojo baseline = new ElasticIpPojo();
 				this.populateElasticIpPojo(moa, pojo);
 				this.populateElasticIpPojo(moa, baseline);
 				pojo.setBaseline(baseline);
 				summary.setElasticIp(pojo);
+				
+				// query for ElasticIPAssignment by ElasticIpId
+				ElasticIpAssignmentQueryFilterPojo eia_filter = new ElasticIpAssignmentQueryFilterPojo();
+				eia_filter.setElasticIpId(pojo.getElasticIpId());
+				ElasticIpAssignmentQueryResultPojo eia_result = this.getElasticIpAssignmentsForFilter(eia_filter);
+				if (eia_result.getResults().size() > 0) {
+					summary.setElasticIpAssignment(eia_result.getResults().get(0));
+				}
 				summaries.add(summary);
 			}
 
@@ -3991,13 +4003,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				ElasticIp moa = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
 				info("populating moa");
 				this.populateElasticIpMoa(elasticIp, moa);
-
+				info("Creating ElasticIP: " + moa.toXmlString());
 				
 				info("doing the ElasticIp.create...");
 				this.doCreate(moa, getElasticIpRequestService());
 				info("ElasticIp.create is complete...");
 
-//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return elasticIp;
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
@@ -4035,12 +4046,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
+			} catch (XmlEnterpriseObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
 			}
 		}
 	}
 
 	@Override
-	public void deleteElasticIpSummary(ElasticIpSummaryPojo summaryPojo) throws RpcException {
+	public void deleteElasticIp(ElasticIpPojo elasticIp) throws RpcException {
 		if (!useEsbService) {
 			return;
 		} 
@@ -4050,7 +4064,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("deleting ElasticIp record on the server...");
 				ElasticIp moa = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
 				info("populating moa");
-				this.populateElasticIpMoa(summaryPojo.getElasticIp(), moa);
+				this.populateElasticIpMoa(elasticIp, moa);
 
 				
 				info("doing the ElasticIp.delete...");
@@ -4155,6 +4169,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filter != null) {
 				queryObject.setElasticIpAssignmentId(filter.getAssignmentId());
 				queryObject.setOwnerId(filter.getOwnerId());
+				queryObject.setElasticIpId(filter.getElasticIpId());
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
@@ -8599,5 +8614,201 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@Override
+	public VpnConnectionProfileQueryResultPojo getVpnConnectionProfilesForFilter(
+			VpnConnectionProfileQueryFilterPojo filter) throws RpcException {
+		
+		VpnConnectionProfileQueryResultPojo result = new VpnConnectionProfileQueryResultPojo();
+		List<VpnConnectionProfileSummaryPojo> summaries = new java.util.ArrayList<VpnConnectionProfileSummaryPojo>();
+		try {
+			VpnConnectionProfileQuerySpecification queryObject = (VpnConnectionProfileQuerySpecification) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_QUERY_SPEC);
+			VpnConnectionProfile actionable = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
+
+			if (filter != null) {
+				// TODO: query language probably
+
+				queryObject.setVpnConnectionProfileId(filter.getVpnConnectionProfileId());
+				queryObject.setVpcNetwork(filter.getVpcNetwork());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getVpnConnectionProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<VpnConnectionProfile> moas = actionable.query(queryObject,
+					this.getNetworkOpsRequestService());
+			info("[getVpnConnectionProfilesForFilter] got " + moas.size() + " VPN COnnection profiles back from the ESB.");
+			for (VpnConnectionProfile moa : moas) {
+				VpnConnectionProfileSummaryPojo summary = new VpnConnectionProfileSummaryPojo();
+				
+				VpnConnectionProfilePojo pojo = new VpnConnectionProfilePojo();
+				VpnConnectionProfilePojo baseline = new VpnConnectionProfilePojo();
+				this.populateVpnConnectionProfilePojo(moa, pojo);
+				this.populateVpnConnectionProfilePojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				summary.setProfile(pojo);
+				
+				// query for ElasticIPAssignment by ElasticIpId
+				VpnConnectionProfileAssignmentQueryFilterPojo eia_filter = new VpnConnectionProfileAssignmentQueryFilterPojo();
+				eia_filter.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
+				VpnConnectionProfileAssignmentQueryResultPojo eia_result = this.getVpnConnectionProfileAssignmentsForFilter(eia_filter);
+				if (eia_result.getResults().size() > 0) {
+					summary.setAssignment(eia_result.getResults().get(0));
+				}
+				summaries.add(summary);
+			}
+
+			Collections.sort(summaries);
+			result.setResults(summaries);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateVpnConnectionProfilePojo(VpnConnectionProfile moa, VpnConnectionProfilePojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setVpnConnectionProfileId(moa.getVpnConnectionProfileId());
+		pojo.setVpcNetwork(moa.getVpcNetwork());
+		for (TunnelProfile tp_moa : (List<TunnelProfile>) moa.getTunnelProfile()) {
+			TunnelProfilePojo tp_pojo = new TunnelProfilePojo();
+			tp_pojo.setTunnelId(tp_moa.getTunnelId());
+			tp_pojo.setCryptoKeyringName(tp_moa.getCryptoKeyringName());
+			tp_pojo.setIsakampProfileName(tp_moa.getIsakampProfileName());
+			tp_pojo.setIpsecProfileName(tp_moa.getIpsecProfileName());
+			tp_pojo.setIpsecTransformSetName(tp_moa.getIpsecTransformSetName());
+			tp_pojo.setTunnelDescription(tp_moa.getTunnelDescription());
+			tp_pojo.setCustomerGatewayIp(tp_moa.getCustomerGatewayIp());
+			tp_pojo.setVpnInsideIpCidr1(tp_moa.getVpnInsideIpCidr1());
+			tp_pojo.setVpnInsideIpCidr2(tp_moa.getVpnInsideIpCidr2());
+			
+			pojo.getTunnelProfiles().add(tp_pojo);
+		}
+		
+//		this.setPojoCreateInfo(pojo, moa);
+//		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@Override
+	public VpnConnectionProfilePojo createVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile)
+			throws RpcException {
+		vpnConnectionProfile.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
+
+		try {
+			info("creating ElasticIp record on the server...");
+			VpnConnectionProfile moa = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
+			info("populating moa");
+			this.populateVpnConnectionProfileMoa(vpnConnectionProfile, moa);
+			info("Creating VpnConnectionProfile: " + moa.toXmlString());
+			
+			info("doing the VpnConnectionProfile.create...");
+			this.doCreate(moa, getNetworkOpsRequestService());
+			info("VpnConnectionProfile.create is complete...");
+
+			return vpnConnectionProfile;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectCreateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	private void populateVpnConnectionProfileMoa(VpnConnectionProfilePojo pojo,
+			VpnConnectionProfile moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+		
+		moa.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
+		moa.setVpcNetwork(pojo.getVpcNetwork());
+		for (TunnelProfilePojo tp_pojo : pojo.getTunnelProfiles()) {
+			TunnelProfile tp_moa = moa.newTunnelProfile();
+			tp_moa.setTunnelId(tp_pojo.getTunnelId());
+			tp_moa.setCryptoKeyringName(tp_pojo.getCryptoKeyringName());
+			tp_moa.setIsakampProfileName(tp_pojo.getIsakampProfileName());
+			tp_moa.setIpsecProfileName(tp_pojo.getIpsecProfileName());
+			tp_moa.setIpsecTransformSetName(tp_pojo.getIpsecTransformSetName());
+			tp_moa.setTunnelDescription(tp_pojo.getTunnelDescription());
+			tp_moa.setCustomerGatewayIp(tp_pojo.getCustomerGatewayIp());
+			tp_moa.setVpnInsideIpCidr1(tp_pojo.getVpnInsideIpCidr1());
+			tp_moa.setVpnInsideIpCidr2(tp_pojo.getVpnInsideIpCidr2());
+			
+			moa.addTunnelProfile(tp_moa);
+		}
+//		this.setMoaCreateInfo(moa, pojo);
+//		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	@Override
+	public void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public VpnConnectionProfilePojo updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile)
+			throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public VpnConnectionProfileAssignmentQueryResultPojo getVpnConnectionProfileAssignmentsForFilter(
+			VpnConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException {
+		
+		VpnConnectionProfileAssignmentQueryResultPojo result = new VpnConnectionProfileAssignmentQueryResultPojo();
+		
+		return result;
 	}
 }

@@ -1,8 +1,6 @@
-package edu.emory.oit.vpcprovisioning.presenter.elasticip;
+package edu.emory.oit.vpcprovisioning.presenter.vpn;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -12,18 +10,17 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
-import edu.emory.oit.vpcprovisioning.client.event.ElasticIpListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.client.event.VpnConnectionProfileListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 
-public class ListElasticIpPresenter extends PresenterBase implements ListElasticIpView.Presenter {
-	private static final Logger log = Logger.getLogger(ListElasticIpPresenter.class.getName());
+public class ListVpnConnectionProfilePresenter extends PresenterBase implements ListVpnConnectionProfileView.Presenter {
 	/**
 	 * The delay in milliseconds between calls to refresh the Vpc list.
 	 */
@@ -39,16 +36,17 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	private EventBus eventBus;
 	
-	ElasticIpQueryFilterPojo filter;
+	VpnConnectionProfileQueryFilterPojo filter;
 	VpcPojo vpc;
-	ElasticIpSummaryPojo selectedSummary;
-	List<ElasticIpSummaryPojo> selectedSummaries;
+	VpnConnectionProfileSummaryPojo selectedSummary;
+	List<VpnConnectionProfileSummaryPojo> selectedSummaries;
+	UserAccountPojo userLoggedIn;
 
-	public ListElasticIpPresenter(ClientFactory clientFactory, boolean clearList, ElasticIpQueryFilterPojo filter) {
+	public ListVpnConnectionProfilePresenter(ClientFactory clientFactory, boolean clearList, VpnConnectionProfileQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
 		this.filter = filter;
-		clientFactory.getListElasticIpView().setPresenter(this);
+		clientFactory.getListVpnConnectionProfileView().setPresenter(this);
 	}
 
 	/**
@@ -57,12 +55,12 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	 * @param clientFactory the {@link ClientFactory} of shared resources
 	 * @param place configuration for this activity
 	 */
-	public ListElasticIpPresenter(ClientFactory clientFactory, ListElasticIpPlace place) {
+	public ListVpnConnectionProfilePresenter(ClientFactory clientFactory, ListVpnConnectionProfilePlace place) {
 		this(clientFactory, place.isListStale(), place.getFilter());
 	}
 
-	private ListElasticIpView getView() {
-		return clientFactory.getListElasticIpView();
+	private ListVpnConnectionProfileView getView() {
+		return clientFactory.getListVpnConnectionProfileView();
 	}
 
 	@Override
@@ -78,7 +76,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving Elastic IPs from the Elastic IP service...");
+		getView().showPleaseWaitDialog("Retrieving VPN Connection Profiles from the Network OPS service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -92,10 +90,10 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			}
 
 			@Override
-			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
 				clientFactory.getShell().setTitle("VPC Provisioning App");
-				clientFactory.getShell().setSubTitle("Elastic IPs");
+				clientFactory.getShell().setSubTitle("VPN Connection Profiles");
 
 				// Clear the Vpc list and display it.
 				if (clearList) {
@@ -105,7 +103,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				getView().setUserLoggedIn(userLoggedIn);
 
 				// Request the Vpc list now.
-				refreshList(userLoggedIn);
+				refreshList(user);
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -130,7 +128,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	}
 
 	@Override
-	public void selectElasticIp(ElasticIpPojo selected) {
+	public void selectVpnConnectionProfile(VpnConnectionProfilePojo selected) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -144,11 +142,11 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	}
 
 	@Override
-	public ElasticIpQueryFilterPojo getFilter() {
+	public VpnConnectionProfileQueryFilterPojo getFilter() {
 		return filter;
 	}
 
-	public void setFilter(ElasticIpQueryFilterPojo filter) {
+	public void setFilter(VpnConnectionProfileQueryFilterPojo filter) {
 		this.filter = filter;
 	}
 
@@ -158,34 +156,33 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	}
 
 	@Override
-	public void deleteElasticIp(ElasticIpSummaryPojo selected) {
+	public void deleteVpnConnectionProfile(VpnConnectionProfileSummaryPojo selected) {
 		selectedSummary = selected;
 		VpcpConfirm.confirm(
-			ListElasticIpPresenter.this, 
-			"Confirm Delete Elastic IP", 
-			"Delete the Elastic IP " + selectedSummary.getElasticIp().getElasticIpAddress() + "?");
+			ListVpnConnectionProfilePresenter.this, 
+			"Confirm Delete VPN Connection Profile", 
+			"Delete the VPN Connection Profile " + selectedSummary.getProfile().getVpcNetwork() + "?");
 	}
 
 	/**
 	 * Refresh the CIDR list.
 	 */
-	private void refreshList(final UserAccountPojo user) {
+	public void refreshList(final UserAccountPojo user) {
 		// use RPC to get all Vpcs for the current filter being used
-		AsyncCallback<ElasticIpQueryResultPojo> callback = new AsyncCallback<ElasticIpQueryResultPojo>() {
+		AsyncCallback<VpnConnectionProfileQueryResultPojo> callback = new AsyncCallback<VpnConnectionProfileQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitDialog();
                 getView().hidePleaseWaitPanel();
-				log.log(Level.SEVERE, "Exception Retrieving Elastic IPs", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of Elastic IPs.  " +
+						"server retrieving your list of VPN Connection Profiles.  " +
 						"Message from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(ElasticIpQueryResultPojo result) {
-				GWT.log("Got " + result.getResults().size() + " ElasticIPs for " + result.getFilterUsed());
-				setElasticIpSummaryList(result.getResults());
+			public void onSuccess(VpnConnectionProfileQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " VPN Connection Profiles for " + result.getFilterUsed());
+				setVpnConnectionProfileSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
@@ -201,13 +198,13 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			}
 		};
 
-		GWT.log("refreshing ElasticIP list...");
-		VpcProvisioningService.Util.getInstance().getElasticIpsForFilter(filter, callback);
+		GWT.log("refreshing VPN Connection Profile list...");
+		VpcProvisioningService.Util.getInstance().getVpnConnectionProfilesForFilter(filter, callback);
 	}
 
-	private void setElasticIpSummaryList(List<ElasticIpSummaryPojo> list) {
-		getView().setElasticIpSummaries(list);
-		eventBus.fireEventFromSource(new ElasticIpListUpdateEvent(list), this);
+	private void setVpnConnectionProfileSummaryList(List<VpnConnectionProfileSummaryPojo> list) {
+		getView().setVpnConnectionProfileSummaries(list);
+		eventBus.fireEventFromSource(new VpnConnectionProfileListUpdateEvent(list), this);
 	}
 
 	public VpcPojo getVpc() {
@@ -232,13 +229,13 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			@Override
 			public void onSuccess(Void result) {
 				// remove from dataprovider
-				getView().removeElasticIpSummaryFromView(selectedSummary);
+				getView().removeVpnConnectionProfileSummaryFromView(selectedSummary);
 				getView().hidePleaseWaitDialog();
 				// status message
-				getView().showStatus(getView().getStatusMessageSource(), "Elastic IP was deleted.");
+				getView().showStatus(getView().getStatusMessageSource(), "VPN Connection Profile was deleted.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().deleteElasticIp(selectedSummary.getElasticIp(), callback);
+		VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfile(selectedSummary.getProfile(), callback);
 	}
 
 	@Override
@@ -248,7 +245,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	}
 
 	@Override
-	public void deleteElasticIps(List<ElasticIpSummaryPojo> summaries) {
+	public void deleteVpnConnectionProfiles(List<VpnConnectionProfileSummaryPojo> summaries) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -256,18 +253,24 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	void showDeleteListStatus(int createdCount, int totalToCreate, StringBuffer errors) {
 		if (errors.length() == 0) {
 			getView().hidePleaseWaitDialog();
-			getView().showStatus(null, createdCount + " out of " + totalToCreate + " ElasticIP(s) were created.");
+			getView().showStatus(null, createdCount + " out of " + totalToCreate + " VPN Connection Profile(s) were created.");
 		}
 		else {
 			getView().hidePleaseWaitDialog();
-			errors.insert(0, createdCount + " out of " + totalToCreate + " ElasticIP(s) were created.  "
+			errors.insert(0, createdCount + " out of " + totalToCreate + " VPN Connection Profile(s) were created.  "
 				+ "Below are the errors that occurred:</br>");
 			getView().showMessageToUser(errors.toString());
 		}
 	}
 
 	@Override
-	public void setSelectedSummaries(List<ElasticIpSummaryPojo> summaries) {
+	public void setSelectedSummaries(List<VpnConnectionProfileSummaryPojo> summaries) {
 		selectedSummaries = summaries;
+	}
+
+	@Override
+	public void filterByVpcAddress(String vpcAddress) {
+		// TODO Auto-generated method stub
+		
 	}
 }

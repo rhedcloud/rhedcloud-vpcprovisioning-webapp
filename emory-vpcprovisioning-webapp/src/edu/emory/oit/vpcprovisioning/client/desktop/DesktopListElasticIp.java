@@ -2,6 +2,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
@@ -31,8 +32,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
@@ -44,14 +45,14 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpView {
 	Presenter presenter;
 	private ListDataProvider<ElasticIpSummaryPojo> dataProvider = new ListDataProvider<ElasticIpSummaryPojo>();
-	private SingleSelectionModel<ElasticIpSummaryPojo> selectionModel;
+	private MultiSelectionModel<ElasticIpSummaryPojo> selectionModel;
 	List<ElasticIpSummaryPojo> elasticIpList = new java.util.ArrayList<ElasticIpSummaryPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
 	@UiField SimplePager elasticIpListPager;
-	@UiField Button allocateAddressButton;
+	@UiField Button createElasticIpButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<ElasticIpSummaryPojo> elasticIpListTable = new CellTable<ElasticIpSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -70,8 +71,8 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
-	@UiHandler("allocateAddressButton")
-	void allocateAddressButtonClicked(ClickEvent e) {
+	@UiHandler("createElasticIpButton")
+	void createIpButtonClicked(ClickEvent e) {
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_ELASTIC_IP);
 	}
 	
@@ -82,65 +83,45 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(3, 1);
+	    Grid grid = new Grid(1, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 
-		Anchor releaseAddressesAnchor = new Anchor("Release Addresses");
+		Anchor releaseAddressesAnchor = new Anchor("Delete Address(es)");
 		releaseAddressesAnchor.addStyleName("productAnchor");
 		releaseAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		releaseAddressesAnchor.setTitle("Release selected addresses");
+		releaseAddressesAnchor.setTitle("Delete selected address(es)");
 		releaseAddressesAnchor.ensureDebugId(releaseAddressesAnchor.getText());
 		releaseAddressesAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
-				if (m != null) {
-					showMessageToUser("Will release address");
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one or more item(s) from the list");
+					return;
 				}
-				else {
-					showMessageToUser("Please select an item from the list");
+				
+				// TODO: presenter.deleteElasticIps(ipsToDelete);
+				
+				Iterator<ElasticIpSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				while (nIter.hasNext()) {
+					ElasticIpSummaryPojo m = nIter.next();
+					if (m != null) {
+						// remove the elastic ip if it's NOT assigned
+						if (m.getElasticIpAssignment() != null) {
+							showMessageToUser("You cannot delete an Elastic IP that has an assignment associated to it.");
+						}
+						else {
+							presenter.deleteElasticIp(m);
+						}
+					}
+					else {
+						showMessageToUser("Please select one or more item(s) from the list");
+					}
 				}
 			}
 		});
 		grid.setWidget(0, 0, releaseAddressesAnchor);
-		
-		Anchor associateAddressesAnchor = new Anchor("Associate Addresses");
-		associateAddressesAnchor.addStyleName("productAnchor");
-		associateAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		associateAddressesAnchor.setTitle("Associate selected addresses");
-		associateAddressesAnchor.ensureDebugId(associateAddressesAnchor.getText());
-		associateAddressesAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
-			}
-		});
-		associateAddressesAnchor.setEnabled(false);
-		grid.setWidget(1, 0, associateAddressesAnchor);
-		
-		Anchor disassociateAddressesAnchor = new Anchor("Disassociate Addresses");
-		disassociateAddressesAnchor.addStyleName("productAnchor");
-		disassociateAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		disassociateAddressesAnchor.setTitle("Disassociate selected addresses");
-		disassociateAddressesAnchor.ensureDebugId(disassociateAddressesAnchor.getText());
-		disassociateAddressesAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
-				if (m != null) {
-					showMessageToUser("Will dis-associate address");
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
-				}
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
-			}
-		});
-		grid.setWidget(2, 0, disassociateAddressesAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
@@ -159,14 +140,14 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		actionsButton.setEnabled(true);
-		allocateAddressButton.setEnabled(true);
+		actionsButton.setEnabled(false);
+		createElasticIpButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		actionsButton.setEnabled(false);
-		allocateAddressButton.setEnabled(false);
+		createElasticIpButton.setEnabled(false);
 	}
 
 	@Override
@@ -206,14 +187,14 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		dataProvider.getList().addAll(this.elasticIpList);
 		
 		selectionModel = 
-	    	new SingleSelectionModel<ElasticIpSummaryPojo>(ElasticIpSummaryPojo.KEY_PROVIDER);
+	    	new MultiSelectionModel<ElasticIpSummaryPojo>(ElasticIpSummaryPojo.KEY_PROVIDER);
 		elasticIpListTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 	    	@Override
 	    	public void onSelectionChange(SelectionChangeEvent event) {
-	    		ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
-	    		GWT.log("Selected elsticIp is: " + m.getClass().getName());
+//	    		ElasticIpSummaryPojo m = selectionModel.getSelectedObject();
+//	    		GWT.log("Selected elsticIp is: " + m.getClass().getName());
 	    	}
 	    });
 
@@ -280,13 +261,13 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 			
 			@Override
 			public SafeHtml getValue(ElasticIpSummaryPojo object) {
-				if (object.getElasticIp() != null) {
+				if (object.getElasticIpAssignment() == null) {
 					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("Unassigned");
 				}
 				else {
 					// TODO: more content here
 					String s =
-						"<b>Assigned</b><br>";
+						"<b>Assigned </b>to VPC: " + object.getElasticIpAssignment().getOwnerId();
 					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(s);
 				}
 			}
@@ -458,9 +439,8 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	}
 
 	@Override
-	public void removeElasticIpSummaryFromView(ElasticIpSummaryPojo elasticIp) {
-		// TODO Auto-generated method stub
-		
+	public void removeElasticIpSummaryFromView(ElasticIpSummaryPojo summary) {
+		dataProvider.getList().remove(summary);
 	}
 
 	@Override
@@ -487,8 +467,10 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		// TODO: TEMPOARY
+		// normally these should be disabled.
+		actionsButton.setEnabled(true);
+		createElasticIpButton.setEnabled(true);
 	}
 
 	@Override
@@ -517,19 +499,19 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 	@Override
 	public void disableButtons() {
-		allocateAddressButton.setEnabled(false);
+		createElasticIpButton.setEnabled(false);
 		actionsButton.setEnabled(false);
 	}
 
 	@Override
 	public void enableButtons() {
-		allocateAddressButton.setEnabled(true);
+		createElasticIpButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
-		
+		actionsButton.setEnabled(true);
+		createElasticIpButton.setEnabled(true);
 	}
 }

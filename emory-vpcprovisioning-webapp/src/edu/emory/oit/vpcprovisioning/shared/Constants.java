@@ -143,4 +143,11 @@ public class Constants implements IsSerializable {
 	public static final String MOA_STATIC_NAT_DEPROVISIONING_QUERY_SPEC = "StaticNatDeprovisioningQuerySpecification.v1_0";
 	
 	public static final String NOTIFICATION_TYPE_CENTRAL_ADMIN = "Central Admin Initiated";
+	public static final String LIST_ELASTIC_IP = "listElasticIp";
+	public static final String LIST_VPN_CONNECTION = "listVpnConnection";
+	public static final String LIST_VPN_CONNECTION_PROFILE = "listVpnConnectionProfile";
+	public static final String MOA_VPN_CONNECTION_PROFILE_QUERY_SPEC = "VpnConnectionProfileQuerySpecification.v1_0";
+	public static final String MOA_VPN_CONNECTION_PROFILE = "VpnConnectionProfile.v1_0";
+	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC = "VpnConnectionProfileAssignmentQuerySpecification.v1_0";
+	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT = "VpnConnectionProfileAssignment.v1_0";
 }

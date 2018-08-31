@@ -1,4 +1,4 @@
-package edu.emory.oit.vpcprovisioning.presenter.elasticip;
+package edu.emory.oit.vpcprovisioning.presenter.vpn;
 
 import java.util.Date;
 import java.util.List;
@@ -14,15 +14,15 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 
-public class MaintainElasticIpPresenter extends PresenterBase implements MaintainElasticIpView.Presenter {
+public class MaintainVpnConnectionProfilePresenter extends PresenterBase implements MaintainVpnConnectionProfileView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
-	private String elasticIpId;
-	private ElasticIpPojo elasticIp;
-	private MaintainElasticIpView view;
+	private String vpnConnectionProfileId;
+	private VpnConnectionProfilePojo vpnConnectionProfile;
+	private MaintainVpnConnectionProfileView view;
 	private UserAccountPojo userLoggedIn;
 	int createdCount = 0;
 	boolean showStatus = false;
@@ -37,21 +37,21 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	/**
 	 * For creating a new CIDR.
 	 */
-	public MaintainElasticIpPresenter(ClientFactory clientFactory) {
+	public MaintainVpnConnectionProfilePresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
-		this.elasticIp = null;
-		this.elasticIpId = null;
+		this.vpnConnectionProfile = null;
+		this.vpnConnectionProfileId = null;
 		this.clientFactory = clientFactory;
 	}
 
 	/**
 	 * For editing an existing CIDR.
 	 */
-	public MaintainElasticIpPresenter(ClientFactory clientFactory, ElasticIpPojo pojo) {
+	public MaintainVpnConnectionProfilePresenter(ClientFactory clientFactory, VpnConnectionProfilePojo pojo) {
 		this.isEditing = true;
-		this.elasticIpId = pojo.getElasticIpId();
+		this.vpnConnectionProfileId = pojo.getVpnConnectionProfileId();
 		this.clientFactory = clientFactory;
-		this.elasticIp = pojo;
+		this.vpnConnectionProfile = pojo;
 	}
 
 	@Override
@@ -67,11 +67,11 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		if (elasticIpId == null) {
-			clientFactory.getShell().setSubTitle("Create Elastic IP");
+		if (vpnConnectionProfileId == null) {
+			clientFactory.getShell().setSubTitle("Create VPN Connection Profile");
 			startCreate();
 		} else {
-			clientFactory.getShell().setSubTitle("Edit Elastic IP");
+			clientFactory.getShell().setSubTitle("Edit VPN Connection Profile");
 			startEdit();
 		}
 
@@ -112,7 +112,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	private void startCreate() {
 		isEditing = false;
 		getView().setEditing(false);
-		elasticIp = new ElasticIpPojo();
+		vpnConnectionProfile = new VpnConnectionProfilePojo();
 	}
 
 	private void startEdit() {
@@ -125,7 +125,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	@Override
 	public void stop() {
 		eventBus = null;
-		clientFactory.getMaintainElasticIpView().setLocked(false);
+		clientFactory.getMaintainVpnConnectionProfileView().setLocked(false);
 	}
 	
 	@Override
@@ -138,12 +138,12 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		return getView().asWidget();
 	}
 	@Override
-	public void deleteElasticIp() {
+	public void deleteVpnConnectionProfile() {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void createElasticIps(List<ElasticIpPojo> ips) {
+	public void createVpnConnectionProfiles(List<VpnConnectionProfilePojo> ips) {
 		createdCount = 0;
 		showStatus = false;
 
@@ -154,17 +154,17 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		
 		final StringBuffer errors = new StringBuffer();
 		for (int i=0; i<ips.size(); i++) {
-			final ElasticIpPojo eip = ips.get(i);
-			eip.setCreateTime(new Date());
-			eip.setCreateUser(userLoggedIn.getPublicId());
+			final VpnConnectionProfilePojo profile = ips.get(i);
+			profile.setCreateTime(new Date());
+			profile.setCreateUser(userLoggedIn.getPublicId());
 			final int listCounter = i;
 			
-			AsyncCallback<ElasticIpPojo> callback = new AsyncCallback<ElasticIpPojo>() {
+			AsyncCallback<VpnConnectionProfilePojo> callback = new AsyncCallback<VpnConnectionProfilePojo>() {
 				@Override
 				public void onFailure(Throwable caught) {
-					GWT.log("Exception saving the ElasticIP: " + eip.getElasticIpAddress(), caught);
+					GWT.log("Exception saving the VPN ConnectionProfile: " + profile.getVpcNetwork(), caught);
 					errors.append("There was an exception on the " +
-							"server saving the ElasticIP (" + eip.getElasticIpAddress() + ").  " +
+							"server saving the VPN ConnectionProfile (" + profile.getVpcNetwork() + ").  " +
 							"Message from server is: " + caught.getMessage());
 					if (!showStatus) {
 						errors.append("\n");
@@ -175,7 +175,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 				}
 
 				@Override
-				public void onSuccess(ElasticIpPojo result) {
+				public void onSuccess(VpnConnectionProfilePojo result) {
 					createdCount++;
 					if (listCounter == totalToCreate - 1) {
 						showStatus = true;
@@ -183,8 +183,8 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 				}
 			};
 
-			GWT.log("[MaintainElasticIpPresenter] creating ElsticIp: " + eip.getElasticIpAddress());
-			VpcProvisioningService.Util.getInstance().createElasticIp(eip, callback);
+			GWT.log("[MaintainVpnConnectionProfilePresenter] creating VPN Connection Profile: " + profile.getVpcNetwork());
+			VpcProvisioningService.Util.getInstance().createVpnConnectionProfile(profile, callback);
 		}
 		if (!showStatus) {
 			// wait for all the creates to finish processing
@@ -205,34 +205,34 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		}
 	}
 	@Override
-	public void saveElasticIp() {
-		getView().showPleaseWaitDialog("Saving Elastic IP(s)...");
+	public void saveVpnConnectionProfile() {
+		getView().showPleaseWaitDialog("Saving VPN Connection Profile...");
 		if (!isFormValid()) {
 			return;
 		}
-		AsyncCallback<ElasticIpPojo> callback = new AsyncCallback<ElasticIpPojo>() {
+		AsyncCallback<VpnConnectionProfilePojo> callback = new AsyncCallback<VpnConnectionProfilePojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception saving the ElasticIp", caught);
+				GWT.log("Exception saving the VpnConnectionProfile", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the ElasticIp.  Message " +
+						"server saving the VpnConnectionProfile.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(ElasticIpPojo result) {
+			public void onSuccess(VpnConnectionProfilePojo result) {
 				getView().hidePleaseWaitDialog();
-				ActionEvent.fire(eventBus, ActionNames.ELASTIC_IP_SAVED, result);
+				ActionEvent.fire(eventBus, ActionNames.VPN_CONNECTION_PROFILE_SAVED, result);
 			}
 		};
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().createElasticIp(elasticIp, callback);
+			VpcProvisioningService.Util.getInstance().createVpnConnectionProfile(vpnConnectionProfile, callback);
 		}
 		else {
 			// it's an update
-			VpcProvisioningService.Util.getInstance().updateElasticIp(elasticIp, callback);
+			VpcProvisioningService.Util.getInstance().updateVpnConnectionProfile(vpnConnectionProfile, callback);
 		}
 	}
 	private boolean isFormValid() {
@@ -255,18 +255,18 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	void showCreateListStatus(int createdCount, int totalToCreate, StringBuffer errors) {
 		if (errors.length() == 0) {
 			getView().hidePleaseWaitDialog();
-			getView().showStatus(null, createdCount + " out of " + totalToCreate + " ElasticIP(s) were created.");
+			getView().showStatus(null, createdCount + " out of " + totalToCreate + " VPN ConnectionProfile(s) were created.");
 		}
 		else {
 			getView().hidePleaseWaitDialog();
-			errors.insert(0, createdCount + " out of " + totalToCreate + " ElasticIP(s) were created.  "
+			errors.insert(0, createdCount + " out of " + totalToCreate + " VPN ConnectionProfile(s) were created.  "
 				+ "Below are the errors that occurred:</br>");
 			getView().showMessageToUser(errors.toString());
 		}
 	}
 	@Override
-	public ElasticIpPojo getElasticIp() {
-		return this.elasticIp;
+	public VpnConnectionProfilePojo getVpnConnectionProfile() {
+		return this.vpnConnectionProfile;
 	}
 	@Override
 	public EventBus getEventBus() {
@@ -281,23 +281,23 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		return clientFactory;
 	}
 
-	public MaintainElasticIpView getView() {
+	public MaintainVpnConnectionProfileView getView() {
 		if (view == null) {
-			view = clientFactory.getMaintainElasticIpView();
+			view = clientFactory.getMaintainVpnConnectionProfileView();
 			view.setPresenter(this);
 		}
 		return view;
 	}
 
-	public String getElasticIpId() {
-		return elasticIpId;
+	public String getVpnConnectionProfileId() {
+		return vpnConnectionProfileId;
 	}
 
-	public void setElasticIpId(String elasticIpId) {
-		this.elasticIpId = elasticIpId;
+	public void setVpnConnectionProfileId(String vpnConnectionProfileId) {
+		this.vpnConnectionProfileId = vpnConnectionProfileId;
 	}
 
-	public void setElasticIp(ElasticIpPojo elasticIp) {
-		this.elasticIp = elasticIp;
+	public void setVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) {
+		this.vpnConnectionProfile = vpnConnectionProfile;
 	}
 }

@@ -10,6 +10,7 @@ public class VpnConnectionProfilePojo extends SharedObject implements IsSerializ
 	String vpnConnectionProfileId;
 	String vpcNetwork;
 	List<TunnelProfilePojo> tunnelProfiles = new java.util.ArrayList<TunnelProfilePojo>();
+	VpnConnectionProfilePojo baseline;
 	
 	public VpnConnectionProfilePojo() {
 		// TODO Auto-generated constructor stub
@@ -37,6 +38,14 @@ public class VpnConnectionProfilePojo extends SharedObject implements IsSerializ
 
 	public void setTunnelProfiles(List<TunnelProfilePojo> tunnelProfiles) {
 		this.tunnelProfiles = tunnelProfiles;
+	}
+
+	public VpnConnectionProfilePojo getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(VpnConnectionProfilePojo baseline) {
+		this.baseline = baseline;
 	}
 
 }

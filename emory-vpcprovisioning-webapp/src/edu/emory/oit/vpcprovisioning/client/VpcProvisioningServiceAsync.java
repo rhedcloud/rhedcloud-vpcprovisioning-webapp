@@ -56,7 +56,6 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
@@ -113,6 +112,11 @@ import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryResultPojo;
 
 public interface VpcProvisioningServiceAsync {
 	// START TEMPORARY
@@ -202,7 +206,7 @@ public interface VpcProvisioningServiceAsync {
 	void getElasticIpsForFilter(ElasticIpQueryFilterPojo filter, AsyncCallback<ElasticIpQueryResultPojo> callback);
 	void createElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpPojo> callback);
 	void updateElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpPojo> callback);
-	void deleteElasticIpSummary(ElasticIpSummaryPojo cidr, AsyncCallback<Void> callback);
+	void deleteElasticIp(ElasticIpPojo cidr, AsyncCallback<Void> callback);
 	void isElasticIpAssigned(ElasticIpPojo cidr, AsyncCallback<Boolean> callback);
 	void getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpAssignmentStatusPojo> callback);
 
@@ -310,4 +314,11 @@ public interface VpcProvisioningServiceAsync {
 	void getStaticNatProvisioningsForFilter(StaticNatProvisioningQueryFilterPojo filter, AsyncCallback<StaticNatProvisioningQueryResultPojo> callback);
 	void getStaticNatDeprovisioningsForFilter(StaticNatDeprovisioningQueryFilterPojo filter, AsyncCallback<StaticNatDeprovisioningQueryResultPojo> callback);
 
+	// vpn connection profiles and assignments
+	void getVpnConnectionProfilesForFilter(VpnConnectionProfileQueryFilterPojo filter, AsyncCallback<VpnConnectionProfileQueryResultPojo> callback);
+	void createVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<VpnConnectionProfilePojo> callback);
+	void updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<VpnConnectionProfilePojo> callback);
+	void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<Void> callback);
+	void getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter, AsyncCallback<VpnConnectionProfileAssignmentQueryResultPojo> callback);
+	
 }

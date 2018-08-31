@@ -49,6 +49,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
 
 public class ClientFactoryImplMobile implements ClientFactory {
 	private final EventBus eventBus = new SimpleEventBus();
@@ -98,6 +100,8 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainSrdView maintainSrdView;
 	private MaintainTermsOfUseAgreementView maintainTermsOfUseAgreementView;
 	private ListStaticNatProvisioningSummaryView listStaticNatProvisioningSummaryView;
+	private ListVpnConnectionProfileView listVpnConnectionProfileView;
+	private MaintainVpnConnectionProfileView maintainVpnConnectionProfileView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -333,6 +337,16 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public ListStaticNatProvisioningSummaryView getListStaticNatProvisioningSummaryView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListVpnConnectionProfileView getListVpnConnectionProfileView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainVpnConnectionProfileView getMaintainVpnConnectionProfileView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

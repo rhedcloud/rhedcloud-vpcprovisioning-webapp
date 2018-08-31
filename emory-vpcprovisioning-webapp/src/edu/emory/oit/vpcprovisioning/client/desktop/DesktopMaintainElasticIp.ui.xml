@@ -5,6 +5,7 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
+		<!-- 
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="12">
 				<g:row>
@@ -26,6 +27,28 @@
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>
+		</g:cell>
+		 -->
+    	<!-- TODO: give users ability to keep adding more on this same page -->
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+			<g:ScrollPanel>
+				<g:VerticalPanel spacing="8" ui:field="emailsVP" height="100%">
+					<g:Label addStyleNames="{style.mediumLabel}">Add/remove Elastic IPs:</g:Label>
+					<g:HorizontalPanel ui:field="addElasticIpHP" spacing="16">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:TextBox ui:field="addElasticIpTF" debugId="addElasticIpTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:Button ui:field="addElasticIpButton" debugId="addElasticIpButton"
+								addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+						</g:cell>
+					</g:HorizontalPanel>
+					<g:VerticalPanel spacing="8">
+						<g:Label addStyleNames="{style.mediumLabel}">Elastic IPs you want to create:</g:Label>
+						<g:FlexTable ui:field="elasticIpTable" debugId="elasticIpTable" cellSpacing="3" cellPadding="3"/>
+					</g:VerticalPanel>
+				</g:VerticalPanel>
+			</g:ScrollPanel>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">

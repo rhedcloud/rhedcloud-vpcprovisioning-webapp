@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.shared.GWT;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -346,8 +345,8 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 		}
 		else {
 			getView().hidePleaseWaitDialog();
-			errors.append(createdCount + " out of " + totalToCreate + " Notification(s) were created.  "
-				+ "Below are the errors that occurred:\n\n");
+			errors.insert(0, createdCount + " out of " + totalToCreate + " Notification(s) were created.  "
+					+ "Below are the errors that occurred:</br>");
 			getView().showMessageToUser(errors.toString());
 		}
 	}

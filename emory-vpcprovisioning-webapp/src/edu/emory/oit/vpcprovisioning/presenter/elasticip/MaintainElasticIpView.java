@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.elasticip;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -24,6 +26,7 @@ public interface MaintainElasticIpView extends Editor<ElasticIpPojo>, IsWidget, 
 		 * inputs.
 		 */
 		void saveElasticIp();
+		void createElasticIps(List<ElasticIpPojo> ips);
 		ElasticIpPojo getElasticIp();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();

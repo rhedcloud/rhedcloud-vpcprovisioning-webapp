@@ -1,0 +1,617 @@
+package edu.emory.oit.vpcprovisioning.client.desktop;
+
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.SafeHtmlCell;
+import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.SelectionChangeEvent;
+
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
+
+public class DesktopListVpnConnectionProfile extends ViewImplBase implements ListVpnConnectionProfileView {
+	Presenter presenter;
+	private ListDataProvider<VpnConnectionProfileSummaryPojo> dataProvider = new ListDataProvider<VpnConnectionProfileSummaryPojo>();
+	private MultiSelectionModel<VpnConnectionProfileSummaryPojo> selectionModel;
+	List<VpnConnectionProfileSummaryPojo> profileList = new java.util.ArrayList<VpnConnectionProfileSummaryPojo>();
+	UserAccountPojo userLoggedIn;
+	PopupPanel actionsPopup = new PopupPanel(true);
+
+	/*** FIELDS ***/
+	@UiField
+	SimplePager listPager;
+	@UiField
+	Button createButton;
+	@UiField
+	Button actionsButton;
+	@UiField(provided = true)
+	CellTable<VpnConnectionProfileSummaryPojo> listTable = new CellTable<VpnConnectionProfileSummaryPojo>(15,
+			(CellTable.Resources) GWT.create(MyCellTableResources.class));
+	@UiField
+	HorizontalPanel pleaseWaitPanel;
+	@UiField
+	HTML pleaseWaitHTML;
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
+	@UiField PushButton refreshButton;
+	@UiField HTML filteredHTML;
+
+
+	public interface MyCellTableResources extends CellTable.Resources {
+
+		@Source({ CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+		public CellTable.Style cellTableStyle();
+	}
+
+	private static DesktopListVpnConnectionProfileUiBinder uiBinder = GWT
+			.create(DesktopListVpnConnectionProfileUiBinder.class);
+
+	interface DesktopListVpnConnectionProfileUiBinder extends UiBinder<Widget, DesktopListVpnConnectionProfile> {
+	}
+
+	public DesktopListVpnConnectionProfile() {
+		initWidget(uiBinder.createAndBindUi(this));
+		setRefreshButtonImage(refreshButton);
+	}
+
+	@UiHandler ("filterTB")
+	void addEmailTFKeyPressed(KeyPressEvent e) {
+        int keyCode = e.getNativeEvent().getKeyCode();
+        if (keyCode == KeyCodes.KEY_ENTER) {
+    		presenter.filterByVpcAddress(filterTB.getText());
+        }
+	}
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		presenter.filterByVpcAddress(filterTB.getText());
+	}
+	
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		filterTB.setText("");
+		presenter.refreshList(userLoggedIn);
+		this.hideFilteredStatus();
+	}
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		filterTB.setText("");
+		presenter.refreshList(userLoggedIn);
+	}
+
+	@UiHandler("createButton")
+	void createButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
+	}
+
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+		actionsPopup.setAutoHideEnabled(true);
+		actionsPopup.setAnimationEnabled(true);
+		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid = new Grid(1, 1);
+		grid.setCellSpacing(8);
+		actionsPopup.add(grid);
+
+		// TODO:
+		// - view/maintain
+
+		Anchor releaseAddressesAnchor = new Anchor("Delete Profile(es)");
+		releaseAddressesAnchor.addStyleName("productAnchor");
+		releaseAddressesAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		releaseAddressesAnchor.setTitle("Delete selected profile(es)");
+		releaseAddressesAnchor.ensureDebugId(releaseAddressesAnchor.getText());
+		releaseAddressesAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one or more item(s) from the list");
+					return;
+				}
+
+				// TODO: presenter.deleteVpnConnectionProfiles(profilesToDelete);
+
+				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				while (nIter.hasNext()) {
+					VpnConnectionProfileSummaryPojo m = nIter.next();
+					if (m != null) {
+						// remove the elastic ip if it's NOT assigned
+						if (m.getAssignment() != null) {
+							showMessageToUser("You cannot delete a profile that has an assignment associated to it.");
+						} else {
+							presenter.deleteVpnConnectionProfile(m);
+						}
+					} else {
+						showMessageToUser("Please select one or more item(s) from the list");
+					}
+				}
+			}
+		});
+		grid.setWidget(0, 0, releaseAddressesAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
+	}
+
+	@Override
+	public void hidePleaseWaitPanel() {
+		pleaseWaitPanel.setVisible(false);
+	}
+
+	@Override
+	public void showPleaseWaitPanel(String pleaseWaitHTML) {
+		if (pleaseWaitHTML == null || pleaseWaitHTML.length() == 0) {
+			this.pleaseWaitHTML.setHTML("Please wait...");
+		} else {
+			this.pleaseWaitHTML.setHTML(pleaseWaitHTML);
+		}
+		this.pleaseWaitPanel.setVisible(true);
+	}
+
+	@Override
+	public void setInitialFocus() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Widget getStatusMessageSource() {
+		return actionsButton;
+	}
+
+	@Override
+	public void applyNetworkAdminMask() {
+		createButton.setEnabled(true);
+		actionsButton.setEnabled(true);
+	}
+
+	@Override
+	public void applyCentralAdminMask() {
+		createButton.setEnabled(true);
+		actionsButton.setEnabled(true);
+	}
+
+	@Override
+	public void applyAWSAccountAdminMask() {
+		createButton.setEnabled(false);
+		actionsButton.setEnabled(false);
+	}
+
+	@Override
+	public void applyAWSAccountAuditorMask() {
+		createButton.setEnabled(false);
+		actionsButton.setEnabled(false);
+	}
+
+	@Override
+	public void setUserLoggedIn(UserAccountPojo user) {
+		this.userLoggedIn = user;
+	}
+
+	@Override
+	public List<Widget> getMissingRequiredFields() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void resetFieldStyles() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public HasClickHandlers getCancelWidget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasClickHandlers getOkayWidget() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void vpcpPromptOkay(String valueEntered) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void vpcpPromptCancel() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void disableButtons() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void enableButtons() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void clearList() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setPresenter(Presenter presenter) {
+		this.presenter = presenter;
+	}
+
+	@Override
+	public void setVpnConnectionProfileSummaries(List<VpnConnectionProfileSummaryPojo> summaries) {
+		this.profileList = summaries;
+		this.initializeListTable();
+		listPager.setDisplay(listTable);
+	}
+
+	private void initializeListTable() {
+		GWT.log("initializing ElasticIP list table...");
+		listTable.setTableLayoutFixed(false);
+		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		// set range to display
+		listTable.setVisibleRange(0, 15);
+
+		// create dataprovider
+		dataProvider = new ListDataProvider<VpnConnectionProfileSummaryPojo>();
+		dataProvider.addDataDisplay(listTable);
+		dataProvider.getList().clear();
+		dataProvider.getList().addAll(this.profileList);
+
+		selectionModel = new MultiSelectionModel<VpnConnectionProfileSummaryPojo>(
+				VpnConnectionProfileSummaryPojo.KEY_PROVIDER);
+		listTable.setSelectionModel(selectionModel);
+
+		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				// VpnConnectionProfileSummaryPojo m = selectionModel.getSelectedObject();
+				// GWT.log("Selected elsticIp is: " + m.getClass().getName());
+			}
+		});
+
+		ListHandler<VpnConnectionProfileSummaryPojo> sortHandler = new ListHandler<VpnConnectionProfileSummaryPojo>(
+				dataProvider.getList());
+		listTable.addColumnSortHandler(sortHandler);
+
+		if (listTable.getColumnCount() == 0) {
+			initListTableColumns(sortHandler);
+		}
+	}
+
+	private void initListTableColumns(ListHandler<VpnConnectionProfileSummaryPojo> sortHandler) {
+		GWT.log("initializing VpnConnectionProfileSummary list table columns...");
+
+		Column<VpnConnectionProfileSummaryPojo, Boolean> checkColumn = new Column<VpnConnectionProfileSummaryPojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(VpnConnectionProfileSummaryPojo object) {
+				// Get the value from the selection model.
+				return selectionModel.isSelected(object);
+			}
+		};
+		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		// Account id column
+		Column<VpnConnectionProfileSummaryPojo, String> elasticIpColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(VpnConnectionProfileSummaryPojo object) {
+				return object.getProfile().getVpnConnectionProfileId();
+			}
+		};
+		elasticIpColumn.setSortable(true);
+		sortHandler.setComparator(elasticIpColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				return o1.getProfile().getVpnConnectionProfileId()
+						.compareTo(o2.getProfile().getVpnConnectionProfileId());
+			}
+		});
+		listTable.addColumn(elasticIpColumn, "Profile ID");
+
+		// VPC id column
+		Column<VpnConnectionProfileSummaryPojo, String> associatedIpColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(VpnConnectionProfileSummaryPojo object) {
+				return object.getProfile().getVpcNetwork();
+			}
+		};
+		associatedIpColumn.setSortable(true);
+		sortHandler.setComparator(associatedIpColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				return o1.getProfile().getVpcNetwork().compareTo(o2.getProfile().getVpcNetwork());
+			}
+		});
+		listTable.addColumn(associatedIpColumn, "VPC Network");
+
+		Column<VpnConnectionProfileSummaryPojo, SafeHtml> tunnelProfileColumn = new Column<VpnConnectionProfileSummaryPojo, SafeHtml>(
+				new SafeHtmlCell()) {
+
+			@Override
+			public SafeHtml getValue(VpnConnectionProfileSummaryPojo object) {
+				if (object.getProfile().getTunnelProfiles().size() > 0) {
+					StringBuffer sbuf = new StringBuffer();
+					/*
+						<p>Collapsible Set:</p>
+						<button class="collapsible">Open Section 1</button>
+						<div class="content">
+						  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+						</div>
+						<button class="collapsible">Open Section 2</button>
+						<div class="content">
+						  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+						</div>
+						<button class="collapsible">Open Section 3</button>
+						<div class="content">
+						  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+						</div>
+					 */
+					for (int i=0; i<object.getProfile().getTunnelProfiles().size(); i++) {
+						TunnelProfilePojo tpp = object.getProfile().getTunnelProfiles().get(i);
+//						sbuf.append("<button class=\"collapsible\">" + tpp.getTunnelId() + "</button>");
+//						sbuf.append("<div class=\"content\">");
+						sbuf.append("<p>");
+						sbuf.append("<b>Tunnel Id: </b>" + tpp.getTunnelId() + "</br>");
+						sbuf.append("<b>Tunnel Description: </b>" + tpp.getTunnelDescription() + "</br>");
+//						sbuf.append("<b>Crypto Keyring: </b>" + tpp.getCryptoKeyringName() + "</br>");
+//						sbuf.append("<b>ISAKAMP Profile: </b>" + tpp.getIsakampProfileName() + "</br>");
+//						sbuf.append("<b>IPSEC Profile: </b>" + tpp.getIpsecProfileName() + "</br>");
+//						sbuf.append("<b>IPSEC Transform Set: </b>" + tpp.getIpsecTransformSetName() + "</br>");
+//						sbuf.append("<b>Customer Gateway IP: </b>" + tpp.getCustomerGatewayIp() + "</br>");
+//						sbuf.append("<b>VPN Inside CIDR 1: </b>" + tpp.getVpnInsideIpCidr1() + "</br>");
+//						sbuf.append("<b>VPN Inside CIDR 2: </b>" + tpp.getVpnInsideIpCidr2() + "</br>");
+						sbuf.append("</p>");
+//						sbuf.append("</div>");
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+				}
+				else {
+					String s = "No Tunnel Profile Info";
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(s);
+				}
+			}
+		};
+		tunnelProfileColumn.setSortable(true);
+		sortHandler.setComparator(tunnelProfileColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				return o1.getProfile() == null ? 0 : 1;
+			}
+		});
+		listTable.addColumn(tunnelProfileColumn, "Tunnel Profiles");
+
+		Column<VpnConnectionProfileSummaryPojo, SafeHtml> assignmentStatusColumn = new Column<VpnConnectionProfileSummaryPojo, SafeHtml>(
+				new SafeHtmlCell()) {
+
+			@Override
+			public SafeHtml getValue(VpnConnectionProfileSummaryPojo object) {
+				if (object.getAssignment() == null) {
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("Unassigned");
+				} else {
+					// TODO: more content here
+					String s = "<b>Assigned </b>to VPC: " + object.getAssignment().getOwnerId();
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(s);
+				}
+			}
+		};
+		assignmentStatusColumn.setSortable(true);
+		sortHandler.setComparator(assignmentStatusColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				return o1.getProfile() == null ? 0 : 1;
+			}
+		});
+		listTable.addColumn(assignmentStatusColumn, "Assignment Status");
+
+		// create user
+		Column<VpnConnectionProfileSummaryPojo, String> createUserColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(VpnConnectionProfileSummaryPojo object) {
+				if (object.getProfile() != null) {
+					return object.getProfile().getCreateUser();
+				} else {
+					return object.getAssignment().getCreateUser();
+				}
+			}
+		};
+		createUserColumn.setSortable(true);
+		sortHandler.setComparator(createUserColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				if (o1.getProfile() != null) {
+					return o1.getProfile().getCreateUser().compareTo(o2.getProfile().getCreateUser());
+				} else {
+					return o1.getAssignment().getCreateUser().compareTo(o2.getAssignment().getCreateUser());
+				}
+			}
+		});
+		listTable.addColumn(createUserColumn, "Create User");
+
+		// create time
+		Column<VpnConnectionProfileSummaryPojo, String> createTimeColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(VpnConnectionProfileSummaryPojo object) {
+				if (object.getProfile() != null) {
+					Date createTime = object.getProfile().getCreateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+				} else {
+					Date createTime = object.getAssignment().getCreateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+				}
+			}
+		};
+		createTimeColumn.setSortable(true);
+		sortHandler.setComparator(createTimeColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				if (o1.getProfile() != null) {
+					Date c1 = o1.getProfile().getCreateTime();
+					Date c2 = o2.getProfile().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				} else {
+					Date c1 = o1.getAssignment().getCreateTime();
+					Date c2 = o2.getAssignment().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				}
+			}
+		});
+		listTable.addColumn(createTimeColumn, "Create Time");
+
+		// last update user
+		Column<VpnConnectionProfileSummaryPojo, String> lastUpdateUserColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(VpnConnectionProfileSummaryPojo object) {
+				if (object.getProfile() != null) {
+					return object.getProfile().getUpdateUser();
+				} else {
+					return object.getAssignment().getUpdateUser();
+				}
+			}
+		};
+		lastUpdateUserColumn.setSortable(true);
+		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				if (o1.getProfile() != null) {
+					return o1.getProfile().getUpdateUser().compareTo(o2.getProfile().getUpdateUser());
+				} else {
+					return o1.getAssignment().getUpdateUser().compareTo(o2.getAssignment().getUpdateUser());
+				}
+			}
+		});
+		listTable.addColumn(lastUpdateUserColumn, "Update User");
+
+		// update time
+		Column<VpnConnectionProfileSummaryPojo, String> updateTimeColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
+				new TextCell()) {
+
+			@Override
+			public String getValue(VpnConnectionProfileSummaryPojo object) {
+				if (object.getProfile() != null) {
+					Date createTime = object.getProfile().getUpdateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+				} else {
+					Date createTime = object.getAssignment().getUpdateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+				}
+			}
+		};
+		updateTimeColumn.setSortable(true);
+		sortHandler.setComparator(updateTimeColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
+			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
+				if (o1.getProfile() != null) {
+					Date c1 = o1.getProfile().getUpdateTime();
+					Date c2 = o2.getProfile().getUpdateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				} else {
+					Date c1 = o1.getAssignment().getUpdateTime();
+					Date c2 = o2.getAssignment().getUpdateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				}
+			}
+		});
+		listTable.addColumn(updateTimeColumn, "Update Time");
+	}
+
+	@Override
+	public void setReleaseInfo(String releaseInfoHTML) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeVpnConnectionProfileSummaryFromView(VpnConnectionProfileSummaryPojo summary) {
+		dataProvider.getList().remove(summary);
+	}
+
+	@Override
+	public void showFilteredStatus() {
+		filteredHTML.setVisible(true);
+	}
+
+	@Override
+	public void hideFilteredStatus() {
+		filteredHTML.setVisible(false);
+	}
+
+}

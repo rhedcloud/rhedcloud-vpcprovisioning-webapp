@@ -4,8 +4,11 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
 public class ElasticIpAssignmentQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter  {
+//	<!ELEMENT ElasticIpAssignmentQuerySpecification (Comparison*, QueryLanguage?,ElasticIpAssignmentId?, OwnerId?,ElasticIpId?) >
+
 	String assignmentId;
-	String ownerId;
+	String ownerId;		// NOTE: this is the VPC ID
+	String elasticIpId;
 
 	public ElasticIpAssignmentQueryFilterPojo() {
 	}
@@ -24,6 +27,14 @@ public class ElasticIpAssignmentQueryFilterPojo extends SharedObject implements 
 
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
+	}
+
+	public String getElasticIpId() {
+		return elasticIpId;
+	}
+
+	public void setElasticIpId(String elasticIpId) {
+		this.elasticIpId = elasticIpId;
 	}
 
 }

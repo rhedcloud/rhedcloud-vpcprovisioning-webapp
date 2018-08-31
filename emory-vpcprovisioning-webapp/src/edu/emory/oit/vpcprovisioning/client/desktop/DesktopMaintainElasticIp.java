@@ -5,11 +5,16 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,7 +28,7 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainElasticIpView {
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
-
+	List<ElasticIpPojo> ipsToCreate = new java.util.ArrayList<ElasticIpPojo>();
 
 	private static DesktopMaintainElasticIpUiBinder uiBinder = GWT.create(DesktopMaintainElasticIpUiBinder.class);
 
@@ -34,26 +39,86 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
-	@UiField TextBox elasticIpTB;
-	@UiField TextBox associatedIpTB;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
+	
+	@UiField TextBox addElasticIpTF;
+	@UiField Button addElasticIpButton;
+	@UiField FlexTable elasticIpTable;
+	
 
+	@UiHandler ("addElasticIpTF")
+	void addElasticIpTFKeyPressed(KeyPressEvent e) {
+        int keyCode = e.getNativeEvent().getKeyCode();
+        if (keyCode == KeyCodes.KEY_ENTER) {
+    		addIp();
+        }
+	}
+	@UiHandler ("addElasticIpButton")
+	void addElasticIpButtonClick(ClickEvent e) {
+		addIp();
+	}
+	private void addIp() {
+		String ip = addElasticIpTF.getText();
+		if (ip == null || ip.length() == 0) {
+			this.setInitialFocus();
+			showMessageToUser("Pleast enter a valid IP address.");
+			return;
+		}
+		addElasticIpToPanel(addElasticIpTF.getText());
+		addElasticIpTF.setText("");
+		this.resetFieldStyles();
+		this.setInitialFocus();
+	}
+	private void addElasticIpToPanel(final String ipAddress) {
+		// TODO: presenter.isValidIpAddress(ipAddress);
+		final ElasticIpPojo eip = new ElasticIpPojo();
+		eip.setElasticIpAddress(ipAddress);
+		ipsToCreate.add(eip);
+		final int numRows = elasticIpTable.getRowCount();
+		final Label ipLabel = new Label(ipAddress);
+		ipLabel.addStyleName("emailLabel");
+		final Button removeIpButton = new Button("Remove");
+		// disable remove button if userLoggedIn is NOT an admin
+		// TODO: network admin
+		if (this.userLoggedIn.isCentralAdmin()) {
+			removeIpButton.setEnabled(true);
+		}
+		else {
+			removeIpButton.setEnabled(false);
+		}
+		removeIpButton.addStyleName("glowing-border");
+		removeIpButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				ipsToCreate.remove(eip);
+				elasticIpTable.remove(ipLabel);
+				elasticIpTable.remove(removeIpButton);
+			}
+		});
+		addElasticIpTF.setText("");
+		elasticIpTable.setWidget(numRows, 0, ipLabel);
+		elasticIpTable.setWidget(numRows, 1, removeIpButton);
+	}
+
+	void initializeElasticIpPanel() {
+		elasticIpTable.removeAllRows();
+		ipsToCreate = new java.util.ArrayList<ElasticIpPojo>();
+	}
+	
 	@UiHandler("cancelButton")
 	void cancelButtonClicked(ClickEvent e) {
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.ELASTIC_IP_EDITING_CANCELED);
 	}
 	@UiHandler("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		presenter.getElasticIp().setElasticIpAddress(elasticIpTB.getText());
-		presenter.getElasticIp().setAssociatedIpAddress(associatedIpTB.getText());
-		presenter.saveElasticIp();
+		presenter.createElasticIps(ipsToCreate);
 	}
 	@Override
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	elasticIpTB.setFocus(true);
+	        	addElasticIpTF.setFocus(true);
 	        }
 	    });
 	}
@@ -67,15 +132,11 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	@Override
 	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
-		elasticIpTB.setEnabled(true);
-		associatedIpTB.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
-		elasticIpTB.setEnabled(false);
-		associatedIpTB.setEnabled(false);
 	}
 
 	@Override
@@ -86,14 +147,11 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	@Override
 	public void setEditing(boolean isEditing) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setLocked(boolean locked) {
 		okayButton.setEnabled(false);
-		elasticIpTB.setEnabled(false);
-		associatedIpTB.setEnabled(false);
 	}
 
 	@Override
@@ -115,14 +173,7 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public void initPage() {
-		if (presenter.getElasticIp() != null) {
-			elasticIpTB.setText(presenter.getElasticIp().getElasticIpAddress());
-			associatedIpTB.setText(presenter.getElasticIp().getAssociatedIpAddress());
-		}
-		else {
-			elasticIpTB.setText("");
-			associatedIpTB.setText("");
-		}
+		initializeElasticIpPanel();
 	}
 
 	@Override
@@ -140,10 +191,9 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	@Override
 	public List<Widget> getMissingRequiredFields() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		ElasticIpPojo pojo = presenter.getElasticIp();
-		if (pojo.getElasticIpAddress() == null || pojo.getElasticIpAddress().length() == 0) {
+		if (ipsToCreate.size() == 0) {
 			this.setFieldViolations(true);
-			fields.add(elasticIpTB);
+			fields.add(addElasticIpTF);
 		}
 		return fields;
 	}
@@ -151,8 +201,7 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	@Override
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		fields.add(elasticIpTB);
-		fields.add(associatedIpTB);
+		fields.add(addElasticIpTF);
 		this.resetFieldStyles(fields);
 	}
 

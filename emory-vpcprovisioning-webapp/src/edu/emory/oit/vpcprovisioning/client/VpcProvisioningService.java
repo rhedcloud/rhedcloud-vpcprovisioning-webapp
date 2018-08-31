@@ -58,7 +58,6 @@ import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryQueryResul
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpQueryResultPojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
@@ -115,6 +114,11 @@ import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryResultPojo;
 
 @RemoteServiceRelativePath("VpcProvisioningService")
 public interface VpcProvisioningService extends RemoteService {
@@ -210,7 +214,7 @@ public interface VpcProvisioningService extends RemoteService {
 	// Elastic IP
 	ElasticIpQueryResultPojo getElasticIpsForFilter(ElasticIpQueryFilterPojo filter) throws RpcException;
 	ElasticIpPojo createElasticIp(ElasticIpPojo elasticIp) throws RpcException;
-	void deleteElasticIpSummary(ElasticIpSummaryPojo elasticIpSummary) throws RpcException;
+	void deleteElasticIp(ElasticIpPojo elasticIp) throws RpcException;
 	ElasticIpPojo updateElasticIp(ElasticIpPojo vpc) throws RpcException;
 	boolean isElasticIpAssigned(ElasticIpPojo elasticIp) throws RpcException;
 	ElasticIpAssignmentStatusPojo getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo elasticIp) throws RpcException;
@@ -331,4 +335,10 @@ public interface VpcProvisioningService extends RemoteService {
 	StaticNatProvisioningQueryResultPojo getStaticNatProvisioningsForFilter(StaticNatProvisioningQueryFilterPojo filter) throws RpcException;
 	StaticNatDeprovisioningQueryResultPojo getStaticNatDeprovisioningsForFilter(StaticNatDeprovisioningQueryFilterPojo filter) throws RpcException;
 	
+	// VpnConnectionProfile and VpnConnectionProfileAssignment
+	VpnConnectionProfileQueryResultPojo getVpnConnectionProfilesForFilter(VpnConnectionProfileQueryFilterPojo filter) throws RpcException;
+	VpnConnectionProfilePojo createVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException;
+	void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException;
+	VpnConnectionProfilePojo updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException;
+	VpnConnectionProfileAssignmentQueryResultPojo getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException;
 }

@@ -50,6 +50,8 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 
 
 /**
@@ -98,6 +100,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private IncidentPojo incident;
 	private StaticNatProvisioningPojo staticNatProvisioning;
 	private StaticNatDeprovisioningPojo staticNatDeprovisioning;
+	private VpnConnectionProfilePojo vpnConnectionProfile;
+	private VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -280,6 +284,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName, UserAccountPojo userLoggedIn) {
 		eventBus.fireEventFromSource(new ActionEvent(userLoggedIn), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfilePojo profile) {
+		eventBus.fireEventFromSource(new ActionEvent(profile), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfileAssignmentPojo profileAssignment) {
+		eventBus.fireEventFromSource(new ActionEvent(profileAssignment), sourceName);
 	}
 
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
@@ -506,6 +518,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.userLoggedIn = userLoggedIn;
 	}
 
+	public ActionEvent(VpnConnectionProfilePojo profile) {
+		this.vpnConnectionProfile = profile;
+	}
+
+	public ActionEvent(VpnConnectionProfileAssignmentPojo profileAssignment) {
+		this.vpnConnectonProfileAssignment = profileAssignment;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -730,5 +750,21 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
 		this.userLoggedIn = userLoggedIn;
+	}
+
+	public VpnConnectionProfilePojo getVpnConnectionProfile() {
+		return vpnConnectionProfile;
+	}
+
+	public void setVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) {
+		this.vpnConnectionProfile = vpnConnectionProfile;
+	}
+
+	public VpnConnectionProfileAssignmentPojo getVpnConnectonProfileAssignment() {
+		return vpnConnectonProfileAssignment;
+	}
+
+	public void setVpnConnectonProfileAssignment(VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment) {
+		this.vpnConnectonProfileAssignment = vpnConnectonProfileAssignment;
 	}
 }
