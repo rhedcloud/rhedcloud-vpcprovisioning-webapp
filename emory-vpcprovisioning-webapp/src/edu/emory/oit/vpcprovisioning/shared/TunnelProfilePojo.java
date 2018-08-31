@@ -18,6 +18,18 @@ public class TunnelProfilePojo extends SharedObject implements IsSerializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public String toString() {
+		return "ID: " + tunnelId + "\n" +
+			"Crypto Keyring: " + cryptoKeyringName + "\n" +
+			"ISACAMP Profile: " + isakampProfileName + "\n" +
+			"IPSEC Transform Set: " + ipsecTransformSetName + "\n" +
+			"IPSEC Profile: " + ipsecProfileName + "\n" + 
+			"Customer Gateway IP: " + customerGatewayIp + "\n" +
+			"VPN Inside IP CIDR 1: " + vpnInsideIpCidr1 + "\n" +
+			"VPN Inside IP CIDR 2: " + vpnInsideIpCidr2;
+	}
+
 	public String getTunnelId() {
 		return tunnelId;
 	}
@@ -89,5 +101,4 @@ public class TunnelProfilePojo extends SharedObject implements IsSerializable {
 	public void setVpnInsideIpCidr2(String vpnInsideIpCidr2) {
 		this.vpnInsideIpCidr2 = vpnInsideIpCidr2;
 	}
-
 }
