@@ -33,7 +33,7 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 			<g:ScrollPanel>
 				<g:VerticalPanel spacing="8" ui:field="tunnelsVP" height="100%">
-					<g:Label addStyleNames="{style.mediumLabel}">Add Tunnel Profiles:</g:Label>
+					<g:Label addStyleNames="{style.mediumLabel}">Add/Edit Tunnel Profiles:</g:Label>
 					<g:DecoratorPanel>
 					<g:HorizontalPanel ui:field="addTunnelHP" spacing="16">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">

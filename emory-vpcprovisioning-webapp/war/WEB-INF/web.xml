@@ -28,12 +28,12 @@
 		<init-param>
 			<param-name>configDocPath</param-name>
 			<!-- Local testing -->
-			<!-- <param-value>file:///Users/jtjacks/Development/oxygen-workspace/deployment-esb-dev/Deployments/VpcProvisioningWebApplication.xml</param-value> -->
+			<param-value>file:///Users/jtjacks/Development/oxygen-workspace/deployment-esb-dev/Deployments/VpcProvisioningWebApplication.xml</param-value>
 
 			<!-- for ALL EAP environments (value is turned into a URL by start scripts 
 				on server) -->
 			<!-- Also used for AWS deployment and testing -->
-			<param-value>configs/messaging/Environments/Examples/Deployments/VpcProvisioningWebApplication.xml</param-value>
+			<!-- <param-value>configs/messaging/Environments/Examples/Deployments/VpcProvisioningWebApplication.xml</param-value> -->
 		</init-param>
 		<init-param>
 			<param-name>appId</param-name>

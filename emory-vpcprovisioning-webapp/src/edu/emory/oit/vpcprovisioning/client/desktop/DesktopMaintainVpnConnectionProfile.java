@@ -12,7 +12,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -154,8 +156,14 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 		final int numRows = tunnelTable.getRowCount();
 		final Label descLabel = new Label(tunnel.getTunnelDescription());
 		descLabel.addStyleName("emailLabel");
+		descLabel.setTitle(tunnel.toString());
 		
-		final Button editButton = new Button("Edit");
+		final PushButton editButton = new PushButton();
+		editButton.setTitle("Edit this Tunnel Profile.");
+		Image editImage = new Image("images/edit_icon.png");
+		editImage.setWidth("30px");
+		editImage.setHeight("30px");
+		editButton.getUpFace().setImage(editImage);
 		// disable buttons if userLoggedIn is NOT a network admin
 		// TODO: network admin
 		if (this.userLoggedIn.isCentralAdmin()) {
@@ -181,7 +189,12 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 			}
 		});
 		
-		final Button removeTunnelButton = new Button("Remove");
+		final PushButton removeTunnelButton = new PushButton();
+		removeTunnelButton.setTitle("Remove this Tunnel Profile.");
+		Image removeImage = new Image("images/delete_icon.png");
+		removeImage.setWidth("30px");
+		removeImage.setHeight("30px");
+		removeTunnelButton.getUpFace().setImage(removeImage);
 		// disable buttons if userLoggedIn is NOT a network admin
 		// TODO: network admin
 		if (this.userLoggedIn.isCentralAdmin()) {
