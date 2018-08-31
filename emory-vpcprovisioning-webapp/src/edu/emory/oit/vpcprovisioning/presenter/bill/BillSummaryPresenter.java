@@ -57,7 +57,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 				GWT.log("Exception Retrieving Vpcs", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -74,7 +74,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 						log.log(Level.SEVERE, "Exception Retrieving Accounts", caught);
 						getView().showMessageToUser("There was an exception on the " +
 								"server retrieving your list of accounts.  " +
-								"Message from server is: " + caught.getMessage());
+								"<p>Message from server is: " + caught.getMessage() + "</p>");
 					}
 
 					@Override
@@ -172,7 +172,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 				log.log(Level.SEVERE, "Exception Retrieving Bill information", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the list of bills for the selected account.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

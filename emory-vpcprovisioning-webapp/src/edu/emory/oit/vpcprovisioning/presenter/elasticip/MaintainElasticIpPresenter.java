@@ -84,7 +84,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -165,7 +165,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 					GWT.log("Exception saving the ElasticIP: " + eip.getElasticIpAddress(), caught);
 					errors.append("There was an exception on the " +
 							"server saving the ElasticIP (" + eip.getElasticIpAddress() + ").  " +
-							"Message from server is: " + caught.getMessage());
+							"<p>Message from server is: " + caught.getMessage() + "</p>");
 					if (!showStatus) {
 						errors.append("\n");
 					}

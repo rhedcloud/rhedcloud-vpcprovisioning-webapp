@@ -101,7 +101,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -147,7 +147,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				log.log(Level.SEVERE, "Exception Retrieving FirewallRules", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the list of Firewall Rules for this VPC.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -194,7 +194,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				log.log(Level.SEVERE, "Exception Retrieving FirewallExceptionRequests", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of firewall exception requests.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

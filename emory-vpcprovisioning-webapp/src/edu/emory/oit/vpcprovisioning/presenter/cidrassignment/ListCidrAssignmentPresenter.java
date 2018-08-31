@@ -90,12 +90,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
-						"Message from server is: " + caught.getMessage());
-//				if (!PresenterBase.isTimeoutException(getView(), caught)) {
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving information about the user logged " +
-//							"in.  Message from server is: " + caught.getMessage());
-//				}
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -145,7 +140,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
                 getView().hidePleaseWaitDialog();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of CidrAssignmentSummaries.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

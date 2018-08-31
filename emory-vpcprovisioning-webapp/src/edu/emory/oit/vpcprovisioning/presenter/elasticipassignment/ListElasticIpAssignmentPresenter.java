@@ -76,7 +76,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 //				if (!PresenterBase.isTimeoutException(getView(), caught)) {
 //					getView().showMessageToUser("There was an exception on the " +
 //							"server retrieving information about the user logged " +
@@ -129,7 +129,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
                 getView().hidePleaseWaitDialog();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of ElasticIpAssignmentSummaries.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

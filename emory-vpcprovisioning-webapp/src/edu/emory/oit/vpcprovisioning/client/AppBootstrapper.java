@@ -171,8 +171,8 @@ public class AppBootstrapper {
 				shell.hidePleaseWaitPanel();
 				shell.showMessageToUser("[AppBootstrapper:FATAL] There was an exception on the " +
 						"server retrieving the the user logged in.  Processing cannot continue.  Try " + 
-						"refreshing your browser and if the problem continues, please contact the help desk." +
-						"Message from server is: " + caught.getMessage());
+						"refreshing your browser and if the problem continues, please contact the help desk.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

@@ -88,7 +88,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -179,7 +179,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				log.log(Level.SEVERE, "Exception Retrieving Elastic IPs", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Elastic IPs.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

@@ -93,7 +93,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Accounts you're associated to.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -133,7 +133,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				log.log(Level.SEVERE, "Exception Retrieving Accounts", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of accounts.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

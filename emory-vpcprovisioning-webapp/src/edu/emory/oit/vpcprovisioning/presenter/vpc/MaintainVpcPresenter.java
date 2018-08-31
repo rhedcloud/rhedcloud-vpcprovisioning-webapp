@@ -87,7 +87,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the VPCs you're associated to.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

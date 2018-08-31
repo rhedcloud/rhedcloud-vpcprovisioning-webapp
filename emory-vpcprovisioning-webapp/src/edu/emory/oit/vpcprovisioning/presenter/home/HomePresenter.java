@@ -62,7 +62,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your user information.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -256,7 +256,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				getView().hidePleaseWaitPanel();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving account information.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

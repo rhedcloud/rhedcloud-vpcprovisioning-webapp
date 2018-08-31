@@ -84,7 +84,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -165,7 +165,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 					GWT.log("Exception saving the VPN ConnectionProfile: " + profile.getVpcNetwork(), caught);
 					errors.append("There was an exception on the " +
 							"server saving the VPN ConnectionProfile (" + profile.getVpcNetwork() + ").  " +
-							"Message from server is: " + caught.getMessage());
+							"<p>Message from server is: " + caught.getMessage() + "</p>");
 					if (!showStatus) {
 						errors.append("\n");
 					}

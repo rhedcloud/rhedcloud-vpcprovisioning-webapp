@@ -75,7 +75,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 				GWT.log("Exception Retrieving Vpcs", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -200,7 +200,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 				GWT.log("Exception Retrieving Vpcps", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the VPCP status information.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

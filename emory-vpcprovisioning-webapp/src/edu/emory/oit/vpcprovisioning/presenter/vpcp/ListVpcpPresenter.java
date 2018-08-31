@@ -84,7 +84,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your user information.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -130,7 +130,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 				log.log(Level.SEVERE, "Exception Retrieving Vpcs", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Vpcs.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

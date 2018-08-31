@@ -363,7 +363,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			public void onFailure(Throwable caught) {
 				String msg = "Exception getting ESB service status URL."; 
 				GWT.log(msg, caught);
-				showMessageToUser(msg + "  Message from server is: "	 + caught.getMessage());
+				showMessageToUser(msg + 
+					"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -856,7 +857,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				public void onFailure(Throwable caught) {
 					GWT.log("problem getting services..." + caught.getMessage());
 					showMessageToUser("Unable to display product information at this "
-							+ "time.  Please try again later.  Message from server is: " + caught.getMessage());
+							+ "time.  Please try again later.  "
+							+ "<p>Message from server is: " + caught.getMessage() + "</p>");
 				}
 
 				@Override
@@ -887,7 +889,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			public void onFailure(Throwable caught) {
 				GWT.log("problem getting services..." + caught.getMessage());
 				showMessageToUser("Unable to display product information at this "
-						+ "time.  Please try again later.  Message from server is: " + caught.getMessage());
+						+ "time.  Please try again later.  "
+						+ "<p>Message from server is: " + caught.getMessage() + "</p>");
+
 			}
 
 			@Override
@@ -1014,7 +1018,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				public void onFailure(Throwable caught) {
 					showMessageToUser("There was an exception on the " +
 							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
-							+ "continue.  Message from server is: " + caught.getMessage());
+							+ "continue.  "
+							+ "<p>Message from server is: " + caught.getMessage() + "</p>");
 					
 					// just a modal dialog that prevents them from doing anything...
 					lockView();

@@ -104,7 +104,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -144,7 +144,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 				log.log(Level.SEVERE, "Exception Retrieving Central Admins", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of accounts.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

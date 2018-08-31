@@ -140,7 +140,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 				log.log(Level.SEVERE, "Exception Retrieving Case Records", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of CIDRs.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

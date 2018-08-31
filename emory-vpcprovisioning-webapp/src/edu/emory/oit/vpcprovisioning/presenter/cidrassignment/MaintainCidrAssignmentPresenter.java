@@ -113,7 +113,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the Central Admins you're associated to.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

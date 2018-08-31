@@ -99,7 +99,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Notifications.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -145,7 +145,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 				log.log(Level.SEVERE, "Exception Retrieving Notifications", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Notifications.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

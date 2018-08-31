@@ -108,7 +108,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Notifications.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -255,7 +255,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 				GWT.log("Exception saving the Notification", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the Notification for account (" + notification.getAccountId() + ").  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -298,7 +298,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 					GWT.log("Exception saving the Notification for account: " + not.getAccountId(), caught);
 					errors.append("There was an exception on the " +
 							"server saving the Notification for account (" + not.getAccountId() + ").  " +
-							"Message from server is: " + caught.getMessage());
+							"<p>Message from server is: " + caught.getMessage() + "</p>");
 					if (!showStatus) {
 						errors.append("\n");
 					}

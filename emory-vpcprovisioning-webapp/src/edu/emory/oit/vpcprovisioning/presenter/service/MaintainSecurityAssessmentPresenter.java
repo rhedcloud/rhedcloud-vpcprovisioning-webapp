@@ -109,7 +109,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 							GWT.log("Exception Retrieving Security Assessments", caught);
 							getView().showMessageToUser("There was an exception on the " +
 									"server retrieving the Security Assessment.  " +
-									"Message from server is: " + caught.getMessage());
+									"<p>Message from server is: " + caught.getMessage() + "</p>");
 						}
 
 						@Override
@@ -184,7 +184,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 				public void onFailure(Throwable caught) {
 					getView().showMessageToUser("There was an exception on the " +
 							"server retrieving the list of services related to this assessment.  " +
-							"Message from server is: " + caught.getMessage());
+							"<p>Message from server is: " + caught.getMessage() + "</p>");
 				}
 
 				@Override

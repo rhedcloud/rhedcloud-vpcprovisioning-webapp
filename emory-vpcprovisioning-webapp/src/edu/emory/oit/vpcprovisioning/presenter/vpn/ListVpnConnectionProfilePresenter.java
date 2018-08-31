@@ -86,7 +86,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -176,7 +176,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
                 getView().hidePleaseWaitPanel();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of VPN Connection Profiles.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

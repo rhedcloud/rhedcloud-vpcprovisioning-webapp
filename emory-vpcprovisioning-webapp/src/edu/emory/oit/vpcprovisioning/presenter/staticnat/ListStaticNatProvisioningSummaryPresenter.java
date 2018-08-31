@@ -87,7 +87,7 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your user information.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -124,7 +124,7 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 				log.log(Level.SEVERE, "Exception Retrieving Static NAT Info", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving Static NAT Info.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

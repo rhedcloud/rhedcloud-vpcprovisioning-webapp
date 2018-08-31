@@ -229,7 +229,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 						GWT.log("Exception Retrieving Services", caught);
 						getView().showMessageToUser("There was an exception on the " +
 								"server retrieving the list of Security Assessments associated to this Service.  " +
-								"Message from server is: " + caught.getMessage());
+								"<p>Message from server is: " + caught.getMessage() + "</p>");
 					}
 
 					@Override

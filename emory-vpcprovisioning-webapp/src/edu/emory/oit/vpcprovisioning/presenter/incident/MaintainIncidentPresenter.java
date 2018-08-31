@@ -103,7 +103,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your list of Incidents.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

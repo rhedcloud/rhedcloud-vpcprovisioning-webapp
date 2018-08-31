@@ -94,7 +94,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your user information.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override
@@ -133,7 +133,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				log.log(Level.SEVERE, "Exception Retrieving Services", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the list of Services.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

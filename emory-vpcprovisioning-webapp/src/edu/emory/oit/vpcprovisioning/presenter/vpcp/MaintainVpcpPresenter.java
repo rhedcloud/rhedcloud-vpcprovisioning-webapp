@@ -104,7 +104,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
                 getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving your user information.  " +
-						"Message from server is: " + caught.getMessage());
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
 			@Override

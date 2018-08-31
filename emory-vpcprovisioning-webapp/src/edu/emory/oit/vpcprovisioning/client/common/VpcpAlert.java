@@ -45,7 +45,9 @@ public class VpcpAlert extends DialogBox {
 		});
 		vp.add(sessionAnchor);
 		
-		if (message.trim().toLowerCase().endsWith("is: 0")) {
+		if (message.trim().toLowerCase().endsWith("is: 0") || 
+			message.trim().toLowerCase().endsWith("is: 0</p>")) {
+			
 			Anchor newSessionAnchor = new Anchor("It appears as though your session has expired.  "
 				+ "Please click here to start a new session.");
 			newSessionAnchor.addStyleName("errorAnchor");
