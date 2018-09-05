@@ -360,6 +360,36 @@ public class DesktopListStaticNatProvisioningSummary extends ViewImplBase implem
 			listTable.addColumn(createTimeColumn, "Create Time");
 
 			// Provisioning id column
+			Column<StaticNatProvisioningSummaryPojo, String> provTypeColumn = 
+					new Column<StaticNatProvisioningSummaryPojo, String> (new TextCell()) {
+
+				@Override
+				public String getValue(StaticNatProvisioningSummaryPojo object) {
+					if (object.getProvisioned() != null) {
+						return "Provision";
+					}
+					else if (object.getDeprovisioned() != null) {
+						return "Deprovision";
+					}
+					else {
+						return "Error";
+					}
+				}
+			};
+			provTypeColumn.setSortable(true);
+			sortHandler.setComparator(provTypeColumn, new Comparator<StaticNatProvisioningSummaryPojo>() {
+				public int compare(StaticNatProvisioningSummaryPojo o1, StaticNatProvisioningSummaryPojo o2) {
+					if (o1.getProvisioned() != null) {
+						return "Provisioned".compareTo("Deprovisioned");
+					}
+					else {
+						return "Deprovisioned".compareTo("Provisioned");
+					}
+				}
+			});
+			listTable.addColumn(provTypeColumn, "Provisioning Type");
+
+			// Provisioning id column
 			Column<StaticNatProvisioningSummaryPojo, String> provIdColumn = 
 					new Column<StaticNatProvisioningSummaryPojo, String> (new TextCell()) {
 
