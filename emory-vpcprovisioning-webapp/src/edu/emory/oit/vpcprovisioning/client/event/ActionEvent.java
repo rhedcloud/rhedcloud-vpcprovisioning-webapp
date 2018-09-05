@@ -53,6 +53,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 
 
 /**
@@ -104,6 +105,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private StaticNatDeprovisioningPojo staticNatDeprovisioning;
 	private VpnConnectionProfilePojo vpnConnectionProfile;
 	private VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment;
+	private VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -294,6 +296,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfilePojo profile) {
 		eventBus.fireEventFromSource(new ActionEvent(profile), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfileSummaryPojo profileSummary) {
+		eventBus.fireEventFromSource(new ActionEvent(profileSummary), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfileAssignmentPojo profileAssignment) {
@@ -534,6 +540,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(StaticNatProvisioningSummaryPojo snp) {
 		this.staticNatProvisioningSummary = snp;
+	}
+
+	public ActionEvent(VpnConnectionProfileSummaryPojo profileSummary) {
+		this.vpnConnectionProfileSummary = profileSummary;
 	}
 
 	@Override
@@ -784,5 +794,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setStaticNatProvisioningSummary(StaticNatProvisioningSummaryPojo staticNatProvisioningSummary) {
 		this.staticNatProvisioningSummary = staticNatProvisioningSummary;
+	}
+
+	public VpnConnectionProfileSummaryPojo getVpnConnectionProfileSummary() {
+		return vpnConnectionProfileSummary;
+	}
+
+	public void setVpnConnectionProfileSummary(VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary) {
+		this.vpnConnectionProfileSummary = vpnConnectionProfileSummary;
 	}
 }

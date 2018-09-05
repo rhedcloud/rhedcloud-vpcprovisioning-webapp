@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -45,7 +47,6 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 
 public class DesktopListVpnConnectionProfile extends ViewImplBase implements ListVpnConnectionProfileView {
@@ -59,6 +60,8 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	/*** FIELDS ***/
 	@UiField
 	SimplePager listPager;
+	@UiField
+	Button assignButton;
 	@UiField
 	Button createButton;
 	@UiField
@@ -119,6 +122,12 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		presenter.refreshList(userLoggedIn);
 	}
 
+	@UiHandler("assignButton")
+	void assignButtonClicked(ClickEvent e) {
+		showMessageToUser("This feature is not yet implemented.");
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
+	}
+
 	@UiHandler("createButton")
 	void createButtonClicked(ClickEvent e) {
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
@@ -131,7 +140,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(2, 1);
+		Grid grid = new Grid(4, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -202,6 +211,68 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		});
 		grid.setWidget(1, 0, deleteAnchor);
 
+		Anchor provisionAnchor = new Anchor("Provisiong VPN Connection");
+		provisionAnchor.addStyleName("productAnchor");
+		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		provisionAnchor.setTitle("Provision selected profile");
+		provisionAnchor.ensureDebugId(provisionAnchor.getText());
+		provisionAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				if (selectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select one Profile to provision");
+					return;
+				}
+				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				
+				VpnConnectionProfileSummaryPojo m = nIter.next();
+				if (m != null) {
+					showMessageToUser("This feature is not yet implemented.");
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.PROVISION_VPN_CONNECTION, m.getProfile());
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, provisionAnchor);
+
+		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
+		deprovisionAnchor.addStyleName("productAnchor");
+		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
+		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
+		deprovisionAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one or more item(s) from the list");
+					return;
+				}
+
+				// TODO: presenter.deleteVpnConnectionProfiles(profilesToDelete);
+
+				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				while (nIter.hasNext()) {
+					VpnConnectionProfileSummaryPojo m = nIter.next();
+					if (m != null) {
+						// remove the elastic ip if it's NOT assigned
+						showMessageToUser("This feature is not yet implemented.");
+//							presenter.deprovisionVpnConnectionProfile(m);
+					} 
+					else {
+						showMessageToUser("Please select one or more item(s) from the list");
+					}
+				}
+			}
+		});
+		grid.setWidget(3, 0, deprovisionAnchor);
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
@@ -477,17 +548,16 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		});
 		listTable.addColumn(tunnelProfileColumn, "Tunnel Profiles");
 
-		Column<VpnConnectionProfileSummaryPojo, SafeHtml> assignmentStatusColumn = new Column<VpnConnectionProfileSummaryPojo, SafeHtml>(
-				new SafeHtmlCell()) {
+		Column<VpnConnectionProfileSummaryPojo, String> assignmentStatusColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
+				new ClickableTextCell()) {
 
 			@Override
-			public SafeHtml getValue(VpnConnectionProfileSummaryPojo object) {
+			public String getValue(VpnConnectionProfileSummaryPojo object) {
 				if (object.getAssignment() == null) {
-					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("Unassigned");
+					return "Unassigned";
 				} else {
-					// TODO: more content here
-					String s = "<b>Assigned </b>to VPC: " + object.getAssignment().getOwnerId();
-					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(s);
+					String s = "Assigned to VPC:  " + object.getAssignment().getOwnerId();
+					return s;
 				}
 			}
 		};
@@ -497,6 +567,18 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				return o1.getProfile() == null ? 0 : 1;
 			}
 		});
+		assignmentStatusColumn.setFieldUpdater(new FieldUpdater<VpnConnectionProfileSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, VpnConnectionProfileSummaryPojo object, String value) {
+	    		if (object.getAssignment() != null) {
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT, object);
+	    		}
+	    		else {
+	    			showMessageToUser("No assignment to view.");
+	    		}
+	    	}
+	    });
+		assignmentStatusColumn.setCellStyleNames("productAnchor");
 		listTable.addColumn(assignmentStatusColumn, "Assignment Status");
 
 		// create user

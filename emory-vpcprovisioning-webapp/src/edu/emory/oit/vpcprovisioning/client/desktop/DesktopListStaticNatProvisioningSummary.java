@@ -42,7 +42,6 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
 public class DesktopListStaticNatProvisioningSummary extends ViewImplBase implements ListStaticNatProvisioningSummaryView {
 	Presenter presenter;
@@ -315,8 +314,15 @@ public class DesktopListStaticNatProvisioningSummary extends ViewImplBase implem
 
 				@Override
 				public String getValue(StaticNatProvisioningSummaryPojo object) {
-					Date createTime = object.getCreateTime();
-					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+					if (object.getProvisioned() != null) {
+						Date createTime = object.getProvisioned().getCreateTime();
+						return createTime != null ? dateFormat.format(createTime) : "Unknown";
+					}
+					else {
+						Date createTime = object.getDeprovisioned().getCreateTime();
+						return createTime != null ? dateFormat.format(createTime) : "Unknown";
+					}
+						
 				}
 			};
 			createTimeColumn.setSortable(true);
