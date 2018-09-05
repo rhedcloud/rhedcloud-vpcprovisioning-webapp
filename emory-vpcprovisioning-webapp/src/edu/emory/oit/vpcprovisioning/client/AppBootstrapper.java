@@ -67,6 +67,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -886,15 +887,17 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.SHOW_STATIC_NAT_STATUS, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				if (event.getStaticNatProvisioning() != null) {
-					ViewImplBase.showMessage(null, "StaticNatProvisioning status", null);
-				}
-				else if (event.getStaticNatDeprovisioning() != null) {
-					ViewImplBase.showMessage(null, "StaticNatDeprovisioning status", null);
-				}
-				else {
-					ViewImplBase.showMessage(null, "UNKNOWN Static NAT status", null);
-				}
+				placeController.goTo(StaticNatProvisioningStatusPlace.createStaticNatProvisioningStatusPlace(event.getStaticNatProvisioningSummary()));
+				// TODO: not sure if a dialog box would be better or not...
+//				if (event.getStaticNatProvisioning() != null) {
+//					ViewImplBase.showMessage(null, "StaticNatProvisioning status", null);
+//				}
+//				else if (event.getStaticNatDeprovisioning() != null) {
+//					ViewImplBase.showMessage(null, "StaticNatDeprovisioning status", null);
+//				}
+//				else {
+//					ViewImplBase.showMessage(null, "UNKNOWN Static NAT status", null);
+//				}
 			}
 		});
 

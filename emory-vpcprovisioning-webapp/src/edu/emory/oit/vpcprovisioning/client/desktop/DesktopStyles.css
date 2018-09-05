@@ -661,6 +661,8 @@ a:visited {
 	text-align: left;
 	border: 2px solid;
     border-radius: 5px;
+    min-width: 150px;
+    max-width: 250px;
 }
 .statusPanel {
 	color: grey;

@@ -101,11 +101,11 @@ public class DesktopListStaticNatProvisioningSummary extends ViewImplBase implem
 				if (m != null) {
 					if (m.getProvisioned() != null) {
 						GWT.log("Firing SHOW_STATIC_NAT_STATUS for a StaticNatProvisioning object.");
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_STATIC_NAT_STATUS, m.getProvisioned());
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_STATIC_NAT_STATUS, m);
 					}
 					else if (m.getDeprovisioned() != null) {
 						GWT.log("Firing SHOW_STATIC_NAT_STATUS for a StaticNatDeprovisioning object.");
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_STATIC_NAT_STATUS, m.getDeprovisioned());
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_STATIC_NAT_STATUS, m);
 					}
 					else {
 						showMessageToUser("There appears to be a data issue with the selected "

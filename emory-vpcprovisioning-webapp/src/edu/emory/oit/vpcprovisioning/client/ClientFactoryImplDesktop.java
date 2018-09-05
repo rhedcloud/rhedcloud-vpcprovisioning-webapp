@@ -50,6 +50,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfile;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopStaticNatProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
@@ -82,6 +83,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanVi
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -146,6 +148,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListStaticNatProvisioningSummaryView listStaticNatProvisioningSummaryView;
 	private ListVpnConnectionProfileView listVpnConnectionProfileView;
 	private MaintainVpnConnectionProfileView maintainVpnConnectionProfileView;
+	private StaticNatProvisioningStatusView staticNatProvisioningStatusView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -619,4 +622,14 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	protected MaintainVpnConnectionProfileView createMaintainVpnConnectionProfileView() {
 		return new DesktopMaintainVpnConnectionProfile();
 	}
+	@Override
+	public StaticNatProvisioningStatusView getStaticNatProvisioningStatusView() {
+        if (staticNatProvisioningStatusView == null) {
+        	staticNatProvisioningStatusView = createStaticNatProvisioningStatusView();
+        }
+        return staticNatProvisioningStatusView;
+	}
+    protected StaticNatProvisioningStatusView createStaticNatProvisioningStatusView() {
+        return new DesktopStaticNatProvisioningStatus();
+    }
 }

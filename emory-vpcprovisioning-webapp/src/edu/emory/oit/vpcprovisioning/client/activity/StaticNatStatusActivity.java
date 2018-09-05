@@ -6,15 +6,17 @@ import com.google.web.bindery.event.shared.ResettableEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.event.StaticNatStatusEvent;
-import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPresenter;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class StaticNatStatusActivity extends AbstractActivity {
 	private PresentsWidgets presenter;
 
-//	private final StaticNatProvisioningStatusPlace place;
+	private final StaticNatProvisioningStatusPlace place;
 
-//	private final ClientFactory clientFactory;
+	private final ClientFactory clientFactory;
 
 	private ResettableEventBus childEventBus;
 
@@ -24,10 +26,10 @@ public class StaticNatStatusActivity extends AbstractActivity {
 	 * @param clientFactory the {@link ClientFactory} of shared resources
 	 * @param place configuration for this activity
 	 */
-//	public StaticNatProvisioningStatusActivity(ClientFactory clientFactory, StaticNatProvisioningStatusPlace place) {
-//		this.place = place;
-//		this.clientFactory = clientFactory;
-//	}
+	public StaticNatStatusActivity(ClientFactory clientFactory, StaticNatProvisioningStatusPlace place) {
+		this.place = place;
+		this.clientFactory = clientFactory;
+	}
 
 	@Override
 	public String mayStop() {
@@ -52,19 +54,18 @@ public class StaticNatStatusActivity extends AbstractActivity {
 			public void onShowStaticNatStatus(StaticNatStatusEvent event) {
 				// Stop the read presenter
 				onStop();
-				presenter = startShowStatus(event.getStaticNatProvisioning());
+				presenter = startShowProvisioningStatus(event.getStaticNatProvisioningSummary());
 				container.setWidget(presenter);
 			}
 		});
 
-//		presenter = startShowStatus(place.getStaticNatProvisioning());
+		presenter = startShowProvisioningStatus(place.getSummary());
 		container.setWidget(presenter);
 	}
 
-	private PresentsWidgets startShowStatus(StaticNatProvisioningPojo vpcp) {
-//		PresentsWidgets rtn = new StaticNatProvisioningStatusPresenter(clientFactory, vpcp);
-//		rtn.start(childEventBus);
-//		return rtn;
-		return null;
+	private PresentsWidgets startShowProvisioningStatus(StaticNatProvisioningSummaryPojo summary) {
+		PresentsWidgets rtn = new StaticNatProvisioningStatusPresenter(clientFactory, summary);
+		rtn.start(childEventBus);
+		return rtn;
 	}
 }

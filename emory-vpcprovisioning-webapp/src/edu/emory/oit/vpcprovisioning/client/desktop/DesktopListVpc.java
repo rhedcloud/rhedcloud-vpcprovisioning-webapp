@@ -106,12 +106,12 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				actionsPopup.hide();
 				VpcPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
+//					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, m);
-					}
-					else {
-						showMessageToUser("You are not authorized to perform this action for this VPC.");
-					}
+//					}
+//					else {
+//						showMessageToUser("You are not authorized to perform this action for this VPC.");
+//					}
 				}
 				else {
 					showMessageToUser("Please select an item from the list");

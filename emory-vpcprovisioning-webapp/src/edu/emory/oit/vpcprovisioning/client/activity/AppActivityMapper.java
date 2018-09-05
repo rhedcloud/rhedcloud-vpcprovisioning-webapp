@@ -51,6 +51,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPl
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPlace;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -391,6 +392,11 @@ public class AppActivityMapper implements ActivityMapper {
 
 		if (place instanceof MaintainVpnConnectionProfilePlace) {
 			return new MaintainVpnConnectionProfileActivity(clientFactory, (MaintainVpnConnectionProfilePlace) place);
+		}
+
+		if (place instanceof StaticNatProvisioningStatusPlace) {
+			// Generate/Maintain vpcp
+			return new StaticNatStatusActivity(clientFactory, (StaticNatProvisioningStatusPlace) place);
 		}
 
 		return null;

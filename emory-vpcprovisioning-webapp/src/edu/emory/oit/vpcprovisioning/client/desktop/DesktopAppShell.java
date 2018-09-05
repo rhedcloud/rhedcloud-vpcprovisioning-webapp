@@ -69,6 +69,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
@@ -468,9 +470,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			firstStaticNatContentWidget = true;
 			staticNatContentContainer.clear();
 			ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
-//			StaticNatStatusView snpStatusView = clientFactory.getStaticNatStatusView();
+			StaticNatProvisioningStatusView snpStatusView = clientFactory.getStaticNatProvisioningStatusView();
 			staticNatContentContainer.add(listStaticNatView);
-//			staticNatContentContainer.add(snpStatusView);
+			staticNatContentContainer.add(snpStatusView);
 			staticNatContentContainer.setAnimationDuration(500);
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY);
 			break;
@@ -589,8 +591,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-		if (w instanceof ListStaticNatProvisioningSummaryPresenter) {
-			// TODO: or StaticNatStatusPresenter
+		if (w instanceof ListStaticNatProvisioningSummaryPresenter || w instanceof StaticNatProvisioningStatusPresenter) {
 			staticNatContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstStaticNatContentWidget) {

@@ -4,6 +4,34 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
+	<!-- 
+	<!ELEMENT StaticNatProvisioning (
+		ProvisioningId, 
+		StaticNat, 
+		<!ELEMENT StaticNat (
+			PublicIp,
+			PrivateIp)>
+		Status, 
+		ProvisioningResult?, 
+		ActualTime?, 
+		AnticipatedTime?, 
+		ProvisioningStep*, 
+		<!ELEMENT ProvisioningStep (
+			ProvisioningStepId?, 
+			ProvisioningId, 
+			StepId, 
+			Type, 
+			Description, 
+			Status, 
+			StepResult?, 
+			ActualTime?, 
+			AnticipatedTime?, 
+			Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+		CreateUser, 
+		CreateDatetime, 
+		LastUpdateUser?, 
+		LastUpdateDatetime?)>
+	 -->
 	<g:ScrollPanel height="99%" width="99%">
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
@@ -24,12 +52,12 @@
 	   			<g:Grid cellSpacing ="8">
 					<g:row>
 				    	<g:customCell>
-							<g:HTML>Below is the current status of this VPC Provisioning 
+							<g:HTML>Below is the current status of this StaticNat Provisioning/Deprovisioning 
 							object.  The page will refresh every 5 seconds with the latest 
 							status of the object (until the Overall Status is "completed").  
 							Alternatively, you may click on the "Refresh" button 
 							to manually refresh the status.  You can click the 
-							"Done" button to leave the page and return to the list of VPCP 
+							"Done" button to leave the page and return to the list of StaticNat Provisioning/Deprovisioning 
 							objects and you can return to this page at any time to check 
 							the status of this particular provisioning object.</g:HTML>
 				    	</g:customCell>
@@ -55,9 +83,9 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
 			<!-- EVERYTHING IS READ ONLY ON THIS PAGE -->
 			
-    		<g:CaptionPanel ui:field="vpcpStatusCP" captionHTML="Overall Status" width="95%">
+    		<g:CaptionPanel ui:field="statusCP" captionHTML="Overall Status" width="95%">
     			<g:VerticalPanel>
-    			<g:Grid ui:field="vpcpGeneralStatusGrid" cellSpacing ="8">
+    			<g:Grid ui:field="generalStatusGrid" cellSpacing ="8">
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Provisioning ID:</g:Label>
@@ -69,7 +97,7 @@
 	 						<g:Label addStyleNames="{style.label}">Overall Status:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-							<g:Label ui:field="vpcpStatusLabel" addStyleNames="{style.statusLabel}"/>
+							<g:Label ui:field="statusLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Provisioning Result:</g:Label>
@@ -94,48 +122,16 @@
 					</g:row>
 					<g:row>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Requestor:</g:Label>
+							<g:Label addStyleNames="{style.label}">Public IP:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-							<g:Label ui:field="requestorNetIdLabel" addStyleNames="{style.statusLabel}"/>
+							<g:Label ui:field="publicIpLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
+							<g:Label addStyleNames="{style.label}">Private IP:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-							<g:Label ui:field="ownerNetIdLabel" addStyleNames="{style.statusLabel}"/>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label ui:field="speedTypeLabel" addStyleNames="{style.statusLabel}"/>
-				    	</g:customCell>
-					</g:row>
-					<g:row>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label ui:field="vpcTypeLabel" addStyleNames="{style.statusLabel}"/>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label ui:field="complianceClassLabel" addStyleNames="{style.statusLabel}"/>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label ui:field="purposeLabel" addStyleNames="{style.statusLabel}"/>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
-				    	</g:customCell>
-				    	<g:customCell>
-							<g:Label ui:field="notifyAdminsLabel" addStyleNames="{style.statusLabel}"/>
+							<g:Label ui:field="privateIpLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 					</g:row>
     			</g:Grid>
@@ -149,17 +145,13 @@
 				    	</g:customCell>
 					</g:row>
     			</g:Grid>
-				<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
-					<g:Label addStyleNames="{style.heading_label}">Admin Net Ids associated to this VPC:</g:Label>
-					<g:FlexTable ui:field="netIdTable" cellSpacing="3" cellPadding="3"/>
-				</g:VerticalPanel>
     			</g:VerticalPanel>
     		</g:CaptionPanel>
     	</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
-    		<g:CaptionPanel ui:field="vpcpStepStatusCP" captionHTML="Provisioing Step Status" width="95%">
-    			<g:VerticalPanel ui:field="vpcpStepsPanel" debugId="vpcpStepsPanel">
-					<g:Label addStyleNames="{style.label}">VPCP Step Status Table/List goes here</g:Label>
+    		<g:CaptionPanel ui:field="stepStatusCP" captionHTML="Provisioing Step Status" width="95%">
+    			<g:VerticalPanel ui:field="stepsPanel" debugId="stepsPanel">
+					<g:Label addStyleNames="{style.label}">ProvisioningStep Status Table/List goes here</g:Label>
     			</g:VerticalPanel>
 			</g:CaptionPanel>
 		</g:cell>

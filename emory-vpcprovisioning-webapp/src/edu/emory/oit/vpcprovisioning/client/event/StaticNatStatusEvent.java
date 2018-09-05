@@ -3,8 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.event;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningPojo;
-import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryPojo;
 
 public class StaticNatStatusEvent extends GwtEvent<StaticNatStatusEvent.Handler> {
 	  /**
@@ -19,12 +18,10 @@ public class StaticNatStatusEvent extends GwtEvent<StaticNatStatusEvent.Handler>
 	   */
 	  public static final Type<StaticNatStatusEvent.Handler> TYPE = new Type<StaticNatStatusEvent.Handler>();
 
-	  private final StaticNatProvisioningPojo snp;
-	  private final StaticNatDeprovisioningPojo sndp;
+	  private final StaticNatProvisioningSummaryPojo summary;
 
-	  public StaticNatStatusEvent(StaticNatProvisioningPojo snp, StaticNatDeprovisioningPojo sndp) {
-	    this.snp = snp;
-	    this.sndp = sndp;
+	  public StaticNatStatusEvent(StaticNatProvisioningSummaryPojo summary) {
+	    this.summary = summary;
 	  }
 
 	  @Override
@@ -32,13 +29,9 @@ public class StaticNatStatusEvent extends GwtEvent<StaticNatStatusEvent.Handler>
 	    return TYPE;
 	  }
 
-	  public StaticNatProvisioningPojo getStaticNatProvisioning() {
-	    return snp;
+	  public StaticNatProvisioningSummaryPojo getStaticNatProvisioningSummary() {
+	    return summary;
 	  }
-
-	  public StaticNatDeprovisioningPojo getStaticNatDeprovisioning() {
-		    return sndp;
-		  }
 
 	  @Override
 	  protected void dispatch(StaticNatStatusEvent.Handler handler) {

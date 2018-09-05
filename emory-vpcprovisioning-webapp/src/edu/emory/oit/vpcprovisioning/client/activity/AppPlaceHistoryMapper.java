@@ -33,6 +33,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPlace;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPlace;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
+import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -81,7 +82,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileP
 				 MaintainIncidentPlace.Tokenizer.class,
 				 ListStaticNatProvisioningSummaryPlace.Tokenizer.class,
 				 ListVpnConnectionProfilePlace.Tokenizer.class,
-				 MaintainVpnConnectionProfilePlace.Tokenizer.class})
+				 MaintainVpnConnectionProfilePlace.Tokenizer.class,
+				 StaticNatProvisioningStatusPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

@@ -45,6 +45,7 @@ import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
@@ -98,6 +99,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private QueryFilter filter;
 	private TermsOfUseAgreementPojo termsOfUseAgreement;
 	private IncidentPojo incident;
+	private StaticNatProvisioningSummaryPojo staticNatProvisioningSummary;
 	private StaticNatProvisioningPojo staticNatProvisioning;
 	private StaticNatDeprovisioningPojo staticNatDeprovisioning;
 	private VpnConnectionProfilePojo vpnConnectionProfile;
@@ -170,6 +172,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	
 	public static void fire(EventBus eventBus, String sourceName, VpcpPojo vpcp) {
 		eventBus.fireEventFromSource(new ActionEvent(vpcp), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, StaticNatProvisioningSummaryPojo snp) {
+		eventBus.fireEventFromSource(new ActionEvent(snp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, StaticNatProvisioningPojo snp) {
@@ -526,6 +532,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.vpnConnectonProfileAssignment = profileAssignment;
 	}
 
+	public ActionEvent(StaticNatProvisioningSummaryPojo snp) {
+		this.staticNatProvisioningSummary = snp;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -766,5 +776,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setVpnConnectonProfileAssignment(VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment) {
 		this.vpnConnectonProfileAssignment = vpnConnectonProfileAssignment;
+	}
+
+	public StaticNatProvisioningSummaryPojo getStaticNatProvisioningSummary() {
+		return staticNatProvisioningSummary;
+	}
+
+	public void setStaticNatProvisioningSummary(StaticNatProvisioningSummaryPojo staticNatProvisioningSummary) {
+		this.staticNatProvisioningSummary = staticNatProvisioningSummary;
 	}
 }

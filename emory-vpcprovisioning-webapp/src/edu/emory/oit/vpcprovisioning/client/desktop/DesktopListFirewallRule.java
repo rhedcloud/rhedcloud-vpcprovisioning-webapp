@@ -129,82 +129,100 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-		if (userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) || 
-				userLoggedIn.isCentralAdmin()) {
-
-		    Grid grid = new Grid(3, 1);
-		    grid.setCellSpacing(8);
-		    actionsPopup.add(grid);
-		    
-		    // anchors for:
-		    // - view/edit
-		    // - delete
-			String anchorText = "Create Firewall Exception Request Like This";
-
-			Anchor maintainAnchor = new Anchor(anchorText);
-			maintainAnchor.addStyleName("productAnchor");
-			maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-			maintainAnchor.setTitle("Create Firewall Exception Request like the selected Firewall Rule.");
-			maintainAnchor.ensureDebugId(anchorText);
-			maintainAnchor.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					actionsPopup.hide();
-					FirewallRulePojo m = fw_selectionModel.getSelectedObject();
-					if (m != null) {
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());
-					}
-					else {
-						showMessageToUser("Please select an item from the list");
-					}
-				}
-			});
-			grid.setWidget(0, 0, maintainAnchor);
-
-			Anchor createFwerAnchor = new Anchor("Create Firewall Exception Request");
-			createFwerAnchor.addStyleName("productAnchor");
-			createFwerAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-			createFwerAnchor.setTitle("Create a new Firewall Exception Request");
-			createFwerAnchor.ensureDebugId(createFwerAnchor.getText());
-			createFwerAnchor.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					actionsPopup.hide();
-					FirewallRulePojo m = null;
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());
-				}
-			});
-			grid.setWidget(1, 0, createFwerAnchor);
-			actionsPopup.showRelativeTo(firewallRuleActionsButton);
-
-			Anchor deleteAnchor = new Anchor("Remove Firewall Rule");
-			deleteAnchor.addStyleName("productAnchor");
-			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-			deleteAnchor.setTitle("Remove selected Firewall Rule");
-			deleteAnchor.ensureDebugId(deleteAnchor.getText());
-			deleteAnchor.addClickHandler(new ClickHandler() {
-				@Override
-				public void onClick(ClickEvent event) {
-					actionsPopup.hide();
-					FirewallRulePojo m = fw_selectionModel.getSelectedObject();
-					if (m != null) {
-						// just use a popup here and not try to show the "normal" CidrAssignment
-						// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-//						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
-						showMessageToUser("Action not supported yet.");
-					}
-					else {
-						showMessageToUser("Please select an item from the list");
-					}
-				}
-			});
-			grid.setWidget(2, 0, deleteAnchor);
-			actionsPopup.showRelativeTo(firewallRuleActionsButton);
-		}
-		else {
+		if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) && 
+				!userLoggedIn.isCentralAdmin()) {
+			
 			// user not authorized to perform any actions on selected item...
 			showMessageToUser("You are not authorized to perform any actions on Firewall Rules.");
+			return;
 		}
+		
+	    Grid grid = new Grid(3, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+	    
+	    // anchors for:
+	    // - view/edit
+	    // - delete
+		String anchorText = "Create Firewall Exception Request Like This";
+
+		Anchor maintainAnchor = new Anchor(anchorText);
+		maintainAnchor.addStyleName("productAnchor");
+		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		maintainAnchor.setTitle("Create Firewall Exception Request like the selected Firewall Rule.");
+		maintainAnchor.ensureDebugId(anchorText);
+		maintainAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+			    if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) &&
+				    	!userLoggedIn.isCentralAdmin()) {
+			    	
+			    	showMessageToUser("User are not authorized to perform this action on this item.");
+			    	return;
+			    }
+				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+				if (m != null) {
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, maintainAnchor);
+
+		Anchor createFwerAnchor = new Anchor("Create Firewall Exception Request");
+		createFwerAnchor.addStyleName("productAnchor");
+		createFwerAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		createFwerAnchor.setTitle("Create a new Firewall Exception Request");
+		createFwerAnchor.ensureDebugId(createFwerAnchor.getText());
+		createFwerAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+			    if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) &&
+				    	!userLoggedIn.isCentralAdmin()) {
+			    	
+			    	showMessageToUser("User are not authorized to perform this action on this item.");
+			    	return;
+			    }
+				FirewallRulePojo m = null;
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());
+			}
+		});
+		grid.setWidget(1, 0, createFwerAnchor);
+		actionsPopup.showRelativeTo(firewallRuleActionsButton);
+
+		Anchor deleteAnchor = new Anchor("Remove Firewall Rule");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Remove selected Firewall Rule");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+			    if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) &&
+				    	!userLoggedIn.isCentralAdmin()) {
+			    	
+			    	showMessageToUser("User are not authorized to perform this action on this item.");
+			    	return;
+			    }
+				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
+				if (m != null) {
+					// just use a popup here and not try to show the "normal" CidrAssignment
+					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
+					showMessageToUser("Action not supported yet.");
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, deleteAnchor);
+		actionsPopup.showRelativeTo(firewallRuleActionsButton);
 	}
 	
 	@UiHandler("firewallExceptionRequestButton")
@@ -221,6 +239,13 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
+		if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) && 
+				!userLoggedIn.isCentralAdmin()) {
+			
+			// user not authorized to perform any actions on selected item...
+			showMessageToUser("You are not authorized to perform any actions on Firewall Exception Requests.");
+			return;
+		}
 	    Grid grid = new Grid(2, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
@@ -244,6 +269,12 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
+			    if (!userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId()) &&
+				    	!userLoggedIn.isCentralAdmin()) {
+			    	
+			    	showMessageToUser("User are not authorized to perform this action on this item.");
+			    	return;
+			    }
 				FirewallExceptionRequestPojo m = fwer_selectionModel.getSelectedObject();
 				if (m != null) {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_FIREWALL_EXCEPTION_REQUEST, m, presenter.getVpc());

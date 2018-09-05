@@ -77,8 +77,8 @@ public class StaticNatProvisioningSummaryPojo extends SharedObject implements Is
 			return c1.compareTo(c2);
 		}
 		else if (this.deProvisioned != null && o.getProvisioned() != null) {
-			Date c1 = o.getDeprovisioned().getCreateTime();
-			Date c2 = this.getProvisioned().getCreateTime();
+			Date c1 = o.getProvisioned().getCreateTime();
+			Date c2 = this.getDeprovisioned().getCreateTime();
 			if (c1 == null || c2 == null) {
 				return 0;
 			}
