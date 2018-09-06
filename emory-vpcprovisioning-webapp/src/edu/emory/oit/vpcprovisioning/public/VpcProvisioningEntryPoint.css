@@ -484,10 +484,11 @@ a:visited {
   background-color:AntiqueWhite;
 }
 .pspGridRow-success {
-  background-color:LightGreen;
+  	background-color:LightGreen;
 }
 .pspGridRow-failure {
-  background-color:Crimson;
+	color: lightgrey;
+	background-color:Crimson;
 }
 .productCategory {
 	font-size: 14px;

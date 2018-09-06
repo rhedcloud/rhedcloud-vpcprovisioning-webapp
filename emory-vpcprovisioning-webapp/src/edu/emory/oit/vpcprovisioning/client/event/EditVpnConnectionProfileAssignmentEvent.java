@@ -19,7 +19,7 @@ package edu.emory.oit.vpcprovisioning.client.event;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 
 /**
  * Fired when the user wants to edit a case record.
@@ -37,10 +37,10 @@ public class EditVpnConnectionProfileAssignmentEvent extends GwtEvent<EditVpnCon
    */
   public static final Type<EditVpnConnectionProfileAssignmentEvent.Handler> TYPE = new Type<EditVpnConnectionProfileAssignmentEvent.Handler>();
 
-  private final VpnConnectionProfileAssignmentPojo assignment;
+  private final VpnConnectionProfileSummaryPojo summary;
 
-  public EditVpnConnectionProfileAssignmentEvent(VpnConnectionProfileAssignmentPojo assignment) {
-    this.assignment = assignment;
+  public EditVpnConnectionProfileAssignmentEvent(VpnConnectionProfileSummaryPojo summary) {
+    this.summary = summary;
   }
 
   @Override
@@ -48,8 +48,8 @@ public class EditVpnConnectionProfileAssignmentEvent extends GwtEvent<EditVpnCon
     return TYPE;
   }
 
-  public VpnConnectionProfileAssignmentPojo getVpnConnectionProfileAssignment() {
-    return this.assignment;
+  public VpnConnectionProfileSummaryPojo getVpnConnectionProfileSummary() {
+    return this.summary;
   }
 
   @Override

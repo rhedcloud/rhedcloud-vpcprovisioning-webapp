@@ -63,6 +63,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePlace;
 
 public class AppActivityMapper implements ActivityMapper {
@@ -392,6 +393,10 @@ public class AppActivityMapper implements ActivityMapper {
 
 		if (place instanceof MaintainVpnConnectionProfilePlace) {
 			return new MaintainVpnConnectionProfileActivity(clientFactory, (MaintainVpnConnectionProfilePlace) place);
+		}
+
+		if (place instanceof MaintainVpnConnectionProfileAssignmentPlace) {
+			return new MaintainVpnConnectionProfileAssignmentActivity(clientFactory, (MaintainVpnConnectionProfileAssignmentPlace) place);
 		}
 
 		if (place instanceof StaticNatProvisioningStatusPlace) {

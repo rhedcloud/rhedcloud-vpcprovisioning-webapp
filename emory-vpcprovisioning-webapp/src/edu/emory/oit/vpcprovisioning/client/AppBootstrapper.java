@@ -27,7 +27,6 @@ import com.google.web.bindery.event.shared.UmbrellaException;
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
-import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
@@ -77,6 +76,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
@@ -436,7 +436,30 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				shell.showMessageToUser("Maintain VPN Connecton Profile Assignment...coming soon...");
+//				shell.showMessageToUser("Maintain VPN Connecton Profile Assignment...coming soon...");
+				final DialogBox db = new DialogBox();
+				db.setText("View/Maintain VPN Connection Profile Assignment");
+				db.setGlassEnabled(true);
+				db.center();
+				final MaintainVpnConnectionProfileAssignmentPresenter presenter = new MaintainVpnConnectionProfileAssignmentPresenter(clientFactory, event.getVpnConnectionProfileSummary());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
 //				placeController.goTo(MaintainVpnConnectionProfileAssignmentPlace.createMaintainVpnConnectionProfileAssignmentPlace(event.getVpnConnectionProfileAssignment()));
 			}
 		});

@@ -5,6 +5,11 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
@@ -15,6 +20,17 @@ public class DesktopMaintainVpnConnectionProfileAssignment extends ViewImplBase 
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
 
+	@UiField TextBox assignmentIdTB;
+	@UiField TextBox connectionProfileIdTB;
+	@UiField TextBox ownerIdTB;
+	@UiField TextArea descriptionTA;
+	@UiField TextBox purposeTB;
+	@UiField TextBox deleteUserTB;
+	@UiField TextBox deleteTimeTB;
+	@UiField Label createInfoLabel;
+	@UiField Label updateInfoLabel;
+	@UiField Button okayButton;
+	@UiField Button cancelButton;
 
 	private static DesktopMaintainVpnConnectionProfileAssignmentUiBinder uiBinder = GWT
 			.create(DesktopMaintainVpnConnectionProfileAssignmentUiBinder.class);
@@ -53,26 +69,46 @@ public class DesktopMaintainVpnConnectionProfileAssignment extends ViewImplBase 
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
-		
+		assignmentIdTB.setEnabled(false);
+		connectionProfileIdTB.setEnabled(false);
+		ownerIdTB.setEnabled(false);
+		descriptionTA.setEnabled(false);
+		purposeTB.setEnabled(false);
+		deleteUserTB.setEnabled(false);
+		deleteTimeTB.setEnabled(false);
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		assignmentIdTB.setEnabled(false);
+		connectionProfileIdTB.setEnabled(false);
+		ownerIdTB.setEnabled(false);
+		descriptionTA.setEnabled(false);
+		purposeTB.setEnabled(false);
+		deleteUserTB.setEnabled(false);
+		deleteTimeTB.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
-		
+		assignmentIdTB.setEnabled(false);
+		connectionProfileIdTB.setEnabled(false);
+		ownerIdTB.setEnabled(false);
+		descriptionTA.setEnabled(false);
+		purposeTB.setEnabled(false);
+		deleteUserTB.setEnabled(false);
+		deleteTimeTB.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		assignmentIdTB.setEnabled(false);
+		connectionProfileIdTB.setEnabled(false);
+		ownerIdTB.setEnabled(false);
+		descriptionTA.setEnabled(false);
+		purposeTB.setEnabled(false);
+		deleteUserTB.setEnabled(false);
+		deleteTimeTB.setEnabled(false);
 	}
 
 	@Override
@@ -94,14 +130,12 @@ public class DesktopMaintainVpnConnectionProfileAssignment extends ViewImplBase 
 
 	@Override
 	public HasClickHandlers getCancelWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return cancelButton;
 	}
 
 	@Override
 	public HasClickHandlers getOkayWidget() {
-		// TODO Auto-generated method stub
-		return null;
+		return okayButton;
 	}
 
 	@Override
@@ -159,8 +193,15 @@ public class DesktopMaintainVpnConnectionProfileAssignment extends ViewImplBase 
 
 	@Override
 	public void initPage() {
-		// TODO Auto-generated method stub
-		
+		assignmentIdTB.setText(presenter.getVpnConnectionProfileAssignment().getVpnConnectionProfileAssignmentId());
+		connectionProfileIdTB.setText(presenter.getVpnConnectionProfileAssignment().getVpnConnectionProfileId());
+		ownerIdTB.setText(presenter.getVpnConnectionProfileAssignment().getOwnerId());
+		descriptionTA.setText(presenter.getVpnConnectionProfileAssignment().getDescription());
+		purposeTB.setText(presenter.getVpnConnectionProfileAssignment().getPurpose());
+		deleteUserTB.setText(presenter.getVpnConnectionProfileAssignment().getDeleteUser());
+		if (presenter.getVpnConnectionProfileAssignment().getDeleteTime() != null) {
+			deleteTimeTB.setText(dateFormat.format(presenter.getVpnConnectionProfileAssignment().getDeleteTime()));
+		}
 	}
 
 	@Override

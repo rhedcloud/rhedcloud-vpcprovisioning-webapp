@@ -49,6 +49,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainTermsOfUseAgr
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfile;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfileAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopStaticNatProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
@@ -92,6 +93,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
 
 public class ClientFactoryImplDesktop implements ClientFactory {
@@ -149,6 +151,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListVpnConnectionProfileView listVpnConnectionProfileView;
 	private MaintainVpnConnectionProfileView maintainVpnConnectionProfileView;
 	private StaticNatProvisioningStatusView staticNatProvisioningStatusView;
+	private MaintainVpnConnectionProfileAssignmentView maintainVpnConnectionProfileAssignmentView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -632,4 +635,11 @@ public class ClientFactoryImplDesktop implements ClientFactory {
     protected StaticNatProvisioningStatusView createStaticNatProvisioningStatusView() {
         return new DesktopStaticNatProvisioningStatus();
     }
+	@Override
+	public MaintainVpnConnectionProfileAssignmentView getMaintainVpnConnectionProfileAssignmentView() {
+		return createMaintainVpnConnectionProfileAssignmentView();
+	}
+	protected MaintainVpnConnectionProfileAssignmentView createMaintainVpnConnectionProfileAssignmentView() {
+		return new DesktopMaintainVpnConnectionProfileAssignment();
+	}
 }

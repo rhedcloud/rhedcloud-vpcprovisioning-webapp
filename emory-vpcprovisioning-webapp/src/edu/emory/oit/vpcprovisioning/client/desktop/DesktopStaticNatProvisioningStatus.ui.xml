@@ -4,34 +4,6 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<!-- 
-	<!ELEMENT StaticNatProvisioning (
-		ProvisioningId, 
-		StaticNat, 
-		<!ELEMENT StaticNat (
-			PublicIp,
-			PrivateIp)>
-		Status, 
-		ProvisioningResult?, 
-		ActualTime?, 
-		AnticipatedTime?, 
-		ProvisioningStep*, 
-		<!ELEMENT ProvisioningStep (
-			ProvisioningStepId?, 
-			ProvisioningId, 
-			StepId, 
-			Type, 
-			Description, 
-			Status, 
-			StepResult?, 
-			ActualTime?, 
-			AnticipatedTime?, 
-			Property*, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
-		CreateUser, 
-		CreateDatetime, 
-		LastUpdateUser?, 
-		LastUpdateDatetime?)>
-	 -->
 	<g:ScrollPanel height="99%" width="99%">
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">

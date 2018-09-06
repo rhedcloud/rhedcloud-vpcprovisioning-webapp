@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 
 public class MaintainVpnConnectionProfileAssignmentPlace extends Place {
 	/**
@@ -44,8 +44,8 @@ public class MaintainVpnConnectionProfileAssignmentPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static MaintainVpnConnectionProfileAssignmentPlace createMaintainVpnConnectionProfileAssignmentPlace(VpnConnectionProfileAssignmentPojo pojo) {
-		return new MaintainVpnConnectionProfileAssignmentPlace(pojo.getVpnConnectionProfileAssignmentId(), pojo);
+	public static MaintainVpnConnectionProfileAssignmentPlace createMaintainVpnConnectionProfileAssignmentPlace(VpnConnectionProfileSummaryPojo pojo) {
+		return new MaintainVpnConnectionProfileAssignmentPlace(pojo.getAssignment().getVpnConnectionProfileAssignmentId(), pojo);
 	}
 
 	/**
@@ -61,7 +61,7 @@ public class MaintainVpnConnectionProfileAssignmentPlace extends Place {
 		return singleton;
 	}
 
-	private final VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment;
+	private final VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary;
 	private final String vpnConnectionProfileAssignmentId;
 	public String getVpnConnectionProfileAssignmentId() {
 		return vpnConnectionProfileAssignmentId;
@@ -73,9 +73,9 @@ public class MaintainVpnConnectionProfileAssignmentPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private MaintainVpnConnectionProfileAssignmentPlace(String vpnConnectionProfileAssignmentId, VpnConnectionProfileAssignmentPojo pojo) {
+	private MaintainVpnConnectionProfileAssignmentPlace(String vpnConnectionProfileAssignmentId, VpnConnectionProfileSummaryPojo pojo) {
 		this.vpnConnectionProfileAssignmentId = vpnConnectionProfileAssignmentId;
-		this.vpnConnectionProfileAssignment = pojo;
+		this.vpnConnectionProfileSummary = pojo;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class MaintainVpnConnectionProfileAssignmentPlace extends Place {
 	 * 
 	 * @return the caseRecord to edit, or null if not available
 	 */
-	public VpnConnectionProfileAssignmentPojo getVpnConnectionProfileAssignment() {
-		return vpnConnectionProfileAssignment;
+	public VpnConnectionProfileSummaryPojo getVpnConnectionProfileSummary() {
+		return vpnConnectionProfileSummary;
 	}
 }

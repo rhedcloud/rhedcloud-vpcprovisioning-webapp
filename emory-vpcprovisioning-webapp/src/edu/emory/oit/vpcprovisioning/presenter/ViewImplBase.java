@@ -45,7 +45,7 @@ public abstract class ViewImplBase extends Composite {
 	
 	public void showPleaseWaitDialog(String pleaseWaitHTML) {
 		if (pleaseWaitDialog == null) {
-			pleaseWaitDialog = new PopupPanel(true);
+			pleaseWaitDialog = new PopupPanel(false);
 		}
 		else {
 			pleaseWaitDialog.clear();
