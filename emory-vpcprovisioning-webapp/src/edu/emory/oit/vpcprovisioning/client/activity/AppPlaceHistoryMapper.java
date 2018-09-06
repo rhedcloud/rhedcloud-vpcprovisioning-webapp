@@ -45,6 +45,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 
 @WithTokenizers({ListCidrPlace.Tokenizer.class, 
 				 MaintainCidrPlace.Tokenizer.class, 
@@ -87,7 +88,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileP
 				 MaintainVpnConnectionProfilePlace.Tokenizer.class,
 				 StaticNatProvisioningStatusPlace.Tokenizer.class,
 				 MaintainVpnConnectionProfileAssignmentPlace.Tokenizer.class,
-				 ListVpnConnectionProvisioningPlace.Tokenizer.class})
+				 ListVpnConnectionProvisioningPlace.Tokenizer.class,
+				 VpncpStatusPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

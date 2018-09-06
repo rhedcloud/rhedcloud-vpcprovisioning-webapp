@@ -54,6 +54,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnection
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopStaticNatProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpncpStatus;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
@@ -97,6 +98,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 
 public class ClientFactoryImplDesktop implements ClientFactory {
 	private final EventBus eventBus = new SimpleEventBus();
@@ -155,6 +157,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private StaticNatProvisioningStatusView staticNatProvisioningStatusView;
 	private MaintainVpnConnectionProfileAssignmentView maintainVpnConnectionProfileAssignmentView;
 	private ListVpnConnectionProvisioningView listVpnConnectionProvisioningView;
+	private VpncpStatusView vpncpStatusView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -655,4 +658,14 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	protected ListVpnConnectionProvisioningView createListVpnConnectionProvisioningView() {
 		return new DesktopListVpnConnectionProvisioning();
 	}
+	@Override
+	public VpncpStatusView getVpncpStatusView() {
+        if (vpncpStatusView == null) {
+        	vpncpStatusView = createVpncpStatusView();
+        }
+        return vpncpStatusView;
+	}
+    protected VpncpStatusView createVpncpStatusView() {
+        return new DesktopVpncpStatus();
+    }
 }

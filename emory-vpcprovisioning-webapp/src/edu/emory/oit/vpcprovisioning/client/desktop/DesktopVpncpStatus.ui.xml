@@ -1,0 +1,118 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:ScrollPanel height="99%" width="99%">
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
+    		<g:CaptionPanel ui:field="introPanel" captionHTML="Intro" width="95%">
+    		<g:VerticalPanel>
+	   			<g:Grid cellSpacing ="8">
+					<g:row>
+				    	<g:customCell>
+							<g:HTML>Below is the current status of this VPN Connection Provisioning 
+							object.  The page will refresh every 5 seconds with the latest 
+							status of the object (until the Overall Status is "completed").  
+							Alternatively, you may click on the "Refresh" button 
+							to manually refresh the status.  You can click the 
+							"Done" button to leave the page and return to the list of VPCP 
+							objects and you can return to this page at any time to check 
+							the status of this particular provisioning object.</g:HTML>
+				    	</g:customCell>
+				    </g:row>
+				</g:Grid>
+			</g:VerticalPanel>
+			</g:CaptionPanel>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+							ui:field="doneButton" debugId="doneButton">Done</g:Button>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
+							ui:field="refreshButton" debugId="refreshButton">Refresh</g:Button>
+			    	</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
+			<!-- EVERYTHING IS READ ONLY ON THIS PAGE -->
+			
+    		<g:CaptionPanel ui:field="statusCP" captionHTML="Overall Status" width="95%">
+    			<g:VerticalPanel>
+    			<g:Grid ui:field="generalStatusGrid" cellSpacing ="8">
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Provisioning ID:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="provisioningIdLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+	 						<g:Label addStyleNames="{style.label}">Overall Status:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="statusLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Provisioning Result:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="provisioningResultLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+					</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Anticpated Completion Time:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="anticipatedTimeLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Actual Completion Time:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="actualTimeLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+					</g:row>
+    			</g:Grid>
+    			<g:Grid ui:field="progressGrid" cellSpacing ="8">
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Overall Progress:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:HTML ui:field="progressHTML"/>
+				    	</g:customCell>
+					</g:row>
+    			</g:Grid>
+    			</g:VerticalPanel>
+    		</g:CaptionPanel>
+    	</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">			
+    		<g:CaptionPanel ui:field="stepStatusCP" captionHTML="Provisioing Step Status" width="95%">
+    			<g:VerticalPanel ui:field="stepsPanel" debugId="stepsPanel">
+					<g:Label addStyleNames="{style.label}">Provisioning Step Status Table/List goes here</g:Label>
+    			</g:VerticalPanel>
+			</g:CaptionPanel>
+		</g:cell>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 

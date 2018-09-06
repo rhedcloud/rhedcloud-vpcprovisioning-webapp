@@ -79,6 +79,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -1685,8 +1686,8 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.SHOW_VPNCP_STATUS, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				shell.showMessageToUser("This feature is not yet implemented...");
-//				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncp()));
+//				shell.showMessageToUser("This feature is not yet implemented...");
+				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncp()));
 			}
 		});
 

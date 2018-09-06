@@ -813,4 +813,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setVpnConnectionProfileSummary(VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary) {
 		this.vpnConnectionProfileSummary = vpnConnectionProfileSummary;
 	}
+
+	public VpncpPojo getVpncp() {
+		return vpncp;
+	}
+
+	public void setVpncp(VpncpPojo vpncp) {
+		this.vpncp = vpncp;
+	}
 }

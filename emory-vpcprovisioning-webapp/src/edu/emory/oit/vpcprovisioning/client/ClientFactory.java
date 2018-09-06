@@ -46,6 +46,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 
 public interface ClientFactory {
 	/**
@@ -122,4 +123,5 @@ public interface ClientFactory {
 	StaticNatProvisioningStatusView getStaticNatProvisioningStatusView();
 	MaintainVpnConnectionProfileAssignmentView getMaintainVpnConnectionProfileAssignmentView();
 	ListVpnConnectionProvisioningView getListVpnConnectionProvisioningView();
+	VpncpStatusView getVpncpStatusView();
 }

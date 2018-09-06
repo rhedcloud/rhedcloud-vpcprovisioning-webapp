@@ -54,6 +54,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 
 public class ClientFactoryImplMobile implements ClientFactory {
 	private final EventBus eventBus = new SimpleEventBus();
@@ -367,6 +368,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public ListVpnConnectionProvisioningView getListVpnConnectionProvisioningView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public VpncpStatusView getVpncpStatusView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

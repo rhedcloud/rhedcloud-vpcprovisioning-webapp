@@ -87,6 +87,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
@@ -485,9 +487,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			firstVpnConnectionContentWidget = true;
 			vpnConnectionContentContainer.clear();
 			ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
-//			VpnConnectionProvisioningStatusView vpncpStatusView = clientFactory.getVpnConnectionProvisioningStatusView();
+			VpncpStatusView vpncpStatusView = clientFactory.getVpncpStatusView();
 			vpnConnectionContentContainer.add(listVpncpView);
-//			vpnConnectionContentContainer.add(vpncpStatusView);
+			vpnConnectionContentContainer.add(vpncpStatusView);
 			vpnConnectionContentContainer.setAnimationDuration(500);
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
 			break;
@@ -623,8 +625,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-//		if (w instanceof ListVpnConnectionProvisioningPresenter || w instanceof VpnConnectionProvisioningStatusPresenter) {
-		if (w instanceof ListVpnConnectionProvisioningPresenter) {
+		if (w instanceof ListVpnConnectionProvisioningPresenter || w instanceof VpncpStatusPresenter) {
 			GWT.log("It's the vpn connection provisioning presenter...");
 			vpnConnectionContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
