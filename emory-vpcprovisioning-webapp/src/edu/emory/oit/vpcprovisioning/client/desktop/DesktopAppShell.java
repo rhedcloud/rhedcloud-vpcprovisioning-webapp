@@ -84,6 +84,9 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
@@ -479,6 +482,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		case 8:
 			GWT.log("need to get VPN Connection content.");
 			clientFactory.getVpcpStatusView().stopTimer();
+			firstVpnConnectionContentWidget = true;
+			vpnConnectionContentContainer.clear();
+			ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
+//			VpnConnectionProvisioningStatusView vpncpStatusView = clientFactory.getVpnConnectionProvisioningStatusView();
+			vpnConnectionContentContainer.add(listVpncpView);
+//			vpnConnectionContentContainer.add(vpncpStatusView);
+			vpnConnectionContentContainer.setAnimationDuration(500);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
 			break;
 		case 9:
 			GWT.log("need to get VPN Connection Profile content.");
@@ -601,8 +612,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-//		if (w instanceof ListVpnConnectionProfilePresenter || w instanceof MaintainVpnConnectionProfilePresenter) {
-		if (w instanceof ListVpnConnectionProfilePresenter) {
+		if (w instanceof ListVpnConnectionProfilePresenter || w instanceof MaintainVpnConnectionProfilePresenter) {
 			GWT.log("It's the vpn connection profile presenter...");
 			vpnConnectionProfileContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -613,6 +623,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
+//		if (w instanceof ListVpnConnectionProvisioningPresenter || w instanceof VpnConnectionProvisioningStatusPresenter) {
+		if (w instanceof ListVpnConnectionProvisioningPresenter) {
+			GWT.log("It's the vpn connection provisioning presenter...");
+			vpnConnectionContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstVpnConnectionContentWidget) {
+				firstVpnConnectionContentWidget = false;
+				vpnConnectionContentContainer.animate(0);
+			}
+			return;
+		}
+
 		// if we get here, it's the home tab, just set the widget to what's passed in for now
 		homeContentContainer.setWidget(w);
 		// Do not animate the first time we show a widget.

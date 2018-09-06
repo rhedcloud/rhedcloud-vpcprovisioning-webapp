@@ -54,6 +54,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
 
 
 /**
@@ -106,6 +107,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private VpnConnectionProfilePojo vpnConnectionProfile;
 	private VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment;
 	private VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary;
+	private VpncpPojo vpncp;
 	private Place nextPlace;
 
 	public CidrPojo getCidr() {
@@ -304,6 +306,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfileAssignmentPojo profileAssignment) {
 		eventBus.fireEventFromSource(new ActionEvent(profileAssignment), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, VpncpPojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
@@ -544,6 +550,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(VpnConnectionProfileSummaryPojo profileSummary) {
 		this.vpnConnectionProfileSummary = profileSummary;
+	}
+
+	public ActionEvent(VpncpPojo m) {
+		this.vpncp = m;
 	}
 
 	@Override

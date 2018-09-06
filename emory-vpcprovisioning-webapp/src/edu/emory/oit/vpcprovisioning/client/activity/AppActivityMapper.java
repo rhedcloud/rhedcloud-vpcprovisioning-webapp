@@ -63,6 +63,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePlace;
 
@@ -279,6 +281,23 @@ public class AppActivityMapper implements ActivityMapper {
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}
+			};
+		}
+
+		if (place instanceof ListVpnConnectionProvisioningPlace) {
+			// The list of case records.
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListVpnConnectionProvisioningPresenter presenter = new ListVpnConnectionProvisioningPresenter(clientFactory, (ListVpnConnectionProvisioningPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+
+				/*
+				 * Note no call to presenter.stop(). The CaseRecordListViews do that
+				 * themselves as a side effect of setPresenter.
+				 */
 			};
 		}
 

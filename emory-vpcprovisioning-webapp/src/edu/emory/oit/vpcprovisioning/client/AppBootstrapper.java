@@ -76,6 +76,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
@@ -1672,6 +1673,22 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPNCP, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				// TODO need pass filter...
+				GWT.log("Bootstrapper, GO_HOME_VPNCP.onAction");
+				placeController.goTo(new ListVpnConnectionProvisioningPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SHOW_VPNCP_STATUS, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				shell.showMessageToUser("This feature is not yet implemented...");
+//				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncp()));
+			}
+		});
 
 		GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 			@Override

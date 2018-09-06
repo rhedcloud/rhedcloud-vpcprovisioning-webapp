@@ -181,4 +181,6 @@ public interface ActionNames {
 	final String VPN_CONNECTION_PROFILE_EDITING_CANCELED = "vpnConnectionProfileCanceled";
 	final String VPN_CONNECTION_PROFILE_SAVED = "vpnConnectionProfileSaved";
 	final String MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT = "maintainVpnConnectionProfileAssignment";
+	final String SHOW_VPNCP_STATUS = "showVpncpStatus";
+	final String GO_HOME_VPNCP = "goHomeVpncp";
 }

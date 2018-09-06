@@ -145,6 +145,7 @@ import edu.emory.moa.jmsobjects.network.v1_0.StaticNatDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatProvisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProvisioning;
 import edu.emory.moa.objects.resources.v1_0.AssociatedCidr;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
@@ -163,6 +164,8 @@ import edu.emory.moa.objects.resources.v1_0.StaticNatProvisioningQuerySpecificat
 import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionProvisioningQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.*;
@@ -8941,6 +8944,138 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setDeleteUser(moa.getDeleteUser());
 		if (moa.getDeleteDatetime() != null) {
 			pojo.setDeleteTime(this.toDateFromDatetime(moa.getDeleteDatetime()));
+		}
+	}
+
+	@Override
+	public VpncpQueryResultPojo getVpncpsForFilter(VpncpQueryFilterPojo filter)
+			throws RpcException {
+
+		VpncpQueryResultPojo result = new VpncpQueryResultPojo();
+		List<VpncpPojo> pojos = new java.util.ArrayList<VpncpPojo>();
+		try {
+			VpnConnectionProvisioningQuerySpecification queryObject = (VpnConnectionProvisioningQuerySpecification) getObject(Constants.MOA_VPCNP_QUERY_SPEC);
+			VpnConnectionProvisioning actionable = (VpnConnectionProvisioning) getObject(Constants.MOA_VPCNP);
+
+			if (filter != null) {
+				if (filter.isDefaultMaxVpncps()) {
+					info("[getVpncpsForFilter] using 'maxVpcps' query language to get VPCPs");
+//					QueryLanguage ql = queryObject.newQueryLanguage();
+//					ql.setName("maxVpncps");
+//					ql.setType("hql");
+//					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+//					queryObject.setQueryLanguage(ql);
+				}
+				else if (filter.isAllVpncps()) {
+					info("[getVpncpsForFilter] using 'allVpcps' query language to get VPCPs");
+//					QueryLanguage ql = queryObject.newQueryLanguage();
+//					ql.setName("allVpncps");
+//					ql.setType("hql");
+//					queryObject.setQueryLanguage(ql);
+				}
+				else {
+					queryObject.setProvisioningId(filter.getProvisioningId());
+					queryObject.setType(filter.getType());
+					queryObject.setCreateUser(filter.getCreateUser());
+					queryObject.setLastUpdateUser(filter.getUpdateUser());
+					info("[getVpncpsForFilter] getting VPCPs for filter: " + queryObject.toXmlString());
+				}
+			}
+			else {
+				info("[getVpncpsForFilter] no filter passed in.  Getting all VPCPs");
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getVpncpsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = generalProps.getProperty("vpcpListTimeoutMillis", "30000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getNetworkOpsRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
+			@SuppressWarnings("unchecked")
+			List<VpnConnectionProvisioning> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getVpncpsForFilter] got " + moas.size() + " VPCPs back from the server.");
+			for (VpnConnectionProvisioning moa : moas) {
+				VpncpPojo pojo = new VpncpPojo();
+				VpncpPojo baseline = new VpncpPojo();
+				this.populateVpncpPojo(moa, pojo);
+				this.populateVpncpPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateVpncpPojo(VpnConnectionProvisioning moa, VpncpPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setProvisioningId(moa.getProvisioningId());
+		pojo.setStatus(moa.getStatus());
+		pojo.setProvisioningResult(moa.getProvisioningResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getVpnConnectionRequisition() != null) {
+			VpncpRequisitionPojo vpcr = new VpncpRequisitionPojo();
+			this.populateVpncpRequisitionPojo(moa.getVpnConnectionRequisition(), vpcr);
+			pojo.setRequisition(vpcr);
+		}
+
+		// provisioningsteps
+		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
+		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa.getProvisioningStep()) {
+			ProvisioningStepPojo psp = new ProvisioningStepPojo();
+			this.populateProvisioningStepPojoFromEmoryMoa(ps, psp);
+			pspList.add(psp);
+//			pojo.getProvisioningSteps().add(psp);
+		}
+		Collections.sort(pspList);
+		pojo.setProvisioningSteps(pspList);
+
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	private void populateVpncpRequisitionPojo(VpnConnectionRequisition moa,
+			VpncpRequisitionPojo pojo) throws XmlEnterpriseObjectException {
+
+		pojo.setOwnerId(moa.getOwnerId());
+		pojo.setRemoteVpnIpAddress(moa.getRemoteVpnIpAddress());
+		pojo.setPresharedKey(moa.getPresharedKey());
+		if (moa.getVpnConnectionProfile() != null) {
+			VpnConnectionProfilePojo vcp = new VpnConnectionProfilePojo();
+			this.populateVpnConnectionProfilePojo(moa.getVpnConnectionProfile(), vcp);
 		}
 	}
 }

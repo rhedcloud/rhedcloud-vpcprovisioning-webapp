@@ -1,0 +1,280 @@
+package edu.emory.oit.vpcprovisioning.presenter.vpn;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.EventBus;
+
+import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.VpncpListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpncpQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpncpQueryResultPojo;
+
+public class ListVpnConnectionProvisioningPresenter extends PresenterBase implements ListVpnConnectionProvisioningView.Presenter {
+	private static final Logger log = Logger.getLogger(ListVpcPresenter.class.getName());
+	/**
+	 * The delay in milliseconds between calls to refresh the Vpc list.
+	 */
+	//	  private static final int REFRESH_DELAY = 5000;
+	private static final int SESSION_REFRESH_DELAY = 900000;	// 15 minutes
+
+	/**
+	 * A boolean indicating that we should clear the Vpc list when started.
+	 */
+	private final boolean clearList;
+
+	private final ClientFactory clientFactory;
+
+	private EventBus eventBus;
+	
+	VpncpQueryFilterPojo filter;
+	UserAccountPojo userLoggedIn;
+
+
+	public ListVpnConnectionProvisioningPresenter(ClientFactory clientFactory, boolean clearList, VpncpQueryFilterPojo filter) {
+		this.clientFactory = clientFactory;
+		this.clearList = clearList;
+		clientFactory.getListVpnConnectionProvisioningView().setPresenter(this);
+	}
+
+	/**
+	 * Construct a new {@link ListVpcPresenter}.
+	 * 
+	 * @param clientFactory the {@link ClientFactory} of shared resources
+	 * @param place configuration for this activity
+	 */
+	public ListVpnConnectionProvisioningPresenter(ClientFactory clientFactory, ListVpnConnectionProvisioningPlace place) {
+		this(clientFactory, place.isListStale(), place.getFilter());
+	}
+
+	private ListVpnConnectionProvisioningView getView() {
+		return clientFactory.getListVpnConnectionProvisioningView();
+	}
+
+	@Override
+	public String mayStop() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void start(EventBus eventBus) {
+		this.eventBus = eventBus;
+		getView().setFieldViolations(false);
+		getView().resetFieldStyles();
+
+		setReleaseInfo(clientFactory);
+		getView().showPleaseWaitPanel("Retrieving VPC Provisioning items...please wait");
+		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
+		
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your user information.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
+				getView().setUserLoggedIn(user);
+				getView().initPage();
+				getView().enableButtons();
+				clientFactory.getShell().setTitle("VPC Provisioning App");
+				clientFactory.getShell().setSubTitle("VPCPs");
+
+				// Clear the Vpc list and display it.
+				if (clearList) {
+					getView().clearList();
+				}
+
+
+				// Request the Vpc list now.
+				if (getView().viewAllVpnConnectionProvisionings()) {
+					// show all of them
+					refreshListWithAllVpnConnectionProvisionings(user);
+				}
+				else {
+					// only show the default maximum
+					refreshListWithMaximumVpnConnectionProvisionings(user);
+				}
+			}
+		};
+		GWT.log("getting user logged in from server...");
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+	}
+
+	/**
+	 * Refresh the CIDR list.
+	 */
+	public void refreshList(final UserAccountPojo user) {
+		// use RPC to get all Vpcs for the current filter being used
+		AsyncCallback<VpncpQueryResultPojo> callback = new AsyncCallback<VpncpQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+				log.log(Level.SEVERE, "Exception Retrieving Vpcs", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving your list of Vpcs.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(VpncpQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " VpnConnectionProvisionings for " + result.getFilterUsed());
+				setVpnConnectionProvisioningList(result.getResults());
+				// apply authorization mask
+				if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else {
+					getView().applyAWSAccountAuditorMask();
+				}
+                getView().hidePleaseWaitDialog();
+                getView().hidePleaseWaitPanel();
+			}
+		};
+
+		GWT.log("refreshing VpnConnectionProvisioning list...");
+		VpcProvisioningService.Util.getInstance().getVpncpsForFilter(filter, callback);
+	}
+
+	@Override
+	public void refreshListWithMaximumVpnConnectionProvisionings(UserAccountPojo user) {
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving the default maximum list of VPCP objects from the AWS Account service...");
+
+		filter = new VpncpQueryFilterPojo();
+		filter.setAllVpncps(false);
+		filter.setDefaultMaxVpncps(true);
+		
+		refreshList(user);
+	}
+
+	@Override
+	public void refreshListWithAllVpnConnectionProvisionings(UserAccountPojo user) {
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Retrieving ALL VPCP objects from the AWS Account service (this could take a while)...");
+
+		filter = new VpncpQueryFilterPojo();
+		filter.setAllVpncps(true);
+		filter.setDefaultMaxVpncps(false);
+		
+		refreshList(user);
+	}
+
+	@Override
+	public void filterByProvisioningId(boolean includeAllVpnConnectionProvisionings, String provisioningId) {
+		if (provisioningId == null || provisioningId.length() == 0) {
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please enter a provisioning id");
+			return;
+		}
+
+		getView().showFilteredStatus();
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Filtering list by provisioning id " + provisioningId + "...");
+		
+		filter = new VpncpQueryFilterPojo();
+		filter.setAllVpncps(false);
+		filter.setDefaultMaxVpncps(false);
+		filter.setProvisioningId(provisioningId);
+		
+		refreshList(userLoggedIn);
+	}
+
+	/**
+	 * Set the list of Vpcs.
+	 */
+	private void setVpnConnectionProvisioningList(List<VpncpPojo> vpcps) {
+		getView().setVpnConnectionProvisionings(vpcps);
+		eventBus.fireEventFromSource(new VpncpListUpdateEvent(vpcps), this);
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setInitialFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Widget asWidget() {
+		return getView().asWidget();
+	}
+
+	@Override
+	public void selectVpnConnectionProvisioning(VpncpPojo selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public EventBus getEventBus() {
+		return eventBus;
+	}
+
+	public void setEventBus(EventBus eventBus) {
+		this.eventBus = eventBus;
+	}
+
+	public VpncpQueryFilterPojo getFilter() {
+		return filter;
+	}
+
+	public void setFilter(VpncpQueryFilterPojo filter) {
+		this.filter = filter;
+	}
+
+	public ClientFactory getClientFactory() {
+		return clientFactory;
+	}
+
+	@Override
+	public void deleteVpnConnectionProvisioning(final VpncpPojo vpcp) {
+//		if (Window.confirm("Delete the AWS VpnConnectionProvisioning " + vpcp.getProvisioningId() + "?")) {
+//			getView().showPleaseWaitDialog("Deleting VPC Provisioning item...");
+//			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+//
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server deleting the Vpc.  Message " +
+//							"from server is: " + caught.getMessage());
+//					getView().hidePleaseWaitDialog();
+//				}
+//
+//				@Override
+//				public void onSuccess(Void result) {
+//					// remove from dataprovider
+//					getView().removeVpnConnectionProvisioningFromView(vpcp);
+//					getView().hidePleaseWaitDialog();
+//					// status message
+//					getView().showStatus(getView().getStatusMessageSource(), "VpnConnectionProvisioning was deleted.");
+//					
+//					// TODO fire list Vpcs event...
+//				}
+//			};
+//			VpcProvisioningService.Util.getInstance().deleteVpnConnectionProvisioning(vpcp, callback);
+//		}
+	}
+
+}

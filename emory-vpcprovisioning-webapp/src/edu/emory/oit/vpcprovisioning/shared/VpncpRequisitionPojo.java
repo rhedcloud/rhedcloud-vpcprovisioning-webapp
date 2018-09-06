@@ -3,14 +3,14 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class VpnConnectionRequisitionPojo extends SharedObject implements IsSerializable {
+public class VpncpRequisitionPojo extends SharedObject implements IsSerializable {
 
 	String ownerId;
 	String remoteVpnIpAddress;
 	String presharedKey;
 	VpnConnectionProfilePojo profile;
 	
-	public VpnConnectionRequisitionPojo() {
+	public VpncpRequisitionPojo() {
 		// TODO Auto-generated constructor stub
 	}
 

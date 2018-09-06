@@ -42,23 +42,23 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
-import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
 
-public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
+public class DesktopListVpnConnectionProvisioning extends ViewImplBase implements ListVpnConnectionProvisioningView {
 	Presenter presenter;
-	private ListDataProvider<VpcpPojo> dataProvider = new ListDataProvider<VpcpPojo>();
-	private SingleSelectionModel<VpcpPojo> selectionModel;
-	List<VpcpPojo> vpcpList = new java.util.ArrayList<VpcpPojo>();
+	private ListDataProvider<VpncpPojo> dataProvider = new ListDataProvider<VpncpPojo>();
+	private SingleSelectionModel<VpncpPojo> selectionModel;
+	List<VpncpPojo> List = new java.util.ArrayList<VpncpPojo>();
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager vpcpListPager;
-	@UiField Button generateVpcButton;
+	@UiField SimplePager listPager;
+//	@UiField Button generateButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<VpcpPojo> vpcpListTable = new CellTable<VpcpPojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<VpncpPojo> listTable = new CellTable<VpncpPojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
@@ -72,22 +72,25 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		@Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
 		public CellTable.Style cellTableStyle();
 	}
-	private static DesktopListVpcpUiBinder uiBinder = GWT.create(DesktopListVpcpUiBinder.class);
 
-	interface DesktopListVpcpUiBinder extends UiBinder<Widget, DesktopListVpcp> {
+	private static DesktopListVpnConnectionProvisioningUiBinder uiBinder = GWT
+			.create(DesktopListVpnConnectionProvisioningUiBinder.class);
+
+	interface DesktopListVpnConnectionProvisioningUiBinder
+			extends UiBinder<Widget, DesktopListVpnConnectionProvisioning> {
 	}
 
-	public DesktopListVpcp() {
+	public DesktopListVpnConnectionProvisioning() {
 		initWidget(uiBinder.createAndBindUi(this));
 		setRefreshButtonImage(refreshButton);
 
-		generateVpcButton.addDomHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				GWT.log("Should go to generate vpcp here...");
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPCP);
-			}
-		}, ClickEvent.getType());
+//		generateButton.addDomHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				GWT.log("Should go to generate  here...");
+//				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPCP);
+//			}
+//		}, ClickEvent.getType());
 	}
 
 	@UiHandler ("filterTB")
@@ -106,10 +109,10 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	void clearFilterButtonClicked(ClickEvent e) {
 		filterTB.setText("");
 		if (viewAllCB.getValue()) {
-			presenter.refreshListWithAllVpcps(userLoggedIn);
+			presenter.refreshListWithAllVpnConnectionProvisionings(userLoggedIn);
 		}
 		else {
-			presenter.refreshListWithMaximumVpcps(userLoggedIn);
+			presenter.refreshListWithMaximumVpnConnectionProvisionings(userLoggedIn);
 		}
 		this.hideFilteredStatus();
 	}
@@ -118,10 +121,10 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	void refreshButtonClicked(ClickEvent e) {
 		filterTB.setText("");
 		if (viewAllCB.getValue()) {
-			presenter.refreshListWithAllVpcps(userLoggedIn);
+			presenter.refreshListWithAllVpnConnectionProvisionings(userLoggedIn);
 		}
 		else {
-			presenter.refreshListWithMaximumVpcps(userLoggedIn);
+			presenter.refreshListWithMaximumVpnConnectionProvisionings(userLoggedIn);
 		}
 	}
 
@@ -129,10 +132,10 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	void viewAllCBClicked(ClickEvent e) {
 		filterTB.setText("");
 		if (viewAllCB.getValue()) {
-			presenter.refreshListWithAllVpcps(userLoggedIn);
+			presenter.refreshListWithAllVpnConnectionProvisionings(userLoggedIn);
 		}
 		else {
-			presenter.refreshListWithMaximumVpcps(userLoggedIn);
+			presenter.refreshListWithMaximumVpnConnectionProvisionings(userLoggedIn);
 		}
 	}
 
@@ -156,9 +159,9 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				VpcpPojo m = selectionModel.getSelectedObject();
+				VpncpPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_VPCP_STATUS, m);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_VPNCP_STATUS, m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -183,13 +186,13 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		generateVpcButton.setEnabled(false);
+//		generateButton.setEnabled(false);
 		actionsButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		generateVpcButton.setEnabled(false);
+//		generateButton.setEnabled(false);
 		actionsButton.setEnabled(false);
 	}
 
@@ -200,7 +203,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public void clearList() {
-		vpcpListTable.setVisibleRangeAndClearData(vpcpListTable.getVisibleRange(), true);
+		listTable.setVisibleRangeAndClearData(listTable.getVisibleRange(), true);
 	}
 
 	@Override
@@ -209,76 +212,76 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	}
 
 	@Override
-	public void setVpcps(List<VpcpPojo> vpcps) {
-		this.vpcpList = vpcps;
-		this.initializeVpcpListTable();
-		vpcpListPager.setDisplay(vpcpListTable);
+	public void setVpnConnectionProvisionings(List<VpncpPojo> s) {
+		this.List = s;
+		this.initializeVpnConnectionProvisioninglistTable();
+		listPager.setDisplay(listTable);
 	}
 
-	private Widget initializeVpcpListTable() {
+	private Widget initializeVpnConnectionProvisioninglistTable() {
 		GWT.log("initializing VPCP list table...");
-		vpcpListTable.setTableLayoutFixed(false);
-		vpcpListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		listTable.setTableLayoutFixed(false);
+		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 
 		// set range to display
-		vpcpListTable.setVisibleRange(0, 15);
+		listTable.setVisibleRange(0, 15);
 
 		// create dataprovider
-		dataProvider = new ListDataProvider<VpcpPojo>();
-		dataProvider.addDataDisplay(vpcpListTable);
+		dataProvider = new ListDataProvider<VpncpPojo>();
+		dataProvider.addDataDisplay(listTable);
 		dataProvider.getList().clear();
-		dataProvider.getList().addAll(this.vpcpList);
+		dataProvider.getList().addAll(this.List);
 
 		selectionModel = 
-				new SingleSelectionModel<VpcpPojo>(VpcpPojo.KEY_PROVIDER);
-		vpcpListTable.setSelectionModel(selectionModel);
+				new SingleSelectionModel<VpncpPojo>(VpncpPojo.KEY_PROVIDER);
+		listTable.setSelectionModel(selectionModel);
 
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				VpcpPojo m = selectionModel.getSelectedObject();
-				GWT.log("Selected vpcp is: " + m.getProvisioningId());
+				VpncpPojo m = selectionModel.getSelectedObject();
+				GWT.log("Selected  is: " + m.getProvisioningId());
 			}
 		});
 
-		ListHandler<VpcpPojo> sortHandler = 
-				new ListHandler<VpcpPojo>(dataProvider.getList());
-		vpcpListTable.addColumnSortHandler(sortHandler);
+		ListHandler<VpncpPojo> sortHandler = 
+				new ListHandler<VpncpPojo>(dataProvider.getList());
+		listTable.addColumnSortHandler(sortHandler);
 
-		if (vpcpListTable.getColumnCount() == 0) {
-			initVpcpListTableColumns(sortHandler);
+		if (listTable.getColumnCount() == 0) {
+			initVpnConnectionProvisioninglistTableColumns(sortHandler);
 		}
 
-		return vpcpListTable;
+		return listTable;
 	}
 
-	private void initVpcpListTableColumns(ListHandler<VpcpPojo> sortHandler) {
+	private void initVpnConnectionProvisioninglistTableColumns(ListHandler<VpncpPojo> sortHandler) {
 		GWT.log("initializing VPCP list table columns...");
 
-		Column<VpcpPojo, Boolean> checkColumn = new Column<VpcpPojo, Boolean>(
+		Column<VpncpPojo, Boolean> checkColumn = new Column<VpncpPojo, Boolean>(
 				new CheckboxCell(true, false)) {
 			@Override
-			public Boolean getValue(VpcpPojo object) {
+			public Boolean getValue(VpncpPojo object) {
 				// Get the value from the selection model.
 				return selectionModel.isSelected(object);
 			}
 		};
-		vpcpListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
-		vpcpListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		// create time
-		Column<VpcpPojo, String> createTimeColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpncpPojo, String> createTimeColumn = 
+				new Column<VpncpPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
+			public String getValue(VpncpPojo object) {
 				Date createTime = object.getCreateTime();
 				return createTime != null ? dateFormat.format(createTime) : "Unknown";
 			}
 		};
 		createTimeColumn.setSortable(true);
-		sortHandler.setComparator(createTimeColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
+		sortHandler.setComparator(createTimeColumn, new Comparator<VpncpPojo>() {
+			public int compare(VpncpPojo o1, VpncpPojo o2) {
 				Date c1 = o1.getCreateTime();
 				Date c2 = o2.getCreateTime();
 				if (c1 == null || c2 == null) {
@@ -287,106 +290,106 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 				return c1.compareTo(c2);
 			}
 		});
-		vpcpListTable.addColumn(createTimeColumn, "Create Time");
+		listTable.addColumn(createTimeColumn, "Create Time");
 
 		// Provisioning id column
-		Column<VpcpPojo, String> provIdColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpncpPojo, String> provIdColumn = 
+				new Column<VpncpPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
+			public String getValue(VpncpPojo object) {
 				return object.getProvisioningId();
 			}
 		};
 		provIdColumn.setSortable(true);
-		sortHandler.setComparator(provIdColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
+		sortHandler.setComparator(provIdColumn, new Comparator<VpncpPojo>() {
+			public int compare(VpncpPojo o1, VpncpPojo o2) {
 				return o1.getProvisioningId().compareTo(o2.getProvisioningId());
 			}
 		});
-		vpcpListTable.addColumn(provIdColumn, "Provisioning ID");
+		listTable.addColumn(provIdColumn, "Provisioning ID");
 
 		// Status
-		Column<VpcpPojo, String> statusColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpncpPojo, String> statusColumn = 
+				new Column<VpncpPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
+			public String getValue(VpncpPojo object) {
 				return object.getStatus();
 			}
 		};
 		statusColumn.setSortable(true);
-		sortHandler.setComparator(provIdColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
+		sortHandler.setComparator(provIdColumn, new Comparator<VpncpPojo>() {
+			public int compare(VpncpPojo o1, VpncpPojo o2) {
 				return o1.getStatus().compareTo(o2.getStatus());
 			}
 		});
-		vpcpListTable.addColumn(statusColumn, "Status");
+		listTable.addColumn(statusColumn, "Status");
 
 		// Provisioning result
-		Column<VpcpPojo, String> resultColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpncpPojo, String> resultColumn = 
+				new Column<VpncpPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
+			public String getValue(VpncpPojo object) {
 				return object.getProvisioningResult();
 			}
 		};
 		resultColumn.setSortable(true);
-		sortHandler.setComparator(resultColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
+		sortHandler.setComparator(resultColumn, new Comparator<VpncpPojo>() {
+			public int compare(VpncpPojo o1, VpncpPojo o2) {
 				return o1.getProvisioningResult().compareTo(o2.getProvisioningResult());
 			}
 		});
-		vpcpListTable.addColumn(resultColumn, "Provisioning Result");
+		listTable.addColumn(resultColumn, "Provisioning Result");
 
 		// Anticipated time
-		Column<VpcpPojo, String> anticipatedTimeColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpncpPojo, String> anticipatedTimeColumn = 
+				new Column<VpncpPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
+			public String getValue(VpncpPojo object) {
 				return object.getAnticipatedTime();
 			}
 		};
 		anticipatedTimeColumn.setSortable(true);
-		sortHandler.setComparator(anticipatedTimeColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
+		sortHandler.setComparator(anticipatedTimeColumn, new Comparator<VpncpPojo>() {
+			public int compare(VpncpPojo o1, VpncpPojo o2) {
 				return o1.getAnticipatedTime().compareTo(o2.getAnticipatedTime());
 			}
 		});
-		vpcpListTable.addColumn(anticipatedTimeColumn, "Anticipated Time");
+		listTable.addColumn(anticipatedTimeColumn, "Anticipated Time");
 
 		// Actual time
-		Column<VpcpPojo, String> actualTimeColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpncpPojo, String> actualTimeColumn = 
+				new Column<VpncpPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
+			public String getValue(VpncpPojo object) {
 				return object.getActualTime();
 			}
 		};
 		actualTimeColumn.setSortable(true);
-		sortHandler.setComparator(actualTimeColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
+		sortHandler.setComparator(actualTimeColumn, new Comparator<VpncpPojo>() {
+			public int compare(VpncpPojo o1, VpncpPojo o2) {
 				return o1.getActualTime().compareTo(o2.getActualTime());
 			}
 		});
-		vpcpListTable.addColumn(actualTimeColumn, "Actual Time");
+		listTable.addColumn(actualTimeColumn, "Actual Time");
 
 		// Provisioning steps progress status
 		final SafeHtmlCell stepProgressCell = new SafeHtmlCell();
 
-		Column<VpcpPojo, SafeHtml> stepProgressCol = new Column<VpcpPojo, SafeHtml>(
+		Column<VpncpPojo, SafeHtml> stepProgressCol = new Column<VpncpPojo, SafeHtml>(
 				stepProgressCell) {
 
 			@Override
-			public SafeHtml getValue(VpcpPojo value) {
+			public SafeHtml getValue(VpncpPojo value) {
 				SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getTotalStepCount(), value.getCompletedStepCount());
 				return sh;
 			}
 		};		 
-		vpcpListTable.addColumn(stepProgressCol, "Progress");
+		listTable.addColumn(stepProgressCol, "Progress");
 	}
 
 	@Override
@@ -413,8 +416,8 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	}
 
 	@Override
-	public void removeVpcpFromView(VpcpPojo vpcp) {
-		dataProvider.getList().remove(vpcp);
+	public void removeVpnConnectionProvisioningFromView(VpncpPojo vpncp ) {
+		dataProvider.getList().remove(vpncp);
 	}
 
 	@Override
@@ -441,7 +444,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public void applyCentralAdminMask() {
-		generateVpcButton.setEnabled(true);;
+//		generateButton.setEnabled(true);;
 		actionsButton.setEnabled(true);;
 	}
 
@@ -471,13 +474,13 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 	@Override
 	public void disableButtons() {
-		generateVpcButton.setEnabled(false);
+//		generateButton.setEnabled(false);
 		actionsButton.setEnabled(false);
 	}
 
 	@Override
 	public void enableButtons() {
-		generateVpcButton.setEnabled(true);
+//		generateButton.setEnabled(true);
 		actionsButton.setEnabled(true);
 	}
 
@@ -486,7 +489,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	}
 
 	@Override
-	public boolean viewAllVpcps() {
+	public boolean viewAllVpnConnectionProvisionings() {
 		return viewAllCB.getValue();
 	}
 
