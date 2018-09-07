@@ -132,7 +132,10 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 				GWT.log("Got " + result.getResults().size() + " StaticNatProvisioningSummaries for " + result.getProvisionedFilterUsed() + "/" + result.getDeProvisionedFilterUsed());
 				setStaticNatProvisioningSummaryList(result.getResults());
 				// apply authorization mask
-				if (user.isCentralAdmin()) {
+				if (user.isNetworkAdmin()) {
+					getView().applyNetworkAdminMask();
+				}
+				else if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else {

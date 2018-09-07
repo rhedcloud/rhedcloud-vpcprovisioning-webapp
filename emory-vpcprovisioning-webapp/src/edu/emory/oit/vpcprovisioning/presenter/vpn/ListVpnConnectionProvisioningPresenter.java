@@ -138,7 +138,10 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 				GWT.log("Got " + result.getResults().size() + " VpnConnectionProvisionings for " + result.getFilterUsed());
 				setVpnConnectionProvisioningList(result.getResults());
 				// apply authorization mask
-				if (user.isCentralAdmin()) {
+				if (user.isNetworkAdmin()) {
+					getView().applyNetworkAdminMask();
+				}
+				else if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
 				}
 				else {

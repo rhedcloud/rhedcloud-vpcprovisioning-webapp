@@ -186,11 +186,11 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 				GWT.log("Got " + result.getResults().size() + " VPN Connection Profiles for " + result.getFilterUsed());
 				setVpnConnectionProfileSummaryList(result.getResults());
 				// apply authorization mask
-				if (user.isCentralAdmin()) {
-					getView().applyCentralAdminMask();
-				}
-				else if (user.isNetworkAdmin()) {
+				if (user.isNetworkAdmin()) {
 					getView().applyNetworkAdminMask();
+				}
+				else if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
 				}
 				else {
 					getView().applyAWSAccountAuditorMask();

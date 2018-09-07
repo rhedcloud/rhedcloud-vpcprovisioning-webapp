@@ -98,11 +98,11 @@ public class MaintainVpnConnectionProfileAssignmentPresenter extends PresenterBa
 				getView().setInitialFocus();
 				
 				// apply authorization mask
-				if (user.isCentralAdmin()) {
-					getView().applyCentralAdminMask();
-				}
-				else if (user.isNetworkAdmin()) {
+				if (user.isNetworkAdmin()) {
 					getView().applyNetworkAdminMask();
+				}
+				else if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
 				}
 				else {
 					getView().applyAWSAccountAuditorMask();

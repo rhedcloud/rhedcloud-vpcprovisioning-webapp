@@ -255,26 +255,26 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
-		
+		vpcTB.setEnabled(true);
+		okayButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		vpcTB.setEnabled(false);
+		okayButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
-		
+		vpcTB.setEnabled(false);
+		okayButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
-		
+		vpcTB.setEnabled(false);
+		okayButton.setEnabled(false);
 	}
 
 	@Override
