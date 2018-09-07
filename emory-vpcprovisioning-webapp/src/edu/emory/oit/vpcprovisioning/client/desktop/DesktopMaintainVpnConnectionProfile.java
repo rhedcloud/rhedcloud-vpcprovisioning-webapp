@@ -257,24 +257,28 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 	public void applyNetworkAdminMask() {
 		vpcTB.setEnabled(true);
 		okayButton.setEnabled(true);
+		addTunnelButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
 		vpcTB.setEnabled(false);
 		okayButton.setEnabled(false);
+		addTunnelButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
 		vpcTB.setEnabled(false);
 		okayButton.setEnabled(false);
+		addTunnelButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		vpcTB.setEnabled(false);
 		okayButton.setEnabled(false);
+		addTunnelButton.setEnabled(false);
 	}
 
 	@Override
