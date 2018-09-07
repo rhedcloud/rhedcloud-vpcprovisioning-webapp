@@ -201,7 +201,12 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 						if (m.getAssignment() != null) {
 							showMessageToUser("You cannot delete a profile that has an assignment associated to it.");
 						} else {
-							presenter.deleteVpnConnectionProfile(m);
+							if (userLoggedIn.isNetworkAdmin()) {
+								presenter.deleteVpnConnectionProfile(m);
+							}
+							else {
+								showMessageToUser("You are not authorized to perform this action.");
+							}
 						}
 					} else {
 						showMessageToUser("Please select one or more item(s) from the list");
@@ -232,8 +237,13 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				
 				VpnConnectionProfileSummaryPojo m = nIter.next();
 				if (m != null) {
-					showMessageToUser("This feature is not yet implemented.");
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.PROVISION_VPN_CONNECTION, m.getProfile());
+					if (userLoggedIn.isNetworkAdmin()) {
+						showMessageToUser("This feature is not yet implemented.");
+	//					ActionEvent.fire(presenter.getEventBus(), ActionNames.PROVISION_VPN_CONNECTION, m.getProfile());
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this action.");
+					}
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -262,9 +272,13 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				while (nIter.hasNext()) {
 					VpnConnectionProfileSummaryPojo m = nIter.next();
 					if (m != null) {
-						// remove the elastic ip if it's NOT assigned
-						showMessageToUser("This feature is not yet implemented.");
-//							presenter.deprovisionVpnConnectionProfile(m);
+						if (userLoggedIn.isNetworkAdmin()) {
+							showMessageToUser("This feature is not yet implemented.");
+	//							presenter.deprovisionVpnConnectionProfile(m);
+						}
+						else {
+							showMessageToUser("You are not authorized to perform this action.");
+						}
 					} 
 					else {
 						showMessageToUser("Please select one or more item(s) from the list");
@@ -306,24 +320,28 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	public void applyNetworkAdminMask() {
 		createButton.setEnabled(true);
 		actionsButton.setEnabled(true);
+		assignButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
-		createButton.setEnabled(true);
+		createButton.setEnabled(false);
 		actionsButton.setEnabled(true);
+		assignButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
 		createButton.setEnabled(false);
 		actionsButton.setEnabled(false);
+		assignButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		createButton.setEnabled(false);
 		actionsButton.setEnabled(false);
+		assignButton.setEnabled(false);
 	}
 
 	@Override

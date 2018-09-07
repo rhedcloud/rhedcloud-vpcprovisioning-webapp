@@ -112,7 +112,12 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 							showMessageToUser("You cannot delete an Elastic IP that has an assignment associated to it.");
 						}
 						else {
-							presenter.deleteElasticIp(m);
+							if (userLoggedIn.isNetworkAdmin()) {
+								presenter.deleteElasticIp(m);
+							}
+							else {
+								showMessageToUser("You are not authorized to perform this action.");
+							}
 						}
 					}
 					else {
@@ -467,10 +472,8 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO: TEMPOARY
-		// normally these should be disabled.
 		actionsButton.setEnabled(true);
-		createElasticIpButton.setEnabled(true);
+		createElasticIpButton.setEnabled(false);
 	}
 
 	@Override

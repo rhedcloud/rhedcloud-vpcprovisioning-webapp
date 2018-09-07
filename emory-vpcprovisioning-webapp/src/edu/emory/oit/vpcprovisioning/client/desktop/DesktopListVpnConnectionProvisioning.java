@@ -486,6 +486,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 
 	@Override
 	public void applyNetworkAdminMask() {
+		actionsButton.setEnabled(true);
 	}
 
 	@Override
