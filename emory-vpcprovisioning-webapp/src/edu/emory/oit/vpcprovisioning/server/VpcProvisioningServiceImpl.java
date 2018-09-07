@@ -853,10 +853,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 				String roleDn = roleAssignment.getRoleDN();
+//				info("[getRolesForUser] checking roldDN: " + roleDn);
 				if (roleDn != null) {
 					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
 						AccountRolePojo arp = new AccountRolePojo();
 						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
+						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						user.addAccountRole(arp);
+						continue;
+					}
+					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
+						AccountRolePojo arp = new AccountRolePojo();
+						arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
 						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 						user.addAccountRole(arp);
 						continue;
@@ -6001,7 +6009,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				String roleDn = moa.getRoleDN();
 				if (roleDn != null) {
 					if (roleDn.indexOf("RGR_AWS") >= 0 || 
-						roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
+						roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 ||
+						roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >=0) {
 						
 						RoleAssignmentPojo pojo = new RoleAssignmentPojo();
 						this.populateRoleAssignmentPojo(moa, pojo);

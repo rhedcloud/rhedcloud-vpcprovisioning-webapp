@@ -20,11 +20,11 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.mediumLabel}">VPN Connection Profile List</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of VPN Connection Profile objects and their current status.<br/><br/>
-		These objects represent a VPN Connection Profile that is either in 
-		progress or completed.  To see more details regarding the status of a 
-		particular profile, click the 'View' button associated to the request 
-		you wish to view.  If a profile is already assigned, you can follow that assignment's link from the list and see the assignment details too.<br/><br/>
+		<g:HTML addStyleNames="{style.body}">Below is a list of VPN Connection Profile objects.<br/><br/>
+		To see more details regarding a 
+		particular profile, select a row below, click the 'Actions' 
+		button and select 'View/Maintain Profile' from the menu.  If a profile is already 
+		assigned, you can follow that assignment's link from the list and see the assignment details too.<br/><br/>
 		Click the 'Create' button to create a new VPN Connection Profile.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">

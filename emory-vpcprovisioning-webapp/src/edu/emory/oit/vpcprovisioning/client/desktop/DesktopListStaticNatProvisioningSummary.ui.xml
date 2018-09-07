@@ -23,8 +23,8 @@
 		Provisioning/Deprovisioning executions and their status. These objects 
 		represent a Static Nat De/Provisioning request that is either completed 
 		or in progress. To see more details regarding the status of a 
-		particular request, click the 'View' button associated to the 
-		request you wish to view.</g:HTML>
+		particular request, select a row below, click the 'Actions' 
+		button and select 'View Status' from the menu.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>
