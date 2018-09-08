@@ -187,11 +187,11 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 				GWT.log("Got " + result.getResults().size() + " ElasticIPs for " + result.getFilterUsed());
 				setElasticIpSummaryList(result.getResults());
 				// apply authorization mask
-				if (user.isCentralAdmin()) {
-					getView().applyCentralAdminMask();
-				}
-				else if (user.isNetworkAdmin()) {
+				if (user.isNetworkAdmin()) {
 					getView().applyNetworkAdminMask();
+				}
+				else if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
 				}
 				else {
 					getView().applyAWSAccountAuditorMask();
