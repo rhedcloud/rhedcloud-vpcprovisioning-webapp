@@ -226,4 +226,6 @@ public interface VpcProvisioningServiceAsync {
 
 	// vpncp
 	void getVpncpsForFilter(VpncpQueryFilterPojo filter, AsyncCallback<VpncpQueryResultPojo> callback);
+
+//	void getTkiClientS3AccessWrapper(AsyncCallback<AmazonS3AccessWrapperPojo> callback);
 }

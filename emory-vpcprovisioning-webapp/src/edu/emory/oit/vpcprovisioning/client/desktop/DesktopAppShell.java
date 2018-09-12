@@ -14,6 +14,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Timer;
@@ -30,6 +31,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -90,6 +92,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileP
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AmazonS3AccessWrapperPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
@@ -228,6 +231,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField HorizontalPanel linksPanel;
 	@UiField HTML notificationsHTML;
 	@UiField Anchor esbServiceStatusAnchor;
+	@UiField MenuItem tkiClientItem;
 
 	/**
 	 * A boolean indicating that we have not yet seen the first content widget.
@@ -243,7 +247,37 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstVpnConnectionContentWidget = true;
 	private boolean firstVpnConnectionProfileContentWidget = true;
 
+	Command tkiClientCommand = new Command() {
+		public void execute() {
+//			AsyncCallback<AmazonS3AccessWrapperPojo> callback = new AsyncCallback<AmazonS3AccessWrapperPojo>() {
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					GWT.log("Exception getting TKI Access wrapper", caught);
+//					showMessageToUser("There was an exception on the " +
+//							"server getting TKI Access wrapper.  Processing can continue.  Message " +
+//							"from server is: " + caught.getMessage());
+//				}
+//
+//				@Override
+//				public void onSuccess(AmazonS3AccessWrapperPojo result) {
+//					GWT.log("TKI Access Wrapper: " + result);
+//					String url = GWT.getModuleBaseURL() + "downloadTkiClient"
+//						+ "?accessId=" + result.getAccessId()
+//						+ "&secretKey=" + result.getSecretKey()
+//						+ "&bucketName=" + result.getBucketName()
+//						+ "&keyName=" + result.getKeyName();
+//					Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
+//				}
+//			};
+//			VpcProvisioningService.Util.getInstance().getTkiClientS3AccessWrapper(callback);
+
+			String url = GWT.getModuleBaseURL() + "s3download?type=TkiClient";
+			Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
+		}
+	};
 	private void registerEvents() {
+		tkiClientItem.setScheduledCommand(tkiClientCommand);
+
 		Event.sinkEvents(logoElem, Event.ONCLICK);
 		Event.setEventListener(logoElem, new EventListener() {
 			@Override

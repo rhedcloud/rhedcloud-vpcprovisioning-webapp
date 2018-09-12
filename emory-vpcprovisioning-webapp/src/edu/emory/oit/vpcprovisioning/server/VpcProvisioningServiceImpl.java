@@ -9087,4 +9087,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			this.populateVpnConnectionProfilePojo(moa.getVpnConnectionProfile(), vcp);
 		}
 	}
+
+//	@Override
+//	public AmazonS3AccessWrapperPojo getTkiClientS3AccessWrapper() throws RpcException {
+//		AmazonS3AccessWrapperPojo accessWrapper = new AmazonS3AccessWrapperPojo();
+//		try {
+//			Properties awsCredsProps = getAppConfig().getProperties("AWSCredentials");
+//			String accessId = awsCredsProps.getProperty("tkiClient-accessId");
+//			String secretKey = awsCredsProps.getProperty("tkiClient-secretKey");
+//			accessWrapper.setAccessId(accessId);
+//			accessWrapper.setSecretKey(secretKey);
+//			
+//			Properties s3Props = getAppConfig().getProperties("AWSS3Properties");
+//			String bucket_name = s3Props.getProperty("tkiClient-bucketName");
+//			String key_name = s3Props.getProperty("tkiClient-keyName");
+//			accessWrapper.setBucketName(bucket_name);
+//			accessWrapper.setKeyName(key_name);
+//			
+//			return accessWrapper;
+//		} 
+//		catch (EnterpriseConfigurationObjectException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e.getMessage());
+//		} 
+//	}
 }

@@ -4,12 +4,15 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -36,6 +39,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceCategoryPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -288,6 +292,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				}
 			}
 		});
+		serviceListTable.redraw();
 
 		return serviceListTable;
 	}
@@ -307,32 +312,28 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		serviceListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		// aws category column
-		Column<AWSServicePojo, String> awsCategoryColumn = 
-				new Column<AWSServicePojo, String> (new TextCell()) {
+		Column<AWSServicePojo, SafeHtml> awsCategoryColumn = 
+				new Column<AWSServicePojo, SafeHtml> (new SafeHtmlCell()) {
 
 			@Override
-			public String getValue(AWSServicePojo object) {
+			public SafeHtml getValue(AWSServicePojo object) {
+				StringBuffer categories = new StringBuffer();
+				int cntr = 1;
 				if (object.getCategories().size() > 0) {
-					return "aws categories";
+					for (String category : object.getCategories()) {
+						if (cntr == object.getCategories().size()) {
+							categories.append(category);
+							
+						}
+						else {
+							cntr++;
+							categories.append(category + "</br>");
+						}
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(categories.toString());
 				}
-				else {
-					return "None Yet";
-				}
-				// TODO: make a list of categories;
-				// return object.getCategories().get(0);
+				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No categories yet");
 			}
-			
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			    	GWT.log("skeleton service..." + object.getAwsServiceName());
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	GWT.log("non-skeleton service..." + object.getAwsServiceName());
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		serviceListTable.addColumn(awsCategoryColumn, "AWS Category");
 
@@ -344,15 +345,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return object.getAwsServiceCode();
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		awsCodeColumn.setSortable(true);
 		sortHandler.setComparator(awsCodeColumn, new Comparator<AWSServicePojo>() {
@@ -370,15 +362,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return object.getAwsServiceName();
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		awsNameColumn.setSortable(true);
 		sortHandler.setComparator(awsNameColumn, new Comparator<AWSServicePojo>() {
@@ -396,15 +379,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return object.getStatus();
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		statusColumn.setSortable(true);
 		sortHandler.setComparator(statusColumn, new Comparator<AWSServicePojo>() {
@@ -422,15 +396,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return object.getDescription();
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		descColumn.setSortable(true);
 		sortHandler.setComparator(descColumn, new Comparator<AWSServicePojo>() {
@@ -447,43 +412,33 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return (object.isAwsHipaaEligible() ? "Yes" : "No");
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		serviceListTable.addColumn(awsHipaaEligibleColumn, "AWS HIPAA Eligible");
 		serviceListTable.setColumnWidth(awsHipaaEligibleColumn, 40, Unit.PX);
 
 		// emory category column
-		Column<AWSServicePojo, String> emoryCategoryColumn = 
-				new Column<AWSServicePojo, String> (new TextCell()) {
+		Column<AWSServicePojo, SafeHtml> emoryCategoryColumn = 
+				new Column<AWSServicePojo, SafeHtml> (new SafeHtmlCell()) {
 
 			@Override
-			public String getValue(AWSServicePojo object) {
+			public SafeHtml getValue(AWSServicePojo object) {
+				StringBuffer categories = new StringBuffer();
+				int cntr = 1;
 				if (object.getConsoleCategories().size() > 0) {
-					return "console categories";
+					for (String category : object.getConsoleCategories()) {
+						if (cntr == object.getConsoleCategories().size()) {
+							categories.append(category);
+							
+						}
+						else {
+							cntr++;
+							categories.append(category + "</br>");
+						}
+					}
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(categories.toString());
 				}
-				else {
-					return "None Yet";
-				}
-				// TODO: make a list of categories;
-				// return object.getCategories().get(0);
+				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No console categories yet");
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		serviceListTable.addColumn(emoryCategoryColumn, "Emory Category");
 
@@ -494,15 +449,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return (object.isEmoryHipaaEligible() ? "Yes" : "No");
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		serviceListTable.addColumn(emoryHipaaEligibleColumn, "Emory HIPAA Eligible");
 		serviceListTable.setColumnWidth(emoryHipaaEligibleColumn, 40, Unit.PX);
@@ -515,15 +461,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return object.getCreateUser();
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		createUserColumn.setSortable(true);
 		sortHandler.setComparator(createUserColumn, new Comparator<AWSServicePojo>() {
@@ -546,15 +483,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 					return "Unknown";
 				}
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		createTimeColumn.setSortable(true);
 		sortHandler.setComparator(createTimeColumn, new Comparator<AWSServicePojo>() {
@@ -577,15 +505,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public String getValue(AWSServicePojo object) {
 				return object.getUpdateUser();
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		lastUpdateUserColumn.setSortable(true);
 		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<AWSServicePojo>() {
@@ -608,15 +527,6 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 					return "Uknown";
 				}
 			}
-//			@Override
-//		    public String getCellStyleNames(Context context, AWSServicePojo object) {
-//			    if (object.isSkeleton()) {
-//			        return "skeletonService";
-//			    }
-//			    else {
-//			    	return "tableData";
-//			    }
-//			}
 		};
 		updateTimeColumn.setSortable(true);
 		sortHandler.setComparator(updateTimeColumn, new Comparator<AWSServicePojo>() {
