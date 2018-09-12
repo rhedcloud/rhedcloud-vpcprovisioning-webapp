@@ -78,7 +78,7 @@
 		<systemPath>${project.basedir}/war/WEB-INF/lib/peoplesoft-moa.jar</systemPath>
 	</dependency>		
 
-	<!-- AWS SDK Jars -->
+	<!-- AWS SDK Jars to get it to commit -->
 	<dependency>
 		<groupId>com.service_now</groupId>
 		<artifactId>com.service_now</artifactId>
