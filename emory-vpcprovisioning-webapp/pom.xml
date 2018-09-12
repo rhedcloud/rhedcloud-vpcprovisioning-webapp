@@ -80,6 +80,13 @@
 
 	<!-- AWS SDK Jars to get it to commit -->
 	<dependency>
+		<groupId>aws-java-sdk</groupId>
+		<artifactId>aws-java-sdk</artifactId>
+		<version>1.0</version>
+		<scope>system</scope>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-java-sdk-1.11.406.jar</systemPath>
+	</dependency>		
+	<dependency>
 		<groupId>aspectjrt</groupId>
 		<artifactId>aspectjrt</artifactId>
 		<version>1.0</version>
