@@ -116,6 +116,18 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 			resetFieldStyles();
 		}
 		TunnelProfilePojo tunnel = createTunnelFromFormData();
+		if (!this.isValidIp(tunnel.getCustomerGatewayIp())) {
+			showMessageToUser("Invalid Customer Gateway IP address.  Please enter a valid IP address.");
+			return;
+		}
+		if (!this.isValidCidr(tunnel.getVpnInsideIpCidr1())) {
+			showMessageToUser("Invalid VPN Inside IP CIDR 1.  Please enter a valid CIDR.");
+			return;
+		}
+		if (!this.isValidCidr(tunnel.getVpnInsideIpCidr2())) {
+			showMessageToUser("Invalid VPN Inside IP CIDR 2.  Please enter a valid CIDR.");
+			return;
+		}
 		presenter.getVpnConnectionProfile().getTunnelProfiles().add(tunnel);
 		addTunnelToPanel(tunnel);
 		this.resetFieldStyles();

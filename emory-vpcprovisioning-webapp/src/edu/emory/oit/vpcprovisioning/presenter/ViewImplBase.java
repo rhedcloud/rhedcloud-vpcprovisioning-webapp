@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
@@ -25,6 +26,31 @@ public abstract class ViewImplBase extends Composite {
 	PopupPanel pleaseWaitDialog;
 	protected boolean fieldViolations = false;
 	
+	public boolean isValidIp(String ipAddress) {
+		/*
+		'\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}\b'
+		^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+		^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$
+		 */
+
+//		RegExp re = RegExp.compile("\\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\\.|$)){4}\\b");
+//		RegExp re = RegExp.compile("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
+		if (ipAddress == null || ipAddress.length() == 0) {
+			return false;
+		}
+		RegExp re = RegExp.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
+		return re.test(ipAddress);
+	}
+	public boolean isValidCidr(String cidr) {
+		/*
+			^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$
+		 */
+		if (cidr == null || cidr.length() == 0) {
+			return false;
+		}
+		RegExp re = RegExp.compile("^([0-9]{1,3}\\.){3}[0-9]{1,3}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$");
+		return re.test(cidr);
+	}
 	public void setRefreshButtonImage(PushButton refreshButton) {
 		Image img = new Image("images/refresh_icon.png");
 		img.setWidth("30px");

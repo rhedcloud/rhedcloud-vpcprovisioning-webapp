@@ -101,17 +101,30 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	void addEmailTFKeyPressed(KeyPressEvent e) {
         int keyCode = e.getNativeEvent().getKeyCode();
         if (keyCode == KeyCodes.KEY_ENTER) {
-    		presenter.filterByVpcAddress(filterTB.getText());
+    		filterList();
         }
 	}
 	@UiHandler("filterButton")
 	void filterButtonClicked(ClickEvent e) {
-		presenter.filterByVpcAddress(filterTB.getText());
+		filterList();
+	}
+	
+	void filterList() {
+		String filterText = filterTB.getText();
+		if (filterText != null) {
+			if (filterText.toLowerCase().indexOf("vpc-") >= 0) {
+				presenter.filterByVpcAddress(filterText);
+			}
+			else {
+				presenter.filterByVpnConnectionProfileId(filterTB.getText());
+			}
+		}
 	}
 	
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
 		filterTB.setText("");
+		presenter.clearFilter();
 		presenter.refreshList(userLoggedIn);
 		this.hideFilteredStatus();
 	}
@@ -743,6 +756,12 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	@Override
 	public void hideFilteredStatus() {
 		filteredHTML.setVisible(false);
+	}
+
+	@Override
+	public void initPage() {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter a profile id OR a VPC Network");
 	}
 
 }

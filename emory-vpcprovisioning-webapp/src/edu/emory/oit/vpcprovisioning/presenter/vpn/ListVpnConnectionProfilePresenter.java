@@ -94,6 +94,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 				userLoggedIn = user;
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("VPN Connection Profiles");
+				getView().initPage();
 
 				// Clear the Vpc list and display it.
 				if (clearList) {
@@ -272,7 +273,44 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 	@Override
 	public void filterByVpcAddress(String vpcAddress) {
-		// TODO Auto-generated method stub
+		GWT.log("vpn connection profile filtering by vpc address");
+		if (vpcAddress == null || vpcAddress.length() == 0) {
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please enter a VPC Network");
+			return;
+		}
+
+		getView().showFilteredStatus();
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Filtering list by VPC Network " + vpcAddress + "...");
 		
+		filter = new VpnConnectionProfileQueryFilterPojo();
+		filter.setVpcNetwork(vpcAddress);
+		
+		refreshList(userLoggedIn);
+	}
+
+	@Override
+	public void filterByVpnConnectionProfileId(String profileId) {
+		GWT.log("vpn connection profile filtering by profile id");
+		if (profileId == null || profileId.length() == 0) {
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please enter a Profile ID");
+			return;
+		}
+
+		getView().showFilteredStatus();
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Filtering list by Profile ID " + profileId + "...");
+		
+		filter = new VpnConnectionProfileQueryFilterPojo();
+		filter.setVpnConnectionProfileId(profileId);
+		
+		refreshList(userLoggedIn);
+	}
+
+	@Override
+	public void clearFilter() {
+		this.filter = null;
 	}
 }

@@ -73,8 +73,8 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel("Retrieving VPC Provisioning items...please wait");
-		getView().showPleaseWaitDialog("Retrieving VPC Provisioning items from the AWS Account Service...");
+		getView().showPleaseWaitPanel("Retrieving VPN Provisioning items...please wait");
+		getView().showPleaseWaitDialog("Retrieving VPN Provisioning items from the Network OPs Service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -127,9 +127,9 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
-				log.log(Level.SEVERE, "Exception Retrieving Vpcs", caught);
+				log.log(Level.SEVERE, "Exception Retrieving VPNs", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of Vpcs.  " +
+						"server retrieving your list of VPNs.  " +
 						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
@@ -159,7 +159,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	@Override
 	public void refreshListWithMaximumVpnConnectionProvisionings(UserAccountPojo user) {
         getView().hidePleaseWaitDialog();
-		getView().showPleaseWaitDialog("Retrieving the default maximum list of VPCP objects from the AWS Account service...");
+		getView().showPleaseWaitDialog("Retrieving the default maximum list of VPNP objects from the Network OPs service...");
 
 		filter = new VpncpQueryFilterPojo();
 		filter.setAllVpncps(false);

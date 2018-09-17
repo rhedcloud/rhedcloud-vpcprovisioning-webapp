@@ -62,7 +62,12 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 		String ip = addElasticIpTF.getText();
 		if (ip == null || ip.length() == 0) {
 			this.setInitialFocus();
-			showMessageToUser("Pleast enter a valid IP address.");
+			showMessageToUser("Please enter a valid IP address.");
+			return;
+		}
+		if (!this.isValidIp(ip)) {
+			this.setInitialFocus();
+			showMessageToUser("Invalid IP address.  Please enter a valid IP address.");
 			return;
 		}
 		addElasticIpToPanel(addElasticIpTF.getText());

@@ -227,7 +227,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		    elasticIpListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
 		    elasticIpListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
-		    // Account id column
+	    // Elastic IP column
 		Column<ElasticIpSummaryPojo, String> elasticIpColumn = 
 			new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
 			
@@ -239,7 +239,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		elasticIpColumn.setSortable(true);
 		sortHandler.setComparator(elasticIpColumn, new Comparator<ElasticIpSummaryPojo>() {
 			public int compare(ElasticIpSummaryPojo o1, ElasticIpSummaryPojo o2) {
-				return o1.getElasticIp().compareTo(o2.getElasticIp());
+				return o1.getElasticIp().getElasticIpAddress().compareTo(o2.getElasticIp().getElasticIpAddress());
 			}
 		});
 		elasticIpListTable.addColumn(elasticIpColumn, "Elastic IP");

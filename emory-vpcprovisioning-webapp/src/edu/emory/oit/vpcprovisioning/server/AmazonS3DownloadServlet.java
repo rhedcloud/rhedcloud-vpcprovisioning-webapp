@@ -129,9 +129,9 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 			}
 			
 	        info("[doGet] " + downloadType + " accessId=" + accessId);
-	        info("[doGet] secretKey=" + downloadType  + secretKey);
-	        info("[doGet] bucketName=" + downloadType  + bucket_name);
-	        info("[doGet] keyName=" + downloadType  + key_name);
+	        info("[doGet] " + downloadType  + " secretKey=" + secretKey);
+	        info("[doGet] " + downloadType + " bucketName="  + bucket_name);
+	        info("[doGet] " + downloadType + " keyName="  + key_name);
 	        
 	        this.downloadTkiClient(resp, accessId, secretKey, bucket_name, key_name);
 	        return;
@@ -200,6 +200,7 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 		s3Builder.setCredentials(credProvider);
 		final AmazonS3 s3 = s3Builder.build();
 
+		info("getting key: " + key_name + " from the bucket: " + bucket_name);
 	    S3Object o = s3.getObject(bucket_name, key_name);
 	    
 	    S3ObjectInputStream s3is = o.getObjectContent();

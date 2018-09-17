@@ -38,6 +38,8 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 		public VpcPojo getVpc();
 		void refreshList(final UserAccountPojo user);
 		void filterByVpcAddress(String vpcAddress);
+		void filterByVpnConnectionProfileId(String profileId);
+		void clearFilter();
 	}
 
 	/**
@@ -62,4 +64,5 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 	void removeVpnConnectionProfileSummaryFromView(VpnConnectionProfileSummaryPojo elasticIpSummary);
 	void showFilteredStatus();
 	void hideFilteredStatus();
+	void initPage();
 }

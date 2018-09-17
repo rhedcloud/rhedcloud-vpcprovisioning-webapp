@@ -64,6 +64,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 	
 	@Override
 	public void start(EventBus eventBus) {
+		getView().showPleaseWaitDialog("VPN Connection Profile maintenance, please wait...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -106,6 +107,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 				else {
 					getView().applyAWSAccountAuditorMask();
 				}
+                getView().hidePleaseWaitDialog();
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);

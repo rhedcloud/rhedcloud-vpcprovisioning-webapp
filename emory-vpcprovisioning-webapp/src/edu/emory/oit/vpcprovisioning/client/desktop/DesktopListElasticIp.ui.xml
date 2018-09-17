@@ -25,7 +25,7 @@
 		progress or completed.  To see more details regarding the status of a 
 		particular request, click the 'View' button associated to the request 
 		you wish to view.<br/><br/>
-		Click the 'Generate' button to go to the Elastic IP maintenance 
+		Click the 'Create' button to go to the Elastic IP maintenance 
 		page where you can request the provisioning of a new AWS Elastic IP.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
