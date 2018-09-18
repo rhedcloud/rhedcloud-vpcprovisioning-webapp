@@ -133,7 +133,13 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 	        info("[doGet] " + downloadType + " bucketName="  + bucket_name);
 	        info("[doGet] " + downloadType + " keyName="  + key_name);
 	        
-	        this.downloadTkiClient(resp, accessId, secretKey, bucket_name, key_name);
+	        try {
+		        this.downloadTkiClient(resp, accessId, secretKey, bucket_name, key_name);
+	        }
+	        catch (IOException e) {
+	        	e.printStackTrace();
+	        	throw e;
+	        }
 	        return;
 		}
 		
