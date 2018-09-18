@@ -202,25 +202,38 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 
 		info("getting key: " + key_name + " from the bucket: " + bucket_name);
 	    S3Object o = s3.getObject(bucket_name, key_name);
+		info("got key: " + key_name + " from the bucket: " + bucket_name);
 	    
+		info("getting object content.");
 	    S3ObjectInputStream s3is = o.getObjectContent();
+		info("got object content.");
 
         int BUFFER = 1024 * 100;
         resp.setContentType( "application/octet-stream" );
         resp.setHeader( "Content-Disposition:", "attachment;filename=" + "\"" + key_name + "\"" );
         
+		info("creating output stream to client (HttpServletResponse).");
         ServletOutputStream outputStream = resp.getOutputStream();
+		info("created output stream to client (HttpServletResponse).");
 
         resp.setContentLength( Long.valueOf( o.getObjectMetadata().getContentLength() ).intValue() );
         resp.setBufferSize( BUFFER );
         
 	    byte[] read_buf = new byte[1024];
 	    int read_len = 0;
+		info("writing to HttpServletResponse output stream....");
 	    while ((read_len = s3is.read(read_buf)) > 0) {
 	    	outputStream.write(read_buf, 0, read_len);
 	    }
+		info("done writing to HttpServletResponse output stream....");
+		
+		info("closing s3 object's input stream");
 	    s3is.close();
+		info("closed s3 object's input stream");
+		
+		info("closing HttpServletResponse output stream.");
 	    outputStream.close();
+		info("closed HttpServletResponse output stream.");
 	}
 
 	private void info(String msg) {
