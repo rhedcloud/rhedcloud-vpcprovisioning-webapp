@@ -34,7 +34,7 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void initializeAwsServiceMap();
 	void initiliizeUserProfile();
 	void validateTermsOfUse();
-	void lockView();
+	void lockView(String errorInformation);
 	void showNetworkAdminTabs();
 	void showAuditorTabs();
 }

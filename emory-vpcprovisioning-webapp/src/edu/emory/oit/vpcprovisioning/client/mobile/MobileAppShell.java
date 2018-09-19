@@ -303,7 +303,7 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void lockView() {
+	public void lockView(String errorInformation) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -92,7 +92,6 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileP
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.AmazonS3AccessWrapperPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
@@ -1074,13 +1073,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			AsyncCallback<TermsOfUseSummaryPojo> cb = new AsyncCallback<TermsOfUseSummaryPojo>() {
 				@Override
 				public void onFailure(Throwable caught) {
-					showMessageToUser("There was an exception on the " +
+//					showMessageToUser("There was an exception on the " +
+//							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
+//							+ "continue.  "
+//							+ "<p>Message from server is: " + caught.getMessage() + "</p>");
+					
+					// just a modal dialog that prevents them from doing anything...
+					lockView("There was an exception on the " +
 							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
 							+ "continue.  "
 							+ "<p>Message from server is: " + caught.getMessage() + "</p>");
-					
-					// just a modal dialog that prevents them from doing anything...
-					lockView();
 				}
 
 				@Override
@@ -1097,13 +1099,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(userLoggedIn, cb);
 		}
 		else {
-			showMessageToUser("There doesn't appear to be a user logged in at this time.  Processing cannot continue");
-			lockView();
+//			showMessageToUser("There doesn't appear to be a user logged in at this time.  Processing cannot continue");
+			lockView("There doesn't appear to be a user logged in at this time.  Processing cannot continue");
 		}
 	}
 
 	@Override
-	public void lockView() {
+	public void lockView(String errorInformation) {
 		final DialogBox db = new DialogBox(false, true);
 		db.setWidth("450px");
 		db.setHeight("200px");
@@ -1112,10 +1114,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		db.center();
 		HTML h = new HTML("<p>A system error has occurred and the application cannot "
 				+ "continue.  The application was unable to verify your Emory Rules of Behavior agreement "
-				+ "status.</p><p>There is another dialog box behind this one with more details regarding "
-				+ "the error that occurred.  You can drag this window out of the way to see that error "
-				+ "message.</p><p>Please try refreshing your browser to start over and if "
-				+ "the problem persists, contact the help desk.</p>");
+				+ "status.</p><p>The error that lead to this situation is listed below.</p>"
+				+ "<p>Please try refreshing your browser to start over and if "
+				+ "the problem persists, contact the help desk.</p>"
+				+ "<p>Error information:</p>"
+				+ "<p>" + errorInformation + "</p>");
 		db.setWidget(h);
 		db.show();
 		db.center();
