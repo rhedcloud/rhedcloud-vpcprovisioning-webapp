@@ -110,18 +110,22 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 			
 			// key_name will have to be OS specific
 			String key_name = null;
+			String fileName = null;
 			
 			if (isMacOS(userAgent)) {
 		        info("[doGet] Client OS is MAC");
 				key_name = getS3Props().getProperty("tkiClient-keyName-mac");
+				fileName = getS3Props().getProperty("tkiClient-fileName-mac");
 			}
 			else if (isWindowsOS(userAgent)) {
 		        info("[doGet] Client OS is Windows");
 				key_name = getS3Props().getProperty("tkiClient-keyName-windows");
+				fileName = getS3Props().getProperty("tkiClient-fileName-windows");
 			}
 			else if (isLinuxOS(userAgent)) {
 		        info("[doGet] Client OS is Linux");
 				key_name = getS3Props().getProperty("tkiClient-keyName-linux");
+				fileName = getS3Props().getProperty("tkiClient-fileName-linux");
 			}
 			else {
 		        info("[doGet] Client OS is Unknown.  User-Agent is: '" + userAgent + "'  Exception condition.");
@@ -134,7 +138,7 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 	        info("[doGet] " + downloadType + " keyName="  + key_name);
 	        
 	        try {
-		        this.downloadTkiClient(resp, accessId, secretKey, bucket_name, key_name);
+		        this.downloadTkiClient(resp, accessId, secretKey, bucket_name, key_name, fileName);
 	        }
 	        catch (IOException e) {
 	        	e.printStackTrace();
@@ -199,7 +203,7 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 		}
 	}
 	
-	private void downloadTkiClient(HttpServletResponse resp, String accessId, String secretKey, String bucket_name, String key_name) throws IOException {
+	private void downloadTkiClient(HttpServletResponse resp, String accessId, String secretKey, String bucket_name, String key_name, String fileName) throws IOException {
 		AWSCredentials credentials = new BasicAWSCredentials(accessId, secretKey);
 		AWSStaticCredentialsProvider credProvider = new AWSStaticCredentialsProvider(credentials);
 		AmazonS3ClientBuilder s3Builder = AmazonS3ClientBuilder.standard();
@@ -216,7 +220,9 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 
         int BUFFER = 1024 * 100;
         resp.setContentType( "application/octet-stream" );
-        resp.setHeader( "Content-Disposition:", "attachment;filename=" + "\"" + key_name + "\"" );
+        String contentDisposition = "attachment;filename=" + "\"" + fileName + "\"";
+        info("Content-Disposition: " + contentDisposition);
+        resp.setHeader( "Content-Disposition:", contentDisposition);
         
 		info("creating output stream to client (HttpServletResponse).");
         ServletOutputStream outputStream = resp.getOutputStream();
