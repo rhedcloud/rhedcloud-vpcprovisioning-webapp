@@ -536,7 +536,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 				user = new UserAccountPojo();
 				user.setEppn(eppn);
-				
+				// 9/19/2018 - create session immediately even before we get their roles
+//				Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
+//				this.createSession(eppn);
+
 				if (useAuthzService) {
 					// get permissions for user so they can be checked against later
 					// only do this once per session.
@@ -7022,7 +7025,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setUserId(filter.getUserId());
 			}
 
-			String authUserId = this.getAuthUserIdForHALS();
+			String authUserId = null;
+			if (filter != null && filter.getUserAccount() != null) {
+				authUserId = this.getAuthUserIdForHALS(filter.getUserAccount());
+			}
+			else {
+				authUserId = this.getAuthUserIdForHALS();
+			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getUserProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
@@ -7208,7 +7217,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 			}
 
-			String authUserId = this.getAuthUserIdForHALS();
+			String authUserId = null;
+			if (filter != null && filter.getUserAccount() != null) {
+				authUserId = this.getAuthUserIdForHALS(filter.getUserAccount());
+			}
+			else {
+				authUserId = this.getAuthUserIdForHALS();
+			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getTermsOfUseForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
@@ -7280,7 +7295,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setUserId(filter.getUserId());
 			}
 
-			String authUserId = this.getAuthUserIdForHALS();
+			String authUserId = null;
+			if (filter != null && filter.getUserAccount() != null) {
+				authUserId = this.getAuthUserIdForHALS(filter.getUserAccount());
+			}
+			else {
+				authUserId = this.getAuthUserIdForHALS();
+			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getTermsOfUseAgreementForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
@@ -7988,10 +8009,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		TermsOfUseQueryFilterPojo tou_filter = new TermsOfUseQueryFilterPojo();
 		tou_filter.setEffectiveTerms(true);
+		tou_filter.setUserAccount(user);
 		TermsOfUseQueryResultPojo tou_result = this.getTermsOfUseForFilter(tou_filter);
 		
 		TermsOfUseAgreementQueryFilterPojo toua_filter = new TermsOfUseAgreementQueryFilterPojo();
 		toua_filter.setUserId(user.getPublicId());
+		toua_filter.setUserAccount(user);
 		TermsOfUseAgreementQueryResultPojo toua_result = this.getTermsOfUseAgreementsForFilter(toua_filter);
 		
 		if (tou_result.getResults().size() == 1) {

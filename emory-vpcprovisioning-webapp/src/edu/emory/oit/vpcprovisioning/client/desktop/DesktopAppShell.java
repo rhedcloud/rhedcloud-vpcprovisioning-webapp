@@ -1028,6 +1028,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		};
 		UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
 		up_filter.setUserId(userLoggedIn.getPublicId());
+		up_filter.setUserAccount(userLoggedIn);
 		VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback);
 	}
 	private void updateUserProfile(UserProfilePojo profile) {

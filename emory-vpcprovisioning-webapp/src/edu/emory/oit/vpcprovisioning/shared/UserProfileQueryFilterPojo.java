@@ -11,6 +11,7 @@ public class UserProfileQueryFilterPojo extends SharedObject implements IsSerial
 	*/
 
 	String userId;
+	UserAccountPojo userAccount;
 	List<PropertyPojo> properties = new java.util.ArrayList<PropertyPojo>();
 	
 	public UserProfileQueryFilterPojo() {
@@ -31,6 +32,14 @@ public class UserProfileQueryFilterPojo extends SharedObject implements IsSerial
 
 	public void setProperties(List<PropertyPojo> properties) {
 		this.properties = properties;
+	}
+
+	public UserAccountPojo getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccountPojo userAccount) {
+		this.userAccount = userAccount;
 	}
 
 }

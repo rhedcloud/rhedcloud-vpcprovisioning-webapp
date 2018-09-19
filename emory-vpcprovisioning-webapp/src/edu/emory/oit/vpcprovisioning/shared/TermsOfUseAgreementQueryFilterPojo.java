@@ -7,6 +7,7 @@ public class TermsOfUseAgreementQueryFilterPojo extends SharedObject implements 
 	String termsOfUseAgreementId;
 	String termsOfUseId;
 	String userId;
+	UserAccountPojo userAccount;
 	
 	public TermsOfUseAgreementQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
@@ -34,6 +35,14 @@ public class TermsOfUseAgreementQueryFilterPojo extends SharedObject implements 
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public UserAccountPojo getUserAccount() {
+		return userAccount;
+	}
+
+	public void setUserAccount(UserAccountPojo userAccount) {
+		this.userAccount = userAccount;
 	}
 
 }
