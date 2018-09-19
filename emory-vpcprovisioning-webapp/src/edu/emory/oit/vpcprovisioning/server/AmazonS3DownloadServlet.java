@@ -220,7 +220,8 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 
         int BUFFER = 1024 * 100;
         resp.setContentType( "application/octet-stream" );
-        String contentDisposition = "attachment;filename=" + "\"" + fileName + "\"";
+//        String contentDisposition = "attachment;filename=" + "\"" + fileName + "\"";
+        String contentDisposition = "attachment; filename=" + fileName;
         info("Content-Disposition: " + contentDisposition);
         resp.setHeader( "Content-Disposition:", contentDisposition);
         
