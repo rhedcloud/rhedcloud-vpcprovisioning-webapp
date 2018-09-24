@@ -156,6 +156,9 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 						showMessageToUser("Please select one or more item(s) from the list");
 						return;
 					}
+					
+					// TODO: presenter.deleteSecurityRisks(risksToDelete);
+					
 					Iterator<CounterMeasurePojo> nIter = selectionModel.getSelectedSet().iterator();
 					while (nIter.hasNext()) {
 						CounterMeasurePojo m = nIter.next();

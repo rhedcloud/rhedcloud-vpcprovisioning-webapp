@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.server;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -216,9 +217,15 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 
         int BUFFER = 1024 * 100;
         resp.setContentType( "application/octet-stream" );
-        String contentDisposition = "attachment;filename=" + "\"" + key_name + "\"";
+        String contentDisposition = " attachment; filename=" + "\"" + key_name + "\"";
         info("Content-Disposition: " + contentDisposition);
-        resp.setHeader( "Content-Disposition:", contentDisposition);
+        resp.setHeader( "Content-Disposition", contentDisposition);
+        Iterator<String> headers = resp.getHeaderNames().iterator();
+        info("response headers:");
+        while (headers.hasNext()) {
+        	String header = headers.next();
+        	info(header + "=" + resp.getHeader(header));
+        }
         
 		info("creating output stream to client (HttpServletResponse).");
         ServletOutputStream outputStream = resp.getOutputStream();

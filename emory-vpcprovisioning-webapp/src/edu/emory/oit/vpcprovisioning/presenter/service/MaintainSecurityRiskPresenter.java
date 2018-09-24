@@ -334,4 +334,10 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void deleteCounterMeasures(List<CounterMeasurePojo> selected) {
+		// TODO Auto-generated method stub
+		
+	}
 }

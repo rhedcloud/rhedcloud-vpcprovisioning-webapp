@@ -117,7 +117,7 @@ public interface VpcProvisioningService extends RemoteService {
 	// Elastic IP
 	ElasticIpQueryResultPojo getElasticIpsForFilter(ElasticIpQueryFilterPojo filter) throws RpcException;
 	ElasticIpPojo createElasticIp(ElasticIpPojo elasticIp) throws RpcException;
-	void deleteElasticIp(ElasticIpPojo elasticIp) throws RpcException;
+	ElasticIpPojo deleteElasticIp(ElasticIpPojo elasticIp) throws RpcException;
 	ElasticIpPojo updateElasticIp(ElasticIpPojo vpc) throws RpcException;
 	boolean isElasticIpAssigned(ElasticIpPojo elasticIp) throws RpcException;
 	ElasticIpAssignmentStatusPojo getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo elasticIp) throws RpcException;
@@ -241,7 +241,7 @@ public interface VpcProvisioningService extends RemoteService {
 	// VpnConnectionProfile and VpnConnectionProfileAssignment
 	VpnConnectionProfileQueryResultPojo getVpnConnectionProfilesForFilter(VpnConnectionProfileQueryFilterPojo filter) throws RpcException;
 	VpnConnectionProfilePojo createVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException;
-	void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException;
+	VpnConnectionProfilePojo deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException;
 	VpnConnectionProfilePojo updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException;
 	VpnConnectionProfileAssignmentQueryResultPojo getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException;
 

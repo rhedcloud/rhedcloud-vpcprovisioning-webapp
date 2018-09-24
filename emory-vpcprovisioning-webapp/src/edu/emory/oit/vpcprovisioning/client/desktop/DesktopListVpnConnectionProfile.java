@@ -47,6 +47,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 
 public class DesktopListVpnConnectionProfile extends ViewImplBase implements ListVpnConnectionProfileView {
@@ -204,25 +205,38 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 					return;
 				}
 
-				// TODO: presenter.deleteVpnConnectionProfiles(profilesToDelete);
+				List<VpnConnectionProfileSummaryPojo> profilesToDelete = new java.util.ArrayList<VpnConnectionProfileSummaryPojo>();
+				boolean hasErrors = false;
 
 				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-				while (nIter.hasNext()) {
+				profileLoop: while (nIter.hasNext()) {
 					VpnConnectionProfileSummaryPojo m = nIter.next();
 					if (m != null) {
 						// remove the elastic ip if it's NOT assigned
 						if (m.getAssignment() != null) {
 							showMessageToUser("You cannot delete a profile that has an assignment associated to it.");
-						} else {
+							hasErrors = true;
+							break profileLoop;
+						} 
+						else {
 							if (userLoggedIn.isNetworkAdmin()) {
-								presenter.deleteVpnConnectionProfile(m);
+								profilesToDelete.add(m);
 							}
 							else {
 								showMessageToUser("You are not authorized to perform this action.");
+								hasErrors = true;
+								break profileLoop;
 							}
 						}
-					} else {
+					} 
+					else {
 						showMessageToUser("Please select one or more item(s) from the list");
+						hasErrors = true;
+						break profileLoop;
+					}
+					
+					if (!hasErrors && profilesToDelete.size() > 0) {
+						presenter.deleteVpnConnectionProfiles(profilesToDelete);
 					}
 				}
 			}
@@ -744,8 +758,12 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	}
 
 	@Override
-	public void removeVpnConnectionProfileSummaryFromView(VpnConnectionProfileSummaryPojo summary) {
-		dataProvider.getList().remove(summary);
+	public void removeSummaryForVpnConnectionProfileFromView(VpnConnectionProfilePojo vpnConnectionProfile) {
+		for (VpnConnectionProfileSummaryPojo summary : dataProvider.getList()) {
+			if (summary.getProfile().equals(vpnConnectionProfile)) {
+				dataProvider.getList().remove(summary);
+			}
+		}
 	}
 
 	@Override

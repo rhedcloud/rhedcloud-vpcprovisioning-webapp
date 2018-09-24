@@ -109,7 +109,7 @@ public interface VpcProvisioningServiceAsync {
 	void getElasticIpsForFilter(ElasticIpQueryFilterPojo filter, AsyncCallback<ElasticIpQueryResultPojo> callback);
 	void createElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpPojo> callback);
 	void updateElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpPojo> callback);
-	void deleteElasticIp(ElasticIpPojo cidr, AsyncCallback<Void> callback);
+	void deleteElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpPojo> callback);
 	void isElasticIpAssigned(ElasticIpPojo cidr, AsyncCallback<Boolean> callback);
 	void getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo cidr, AsyncCallback<ElasticIpAssignmentStatusPojo> callback);
 
@@ -221,7 +221,7 @@ public interface VpcProvisioningServiceAsync {
 	void getVpnConnectionProfilesForFilter(VpnConnectionProfileQueryFilterPojo filter, AsyncCallback<VpnConnectionProfileQueryResultPojo> callback);
 	void createVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<VpnConnectionProfilePojo> callback);
 	void updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<VpnConnectionProfilePojo> callback);
-	void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<Void> callback);
+	void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<VpnConnectionProfilePojo> callback);
 	void getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter, AsyncCallback<VpnConnectionProfileAssignmentQueryResultPojo> callback);
 
 	// vpncp

@@ -39,6 +39,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -101,28 +102,40 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 					return;
 				}
 				
-				// TODO: presenter.deleteElasticIps(ipsToDelete);
+				List<ElasticIpSummaryPojo> ipsToDelete = new java.util.ArrayList<ElasticIpSummaryPojo>();
+				boolean hasErrors = false;
 				
 				Iterator<ElasticIpSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-				while (nIter.hasNext()) {
+				ipLoop:  while (nIter.hasNext()) {
 					ElasticIpSummaryPojo m = nIter.next();
 					if (m != null) {
 						// remove the elastic ip if it's NOT assigned
 						if (m.getElasticIpAssignment() != null) {
-							showMessageToUser("You cannot delete an Elastic IP that has an assignment associated to it.");
+							hasErrors = true;
+							showMessageToUser("You cannot delete an Elastic IP that has an assignment "
+								+ "associated to it.  Please de-select any Elastic IP that has an "
+								+ "assignment associated to it.");
+							break ipLoop;
 						}
 						else {
 							if (userLoggedIn.isNetworkAdmin()) {
-								presenter.deleteElasticIp(m);
+								ipsToDelete.add(m);
 							}
 							else {
+								hasErrors = true;
 								showMessageToUser("You are not authorized to perform this action.");
+								break ipLoop;
 							}
 						}
 					}
 					else {
+						hasErrors = true;
 						showMessageToUser("Please select one or more item(s) from the list");
 					}
+				}
+				
+				if (!hasErrors && ipsToDelete.size() > 0) {
+					presenter.deleteElasticIps(ipsToDelete);
 				}
 			}
 		});
@@ -444,8 +457,12 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	}
 
 	@Override
-	public void removeElasticIpSummaryFromView(ElasticIpSummaryPojo summary) {
-		dataProvider.getList().remove(summary);
+	public void removeSummaryForElasticIpFromView(ElasticIpPojo elasticIp) {
+		for (ElasticIpSummaryPojo summary : dataProvider.getList()) {
+			if (summary.getElasticIp() != null && summary.getElasticIp().equals(elasticIp)) {
+				dataProvider.getList().remove(summary);
+			}
+		}
 	}
 
 	@Override

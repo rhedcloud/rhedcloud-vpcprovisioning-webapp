@@ -56,6 +56,6 @@ public interface ListElasticIpView extends IsWidget, View {
 	void setElasticIpSummaries(List<ElasticIpSummaryPojo> elasticIpSummaries);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void removeElasticIpSummaryFromView(ElasticIpSummaryPojo elasticIpSummary);
+	void removeSummaryForElasticIpFromView(ElasticIpPojo elasticIp);
 
 }

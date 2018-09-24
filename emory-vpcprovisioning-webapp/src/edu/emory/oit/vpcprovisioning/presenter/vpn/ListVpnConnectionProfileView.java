@@ -61,7 +61,7 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 	void setVpnConnectionProfileSummaries(List<VpnConnectionProfileSummaryPojo> elasticIpSummaries);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void removeVpnConnectionProfileSummaryFromView(VpnConnectionProfileSummaryPojo elasticIpSummary);
+	void removeSummaryForVpnConnectionProfileFromView(VpnConnectionProfilePojo vpnConnectionProfile);
 	void showFilteredStatus();
 	void hideFilteredStatus();
 	void initPage();

@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -43,6 +44,12 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	VpcPojo vpc;
 	ElasticIpSummaryPojo selectedSummary;
 	List<ElasticIpSummaryPojo> selectedSummaries;
+
+	boolean showStatus = false;
+	boolean startTimer = true;
+	int deletedCount;
+	int totalToDelete;
+	StringBuffer deleteErrors;
 
 	public ListElasticIpPresenter(ClientFactory clientFactory, boolean clearList, ElasticIpQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
@@ -220,25 +227,55 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public void vpcpConfirmOkay() {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				getView().showMessageToUser("There was an exception on the " +
-						"server deleting the VPC metadata.  Message " +
-						"from server is: " + caught.getMessage());
-				getView().hidePleaseWaitDialog();
-			}
+		showStatus = false;
+		deletedCount = 0;
+		totalToDelete = selectedSummaries.size();
+		deleteErrors = new StringBuffer();
+		for (int i=0; i<selectedSummaries.size(); i++) {
+			final ElasticIpSummaryPojo summary = selectedSummaries.get(i);
+			final int listCounter = i;
 
-			@Override
-			public void onSuccess(Void result) {
-				// remove from dataprovider
-				getView().removeElasticIpSummaryFromView(selectedSummary);
-				getView().hidePleaseWaitDialog();
-				// status message
-				getView().showStatus(getView().getStatusMessageSource(), "Elastic IP was deleted.");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().deleteElasticIp(selectedSummary.getElasticIp(), callback);
+			AsyncCallback<ElasticIpPojo> callback = new AsyncCallback<ElasticIpPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					deleteErrors.append("There was an exception on the " +
+							"server deleting the ElasticIP (" + summary.getElasticIp().getElasticIpAddress() + ").  " +
+							"<p>Message from server is: " + caught.getMessage() + "</p>");
+					if (!showStatus) {
+						deleteErrors.append("\n");
+					}
+					if (listCounter == totalToDelete - 1) {
+						showStatus = true;
+					}
+				}
+	
+				@Override
+				public void onSuccess(ElasticIpPojo result) {
+					deletedCount++;
+					if (listCounter == totalToDelete - 1) {
+						showStatus = true;
+					}
+				}
+			};
+			VpcProvisioningService.Util.getInstance().deleteElasticIp(selectedSummary.getElasticIp(), callback);
+		}
+		if (!showStatus) {
+			// wait for all the creates to finish processing
+			int delayMs = 500;
+			Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
+				@Override
+				public boolean execute() {
+					if (showStatus) {
+						startTimer = false;
+						showDeleteListStatus();
+					}
+					return startTimer;
+				}
+			}, delayMs);
+		}
+		else {
+			showDeleteListStatus();
+		}
 	}
 
 	@Override
@@ -249,20 +286,23 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public void deleteElasticIps(List<ElasticIpSummaryPojo> summaries) {
-		// TODO Auto-generated method stub
-		
+		selectedSummaries = summaries;
+		VpcpConfirm.confirm(
+			ListElasticIpPresenter.this, 
+			"Confirm Delete Elastic IP", 
+			"Delete the selected " + selectedSummaries.size() + " Elastic IPs?");
 	}
 
-	void showDeleteListStatus(int createdCount, int totalToCreate, StringBuffer errors) {
-		if (errors.length() == 0) {
+	void showDeleteListStatus() {
+		if (deleteErrors.length() == 0) {
 			getView().hidePleaseWaitDialog();
-			getView().showStatus(null, createdCount + " out of " + totalToCreate + " ElasticIP(s) were created.");
+			getView().showStatus(null, deletedCount + " out of " + totalToDelete + " ElasticIP(s) were deleted.");
 		}
 		else {
 			getView().hidePleaseWaitDialog();
-			errors.insert(0, createdCount + " out of " + totalToCreate + " ElasticIP(s) were created.  "
+			deleteErrors.insert(0, deletedCount + " out of " + totalToDelete + " ElasticIP(s) were deleted.  "
 				+ "Below are the errors that occurred:</br>");
-			getView().showMessageToUser(errors.toString());
+			getView().showMessageToUser(deleteErrors.toString());
 		}
 	}
 

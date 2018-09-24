@@ -4070,9 +4070,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public void deleteElasticIp(ElasticIpPojo elasticIp) throws RpcException {
+	public ElasticIpPojo deleteElasticIp(ElasticIpPojo elasticIp) throws RpcException {
 		if (!useEsbService) {
-			return;
+			return elasticIp;
 		} 
 		else {
 			try {
@@ -4087,7 +4087,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.doDelete(moa, getElasticIpRequestService());
 				info("ElasticIp.delete is complete...");
 
-				return;
+				return elasticIp;
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
@@ -8827,7 +8827,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException {
+	public VpnConnectionProfilePojo deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException {
 		try {
 			// TODO: need to see if there are any assignments to this profile and if so, delete those too
 			info("deleting VpnConnectionProfile record on the server...");
@@ -8840,7 +8840,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			this.doDelete(moa, getNetworkOpsRequestService());
 			info("VpnConnectionProfilePojo.delete is complete...");
 
-			return;
+			return vpnConnectionProfile;
 		} 
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();

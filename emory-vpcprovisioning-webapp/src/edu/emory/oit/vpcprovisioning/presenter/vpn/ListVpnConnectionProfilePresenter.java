@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.presenter.vpn;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -13,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.VpnConnectionProfileListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
@@ -41,6 +43,12 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 	VpnConnectionProfileSummaryPojo selectedSummary;
 	List<VpnConnectionProfileSummaryPojo> selectedSummaries;
 	UserAccountPojo userLoggedIn;
+
+	boolean showStatus = false;
+	boolean startTimer = true;
+	int deletedCount;
+	int totalToDelete;
+	StringBuffer deleteErrors;
 
 	public ListVpnConnectionProfilePresenter(ClientFactory clientFactory, boolean clearList, VpnConnectionProfileQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
@@ -220,25 +228,55 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 	@Override
 	public void vpcpConfirmOkay() {
-		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				getView().showMessageToUser("There was an exception on the " +
-						"server deleting the VPC metadata.  Message " +
-						"from server is: " + caught.getMessage());
-				getView().hidePleaseWaitDialog();
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				// remove from dataprovider
-				getView().removeVpnConnectionProfileSummaryFromView(selectedSummary);
-				getView().hidePleaseWaitDialog();
-				// status message
-				getView().showStatus(getView().getStatusMessageSource(), "VPN Connection Profile was deleted.");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfile(selectedSummary.getProfile(), callback);
+		showStatus = false;
+		deletedCount = 0;
+		totalToDelete = selectedSummaries.size();
+		deleteErrors = new StringBuffer();
+		for (int i=0; i<selectedSummaries.size(); i++) {
+			final VpnConnectionProfileSummaryPojo summary = selectedSummaries.get(i);
+			final int listCounter = i;
+			
+			AsyncCallback<VpnConnectionProfilePojo> callback = new AsyncCallback<VpnConnectionProfilePojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					deleteErrors.append("There was an exception on the " +
+							"server deleting the VPN Connection Profile (id=" + summary.getProfile().getVpnConnectionProfileId() + ").  " +
+							"<p>Message from server is: " + caught.getMessage() + "</p>");
+					if (!showStatus) {
+						deleteErrors.append("\n");
+					}
+					if (listCounter == totalToDelete - 1) {
+						showStatus = true;
+					}
+				}
+	
+				@Override
+				public void onSuccess(VpnConnectionProfilePojo result) {
+					deletedCount++;
+					if (listCounter == totalToDelete - 1) {
+						showStatus = true;
+					}
+				}
+			};
+			VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfile(summary.getProfile(), callback);
+		}
+		if (!showStatus) {
+			// wait for all the creates to finish processing
+			int delayMs = 500;
+			Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
+				@Override
+				public boolean execute() {
+					if (showStatus) {
+						startTimer = false;
+						showDeleteListStatus();
+					}
+					return startTimer;
+				}
+			}, delayMs);
+		}
+		else {
+			showDeleteListStatus();
+		}
 	}
 
 	@Override
@@ -249,20 +287,23 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 	@Override
 	public void deleteVpnConnectionProfiles(List<VpnConnectionProfileSummaryPojo> summaries) {
-		// TODO Auto-generated method stub
-		
+		selectedSummaries = summaries;
+		VpcpConfirm.confirm(
+			ListVpnConnectionProfilePresenter.this, 
+			"Confirm Delete VPN Connection Profile", 
+			"Delete the selected " + selectedSummaries.size() + " VPN Connection Profiles?");
 	}
 
-	void showDeleteListStatus(int createdCount, int totalToCreate, StringBuffer errors) {
-		if (errors.length() == 0) {
+	void showDeleteListStatus() {
+		if (deleteErrors.length() == 0) {
 			getView().hidePleaseWaitDialog();
-			getView().showStatus(null, createdCount + " out of " + totalToCreate + " VPN Connection Profile(s) were created.");
+			getView().showStatus(null, deletedCount + " out of " + totalToDelete + " VPN Connection Profile(s) were deleted.");
 		}
 		else {
 			getView().hidePleaseWaitDialog();
-			errors.insert(0, createdCount + " out of " + totalToCreate + " VPN Connection Profile(s) were created.  "
+			deleteErrors.insert(0, deletedCount + " out of " + totalToDelete + " VPN Connection Profile(s) were deleted.  "
 				+ "Below are the errors that occurred:</br>");
-			getView().showMessageToUser(errors.toString());
+			getView().showMessageToUser(deleteErrors.toString());
 		}
 	}
 

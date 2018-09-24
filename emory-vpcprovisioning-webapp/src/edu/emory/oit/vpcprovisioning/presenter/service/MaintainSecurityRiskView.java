@@ -35,6 +35,7 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 
 		void deleteSecurityRisk(SecurityRiskPojo selected);
 		void deleteCounterMeasure(CounterMeasurePojo selected);
+		void deleteCounterMeasures(List<CounterMeasurePojo> selected);
 		SecurityRiskPojo getSecurityRisk();
 		public void setDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getDirectoryPerson();
