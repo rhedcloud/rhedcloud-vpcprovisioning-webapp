@@ -7117,7 +7117,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public UserProfilePojo updateUserProfile(UserProfilePojo profile) throws RpcException {
-		profile.setUpdateInfo(this.getCachedUser().getPublicId());
+		if (this.getCachedUser() != null) {
+			profile.setUpdateInfo(this.getCachedUser().getPublicId());
+		}
+		else {
+			profile.setUpdateInfo(profile.getUserId());
+		}
         try {
             info("updating UserNotification on the server...");
             UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
@@ -7866,6 +7871,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
 				Constants.USER_ACCOUNT + getCurrentSessionId());
 		
+		if (user == null) {
+			user = this.getUserLoggedIn(false);
+		}
 		return user;
 	}
 
