@@ -461,13 +461,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						this.getRolesForUser(user);
 					}
 					if (user.getAccountRoles().size() == 0) {
-						// ERROR, user does not have any required permissions to use
-						// this app
-						info("user " + user.getEppn() + " is not authorized to use this application.");
-						throw new RpcException("The user id being used to log " +
-							"in is not authorized to use this application.  " +
-							"Please contact your support representative to " +
-							"gain access to this application.");
+						if (!refreshRoles) {
+							// we'll go ahead and refresh the roles here just in case the user closed
+							// their browser and they still have a shib session but no session in the app server
+							this.getRolesForUser(user);
+						}
+						if (user.getAccountRoles().size() == 0) {
+							// ERROR, user does not have any required permissions to use
+							// this app
+							info("user " + user.getEppn() + " is not authorized to use this application.");
+							throw new RpcException("The user id being used to log " +
+								"in is not authorized to use this application.  " +
+								"Please contact your support representative to " +
+								"gain access to this application.");
+						}
 					}
 				}
 				else {
@@ -547,13 +554,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						this.getRolesForUser(user);
 					}
 					if (user.getAccountRoles().size() == 0) {
-						// ERROR, user does not have any required permissions to use
-						// this app
-						info("user " + user.getEppn() + " is not authorized to use this application.");
-						throw new RpcException("The user id being used to log " +
-							"in is not authorized to use this application.  " +
-							"Please contact your support representative to " +
-							"gain access to this application.");
+						if (!refreshRoles) {
+							// we'll go ahead and refresh the roles here just in case the user closed
+							// their browser and they still have a shib session but no session in the app server
+							this.getRolesForUser(user);
+						}
+						if (user.getAccountRoles().size() == 0) {
+							// ERROR, user does not have any required permissions to use
+							// this app
+							info("user " + user.getEppn() + " is not authorized to use this application.");
+							throw new RpcException("The user id being used to log " +
+								"in is not authorized to use this application.  " +
+								"Please contact your support representative to " +
+								"gain access to this application.");
+						}
 					}
 				}
 				else {
