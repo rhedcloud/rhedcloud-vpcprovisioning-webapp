@@ -25,7 +25,7 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="createButton" debugId="createButton" text="Add Service Guideline" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Service"/>
+						<g:Button ui:field="createButton" debugId="createButton" text="Add Service Guideline" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Service Guideline"/>
 					</g:customCell>
 					<g:customCell>
 						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>

@@ -1606,7 +1606,7 @@ public class AppBootstrapper {
 				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
 				presenter.setIncidentType(Constants.INCIDENT_TYPE_TERMINATE_ACCOUNT);
 				presenter.setAccount(event.getAccount());
-				presenter.setShortDescription("Emory AWS Service - Account Termination Request: " + presenter.getAccount().getAccountId());
+				presenter.setShortDescription("AWS at Emory - Account Termination Request: " + presenter.getAccount().getAccountId());
 				presenter.setUrgency("3");
 				presenter.setImpact("3");
 				presenter.setBusinessService("Application Management");
@@ -1642,7 +1642,7 @@ public class AppBootstrapper {
 				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
 				presenter.setIncidentType(Constants.INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT);
 				presenter.setAccount(event.getAccount());
-				presenter.setShortDescription("Emory AWS Service - Create Service Account for: " + presenter.getAccount().getAccountId());
+				presenter.setShortDescription("AWS at Emory - Create Service Account for: " + presenter.getAccount().getAccountId());
 				presenter.setUrgency("3");
 				presenter.setImpact("3");
 				presenter.setBusinessService("Application Management");

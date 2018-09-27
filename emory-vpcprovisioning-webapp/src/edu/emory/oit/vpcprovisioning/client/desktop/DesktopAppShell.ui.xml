@@ -39,7 +39,7 @@
  -->					</g:HTML>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel styleName="{style.productsMenuHeader}" ui:field='productsTitleBar' title="Emory AWS Services">
+					<g:HTMLPanel styleName="{style.productsMenuHeader}" ui:field='productsTitleBar' title="AWS at Emory">
 						<div ui:field='productsElem'>Products  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/></div>
 					</g:HTMLPanel>
 				</g:cell>
@@ -55,19 +55,15 @@
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:MenuBar ui:field="supportMenuBar" autoOpen="false" animationEnabled="true" styleName="{style.linksMenu}">
-						<g:MenuItem ui:field="resourcesMenu" styleName="{style.linksMenuHeader}">Support  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>
+						<g:MenuItem ui:field="supportMenu" debugId="supportMenu" styleName="{style.linksMenuHeader}">Support  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>
 							<g:MenuBar vertical="true">
-								<g:MenuItem ui:field="awsItem" debugId="awsItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">AWS Enterprise Support</a></g:MenuItem>
-								<g:MenuItem ui:field="emoryAwsItem" debugId="emoryAwsItem" title="Emory AWS Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://emory.service-now.com/sp?id=sc_cat_item&amp;sys_id=58e901fd983a4500593bf372f0e9a92e">Emory AWS Support</a></g:MenuItem>
-								<g:MenuItem styleName="{style.menuItemSeparator}">
-									<div class="menuSeparatorInner"></div>
-								</g:MenuItem> 
-								<g:MenuItem ui:field="reportProblemItem" title="Report a Problem" styleName="{style.linksMenuItem}"> Report a Problem
+								<g:MenuItem ui:field="contactAwsItem" debugId="contactAwsItem" title="Contact AWS Support" styleName="{style.linksMenuItem}"> Contact AWS Support
 									<g:MenuBar vertical="true">
-										<g:MenuItem ui:field="haveAnAccountItem" debugId="haveAnAccountItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">I have an account</a></g:MenuItem>
-										<g:MenuItem ui:field="doNotHaveAnAccountItem" debugId="doNotHaveAnAccountItem" title="AWS Enterprise Support" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/premiumsupport/enterprise-support/">I DO NOT have an account</a></g:MenuItem>
+										<g:MenuItem ui:field="awsItem" debugId="awsItem" title="Login to your AWS account" styleName="{style.linksMenuItemUnFollowable}">
+											<a id="emoryAwsLoginAnchor" title="Login to your AWS Account" target="_self" href="http://console.aws.emory.edu/">Login</a> to your AWS account, then click the Support Link in the upper right corner</g:MenuItem>
 									</g:MenuBar>
 								</g:MenuItem>
+								<g:MenuItem ui:field="emoryAwsItem" debugId="emoryAwsItem" title="Contact Emory Support" styleName="{style.linksMenuItem}"><a id="emoryAwsSupportAnchor" target="_self" href="https://emory.service-now.com/sp?id=sc_cat_item&amp;sys_id=62b4a2a3db771700d1b958a8dc961994">Contact Emory Support</a></g:MenuItem>
 							</g:MenuBar>
 						</g:MenuItem>
 					</g:MenuBar>

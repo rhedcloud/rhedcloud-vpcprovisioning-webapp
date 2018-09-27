@@ -118,7 +118,7 @@
 							<g:Grid cellSpacing="12">
 								<g:row>
 									<g:customCell>
-										<g:Button ui:field="createAssessmentButton" debugId="createAssessmentButton" text="Add Assessment" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Service Security Assessment"/>
+										<g:Button ui:field="createAssessmentButton" debugId="createAssessmentButton" text="Add Assessment" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Security Assessment"/>
 									</g:customCell>
 									<g:customCell>
 										<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>

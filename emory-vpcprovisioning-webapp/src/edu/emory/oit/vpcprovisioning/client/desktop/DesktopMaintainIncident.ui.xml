@@ -109,25 +109,6 @@
 		    	</g:row>
 			</g:Grid>
 		</g:VerticalPanel>
-		<!-- 
-		    <Incident>
-			      <Number>INC12345678</Number>
-			      <AssignmentGroup>LITS: Service Desk - Tier 1</AssignmentGroup>
-			      <ShortDescription>Emory AWS Service - Account Termination Request</ShortDescription>
-			      <Description>Please terinate AWS account 123456789012.</Description>
-			      <Urgency>3 - Medium</Urgency>
-			      <Priority>4 - Low</Priority>
-			      <Impact>3 - Moderate/Limited</Impact>
-			      <BusinessService>Application Management</BusinessService>
-			      <Category>Access</Category>
-			      <SubCategory>Remove</SubCategory>
-			      <RecordType>Incident</RecordType>
-			      <ContactType>Integration</ContactType>
-			      <CallerId>PPETERS</CallerId>
-			      <SystemId>some_internal_sys_id</SystemId>
-			      <IncidentState>Awaiting Assignment</IncidentState>
-		    </Incident>
-		 -->
 		<g:HorizontalPanel ui:field="editIncidentPanel">
 		</g:HorizontalPanel>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">

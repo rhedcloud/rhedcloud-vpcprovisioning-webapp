@@ -7124,7 +7124,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			profile.setUpdateInfo(profile.getUserId());
 		}
         try {
-            info("updating UserNotification on the server...");
+            info("updating UserProfile on the server...");
             UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
             UserProfile baselineData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
 
