@@ -636,7 +636,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	public void applyAWSAccountAuditorMask() {
 		// disable add account button
 		addAccountButton.setEnabled(false);
-		actionsButton.setEnabled(false);
+		actionsButton.setEnabled(true);
 		filterButton.setEnabled(false);
 		clearFilterButton.setEnabled(false);
 		accountIdTB.setEnabled(false);

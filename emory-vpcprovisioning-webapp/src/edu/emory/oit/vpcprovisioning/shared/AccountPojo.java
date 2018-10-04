@@ -18,6 +18,7 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 //	List<RoleAssignmentPojo> roleAssignments = new ArrayList<RoleAssignmentPojo>();
 	String complianceClass;
 	List<String> sensitiveDataList = new java.util.ArrayList<String>();
+	List<PropertyPojo> properties = new java.util.ArrayList<PropertyPojo>();
 	AccountPojo baseline;
 	
 	public static final ProvidesKey<AccountPojo> KEY_PROVIDER = new ProvidesKey<AccountPojo>() {
@@ -140,5 +141,13 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 
 	public void setSensitiveDataList(List<String> sensitiveDataList) {
 		this.sensitiveDataList = sensitiveDataList;
+	}
+
+	public List<PropertyPojo> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<PropertyPojo> properties) {
+		this.properties = properties;
 	}
 }

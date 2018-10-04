@@ -19,109 +19,124 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<!-- 
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Label addStyleNames="{style.label-left}">General Account Info:</g:Label>
-		</g:cell>		
-		 -->
-		<g:HorizontalPanel>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.mediumLabel}">General Account Info:</g:Label>
-			    	</g:customCell>
-				</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="accountIdTB" debugId="accountIdTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account Name:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="accountNameTB" debugId="accountNameTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:SuggestBox ui:field="ownerIdSB" debugId="ownerIdSB" 
-							addStyleNames="{style.field} {style.glowing-border}"/>
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="complianceClassLB" debugId="complianceClassLB" />
-			    	</g:customCell>
-				</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Password Location:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="passwordLocationTB" debugId="passwordLocationTB" />
-			    	</g:customCell>
-		    	</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="speedTypeTB" debugId="speedTypeTB" />
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:HTML ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
-			    	</g:customCell>
-		    	</g:row>
-			</g:Grid>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-			<g:ScrollPanel>
-				<g:VerticalPanel spacing="8" ui:field="emailsVP" height="100%">
-					<g:Label addStyleNames="{style.mediumLabel}">Add/remove email(s):</g:Label>
-					<g:HorizontalPanel ui:field="addEmailHP" spacing="16">
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-							<g:TextBox ui:field="addEmailTF" debugId="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-						</g:cell>
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-							<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="addEmailTypeLB" debugId="addEmailTypeLB" />
-						</g:cell>
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-							<g:Button ui:field="addEmailButton" debugId="addEmailButton"
-								addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-						</g:cell>
-					</g:HorizontalPanel>
-					<g:VerticalPanel spacing="8">
-						<g:Label addStyleNames="{style.mediumLabel}">e-mail addresses associated to this account:</g:Label>
-						<g:FlexTable ui:field="emailTable" debugId="emailTable" cellSpacing="3" cellPadding="3"/>
+		<g:Grid cellSpacing="8">
+			<g:row>
+		    	<g:customCell>
+					<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.mediumLabel}">General Account Info:</g:Label>
+					    	</g:customCell>
+						</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="accountIdTB" debugId="accountIdTB" />
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Account Name:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="accountNameTB" debugId="accountNameTB" />
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:SuggestBox ui:field="ownerIdSB" debugId="ownerIdSB" 
+									addStyleNames="{style.field} {style.glowing-border}"/>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="complianceClassLB" debugId="complianceClassLB" />
+					    	</g:customCell>
+						</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Password Location:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="passwordLocationTB" debugId="passwordLocationTB" />
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="speedTypeTB" debugId="speedTypeTB" />
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:HTML ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
+					    	</g:customCell>
+				    	</g:row>
+					</g:Grid>
+		    	</g:customCell>
+		    </g:row>
+		    <g:row>
+		    	<g:customCell>
+					<g:ScrollPanel>
+						<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="emailsVP" height="100%">
+							<g:Label addStyleNames="{style.mediumLabel}">Add/remove email(s):</g:Label>
+							<g:HorizontalPanel ui:field="addEmailHP" spacing="16">
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+									<g:TextBox ui:field="addEmailTF" debugId="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+								</g:cell>
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+									<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+										ui:field="addEmailTypeLB" debugId="addEmailTypeLB" />
+								</g:cell>
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+									<g:Button ui:field="addEmailButton" debugId="addEmailButton"
+										addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+								</g:cell>
+							</g:HorizontalPanel>
+							<g:VerticalPanel spacing="8">
+								<g:Label addStyleNames="{style.mediumLabel}">e-mail addresses associated to this account:</g:Label>
+								<g:FlexTable ui:field="emailTable" debugId="emailTable" cellSpacing="3" cellPadding="3"/>
+							</g:VerticalPanel>
+						</g:VerticalPanel>
+					</g:ScrollPanel>
+		    	</g:customCell>
+		    	<g:customCell>
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="propertiesVP" height="100%">
+						<g:Label addStyleNames="{style.mediumLabel}">Add/Update/Remove Properties:</g:Label>
+						<g:HorizontalPanel ui:field="addPropertyHP" spacing="16">
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:TextBox ui:field="propertyKeyTF" debugId="propertyKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:TextBox ui:field="propertyValueTF" debugId="propertyValueTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:Button ui:field="addPropertyButton" debugId="addPropertyButton"
+									addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+							</g:cell>
+						</g:HorizontalPanel>
+						<g:VerticalPanel spacing="8">
+							<g:Label addStyleNames="{style.mediumLabel}">Properties associated to this account:</g:Label>
+							<g:FlexTable ui:field="propertiesTable" debugId="propertiesTable" cellSpacing="3" cellPadding="3"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
-				</g:VerticalPanel>
-			</g:ScrollPanel>
-		</g:cell>
-		</g:HorizontalPanel>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
-			<g:VerticalPanel spacing="8" ui:field="sensitiveDataPanel"/>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
-			<g:HorizontalPanel>
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+		    	</g:customCell>
+		    </g:row>
+			<g:row>
+		    	<g:customCell>
 					<g:Grid cellSpacing="12">
 						<g:row>
 					    	<g:customCell>
@@ -138,14 +153,12 @@
 					    	</g:customCell>
 						</g:row>
 					</g:Grid>
-				</g:cell>
-			</g:HorizontalPanel>
-		</g:cell>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
-			<g:HorizontalPanel width="100%">
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="45%">
+		    	</g:customCell>
+		    </g:row>
+			<g:row>
+		    	<g:customCell>
 					<g:ScrollPanel>
-						<g:VerticalPanel spacing="8" ui:field="adminVP" height="100%">
+						<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="adminVP" height="100%">
 							<g:Label addStyleNames="{style.mediumLabel}">Add/remove Users/Roles:</g:Label>
 							<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
 								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -162,9 +175,9 @@
 							</g:VerticalPanel>
 						</g:VerticalPanel>
 					</g:ScrollPanel>
-				</g:cell>
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="45%">
-					<g:VerticalPanel addStyleNames="{style.statusPanel}" width="100%">
+		    	</g:customCell>
+		    	<g:customCell>
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" width="100%" spacing="8">
 						<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 							<g:Grid cellSpacing="12">
@@ -212,27 +225,9 @@
 							</g:VerticalPanel>
 						</g:cell>
 					</g:VerticalPanel>
-				</g:cell>
-			</g:HorizontalPanel>
-		</g:cell>
+		    	</g:customCell>
+		    </g:row>
+		</g:Grid>
 	</g:VerticalPanel>
 	</g:ScrollPanel>
-</ui:UiBinder> 
-					<!-- 
-					<g:ScrollPanel>
-						<g:VerticalPanel width="100%" spacing="8">
-							<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
-							<g:HorizontalPanel ui:field="waitForNotificationsPopup">
-								<g:VerticalPanel spacing="8">
-									<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-										<g:Image url="images/ajax-loader.gif"/>
-									</g:cell>
-									<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-										<g:HTML ui:field="waitForNotificationsHTML" addStyleNames="{style.body}">Retrieving Notifications...</g:HTML>
-									</g:cell>
-								</g:VerticalPanel>
-							</g:HorizontalPanel>
-							<g:VerticalPanel visible="false" addStyleNames="{style.statusLabel}" ui:field="accountNotificationsVP" height="100%"/>
-						</g:VerticalPanel>
-					</g:ScrollPanel>
-					 -->
+</ui:UiBinder>

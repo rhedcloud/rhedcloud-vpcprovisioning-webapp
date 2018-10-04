@@ -1276,6 +1276,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //        	moa.addSensitiveDataType(s);
 //        }
 
+        for (PropertyPojo p : pojo.getProperties()) {
+        	com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
+        	mp.setKey(p.getName());
+        	mp.setValue(p.getValue());
+        	moa.addProperty(mp);
+        }
         this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
@@ -1317,6 +1323,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //			}
 //		}
 
+		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			PropertyPojo p = new PropertyPojo();
+			p.setName(mp.getKey());
+			p.setValue(mp.getValue());
+			pojo.getProperties().add(p);
+		}
+		
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}

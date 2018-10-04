@@ -23,6 +23,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
@@ -30,6 +31,7 @@ import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainAccountPresenter extends PresenterBase implements MaintainAccountView.Presenter {
@@ -44,6 +46,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	private DirectoryPersonPojo directoryPerson;
 	private List<RoleAssignmentSummaryPojo> accountRoleAssignmentSummaries = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
 	private AccountNotificationQueryFilterPojo filter;
+	PropertyPojo selectedProperty;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -735,5 +738,35 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		filter.setMaxRows(200);
 		filter.setSearchString(searchString);
 		refreshAccountNotificationList(userLoggedIn);
+	}
+
+	@Override
+	public void setSelectedProperty(PropertyPojo prop) {
+		this.selectedProperty = prop;
+	}
+
+	@Override
+	public PropertyPojo getSelectedProperty() {
+		return this.selectedProperty;
+	}
+
+	@Override
+	public void updateProperty(PropertyPojo prop) {
+		int index = -1;
+		propertyLoop: for (int i=0; i<account.getProperties().size(); i++) {
+			PropertyPojo tpp = account.getProperties().get(i);
+			if (tpp.getName().equalsIgnoreCase(prop.getName())) {
+				index = i;
+				break propertyLoop;
+			}
+		}
+		if (index >= 0) {
+			GWT.log("Updating property: " + index);
+			account.getProperties().remove(index);
+			account.getProperties().add(prop);
+		}
+		else {
+			GWT.log("Counldn't find a property to update...problem");
+		}
 	}
 }

@@ -58,7 +58,9 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopMaintainAccount extends ViewImplBase implements MaintainAccountView {
@@ -118,13 +120,148 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField(provided=true) SuggestBox ownerIdSB = new SuggestBox(ownerIdSuggestions, new TextBox());
-	@UiField VerticalPanel sensitiveDataPanel;
 	@UiField PushButton refreshButton;
 	
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox filterTB;
 	@UiField HTML filteredHTML;
+
+	// AWS Account associated properties
+	@UiField VerticalPanel propertiesVP;
+	@UiField TextBox propertyKeyTF;
+	@UiField TextBox propertyValueTF;
+	@UiField Button addPropertyButton;
+	@UiField FlexTable propertiesTable;
+	
+	@UiHandler ("addPropertyButton")
+	void addElasticIpButtonClick(ClickEvent e) {
+		propertyKeyTF.setEnabled(true);
+		if (addPropertyButton.getText().equalsIgnoreCase("Add")) {
+			addProperty();
+		}
+		else {
+			// update existing property
+			PropertyPojo property = createPropertyFromFormData();
+			presenter.updateProperty(property);
+			initializeAccountPropertiesPanel();
+		}
+		propertyKeyTF.setText("");
+		propertyValueTF.setText("");
+	}
+	
+	private void initializeAccountPropertiesPanel() {
+		addPropertyButton.setText("Add");
+		propertyKeyTF.setEnabled(true);
+		propertiesTable.removeAllRows();
+		for (PropertyPojo prop : presenter.getAccount().getProperties()) {
+			this.addPropertyToPanel(prop);
+		}
+	}
+
+	private void addPropertyToPanel(final PropertyPojo prop) {
+		final int numRows = propertiesTable.getRowCount();
+		
+		final Label keyLabel = new Label(prop.getName());
+		keyLabel.addStyleName("emailLabel");
+		
+		final Label valueLabel = new Label(prop.getValue());
+		valueLabel.addStyleName("emailLabel");
+		
+		final PushButton editButton = new PushButton();
+		editButton.setTitle("Edit this Property.");
+		Image editImage = new Image("images/edit_icon.png");
+		editImage.setWidth("30px");
+		editImage.setHeight("30px");
+		editButton.getUpFace().setImage(editImage);
+//		if (this.userLoggedIn.isNetworkAdmin()) {
+//			removeButton.setEnabled(true);
+//		}
+//		else {
+//			removeButton.setEnabled(false);
+//		}
+		editButton.addStyleName("glowing-border");
+		editButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.setSelectedProperty(prop);
+				propertyKeyTF.setText(prop.getName());
+				propertyKeyTF.setEnabled(false);
+				propertyValueTF.setText(prop.getValue());
+				addPropertyButton.setText("Update");
+				Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+			        public void execute () {
+			        	propertyValueTF.setFocus(true);
+			        }
+			    });
+			}
+		});
+		
+		final PushButton removeButton = new PushButton();
+		removeButton.setTitle("Remove this Property.");
+		Image removeImage = new Image("images/delete_icon.png");
+		removeImage.setWidth("30px");
+		removeImage.setHeight("30px");
+		removeButton.getUpFace().setImage(removeImage);
+		// disable buttons if userLoggedIn is NOT a network admin
+		// TODO: network admin
+//		if (this.userLoggedIn.isNetworkAdmin()) {
+//			removeButton.setEnabled(true);
+//		}
+//		else {
+//			removeButton.setEnabled(false);
+//		}
+		removeButton.addStyleName("glowing-border");
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.getAccount().getProperties().remove(prop);
+				initPage();
+			}
+		});
+		
+		propertiesTable.setWidget(numRows, 0, keyLabel);
+		propertiesTable.setWidget(numRows, 1, new Label("="));
+		propertiesTable.setWidget(numRows, 2, valueLabel);
+		propertiesTable.setWidget(numRows, 3, editButton);
+		propertiesTable.setWidget(numRows, 4, removeButton);
+	}
+
+	private void addProperty() {
+		List<Widget> fields = getMissingPropertyFields();
+		if (fields != null && fields.size() > 0) {
+			setFieldViolations(true);
+			applyStyleToMissingFields(fields);
+			showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			setFieldViolations(false);
+			resetFieldStyles();
+		}
+		PropertyPojo property = createPropertyFromFormData();
+		presenter.getAccount().getProperties().add(property);
+		addPropertyToPanel(property);
+		this.resetFieldStyles();
+	}
+
+	private PropertyPojo createPropertyFromFormData() {
+		PropertyPojo prop = new PropertyPojo();
+		prop.setName(propertyKeyTF.getText());
+		prop.setValue(propertyValueTF.getText());
+		return prop;
+	}
+
+	private List<Widget> getMissingPropertyFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		if (propertyKeyTF.getText() == null || propertyKeyTF.getText().length() == 0) {
+			fields.add(propertyKeyTF);
+		}
+		if (propertyValueTF.getText() == null || propertyValueTF.getText().length() == 0) {
+			fields.add(propertyValueTF);
+		}
+		return fields;
+	}
 
 	@UiHandler("filterButton")
 	void filterButtonClicked(ClickEvent e) {
@@ -468,6 +605,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addEmailTF.getElement().setPropertyString("placeholder", "enter e-mail");
 		addEmailTypeLB.getElement().setPropertyString("placeholder", "select e-mail type");
 
+		addPropertyButton.setText("Add");
+		propertyKeyTF.setText("");
+		propertyKeyTF.getElement().setPropertyString("placeholder", "enter property key");
+		propertyValueTF.setText("");
+		propertyValueTF.getElement().setPropertyString("placeholder", "enter property value");
+
 		directoryLookupSB.setText("");
 		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
 
@@ -496,7 +639,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		// populate associated emails if appropriate
 		initializeEmailPanel();
 		
-		// populate sensitive data panel
+		// populate properties panel
+		initializeAccountPropertiesPanel();
 		
 		// populate admin net id fields if appropriate
 		adminTable.clear();
@@ -566,7 +710,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	accountIdTB.setFocus(true);
+	        	if (!editing) {
+		        	accountIdTB.setFocus(true);
+	        	}
+	        	else {
+	        		accountNameTB.setFocus(true);
+	        	}
 	        }
 	    });
 	}

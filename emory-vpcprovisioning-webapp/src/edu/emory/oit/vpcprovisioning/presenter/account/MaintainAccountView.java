@@ -13,8 +13,10 @@ import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
+import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
@@ -58,6 +60,10 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		void showSrdForAccountNotification(AccountNotificationPojo selected);
 		void refreshAccountNotificationList(final UserAccountPojo user);
 		void filterBySearchString(String searchString);
+		
+		public void setSelectedProperty(PropertyPojo prop);
+		public PropertyPojo getSelectedProperty();
+		public void updateProperty(PropertyPojo prop);
 	}
 
 	/**
