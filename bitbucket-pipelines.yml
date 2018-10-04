@@ -31,15 +31,7 @@ pipelines:
           - sed -i 's/BUILD_NUMBER/'"$BITBUCKET_BUILD_NUMBER"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - sed -i 's/S3_BUCKET/'"$S3_BUCKET"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - mvn package
-          # begin new
           - cd $BUILD_HOME
-#          - mkdir -p deploy/stage/libs/WEB-INF
-#          - cp deploy/stage/configs/web.xml deploy/stage/libs/WEB-INF
-#          - cp $GWT_PROJECT_NAME/target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war deploy/stage/libs
-#          - cd deploy/stage/libs
-#          - jar uf emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war WEB-INF/web.xml
-#          - rm -Rf WEB-INF
-#          - cd $BUILD_HOME
           - zip -r emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
           - mv emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip $GWT_PROJECT_NAME/target
           - cp $GWT_PROJECT_NAME/target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war $GWT_PROJECT_NAME/target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
@@ -52,7 +44,6 @@ pipelines:
           - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
           - rm target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
           - rm target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
-          # end new
         artifacts:
           - deploy/**
           - target/**
@@ -115,16 +106,6 @@ pipelines:
           - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (stage)
-          # begin new (stage specific web.xml)
- #         - mkdir -p $BUILD_HOME/deploy/stage/libs/WEB-INF
- #         - cp deploy/stage/configs/web.xml $BUILD_HOME/deploy/stage/libs/WEB-INF
- #         - cp /tmp/ROOT.war $BUILD_HOME/deploy/stage/libs
- #         - cd $BUILD_HOME/deploy/stage/libs
- #         - jar uf ROOT.war WEB-INF/web.xml
- #         - rm -Rf WEB-INF
- #         - cp ROOT.war /tmp
- #         - cd $BUILD_HOME
-          # end new
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
 
     - step:
