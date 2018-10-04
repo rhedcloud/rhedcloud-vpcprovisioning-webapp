@@ -64,6 +64,8 @@ pipelines:
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (DEV)
+          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-dev.vpcp.emory.edu .ebextensions/files/sp-cert.pem
+          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-dev.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - sed -i 's,IDP_URL,https://login.emory.edu:4444/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,https://dev.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://dev.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
