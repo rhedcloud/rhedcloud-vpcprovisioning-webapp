@@ -8857,8 +8857,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			moa.addTunnelProfile(tp_moa);
 		}
-//		this.setMoaCreateInfo(moa, pojo);
-//		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@Override
