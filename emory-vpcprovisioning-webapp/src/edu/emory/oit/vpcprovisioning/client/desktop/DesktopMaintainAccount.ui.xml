@@ -113,6 +113,8 @@
 						</g:VerticalPanel>
 					</g:ScrollPanel>
 		    	</g:customCell>
+		    </g:row>
+		    <g:row>
 		    	<g:customCell>
 					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="propertiesVP" height="100%">
 						<g:Label addStyleNames="{style.mediumLabel}">Add/Update/Remove Properties:</g:Label>
@@ -155,6 +157,8 @@
 					</g:Grid>
 		    	</g:customCell>
 		    </g:row>
+		</g:Grid>
+		<g:Grid>
 			<g:row>
 		    	<g:customCell>
 					<g:ScrollPanel>

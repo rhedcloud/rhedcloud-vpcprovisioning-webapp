@@ -412,7 +412,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 					selectedEia.setElasticIp(eip);
 				}
 				// use VpcpConfirm dialog box
-//				VpcpConfirm.confirm(DesktopListElasticIpAssignment.this, "Confirm CIDR", "Use the Private IP address: " + valueEntered + "?");
+//				VpcpConfirm.confirm(DesktopListElasticIpAssignment.this, "Private IP", "Use the Private IP address: " + valueEntered + "?");
 				boolean confirmed = Window.confirm("Use the Private IP address: " + valueEntered + "?");
 				if (confirmed) {
 					presenter.saveElasticIpAssignment(selectedEia);

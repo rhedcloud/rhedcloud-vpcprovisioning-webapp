@@ -35,7 +35,14 @@ public class VpcpPrompt extends DialogBox {
 		tb.setTitle(hint);
 		hpanel.add(tb);
 		
+		HorizontalPanel buttonPanel = new HorizontalPanel();
+		buttonPanel.setWidth("100%");
+		buttonPanel.setSpacing(8);
+		vp.add(buttonPanel);
+		
 		Button okayButton = new Button("Okay");
+		okayButton.setHeight("35px");
+		okayButton.setWidth("105px");
 		okayButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -45,6 +52,8 @@ public class VpcpPrompt extends DialogBox {
 		});
 		
 		Button cancelButton = new Button("Cancel");
+		cancelButton.setHeight("35px");
+		cancelButton.setWidth("105px");
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -52,11 +61,14 @@ public class VpcpPrompt extends DialogBox {
 				vpcpPrompt.hide();
 			}
 		});
-		vp.add(okayButton);
-		vp.add(cancelButton);
+		buttonPanel.add(okayButton);
+		buttonPanel.add(cancelButton);
+		buttonPanel.setCellHorizontalAlignment(okayButton, HasHorizontalAlignment.ALIGN_CENTER);
+		buttonPanel.setCellHorizontalAlignment(cancelButton, HasHorizontalAlignment.ALIGN_CENTER);
+
 		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_LEFT);
-		vp.setCellHorizontalAlignment(okayButton, HasHorizontalAlignment.ALIGN_CENTER);
-		vp.setCellHorizontalAlignment(cancelButton, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellHorizontalAlignment(buttonPanel, HasHorizontalAlignment.ALIGN_CENTER);
+		
 		vpcpPrompt.setWidget(vp);
 		vpcpPrompt.setWidth("450px");
 		vpcpPrompt.center();
