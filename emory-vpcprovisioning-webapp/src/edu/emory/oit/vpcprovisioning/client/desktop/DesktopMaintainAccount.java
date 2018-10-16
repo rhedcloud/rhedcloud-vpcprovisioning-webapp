@@ -174,12 +174,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		editImage.setWidth("30px");
 		editImage.setHeight("30px");
 		editButton.getUpFace().setImage(editImage);
-//		if (this.userLoggedIn.isNetworkAdmin()) {
-//			removeButton.setEnabled(true);
-//		}
-//		else {
-//			removeButton.setEnabled(false);
-//		}
+		if (this.userLoggedIn.isCentralAdmin() || 
+			this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId())) {
+			editButton.setEnabled(true);
+		}
+		else {
+			editButton.setEnabled(false);
+		}
 		editButton.addStyleName("glowing-border");
 		editButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -204,13 +205,13 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		removeImage.setHeight("30px");
 		removeButton.getUpFace().setImage(removeImage);
 		// disable buttons if userLoggedIn is NOT a network admin
-		// TODO: network admin
-//		if (this.userLoggedIn.isNetworkAdmin()) {
-//			removeButton.setEnabled(true);
-//		}
-//		else {
-//			removeButton.setEnabled(false);
-//		}
+		if (this.userLoggedIn.isCentralAdmin()  || 
+			this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId())) {
+			removeButton.setEnabled(true);
+		}
+		else {
+			removeButton.setEnabled(false);
+		}
 		removeButton.addStyleName("glowing-border");
 		removeButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -761,6 +762,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(false);
 		billSummaryButton.setVisible(false);
+		addPropertyButton.setEnabled(true);
 	}
 	@Override
 	public void applyAWSAccountAuditorMask() {
@@ -778,6 +780,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(false);
 		complianceClassLB.setEnabled(false);
 		billSummaryButton.setVisible(false);
+		addPropertyButton.setEnabled(false);
 	}
 	@Override
 	public void setUserLoggedIn(UserAccountPojo user) {
@@ -926,6 +929,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(true);
 		billSummaryButton.setVisible(true);
+		addPropertyButton.setEnabled(true);
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
