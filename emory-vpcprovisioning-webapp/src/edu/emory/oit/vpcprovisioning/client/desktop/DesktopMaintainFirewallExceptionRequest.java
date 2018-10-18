@@ -102,6 +102,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	
 	@UiField VerticalPanel maintainRequestVP;
 	@UiField VerticalPanel generateAddRequestVP;
+	@UiField VerticalPanel generateAddRequestVP2;
 	@UiField VerticalPanel generateRemoveRequestVP;
 	
 	@UiField TextArea notPatchedJustificationTA;
@@ -586,6 +587,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			if (presenter.getAddRequisition() != null) {
 				generateRemoveRequestVP.setVisible(false);
 				generateAddRequestVP.setVisible(true);
+				generateAddRequestVP2.setVisible(true);
 				if (!editing) {
 					maintainRequestVP.setVisible(false);
 				}
@@ -595,6 +597,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			}
 			else if (presenter.getRemoveRequisition() != null) {
 				generateAddRequestVP.setVisible(false);
+				generateAddRequestVP2.setVisible(false);
 				generateRemoveRequestVP.setVisible(true);
 				if (!editing) {
 					maintainRequestVP.setVisible(false);
@@ -608,6 +611,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			if (presenter.getAddRequest() != null) {
 				generateRemoveRequestVP.setVisible(false);
 				generateAddRequestVP.setVisible(true);
+				generateAddRequestVP2.setVisible(true);
 				if (!editing) {
 					maintainRequestVP.setVisible(false);
 				}
@@ -617,6 +621,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			}
 			else if (presenter.getRemoveRequest() != null) {
 				generateAddRequestVP.setVisible(false);
+				generateAddRequestVP2.setVisible(false);
 				generateRemoveRequestVP.setVisible(true);
 				if (!editing) {
 					maintainRequestVP.setVisible(false);

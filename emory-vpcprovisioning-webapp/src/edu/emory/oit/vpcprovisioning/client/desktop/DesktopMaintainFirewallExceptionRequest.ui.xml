@@ -88,6 +88,7 @@
 								title="For what application is this firewall exception needed."/>
 				    	</g:customCell>
 			    	</g:row>
+			    	<!-- 
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Source Outside Emory:</g:Label>
@@ -98,6 +99,7 @@
 					    		title="Is the source outside of Emory's network and the destination inside?"/>
 				    	</g:customCell>
 			    	</g:row>
+			    	 -->
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Time Rule:</g:Label>
@@ -157,6 +159,7 @@
 								title="Describe the business justification for this exception."/>
 				    	</g:customCell>
 			    	</g:row>
+			    	<!-- 
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Patched:</g:Label>
@@ -238,6 +241,7 @@
 							</g:Grid>
 				    	</g:customCell>
 			    	</g:row>
+			    	 -->
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Patching Plan:</g:Label>
@@ -279,6 +283,7 @@
 								title="Describe any local (host-based) firewall rules that are currently configured on the system."/>
 				    	</g:customCell>
 			    	</g:row>
+			    	<!-- 
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Default Deny Zone:</g:Label>
@@ -317,6 +322,7 @@
 					    		title="Does this system acess an AWS VPC?."/>
 				    	</g:customCell>
 			    	</g:row>
+			    	 -->
 				</g:Grid>
 			</g:cell>
 		</g:VerticalPanel>
@@ -337,36 +343,173 @@
 			    </g:Grid>
 			</g:cell>
 		</g:VerticalPanel>
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
-				<g:row>
-			    	<g:customCell>
-						<g:HorizontalPanel>
-							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-								<g:ScrollPanel>
-									<g:VerticalPanel spacing="8" ui:field="tagsVP" height="100%">
-										<g:Label addStyleNames="{style.heading_label}">Add/remove Tags:</g:Label>
-										<g:HorizontalPanel ui:field="addTagHP" spacing="16">
-											<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-												<g:TextBox ui:field="addTagTF" debugId="addTagTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-											</g:cell>
-											<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-												<g:Button ui:field="addTagButton" debugId="addTagButton"
-													addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-											</g:cell>
-										</g:HorizontalPanel>
-										<g:VerticalPanel spacing="8">
-											<g:Label addStyleNames="{style.heading_label}">Tags associated to this Firewall Exception Request:</g:Label>
-											<g:FlexTable ui:field="tagsTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Tags for this request."/>
+		<g:VerticalPanel>
+			<g:VerticalPanel visible="false" ui:field="generateAddRequestVP2">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+					<g:Grid cellSpacing="8">
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Source Outside Emory:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+						    	<g:CheckBox ui:field="isSourceOutsideEmoryCB" debugId="isSourceOutsideEmoryCB" 
+						    		addStyleNames="{style.label}"
+						    		title="Is the source outside of Emory's network and the destination inside?"/>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Patched:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Grid>
+									<g:row>
+								    	<g:customCell>
+									    	<g:CheckBox ui:field="isPatchedCB" debugId="isPatchedCB" addStyleNames="{style.label}"
+									    		title="Are Server/Service/Application components fully patched at the time of this request?"/>
+								    	</g:customCell>
+								    	<g:customCell>
+											<g:TextArea visible="false" addStyleNames="{style.field} {style.glowing-border}"
+												ui:field="notPatchedJustificationTA" debugId="notPatchedJustificationTA" 
+												title="Describe why the source environment is not patched."/>
+								    	</g:customCell>
+								    </g:row>
+								</g:Grid>
+							</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Default Password Changed:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Grid>
+									<g:row>
+								    	<g:customCell>
+									    	<g:CheckBox ui:field="isDefaultPasswordChangedCB" debugId="isDefaultPasswordChangedCB" 
+									    		addStyleNames="{style.label}"
+									    		title="Have all default application or server passwords been changed?"/>
+									    </g:customCell>
+								    	<g:customCell>
+											<g:TextArea visible="false" addStyleNames="{style.field} {style.glowing-border}"
+												ui:field="passwordNotChangedJustificationTA" debugId="passwordNotChangedJustificationTA" 
+												title="Describe why the password has not been changed."/>
+								    	</g:customCell>
+									</g:row>
+								</g:Grid>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Consoles ACL'd:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Grid>
+									<g:row>
+								    	<g:customCell>
+									    	<g:CheckBox ui:field="isAppConsoleACLedCB" debugId="isAppConsoleACLedCB" addStyleNames="{style.label}"
+									    		title="Have all administrative/management consoles for the application, as well as any underlying technology administrative/management consoles (such as ColdFusion, Jboss, Tomcat, phpmyadmin) been properly ACL'd."/>
+									   	</g:customCell>
+								    	<g:customCell>
+											<g:TextArea visible="false" addStyleNames="{style.field} {style.glowing-border}"
+												ui:field="notACLedJustificationTA" debugId="notACLedJustificationTA" 
+												title="Describe why the environment is not ACLed."/>
+								    	</g:customCell>
+									</g:row>
+								</g:Grid>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Hardened:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Grid>
+									<g:row>
+								    	<g:customCell>
+									    	<g:CheckBox ui:field="isHardenedCB" debugId="isHardenedCB" addStyleNames="{style.label}"
+									    		title="Have hardening guidelines for the application/service and underlying technologies been followed and implemented?"/>
+									    </g:customCell>
+								    	<g:customCell>
+											<g:TextArea visible="false" addStyleNames="{style.field} {style.glowing-border}"
+												ui:field="notHardenedJustificationTA" debugId="notHardenedJustificationTA" 
+												title="Describe why the environment is not hardened."/>
+								    	</g:customCell>
+									</g:row>
+								</g:Grid>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Default Deny Zone:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+						    	<g:CheckBox ui:field="isDefaultDenyZoneCB" debugId="isDefaultDenyZoneCB" addStyleNames="{style.label}"
+						    		title="Could this system be placed into a subnet that blocks all outbound Internet traffic by default."/>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Traverses VPN:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Grid>
+									<g:row>
+								    	<g:customCell>
+									    	<g:CheckBox ui:field="isTraverseVpnCB" debugId="isTraverseVpnCB" addStyleNames="{style.label}"
+									    		title="Does it traverse a VPN?"/>
+									    </g:customCell>
+								    	<g:customCell>
+											<g:TextBox visible="false" addStyleNames="{style.field} {style.glowing-border}"
+												ui:field="vpnNameTB" debugId="vpnNameTB" 
+												title="Enter the name of the VPN it will traverse."/>
+								    	</g:customCell>
+									</g:row>
+								</g:Grid>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Default Deny Zone:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+						    	<g:CheckBox ui:field="isAccessVPCCB" debugId="isAccessVPCCB" addStyleNames="{style.label}"
+						    		title="Does this system acess an AWS VPC?."/>
+					    	</g:customCell>
+				    	</g:row>
+					</g:Grid>
+				</g:cell>
+			</g:VerticalPanel>
+			<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+				<g:Grid cellSpacing="8">
+					<g:row>
+				    	<g:customCell>
+							<g:HorizontalPanel>
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
+									<g:ScrollPanel>
+										<g:VerticalPanel spacing="8" ui:field="tagsVP" height="100%">
+											<g:Label addStyleNames="{style.heading_label}">Add/remove Tags:</g:Label>
+											<g:HorizontalPanel ui:field="addTagHP" spacing="16">
+												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+													<g:TextBox ui:field="addTagTF" debugId="addTagTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+												</g:cell>
+												<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+													<g:Button ui:field="addTagButton" debugId="addTagButton"
+														addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+												</g:cell>
+											</g:HorizontalPanel>
+											<g:VerticalPanel spacing="8">
+												<g:Label addStyleNames="{style.heading_label}">Tags associated to this Firewall Exception Request:</g:Label>
+												<g:FlexTable ui:field="tagsTable" debugId="tagsTable" cellSpacing="3" cellPadding="3" title="Tags for this request."/>
+											</g:VerticalPanel>
 										</g:VerticalPanel>
-									</g:VerticalPanel>
-								</g:ScrollPanel>
-							</g:cell>
-						</g:HorizontalPanel>
-				    </g:customCell>
-		    	</g:row>
-		    </g:Grid>
-		</g:cell>
+									</g:ScrollPanel>
+								</g:cell>
+							</g:HorizontalPanel>
+					    </g:customCell>
+			    	</g:row>
+			    </g:Grid>
+			</g:cell>
+		</g:VerticalPanel>
 		</g:HorizontalPanel>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">
