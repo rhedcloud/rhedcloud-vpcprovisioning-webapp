@@ -13,7 +13,12 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRemoveRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRemoveRequestRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -22,7 +27,11 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String systemId;
-	private FirewallExceptionRequestPojo firewallExceptionRequest;
+	private FirewallExceptionRequestSummaryPojo summary;
+	private FirewallExceptionAddRequestPojo addRequest;
+	private FirewallExceptionAddRequestRequisitionPojo addRequisition;
+	private FirewallExceptionRemoveRequestPojo removeRequest;
+	private FirewallExceptionRemoveRequestRequisitionPojo removeRequisition;
 	private FirewallRulePojo firewallRule;
 	VpcPojo vpc;
 
@@ -31,27 +40,48 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 	 * new case record.
 	 */
 	private boolean isEditing;
+	private boolean isAdd;
+	private boolean isRemove;
 
 	/**
-	 * For creating a new CIDR.
+	 * For creating a new firewall exception request
 	 */
-	public MaintainFirewallExceptionRequestPresenter(ClientFactory clientFactory) {
+	// TODO: need to tell the presenter if we're creating an addException request or a removeException request
+	public MaintainFirewallExceptionRequestPresenter(ClientFactory clientFactory, boolean isAdd) {
+		this.isAdd = isAdd;
+		if (isAdd) {
+			this.isRemove = false;
+		}
+		else {
+			this.isRemove = true;
+		}
 		this.isEditing = false;
-		this.firewallExceptionRequest = null;
 		this.systemId = null;
 		this.clientFactory = clientFactory;
+		this.summary = null;
 		clientFactory.getMaintainFirewallExceptionRequestView().setPresenter(this);
 	}
 
 	/**
 	 * For editing an existing CIDR.
 	 */
-	public MaintainFirewallExceptionRequestPresenter(ClientFactory clientFactory, FirewallExceptionRequestPojo firewallExceptionRequest) {
+	public MaintainFirewallExceptionRequestPresenter(ClientFactory clientFactory, FirewallExceptionRequestSummaryPojo summary) {
 		this.isEditing = true;
-		this.systemId = firewallExceptionRequest.getSystemId();
+		if (summary.getAddRequest() != null) {
+			this.isAdd = true;
+			this.isRemove = false;
+			this.systemId = summary.getAddRequest().getSystemId();
+			this.addRequest = summary.getAddRequest();
+		}
+		else {
+			this.isRemove = true;
+			this.isAdd = false;
+			this.systemId = summary.getRemoveRequest().getSystemId();
+			this.removeRequest = summary.getRemoveRequest();
+		}
 		this.clientFactory = clientFactory;
-		this.firewallExceptionRequest = firewallExceptionRequest;
-		clientFactory.getMaintainFirewallExceptionRequestView().setPresenter(this);
+		this.summary = summary;
+		getView().setPresenter(this);
 	}
 
 	@Override
@@ -75,6 +105,8 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 			startEdit();
 		}
 
+		getView().initDataEntryPanels();
+		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
 			@Override
@@ -90,34 +122,43 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
 				if (!isEditing) {
-					firewallExceptionRequest.setUserNetId(user.getPrincipal());
+					if (isAdd) {
+						addRequisition.setUserNetId(user.getPrincipal());
+					}
+					else {
+						removeRequisition.setUserNetId(user.getPrincipal());
+					}
 				}
 
 				getView().setUserLoggedIn(user);
-				List<String> complianceClassTypes = new java.util.ArrayList<String>();
-				complianceClassTypes.add("ePHI");
-				complianceClassTypes.add("FERPA");
-				complianceClassTypes.add("FISMA");
-				complianceClassTypes.add("HIPAA");
-				complianceClassTypes.add("PCI");
+				if (isAdd) {
+					List<String> complianceClassTypes = new java.util.ArrayList<String>();
+					complianceClassTypes.add("ePHI");
+					complianceClassTypes.add("FERPA");
+					complianceClassTypes.add("FISMA");
+					complianceClassTypes.add("HIPAA");
+					complianceClassTypes.add("PCI");
 
-				getView().setComplianceClassItems(complianceClassTypes);
-				
-				List<String> timeRules = new java.util.ArrayList<String>();
-				timeRules.add(Constants.TIME_RULE_INDEFINITELY);
-				timeRules.add(Constants.TIME_RULE_SPECIFIC_DATE);
-				getView().setTimeRuleItems(timeRules);
+					getView().setComplianceClassItems(complianceClassTypes);
+					
+					List<String> timeRules = new java.util.ArrayList<String>();
+					timeRules.add(Constants.TIME_RULE_INDEFINITELY);
+					timeRules.add(Constants.TIME_RULE_SPECIFIC_DATE);
+					getView().setTimeRuleItems(timeRules);
+				}
 				
 				getView().initPage();
-				if (user.isCentralAdmin()) {
-					getView().applyCentralAdminMask();
+				if (!isEditing) {
+					if (user.isCentralAdmin()) {
+						getView().applyCentralAdminMask();
+					}
+					else if (user.isAdminForAccount(getVpc().getAccountId())) {
+				    	getView().applyAWSAccountAdminMask();
+				    }
+				    else {
+				    	getView().applyAWSAccountAuditorMask();
+				    }
 				}
-				else if (user.isAdminForAccount(getVpc().getAccountId())) {
-			    	getView().applyAWSAccountAdminMask();
-			    }
-			    else {
-			    	getView().applyAWSAccountAuditorMask();
-			    }
 
 				getView().setInitialFocus();
 			}
@@ -128,8 +169,14 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 	private void startCreate() {
 		isEditing = false;
 		getView().setEditing(false);
-		firewallExceptionRequest = new FirewallExceptionRequestPojo();
-		firewallExceptionRequest.getTags().add(this.getVpc().getVpcId());
+		if (isAdd) {
+			addRequisition = new FirewallExceptionAddRequestRequisitionPojo();
+			addRequisition.getTags().add(this.getVpc().getVpcId());
+		}
+		else {
+			removeRequisition = new FirewallExceptionRemoveRequestRequisitionPojo();
+			removeRequisition.getTags().add(this.getVpc().getVpcId());
+		}
 	}
 
 	private void startEdit() {
@@ -175,11 +222,6 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 	 * Delete the current case record.
 	 */
 	private void doDeleteFirewallExceptionRequest() {
-		if (firewallExceptionRequest == null) {
-			return;
-		}
-
-		// TODO Delete the CIDR on the server then fire onFirewallExceptionRequestDeleted();
 	}
 
 	@Override
@@ -198,37 +240,58 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 			getView().setFieldViolations(false);
 			getView().resetFieldStyles();
 		}
-		AsyncCallback<FirewallExceptionRequestPojo> callback = new AsyncCallback<FirewallExceptionRequestPojo>() {
+		
+		AsyncCallback<FirewallExceptionAddRequestPojo> addCb = new AsyncCallback<FirewallExceptionAddRequestPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception saving the FirewallExceptionRequest", caught);
+				GWT.log("Exception saving the FirewallExceptionAddRequest", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the Firewall Exception Request.  Message " +
+						"server saving the Firewall Exception Add Request.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(FirewallExceptionRequestPojo result) {
-				// TODO Auto-generated method stub
-				
+			public void onSuccess(FirewallExceptionAddRequestPojo result) {
 				getView().hidePleaseWaitDialog();
 				ActionEvent.fire(eventBus, ActionNames.FIREWALL_EXCEPTION_REQUEST_SAVED, result, vpc);
 			}
 		};
+		AsyncCallback<FirewallExceptionRemoveRequestPojo> removeCb = new AsyncCallback<FirewallExceptionRemoveRequestPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception saving the FirewallExceptionRemoveRequest", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the Firewall Exception Remove Request.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(FirewallExceptionRemoveRequestPojo result) {
+				getView().hidePleaseWaitDialog();
+				ActionEvent.fire(eventBus, ActionNames.FIREWALL_EXCEPTION_REQUEST_SAVED, result, vpc);
+			}
+		};
+		
 		if (!this.isEditing) {
 			// it's a create
-			VpcProvisioningService.Util.getInstance().createFirewallExceptionRequest(firewallExceptionRequest, callback);
+			if (isAdd) {
+				VpcProvisioningService.Util.getInstance().generateFirewallExceptionAddRequest(addRequisition, addCb);
+			}
+			else {
+				VpcProvisioningService.Util.getInstance().generateFirewallExceptionRemoveRequest(removeRequisition, removeCb);
+			}
 		}
 		else {
 			// it's an update
-			VpcProvisioningService.Util.getInstance().updateFirewallExceptionRequest(firewallExceptionRequest, callback);
+			if (isAdd) {
+				VpcProvisioningService.Util.getInstance().updateFirewallExceptionAddRequest(addRequest, addCb);
+			}
+			else {
+				VpcProvisioningService.Util.getInstance().updateFirewallExceptionRemoveRequest(removeRequest, removeCb);
+			}
 		}
-	}
-
-	@Override
-	public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
-		return this.firewallExceptionRequest;
 	}
 
 	public MaintainFirewallExceptionRequestView getView() {
@@ -253,10 +316,6 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 
 	public ClientFactory getClientFactory() {
 		return clientFactory;
-	}
-
-	public void setFirewallExceptionRequest(FirewallExceptionRequestPojo firewallExceptionRequest) {
-		this.firewallExceptionRequest = firewallExceptionRequest;
 	}
 
 	@Override
@@ -285,5 +344,51 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 
 	public void setFirewallRule(FirewallRulePojo firewallRule) {
 		this.firewallRule = firewallRule;
+	}
+
+	@Override
+	public FirewallExceptionRequestSummaryPojo getSummary() {
+		return summary;
+	}
+
+	public FirewallExceptionAddRequestPojo getAddRequest() {
+		return addRequest;
+	}
+
+	public void setAddRequest(FirewallExceptionAddRequestPojo addRequest) {
+		this.addRequest = addRequest;
+	}
+
+	public FirewallExceptionRemoveRequestPojo getRemoveRequest() {
+		return removeRequest;
+	}
+
+	public void setRemoveRequest(FirewallExceptionRemoveRequestPojo removeRequest) {
+		this.removeRequest = removeRequest;
+	}
+
+	public void setSummary(FirewallExceptionRequestSummaryPojo summary) {
+		this.summary = summary;
+	}
+
+	public FirewallExceptionAddRequestRequisitionPojo getAddRequisition() {
+		return addRequisition;
+	}
+
+	public void setAddRequisition(FirewallExceptionAddRequestRequisitionPojo addRequisition) {
+		this.addRequisition = addRequisition;
+	}
+
+	public FirewallExceptionRemoveRequestRequisitionPojo getRemoveRequisition() {
+		return removeRequisition;
+	}
+
+	public void setRemoveRequisition(FirewallExceptionRemoveRequestRequisitionPojo removeRequisition) {
+		this.removeRequisition = removeRequisition;
+	}
+
+	@Override
+	public boolean isAddRequest() {
+		return this.isAdd;
 	}
 }

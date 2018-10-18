@@ -20,43 +20,43 @@ import java.util.List;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 
 /**
  * Event fired when the case record list is updated.
  */
-public class FirewallRuleRequestListUpdateEvent extends GwtEvent<FirewallRuleRequestListUpdateEvent.Handler> {
+public class FirewallExceptionRequestListUpdateEvent extends GwtEvent<FirewallExceptionRequestListUpdateEvent.Handler> {
 
   /**
-   * Handler for {@link FirewallRuleRequestListUpdateEvent}.
+   * Handler for {@link FirewallExceptionRequestListUpdateEvent}.
    */
   public interface Handler extends EventHandler {
   
     /**
      * Called when the case record list is updated.
      */
-    void onFirewallRuleListUpdated(FirewallRuleRequestListUpdateEvent event);
+    void onFirewallRuleListUpdated(FirewallExceptionRequestListUpdateEvent event);
   }
 
-  public static final Type<FirewallRuleRequestListUpdateEvent.Handler> TYPE = new Type<FirewallRuleRequestListUpdateEvent.Handler>();
+  public static final Type<FirewallExceptionRequestListUpdateEvent.Handler> TYPE = new Type<FirewallExceptionRequestListUpdateEvent.Handler>();
 
-  private final List<FirewallExceptionRequestPojo> firewallRules;
+  private final List<FirewallExceptionRequestSummaryPojo> firewallExceptionSummaries;
 
-  public FirewallRuleRequestListUpdateEvent(List<FirewallExceptionRequestPojo> firewallRules) {
-    this.firewallRules = firewallRules;
+  public FirewallExceptionRequestListUpdateEvent(List<FirewallExceptionRequestSummaryPojo> summaries) {
+    this.firewallExceptionSummaries = summaries;
   }
 
   @Override
-  public Type<FirewallRuleRequestListUpdateEvent.Handler> getAssociatedType() {
+  public Type<FirewallExceptionRequestListUpdateEvent.Handler> getAssociatedType() {
     return TYPE;
   }
 
-  public List<FirewallExceptionRequestPojo> getFirewallRules() {
-    return firewallRules;
+  public List<FirewallExceptionRequestSummaryPojo> getFirewallExceptionRequestSummaries() {
+    return firewallExceptionSummaries;
   }
 
   @Override
-  protected void dispatch(FirewallRuleRequestListUpdateEvent.Handler handler) {
+  protected void dispatch(FirewallExceptionRequestListUpdateEvent.Handler handler) {
     handler.onFirewallRuleListUpdated(this);
   }
 }

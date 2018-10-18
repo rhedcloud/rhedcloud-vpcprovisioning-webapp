@@ -44,6 +44,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	VpcPojo vpc;
 	ElasticIpSummaryPojo selectedSummary;
 	List<ElasticIpSummaryPojo> selectedSummaries;
+	UserAccountPojo userLoggedIn;
 
 	boolean showStatus = false;
 	boolean startTimer = true;
@@ -99,8 +100,8 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			}
 
 			@Override
-			public void onSuccess(final UserAccountPojo userLoggedIn) {
-
+			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
 				clientFactory.getShell().setTitle("VPC Provisioning App");
 				clientFactory.getShell().setSubTitle("Elastic IPs");
 
@@ -109,10 +110,10 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 					getView().clearList();
 				}
 
-				getView().setUserLoggedIn(userLoggedIn);
+				getView().setUserLoggedIn(user);
 
 				// Request the Vpc list now.
-				refreshList(userLoggedIn);
+				refreshList(user);
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -257,7 +258,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 					}
 				}
 			};
-			VpcProvisioningService.Util.getInstance().deleteElasticIp(selectedSummary.getElasticIp(), callback);
+			VpcProvisioningService.Util.getInstance().deleteElasticIp(summary.getElasticIp(), callback);
 		}
 		if (!showStatus) {
 			// wait for all the creates to finish processing
@@ -276,6 +277,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		else {
 			showDeleteListStatus();
 		}
+		refreshList(userLoggedIn);
 	}
 
 	@Override

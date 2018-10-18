@@ -117,9 +117,13 @@ import com.paloaltonetworks.moa.objects.resources.v1_0.Source;
 import com.paloaltonetworks.moa.objects.resources.v1_0.SourceUser;
 import com.paloaltonetworks.moa.objects.resources.v1_0.Tag;
 import com.paloaltonetworks.moa.objects.resources.v1_0.To;
-import com.service_now.moa.jmsobjects.customrequests.v1_0.FirewallExceptionRequest;
+import com.service_now.moa.jmsobjects.customrequests.v1_0.FirewallExceptionAddRequest;
+import com.service_now.moa.jmsobjects.customrequests.v1_0.FirewallExceptionRemoveRequest;
 import com.service_now.moa.jmsobjects.servicedesk.v2_0.Incident;
-import com.service_now.moa.objects.resources.v1_0.FirewallExceptionRequestQuerySpecification;
+import com.service_now.moa.objects.resources.v1_0.FirewallExceptionAddRequestQuerySpecification;
+import com.service_now.moa.objects.resources.v1_0.FirewallExceptionAddRequestRequisition;
+import com.service_now.moa.objects.resources.v1_0.FirewallExceptionRemoveRequestQuerySpecification;
+import com.service_now.moa.objects.resources.v1_0.FirewallExceptionRemoveRequestRequisition;
 import com.service_now.moa.objects.resources.v2_0.AssignedTo;
 import com.service_now.moa.objects.resources.v2_0.ConfigurationItem;
 import com.service_now.moa.objects.resources.v2_0.IncidentQuerySpecification;
@@ -5404,7 +5408,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public void deleteFirewallRule(FirewallRulePojo rule) throws RpcException {
 		// TODO: this will be a request to service now (FirewallRuleExceptionRequest.Create)
-		FirewallExceptionRequestPojo fer = new FirewallExceptionRequestPojo();
+		FirewallExceptionRemoveRequestRequisitionPojo pojo_req = new FirewallExceptionRemoveRequestRequisitionPojo();
 		// TODO: populate the fer with stuff from the rule passed in.
 		/*
 			<!ELEMENT FirewallExceptionRequest (
@@ -5429,38 +5433,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
 				Constants.USER_ACCOUNT + getCurrentSessionId());
 
-		fer.setUserNetId(user.getPrincipal());
-		fer.setApplicationName("VPCP");
-		fer.setTimeRule("Indefinitely");
-		StringBuffer sources = new StringBuffer();
-		for (int i=0; i<rule.getSources().size(); i++) {
-			String source = rule.getSources().get(i);
-			sources.append(source);
-		}
-		for (String tag : rule.getTags()) {
-			fer.getTags().add(tag);
-		}
+//		fer.setUserNetId(user.getPrincipal());
+//		fer.setApplicationName("VPCP");
+//		fer.setTimeRule("Indefinitely");
+//		StringBuffer sources = new StringBuffer();
+//		for (int i=0; i<rule.getSources().size(); i++) {
+//			String source = rule.getSources().get(i);
+//			sources.append(source);
+//		}
+//		for (String tag : rule.getTags()) {
+//			fer.getTags().add(tag);
+//		}
 		
 		try {
-			info("deleting FirewallExceptionRequest record on the server...");
-			FirewallExceptionRequest moa = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
-			info("populating moa");
-			this.populateFirewallExceptionRequestMoa(fer, moa);
-
-			
-			info("doing the FirewallExceptionRequest.delete...to delete a FirewallRule");
-			this.doDelete(moa, getServiceNowRequestService());
-			info("FirewallExceptionRequest.delete (for FirewallRule) is complete...");
+			// TODO: should be a FirewallExceptionRemoveRequestRequisition now I believe
+			FirewallExceptionRemoveRequestPojo pojo = this.generateFirewallExceptionRemoveRequest(pojo_req);
 
 			return;
-		} 
-		catch (EnterpriseConfigurationObjectException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (EnterpriseFieldException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
 		} 
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
@@ -5470,25 +5459,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (InvocationTargetException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (NoSuchMethodException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (JMSException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		}
 	}
 
 	@Override
@@ -6380,6 +6350,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
+	/*
 	private void populateFirewallExceptionRequestMoa(FirewallExceptionRequestPojo pojo,
 			FirewallExceptionRequest moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -6717,7 +6688,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 	}
-
+	*/
+	
 	@Override
 	public ReleaseInfo getReleaseInfo() throws RpcException {
 		ReleaseInfo ri = new ReleaseInfo();
@@ -8408,11 +8380,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setShortDescription(pojo.getShortDescription());
 		moa.setDescription(pojo.getDescription());
-		if (pojo.getWorkNotes() != null && pojo.getWorkNotes().size() > 0) {
-			for (String note : (List<String>) pojo.getWorkNotes()) {
-				moa.addWorkNotes(note);
-			}
-		}
+//		if (pojo.getWorkNotes() != null && pojo.getWorkNotes().size() > 0) {
+//			for (String note : (List<String>) pojo.getWorkNotes()) {
+//				moa.addWorkNotes(note);
+//			}
+//		}
 		moa.setUrgency(pojo.getUrgency());
 		moa.setImpact(pojo.getImpact());
 		moa.setBusinessService(pojo.getBusinessService());
@@ -9144,27 +9116,680 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-//	@Override
-//	public AmazonS3AccessWrapperPojo getTkiClientS3AccessWrapper() throws RpcException {
-//		AmazonS3AccessWrapperPojo accessWrapper = new AmazonS3AccessWrapperPojo();
-//		try {
-//			Properties awsCredsProps = getAppConfig().getProperties("AWSCredentials");
-//			String accessId = awsCredsProps.getProperty("tkiClient-accessId");
-//			String secretKey = awsCredsProps.getProperty("tkiClient-secretKey");
-//			accessWrapper.setAccessId(accessId);
-//			accessWrapper.setSecretKey(secretKey);
-//			
-//			Properties s3Props = getAppConfig().getProperties("AWSS3Properties");
-//			String bucket_name = s3Props.getProperty("tkiClient-bucketName");
-//			String key_name = s3Props.getProperty("tkiClient-keyName");
-//			accessWrapper.setBucketName(bucket_name);
-//			accessWrapper.setKeyName(key_name);
-//			
-//			return accessWrapper;
-//		} 
-//		catch (EnterpriseConfigurationObjectException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e.getMessage());
-//		} 
-//	}
+	@Override
+	public FirewallExceptionAddRequestQueryResultPojo getFirewallExceptionAddRequestsForFilter(
+			FirewallExceptionAddRequestQueryFilterPojo filter) throws RpcException {
+
+		FirewallExceptionAddRequestQueryResultPojo result = new FirewallExceptionAddRequestQueryResultPojo();
+		List<FirewallExceptionAddRequestPojo> pojos = new java.util.ArrayList<FirewallExceptionAddRequestPojo>();
+		try {
+			FirewallExceptionAddRequestQuerySpecification queryObject = (FirewallExceptionAddRequestQuerySpecification) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST_QUERY_SPEC);
+			FirewallExceptionAddRequest actionable = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+
+			if (filter != null) {
+				queryObject.setSystemId(filter.getSystemId());
+				queryObject.setUserNetID(filter.getUserNetId());
+				queryObject.setApplicationName(filter.getApplicationName());
+				queryObject.setSourceOutsideEmory(filter.getIsSourceOutsideEmory());
+				queryObject.setTimeRule(filter.getTimeRule());
+				if (filter.getValidUntilDate() != null) {
+					org.openeai.moa.objects.resources.Date validUntilDate = queryObject.newValidUntilDate();
+					this.populateDate(validUntilDate, filter.getValidUntilDate());
+					queryObject.setValidUntilDate(validUntilDate);
+				}
+				queryObject.setSourceIpAddresses(filter.getSourceIp());
+				queryObject.setDestinationIpAddresses(filter.getDestinationIp());
+				queryObject.setPorts(filter.getPorts());
+				queryObject.setBusinessReason(filter.getBusinessReason());
+				queryObject.setPatched(filter.getIsPatched());
+				queryObject.setDefaultPasswdChanged(filter.getIsDefaultPasswdChanged());
+				queryObject.setAppConsoleACLed(filter.getIsAppConsoleACLed());
+				queryObject.setHardened(filter.getIsHardened());
+				queryObject.setPatchingPlan(filter.getPatchingPlan());
+				if (filter.getCompliance().size() > 0) {
+					for (String compliance : filter.getCompliance()) {
+						queryObject.addCompliance(compliance);
+					}
+				}
+				queryObject.setOtherCompliance(filter.getOtherCompliance());
+				queryObject.setSensitiveDataDesc(filter.getSensitiveDataDesc());
+				queryObject.setLocalFirewallRules(filter.getLocalFirewallRules());
+				queryObject.setDefaultDenyZone(filter.getIsDefaultDenyZone());
+				for (String tag : filter.getTags()) {
+					queryObject.addTag(tag);
+				}
+				queryObject.setRequestState(filter.getRequestState());
+				queryObject.setRequestItemNumber(filter.getRequestItemNumber());
+				queryObject.setRequestItemState(filter.getRequestItemState());
+				queryObject.setWillTraverseVPN(filter.getWillTraverseVPN());
+				queryObject.setAccessAwsVPC(filter.getAccessAwsVPC());
+				queryObject.setVPNName(filter.getVpnName());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getFirewallExceptionRequestsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			info("[getFirewallExceptionRequestsForFilter] query spec is: " + queryObject.toXmlString());
+			
+			@SuppressWarnings("unchecked")
+			List<FirewallExceptionAddRequest> moas = actionable.query(queryObject,
+					this.getServiceNowRequestService());
+			if (moas != null) {
+				info("[getFirewallExceptionAddRequestsForFilter] got " + moas.size() + " FirewallExceptionAddRequest objects back from ESB.");
+			}
+			for (FirewallExceptionAddRequest moa : moas) {
+				FirewallExceptionAddRequestPojo pojo = new FirewallExceptionAddRequestPojo();
+				FirewallExceptionAddRequestPojo baseline = new FirewallExceptionAddRequestPojo();
+				this.populateFirewallExceptionAddRequestPojo(moa, pojo);
+				this.populateFirewallExceptionAddRequestPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public FirewallExceptionAddRequestPojo generateFirewallExceptionAddRequest(FirewallExceptionAddRequestRequisitionPojo pojo_req)
+			throws RpcException {
+		
+		try {
+			info("generating FirewallExceptionAddRequest on the server...");
+			FirewallExceptionAddRequest actionable = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+			FirewallExceptionAddRequestRequisition seed = (FirewallExceptionAddRequestRequisition) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST_REQUISITION);
+			info("populating moa");
+			this.populateFirewallExceptionAddRequestRequisitionMoa(pojo_req, seed);
+
+			
+			info("doing the FirewallExceptionAddRequest.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("FirewallExceptionAddRequest.generate seed data is: " + seed.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<FirewallExceptionAddRequest> result = actionable.generate(seed, this.getServiceNowRequestService());
+			// TODO if more than one returned, it's an error...
+			FirewallExceptionAddRequestPojo pojo = new FirewallExceptionAddRequestPojo();
+			for (FirewallExceptionAddRequest moa : result) {
+				info("generated FirewallExceptionAddRequest is: " + moa.toXmlString());
+				this.populateFirewallExceptionAddRequestPojo(moa, pojo);
+			}
+			info("FirewallExceptionAddRequest.generate is complete...");
+
+			return pojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public FirewallExceptionAddRequestPojo updateFirewallExceptionAddRequest(FirewallExceptionAddRequestPojo rule)
+			throws RpcException {
+
+		rule.setUpdateInfo(this.getCachedUser().getPublicId());
+        try {
+            info("updating FirewallExceptionAddRequest on the server...");
+            FirewallExceptionAddRequest newData = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+            FirewallExceptionAddRequest baselineData = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+
+            info("populating newData...");
+            populateFirewallExceptionAddRequestMoa(rule, newData);
+
+            info("populating baselineData...");
+            populateFirewallExceptionAddRequestMoa(rule.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the FirewallExceptionAddRequest.update...");
+            doUpdate(newData, getServiceNowRequestService());
+            info("update is FirewallExceptionAddRequest.update complete...");
+        } 
+        catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return rule;
+	}
+
+	@Override
+	public void deleteFirewallExceptionAddRequest(FirewallExceptionAddRequestPojo rule) throws RpcException {
+		try {
+			info("deleting FirewallExceptionAddRequest record on the server...");
+			FirewallExceptionAddRequest moa = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+			info("populating moa");
+			this.populateFirewallExceptionAddRequestMoa(rule, moa);
+
+			
+			info("doing the FirewallExceptionAddRequest.delete...");
+			this.doDelete(moa, getServiceNowRequestService());
+			info("FirewallExceptionAddRequest.delete is complete...");
+
+			return;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+	
+	private void populateFirewallExceptionAddRequestMoa(FirewallExceptionAddRequestPojo pojo,
+			FirewallExceptionAddRequest moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setSystemId(pojo.getSystemId());
+		moa.setUserNetID(pojo.getUserNetId());
+		moa.setApplicationName(pojo.getApplicationName());
+		moa.setSourceOutsideEmory(pojo.getIsSourceOutsideEmory());
+		moa.setTimeRule(pojo.getTimeRule());
+		if (pojo.getValidUntilDate() != null) {
+			org.openeai.moa.objects.resources.Date validUntilDate = moa.newValidUntilDate();
+			this.populateDate(validUntilDate, pojo.getValidUntilDate());
+			moa.setValidUntilDate(validUntilDate);
+		}
+		moa.setSourceIpAddresses(pojo.getSourceIp());
+		moa.setDestinationIpAddresses(pojo.getDestinationIp());
+		moa.setPorts(pojo.getPorts());
+		moa.setBusinessReason(pojo.getBusinessReason());
+		moa.setPatched(pojo.getIsPatched());
+		moa.setNotPatchedJustification(pojo.getNotPatchedJustification());
+		moa.setDefaultPasswdChanged(pojo.getIsDefaultPasswdChanged());
+		moa.setPasswdNotChangedJustification(pojo.getPasswdNotChangedJustification());
+		moa.setAppConsoleACLed(pojo.getIsAppConsoleACLed());
+		moa.setNotACLedJustification(pojo.getNotACLedJustification());
+		moa.setHardened(pojo.getIsHardened());
+		moa.setNotHardenedJustification(pojo.getNotHardenedJustification());
+		moa.setPatchingPlan(pojo.getPatchingPlan());
+		if (pojo.getCompliance().size() > 0) {
+			for (String compliance : pojo.getCompliance()) {
+				moa.addCompliance(compliance);
+			}
+		}
+		moa.setOtherCompliance(pojo.getOtherCompliance());
+		moa.setSensitiveDataDesc(pojo.getSensitiveDataDesc());
+		moa.setLocalFirewallRules(pojo.getLocalFirewallRules());
+		moa.setDefaultDenyZone(pojo.getIsDefaultDenyZone());
+		for (String tag : pojo.getTags()) {
+			moa.addTag(tag);
+		}
+		moa.setRequestState(pojo.getRequestState());
+		moa.setRequestItemNumber(pojo.getRequestItemNumber());
+		moa.setRequestItemState(pojo.getRequestItemState());
+		moa.setWillTraverseVPN(pojo.getWillTraverseVPN());
+		moa.setVPNName(pojo.getVpnName());
+		moa.setAccessAwsVPC(pojo.getAccessAwsVPC());
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateFirewallExceptionAddRequestPojo(FirewallExceptionAddRequest moa,
+			FirewallExceptionAddRequestPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	
+		pojo.setSystemId(moa.getSystemId());
+		pojo.setUserNetId(moa.getUserNetID());
+		pojo.setApplicationName(moa.getApplicationName());
+		pojo.setIsSourceOutsideEmory(moa.getSourceOutsideEmory());
+		pojo.setTimeRule(moa.getTimeRule());
+		if (moa.getValidUntilDate() != null) {
+			pojo.setValidUntilDate(this.toDateFromDate(moa.getValidUntilDate()));
+		}
+		pojo.setSourceIp(moa.getSourceIpAddresses());
+		pojo.setDestinationIp(moa.getDestinationIpAddresses());
+		pojo.setPorts(moa.getPorts());
+		pojo.setBusinessReason(moa.getBusinessReason());
+		pojo.setIsPatched(moa.getPatched());
+		pojo.setNotPatchedJustification(moa.getNotPatchedJustification());
+		pojo.setIsDefaultPasswdChanged(moa.getDefaultPasswdChanged());
+		pojo.setPasswdNotChangedJustification(moa.getPasswdNotChangedJustification());
+		pojo.setIsAppConsoleACLed(moa.getAppConsoleACLed());
+		pojo.setNotACLedJustification(moa.getNotACLedJustification());
+		pojo.setIsHardened(moa.getHardened());
+		pojo.setNotHardenedJustification(moa.getNotHardenedJustification());
+		pojo.setPatchingPlan(moa.getPatchingPlan());
+		for (String compliance : (List<String>) moa.getCompliance()) {
+			pojo.getCompliance().add(compliance);
+		}
+		pojo.setOtherCompliance(moa.getOtherCompliance());
+		pojo.setSensitiveDataDesc(moa.getSensitiveDataDesc());
+		pojo.setLocalFirewallRules(moa.getLocalFirewallRules());
+		pojo.setIsDefaultDenyZone(moa.getDefaultDenyZone());
+		for (String tag : (List<String>) moa.getTag()) {
+			pojo.getTags().add(tag);
+		}
+		pojo.setRequestState(moa.getRequestState());
+		pojo.setRequestItemNumber(moa.getRequestItemNumber());
+		pojo.setRequestItemState(moa.getRequestItemState());
+		pojo.setWillTraverseVPN(moa.getWillTraverseVPN());
+		pojo.setVpnName(moa.getVPNName());
+		pojo.setAccessAwsVPC(moa.getAccessAwsVPC());
+	}
+
+	private void populateFirewallExceptionAddRequestRequisitionMoa(FirewallExceptionAddRequestRequisitionPojo pojo,
+			FirewallExceptionAddRequestRequisition moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setUserNetID(pojo.getUserNetId());
+		moa.setApplicationName(pojo.getApplicationName());
+		moa.setSourceOutsideEmory(pojo.getIsSourceOutsideEmory());
+		moa.setTimeRule(pojo.getTimeRule());
+		if (pojo.getValidUntilDate() != null) {
+			org.openeai.moa.objects.resources.Date validUntilDate = moa.newValidUntilDate();
+			this.populateDate(validUntilDate, pojo.getValidUntilDate());
+			moa.setValidUntilDate(validUntilDate);
+		}
+		moa.setSourceIpAddresses(pojo.getSourceIp());
+		moa.setDestinationIpAddresses(pojo.getDestinationIp());
+		moa.setPorts(pojo.getPorts());
+		moa.setBusinessReason(pojo.getBusinessReason());
+		moa.setPatched(pojo.getIsPatched());
+		moa.setNotPatchedJustification(pojo.getNotPatchedJustification());
+		moa.setDefaultPasswdChanged(pojo.getIsDefaultPasswdChanged());
+		moa.setPasswdNotChangedJustification(pojo.getPasswdNotChangedJustification());
+		moa.setAppConsoleACLed(pojo.getIsAppConsoleACLed());
+		moa.setNotACLedJustification(pojo.getNotACLedJustification());
+		moa.setHardened(pojo.getIsHardened());
+		moa.setNotHardenedJustification(pojo.getNotHardenedJustification());
+		moa.setPatchingPlan(pojo.getPatchingPlan());
+		if (pojo.getCompliance().size() > 0) {
+			for (String compliance : pojo.getCompliance()) {
+				moa.addCompliance(compliance);
+			}
+		}
+		moa.setOtherCompliance(pojo.getOtherCompliance());
+		moa.setSensitiveDataDesc(pojo.getSensitiveDataDesc());
+		moa.setLocalFirewallRules(pojo.getLocalFirewallRules());
+		moa.setDefaultDenyZone(pojo.getIsDefaultDenyZone());
+		for (String tag : pojo.getTags()) {
+			moa.addTag(tag);
+		}
+		moa.setWillTraverseVPN(pojo.getWillTraverseVPN());
+		moa.setVPNName(pojo.getVpnName());
+		moa.setAccessAwsVPC(pojo.getAccessAwsVPC());
+	}
+
+	@Override
+	public FirewallExceptionRemoveRequestQueryResultPojo getFirewallExceptionRemoveRequestsForFilter(
+			FirewallExceptionRemoveRequestQueryFilterPojo filter) throws RpcException {
+		
+		FirewallExceptionRemoveRequestQueryResultPojo result = new FirewallExceptionRemoveRequestQueryResultPojo();
+		List<FirewallExceptionRemoveRequestPojo> pojos = new java.util.ArrayList<FirewallExceptionRemoveRequestPojo>();
+		try {
+			FirewallExceptionRemoveRequestQuerySpecification queryObject = (FirewallExceptionRemoveRequestQuerySpecification) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_QUERY_SPEC);
+			FirewallExceptionRemoveRequest actionable = (FirewallExceptionRemoveRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
+
+			if (filter != null) {
+				queryObject.setSystemId(filter.getSystemId());
+				queryObject.setUserNetID(filter.getUserNetId());
+				queryObject.setRequestState(filter.getRequestState());
+				queryObject.setRequestItemNumber(filter.getRequestItemNumber());
+				queryObject.setRequestItemState(filter.getRequestItemState());
+				queryObject.setRequestDetails(filter.getRequestDetails());
+				for (String tag : filter.getTags()) {
+					queryObject.addTag(tag);
+				}
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getFirewallExceptionRemoveRequestsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			info("[getFirewallExceptionRemoveRequestsForFilter] query spec is: " + queryObject.toXmlString());
+			
+			@SuppressWarnings("unchecked")
+			List<FirewallExceptionRemoveRequest> moas = actionable.query(queryObject,
+					this.getServiceNowRequestService());
+			if (moas != null) {
+				info("[getFirewallExceptionRemoveRequestsForFilter] got " + moas.size() + " FirewallExceptionRemoveRequest objects back from ESB.");
+			}
+			for (FirewallExceptionRemoveRequest moa : moas) {
+				FirewallExceptionRemoveRequestPojo pojo = new FirewallExceptionRemoveRequestPojo();
+				FirewallExceptionRemoveRequestPojo baseline = new FirewallExceptionRemoveRequestPojo();
+				this.populateFirewallExceptionRemoveRequestPojo(moa, pojo);
+				this.populateFirewallExceptionRemoveRequestPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public FirewallExceptionRemoveRequestPojo generateFirewallExceptionRemoveRequest(
+			FirewallExceptionRemoveRequestRequisitionPojo pojo_req) throws RpcException {
+		
+		try {
+			info("generating FirewallExceptionRemoveRequest on the server...");
+			FirewallExceptionRemoveRequest actionable = (FirewallExceptionRemoveRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
+			FirewallExceptionRemoveRequestRequisition seed = (FirewallExceptionRemoveRequestRequisition) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_REQUISITION);
+			info("populating moa");
+			this.populateFirewallExceptionRemoveRequestRequisitionMoa(pojo_req, seed);
+
+			
+			info("doing the FirewallExceptionRemoveRequest.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("FirewallExceptionRemoveRequest.generate seed data is: " + seed.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<FirewallExceptionRemoveRequest> result = actionable.generate(seed, this.getServiceNowRequestService());
+			// TODO if more than one returned, it's an error...
+			FirewallExceptionRemoveRequestPojo pojo = new FirewallExceptionRemoveRequestPojo();
+			for (FirewallExceptionRemoveRequest moa : result) {
+				info("generated FirewallExceptionRemoveRequest is: " + moa.toXmlString());
+				this.populateFirewallExceptionRemoveRequestPojo(moa, pojo);
+			}
+			info("FirewallExceptionRemoveRequest.generate is complete...");
+
+			return pojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public FirewallExceptionRemoveRequestPojo updateFirewallExceptionRemoveRequest(
+			FirewallExceptionRemoveRequestPojo rule) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule) throws RpcException {
+		try {
+			info("deleting FirewallExceptionRemoveRequest record on the server...");
+			FirewallExceptionRemoveRequest moa = (FirewallExceptionRemoveRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
+			info("populating moa");
+			this.populateFirewallExceptionRemoveRequestMoa(rule, moa);
+
+			
+			info("doing the FirewallExceptionRemoveRequest.delete...");
+			this.doDelete(moa, getServiceNowRequestService());
+			info("FirewallExceptionRemoveRequest.delete is complete...");
+
+			return;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	private void populateFirewallExceptionRemoveRequestMoa(FirewallExceptionRemoveRequestPojo pojo,
+			FirewallExceptionRemoveRequest moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setSystemId(pojo.getSystemId());
+		moa.setUserNetID(pojo.getUserNetId());
+		moa.setRequestState(pojo.getRequestState());
+		moa.setRequestItemNumber(pojo.getRequestItemNumber());
+		moa.setRequestItemState(pojo.getRequestItemState());
+		moa.setRequestDetails(pojo.getRequestDetails());
+		for (String tag : pojo.getTags()) {
+			moa.addTag(tag);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateFirewallExceptionRemoveRequestPojo(FirewallExceptionRemoveRequest moa,
+			FirewallExceptionRemoveRequestPojo pojo) throws XmlEnterpriseObjectException,
+			ParseException {
+	
+		pojo.setSystemId(moa.getSystemId());
+		pojo.setUserNetId(moa.getUserNetID());
+		pojo.setRequestState(moa.getRequestState());
+		pojo.setRequestItemNumber(moa.getRequestItemNumber());
+		pojo.setRequestItemState(moa.getRequestItemState());
+		pojo.setRequestDetails(moa.getRequestDetails());
+		for (String tag : (List<String>) moa.getTag()) {
+			pojo.getTags().add(tag);
+		}
+	}
+
+	private void populateFirewallExceptionRemoveRequestRequisitionMoa(FirewallExceptionRemoveRequestRequisitionPojo pojo,
+			FirewallExceptionRemoveRequestRequisition moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setUserNetID(pojo.getUserNetId());
+		moa.setRequestDetails(pojo.getRequestDetails());
+		for (String tag : pojo.getTags()) {
+			moa.addTag(tag);
+		}
+	}
+
+	@Override
+	public FirewallExceptionRequestSummaryQueryResultPojo getFirewallExceptionRequestSummariesForFilter(
+			FirewallExceptionRequestSummaryQueryFilterPojo filter) throws RpcException {
+
+		FirewallExceptionRequestSummaryQueryResultPojo result = new FirewallExceptionRequestSummaryQueryResultPojo();
+		if (filter != null) {
+			filter.setAddRequestFilter(new FirewallExceptionAddRequestQueryFilterPojo());
+			filter.getAddRequestFilter().getTags().add(filter.getVpcId());
+			result.setAddRequestFilterUsed(filter.getAddRequestFilter());
+			
+			filter.setRemoveRequestFilter(new FirewallExceptionRemoveRequestQueryFilterPojo());
+			filter.getRemoveRequestFilter().getTags().add(filter.getVpcId());
+			result.setRemoveRequestFilterUsed(filter.getRemoveRequestFilter());
+		}
+
+		List<FirewallExceptionRequestSummaryPojo> pojos = new java.util.ArrayList<FirewallExceptionRequestSummaryPojo>();
+		
+		FirewallExceptionAddRequestQueryResultPojo p_result = 
+			this.getFirewallExceptionAddRequestsForFilter(filter == null ? null : filter.getAddRequestFilter());
+		for (FirewallExceptionAddRequestPojo snp : p_result.getResults()) {
+			FirewallExceptionRequestSummaryPojo snps = new FirewallExceptionRequestSummaryPojo();
+			snps.setAddRequest(snp);
+			pojos.add(snps);
+		}
+		
+		FirewallExceptionRemoveRequestQueryResultPojo dp_result = 
+			this.getFirewallExceptionRemoveRequestsForFilter(filter == null ? null : filter.getRemoveRequestFilter());
+		for (FirewallExceptionRemoveRequestPojo snd : dp_result.getResults()) {
+			FirewallExceptionRequestSummaryPojo snps = new FirewallExceptionRequestSummaryPojo();
+			snps.setRemoveRequest(snd);
+			pojos.add(snps);
+		}
+		
+		Collections.sort(pojos);
+		result.setResults(pojos);
+		return result;
+	}
 }

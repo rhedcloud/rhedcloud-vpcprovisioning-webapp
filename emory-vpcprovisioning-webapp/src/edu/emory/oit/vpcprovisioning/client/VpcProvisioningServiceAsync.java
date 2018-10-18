@@ -159,10 +159,24 @@ public interface VpcProvisioningServiceAsync {
 	void deleteFirewallRule(FirewallRulePojo rule, AsyncCallback<Void> callback);
 	
 	// FirewallExceptionRequest
-	void getFirewallExceptionRequestsForFilter(FirewallExceptionRequestQueryFilterPojo filter, AsyncCallback<FirewallExceptionRequestQueryResultPojo> callback);
-	void createFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
-	void updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
-	void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<Void> callback);
+//	void getFirewallExceptionRequestsForFilter(FirewallExceptionRequestQueryFilterPojo filter, AsyncCallback<FirewallExceptionRequestQueryResultPojo> callback);
+//	void createFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
+//	void updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
+//	void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<Void> callback);
+
+	// FirewallExceptionAddRequest
+	void getFirewallExceptionAddRequestsForFilter(FirewallExceptionAddRequestQueryFilterPojo filter, AsyncCallback<FirewallExceptionAddRequestQueryResultPojo> callback);
+	void generateFirewallExceptionAddRequest(FirewallExceptionAddRequestRequisitionPojo rule, AsyncCallback<FirewallExceptionAddRequestPojo> callback);
+	void updateFirewallExceptionAddRequest(FirewallExceptionAddRequestPojo rule, AsyncCallback<FirewallExceptionAddRequestPojo> callback);
+	void deleteFirewallExceptionAddRequest(FirewallExceptionAddRequestPojo rule, AsyncCallback<Void> callback);
+
+	// FirewallExceptionRemoveRequest
+	void getFirewallExceptionRemoveRequestsForFilter(FirewallExceptionRemoveRequestQueryFilterPojo filter, AsyncCallback<FirewallExceptionRemoveRequestQueryResultPojo> callback);
+	void generateFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestRequisitionPojo rule, AsyncCallback<FirewallExceptionRemoveRequestPojo> callback);
+	void updateFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule, AsyncCallback<FirewallExceptionRemoveRequestPojo> callback);
+	void deleteFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule, AsyncCallback<Void> callback);
+
+	void getFirewallExceptionRequestSummariesForFilter(FirewallExceptionRequestSummaryQueryFilterPojo filter, AsyncCallback<FirewallExceptionRequestSummaryQueryResultPojo> callback);
 
 	// DirectoryPerson
 	void getDirectoryPersonsForFilter(DirectoryPersonQueryFilterPojo filter, AsyncCallback<DirectoryPersonQueryResultPojo> callback);

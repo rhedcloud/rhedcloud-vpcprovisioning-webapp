@@ -9,7 +9,12 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRemoveRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRemoveRequestRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -29,8 +34,13 @@ public interface MaintainFirewallExceptionRequestView extends Editor<FirewallExc
 		 * inputs.
 		 */
 		void saveFirewallExceptionRequest();
-		FirewallExceptionRequestPojo getFirewallExceptionRequest();
+		FirewallExceptionRequestSummaryPojo getSummary();
+		FirewallExceptionAddRequestPojo getAddRequest();
+		FirewallExceptionAddRequestRequisitionPojo getAddRequisition();
+		FirewallExceptionRemoveRequestPojo getRemoveRequest();
+		FirewallExceptionRemoveRequestRequisitionPojo getRemoveRequisition();
 		public boolean isValidFirewallExceptionRequestName(String value);
+		public boolean isAddRequest();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
@@ -80,4 +90,5 @@ public interface MaintainFirewallExceptionRequestView extends Editor<FirewallExc
 	void setReleaseInfo(String releaseInfoHTML);
 	void setComplianceClassItems(List<String> complianceClassTypes);
 	void setTimeRuleItems(List<String> timeRules);
+	void initDataEntryPanels();
 }

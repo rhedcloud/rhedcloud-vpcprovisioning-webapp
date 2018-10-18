@@ -17,7 +17,7 @@ public class IncidentRequisitionPojo extends SharedObject implements IsSerializa
 	AssignedToPojo assignedTo;
 	String shortDescription;
 	String description;
-	List<String> workNotes = new java.util.ArrayList<String>();
+//	List<String> workNotes = new java.util.ArrayList<String>();
 	String urgency;
 	String impact;
 	String businessService;
@@ -74,13 +74,13 @@ public class IncidentRequisitionPojo extends SharedObject implements IsSerializa
 		this.description = description;
 	}
 
-	public List<String> getWorkNotes() {
-		return workNotes;
-	}
-
-	public void setWorkNotes(List<String> workNotes) {
-		this.workNotes = workNotes;
-	}
+//	public List<String> getWorkNotes() {
+//		return workNotes;
+//	}
+//
+//	public void setWorkNotes(List<String> workNotes) {
+//		this.workNotes = workNotes;
+//	}
 
 	public String getUrgency() {
 		return urgency;

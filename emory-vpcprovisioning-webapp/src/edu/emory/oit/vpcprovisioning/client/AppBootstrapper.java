@@ -328,7 +328,6 @@ public class AppBootstrapper {
 				presenter.start(eventBus);
 				MaintainVpcView parent = clientFactory.getMaintainVpcView();
 				parent.setWidget(presenter);
-//				placeController.goTo(new ListFirewallRulePlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPC, new ActionEvent.Handler() {
@@ -771,14 +770,19 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				
-				if (event.getFirewallExceptionRequest() != null) {
+				if (event.getFwea_request() != null || event.getFwer_request() != null) {
 					// pass the exception we're working with
-					GWT.log("bootstrap, passing a FirewallExceptionRequest (edit)");
+					GWT.log("bootstrap, passing a FirewallExceptionAdd/Remove Request (edit)");
 					final DialogBox db = new DialogBox();
-					db.setText("Maintain Firewall Exception Request");
+					if (event.isFirewallExceptionAddRequest()) {
+						db.setText("Maintain Firewall Exception ADD Request");
+					}
+					else {
+						db.setText("Maintain Firewall Exception REMOVE Request");
+					}
 					db.setGlassEnabled(true);
 					db.center();
-					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.getFirewallExceptionRequest());
+					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.getFwer_summary());
 					GWT.log("CREATE_FIREWALL_EXCEPTION_REQUEST event's VPC is: " + event.getVpc());
 					presenter.setVpc(event.getVpc());
 					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
@@ -803,10 +807,15 @@ public class AppBootstrapper {
 				else {
 					GWT.log("bootstrap, NOT passing a FirewallExceptionRequest (create)");
 					final DialogBox db = new DialogBox();
-					db.setText("Create Firewall Exception Request");
+					if (event.isFirewallExceptionAddRequest()) {
+						db.setText("Create Firewall Exception ADD Request");
+					}
+					else {
+						db.setText("Create Firewall Exception REMOVE Request");
+					}
 					db.setGlassEnabled(true);
 					db.center();
-					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory);
+					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.isFirewallExceptionAddRequest());
 					if (event.getFirewallRule() != null) {
 						GWT.log("bootstrap, creating a FirewallExceptionRequest like a FirewallRule");
 						presenter.setFirewallRule(event.getFirewallRule());
@@ -838,14 +847,19 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_FIREWALL_EXCEPTION_REQUEST, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				if (event.getFirewallExceptionRequest() != null) {
+				if (event.getFwea_request() != null || event.getFwer_request() != null) {
 					// pass the exception we're working with
-					GWT.log("bootstrap, passing a FirewallExceptionRequest (edit)");
+					GWT.log("bootstrap, passing a FirewallExceptionAdd/Remove Request (edit)");
 					final DialogBox db = new DialogBox();
-					db.setText("Maintain Firewall Exception Request");
+					if (event.isFirewallExceptionAddRequest()) {
+						db.setText("Maintain Firewall Exception ADD Request");
+					}
+					else {
+						db.setText("Maintain Firewall Exception REMOVE Request");
+					}
 					db.setGlassEnabled(true);
 					db.center();
-					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.getFirewallExceptionRequest());
+					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.getFwer_summary());
 					GWT.log("MAINTAIN_FIREWALL_EXCEPTION_REQUEST event's VPC is: " + event.getVpc());
 					presenter.setVpc(event.getVpc());
 					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
@@ -868,7 +882,7 @@ public class AppBootstrapper {
 					db.center();
 				}
 				else {
-					// error, shouldn't happen
+					// error shouldn't happen
 				}
 			}
 		});
@@ -883,7 +897,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.FIREWALL_EXCEPTION_REQUEST_SAVED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-//				placeController.goTo(new ListFirewallRulePlace(false));
 				placeController.goTo(MaintainVpcPlace.createMaintainVpcPlace(event.getVpc()));
 			}
 		});

@@ -203,6 +203,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 		else {
 			showCreateListStatus(createdCount, totalToCreate, errors);
 		}
+		ActionEvent.fire(eventBus, ActionNames.ELASTIC_IP_SAVED, new ElasticIpPojo());
 	}
 	@Override
 	public void saveElasticIp() {

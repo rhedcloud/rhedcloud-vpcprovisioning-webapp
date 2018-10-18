@@ -33,7 +33,10 @@ import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRemoveRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
@@ -88,7 +91,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private AWSServicePojo awsService;
 	private UserNotificationPojo notification;
 	private FirewallRulePojo firewallRule;
-	private FirewallExceptionRequestPojo firewallExceptionRequest;
+//	private FirewallExceptionRequestPojo firewallExceptionRequest;
 	private CidrSummaryPojo cidrSummary;
 	ServiceSecurityAssessmentPojo securityAssessment;
 	private SecurityRiskPojo securityRisk;
@@ -108,7 +111,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment;
 	private VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary;
 	private VpncpPojo vpncp;
+	private FirewallExceptionAddRequestPojo fwea_request;
+	private FirewallExceptionRemoveRequestPojo fwer_request;
+	private FirewallExceptionRequestSummaryPojo fwer_summary;
 	private Place nextPlace;
+	private boolean firewallExceptionAddRequest;
 
 	public CidrPojo getCidr() {
 		return cidr;
@@ -174,6 +181,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(vpc), sourceName);
 	}
 	
+	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc2, boolean b) {
+		eventBus.fireEventFromSource(new ActionEvent(vpc2, b), sourceName);
+	}
+
 	public static void fire(EventBus eventBus, String sourceName, VpcpPojo vpcp) {
 		eventBus.fireEventFromSource(new ActionEvent(vpcp), sourceName);
 	}
@@ -206,17 +217,40 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
 	}
 
-	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule) {
-		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
+	public static void fire(EventBus eventBus, String sourceName,
+			FirewallExceptionAddRequestPojo result, VpcPojo vpc2) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(result, vpc2), sourceName);
 	}
 
-	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule, VpcPojo vpc) {
-		eventBus.fireEventFromSource(new ActionEvent(rule, vpc), sourceName);
+	public static void fire(EventBus eventBus, String sourceName,
+			FirewallExceptionRemoveRequestPojo result, VpcPojo vpc2) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(result, vpc2), sourceName);
 	}
 
+//	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule) {
+//		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
+//	}
+//
+//	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule, VpcPojo vpc) {
+//		eventBus.fireEventFromSource(new ActionEvent(rule, vpc), sourceName);
+//	}
+
+	public static void fire(EventBus eventBus, String sourceName,
+			FirewallExceptionRequestSummaryPojo m, VpcPojo vpc) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(m, vpc), sourceName);
+	}
 	public static void fire(EventBus eventBus, String sourceName, FirewallRulePojo rule, VpcPojo vpc) {
 		eventBus.fireEventFromSource(new ActionEvent(rule, vpc), sourceName);
 	}
+	public static void fire(EventBus eventBus, String sourceName, FirewallRulePojo m, VpcPojo vpc2,
+			boolean b) {
+		
+		eventBus.fireEventFromSource(new ActionEvent(m, vpc2, b), sourceName);
+	}
+
 
 	public static void fire(EventBus eventBus, String sourceName, ServiceSecurityAssessmentPojo m) {
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
@@ -327,15 +361,28 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.firewallRule = rule;
 		this.vpc = vpc;
 	}
-
-	public ActionEvent(FirewallExceptionRequestPojo rule, VpcPojo vpc) {
-		this.firewallExceptionRequest = rule;
-		this.vpc = vpc;
+	public ActionEvent(FirewallRulePojo m, VpcPojo vpc2, boolean b) {
+		this.firewallRule = m;
+		this.vpc = vpc2;
+		this.firewallExceptionAddRequest = b;
 	}
 
-	public ActionEvent(FirewallExceptionRequestPojo rule) {
-		this.firewallExceptionRequest = rule;
+
+//	public ActionEvent(FirewallExceptionRequestPojo rule, VpcPojo vpc) {
+//		this.firewallExceptionRequest = rule;
+//		this.vpc = vpc;
+//	}
+
+	public ActionEvent(FirewallExceptionRequestSummaryPojo m, VpcPojo vpc2) {
+		this.fwea_request = m.getAddRequest();
+		this.fwer_request = m.getRemoveRequest();
+		this.fwer_summary = m;
+		this.vpc = vpc2;
 	}
+
+//	public ActionEvent(FirewallExceptionRequestPojo rule) {
+//		this.firewallExceptionRequest = rule;
+//	}
 
 	public ActionEvent(FirewallRulePojo rule) {
 		this.firewallRule = rule;
@@ -431,10 +478,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.setNextPlace(nextPlace);
 	}
 
-	public ActionEvent(FirewallExceptionRequestPojo rule, Place nextPlace) {
-		this.firewallExceptionRequest = rule;
-		this.setNextPlace(nextPlace);
-	}
+//	public ActionEvent(FirewallExceptionRequestPojo rule, Place nextPlace) {
+//		this.firewallExceptionRequest = rule;
+//		this.setNextPlace(nextPlace);
+//	}
 
 	public ActionEvent(ServiceSecurityAssessmentPojo m) {
 		this.securityAssessment = m;
@@ -556,6 +603,21 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.vpncp = m;
 	}
 
+	public ActionEvent(FirewallExceptionAddRequestPojo result, VpcPojo vpc2) {
+		this.fwea_request = result;
+		this.vpc = vpc2;
+	}
+
+	public ActionEvent(FirewallExceptionRemoveRequestPojo result, VpcPojo vpc2) {
+		this.fwer_request = result;
+		this.vpc = vpc2;
+	}
+
+	public ActionEvent(VpcPojo vpc2, boolean b) {
+		this.vpc = vpc2;
+		this.firewallExceptionAddRequest = b;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -662,13 +724,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.cidrSummary = cidrSummary;
 	}
 
-	public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
-		return firewallExceptionRequest;
-	}
-
-	public void setFirewallExceptionRequest(FirewallExceptionRequestPojo firewallExceptionRequest) {
-		this.firewallExceptionRequest = firewallExceptionRequest;
-	}
+//	public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
+//		return firewallExceptionRequest;
+//	}
+//
+//	public void setFirewallExceptionRequest(FirewallExceptionRequestPojo firewallExceptionRequest) {
+//		this.firewallExceptionRequest = firewallExceptionRequest;
+//	}
 
 	public ServiceSecurityAssessmentPojo getSecurityAssessment() {
 		return securityAssessment;
@@ -821,4 +883,37 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setVpncp(VpncpPojo vpncp) {
 		this.vpncp = vpncp;
 	}
+
+	public FirewallExceptionRequestSummaryPojo getFwer_summary() {
+		return fwer_summary;
+	}
+
+	public void setFwer_summary(FirewallExceptionRequestSummaryPojo fwer_summary) {
+		this.fwer_summary = fwer_summary;
+	}
+
+	public FirewallExceptionAddRequestPojo getFwea_request() {
+		return fwea_request;
+	}
+
+	public void setFwea_request(FirewallExceptionAddRequestPojo fwea_request) {
+		this.fwea_request = fwea_request;
+	}
+
+	public FirewallExceptionRemoveRequestPojo getFwer_request() {
+		return fwer_request;
+	}
+
+	public void setFwer_request(FirewallExceptionRemoveRequestPojo fwer_request) {
+		this.fwer_request = fwer_request;
+	}
+
+	public boolean isFirewallExceptionAddRequest() {
+		return firewallExceptionAddRequest;
+	}
+
+	public void setFirewallExceptionAddRequest(boolean firewallExceptionAddRequest) {
+		this.firewallExceptionAddRequest = firewallExceptionAddRequest;
+	}
+
 }

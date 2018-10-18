@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 
 public class MaintainFirewallExceptionRequestPlace extends Place {
 	/**
@@ -17,16 +17,16 @@ public class MaintainFirewallExceptionRequestPlace extends Place {
 
 		public MaintainFirewallExceptionRequestPlace getPlace(String token) {
 			if (token != null) {
-				return new MaintainFirewallExceptionRequestPlace(token, null);
+				return new MaintainFirewallExceptionRequestPlace(token, null, true);
 			}
 			else {
 				// If the ID cannot be parsed, assume we are creating a caseRecord.
-				return MaintainFirewallExceptionRequestPlace.getMaintainFirewallExceptionRequestPlace();
+				return MaintainFirewallExceptionRequestPlace.getMaintainFirewallExceptionRequestPlace(true);
 			}
 		}
 
 		public String getToken(MaintainFirewallExceptionRequestPlace place) {
-			String name = place.getFirewallExceptionRequestId();
+			String name = place.getFirewallExceptionSystemId();
 			return (name == null) ? NO_ID : name;
 		}
 	}
@@ -44,8 +44,13 @@ public class MaintainFirewallExceptionRequestPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static MaintainFirewallExceptionRequestPlace createMaintainFirewallExceptionRequestPlace(FirewallExceptionRequestPojo firewallExceptionRequest) {
-		return new MaintainFirewallExceptionRequestPlace(firewallExceptionRequest.getSystemId(), firewallExceptionRequest);
+	public static MaintainFirewallExceptionRequestPlace createMaintainFirewallExceptionRequestPlace(FirewallExceptionRequestSummaryPojo summary) {
+		if (summary.getAddRequest() != null) {
+			return new MaintainFirewallExceptionRequestPlace(summary.getAddRequest().getSystemId(), summary, true);
+		}
+		else {
+			return new MaintainFirewallExceptionRequestPlace(summary.getRemoveRequest().getSystemId(), summary, false);
+		}
 	}
 
 	/**
@@ -54,16 +59,18 @@ public class MaintainFirewallExceptionRequestPlace extends Place {
 	 * 
 	 * @return the place
 	 */
-	public static MaintainFirewallExceptionRequestPlace getMaintainFirewallExceptionRequestPlace() {
+	public static MaintainFirewallExceptionRequestPlace getMaintainFirewallExceptionRequestPlace(boolean isAdd) {
 		if (singleton == null) {
-			singleton = new MaintainFirewallExceptionRequestPlace(null, null);
+			singleton = new MaintainFirewallExceptionRequestPlace(null, null, isAdd);
 		}
 		return singleton;
 	}
 
-	private final FirewallExceptionRequestPojo firewallExceptionRequest;
+//	private final FirewallExceptionRequestPojo firewallExceptionRequest;
+	private final FirewallExceptionRequestSummaryPojo summary;	// used to maintain an existing item (add or remove)
 	private final String systemId;
-	public String getFirewallExceptionRequestId() {
+	private final boolean firewallExceptionAddRequest;
+	public String getFirewallExceptionSystemId() {
 		return systemId;
 	}
 
@@ -73,9 +80,10 @@ public class MaintainFirewallExceptionRequestPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private MaintainFirewallExceptionRequestPlace(String systemId, FirewallExceptionRequestPojo firewallExceptionRequest) {
+	private MaintainFirewallExceptionRequestPlace(String systemId, FirewallExceptionRequestSummaryPojo summary, boolean isAdd) {
+		this.firewallExceptionAddRequest = isAdd;
 		this.systemId = systemId;
-		this.firewallExceptionRequest = firewallExceptionRequest;
+		this.summary = summary;
 	}
 
 	/**
@@ -83,7 +91,14 @@ public class MaintainFirewallExceptionRequestPlace extends Place {
 	 * 
 	 * @return the caseRecord to edit, or null if not available
 	 */
-	public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
-		return firewallExceptionRequest;
+//	public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
+//		return firewallExceptionRequest;
+//	}
+	public FirewallExceptionRequestSummaryPojo getSummary() {
+		return summary;
+	}
+
+	public boolean isFirewallExceptionAddRequest() {
+		return firewallExceptionAddRequest;
 	}
 }

@@ -14,6 +14,10 @@ public class Constants implements IsSerializable {
 	public static final String USER_ACCOUNT = "UserAccount";
 	public static final String NET_ID = "NetId=";
 	public static final String SESSION_TIMEOUT = "SessionTimeout";
+	public static final String UNKNOWN = "Unknown";
+	public static final String NOT_APPLICABLE = "N/A";
+	public static final String YES = "Yes";
+	public static final String NO = "No";
 
 	// these will need to be specific for this app's functionality
 	
@@ -153,4 +157,13 @@ public class Constants implements IsSerializable {
 	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT = "VpnConnectionProfileAssignment.v1_0";
 	public static final String MOA_VPCNP_QUERY_SPEC = "VpnConnectionProvisioningQuerySpecification.v1_0";
 	public static final String MOA_VPCNP = "VpnConnectionProvisioning.v1_0";
+
+	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST = "FirewallExceptionAddRequest.v1_0";
+	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST_QUERY_SPEC = "FirewallExceptionAddRequestQuerySpecification.v1_0";
+	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST_REQUISITION = "FirewallExceptionAddRequestRequisition.v1_0";
+	
+	public static final String MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST = "FirewallExceptionRemoveRequest.v1_0";
+	public static final String MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_QUERY_SPEC = "FirewallExceptionRemoveRequestQuerySpecification.v1_0";
+	public static final String MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_REQUISITION = "FirewallExceptionRemoveRequestRequisition.v1_0";
+	public static final String REQUEST_STATE_OPEN = "Open";
 }

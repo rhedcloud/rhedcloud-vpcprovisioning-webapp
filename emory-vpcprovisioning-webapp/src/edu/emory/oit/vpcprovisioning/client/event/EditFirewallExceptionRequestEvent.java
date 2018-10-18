@@ -20,6 +20,7 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 
 /**
  * Fired when the user wants to edit a case record.
@@ -37,10 +38,10 @@ public class EditFirewallExceptionRequestEvent extends GwtEvent<EditFirewallExce
    */
   public static final Type<EditFirewallExceptionRequestEvent.Handler> TYPE = new Type<EditFirewallExceptionRequestEvent.Handler>();
 
-  private final FirewallExceptionRequestPojo firewallRule;
+  private final FirewallExceptionRequestSummaryPojo summary;
 
-  public EditFirewallExceptionRequestEvent(FirewallExceptionRequestPojo firewallRule) {
-    this.firewallRule = firewallRule;
+  public EditFirewallExceptionRequestEvent(FirewallExceptionRequestSummaryPojo summary) {
+    this.summary = summary;
   }
 
   @Override
@@ -48,8 +49,8 @@ public class EditFirewallExceptionRequestEvent extends GwtEvent<EditFirewallExce
     return TYPE;
   }
 
-  public FirewallExceptionRequestPojo getFirewallExceptionRequest() {
-    return firewallRule;
+  public FirewallExceptionRequestSummaryPojo getFirewallExceptionRequestSummary() {
+    return summary;
   }
 
   @Override

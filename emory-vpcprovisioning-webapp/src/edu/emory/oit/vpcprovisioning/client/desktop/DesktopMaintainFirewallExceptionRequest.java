@@ -33,7 +33,8 @@ import com.google.gwt.user.datepicker.client.DateBox;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -72,7 +73,6 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	@UiField Button cancelButton;
 	
 	@UiField TextBox netIdTB;
-	@UiField TextBox technicalContactTB;
 	@UiField TextBox applicationNameTB;
 	@UiField CheckBox isSourceOutsideEmoryCB;
 	@UiField ListBox timeRuleLB;
@@ -99,30 +99,163 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	@UiField VerticalPanel tagsVP;
 	@UiField FlexTable tagsTable;
 	@UiField Button addTagButton;
+	
+	@UiField VerticalPanel maintainRequestVP;
+	@UiField VerticalPanel generateAddRequestVP;
+	@UiField VerticalPanel generateRemoveRequestVP;
+	
+	@UiField TextArea notPatchedJustificationTA;
+	@UiField TextArea passwordNotChangedJustificationTA;
+	@UiField TextArea notACLedJustificationTA;
+	@UiField TextArea notHardenedJustificationTA;
+	@UiField CheckBox isTraverseVpnCB;
+	@UiField TextBox vpnNameTB;
+	@UiField CheckBox isAccessVPCCB;
+	
+	@UiField Label requestItemNumberLabel;
+	@UiField Label requestStateLabel;
+	@UiField Label requestItemStateLabel;
+	@UiField Label systemIdLabel;
+	
+	@UiField TextArea requestDetailsTA;
 
+	@UiHandler("isTraverseVpnCB")
+	void isTraverseVpnClicked(ClickEvent e) {
+		if (isTraverseVpnCB.getValue()) {
+			vpnNameTB.setVisible(true);
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+		        public void execute () {
+		        	vpnNameTB.setFocus(true);
+		        }
+		    });
+		}
+		else {
+			vpnNameTB.setVisible(false);
+		}
+	}
+	@UiHandler("isPatchedCB")
+	void isPatchedClicked(ClickEvent e) {
+		if (!isPatchedCB.getValue()) {
+			notPatchedJustificationTA.setVisible(true);
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+		        public void execute () {
+		        	notPatchedJustificationTA.setFocus(true);
+		        }
+		    });
+		}
+		else {
+			notPatchedJustificationTA.setVisible(false);
+		}
+	}
+	@UiHandler("isDefaultPasswordChangedCB")
+	void isDefaultPasswordChangedCBClicked(ClickEvent e) {
+		if (!isDefaultPasswordChangedCB.getValue()) {
+			passwordNotChangedJustificationTA.setVisible(true);
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+		        public void execute () {
+		        	passwordNotChangedJustificationTA.setFocus(true);
+		        }
+		    });
+		}
+		else {
+			passwordNotChangedJustificationTA.setVisible(false);
+		}
+	}
+	@UiHandler("isAppConsoleACLedCB")
+	void isAppConsoleACLedCBClicked(ClickEvent e) {
+		if (!isAppConsoleACLedCB.getValue()) {
+			notACLedJustificationTA.setVisible(true);
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+		        public void execute () {
+		        	notACLedJustificationTA.setFocus(true);
+		        }
+		    });
+		}
+		else {
+			notACLedJustificationTA.setVisible(false);
+		}
+	}
+	@UiHandler("isHardenedCB")
+	void isHardenedCBClicked(ClickEvent e) {
+		if (!isHardenedCB.getValue()) {
+			notHardenedJustificationTA.setVisible(true);
+		}
+		else {
+			notHardenedJustificationTA.setVisible(false);
+		}
+	}
 	@UiHandler("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		presenter.getFirewallExceptionRequest().setUserNetId(netIdTB.getText());
-		presenter.getFirewallExceptionRequest().setTechnicalContact(technicalContactTB.getText());
-		presenter.getFirewallExceptionRequest().setApplicationName(applicationNameTB.getText());
-		presenter.getFirewallExceptionRequest().setIsSourceOutsideEmory(isSourceOutsideEmoryCB.getValue() ? "Yes" : "No");
-		presenter.getFirewallExceptionRequest().setTimeRule(timeRuleLB.getSelectedValue());
-		presenter.getFirewallExceptionRequest().setValidUntilDate(validUntilDB.getValue());
-		presenter.getFirewallExceptionRequest().setSourceIp(sourceIpAddressesTA.getText());
-		presenter.getFirewallExceptionRequest().setDestinationIp(destinationIpAddressesTA.getText());
-		presenter.getFirewallExceptionRequest().setPorts(portsTA.getText());
-		presenter.getFirewallExceptionRequest().setBusinessReason(businessReasonTA.getText());
-		presenter.getFirewallExceptionRequest().setIsPatched(isPatchedCB.getValue() ? "Yes" : "No");
-		presenter.getFirewallExceptionRequest().setIsDefaultPasswdChanged(isDefaultPasswordChangedCB.getValue() ? "Yes" : "No");
-		presenter.getFirewallExceptionRequest().setIsAppConsoleACLed(isAppConsoleACLedCB.getValue() ? "Yes" : "No");
-		presenter.getFirewallExceptionRequest().setIsHardened(isHardenedCB.getValue() ? "Yes" : "No");
-		presenter.getFirewallExceptionRequest().setPatchingPlan(patchingPlanTA.getText());
-		// TODO: compliances
-		presenter.getFirewallExceptionRequest().setSensitiveDataDesc(sensitiveDataDescriptionTA.getText());
-		presenter.getFirewallExceptionRequest().setLocalFirewallRules(localFirewallRulesDescriptionTA.getText());
-		presenter.getFirewallExceptionRequest().setIsDefaultDenyZone(isDefaultDenyZoneCB.getValue() ? "Yes" : "No");
-		// tags are added to the FirewallExceptionRequest as they're added by the user
-		presenter.saveFirewallExceptionRequest();
+		if (!editing) {
+			if (presenter.getAddRequisition() != null) {
+				presenter.getAddRequisition().setUserNetId(netIdTB.getText());
+				presenter.getAddRequisition().setApplicationName(applicationNameTB.getText());
+				presenter.getAddRequisition().setIsSourceOutsideEmory(isSourceOutsideEmoryCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequisition().setTimeRule(timeRuleLB.getSelectedValue());
+				presenter.getAddRequisition().setValidUntilDate(validUntilDB.getValue());
+				presenter.getAddRequisition().setSourceIp(sourceIpAddressesTA.getText());
+				presenter.getAddRequisition().setDestinationIp(destinationIpAddressesTA.getText());
+				presenter.getAddRequisition().setPorts(portsTA.getText());
+				presenter.getAddRequisition().setBusinessReason(businessReasonTA.getText());
+				presenter.getAddRequisition().setIsPatched(isPatchedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequisition().setNotPatchedJustification(notPatchedJustificationTA.getText());
+				presenter.getAddRequisition().setIsDefaultPasswdChanged(isDefaultPasswordChangedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequisition().setPasswdNotChangedJustification(passwordNotChangedJustificationTA.getText());
+				presenter.getAddRequisition().setIsAppConsoleACLed(isAppConsoleACLedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequisition().setNotACLedJustification(notACLedJustificationTA.getText());
+				presenter.getAddRequisition().setIsHardened(isHardenedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequisition().setNotHardenedJustification(notHardenedJustificationTA.getText());
+				presenter.getAddRequisition().setPatchingPlan(patchingPlanTA.getText());
+				// TODO: compliances
+				presenter.getAddRequisition().setSensitiveDataDesc(sensitiveDataDescriptionTA.getText());
+				presenter.getAddRequisition().setLocalFirewallRules(localFirewallRulesDescriptionTA.getText());
+				presenter.getAddRequisition().setIsDefaultDenyZone(isDefaultDenyZoneCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequisition().setWillTraverseVPN(isTraverseVpnCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequisition().setVpnName(vpnNameTB.getText());
+				presenter.getAddRequisition().setAccessAwsVPC(isAccessVPCCB.getValue() ? "Yes" : "No");
+				// tags are added to the FirewallExceptionRequest as they're added by the user
+				presenter.saveFirewallExceptionRequest();
+			}
+			else {
+				presenter.getRemoveRequisition().setUserNetId(netIdTB.getText());
+				presenter.getRemoveRequisition().setRequestDetails(requestDetailsTA.getText());
+			}
+		}
+		else {
+			if (presenter.getAddRequest() != null) {
+				presenter.getAddRequest().setUserNetId(netIdTB.getText());
+				presenter.getAddRequest().setApplicationName(applicationNameTB.getText());
+				presenter.getAddRequest().setIsSourceOutsideEmory(isSourceOutsideEmoryCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequest().setTimeRule(timeRuleLB.getSelectedValue());
+				presenter.getAddRequest().setValidUntilDate(validUntilDB.getValue());
+				presenter.getAddRequest().setSourceIp(sourceIpAddressesTA.getText());
+				presenter.getAddRequest().setDestinationIp(destinationIpAddressesTA.getText());
+				presenter.getAddRequest().setPorts(portsTA.getText());
+				presenter.getAddRequest().setBusinessReason(businessReasonTA.getText());
+				presenter.getAddRequest().setIsPatched(isPatchedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequest().setNotPatchedJustification(notPatchedJustificationTA.getText());
+				presenter.getAddRequest().setIsDefaultPasswdChanged(isDefaultPasswordChangedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequest().setPasswdNotChangedJustification(passwordNotChangedJustificationTA.getText());
+				presenter.getAddRequest().setIsAppConsoleACLed(isAppConsoleACLedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequest().setNotACLedJustification(notACLedJustificationTA.getText());
+				presenter.getAddRequest().setIsHardened(isHardenedCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequest().setNotHardenedJustification(notHardenedJustificationTA.getText());
+				presenter.getAddRequest().setPatchingPlan(patchingPlanTA.getText());
+				// TODO: compliances
+				presenter.getAddRequest().setSensitiveDataDesc(sensitiveDataDescriptionTA.getText());
+				presenter.getAddRequest().setLocalFirewallRules(localFirewallRulesDescriptionTA.getText());
+				presenter.getAddRequest().setIsDefaultDenyZone(isDefaultDenyZoneCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequest().setWillTraverseVPN(isTraverseVpnCB.getValue() ? "Yes" : "No");
+				presenter.getAddRequest().setVpnName(vpnNameTB.getText());
+				presenter.getAddRequest().setAccessAwsVPC(isAccessVPCCB.getValue() ? "Yes" : "No");
+				// tags are added to the FirewallExceptionRequest as they're added by the user
+				presenter.saveFirewallExceptionRequest();
+			}
+			else {
+				presenter.getRemoveRequest().setUserNetId(netIdTB.getText());
+				presenter.getRemoveRequest().setRequestDetails(requestDetailsTA.getText());
+			}
+		}
 	}
 	
 	@UiHandler ("addTagTF")
@@ -141,14 +274,19 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	technicalContactTB.setFocus(true);
+	        	if (presenter.getAddRequest() != null || presenter.getAddRequisition() != null) {
+	        		applicationNameTB.setFocus(true);
+	        	}
+	        	else {
+	        		// set the appropriate focus field for a remove request
+	        		requestDetailsTA.setFocus(true);
+	        	}
 	        }
 	    });
 	}
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -156,7 +294,6 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	public void applyAWSAccountAdminMask() {
 		okayButton.setEnabled(true);
 		netIdTB.setEnabled(true);
-		technicalContactTB.setEnabled(true);
 		applicationNameTB.setEnabled(true);
 		isSourceOutsideEmoryCB.setEnabled(true);
 		timeRuleLB.setEnabled(true);
@@ -174,13 +311,21 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		sensitiveDataDescriptionTA.setEnabled(true);
 		localFirewallRulesDescriptionTA.setEnabled(true);
 		isDefaultDenyZoneCB.setEnabled(true);
+		isAccessVPCCB.setEnabled(true);
+		notPatchedJustificationTA.setEnabled(true);
+		passwordNotChangedJustificationTA.setEnabled(true);
+		notACLedJustificationTA.setEnabled(true);
+		notHardenedJustificationTA.setEnabled(true);
+		vpnNameTB.setEnabled(true);
+		
+		// remove request fields
+		requestDetailsTA.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		okayButton.setEnabled(false);
 		netIdTB.setEnabled(false);
-		technicalContactTB.setEnabled(false);
 		applicationNameTB.setEnabled(false);
 		isSourceOutsideEmoryCB.setEnabled(false);
 		timeRuleLB.setEnabled(false);
@@ -198,6 +343,15 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		sensitiveDataDescriptionTA.setEnabled(false);
 		localFirewallRulesDescriptionTA.setEnabled(false);
 		isDefaultDenyZoneCB.setEnabled(false);
+		isAccessVPCCB.setEnabled(false);
+		notPatchedJustificationTA.setEnabled(false);
+		passwordNotChangedJustificationTA.setEnabled(false);
+		notACLedJustificationTA.setEnabled(false);
+		notHardenedJustificationTA.setEnabled(false);
+		vpnNameTB.setEnabled(false);
+
+		// remove request fields
+		requestDetailsTA.setEnabled(false);
 	}
 
 	@Override
@@ -208,60 +362,155 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	@Override
 	public List<Widget> getMissingRequiredFields() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		FirewallExceptionRequestPojo fer = presenter.getFirewallExceptionRequest();
-		if (fer.getUserNetId() == null || fer.getUserNetId().length() == 0) {
-			fields.add(netIdTB);
+		if (!editing) {
+			if (presenter.getAddRequisition() != null) {
+				FirewallExceptionAddRequestRequisitionPojo addRequisition = presenter.getAddRequisition();
+				if (addRequisition.getUserNetId() == null || addRequisition.getUserNetId().length() == 0) {
+					fields.add(netIdTB);
+				}
+				if (addRequisition.getApplicationName() == null || addRequisition.getApplicationName().length() == 0) {
+					fields.add(applicationNameTB);
+				}
+				if (addRequisition.getIsSourceOutsideEmory() == null) {
+					fields.add(isSourceOutsideEmoryCB);
+				}
+				if (addRequisition.getTimeRule() == null) {
+					fields.add(timeRuleLB);
+				}
+				if (addRequisition.getSourceIp() == null || addRequisition.getSourceIp().length() == 0) {
+					fields.add(sourceIpAddressesTA);
+				}
+				if (addRequisition.getDestinationIp() == null || addRequisition.getDestinationIp().length() == 0) {
+					fields.add(destinationIpAddressesTA);
+				}
+				if (addRequisition.getPorts() == null || addRequisition.getPorts().length() == 0) {
+					fields.add(portsTA);
+				}
+				if (addRequisition.getBusinessReason() == null || addRequisition.getBusinessReason().length() == 0) {
+					fields.add(businessReasonTA);
+				}
+				if (!isPatchedCB.getValue()) {
+					if (addRequisition.getNotPatchedJustification() == null || addRequisition.getNotPatchedJustification().length() == 0) {
+						fields.add(notPatchedJustificationTA);
+					}
+				}
+				if (!isDefaultPasswordChangedCB.getValue()) {
+					if (addRequisition.getPasswdNotChangedJustification() == null || addRequisition.getPasswdNotChangedJustification().length() == 0) {
+						fields.add(passwordNotChangedJustificationTA);
+					}
+				}
+				if (!isAppConsoleACLedCB.getValue()) {
+					if (addRequisition.getNotACLedJustification() == null || addRequisition.getNotACLedJustification().length() == 0) {
+						fields.add(notACLedJustificationTA);
+					}
+				}
+				if (!isHardenedCB.getValue()) {
+					if (addRequisition.getNotHardenedJustification() == null || addRequisition.getNotHardenedJustification().length() == 0) {
+						fields.add(notHardenedJustificationTA);
+					}
+				}
+				if (addRequisition.getPatchingPlan() == null || addRequisition.getPatchingPlan().length() == 0) {
+					fields.add(patchingPlanTA);
+				}
+				if (addRequisition.getSensitiveDataDesc() == null || addRequisition.getSensitiveDataDesc().length() == 0) {
+					fields.add(sensitiveDataDescriptionTA);
+				}
+				if (addRequisition.getLocalFirewallRules() == null || addRequisition.getLocalFirewallRules().length() == 0) {
+					fields.add(localFirewallRulesDescriptionTA);
+				}
+				if (addRequisition.getIsDefaultDenyZone() == null) {
+					fields.add(isDefaultDenyZoneCB);
+				}
+				if (addRequisition.getTags() == null || addRequisition.getTags().size() == 0) {
+					fields.add(addTagTF);
+				}
+				if (isTraverseVpnCB.getValue()) {
+					if (addRequisition.getVpnName() == null || addRequisition.getVpnName().length() == 0) {
+						fields.add(vpnNameTB);
+					}
+				}
+				if (addRequisition.getAccessAwsVPC() == null) {
+					fields.add(isAccessVPCCB);
+				}
+			}
+			else {
+				
+			}
 		}
-		if (fer.getTechnicalContact() == null || fer.getTechnicalContact().length() == 0) {
-			fields.add(technicalContactTB);
-		}
-		if (fer.getApplicationName() == null || fer.getApplicationName().length() == 0) {
-			fields.add(applicationNameTB);
-		}
-		if (fer.getIsSourceOutsideEmory() == null) {
-			fields.add(isSourceOutsideEmoryCB);
-		}
-		if (fer.getTimeRule() == null) {
-			fields.add(timeRuleLB);
-		}
-		if (fer.getSourceIp() == null || fer.getSourceIp().length() == 0) {
-			fields.add(sourceIpAddressesTA);
-		}
-		if (fer.getDestinationIp() == null || fer.getDestinationIp().length() == 0) {
-			fields.add(destinationIpAddressesTA);
-		}
-		if (fer.getPorts() == null || fer.getPorts().length() == 0) {
-			fields.add(portsTA);
-		}
-		if (fer.getBusinessReason() == null || fer.getBusinessReason().length() == 0) {
-			fields.add(businessReasonTA);
-		}
-		if (fer.getIsPatched() == null) {
-			fields.add(isPatchedCB);
-		}
-		if (fer.getIsDefaultPasswdChanged() == null) {
-			fields.add(isDefaultPasswordChangedCB);
-		}
-		if (fer.getIsAppConsoleACLed() == null) {
-			fields.add(isAppConsoleACLedCB);
-		}
-		if (fer.getIsHardened() == null) {
-			fields.add(isHardenedCB);
-		}
-		if (fer.getPatchingPlan() == null || fer.getPatchingPlan().length() == 0) {
-			fields.add(patchingPlanTA);
-		}
-		if (fer.getSensitiveDataDesc() == null || fer.getSensitiveDataDesc().length() == 0) {
-			fields.add(sensitiveDataDescriptionTA);
-		}
-		if (fer.getLocalFirewallRules() == null || fer.getLocalFirewallRules().length() == 0) {
-			fields.add(localFirewallRulesDescriptionTA);
-		}
-		if (fer.getIsDefaultDenyZone() == null) {
-			fields.add(isDefaultDenyZoneCB);
-		}
-		if (fer.getTags() == null || fer.getTags().size() == 0) {
-			fields.add(addTagTF);
+		else {
+			if (presenter.getAddRequest() != null) {
+				FirewallExceptionAddRequestPojo addRequest = presenter.getAddRequest();
+				if (addRequest.getUserNetId() == null || addRequest.getUserNetId().length() == 0) {
+					fields.add(netIdTB);
+				}
+				if (addRequest.getApplicationName() == null || addRequest.getApplicationName().length() == 0) {
+					fields.add(applicationNameTB);
+				}
+				if (addRequest.getIsSourceOutsideEmory() == null) {
+					fields.add(isSourceOutsideEmoryCB);
+				}
+				if (addRequest.getTimeRule() == null) {
+					fields.add(timeRuleLB);
+				}
+				if (addRequest.getSourceIp() == null || addRequest.getSourceIp().length() == 0) {
+					fields.add(sourceIpAddressesTA);
+				}
+				if (addRequest.getDestinationIp() == null || addRequest.getDestinationIp().length() == 0) {
+					fields.add(destinationIpAddressesTA);
+				}
+				if (addRequest.getPorts() == null || addRequest.getPorts().length() == 0) {
+					fields.add(portsTA);
+				}
+				if (addRequest.getBusinessReason() == null || addRequest.getBusinessReason().length() == 0) {
+					fields.add(businessReasonTA);
+				}
+				if (!isPatchedCB.getValue()) {
+					if (addRequest.getNotPatchedJustification() == null || addRequest.getNotPatchedJustification().length() == 0) {
+						fields.add(notPatchedJustificationTA);
+					}
+				}
+				if (!isDefaultPasswordChangedCB.getValue()) {
+					if (addRequest.getPasswdNotChangedJustification() == null || addRequest.getPasswdNotChangedJustification().length() == 0) {
+						fields.add(passwordNotChangedJustificationTA);
+					}
+				}
+				if (!isAppConsoleACLedCB.getValue()) {
+					if (addRequest.getNotACLedJustification() == null || addRequest.getNotACLedJustification().length() == 0) {
+						fields.add(notACLedJustificationTA);
+					}
+				}
+				if (!isHardenedCB.getValue()) {
+					if (addRequest.getNotHardenedJustification() == null || addRequest.getNotHardenedJustification().length() == 0) {
+						fields.add(notHardenedJustificationTA);
+					}
+				}
+				if (addRequest.getPatchingPlan() == null || addRequest.getPatchingPlan().length() == 0) {
+					fields.add(patchingPlanTA);
+				}
+				if (addRequest.getSensitiveDataDesc() == null || addRequest.getSensitiveDataDesc().length() == 0) {
+					fields.add(sensitiveDataDescriptionTA);
+				}
+				if (addRequest.getLocalFirewallRules() == null || addRequest.getLocalFirewallRules().length() == 0) {
+					fields.add(localFirewallRulesDescriptionTA);
+				}
+				if (addRequest.getIsDefaultDenyZone() == null) {
+					fields.add(isDefaultDenyZoneCB);
+				}
+				if (addRequest.getTags() == null || addRequest.getTags().size() == 0) {
+					fields.add(addTagTF);
+				}
+				if (isTraverseVpnCB.getValue()) {
+					if (addRequest.getVpnName() == null || addRequest.getVpnName().length() == 0) {
+						fields.add(vpnNameTB);
+					}
+				}
+				if (addRequest.getAccessAwsVPC() == null) {
+					fields.add(isAccessVPCCB);
+				}
+			}
+			else {
+				
+			}
 		}
 		return fields;
 	}
@@ -270,7 +519,6 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		fields.add(netIdTB);
-		fields.add(technicalContactTB);
 		fields.add(applicationNameTB);
 		fields.add(complianceClassLB);
 		fields.add(isSourceOutsideEmoryCB);
@@ -288,6 +536,15 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		fields.add(localFirewallRulesDescriptionTA);
 		fields.add(isDefaultDenyZoneCB);
 		fields.add(addTagTF);
+		fields.add(notPatchedJustificationTA);
+		fields.add(passwordNotChangedJustificationTA);
+		fields.add(notACLedJustificationTA);
+		fields.add(notHardenedJustificationTA);
+		fields.add(vpnNameTB);
+		fields.add(isAccessVPCCB);
+
+		// remove request fields
+		fields.add(requestDetailsTA);
 		this.resetFieldStyles(fields);
 	}
 
@@ -324,118 +581,289 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	}
 
 	@Override
-	public void initPage() {
-		FirewallRulePojo fr = presenter.getFirewallRule();
-		FirewallExceptionRequestPojo fer = presenter.getFirewallExceptionRequest();
-		if (fer != null && fer.getUserNetId() != null) {
-			netIdTB.setText(fer.getUserNetId());
+	public void initDataEntryPanels() {
+		if (!editing) {
+			if (presenter.getAddRequisition() != null) {
+				generateRemoveRequestVP.setVisible(false);
+				generateAddRequestVP.setVisible(true);
+				if (!editing) {
+					maintainRequestVP.setVisible(false);
+				}
+				else {
+					maintainRequestVP.setVisible(true);
+				}
+			}
+			else if (presenter.getRemoveRequisition() != null) {
+				generateAddRequestVP.setVisible(false);
+				generateRemoveRequestVP.setVisible(true);
+				if (!editing) {
+					maintainRequestVP.setVisible(false);
+				}
+				else {
+					maintainRequestVP.setVisible(true);
+				}
+			}
 		}
 		else {
-			netIdTB.setText(userLoggedIn.getPrincipal());
+			if (presenter.getAddRequest() != null) {
+				generateRemoveRequestVP.setVisible(false);
+				generateAddRequestVP.setVisible(true);
+				if (!editing) {
+					maintainRequestVP.setVisible(false);
+				}
+				else {
+					maintainRequestVP.setVisible(true);
+				}
+			}
+			else if (presenter.getRemoveRequest() != null) {
+				generateAddRequestVP.setVisible(false);
+				generateRemoveRequestVP.setVisible(true);
+				if (!editing) {
+					maintainRequestVP.setVisible(false);
+				}
+				else {
+					maintainRequestVP.setVisible(true);
+				}
+			}
 		}
-		addTagTF.setText("");
-		addTagTF.getElement().setPropertyString("placeholder", "enter a tag");
-		
-		
-		// initialize all fields with data from the presenter's FirewallExceptionRequest
-		// or from the presenter's firewall rule if it exists
-		if (fr != null) {
-			applicationNameTB.setText(fr.getName());
-			StringBuffer sbuf = new StringBuffer();
-			boolean isFirst = true;
-			for (String s : fr.getSources()) {
-				if (!isFirst) {
-					sbuf.append("\n");
-				}
-				else {
-					isFirst = false;
-				}
-				sbuf.append(s);
-			}
-			sourceIpAddressesTA.setText(sbuf.toString());
-			
-			sbuf = new StringBuffer();
-			isFirst = true;
-			for (String s : fr.getDestinations()) {
-				if (!isFirst) {
-					sbuf.append("\n");
-				}
-				else {
-					isFirst = false;
-				}
-				sbuf.append(s);
-			}
-			destinationIpAddressesTA.setText(sbuf.toString());
-			
-			sbuf = new StringBuffer();
-			isFirst = true;
-			for (String s : fr.getServices()) {
-				if (!isFirst) {
-					sbuf.append("\n");
-				}
-				else {
-					isFirst = false;
-				}
-				sbuf.append(s);
-			}
-			portsTA.setText(sbuf.toString());
-			
-			isSourceOutsideEmoryCB.setValue(false);
-			isPatchedCB.setValue(true);
-			isDefaultPasswordChangedCB.setValue(true);
-			isAppConsoleACLedCB.setValue(true);
-			isHardenedCB.setValue(true);
-			isDefaultDenyZoneCB.setValue(true);
-		}
-		else {
-			technicalContactTB.setText(fer.getTechnicalContact());
-			applicationNameTB.setText(fer.getApplicationName());
-			if (fer.getIsSourceOutsideEmory() != null) {
-				isSourceOutsideEmoryCB.setValue(fer.getIsSourceOutsideEmory().equalsIgnoreCase("Yes") ? true : false);
-			}
-			if (fer.getIsPatched() != null) {
-				isPatchedCB.setValue(fer.getIsPatched().equalsIgnoreCase("Yes") ? true : false);
-			}
-			if (fer.getIsDefaultPasswdChanged() != null) {
-				isDefaultPasswordChangedCB.setValue(fer.getIsDefaultPasswdChanged().equalsIgnoreCase("Yes") ? true : false);
-			}
-			if (fer.getIsAppConsoleACLed() != null) {
-				isAppConsoleACLedCB.setValue(fer.getIsAppConsoleACLed().equalsIgnoreCase("Yes") ? true : false);
-			}
-			if (fer.getIsHardened() != null) {
-				isHardenedCB.setValue(fer.getIsHardened().equalsIgnoreCase("Yes") ? true : false);
-			}
-			if (fer.getIsDefaultDenyZone() != null) {
-				isDefaultDenyZoneCB.setValue(fer.getIsDefaultDenyZone().equalsIgnoreCase("Yes") ? true : false);
-			}
-			
-			if (fer.getValidUntilDate() != null) {
-				validUntilDB.setValue(presenter.getFirewallExceptionRequest().getValidUntilDate());
-			}
-			sourceIpAddressesTA.setText(fer.getSourceIp());
-			destinationIpAddressesTA.setText(fer.getDestinationIp());
-			portsTA.setText(fer.getPorts());
-			businessReasonTA.setText(fer.getBusinessReason());
-			patchingPlanTA.setText(fer.getPatchingPlan());
-			sensitiveDataDescriptionTA.setText(fer.getSensitiveDataDesc());
-			localFirewallRulesDescriptionTA.setText(fer.getLocalFirewallRules());
+	}
 
-			DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
-		    validUntilDB.setFormat(new DateBox.DefaultFormat(dateFormat));
-		    validUntilDB.getDatePicker().setYearArrowsVisible(true);
-		    
-		    String timeRule = timeRuleLB.getSelectedValue();
-		    if (timeRule != null) {
-				if (timeRule.trim().equalsIgnoreCase(Constants.TIME_RULE_INDEFINITELY)) {
-					hideValidUntilDB();
+	@Override
+	public void initPage() {
+		if (!editing) {
+			if (presenter.isAddRequest()) {
+				FirewallExceptionAddRequestRequisitionPojo addRequisition = presenter.getAddRequisition();
+				if (addRequisition != null && addRequisition.getUserNetId() != null) {
+					netIdTB.setText(addRequisition.getUserNetId());
 				}
 				else {
-					showValidUntilDB();
+					netIdTB.setText(userLoggedIn.getPrincipal());
 				}
-		    }
-		    else {
-		    	hideValidUntilDB();
-		    }
+				isSourceOutsideEmoryCB.setValue(false);
+				isPatchedCB.setValue(true);
+				isDefaultPasswordChangedCB.setValue(true);
+				isAppConsoleACLedCB.setValue(true);
+				isHardenedCB.setValue(true);
+				isDefaultDenyZoneCB.setValue(true);
+				isAccessVPCCB.setValue(false);
+				applicationNameTB.setText("");
+				sourceIpAddressesTA.setText("");
+				destinationIpAddressesTA.setText("");
+				portsTA.setText("");
+				businessReasonTA.setText("");
+				patchingPlanTA.setText("");
+				sensitiveDataDescriptionTA.setText("");
+				localFirewallRulesDescriptionTA.setText("");
+
+				notPatchedJustificationTA.setVisible(false);
+				passwordNotChangedJustificationTA.setVisible(false);
+				notACLedJustificationTA.setVisible(false);
+				notHardenedJustificationTA.setVisible(false);
+				vpnNameTB.setVisible(false);
+				
+				notPatchedJustificationTA.setText("");
+				notPatchedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason why it's not patched");
+				passwordNotChangedJustificationTA.setText("");
+				passwordNotChangedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason the password hasn't been changed");
+				notACLedJustificationTA.setText("");
+				notACLedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason why it's not ACLed");
+				notHardenedJustificationTA.setText("");
+				notHardenedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason why it's not hardened");
+				vpnNameTB.setText("");
+				vpnNameTB.getElement().setPropertyString("placeholder", "enter the VPN name");
+
+				FirewallRulePojo fr = presenter.getFirewallRule();
+				// initialize all fields with data from the presenter's FirewallExceptionRequest
+				// or from the presenter's firewall rule if it exists
+				if (fr != null) {
+					applicationNameTB.setText(fr.getName());
+					StringBuffer sbuf = new StringBuffer();
+					boolean isFirst = true;
+					for (String s : fr.getSources()) {
+						if (!isFirst) {
+							sbuf.append("\n");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					sourceIpAddressesTA.setText(sbuf.toString());
+					
+					sbuf = new StringBuffer();
+					isFirst = true;
+					for (String s : fr.getDestinations()) {
+						if (!isFirst) {
+							sbuf.append("\n");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					destinationIpAddressesTA.setText(sbuf.toString());
+					
+					sbuf = new StringBuffer();
+					isFirst = true;
+					for (String s : fr.getServices()) {
+						if (!isFirst) {
+							sbuf.append("\n");
+						}
+						else {
+							isFirst = false;
+						}
+						sbuf.append(s);
+					}
+					portsTA.setText(sbuf.toString());
+				}
+			}
+			else {
+				if (presenter.getRemoveRequisition() != null && 
+					presenter.getRemoveRequisition().getUserNetId() != null) {
+					
+					netIdTB.setText(presenter.getRemoveRequisition().getUserNetId());
+				}
+				else {
+					netIdTB.setText(userLoggedIn.getPrincipal());
+				}
+				requestDetailsTA.setText("");
+			}
+		}
+		else {
+			if (presenter.getAddRequest() != null) {
+				okayButton.setEnabled(false);
+				netIdTB.setEnabled(false);
+				applicationNameTB.setEnabled(false);
+				isSourceOutsideEmoryCB.setEnabled(false);
+				timeRuleLB.setEnabled(false);
+				validUntilDB.setEnabled(false);
+				sourceIpAddressesTA.setEnabled(false);
+				destinationIpAddressesTA.setEnabled(false);
+				portsTA.setEnabled(false);
+				businessReasonTA.setEnabled(false);
+				isPatchedCB.setEnabled(false);
+				isDefaultPasswordChangedCB.setEnabled(false);
+				isAppConsoleACLedCB.setEnabled(false);
+				isHardenedCB.setEnabled(false);
+				patchingPlanTA.setEnabled(false);
+				complianceClassLB.setEnabled(false);
+				sensitiveDataDescriptionTA.setEnabled(false);
+				localFirewallRulesDescriptionTA.setEnabled(false);
+				isDefaultDenyZoneCB.setEnabled(false);
+				isAccessVPCCB.setEnabled(false);
+				notPatchedJustificationTA.setEnabled(false);
+				passwordNotChangedJustificationTA.setEnabled(false);
+				notACLedJustificationTA.setEnabled(false);
+				notHardenedJustificationTA.setEnabled(false);
+				vpnNameTB.setEnabled(false);
+
+				FirewallExceptionAddRequestPojo addRequest = presenter.getAddRequest();
+				requestItemNumberLabel.setText(addRequest.getRequestItemNumber());
+				requestStateLabel.setText(addRequest.getRequestState());
+				requestItemStateLabel.setText(addRequest.getRequestItemState());
+				systemIdLabel.setText(addRequest.getSystemId());
+				
+				if (addRequest.getUserNetId() != null) {
+					netIdTB.setText(addRequest.getUserNetId());
+				}
+				else {
+					netIdTB.setText(userLoggedIn.getPrincipal());
+				}
+				addTagTF.setText("");
+				addTagTF.getElement().setPropertyString("placeholder", "enter a tag");
+				
+				isPatchedCB.setValue(true);
+				isDefaultPasswordChangedCB.setValue(true);
+				isAppConsoleACLedCB.setValue(true);
+				isHardenedCB.setValue(true);
+				notPatchedJustificationTA.setText("");
+				notPatchedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason why it's not patched");
+
+				passwordNotChangedJustificationTA.setText("");
+				passwordNotChangedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason the password hasn't been changed");
+				notACLedJustificationTA.setText("");
+				notACLedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason why it's not ACLed");
+				notHardenedJustificationTA.setText("");
+				notHardenedJustificationTA.getElement().setPropertyString("placeholder", "enter a reason why it's not hardened");
+				vpnNameTB.setText("");
+				vpnNameTB.getElement().setPropertyString("placeholder", "enter the VPN name");
+				
+				applicationNameTB.setText(addRequest.getApplicationName());
+				if (addRequest.getIsSourceOutsideEmory() != null) {
+					isSourceOutsideEmoryCB.setValue(addRequest.getIsSourceOutsideEmory().equalsIgnoreCase("Yes") ? true : false);
+				}
+				if (addRequest.getIsPatched() != null) {
+					isPatchedCB.setValue(addRequest.getIsPatched().equalsIgnoreCase("Yes") ? true : false);
+					if (!isPatchedCB.getValue()) {
+						notPatchedJustificationTA.setVisible(true);
+						notPatchedJustificationTA.setText(addRequest.getNotPatchedJustification());
+					}
+				}
+				if (addRequest.getIsDefaultPasswdChanged() != null) {
+					isDefaultPasswordChangedCB.setValue(addRequest.getIsDefaultPasswdChanged().equalsIgnoreCase("Yes") ? true : false);
+					if (!isDefaultPasswordChangedCB.getValue()) {
+						passwordNotChangedJustificationTA.setVisible(true);
+						passwordNotChangedJustificationTA.setText(addRequest.getPasswdNotChangedJustification());
+					}
+				}
+				if (addRequest.getIsAppConsoleACLed() != null) {
+					isAppConsoleACLedCB.setValue(addRequest.getIsAppConsoleACLed().equalsIgnoreCase("Yes") ? true : false);
+					if (!isAppConsoleACLedCB.getValue()) {
+						notACLedJustificationTA.setVisible(true);
+						notACLedJustificationTA.setText(addRequest.getNotACLedJustification());
+					}
+				}
+				if (addRequest.getIsHardened() != null) {
+					isHardenedCB.setValue(addRequest.getIsHardened().equalsIgnoreCase("Yes") ? true : false);
+					if (!isHardenedCB.getValue()) {
+						notHardenedJustificationTA.setVisible(true);
+						notHardenedJustificationTA.setText(addRequest.getNotHardenedJustification());
+					}
+				}
+				if (addRequest.getIsDefaultDenyZone() != null) {
+					isDefaultDenyZoneCB.setValue(addRequest.getIsDefaultDenyZone().equalsIgnoreCase("Yes") ? true : false);
+				}
+				if (addRequest.getAccessAwsVPC() != null) {
+					isAccessVPCCB.setValue(addRequest.getAccessAwsVPC().equalsIgnoreCase("Yes") ? true : false);
+				}
+				
+				if (addRequest.getValidUntilDate() != null) {
+					validUntilDB.setValue(addRequest.getValidUntilDate());
+				}
+				sourceIpAddressesTA.setText(addRequest.getSourceIp());
+				destinationIpAddressesTA.setText(addRequest.getDestinationIp());
+				portsTA.setText(addRequest.getPorts());
+				businessReasonTA.setText(addRequest.getBusinessReason());
+				patchingPlanTA.setText(addRequest.getPatchingPlan());
+				sensitiveDataDescriptionTA.setText(addRequest.getSensitiveDataDesc());
+				localFirewallRulesDescriptionTA.setText(addRequest.getLocalFirewallRules());
+
+				DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+			    validUntilDB.setFormat(new DateBox.DefaultFormat(dateFormat));
+			    validUntilDB.getDatePicker().setYearArrowsVisible(true);
+			    
+			    String timeRule = timeRuleLB.getSelectedValue();
+			    if (timeRule != null) {
+					if (timeRule.trim().equalsIgnoreCase(Constants.TIME_RULE_INDEFINITELY)) {
+						hideValidUntilDB();
+					}
+					else {
+						showValidUntilDB();
+					}
+			    }
+			    else {
+			    	hideValidUntilDB();
+			    }
+			}
+			else {
+				// remove request fields
+				requestDetailsTA.setEnabled(false);
+				requestItemNumberLabel.setText(presenter.getRemoveRequest().getRequestItemNumber());
+				requestStateLabel.setText(presenter.getRemoveRequest().getRequestState());
+				requestItemStateLabel.setText(presenter.getRemoveRequest().getRequestItemState());
+				systemIdLabel.setText(presenter.getRemoveRequest().getSystemId());
+				requestDetailsTA.setText(presenter.getRemoveRequest().getRequestDetails());
+			}
 		}
 	    
 	    initializeTagsPanel();
@@ -443,8 +871,6 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -467,12 +893,45 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	private void addTagToFirewallExceptionRequest(String tag) {
 		if (tag != null && tag.trim().length() > 0) {
 			final String trimmedTag = tag.trim().toLowerCase();
-			if (presenter.getFirewallExceptionRequest().getTags().contains(trimmedTag)) {
-				showStatus(addTagButton, "That tag is alreay in the list, please enter a unique tag.");
+			if (!editing) {
+				if (presenter.getAddRequisition() != null) {
+					if (presenter.getAddRequisition().getTags().contains(trimmedTag)) {
+						showStatus(addTagButton, "That tag is alreay in the list, please enter a unique tag.");
+					}
+					else {
+						presenter.getAddRequisition().getTags().add(trimmedTag);
+						addTagToPanel(trimmedTag);
+					}
+				}
+				else {
+					if (presenter.getRemoveRequisition().getTags().contains(trimmedTag)) {
+						showStatus(addTagButton, "That tag is alreay in the list, please enter a unique tag.");
+					}
+					else {
+						presenter.getRemoveRequisition().getTags().add(trimmedTag);
+						addTagToPanel(trimmedTag);
+					}
+				}
 			}
 			else {
-				presenter.getFirewallExceptionRequest().getTags().add(trimmedTag);
-				addTagToPanel(trimmedTag);
+				if (presenter.getAddRequest() != null) {
+					if (presenter.getAddRequest().getTags().contains(trimmedTag)) {
+						showStatus(addTagButton, "That tag is alreay in the list, please enter a unique tag.");
+					}
+					else {
+						presenter.getAddRequest().getTags().add(trimmedTag);
+						addTagToPanel(trimmedTag);
+					}
+				}
+				else {
+					if (presenter.getRemoveRequest().getTags().contains(trimmedTag)) {
+						showStatus(addTagButton, "That tag is alreay in the list, please enter a unique tag.");
+					}
+					else {
+						presenter.getRemoveRequest().getTags().add(trimmedTag);
+						addTagToPanel(trimmedTag);
+					}
+				}
 			}
 		}
 		else {
@@ -502,7 +961,22 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		removeTagButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.getFirewallExceptionRequest().getTags().remove(tag);
+				if (!editing) {
+					if (presenter.getAddRequisition() != null) {
+						presenter.getAddRequisition().getTags().remove(tag);
+					}
+					else {
+						presenter.getRemoveRequisition().getTags().remove(tag);
+					}
+				}
+				else {
+					if (presenter.getAddRequest() != null) {
+						presenter.getAddRequest().getTags().remove(tag);
+					}
+					else {
+						presenter.getRemoveRequest().getTags().remove(tag);
+					}
+				}
 				tagsTable.remove(tagLabel);
 				tagsTable.remove(removeTagButton);
 			}
@@ -527,10 +1001,30 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	void initializeTagsPanel() {
 		tagsTable.removeAllRows();
-		if (presenter.getFirewallExceptionRequest() != null) {
-			GWT.log("Adding " + presenter.getFirewallExceptionRequest().getTags().size() + " tags to the panel (update).");
-			for (String tag : presenter.getFirewallExceptionRequest().getTags()) {
-				addTagToPanel(tag);
+		if (!editing) {
+			if (presenter.getAddRequisition() != null) {
+				for (String tag : presenter.getAddRequisition().getTags()) {
+					addTagToPanel(tag);
+				}
+			}
+			else {
+				for (String tag : presenter.getRemoveRequisition().getTags()) {
+					addTagToPanel(tag);
+				}
+			}
+		}
+		else {
+			if (presenter.getAddRequest() != null) {
+				GWT.log("Adding " + presenter.getAddRequest().getTags().size() + " tags to the panel (update).");
+				for (String tag : presenter.getAddRequest().getTags()) {
+					addTagToPanel(tag);
+				}
+			}
+			else {
+				GWT.log("Adding " + presenter.getRemoveRequest().getTags().size() + " tags to the panel (update).");
+				for (String tag : presenter.getRemoveRequest().getTags()) {
+					addTagToPanel(tag);
+				}
 			}
 		}
 	}
@@ -543,9 +1037,9 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			int i=0;
 			for (String type : complianceClassTypes) {
 				complianceClassLB.addItem(type, type);
-				if (presenter.getFirewallExceptionRequest() != null) {
-					if (presenter.getFirewallExceptionRequest().getCompliance() != null) {
-						for (String pojo_type : presenter.getFirewallExceptionRequest().getCompliance()) {
+				if (presenter.getAddRequest() != null) {
+					if (presenter.getAddRequest().getCompliance() != null) {
+						for (String pojo_type : presenter.getAddRequest().getCompliance()) {
 							if (pojo_type.equals(type)) {
 								complianceClassLB.setItemSelected(i, true);
 							}
@@ -566,9 +1060,9 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			int i=1;
 			for (String type : timeRules) {
 				timeRuleLB.addItem(type, type);
-				if (presenter.getFirewallExceptionRequest() != null) {
-					if (presenter.getFirewallExceptionRequest().getTimeRule() != null) {
-						if (presenter.getFirewallExceptionRequest().getTimeRule().equals(type)) {
+				if (presenter.getAddRequest() != null) {
+					if (presenter.getAddRequest().getTimeRule() != null) {
+						if (presenter.getAddRequest().getTimeRule().equals(type)) {
 							timeRuleLB.setSelectedIndex(i);
 						}
 					}
@@ -589,49 +1083,58 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(true);
+		netIdTB.setEnabled(true);
+		applicationNameTB.setEnabled(true);
+		isSourceOutsideEmoryCB.setEnabled(true);
+		timeRuleLB.setEnabled(true);
+		validUntilDB.setEnabled(true);
+		sourceIpAddressesTA.setEnabled(true);
+		destinationIpAddressesTA.setEnabled(true);
+		portsTA.setEnabled(true);
+		businessReasonTA.setEnabled(true);
+		isPatchedCB.setEnabled(true);
+		isDefaultPasswordChangedCB.setEnabled(true);
+		isAppConsoleACLedCB.setEnabled(true);
+		isHardenedCB.setEnabled(true);
+		patchingPlanTA.setEnabled(true);
+		complianceClassLB.setEnabled(true);
+		sensitiveDataDescriptionTA.setEnabled(true);
+		localFirewallRulesDescriptionTA.setEnabled(true);
+		isDefaultDenyZoneCB.setEnabled(true);
+		isAccessVPCCB.setEnabled(true);
+		notPatchedJustificationTA.setEnabled(true);
+		passwordNotChangedJustificationTA.setEnabled(true);
+		notACLedJustificationTA.setEnabled(true);
+		notHardenedJustificationTA.setEnabled(true);
+		vpnNameTB.setEnabled(true);
 	}
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
-		
 	}
 }

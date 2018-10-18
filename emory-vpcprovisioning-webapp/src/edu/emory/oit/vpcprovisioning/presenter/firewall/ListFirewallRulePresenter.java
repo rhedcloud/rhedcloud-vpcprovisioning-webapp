@@ -12,12 +12,18 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.client.event.FirewallExceptionRequestListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleListUpdateEvent;
-import edu.emory.oit.vpcprovisioning.client.event.FirewallRuleRequestListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionAddRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRemoveRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRuleQueryResultPojo;
@@ -44,9 +50,12 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	private EventBus eventBus;
 	
 	FirewallRuleQueryFilterPojo fw_filter;
-	FirewallExceptionRequestQueryFilterPojo fwer_filter;
+	FirewallExceptionRequestSummaryQueryFilterPojo fwer_filter;
 	FirewallRulePojo firewallRule;
 	VpcPojo vpc;
+	FirewallExceptionAddRequestPojo selectedAddRequest;
+	FirewallExceptionRemoveRequestPojo selectedRemoveRequest;
+	FirewallExceptionRequestSummaryPojo selectedExceptionRequestSummary;
 
 	/**
 	 * The refresh timer used to periodically refresh the firewallRule list.
@@ -126,6 +135,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				// this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
 				// the user enter a VPC id in order to filter the list down.
 				refreshList(userLoggedIn);
+				refreshFirewallExceptionRequestSummaryList(userLoggedIn);
 			}
 		};
 		GWT.log("getting user logged in from server...");
@@ -184,8 +194,8 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	}
 
 	@Override
-	public void refreshFirewallRuleExceptionRequestList(final UserAccountPojo user) {
-		AsyncCallback<FirewallExceptionRequestQueryResultPojo> callback = new AsyncCallback<FirewallExceptionRequestQueryResultPojo>() {
+	public void refreshFirewallExceptionRequestSummaryList(final UserAccountPojo user) {
+		AsyncCallback<FirewallExceptionRequestSummaryQueryResultPojo> callback = new AsyncCallback<FirewallExceptionRequestSummaryQueryResultPojo>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -198,8 +208,8 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			}
 
 			@Override
-			public void onSuccess(FirewallExceptionRequestQueryResultPojo result) {
-				GWT.log("Got " + result.getResults().size() + " firewall exception requests for " + result.getFilterUsed());
+			public void onSuccess(FirewallExceptionRequestSummaryQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " firewall exception requests for " + vpc.getVpcId());
 				setFirewallExceptionRequestList(result.getResults());
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
@@ -222,11 +232,11 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 		};
 		GWT.log("refreshing FirewallExceptionRequest list...");
 		if (fwer_filter == null) {
-			fwer_filter = new FirewallExceptionRequestQueryFilterPojo();
-			fwer_filter.getTags().add(vpc.getVpcId());
+			fwer_filter = new FirewallExceptionRequestSummaryQueryFilterPojo();
+			fwer_filter.setVpcId(vpc.getVpcId());
 		}
 		getView().showPleaseWaitDialog("Retrieving firewall exception requests from service now...");
-		VpcProvisioningService.Util.getInstance().getFirewallExceptionRequestsForFilter(fwer_filter, callback);
+		VpcProvisioningService.Util.getInstance().getFirewallExceptionRequestSummariesForFilter(fwer_filter, callback);
 	}
 
 	/**
@@ -237,9 +247,9 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 		eventBus.fireEventFromSource(new FirewallRuleListUpdateEvent(firewallRules), this);
 	}
 
-	private void setFirewallExceptionRequestList(List<FirewallExceptionRequestPojo> firewallRules) {
-		getView().setFirewallRuleRequests(firewallRules);
-		eventBus.fireEventFromSource(new FirewallRuleRequestListUpdateEvent(firewallRules), this);
+	private void setFirewallExceptionRequestList(List<FirewallExceptionRequestSummaryPojo> summaries) {
+		getView().setFirewallExceptionRequestSummaries(summaries);
+		eventBus.fireEventFromSource(new FirewallExceptionRequestListUpdateEvent(summaries), this);
 	}
 
 	@Override
@@ -314,7 +324,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	}
 
 	@Override
-	public FirewallExceptionRequestQueryFilterPojo getFirewallRuleExceptionRequestFilter() {
+	public FirewallExceptionRequestSummaryQueryFilterPojo getFirewallRuleExceptionRequestSummaryFilter() {
 		return fwer_filter;
 	}
 
@@ -362,5 +372,81 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 	public void setVpc(VpcPojo vpc) {
 		this.vpc = vpc;
+	}
+
+	@Override
+	public void cancelFirewallException(FirewallExceptionRequestSummaryPojo summary) {
+		selectedExceptionRequestSummary = summary;
+		selectedAddRequest = summary.getAddRequest();
+		selectedRemoveRequest = summary.getRemoveRequest();
+		String title = null;
+		String message = null;
+		if (selectedAddRequest != null) {
+			if (!selectedAddRequest.getRequestState().equalsIgnoreCase(Constants.REQUEST_STATE_OPEN)) {
+				getView().showMessageToUser("The selected Firewall Exception Request cannot be cancelled.  "
+					+ "Please select a request that's in an " + Constants.REQUEST_STATE_OPEN + " state.");
+				return;
+			}
+			title = "Confirm Cancel Firewall Exception ADD Request";
+			message = "Cancel the Firewall Exception ADD Request: " + selectedAddRequest.getRequestItemNumber() + "?";  
+			VpcpConfirm.confirm(
+					ListFirewallRulePresenter.this, 
+					title, 
+					message);
+		}
+		else {
+			if (!selectedRemoveRequest.getRequestState().equalsIgnoreCase(Constants.REQUEST_STATE_OPEN)) {
+				getView().showMessageToUser("The selected Firewall Exception Request cannot be cancelled.  "
+					+ "Please select a request that's in an " + Constants.REQUEST_STATE_OPEN + " state.");
+				return;
+			}
+			title = "Confirm Delete Firewall Exception REMOVE Request";
+			message = "Camce; the Firewall Exception REMOVE Request: " + selectedRemoveRequest.getRequestItemNumber() + "?";  
+			VpcpConfirm.confirm(
+					ListFirewallRulePresenter.this, 
+					title, 
+					message);
+		}
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		AsyncCallback<Void> callback = new AsyncCallback<Void>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().showMessageToUser("There was an exception on the " +
+						"server cancelling the Firewall Exception Request.  Message " +
+						"from server is: " + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				// remove from dataprovider
+//				getView().removeFirewallExceptionRequestSummaryFromView(selectedExceptionRequestSummary);
+				getView().hidePleaseWaitDialog();
+				// status message
+				getView().showStatus(getView().getStatusMessageSource(), "Firewall exceptoin request was cancelled.");
+				ActionEvent.fire(getEventBus(), ActionNames.GO_HOME_FIREWALL_RULE, vpc);
+			}
+		};
+		if (selectedAddRequest != null) {
+			VpcProvisioningService.Util.getInstance().deleteFirewallExceptionAddRequest(selectedAddRequest, callback);
+		}
+		else {
+			VpcProvisioningService.Util.getInstance().deleteFirewallExceptionRemoveRequest(selectedRemoveRequest, callback);
+		}
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		if (selectedAddRequest != null) {
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Firewall Exception ADD Request " + 
+					selectedAddRequest.getRequestItemNumber() + " was not cancelled.");
+		}
+		else {
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Firewall Exception REMOVE Request " + 
+					selectedRemoveRequest.getRequestItemNumber() + " was not cancelled.");
+		}
 	}
 }

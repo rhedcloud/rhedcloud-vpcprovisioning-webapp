@@ -8,7 +8,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.event.EditFirewallExceptionRequestEvent;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPresenter;
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
+import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class MaintainFirewallExceptionRequestActivity extends AbstractActivity {
@@ -54,27 +54,27 @@ public class MaintainFirewallExceptionRequestActivity extends AbstractActivity {
 			public void onFirewallExceptionRequestEdit(EditFirewallExceptionRequestEvent event) {
 				// Stop the read presenter
 				onStop();
-				presenter = startEdit(event.getFirewallExceptionRequest());
+				presenter = startEdit(event.getFirewallExceptionRequestSummary());
 				container.setWidget(presenter);
 			}
 		});
 
-		if (place.getFirewallExceptionRequestId() == null) {
+		if (place.getFirewallExceptionSystemId() == null) {
 			presenter = startCreate();
 		} else {
-			presenter = startEdit(place.getFirewallExceptionRequest());
+			presenter = startEdit(place.getSummary());
 		}
 		container.setWidget(presenter);
 	}
 
 	private PresentsWidgets startCreate() {
-		PresentsWidgets rtn = new MaintainFirewallExceptionRequestPresenter(clientFactory);
+		PresentsWidgets rtn = new MaintainFirewallExceptionRequestPresenter(clientFactory, place.isFirewallExceptionAddRequest());
 		rtn.start(childEventBus);
 		return rtn;
 	}
 
-	private PresentsWidgets startEdit(FirewallExceptionRequestPojo firewallExceptionRequest) {
-		PresentsWidgets rtn = new MaintainFirewallExceptionRequestPresenter(clientFactory, firewallExceptionRequest);
+	private PresentsWidgets startEdit(FirewallExceptionRequestSummaryPojo summary) {
+		PresentsWidgets rtn = new MaintainFirewallExceptionRequestPresenter(clientFactory, summary);
 		rtn.start(childEventBus);
 		return rtn;
 	}
