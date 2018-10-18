@@ -317,7 +317,9 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		passwordNotChangedJustificationTA.setEnabled(true);
 		notACLedJustificationTA.setEnabled(true);
 		notHardenedJustificationTA.setEnabled(true);
+		isTraverseVpnCB.setEnabled(true);
 		vpnNameTB.setEnabled(true);
+		isAccessVPCCB.setEnabled(true);
 		
 		// remove request fields
 		requestDetailsTA.setEnabled(true);
@@ -349,7 +351,9 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		passwordNotChangedJustificationTA.setEnabled(false);
 		notACLedJustificationTA.setEnabled(false);
 		notHardenedJustificationTA.setEnabled(false);
+		isTraverseVpnCB.setEnabled(false);
 		vpnNameTB.setEnabled(false);
+		isAccessVPCCB.setEnabled(false);
 
 		// remove request fields
 		requestDetailsTA.setEnabled(false);
@@ -760,7 +764,9 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 				passwordNotChangedJustificationTA.setEnabled(false);
 				notACLedJustificationTA.setEnabled(false);
 				notHardenedJustificationTA.setEnabled(false);
+				isTraverseVpnCB.setEnabled(false);
 				vpnNameTB.setEnabled(false);
+				isAccessVPCCB.setEnabled(false);
 
 				FirewallExceptionAddRequestPojo addRequest = presenter.getAddRequest();
 				requestItemNumberLabel.setText(addRequest.getRequestItemNumber());
@@ -1112,7 +1118,9 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		passwordNotChangedJustificationTA.setEnabled(true);
 		notACLedJustificationTA.setEnabled(true);
 		notHardenedJustificationTA.setEnabled(true);
+		isTraverseVpnCB.setEnabled(true);
 		vpnNameTB.setEnabled(true);
+		isAccessVPCCB.setEnabled(true);
 	}
 
 	@Override
