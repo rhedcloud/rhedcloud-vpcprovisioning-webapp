@@ -68,7 +68,7 @@
 		<artifactId>com.paloaltonetworks</artifactId>
 		<version>1.0</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/paloaltonetworks-moa-master-7.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/paloaltonetworks-moa-master-9.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>com.oracle</groupId>

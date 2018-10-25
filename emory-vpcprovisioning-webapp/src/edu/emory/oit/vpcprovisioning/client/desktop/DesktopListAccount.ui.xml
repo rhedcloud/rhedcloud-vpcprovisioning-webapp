@@ -1,10 +1,11 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<g:ScrollPanel width="100%" height="99%">	
+	<g:ScrollPanel width="100%" height="99%" debugId="accountsScrollPanel">	
 	<g:VerticalPanel width="100%" spacing="20">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
@@ -47,7 +48,6 @@
 					<g:customCell>
 						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
 					</g:customCell>
-					<!-- TEMPORARY -->
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="accountIdTB" debugId="accountIdTB"/>
@@ -58,7 +58,6 @@
 					<g:customCell>
 						<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
 					</g:customCell>
-			    	<!-- END TEMPORARY -->
 					<g:customCell>
 						<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
 							addStyleNames="{style.refreshButton}"

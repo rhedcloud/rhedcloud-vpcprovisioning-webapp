@@ -77,6 +77,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 			clientFactory.getShell().setSubTitle("Edit VPC");
 			startEdit();
 		}
+		getView().initDataEntryPanels();
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 

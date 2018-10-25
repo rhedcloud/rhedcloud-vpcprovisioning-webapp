@@ -81,4 +81,5 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 	void setSpeedTypeStatus(String status);
 	void setSpeedTypeColor(String color);
 	Widget getSpeedTypeWidget();
+	void initDataEntryPanels();
 }

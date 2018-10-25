@@ -5,7 +5,7 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<g:VerticalPanel height="100%" width="100%" spacing="8">
+	<g:VerticalPanel height="100%" width="100%" spacing="20">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:VerticalPanel spacing="8">

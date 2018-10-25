@@ -6,7 +6,7 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:ScrollPanel width="99%" height="99%">
-	<g:VerticalPanel spacing="8" width="100%">
+	<g:VerticalPanel spacing="20" width="100%">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:VerticalPanel spacing="8">

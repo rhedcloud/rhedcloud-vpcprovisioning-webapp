@@ -73,10 +73,16 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField TabLayoutPanel firewallRuleTabPanel;
 	@UiField PushButton refreshButton;
+	@UiField PushButton refreshExceptionsButton;
 
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
 		presenter.refreshList(userLoggedIn);
+	}
+
+	@UiHandler("refreshExceptionsButton")
+	void refreshExceptionsButtonClicked(ClickEvent e) {
+		presenter.refreshFirewallExceptionRequestSummaryList(userLoggedIn);
 	}
 
 	//	@UiField Button filterButton;
@@ -104,6 +110,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		initWidget(uiBinder.createAndBindUi(this));
 
 		setRefreshButtonImage(refreshButton);
+		setRefreshButtonImage(refreshExceptionsButton);
 	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -211,10 +218,10 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				}
 				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
 				if (m != null) {
-					// TODO: this should resolve to a FirewallExceptionRemoveRequest.Generate
+					// this should resolve to a FirewallExceptionRemoveRequest.Generate
 					// so this will be the MaintainFirewallExceptionRequest view but the object being
 					// populated will be a FirewallRuleRemoveExceptionRequestRequisition
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, presenter.getVpc(), false);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_EXCEPTION_REQUEST, presenter.getVpc(), m, false);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -313,27 +320,6 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		grid.setWidget(1, 0, deleteAnchor);
 
-		//		Anchor historyAnchor = new Anchor("View your Firewall Rule History");
-		//		historyAnchor.addStyleName("productAnchor");
-		//		historyAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		//		historyAnchor.setTitle("View firewall rule history");
-		//		historyAnchor.addClickHandler(new ClickHandler() {
-		//			@Override
-		//			public void onClick(ClickEvent event) {
-		//				actionsPopup.hide();
-		//				FirewallRulePojo m = fw_selectionModel.getSelectedObject();
-		//				if (m != null) {
-		//					// just use a popup here and not try to show the "normal" CidrAssignment
-		//					// maintenance view.  This is handled in the AppBootstrapper when the events are registered.
-		////					ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_FIREWALL_RULE, m, null);
-		//				}
-		//				else {
-		//					showMessageToUser("Please select an item from the list");
-		//				}
-		//			}
-		//		});
-		//		grid.setWidget(2, 0, historyAnchor);
-
 		actionsPopup.showRelativeTo(firewallExceptionRequestActionsButton);
 	}
 
@@ -423,39 +409,30 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		firewallRuleListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
 		firewallRuleListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
-		Column<FirewallRulePojo, String> nameColumn = 
+		/*
+		Here is how I would suggest we display the rules for users:
+			Vsys Number (maybee include the fw name as well; e.g., vsys4 - Device/AdminCore)
+			Name, Source, Destination, Application, Service, Action		 
+		*/
+		Column<FirewallRulePojo, String> vsysColumn = 
 				new Column<FirewallRulePojo, String> (new TextCell()) {
 
 			@Override
 			public String getValue(FirewallRulePojo object) {
-				return object.getName();
+				if (object.getVsys() != null) {
+					return object.getVsys() + " - " + object.getName();
+				}
+				return "VSYS Unknown - " + object.getName();
 			}
 		};
-		nameColumn.setSortable(true);
-		nameColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(nameColumn, new Comparator<FirewallRulePojo>() {
+		vsysColumn.setSortable(true);
+		vsysColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(vsysColumn, new Comparator<FirewallRulePojo>() {
 			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
-				return o1.getName().compareTo(o2.getName());
+				return o1.getVsys().compareTo(o2.getVsys());
 			}
 		});
-		firewallRuleListTable.addColumn(nameColumn, "Name");
-
-		Column<FirewallRulePojo, String> descColumn = 
-				new Column<FirewallRulePojo, String> (new TextCell()) {
-
-			@Override
-			public String getValue(FirewallRulePojo object) {
-				return object.getAction();
-			}
-		};
-		descColumn.setSortable(true);
-		descColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(descColumn, new Comparator<FirewallRulePojo>() {
-			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
-				return o1.getDescription().compareTo(o2.getDescription());
-			}
-		});
-		firewallRuleListTable.addColumn(descColumn, "Description");
+		firewallRuleListTable.addColumn(vsysColumn, "VSYS");
 
 		Column<FirewallRulePojo, SafeHtml> sourceColumn = 
 				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
@@ -513,14 +490,14 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		firewallRuleListTable.addColumn(destinationColumn, "Destination(s)");
 
-		Column<FirewallRulePojo, SafeHtml> vpcColumn = 
+		Column<FirewallRulePojo, SafeHtml> applicationsColumn = 
 				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
 
 			@Override
 			public SafeHtml getValue(FirewallRulePojo object) {
 				StringBuffer sbuf = new StringBuffer();
 				boolean isFirst = true;
-				for (String s : object.getTags()) {
+				for (String s : object.getApplications()) {
 					if (!isFirst) {
 						sbuf.append("<br>");
 					}
@@ -532,14 +509,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
 			}
 		};
-		vpcColumn.setSortable(true);
-		vpcColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(vpcColumn, new Comparator<FirewallRulePojo>() {
-			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
-				return o1.getAction().compareTo(o2.getAction());
-			}
-		});
-		firewallRuleListTable.addColumn(vpcColumn, "VPC ID");
+		firewallRuleListTable.addColumn(applicationsColumn, "Application(s)");
 
 		Column<FirewallRulePojo, SafeHtml> serviceColumn = 
 				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
@@ -569,151 +539,185 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		firewallRuleListTable.addColumn(serviceColumn, "Service(s)");
 
-		Column<FirewallRulePojo, SafeHtml> toColumn = 
-				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(FirewallRulePojo object) {
-				StringBuffer sbuf = new StringBuffer();
-				boolean isFirst = true;
-				for (String s : object.getTos()) {
-					if (!isFirst) {
-						sbuf.append("<br>");
-					}
-					else {
-						isFirst = false;
-					}
-					sbuf.append(s);
-				}
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
-			}
-		};
-		firewallRuleListTable.addColumn(toColumn, "To(s)");
-
-		Column<FirewallRulePojo, SafeHtml> fromColumn = 
-				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(FirewallRulePojo object) {
-				StringBuffer sbuf = new StringBuffer();
-				boolean isFirst = true;
-				for (String s : object.getFroms()) {
-					if (!isFirst) {
-						sbuf.append("<br>");
-					}
-					else {
-						isFirst = false;
-					}
-					sbuf.append(s);
-				}
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
-			}
-		};
-		firewallRuleListTable.addColumn(fromColumn, "From(s)");
-
-		Column<FirewallRulePojo, SafeHtml> sourceUsersColumn = 
-				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(FirewallRulePojo object) {
-				StringBuffer sbuf = new StringBuffer();
-				boolean isFirst = true;
-				for (String s : object.getSourceUsers()) {
-					if (!isFirst) {
-						sbuf.append("<br>");
-					}
-					else {
-						isFirst = false;
-					}
-					sbuf.append(s);
-				}
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
-			}
-		};
-		firewallRuleListTable.addColumn(sourceUsersColumn, "Source User(s)");
-
-		Column<FirewallRulePojo, SafeHtml> categoriesColumn = 
-				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(FirewallRulePojo object) {
-				StringBuffer sbuf = new StringBuffer();
-				boolean isFirst = true;
-				for (String s : object.getCategories()) {
-					if (!isFirst) {
-						sbuf.append("<br>");
-					}
-					else {
-						isFirst = false;
-					}
-					sbuf.append(s);
-				}
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
-			}
-		};
-		firewallRuleListTable.addColumn(categoriesColumn, "Category(s)");
-
-		Column<FirewallRulePojo, SafeHtml> applicationsColumn = 
-				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(FirewallRulePojo object) {
-				StringBuffer sbuf = new StringBuffer();
-				boolean isFirst = true;
-				for (String s : object.getApplications()) {
-					if (!isFirst) {
-						sbuf.append("<br>");
-					}
-					else {
-						isFirst = false;
-					}
-					sbuf.append(s);
-				}
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
-			}
-		};
-		firewallRuleListTable.addColumn(applicationsColumn, "Application(s)");
-
-		Column<FirewallRulePojo, SafeHtml> hipProfilesColumn = 
-				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(FirewallRulePojo object) {
-				StringBuffer sbuf = new StringBuffer();
-				boolean isFirst = true;
-				for (String s : object.getHipProfiles()) {
-					if (!isFirst) {
-						sbuf.append("<br>");
-					}
-					else {
-						isFirst = false;
-					}
-					sbuf.append(s);
-				}
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
-			}
-		};
-		firewallRuleListTable.addColumn(hipProfilesColumn, "HIP Profile(s)");
-
 		Column<FirewallRulePojo, SafeHtml> actionColumn = 
 				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
 
 			@Override
 			public SafeHtml getValue(FirewallRulePojo object) {
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(object.getAction());
+				if (object.getAction() != null) {
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(object.getAction());
+				}
+				else {
+					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(Constants.UNKNOWN);
+				}
 			}
 		};
 		firewallRuleListTable.addColumn(actionColumn, "Action");
 
-		Column<FirewallRulePojo, SafeHtml> logSettingColumn = 
-				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(FirewallRulePojo object) {
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(object.getLogSetting());
-			}
-		};
-		firewallRuleListTable.addColumn(logSettingColumn, "Log Setting");
+//		Column<FirewallRulePojo, String> descColumn = 
+//				new Column<FirewallRulePojo, String> (new TextCell()) {
+//
+//			@Override
+//			public String getValue(FirewallRulePojo object) {
+//				return object.getAction();
+//			}
+//		};
+//		descColumn.setSortable(true);
+//		descColumn.setCellStyleNames("tableBody");
+//		sortHandler.setComparator(descColumn, new Comparator<FirewallRulePojo>() {
+//			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
+//				return o1.getDescription().compareTo(o2.getDescription());
+//			}
+//		});
+//		firewallRuleListTable.addColumn(descColumn, "Description");
+//
+//		Column<FirewallRulePojo, SafeHtml> vpcColumn = 
+//				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(FirewallRulePojo object) {
+//				StringBuffer sbuf = new StringBuffer();
+//				boolean isFirst = true;
+//				for (String s : object.getTags()) {
+//					if (!isFirst) {
+//						sbuf.append("<br>");
+//					}
+//					else {
+//						isFirst = false;
+//					}
+//					sbuf.append(s);
+//				}
+//				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+//			}
+//		};
+//		vpcColumn.setSortable(true);
+//		vpcColumn.setCellStyleNames("tableBody");
+//		sortHandler.setComparator(vpcColumn, new Comparator<FirewallRulePojo>() {
+//			public int compare(FirewallRulePojo o1, FirewallRulePojo o2) {
+//				return o1.getAction().compareTo(o2.getAction());
+//			}
+//		});
+//		firewallRuleListTable.addColumn(vpcColumn, "VPC ID");
+//
+//		Column<FirewallRulePojo, SafeHtml> toColumn = 
+//				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(FirewallRulePojo object) {
+//				StringBuffer sbuf = new StringBuffer();
+//				boolean isFirst = true;
+//				for (String s : object.getTos()) {
+//					if (!isFirst) {
+//						sbuf.append("<br>");
+//					}
+//					else {
+//						isFirst = false;
+//					}
+//					sbuf.append(s);
+//				}
+//				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+//			}
+//		};
+//		firewallRuleListTable.addColumn(toColumn, "To(s)");
+//
+//		Column<FirewallRulePojo, SafeHtml> fromColumn = 
+//				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(FirewallRulePojo object) {
+//				StringBuffer sbuf = new StringBuffer();
+//				boolean isFirst = true;
+//				for (String s : object.getFroms()) {
+//					if (!isFirst) {
+//						sbuf.append("<br>");
+//					}
+//					else {
+//						isFirst = false;
+//					}
+//					sbuf.append(s);
+//				}
+//				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+//			}
+//		};
+//		firewallRuleListTable.addColumn(fromColumn, "From(s)");
+//
+//		Column<FirewallRulePojo, SafeHtml> sourceUsersColumn = 
+//				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(FirewallRulePojo object) {
+//				StringBuffer sbuf = new StringBuffer();
+//				boolean isFirst = true;
+//				for (String s : object.getSourceUsers()) {
+//					if (!isFirst) {
+//						sbuf.append("<br>");
+//					}
+//					else {
+//						isFirst = false;
+//					}
+//					sbuf.append(s);
+//				}
+//				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+//			}
+//		};
+//		firewallRuleListTable.addColumn(sourceUsersColumn, "Source User(s)");
+//
+//		Column<FirewallRulePojo, SafeHtml> categoriesColumn = 
+//				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(FirewallRulePojo object) {
+//				StringBuffer sbuf = new StringBuffer();
+//				boolean isFirst = true;
+//				for (String s : object.getCategories()) {
+//					if (!isFirst) {
+//						sbuf.append("<br>");
+//					}
+//					else {
+//						isFirst = false;
+//					}
+//					sbuf.append(s);
+//				}
+//				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+//			}
+//		};
+//		firewallRuleListTable.addColumn(categoriesColumn, "Category(s)");
+//
+//		Column<FirewallRulePojo, SafeHtml> hipProfilesColumn = 
+//				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(FirewallRulePojo object) {
+//				StringBuffer sbuf = new StringBuffer();
+//				boolean isFirst = true;
+//				for (String s : object.getHipProfiles()) {
+//					if (!isFirst) {
+//						sbuf.append("<br>");
+//					}
+//					else {
+//						isFirst = false;
+//					}
+//					sbuf.append(s);
+//				}
+//				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
+//			}
+//		};
+//		firewallRuleListTable.addColumn(hipProfilesColumn, "HIP Profile(s)");
+//
+//		Column<FirewallRulePojo, SafeHtml> logSettingColumn = 
+//				new Column<FirewallRulePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(FirewallRulePojo object) {
+//				if (object.getLogSetting() != null) {
+//					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(object.getLogSetting());
+//				}
+//				else {
+//					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(Constants.UNKNOWN);
+//				}
+//			}
+//		};
+//		firewallRuleListTable.addColumn(logSettingColumn, "Log Setting");
 	}
 
 	@Override
@@ -842,6 +846,8 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	}
 
 	private void initFirewallExceptionRequestSummaryListTableColumns(ListHandler<FirewallExceptionRequestSummaryPojo> sortHandler) {
+
+		GWT.log("initializing Firewall Rule Exception Request list table columns...");
 		Column<FirewallExceptionRequestSummaryPojo, Boolean> checkColumn = new Column<FirewallExceptionRequestSummaryPojo, Boolean>(
 				new CheckboxCell(true, false)) {
 			@Override
@@ -888,7 +894,7 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		});
 		firewallExceptionRequestListTable.addColumn(reqType, "Request Type");
 
-		Column<FirewallExceptionRequestSummaryPojo, String> reqNumberColumn = 
+		Column<FirewallExceptionRequestSummaryPojo, String> reqItemNumberColumn = 
 				new Column<FirewallExceptionRequestSummaryPojo, String> (new TextCell()) {
 
 			@Override
@@ -902,26 +908,34 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 				return Constants.UNKNOWN;
 			}
 		};
-		reqNumberColumn.setSortable(true);
-		reqNumberColumn.setCellStyleNames("tableBody");
-		sortHandler.setComparator(reqNumberColumn, new Comparator<FirewallExceptionRequestSummaryPojo>() {
+		reqItemNumberColumn.setSortable(true);
+		reqItemNumberColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(reqItemNumberColumn, new Comparator<FirewallExceptionRequestSummaryPojo>() {
 			public int compare(FirewallExceptionRequestSummaryPojo o1, FirewallExceptionRequestSummaryPojo o2) {
 				if (o1.getAddRequest() != null && o2.getAddRequest() != null) {
-					return o1.getAddRequest().getRequestItemNumber().compareTo(o2.getAddRequest().getRequestItemNumber());
+					if (o1.getAddRequest().getRequestItemNumber() != null && o2.getAddRequest().getRequestItemNumber() != null) {
+						return o1.getAddRequest().getRequestItemNumber().compareTo(o2.getAddRequest().getRequestItemNumber());
+					}
 				}
 				if (o1.getAddRequest() != null && o2.getRemoveRequest() != null) {
-					return o1.getAddRequest().getRequestItemNumber().compareTo(o2.getRemoveRequest().getRequestItemNumber());
+					if (o1.getAddRequest().getRequestItemNumber() != null && o2.getRemoveRequest().getRequestItemNumber() != null) {
+						return o1.getAddRequest().getRequestItemNumber().compareTo(o2.getRemoveRequest().getRequestItemNumber());
+					}
 				}
 				if (o1.getRemoveRequest() != null && o2.getRemoveRequest() != null) {
-					return o1.getRemoveRequest().getRequestItemNumber().compareTo(o2.getRemoveRequest().getRequestItemNumber());
+					if (o1.getRemoveRequest().getRequestItemNumber() != null && o2.getRemoveRequest().getRequestItemNumber() != null) {
+						return o1.getRemoveRequest().getRequestItemNumber().compareTo(o2.getRemoveRequest().getRequestItemNumber());
+					}
 				}
 				if (o1.getRemoveRequest() != null && o2.getAddRequest() != null) {
-					return o1.getRemoveRequest().getRequestItemNumber().compareTo(o2.getAddRequest().getRequestItemNumber());
+					if (o1.getRemoveRequest().getRequestItemNumber() != null && o2.getAddRequest().getRequestItemNumber() != null) {
+						return o1.getRemoveRequest().getRequestItemNumber().compareTo(o2.getAddRequest().getRequestItemNumber());
+					}
 				}
 				return 0;
 			}
 		});
-		firewallExceptionRequestListTable.addColumn(reqNumberColumn, "Request Number");
+		firewallExceptionRequestListTable.addColumn(reqItemNumberColumn, "Request Number");
 
 		Column<FirewallExceptionRequestSummaryPojo, String> reqStateColumn = 
 				new Column<FirewallExceptionRequestSummaryPojo, String> (new TextCell()) {
@@ -1165,7 +1179,12 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			@Override
 			public String getValue(FirewallExceptionRequestSummaryPojo object) {
 				if (object.getAddRequest() != null) {
-					return object.getAddRequest().getWillTraverseVPN();
+					if (object.getAddRequest().getWillTraverseVPN() != null) {
+						return object.getAddRequest().getWillTraverseVPN();
+					}
+					else {
+						return Constants.UNKNOWN;
+					}
 				}
 				return Constants.NOT_APPLICABLE;
 			}
@@ -1175,7 +1194,9 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		sortHandler.setComparator(traverseVpnColumn, new Comparator<FirewallExceptionRequestSummaryPojo>() {
 			public int compare(FirewallExceptionRequestSummaryPojo o1, FirewallExceptionRequestSummaryPojo o2) {
 				if (o1.getAddRequest() != null && o2.getAddRequest() != null) {
-					return o1.getAddRequest().getWillTraverseVPN().compareTo(o2.getAddRequest().getWillTraverseVPN());
+					if (o1.getAddRequest().getWillTraverseVPN() != null && o2.getAddRequest().getWillTraverseVPN() != null) {
+						return o1.getAddRequest().getWillTraverseVPN().compareTo(o2.getAddRequest().getWillTraverseVPN());
+					}
 				}
 				if (o1.getAddRequest() != null && o2.getRemoveRequest() != null) {
 					return 1;
@@ -1197,11 +1218,16 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			@Override
 			public String getValue(FirewallExceptionRequestSummaryPojo object) {
 				if (object.getAddRequest() != null) {
-					if (object.getAddRequest().getWillTraverseVPN().equalsIgnoreCase(Constants.YES)) {
-						return object.getAddRequest().getVpnName();
+					if (object.getAddRequest().getWillTraverseVPN() != null) {
+						if (object.getAddRequest().getWillTraverseVPN().equalsIgnoreCase(Constants.YES)) {
+							return object.getAddRequest().getVpnName();
+						}
+						else {
+							return Constants.NOT_APPLICABLE;
+						}
 					}
 					else {
-						return Constants.NOT_APPLICABLE;
+						return Constants.UNKNOWN;
 					}
 				}
 				return Constants.NOT_APPLICABLE;
@@ -1212,7 +1238,9 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		sortHandler.setComparator(vpnNameColumn, new Comparator<FirewallExceptionRequestSummaryPojo>() {
 			public int compare(FirewallExceptionRequestSummaryPojo o1, FirewallExceptionRequestSummaryPojo o2) {
 				if (o1.getAddRequest() != null && o2.getAddRequest() != null) {
-					return o1.getAddRequest().getVpnName().compareTo(o2.getAddRequest().getVpnName());
+					if (o1.getAddRequest().getVpnName() != null && o2.getAddRequest().getVpnName() != null) {
+						return o1.getAddRequest().getVpnName().compareTo(o2.getAddRequest().getVpnName());
+					}
 				}
 				if (o1.getAddRequest() != null && o2.getRemoveRequest() != null) {
 					return 1;
@@ -1234,7 +1262,12 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 			@Override
 			public String getValue(FirewallExceptionRequestSummaryPojo object) {
 				if (object.getAddRequest() != null) {
-					return object.getAddRequest().getAccessAwsVPC();
+					if (object.getAddRequest().getAccessAwsVPC() != null) {
+						return object.getAddRequest().getAccessAwsVPC();
+					}
+					else {
+						return Constants.UNKNOWN;
+					}
 				}
 				return Constants.NOT_APPLICABLE;
 			}
@@ -1244,7 +1277,9 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 		sortHandler.setComparator(accessesVpcColumn, new Comparator<FirewallExceptionRequestSummaryPojo>() {
 			public int compare(FirewallExceptionRequestSummaryPojo o1, FirewallExceptionRequestSummaryPojo o2) {
 				if (o1.getAddRequest() != null && o2.getAddRequest() != null) {
-					return o1.getAddRequest().getAccessAwsVPC().compareTo(o2.getAddRequest().getAccessAwsVPC());
+					if (o1.getAddRequest().getAccessAwsVPC() != null && o2.getAddRequest().getAccessAwsVPC() != null) {
+						return o1.getAddRequest().getAccessAwsVPC().compareTo(o2.getAddRequest().getAccessAwsVPC());
+					}
 				}
 				if (o1.getAddRequest() != null && o2.getRemoveRequest() != null) {
 					return 1;

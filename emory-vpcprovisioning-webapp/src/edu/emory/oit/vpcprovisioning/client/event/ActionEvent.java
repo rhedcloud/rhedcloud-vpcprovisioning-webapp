@@ -184,6 +184,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc2, boolean b) {
 		eventBus.fireEventFromSource(new ActionEvent(vpc2, b), sourceName);
 	}
+	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc, FirewallRulePojo rule,
+			boolean b) {
+		eventBus.fireEventFromSource(new ActionEvent(vpc, rule, b), sourceName);
+	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpcpPojo vpcp) {
 		eventBus.fireEventFromSource(new ActionEvent(vpcp), sourceName);
@@ -615,6 +619,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(VpcPojo vpc2, boolean b) {
 		this.vpc = vpc2;
+		this.firewallExceptionAddRequest = b;
+	}
+
+	public ActionEvent(VpcPojo vpc2, FirewallRulePojo rule, boolean b) {
+		this.vpc = vpc2;
+		this.firewallRule = rule;
 		this.firewallExceptionAddRequest = b;
 	}
 

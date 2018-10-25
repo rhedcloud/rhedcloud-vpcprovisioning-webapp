@@ -219,7 +219,20 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			}
 			else {
 				presenter.getRemoveRequisition().setUserNetId(netIdTB.getText());
-				presenter.getRemoveRequisition().setRequestDetails(requestDetailsTA.getText());
+				FirewallRulePojo fr = presenter.getFirewallRule();
+				if (fr != null) {
+					GWT.log("adding FirewallRule data to the request details field...");
+					StringBuffer sbuf = new StringBuffer();
+					sbuf.append(requestDetailsTA.getText() + "\n\n");
+					sbuf.append("FirewallRule Details:\n");
+					sbuf.append("VSYS=" + (fr.getVsys() != null ? fr.getVsys() : Constants.UNKNOWN) + "\n");
+					sbuf.append("Name=" + fr.getName());
+					presenter.getRemoveRequisition().setRequestDetails(sbuf.toString());
+				}
+				else {
+					presenter.getRemoveRequisition().setRequestDetails(requestDetailsTA.getText());
+				}
+				presenter.saveFirewallExceptionRequest();
 			}
 		}
 		else {
@@ -255,6 +268,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 			else {
 				presenter.getRemoveRequest().setUserNetId(netIdTB.getText());
 				presenter.getRemoveRequest().setRequestDetails(requestDetailsTA.getText());
+				presenter.saveFirewallExceptionRequest();
 			}
 		}
 	}

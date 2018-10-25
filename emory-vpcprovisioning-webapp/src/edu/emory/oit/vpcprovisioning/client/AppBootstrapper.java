@@ -785,6 +785,7 @@ public class AppBootstrapper {
 					final MaintainFirewallExceptionRequestPresenter presenter = new MaintainFirewallExceptionRequestPresenter(clientFactory, event.getFwer_summary());
 					GWT.log("CREATE_FIREWALL_EXCEPTION_REQUEST event's VPC is: " + event.getVpc());
 					presenter.setVpc(event.getVpc());
+					presenter.setFirewallRule(event.getFirewallRule());
 					presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 						@Override
 						public void onClick(ClickEvent event) {

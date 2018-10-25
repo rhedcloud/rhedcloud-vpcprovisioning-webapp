@@ -619,14 +619,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
-		//		if (w instanceof ListServicePresenter || w instanceof MaintainServicePresenter) {
-		//			GWT.log("It's the services presenter...");
-		//			otherFeaturesPanel.clear();
-		//			otherFeaturesPanel.add(w);
-		//			return;
-		//		}
 
-		if (w instanceof ListElasticIpPresenter || w instanceof MaintainElasticIpPresenter) {
+		if (w instanceof ListElasticIpPresenter || 
+			w instanceof MaintainElasticIpPresenter) {
 			GWT.log("It's the elastic ip presenter...");
 			elasticIpContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -637,7 +632,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-		if (w instanceof ListStaticNatProvisioningSummaryPresenter || w instanceof StaticNatProvisioningStatusPresenter) {
+		if (w instanceof ListStaticNatProvisioningSummaryPresenter || 
+			w instanceof StaticNatProvisioningStatusPresenter) {
 			staticNatContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstStaticNatContentWidget) {
@@ -647,7 +643,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-		if (w instanceof ListVpnConnectionProfilePresenter || w instanceof MaintainVpnConnectionProfilePresenter) {
+		if (w instanceof ListVpnConnectionProfilePresenter || 
+			w instanceof MaintainVpnConnectionProfilePresenter) {
 			GWT.log("It's the vpn connection profile presenter...");
 			vpnConnectionProfileContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -658,7 +655,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 		
-		if (w instanceof ListVpnConnectionProvisioningPresenter || w instanceof VpncpStatusPresenter) {
+		if (w instanceof ListVpnConnectionProvisioningPresenter || 
+			w instanceof VpncpStatusPresenter) {
 			GWT.log("It's the vpn connection provisioning presenter...");
 			vpnConnectionContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -825,7 +823,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		VpcProvisioningService.Util.getInstance().getNotificationCheckIntervalMillis(interval_cb);
 	}
 
-	void showServicesPopup() {
+	void showProductsPopup() {
 		productsPopup.clear();
 		productsPopup.setAutoHideEnabled(true);
 		productsPopup.setWidth("1200px");
@@ -927,14 +925,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						showMessageToUser("Unable to display product information at this time.  Please try again later.");
 					}
 					else {
-						showServicesPopup();
+						showProductsPopup();
 					}
 				}
 			};
 			VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 		}
 		else {
-			this.showServicesPopup();
+			this.showProductsPopup();
 		}
 	}
 	@Override

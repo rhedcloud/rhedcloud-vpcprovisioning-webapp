@@ -30,6 +30,7 @@ public class FirewallRulePojo extends SharedObject implements IsSerializable, Co
 	 */
 	
 	String name;
+	String vsys;
 	String action;
 	String description;
 	String logSetting;
@@ -222,6 +223,16 @@ public class FirewallRulePojo extends SharedObject implements IsSerializable, Co
 
 	public void setBaseline(FirewallRulePojo baseline) {
 		this.baseline = baseline;
+	}
+
+
+	public String getVsys() {
+		return vsys;
+	}
+
+
+	public void setVsys(String vsys) {
+		this.vsys = vsys;
 	}
 
 }

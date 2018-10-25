@@ -249,9 +249,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		this.setFieldViolations(false);
 		if (editing) {
 			GWT.log("maintain VPC view initPage.  editing");
-			// hide generate grid, show maintain grid
-			generateVpcGrid.setVisible(false);
-			maintainVpcGrid.setVisible(true);
+//			// hide generate grid, show maintain grid
+//			generateVpcGrid.setVisible(false);
+//			maintainVpcGrid.setVisible(true);
 			// clear the page
 			accountIdTB.setText("");
 			accountNameTB.setText("");
@@ -279,8 +279,8 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		else {
 			GWT.log("maintain VPC view initPage.  create");
 			// hide maintain grid, show generate grid
-			maintainVpcGrid.setVisible(false);
-			generateVpcGrid.setVisible(true);
+//			maintainVpcGrid.setVisible(false);
+//			generateVpcGrid.setVisible(true);
 			vpcReqOwnerNetIdTB.setText("");
 			vpcReqAccountIdTB.setText("");
 			vpcReqSpeedTypeTB.setText("");
@@ -518,5 +518,19 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void initDataEntryPanels() {
+		if (editing) {
+			// hide generate grid, show maintain grid
+			generateVpcGrid.setVisible(false);
+			maintainVpcGrid.setVisible(true);
+		}
+		else {
+			// hide maintain grid, show generate grid
+			maintainVpcGrid.setVisible(false);
+			generateVpcGrid.setVisible(true);
+		}
 	}
 }

@@ -239,6 +239,7 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 		else {
 			getView().setFieldViolations(false);
 			getView().resetFieldStyles();
+			getView().hidePleaseWaitDialog();
 		}
 		
 		AsyncCallback<FirewallExceptionAddRequestPojo> addCb = new AsyncCallback<FirewallExceptionAddRequestPojo>() {
@@ -277,18 +278,22 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 		if (!this.isEditing) {
 			// it's a create
 			if (isAdd) {
+				getView().showPleaseWaitDialog("Generating Firewall Exception add request...");
 				VpcProvisioningService.Util.getInstance().generateFirewallExceptionAddRequest(addRequisition, addCb);
 			}
 			else {
+				getView().showPleaseWaitDialog("Generating Firewall Exception remove request...");
 				VpcProvisioningService.Util.getInstance().generateFirewallExceptionRemoveRequest(removeRequisition, removeCb);
 			}
 		}
 		else {
 			// it's an update
 			if (isAdd) {
+				getView().showPleaseWaitDialog("Updating Firewall Exception add request...");
 				VpcProvisioningService.Util.getInstance().updateFirewallExceptionAddRequest(addRequest, addCb);
 			}
 			else {
+				getView().showPleaseWaitDialog("Updating Firewall Exception remove request...");
 				VpcProvisioningService.Util.getInstance().updateFirewallExceptionRemoveRequest(removeRequest, removeCb);
 			}
 		}

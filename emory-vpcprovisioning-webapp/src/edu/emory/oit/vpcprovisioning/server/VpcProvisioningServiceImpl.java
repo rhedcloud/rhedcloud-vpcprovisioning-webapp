@@ -459,8 +459,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (this.isSessionValidForUser(user)) { 
 				info("[found user in cache] user logged in is: " + user.getEppn());
 				if (useAuthzService) {
-					// get permissions for user so they can be checked against later
-					// only do this once per session.
+					// get roles assigned to this user
 					if (refreshRoles) {
 						this.getRolesForUser(user);
 					}
@@ -552,8 +551,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				this.createSession(eppn);
 
 				if (useAuthzService) {
-					// get permissions for user so they can be checked against later
-					// only do this once per session.
+					// get roles for the user
 					if (refreshRoles) {
 						this.getRolesForUser(user);
 					}
@@ -5192,6 +5190,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setName(pojo.getName());
+		moa.setVsys(pojo.getVsys());
 		moa.setAction(pojo.getAction());
 		moa.setDescription(pojo.getDescription());
 		moa.setLogSetting(pojo.getLogSetting());
@@ -5267,6 +5266,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ParseException {
 	
 		pojo.setName(moa.getName());
+		pojo.setVsys(moa.getVsys());
 		pojo.setAction(moa.getAction());
 		pojo.setDescription(moa.getDescription());
 		pojo.setLogSetting(moa.getLogSetting());
@@ -5357,6 +5357,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<FirewallRule> moas = actionable.query(queryObject,
 					this.getFirewallRequestService());
 			for (FirewallRule moa : moas) {
+				info("FirewallRule returned from ESB: " + moa.toXmlString());
 				FirewallRulePojo pojo = new FirewallRulePojo();
 				this.populateFirewallRulePojo(moa, pojo);
 				pojos.add(pojo);
