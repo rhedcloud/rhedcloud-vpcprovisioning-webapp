@@ -1335,8 +1335,13 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 
 	@Override
 	public void initPage() {
-		//		filterTB.setText("");
-		//		filterTB.getElement().setPropertyString("placeholder", "enter VPC id");
+		if (firewallRuleTabPanel.getSelectedIndex() == 0) {
+			presenter.refreshList(userLoggedIn);
+		}
+		else {
+			presenter.refreshFirewallExceptionRequestSummaryList(userLoggedIn);
+		}
+
 	}
 	@Override
 	public void applyCentralAdminMask() {

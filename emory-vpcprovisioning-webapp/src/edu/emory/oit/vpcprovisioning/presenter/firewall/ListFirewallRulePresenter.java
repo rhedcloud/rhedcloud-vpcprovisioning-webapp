@@ -127,15 +127,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-//				setFirewallRuleList(Collections.<FirewallRulePojo> emptyList());
-//				setFirewallExceptionRequestList(Collections.<FirewallExceptionRequestPojo> emptyList());
 				getView().initPage();
-
-				// Request the firewallRule list now.
-				// this needs to be by VPC ID.  So, for now, we won't get anything but we'll make 
-				// the user enter a VPC id in order to filter the list down.
-				refreshList(userLoggedIn);
-				refreshFirewallExceptionRequestSummaryList(userLoggedIn);
 			}
 		};
 		GWT.log("getting user logged in from server...");
