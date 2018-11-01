@@ -183,7 +183,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String DIRECTORY_SERVICE_NAME = "DirectoryRequestService";
 	private static final String SERVICE_NOW_SERVICE_NAME = "ServiceNowRequestService";
 	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
-	private static final String AWS_PEOPLE_SOFT_SERVICE_NAME = "AWSPeopleSoftRequestService";
+	private static final String PEOPLE_SOFT_SERVICE_NAME = "PeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
 //	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
 //	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
@@ -208,7 +208,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool idmProducerPool = null;
 	private ProducerPool directoryProducerPool = null;
 	private ProducerPool awsProducerPool = null;
-	private ProducerPool awsPeopleSoftProducerPool = null;
+	private ProducerPool peopleSoftProducerPool = null;
 	private ProducerPool cidrProducerPool = null;
 //	private ProducerPool authzProducerPool = null;
 	private ProducerPool firewallProducerPool = null;
@@ -311,8 +311,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			AppConfigFactory acf = new SimpleAppConfigFactory();
 			setAppConfig(acf.makeAppConfig(configDocPath, appId));
 			info("AppConfig initialized...");
-			awsPeopleSoftProducerPool = (ProducerPool) getAppConfig().getObject(
-					AWS_PEOPLE_SOFT_SERVICE_NAME);
+			peopleSoftProducerPool = (ProducerPool) getAppConfig().getObject(
+					PEOPLE_SOFT_SERVICE_NAME);
 			identityServiceProducerPool = (ProducerPool) getAppConfig().getObject(
 					IDENTITY_SERVICE_NAME);
 			awsProducerPool = (ProducerPool) getAppConfig().getObject(
@@ -2028,8 +2028,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
-	private RequestService getAWSPeopleSoftRequestService() throws JMSException {
-		RequestService reqSvc = (RequestService) awsPeopleSoftProducerPool.getProducer();
+	private RequestService getPeopleSoftRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) peopleSoftProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
@@ -5084,7 +5084,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			@SuppressWarnings("unchecked")
 			List<SPEEDCHART> moas = actionable.query(queryObject,
-					this.getAWSPeopleSoftRequestService());
+					this.getPeopleSoftRequestService());
 			info("got " + moas.size() + " speed chart objects back from ESB");
 			for (SPEEDCHART moa : moas) {
 				info("SPEEDCHART: " + moa.toXmlString());

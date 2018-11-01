@@ -271,10 +271,22 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 				vpnProfileIdTB.setText(presenter.getVpc().getVpnConnectionProfileId());
 			}
 			
-			ListFirewallRuleView listAccountView = presenter.getClientFactory().getListFirewallRuleView();
-			firewallContainer.add(listAccountView);
-			firewallContainer.setAnimationDuration(500);
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_FIREWALL_RULE, presenter.getVpc());
+			if (vpcTabPanel.getSelectedIndex() == 0) {
+				firewallContainer.clear();
+				ListFirewallRuleView listAccountView = presenter.getClientFactory().getListFirewallRuleView();
+				firewallContainer.add(listAccountView);
+				firewallContainer.setAnimationDuration(500);
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_FIREWALL_RULE, presenter.getVpc());
+			}
+			else {
+				elasticIpAssignmentContainer.clear();
+				ListElasticIpAssignmentView listEipView = presenter.getClientFactory().getListElasticIpAssignmentView();
+				MaintainElasticIpAssignmentView maintainEipView = presenter.getClientFactory().getMaintainElasticIpAssignmentView();
+				elasticIpAssignmentContainer.add(listEipView);
+				elasticIpAssignmentContainer.add(maintainEipView);
+				elasticIpAssignmentContainer.setAnimationDuration(500);
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ELASTIC_IP_ASSIGNMENT, presenter.getVpc());
+			}
 		}
 		else {
 			GWT.log("maintain VPC view initPage.  create");
