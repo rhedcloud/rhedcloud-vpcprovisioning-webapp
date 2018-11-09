@@ -11,17 +11,18 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryResultPojo;
 
 public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String provisioningId;
-	private VpncpPojo vpncp;
+	private VpnConnectionProvisioningPojo vpncp;
+	private VpnConnectionProfilePojo profile;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -43,7 +44,7 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 	/**
 	 * For editing an existing VPC.
 	 */
-	public VpncpStatusPresenter(ClientFactory clientFactory, VpncpPojo vpncp) {
+	public VpncpStatusPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpncp) {
 		this.isEditing = true;
 		this.provisioningId = vpncp.getProvisioningId();
 		this.clientFactory = clientFactory;
@@ -145,7 +146,7 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 	}
 
 	@Override
-	public VpncpPojo getVpncp() {
+	public VpnConnectionProvisioningPojo getVpncp() {
 		return this.vpncp;
 	}
 
@@ -173,13 +174,13 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 		return clientFactory;
 	}
 
-	public void setVpncp(VpncpPojo vpncp) {
+	public void setVpncp(VpnConnectionProvisioningPojo vpncp) {
 		this.vpncp = vpncp;
 	}
 
 	@Override
 	public void refreshProvisioningStatusForId(final String provisioningId) {
-		AsyncCallback<VpncpQueryResultPojo> callback = new AsyncCallback<VpncpQueryResultPojo>() {
+		AsyncCallback<VpnConnectionProvisioningQueryResultPojo> callback = new AsyncCallback<VpnConnectionProvisioningQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().stopTimer();
@@ -192,7 +193,7 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 			}
 
 			@Override
-			public void onSuccess(VpncpQueryResultPojo result) {
+			public void onSuccess(VpnConnectionProvisioningQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + 
 						" Vpncps for the filter: " + result.getFilterUsed());
 				
@@ -235,8 +236,16 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 
 		GWT.log("[PRESENTER] refreshing Vpncp object for provisioning id:  " + provisioningId);
         getView().showPleaseWaitDialog("Retrieving VPCs for the provisioning id: " + provisioningId);
-		VpncpQueryFilterPojo filter = new VpncpQueryFilterPojo();
+		VpnConnectionProvisioningQueryFilterPojo filter = new VpnConnectionProvisioningQueryFilterPojo();
 		filter.setProvisioningId(provisioningId);
 		VpcProvisioningService.Util.getInstance().getVpncpsForFilter(filter, callback);
+	}
+
+	public VpnConnectionProfilePojo getProfile() {
+		return profile;
+	}
+
+	public void setProfile(VpnConnectionProfilePojo profile) {
+		this.profile = profile;
 	}
 }

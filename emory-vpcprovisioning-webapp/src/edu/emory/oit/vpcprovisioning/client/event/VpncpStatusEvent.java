@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.event;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 
 public class VpncpStatusEvent extends GwtEvent<VpncpStatusEvent.Handler> {
 	  /**
@@ -18,9 +18,9 @@ public class VpncpStatusEvent extends GwtEvent<VpncpStatusEvent.Handler> {
 	   */
 	  public static final Type<VpncpStatusEvent.Handler> TYPE = new Type<VpncpStatusEvent.Handler>();
 
-	  private final VpncpPojo vpncp;
+	  private final VpnConnectionProvisioningPojo vpncp;
 
-	  public VpncpStatusEvent(VpncpPojo vpncp) {
+	  public VpncpStatusEvent(VpnConnectionProvisioningPojo vpncp) {
 	    this.vpncp = vpncp;
 	  }
 
@@ -29,7 +29,7 @@ public class VpncpStatusEvent extends GwtEvent<VpncpStatusEvent.Handler> {
 	    return TYPE;
 	  }
 
-	  public VpncpPojo getVpncp() {
+	  public VpnConnectionProvisioningPojo getVpncp() {
 	    return vpncp;
 	  }
 

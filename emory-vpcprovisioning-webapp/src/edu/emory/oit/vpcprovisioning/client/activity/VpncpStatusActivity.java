@@ -8,7 +8,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.event.VpncpStatusEvent;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class VpncpStatusActivity extends AbstractActivity {
@@ -63,7 +63,7 @@ public class VpncpStatusActivity extends AbstractActivity {
 		container.setWidget(presenter);
 	}
 
-	private PresentsWidgets startShowStatus(VpncpPojo vpcp) {
+	private PresentsWidgets startShowStatus(VpnConnectionProvisioningPojo vpcp) {
 		PresentsWidgets rtn = new VpncpStatusPresenter(clientFactory, vpcp);
 		rtn.start(childEventBus);
 		return rtn;

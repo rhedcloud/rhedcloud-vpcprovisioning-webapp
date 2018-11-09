@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
+import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class TunnelProfilePojo extends SharedObject implements IsSerializable {
@@ -17,6 +18,13 @@ public class TunnelProfilePojo extends SharedObject implements IsSerializable {
 	public TunnelProfilePojo() {
 		// TODO Auto-generated constructor stub
 	}
+
+	public static final ProvidesKey<TunnelProfilePojo> KEY_PROVIDER = new ProvidesKey<TunnelProfilePojo>() {
+		@Override
+		public Object getKey(TunnelProfilePojo item) {
+			return item == null ? null : item.getTunnelId();
+		}
+	};
 
 	@Override
 	public String toString() {

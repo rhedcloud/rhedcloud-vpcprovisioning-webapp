@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 
 public class VpncpStatusPlace extends Place {
 	/**
@@ -44,7 +44,7 @@ public class VpncpStatusPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static VpncpStatusPlace createVpncpStatusPlace(VpncpPojo vpncp) {
+	public static VpncpStatusPlace createVpncpStatusPlace(VpnConnectionProvisioningPojo vpncp) {
 		return new VpncpStatusPlace(vpncp.getProvisioningId(), vpncp);
 	}
 
@@ -61,7 +61,7 @@ public class VpncpStatusPlace extends Place {
 		return singleton;
 	}
 
-	private final VpncpPojo vpncp;
+	private final VpnConnectionProvisioningPojo vpncp;
 	private final String provisioningId;
 	public String getProvisioningId() {
 		return provisioningId;
@@ -73,7 +73,7 @@ public class VpncpStatusPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private VpncpStatusPlace(String provisioningId, VpncpPojo vpncp) {
+	private VpncpStatusPlace(String provisioningId, VpnConnectionProvisioningPojo vpncp) {
 		this.provisioningId = provisioningId;
 		this.vpncp = vpncp;
 	}
@@ -83,7 +83,7 @@ public class VpncpStatusPlace extends Place {
 	 * 
 	 * @return the caseRecord to edit, or null if not available
 	 */
-	public VpncpPojo getVpncp() {
+	public VpnConnectionProvisioningPojo getVpncp() {
 		return vpncp;
 	}
 }

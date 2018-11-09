@@ -18,6 +18,7 @@ public class Constants implements IsSerializable {
 	public static final String NOT_APPLICABLE = "N/A";
 	public static final String YES = "Yes";
 	public static final String NO = "No";
+	public static final String TUNNEL_AVAILABLE = "AVAILABLE";
 
 	// these will need to be specific for this app's functionality
 	
@@ -155,8 +156,13 @@ public class Constants implements IsSerializable {
 	public static final String MOA_VPN_CONNECTION_PROFILE = "VpnConnectionProfile.v1_0";
 	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC = "VpnConnectionProfileAssignmentQuerySpecification.v1_0";
 	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT = "VpnConnectionProfileAssignment.v1_0";
-	public static final String MOA_VPCNP_QUERY_SPEC = "VpnConnectionProvisioningQuerySpecification.v1_0";
-	public static final String MOA_VPCNP = "VpnConnectionProvisioning.v1_0";
+	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_GENERATE = "VpnConnectionProfileAssignment.Generate.v1_0";
+	public static final String MOA_VPNCP_QUERY_SPEC = "VpnConnectionProvisioningQuerySpecification.v1_0";
+	public static final String MOA_VPNCP = "VpnConnectionProvisioning.v1_0";
+	public static final String MOA_VPNCP_GENERATE = "VpnConnectionProvisioning.Generate.v1_0";
+	public static final String MOA_VPNC_DEPROVISIONING = "VpnConnectionDeprovisioning.v1_0";
+	public static final String MOA_VPN_CONNECTION_REQUISITION = "VpnConnectionRequisition.v1_0";
+	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION = "VpnConnectionProfileAssignmentRequisition.v1_0";
 
 	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST = "FirewallExceptionAddRequest.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST_QUERY_SPEC = "FirewallExceptionAddRequestQuerySpecification.v1_0";

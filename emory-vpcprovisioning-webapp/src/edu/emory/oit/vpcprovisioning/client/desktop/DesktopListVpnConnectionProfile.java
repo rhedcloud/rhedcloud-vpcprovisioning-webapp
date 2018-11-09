@@ -61,19 +61,15 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	/*** FIELDS ***/
 	@UiField
 	SimplePager listPager;
-	@UiField
-	Button assignButton;
-	@UiField
-	Button createButton;
-	@UiField
-	Button actionsButton;
+//	@UiField Button assignButton;
+	@UiField Button createButton;
+	@UiField Button provisionButton;
+	@UiField Button actionsButton;
 	@UiField(provided = true)
 	CellTable<VpnConnectionProfileSummaryPojo> listTable = new CellTable<VpnConnectionProfileSummaryPojo>(15,
 			(CellTable.Resources) GWT.create(MyCellTableResources.class));
-	@UiField
-	HorizontalPanel pleaseWaitPanel;
-	@UiField
-	HTML pleaseWaitHTML;
+	@UiField HorizontalPanel pleaseWaitPanel;
+	@UiField HTML pleaseWaitHTML;
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox filterTB;
@@ -136,15 +132,20 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		presenter.refreshList(userLoggedIn);
 	}
 
-	@UiHandler("assignButton")
-	void assignButtonClicked(ClickEvent e) {
-		showMessageToUser("This feature is not yet implemented.");
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
-	}
+//	@UiHandler("assignButton")
+//	void assignButtonClicked(ClickEvent e) {
+//		showMessageToUser("This feature is not yet implemented.");
+////		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
+//	}
 
 	@UiHandler("createButton")
 	void createButtonClicked(ClickEvent e) {
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
+	}
+	
+	@UiHandler("provisionButton")
+	void provisionButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING);
 	}
 
 	@UiHandler("actionsButton")
@@ -154,7 +155,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(4, 1);
+		Grid grid = new Grid(3, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -243,41 +244,44 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		});
 		grid.setWidget(1, 0, deleteAnchor);
 
-		Anchor provisionAnchor = new Anchor("Provisiong VPN Connection");
-		provisionAnchor.addStyleName("productAnchor");
-		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		provisionAnchor.setTitle("Provision selected profile");
-		provisionAnchor.ensureDebugId(provisionAnchor.getText());
-		provisionAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				if (selectionModel.getSelectedSet().size() == 0) {
-					showMessageToUser("Please select an item from the list");
-					return;
-				}
-				if (selectionModel.getSelectedSet().size() > 1) {
-					showMessageToUser("Please select one Profile to provision");
-					return;
-				}
-				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-				
-				VpnConnectionProfileSummaryPojo m = nIter.next();
-				if (m != null) {
-					if (userLoggedIn.isNetworkAdmin()) {
-						showMessageToUser("This feature is not yet implemented.");
-	//					ActionEvent.fire(presenter.getEventBus(), ActionNames.PROVISION_VPN_CONNECTION, m.getProfile());
-					}
-					else {
-						showMessageToUser("You are not authorized to perform this action.");
-					}
-				}
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
-			}
-		});
-		grid.setWidget(2, 0, provisionAnchor);
+//		Anchor provisionAnchor = new Anchor("Provisiong VPN Connection");
+//		provisionAnchor.addStyleName("productAnchor");
+//		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		provisionAnchor.setTitle("Provision selected profile");
+//		provisionAnchor.ensureDebugId(provisionAnchor.getText());
+//		provisionAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				if (selectionModel.getSelectedSet().size() == 0) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				if (selectionModel.getSelectedSet().size() > 1) {
+//					showMessageToUser("Please select one Profile to provision");
+//					return;
+//				}
+//				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+//				
+//				VpnConnectionProfileSummaryPojo m = nIter.next();
+//				if (m != null) {
+//					if (userLoggedIn.isNetworkAdmin()) {
+//						if (m.getAssignment() != null) {
+//							showMessageToUser("You cannot provision a VPN that has an assignment associated to it.");
+//							return;
+//						}
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m.getProfile());
+//					}
+//					else {
+//						showMessageToUser("You are not authorized to perform this action.");
+//					}
+//				}
+//				else {
+//					showMessageToUser("Please select an item from the list");
+//				}
+//			}
+//		});
+//		grid.setWidget(2, 0, provisionAnchor);
 
 		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
 		deprovisionAnchor.addStyleName("productAnchor");
@@ -313,7 +317,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				}
 			}
 		});
-		grid.setWidget(3, 0, deprovisionAnchor);
+		grid.setWidget(2, 0, deprovisionAnchor);
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
@@ -347,28 +351,28 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	public void applyNetworkAdminMask() {
 		createButton.setEnabled(true);
 		actionsButton.setEnabled(true);
-		assignButton.setEnabled(true);
+//		assignButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
 		createButton.setEnabled(false);
 		actionsButton.setEnabled(true);
-		assignButton.setEnabled(false);
+//		assignButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
 		createButton.setEnabled(false);
-		actionsButton.setEnabled(false);
-		assignButton.setEnabled(false);
+		actionsButton.setEnabled(true);
+//		assignButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		createButton.setEnabled(false);
-		actionsButton.setEnabled(false);
-		assignButton.setEnabled(false);
+		actionsButton.setEnabled(true);
+//		assignButton.setEnabled(false);
 	}
 
 	@Override

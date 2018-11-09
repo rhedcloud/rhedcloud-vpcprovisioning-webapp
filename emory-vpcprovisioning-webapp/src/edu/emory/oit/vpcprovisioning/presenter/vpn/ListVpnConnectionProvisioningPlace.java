@@ -6,7 +6,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.VpncpQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
 
 public class ListVpnConnectionProvisioningPlace extends Place {
 
@@ -27,7 +27,7 @@ public class ListVpnConnectionProvisioningPlace extends Place {
 	}
 
 	private final boolean listStale;
-	VpncpQueryFilterPojo filter;
+	VpnConnectionProvisioningQueryFilterPojo filter;
 
 	/**
 	 * Construct a new {@link case recordListPlace}.
@@ -48,11 +48,11 @@ public class ListVpnConnectionProvisioningPlace extends Place {
 		return listStale;
 	}
 
-	public VpncpQueryFilterPojo getFilter() {
+	public VpnConnectionProvisioningQueryFilterPojo getFilter() {
 		return filter;
 	}
 
-	public void setFilter(VpncpQueryFilterPojo filter) {
+	public void setFilter(VpnConnectionProvisioningQueryFilterPojo filter) {
 		this.filter = filter;
 	}
 }

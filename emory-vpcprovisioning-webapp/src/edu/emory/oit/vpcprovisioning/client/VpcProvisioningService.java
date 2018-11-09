@@ -261,10 +261,12 @@ public interface VpcProvisioningService extends RemoteService {
 	VpnConnectionProfileAssignmentQueryResultPojo getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException;
 
 	// VPNCP
-	VpncpQueryResultPojo getVpncpsForFilter(VpncpQueryFilterPojo filter) throws RpcException;
+	VpnConnectionProvisioningQueryResultPojo getVpncpsForFilter(VpnConnectionProvisioningQueryFilterPojo filter) throws RpcException;
 //	void deleteVpncp(VpnConnectionProvisioningPojo vpncp) throws RpcException;
-//	VpnConnectionProvisioningPojo generateVpncp(VpncpRequisitionPojo vpcRequisition) throws RpcException;
+	VpnConnectionProvisioningPojo generateVpncp(VpnConnectionRequisitionPojo vpncpRequisition) throws RpcException;
+	VpnConnectionDeprovisioningPojo generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition) throws RpcException;
 //	VpcpPojo updateVpcp(VpcpPojo vpc) throws RpcException;
+	VpnConnectionProfileAssignmentPojo generateVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentRequisitionPojo requisition) throws RpcException;
 	
 	// TKI Client Download
 //	AmazonS3AccessWrapperPojo getTkiClientS3AccessWrapper() throws RpcException;

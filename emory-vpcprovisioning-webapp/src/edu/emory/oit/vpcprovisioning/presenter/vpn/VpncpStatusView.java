@@ -7,10 +7,10 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
-public interface VpncpStatusView extends Editor<VpncpPojo>, IsWidget, View {
+public interface VpncpStatusView extends Editor<VpnConnectionProvisioningPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
@@ -24,7 +24,7 @@ public interface VpncpStatusView extends Editor<VpncpPojo>, IsWidget, View {
 		 * generate a new Vpncp or save the current Vpncp based on the values in the
 		 * inputs.
 		 */
-		VpncpPojo getVpncp();
+		VpnConnectionProvisioningPojo getVpncp();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void refreshProvisioningStatusForId(String provisioningId);

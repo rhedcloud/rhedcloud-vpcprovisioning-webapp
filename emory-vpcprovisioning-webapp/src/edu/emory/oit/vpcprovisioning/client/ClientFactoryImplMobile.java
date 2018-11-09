@@ -54,6 +54,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 
 public class ClientFactoryImplMobile implements ClientFactory {
@@ -108,6 +109,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainVpnConnectionProfileView maintainVpnConnectionProfileView;
 	private StaticNatProvisioningStatusView staticNatProvisioningStatusView;
 	private MaintainVpnConnectionProfileAssignmentView maintainVpnConnectionProfileAssignmentView;
+	private MaintainVpnConnectionProvisioningView maintainVpnConnectionProvisioningView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -373,6 +375,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public VpncpStatusView getVpncpStatusView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainVpnConnectionProvisioningView getMaintainVpnConnectionProvisioningView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

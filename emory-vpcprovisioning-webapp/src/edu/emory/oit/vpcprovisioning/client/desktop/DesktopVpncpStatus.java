@@ -70,7 +70,7 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 			@Override
 			public void onClick(ClickEvent event) {
 				startTimer = false;
-//				presenter.refreshProvisioningStatusForId(presenter.getVpncp().getProvisioningId());
+				presenter.refreshProvisioningStatusForId(presenter.getVpncp().getProvisioningId());
 			}
 		}, ClickEvent.getType());
 	}

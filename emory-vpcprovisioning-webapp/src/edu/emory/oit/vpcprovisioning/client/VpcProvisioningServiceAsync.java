@@ -239,7 +239,10 @@ public interface VpcProvisioningServiceAsync {
 	void getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter, AsyncCallback<VpnConnectionProfileAssignmentQueryResultPojo> callback);
 
 	// vpncp
-	void getVpncpsForFilter(VpncpQueryFilterPojo filter, AsyncCallback<VpncpQueryResultPojo> callback);
+	void getVpncpsForFilter(VpnConnectionProvisioningQueryFilterPojo filter, AsyncCallback<VpnConnectionProvisioningQueryResultPojo> callback);
+	void generateVpncp(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionProvisioningPojo> callback);
+	void generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
+	void generateVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentRequisitionPojo requisition, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 
 //	void getTkiClientS3AccessWrapper(AsyncCallback<AmazonS3AccessWrapperPojo> callback);
 }

@@ -51,6 +51,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfile;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfileAssignment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProvisioning;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopStaticNatProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
@@ -98,6 +99,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 
 public class ClientFactoryImplDesktop implements ClientFactory {
@@ -158,6 +160,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainVpnConnectionProfileAssignmentView maintainVpnConnectionProfileAssignmentView;
 	private ListVpnConnectionProvisioningView listVpnConnectionProvisioningView;
 	private VpncpStatusView vpncpStatusView;
+	private MaintainVpnConnectionProvisioningView maintainVpnConnectionProvisioningView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -667,5 +670,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
     protected VpncpStatusView createVpncpStatusView() {
         return new DesktopVpncpStatus();
+    }
+	@Override
+	public MaintainVpnConnectionProvisioningView getMaintainVpnConnectionProvisioningView() {
+        if (maintainVpnConnectionProvisioningView == null) {
+        	maintainVpnConnectionProvisioningView = createMaintainVpnConnectionProvisioningView();
+        }
+        return maintainVpnConnectionProvisioningView;
+	}
+    protected MaintainVpnConnectionProvisioningView createMaintainVpnConnectionProvisioningView() {
+        return new DesktopMaintainVpnConnectionProvisioning();
     }
 }

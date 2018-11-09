@@ -183,4 +183,8 @@ public interface ActionNames {
 	final String MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT = "maintainVpnConnectionProfileAssignment";
 	final String SHOW_VPNCP_STATUS = "showVpncpStatus";
 	final String GO_HOME_VPNCP = "goHomeVpncp";
+	final String VPNCP_GENERATED = "vpncpGenerated";
+	final String VPNCP_SAVED = "vpncpSaved";
+	final String GENERATE_VPN_CONNECTION_PROVISIONING = "generateVpnConnectionProvisioning";
+	final String VPNCDP_GENERATED = "vpncdpGenerated";
 }

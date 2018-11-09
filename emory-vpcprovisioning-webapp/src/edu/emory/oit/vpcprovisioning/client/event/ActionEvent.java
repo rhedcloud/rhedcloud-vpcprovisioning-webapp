@@ -54,10 +54,11 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 
 
 /**
@@ -110,7 +111,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private VpnConnectionProfilePojo vpnConnectionProfile;
 	private VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment;
 	private VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary;
-	private VpncpPojo vpncp;
+	private VpnConnectionProvisioningPojo vpncp;
+	private VpnConnectionDeprovisioningPojo vpncdp;
 	private FirewallExceptionAddRequestPojo fwea_request;
 	private FirewallExceptionRemoveRequestPojo fwer_request;
 	private FirewallExceptionRequestSummaryPojo fwer_summary;
@@ -346,8 +348,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(profileAssignment), sourceName);
 	}
 
-	public static void fire(EventBus eventBus, String sourceName, VpncpPojo m) {
+	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProvisioningPojo m) {
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, VpnConnectionDeprovisioningPojo vpncdp) {
+		eventBus.fireEventFromSource(new ActionEvent(vpncdp), sourceName);
 	}
 
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
@@ -603,8 +609,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.vpnConnectionProfileSummary = profileSummary;
 	}
 
-	public ActionEvent(VpncpPojo m) {
+	public ActionEvent(VpnConnectionProvisioningPojo m) {
 		this.vpncp = m;
+	}
+
+	public ActionEvent(VpnConnectionDeprovisioningPojo vpncdp2) {
+		this.vpncdp = vpncdp2;
 	}
 
 	public ActionEvent(FirewallExceptionAddRequestPojo result, VpcPojo vpc2) {
@@ -886,11 +896,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.vpnConnectionProfileSummary = vpnConnectionProfileSummary;
 	}
 
-	public VpncpPojo getVpncp() {
+	public VpnConnectionProvisioningPojo getVpncp() {
 		return vpncp;
 	}
 
-	public void setVpncp(VpncpPojo vpncp) {
+	public void setVpncp(VpnConnectionProvisioningPojo vpncp) {
 		this.vpncp = vpncp;
 	}
 
@@ -924,6 +934,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setFirewallExceptionAddRequest(boolean firewallExceptionAddRequest) {
 		this.firewallExceptionAddRequest = firewallExceptionAddRequest;
+	}
+
+	public VpnConnectionDeprovisioningPojo getVpncdp() {
+		return vpncdp;
+	}
+
+	public void setVpncdp(VpnConnectionDeprovisioningPojo vpncdp) {
+		this.vpncdp = vpncdp;
 	}
 
 }

@@ -8,8 +8,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListVpnConnectionProvisioningView extends IsWidget, View {
@@ -22,20 +22,21 @@ public interface ListVpnConnectionProvisioningView extends IsWidget, View {
 		 * 
 		 * @param selected the selected caseRecord
 		 */
-		void selectVpnConnectionProvisioning(VpncpPojo selected);
+		void selectVpnConnectionProvisioning(VpnConnectionProvisioningPojo selected);
 		public EventBus getEventBus();
-		public VpncpQueryFilterPojo getFilter();
+		public VpnConnectionProvisioningQueryFilterPojo getFilter();
 		public ClientFactory getClientFactory();
 		/**
 		 * Delete the current Vpc or cancel the creation of a Vpc.
 		 */
-		void deleteVpnConnectionProvisioning(VpncpPojo vpcp);
+		void deleteVpnConnectionProvisioning(VpnConnectionProvisioningPojo vpcp);
 		public void logMessageOnServer(final String message);
 		void refreshList(final UserAccountPojo user);
 		
 		void refreshListWithMaximumVpnConnectionProvisionings(UserAccountPojo user);
 		void refreshListWithAllVpnConnectionProvisionings(UserAccountPojo user);
 		void filterByProvisioningId(boolean includeAllVpnConnectionProvisionings, String provisioningId);
+		void deprovisionVpnConnection(VpnConnectionProvisioningPojo provisionedVpnConnection);
 	}
 
 	/**
@@ -54,10 +55,10 @@ public interface ListVpnConnectionProvisioningView extends IsWidget, View {
 	 * 
 	 * @param cidrs the list of caseRecords
 	 */
-	void setVpnConnectionProvisionings(List<VpncpPojo> vpcps);
+	void setVpnConnectionProvisionings(List<VpnConnectionProvisioningPojo> vpcps);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void removeVpnConnectionProvisioningFromView(VpncpPojo vpcp);
+	void removeVpnConnectionProvisioningFromView(VpnConnectionProvisioningPojo vpcp);
 	
 	boolean viewAllVpnConnectionProvisionings();
 	void initPage();

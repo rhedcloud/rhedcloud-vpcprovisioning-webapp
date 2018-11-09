@@ -64,7 +64,7 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
-						<c:CellTable width="100%" ui:field="listTable"  title="Existing CIDRs"/>
+						<c:CellTable width="100%" ui:field="listTable"  title="Existing VPN Connection Provisioning objects"/>
 					</g:customCell>
 				</g:row>
 				<g:row>

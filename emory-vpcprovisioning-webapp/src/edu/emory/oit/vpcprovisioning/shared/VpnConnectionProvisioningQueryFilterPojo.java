@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.shared;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
-public class VpncpQueryFilterPojo extends SharedObject implements IsSerializable {
+public class VpnConnectionProvisioningQueryFilterPojo extends SharedObject implements IsSerializable {
 
 	/*
 <!ELEMENT VpnConnectionProvisioningQuerySpecification (Comparison*, QueryLanguage?, ProvisioningId?, Type?, CreateUser?, LastUpdateUser?)>
@@ -15,7 +15,7 @@ public class VpncpQueryFilterPojo extends SharedObject implements IsSerializable
 	int maxRows;
 	String searchString;
 
-	public VpncpQueryFilterPojo() {
+	public VpnConnectionProvisioningQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
 	}
 

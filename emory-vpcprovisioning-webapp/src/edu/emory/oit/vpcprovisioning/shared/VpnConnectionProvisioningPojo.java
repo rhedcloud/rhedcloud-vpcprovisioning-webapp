@@ -7,16 +7,16 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
-public class VpncpPojo extends SharedObject implements IsSerializable, Comparable<VpncpPojo> {
+public class VpnConnectionProvisioningPojo extends SharedObject implements IsSerializable, Comparable<VpnConnectionProvisioningPojo> {
 	
 	String provisioningId;
-	VpncpRequisitionPojo requisition;
+	VpnConnectionRequisitionPojo requisition;
 	String status;
 	String provisioningResult;
 	String actualTime;
 	String anticipatedTime;
 	List<ProvisioningStepPojo> provisioningSteps = new java.util.ArrayList<ProvisioningStepPojo>();	
-	VpncpPojo baseline;
+	VpnConnectionProvisioningPojo baseline;
 	
 	public int getTotalStepCount() {
 		return provisioningSteps.size();
@@ -36,15 +36,15 @@ public class VpncpPojo extends SharedObject implements IsSerializable, Comparabl
 		return completeStepCount;
 	}
 	
-	public static final ProvidesKey<VpncpPojo> KEY_PROVIDER = new ProvidesKey<VpncpPojo>() {
+	public static final ProvidesKey<VpnConnectionProvisioningPojo> KEY_PROVIDER = new ProvidesKey<VpnConnectionProvisioningPojo>() {
 		@Override
-		public Object getKey(VpncpPojo item) {
+		public Object getKey(VpnConnectionProvisioningPojo item) {
 			return item == null ? null : item.getProvisioningId();
 		}
 	};
 
 	@Override
-	public int compareTo(VpncpPojo o) {
+	public int compareTo(VpnConnectionProvisioningPojo o) {
 		Date c1 = o.getCreateTime();
 		Date c2 = this.getCreateTime();
 		if (c1 == null || c2 == null) {
@@ -53,7 +53,7 @@ public class VpncpPojo extends SharedObject implements IsSerializable, Comparabl
 		return c1.compareTo(c2);
 	}
 
-	public VpncpPojo() {
+	public VpnConnectionProvisioningPojo() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -105,19 +105,19 @@ public class VpncpPojo extends SharedObject implements IsSerializable, Comparabl
 		this.provisioningSteps = provisioningSteps;
 	}
 
-	public VpncpPojo getBaseline() {
+	public VpnConnectionProvisioningPojo getBaseline() {
 		return baseline;
 	}
 
-	public void setBaseline(VpncpPojo baseline) {
+	public void setBaseline(VpnConnectionProvisioningPojo baseline) {
 		this.baseline = baseline;
 	}
 
-	public VpncpRequisitionPojo getRequisition() {
+	public VpnConnectionRequisitionPojo getRequisition() {
 		return requisition;
 	}
 
-	public void setRequisition(VpncpRequisitionPojo requisition) {
+	public void setRequisition(VpnConnectionRequisitionPojo requisition) {
 		this.requisition = requisition;
 	}
 

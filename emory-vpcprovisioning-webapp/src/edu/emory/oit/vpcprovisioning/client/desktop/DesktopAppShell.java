@@ -89,6 +89,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
@@ -180,11 +182,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				mainTabPanel.selectTab(7);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION + ":")) {
-				GWT.log("Need to go to Static Nat tab");
+				GWT.log("Need to go to VPN Connection tab");
 				mainTabPanel.selectTab(8);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION_PROFILE + ":")) {
-				GWT.log("Need to go to Static Nat tab");
+				GWT.log("Need to go to VPN Profile tab");
 				mainTabPanel.selectTab(9);
 			}
 			else {
@@ -532,9 +534,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			firstVpnConnectionProfileContentWidget = true;
 			vpnConnectionProfileContentContainer.clear();
 			ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
-//			StaticNatStatusView snpStatusView = clientFactory.getStaticNatStatusView();
+			MaintainVpnConnectionProvisioningView maintainVpncpView = clientFactory.getMaintainVpnConnectionProvisioningView();
+			VpncpStatusView vpncpStatusView2 = clientFactory.getVpncpStatusView();
 			vpnConnectionProfileContentContainer.add(listVpnConnectionProfileView);
-//			staticNatContentContainer.add(snpStatusView);
+			vpnConnectionProfileContentContainer.add(maintainVpncpView);
+			vpnConnectionProfileContentContainer.add(vpncpStatusView2);
 			vpnConnectionProfileContentContainer.setAnimationDuration(500);
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
 			break;
@@ -644,7 +648,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		if (w instanceof ListVpnConnectionProfilePresenter || 
-			w instanceof MaintainVpnConnectionProfilePresenter) {
+			w instanceof MaintainVpnConnectionProfilePresenter || 
+			w instanceof MaintainVpnConnectionProvisioningPresenter) {
 			GWT.log("It's the vpn connection profile presenter...");
 			vpnConnectionProfileContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -654,10 +659,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
+		if (mainTabPanel.getSelectedIndex() == 9 && w instanceof VpncpStatusPresenter) {
+			vpnConnectionProfileContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstVpnConnectionProfileContentWidget) {
+				firstVpnConnectionProfileContentWidget = false;
+				vpnConnectionProfileContentContainer.animate(0);
+			}
+			return;
+		}
 		
-		if (w instanceof ListVpnConnectionProvisioningPresenter || 
-			w instanceof VpncpStatusPresenter) {
+		if (w instanceof ListVpnConnectionProvisioningPresenter) {
 			GWT.log("It's the vpn connection provisioning presenter...");
+			vpnConnectionContentContainer.setWidget(w);
+			// Do not animate the first time we show a widget.
+			if (firstVpnConnectionContentWidget) {
+				firstVpnConnectionContentWidget = false;
+				vpnConnectionContentContainer.animate(0);
+			}
+			return;
+		}
+		
+		if (mainTabPanel.getSelectedIndex() == 8 && w instanceof VpncpStatusPresenter) {
 			vpnConnectionContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstVpnConnectionContentWidget) {

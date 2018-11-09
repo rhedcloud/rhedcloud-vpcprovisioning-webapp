@@ -287,7 +287,19 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 
 			@Override
 			public String getValue(RoleAssignmentSummaryPojo object) {
-				return object.getDirectoryPerson().getFullName();
+				if (object.getDirectoryPerson() != null) {
+					if (object.getDirectoryPerson().getFullName() == null || 
+						object.getDirectoryPerson().getFullName().length() == 0) {
+
+						return "Unknown name.  PPID is: " + object.getDirectoryPerson().getKey();
+					}
+					else {
+						return object.getDirectoryPerson().getFullName();
+					}
+				}
+				else {
+					return "Unknown (null Directory Person)";
+				}
 			}
 		};
 		adminNameColumn.setSortable(true);

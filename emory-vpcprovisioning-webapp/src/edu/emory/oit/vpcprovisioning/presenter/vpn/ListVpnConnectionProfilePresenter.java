@@ -14,7 +14,6 @@ import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.VpnConnectionProfileListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
@@ -84,6 +83,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
+		getView().showPleaseWaitPanel("Retrieving VPN Connection Profiles...please wait (potentially long running task)");
 		getView().showPleaseWaitDialog("Retrieving VPN Connection Profiles from the Network OPS service...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {

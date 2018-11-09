@@ -79,6 +79,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePlace
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfileAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
@@ -1697,10 +1698,23 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpnConnectionProfile()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.VPNCP_GENERATED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncp()));
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.SHOW_VPNCP_STATUS, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-//				shell.showMessageToUser("This feature is not yet implemented...");
 				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncp()));
 			}
 		});

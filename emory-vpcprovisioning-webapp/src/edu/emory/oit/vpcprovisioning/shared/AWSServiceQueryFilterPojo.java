@@ -4,6 +4,17 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
 public class AWSServiceQueryFilterPojo extends SharedObject implements IsSerializable, QueryFilter {
+	/*
+	ServiceId?, 
+	AwsServiceCode?, 
+	AwsServiceName?, 
+	Status?, 
+	Category*, 
+	ConsoleCategory*, 
+	AwsHipaaEligible?, 
+	EmoryHipaaEligible?, 
+	Tag*	 
+	 */
 	String serviceId;
 	String serviceCode;
 	String status;

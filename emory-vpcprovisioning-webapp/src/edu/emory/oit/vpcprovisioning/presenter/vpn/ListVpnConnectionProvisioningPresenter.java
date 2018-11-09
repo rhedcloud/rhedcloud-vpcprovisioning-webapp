@@ -11,13 +11,16 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.VpncpListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpncpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryResultPojo;
 
 public class ListVpnConnectionProvisioningPresenter extends PresenterBase implements ListVpnConnectionProvisioningView.Presenter {
 	private static final Logger log = Logger.getLogger(ListVpcPresenter.class.getName());
@@ -36,11 +39,11 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 
 	private EventBus eventBus;
 	
-	VpncpQueryFilterPojo filter;
+	VpnConnectionProvisioningQueryFilterPojo filter;
 	UserAccountPojo userLoggedIn;
 
 
-	public ListVpnConnectionProvisioningPresenter(ClientFactory clientFactory, boolean clearList, VpncpQueryFilterPojo filter) {
+	public ListVpnConnectionProvisioningPresenter(ClientFactory clientFactory, boolean clearList, VpnConnectionProvisioningQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
 		clientFactory.getListVpnConnectionProvisioningView().setPresenter(this);
@@ -122,7 +125,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	 */
 	public void refreshList(final UserAccountPojo user) {
 		// use RPC to get all Vpcs for the current filter being used
-		AsyncCallback<VpncpQueryResultPojo> callback = new AsyncCallback<VpncpQueryResultPojo>() {
+		AsyncCallback<VpnConnectionProvisioningQueryResultPojo> callback = new AsyncCallback<VpnConnectionProvisioningQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
@@ -134,7 +137,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 			}
 
 			@Override
-			public void onSuccess(VpncpQueryResultPojo result) {
+			public void onSuccess(VpnConnectionProvisioningQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " VpnConnectionProvisionings for " + result.getFilterUsed());
 				setVpnConnectionProvisioningList(result.getResults());
 				// apply authorization mask
@@ -161,7 +164,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
         getView().hidePleaseWaitDialog();
 		getView().showPleaseWaitDialog("Retrieving the default maximum list of VPNP objects from the Network OPs service...");
 
-		filter = new VpncpQueryFilterPojo();
+		filter = new VpnConnectionProvisioningQueryFilterPojo();
 		filter.setAllVpncps(false);
 		filter.setDefaultMaxVpncps(true);
 		
@@ -173,7 +176,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
         getView().hidePleaseWaitDialog();
 		getView().showPleaseWaitDialog("Retrieving ALL VPCP objects from the AWS Account service (this could take a while)...");
 
-		filter = new VpncpQueryFilterPojo();
+		filter = new VpnConnectionProvisioningQueryFilterPojo();
 		filter.setAllVpncps(true);
 		filter.setDefaultMaxVpncps(false);
 		
@@ -192,7 +195,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
         getView().hidePleaseWaitDialog();
 		getView().showPleaseWaitDialog("Filtering list by provisioning id " + provisioningId + "...");
 		
-		filter = new VpncpQueryFilterPojo();
+		filter = new VpnConnectionProvisioningQueryFilterPojo();
 		filter.setAllVpncps(false);
 		filter.setDefaultMaxVpncps(false);
 		filter.setProvisioningId(provisioningId);
@@ -203,7 +206,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	/**
 	 * Set the list of Vpcs.
 	 */
-	private void setVpnConnectionProvisioningList(List<VpncpPojo> vpcps) {
+	private void setVpnConnectionProvisioningList(List<VpnConnectionProvisioningPojo> vpcps) {
 		getView().setVpnConnectionProvisionings(vpcps);
 		eventBus.fireEventFromSource(new VpncpListUpdateEvent(vpcps), this);
 	}
@@ -226,7 +229,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	}
 
 	@Override
-	public void selectVpnConnectionProvisioning(VpncpPojo selected) {
+	public void selectVpnConnectionProvisioning(VpnConnectionProvisioningPojo selected) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -239,11 +242,11 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 		this.eventBus = eventBus;
 	}
 
-	public VpncpQueryFilterPojo getFilter() {
+	public VpnConnectionProvisioningQueryFilterPojo getFilter() {
 		return filter;
 	}
 
-	public void setFilter(VpncpQueryFilterPojo filter) {
+	public void setFilter(VpnConnectionProvisioningQueryFilterPojo filter) {
 		this.filter = filter;
 	}
 
@@ -252,7 +255,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	}
 
 	@Override
-	public void deleteVpnConnectionProvisioning(final VpncpPojo vpcp) {
+	public void deleteVpnConnectionProvisioning(final VpnConnectionProvisioningPojo vpcp) {
 //		if (Window.confirm("Delete the AWS VpnConnectionProvisioning " + vpcp.getProvisioningId() + "?")) {
 //			getView().showPleaseWaitDialog("Deleting VPC Provisioning item...");
 //			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
@@ -278,6 +281,41 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 //			};
 //			VpcProvisioningService.Util.getInstance().deleteVpnConnectionProvisioning(vpcp, callback);
 //		}
+	}
+
+	@Override
+	public void deprovisionVpnConnection(final VpnConnectionProvisioningPojo provisionedVpnConnection) {
+		AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception saving the VpnConnectionDeprovisioning", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the VpnConnectionDeprovisioning.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(VpnConnectionDeprovisioningPojo result) {
+				getView().hidePleaseWaitDialog();
+				// if it was a generate, we'll take them to the VPNCP status view
+				// So we won't go directly back
+				// to the list just yet but instead, we'll show them an immediate 
+				// status and give them the opportunity to watch it for a bit
+				// before they go back.  So, we'll only fire the VPCP_SAVED event 
+				// when/if it's an update and not on the generate.  As of right now
+				// we don't think there will be a VPCP update so the update handling 
+				// stuff is just here to maintain consistency and if we ever decide
+				// a VPCP can be updated, we'll already have the flow here.
+				// show VPNCP status page
+				final VpnConnectionDeprovisioningPojo vpncdp = result;
+				GWT.log("VPNCDP was generated on the server, showing status page.  "
+						+ "VPNCDP is: " + vpncdp);
+				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncdp);
+			}
+		};
+		getView().showPleaseWaitDialog("Generating VPC Provisioning object...");
+		VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(provisionedVpnConnection.getRequisition(), callback);
 	}
 
 }
