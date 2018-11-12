@@ -484,13 +484,20 @@ a:visited {
 	color: lightgrey;
 	background-color:Crimson;
 }
+.productColumn {
+ 	border: 1px solid;
+    border-radius: 5px;
+    padding: 6px;
+}
 .productCategory {
 	font-size: 14px;
 	font-weight: bold;
 	text-align: left;
 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
 	padding-bottom: 3px;
-}
+/* 	border: 1px solid;
+    border-radius: 5px;
+ */}
 .productAnchor {
 /*	margin-right: 20px; */
 	color: #232f3e;

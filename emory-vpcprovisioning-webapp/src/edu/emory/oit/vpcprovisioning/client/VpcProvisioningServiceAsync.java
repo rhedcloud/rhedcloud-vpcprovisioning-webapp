@@ -129,7 +129,8 @@ public interface VpcProvisioningServiceAsync {
 	void createService(AWSServicePojo service, AsyncCallback<AWSServicePojo> callback);
 	void updateService(AWSServicePojo service, AsyncCallback<AWSServicePojo> callback);
 	void deleteService(AWSServicePojo service, AsyncCallback<Void> callback);
-	void getServiceStatusItems(AsyncCallback<List<String>> callback);
+	void getAwsServiceStatusItems(AsyncCallback<List<String>> callback);
+	void getSiteServiceStatusItems(AsyncCallback<List<String>> callback);
 
 	void getAWSServiceMap(AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback) throws RpcException;
 	

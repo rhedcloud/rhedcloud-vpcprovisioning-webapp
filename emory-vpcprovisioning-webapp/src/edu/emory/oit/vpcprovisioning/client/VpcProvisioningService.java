@@ -143,7 +143,8 @@ public interface VpcProvisioningService extends RemoteService {
 	AWSServicePojo createService(AWSServicePojo service) throws RpcException;
 	AWSServicePojo updateService(AWSServicePojo service) throws RpcException;
 	void deleteService(AWSServicePojo service) throws RpcException;
-	List<String> getServiceStatusItems();
+	List<String> getAwsServiceStatusItems();
+	List<String> getSiteServiceStatusItems();
 
 	// UserNotifications
 	UserNotificationQueryResultPojo getUserNotificationsForFilter(UserNotificationQueryFilterPojo filter) throws RpcException;

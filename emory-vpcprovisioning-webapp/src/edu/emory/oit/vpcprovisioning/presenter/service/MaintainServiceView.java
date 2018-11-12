@@ -76,7 +76,8 @@ public interface MaintainServiceView extends Editor<AWSServicePojo>, IsWidget, V
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-	void setServiceStatusItems(List<String> serviceStatusTypes);
+	void setAwsServiceStatusItems(List<String> serviceStatusTypes);
+	void setSiteServiceStatusItems(List<String> serviceStatusTypes);
 	void setAssessments(List<ServiceSecurityAssessmentPojo> assessments);
 	void removeAssessmentFromView(ServiceSecurityAssessmentPojo assessment);
 	void clearAssessmentList();

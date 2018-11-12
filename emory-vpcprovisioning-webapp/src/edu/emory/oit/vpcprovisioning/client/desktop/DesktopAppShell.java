@@ -30,9 +30,11 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
@@ -105,6 +107,7 @@ import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfileQueryResultPojo;
 
 public class DesktopAppShell extends ResizeComposite implements AppShell {
+	PopupPanel pleaseWaitDialog;
 
 	Logger log=Logger.getLogger(DesktopAppShell.class.getName());
 	ClientFactory clientFactory;
@@ -128,20 +131,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
+//		startServiceRefreshTimer();
+		this.refreshServiceMap(false);
 		showAuditorTabs();
 
 		GWT.log("DesktopAppShell:  constructor");
 		
-//		String protocol = com.google.gwt.user.client.Window.Location.getProtocol();
-//		GWT.log("DesktopAppShell:  protocol: " + protocol);
-//		String hostAndPort = com.google.gwt.user.client.Window.Location.getHost();
-//		GWT.log("DesktopAppShell:  hostAndPort: " + hostAndPort);
-//		String path = com.google.gwt.user.client.Window.Location.getPath();
-//		GWT.log("DesktopAppShell:  path: " + path);
 		hash = com.google.gwt.user.client.Window.Location.getHash();
 		GWT.log("DesktopAppShell:  hash: " + hash);
-//		String queryString = com.google.gwt.user.client.Window.Location.getQueryString();
-//		GWT.log("DesktopAppShell:  queryString: " + queryString);
 
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
@@ -247,6 +244,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private boolean firstStaticNatContentWidget = true;
 	private boolean firstVpnConnectionContentWidget = true;
 	private boolean firstVpnConnectionProfileContentWidget = true;
+
+	private void startServiceRefreshTimer() {
+		// Create a new timer that checks for notifications
+		final Timer servicesTimer = new Timer() {
+			@Override
+			public void run() {
+				refreshServiceMap(false);
+			}
+		};
+		servicesTimer.scheduleRepeating(60000);
+	}
 
 	Command tkiClientCommand = new Command() {
 		public void execute() {
@@ -761,14 +769,31 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showPleaseWaitDialog(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
-
+		if (pleaseWaitDialog == null) {
+			pleaseWaitDialog = new PopupPanel(false);
+		}
+		else {
+			pleaseWaitDialog.clear();
+		}
+		VerticalPanel vp = new VerticalPanel();
+		vp.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		Image img = new Image();
+		img.setUrl("images/ajax-loader.gif");
+		vp.add(img);
+		HTML h = new HTML(pleaseWaitHTML);
+		vp.add(h);
+		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+		pleaseWaitDialog.setWidget(vp);
+		pleaseWaitDialog.center();
+		pleaseWaitDialog.show();
 	}
 
 	@Override
 	public void hidePleaseWaitDialog() {
-		// TODO Auto-generated method stub
-
+		if (pleaseWaitDialog != null) {
+			pleaseWaitDialog.hide();
+		}
 	}
 
 	@Override
@@ -847,6 +872,26 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	void showProductsPopup() {
+		/*
+	border-radius: 3px;
+	height: 30px;
+	width: 30px;
+		 */
+		PushButton refreshButton = new PushButton();
+		refreshButton.setTitle("Refresh list");
+		refreshButton.setWidth("30px");
+		refreshButton.setHeight("30px");
+		Image img = new Image("images/refresh_icon.png");
+		img.setWidth("30px");
+		img.setHeight("30px");
+		refreshButton.getUpFace().setImage(img);
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				refreshServiceMap(false);
+			}
+		});
+
 		productsPopup.clear();
 		productsPopup.setAutoHideEnabled(true);
 		productsPopup.setWidth("1200px");
@@ -857,10 +902,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		sp.setHeight("99%");
 		sp.setWidth("100%");
 		productsPopup.add(sp);
+		VerticalPanel refreshPanel = new VerticalPanel();
+		sp.add(refreshPanel);
+		refreshPanel.add(refreshButton);
 
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setWidth("100%");
-		sp.add(hp);
+		hp.setSpacing(12);
+		refreshPanel.add(hp);
 		// 4 columns
 		List<VerticalPanel> vpList = new java.util.ArrayList<VerticalPanel>();
 		vpList.add(new VerticalPanel());
@@ -888,6 +937,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			else {
 				GWT.log("using vp number " + vpCntr);
 				VerticalPanel vp = vpList.get(vpCntr);
+				vp.addStyleName("productColumn");
 				HTMLPanel catHtml = new HTMLPanel(catName);
 				catHtml.addStyleName("productCategory");
 				vp.add(catHtml);
@@ -895,13 +945,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 				for (AWSServicePojo svc : services) {
 					GWT.log("Adding service: " + svc.getAwsServiceName());
-					Anchor svcAnchor = new Anchor(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+					Anchor svcAnchor = new Anchor("* " + svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
 					svcAnchor.addStyleName("productAnchor");
-					svcAnchor.setTitle("STATUS: " + svc.getStatus() + 
+					svcAnchor.setTitle("STATUS: " + svc.getAwsStatus() + 
 							"  DESCRIPTION: " + svc.getDescription());
-					svcAnchor.setHref(svc.getLandingPageURL());
+					svcAnchor.setHref(svc.getAwsLandingPageUrl());
 					svcAnchor.setTarget("_blank");
-					if (svc.getStatus().toLowerCase().contains("blocked")) {
+					if (svc.getAwsStatus().toLowerCase().contains("blocked")) {
 						svcAnchor.addStyleName("productAnchorBlocked");
 					}
 					vp.add(svcAnchor);
@@ -921,42 +971,52 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.showRelativeTo(linksPanel);
 	}
 	void showServices() {
-	   	 if (!productsShowing) {
-			 productsShowing = true;
-		 }
-		 else {
-			 productsShowing = false;
-			 productsPopup.hide();
-			 return;
-		 }
-		if (awsServices == null || awsServices.size() == 0) {
-			AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					GWT.log("problem getting services..." + caught.getMessage());
-					showMessageToUser("Unable to display product information at this "
-							+ "time.  Please try again later.  "
-							+ "<p>Message from server is: " + caught.getMessage() + "</p>");
-				}
+		if (!productsShowing) {
+			productsShowing = true;
+		}
+		else {
+			productsShowing = false;
+			productsPopup.hide();
+			return;
+		}
 
-				@Override
-				public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
-					awsServices = result;
-					GWT.log("got " + result.size() + " categories of services back.");
-					if (awsServices == null || awsServices.size() == 0) {
-						// there's an issue
-						showMessageToUser("Unable to display product information at this time.  Please try again later.");
-					}
-					else {
-						showProductsPopup();
-					}
-				}
-			};
-			VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+		this.showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
+		if (awsServices == null || awsServices.size() == 0) {
+			this.refreshServiceMap(true);
 		}
 		else {
 			this.showProductsPopup();
+			hidePleaseWaitDialog();
 		}
+	}
+	private void refreshServiceMap(final boolean showPopup) {
+		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				hidePleaseWaitDialog();
+				GWT.log("problem getting services..." + caught.getMessage());
+				showMessageToUser("Unable to display product information at this "
+						+ "time.  Please try again later.  "
+						+ "<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
+				awsServices = result;
+				GWT.log("got " + result.size() + " categories of services back.");
+				if (awsServices == null || awsServices.size() == 0) {
+					// there's an issue
+					showMessageToUser("Unable to display product information at this time.  Please try again later.");
+				}
+				else {
+					if (showPopup) {
+						showProductsPopup();
+					}
+				}
+				hidePleaseWaitDialog();
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
 	}
 	@Override
 	public void initializeAwsServiceMap() {

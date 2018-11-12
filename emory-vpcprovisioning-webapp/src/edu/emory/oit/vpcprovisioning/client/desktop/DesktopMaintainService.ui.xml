@@ -50,24 +50,46 @@
 			    	</g:row>
 					<g:row>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Status:</g:Label>
+							<g:Label addStyleNames="{style.label}">AWS Status:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-								ui:field="statusLB" debugId="statusLB" />
+								ui:field="awsStatusLB" debugId="awsStatusLB" />
 				    	</g:customCell>
 			    	</g:row>
 					<g:row>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Landing Page URL:</g:Label>
+							<g:Label addStyleNames="{style.label}">Emory Status:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+								ui:field="siteStatusLB" debugId="siteStatusLB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">AWS Landing Page URL:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="landingPageURLTB" debugId="landingPageUTLTB" />
+								ui:field="awsLandingPageURLTB" debugId="awsLandingPageURLTB" />
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
-								ui:field="testURLButton" debugId="testURLButton">Test URL</g:Button>
+								ui:field="testAWSURLButton" debugId="testURLButton">Test URL</g:Button>
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Emory Landing Page URL:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="siteLandingPageURLTB" debugId="siteLandingPageURLTB" />
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
+								ui:field="testSiteURLButton" debugId="testSiteURLButton">Test URL</g:Button>
 				    	</g:customCell>
 			    	</g:row>
 					<g:row>
@@ -94,7 +116,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="emoryHipaaEligibleCB" debugId="emoryHippaEligibleCB" />
+								ui:field="siteHipaaEligibleCB" debugId="siteHippaEligibleCB" />
 				    	</g:customCell>
 			    	</g:row>
 				</g:Grid>

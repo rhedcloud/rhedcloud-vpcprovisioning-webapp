@@ -8,37 +8,41 @@ import com.google.gwt.view.client.ProvidesKey;
 @SuppressWarnings("serial")
 public class AWSServicePojo extends SharedObject implements IsSerializable {
 	/*
-		<!ELEMENT Service (
-			ServiceId?, 
-			AwsServiceCode, 
-			AwsServiceName, 
-			AlternateServiceName?, 
-			CombinedServiceName?, 
-			Status, 
-			ServiceLandingPageUrl, 
-			Description?, 
-			Category*, 
-			ConsoleCategory*, 
-			AwsHipaaEligible, 
-			EmoryHipaaEligible, 
-			Tag*, 
-			CreateUser, 
-			CreateDatetime, 
-			LastUpdateUser?, 
-			LastUpdateDatetime?)>
+	<!ELEMENT Service (
+		ServiceId?, 
+		AwsServiceCode, 
+		AwsServiceName, 
+		AlternateServiceName?, 
+		CombinedServiceName?, 
+		AwsStatus, 
+		SiteStatus, 
+		AwsServiceLandingPageUrl?, 
+		SiteServiceLandingPageUrl?, 
+		Description?, 
+		Category*, 
+		ConsoleCategory*, 
+		AwsHipaaEligible?, 
+		SiteHipaaEligible?, 
+		Tag*, 
+		CreateUser, 
+		CreateDatetime, 
+		LastUpdateUser?, 
+		LastUpdateDatetime?)>
 	 */
 	String serviceId;
 	String awsServiceCode;
 	String awsServiceName;
 	String alternateServiceName;
 	String combinedServiceName;
-	String status;
-	String landingPageURL;
+	String awsStatus;
+	String siteStatus;
+	String awsLandingPageUrl;
+	String siteLandingPageUrl;
 	String description;
 	List<String> awsCategories = new java.util.ArrayList<String>();
 	List<String> consoleCategories = new java.util.ArrayList<String>();
-	boolean awsHipaaEligible;
-	boolean emoryHipaaEligible;
+	String awsHipaaEligible;
+	String siteHipaaEligible;
 	List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
 	AWSServicePojo baseline;
 	boolean skeleton;
@@ -54,12 +58,12 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	}
 
 
-	public List<String> getCategories() {
+	public List<String> getAwsCategories() {
 		return awsCategories;
 	}
 
 
-	public void setCategories(List<String> categories) {
+	public void setAwsCategories(List<String> categories) {
 		this.awsCategories = categories;
 	}
 
@@ -84,13 +88,13 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	}
 
 
-	public String getStatus() {
-		return status;
+	public String getAwsStatus() {
+		return awsStatus;
 	}
 
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setAwsStatus(String status) {
+		this.awsStatus = status;
 	}
 
 
@@ -104,13 +108,13 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	}
 
 
-	public String getLandingPageURL() {
-		return landingPageURL;
+	public String getAwsLandingPageUrl() {
+		return awsLandingPageUrl;
 	}
 
 
-	public void setLandingPageURL(String landingPage) {
-		this.landingPageURL = landingPage;
+	public void setAwsLandingPageUrl(String landingPage) {
+		this.awsLandingPageUrl = landingPage;
 	}
 
 
@@ -143,13 +147,19 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 	}
 
 
-	public boolean isEmoryHipaaEligible() {
-		return emoryHipaaEligible;
+	public boolean isSiteHipaaEligible() {
+		if (siteHipaaEligible != null) {
+			if (siteHipaaEligible.equalsIgnoreCase(Constants.TRUE)) {
+				return true;
+			}
+		}
+		return false;
 	}
-
-
-	public void setEmoryHipaaEligible(boolean emoryHipaaEligible) {
-		this.emoryHipaaEligible = emoryHipaaEligible;
+	public String getSiteHipaaEligible() {
+		return this.siteHipaaEligible;
+	}
+	public void setSiteHipaaEligible(String emoryHipaaEligible) {
+		this.siteHipaaEligible = emoryHipaaEligible;
 	}
 
 
@@ -184,11 +194,17 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 
 
 	public boolean isAwsHipaaEligible() {
-		return awsHipaaEligible;
+		if (awsHipaaEligible != null) {
+			if (awsHipaaEligible.equalsIgnoreCase(Constants.TRUE)) {
+				return true;
+			}
+		}
+		return false;
 	}
-
-
-	public void setAwsHipaaEligible(boolean awsHipaaEligible) {
+	public String getAwsHipaaEligible() {
+		return this.awsHipaaEligible;
+	}
+	public void setAwsHipaaEligible(String awsHipaaEligible) {
 		this.awsHipaaEligible = awsHipaaEligible;
 	}
 
@@ -228,6 +244,26 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 
 	public void setSkeleton(boolean skeleton) {
 		this.skeleton = skeleton;
+	}
+
+
+	public String getSiteStatus() {
+		return siteStatus;
+	}
+
+
+	public void setSiteStatus(String siteStatus) {
+		this.siteStatus = siteStatus;
+	}
+
+
+	public String getSiteLandingPageUrl() {
+		return siteLandingPageUrl;
+	}
+
+
+	public void setSiteLandingPageUrl(String siteLandingPageUrl) {
+		this.siteLandingPageUrl = siteLandingPageUrl;
 	}
 
 }

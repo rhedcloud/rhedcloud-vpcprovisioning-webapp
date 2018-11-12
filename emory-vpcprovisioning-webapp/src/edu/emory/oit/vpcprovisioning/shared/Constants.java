@@ -19,6 +19,8 @@ public class Constants implements IsSerializable {
 	public static final String YES = "Yes";
 	public static final String NO = "No";
 	public static final String TUNNEL_AVAILABLE = "AVAILABLE";
+	public static final String TRUE = "true";
+	public static final String FALSE = "false";
 
 	// these will need to be specific for this app's functionality
 	

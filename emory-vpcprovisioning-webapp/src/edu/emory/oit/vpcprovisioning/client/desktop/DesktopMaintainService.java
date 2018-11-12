@@ -24,6 +24,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -56,7 +57,8 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 public class DesktopMaintainService extends ViewImplBase implements MaintainServiceView {
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
-	List<String> statusTypes;
+	List<String> awsStatusTypes;
+	List<String> siteStatusTypes;
 	boolean editing;
 	private ListDataProvider<ServiceSecurityAssessmentPojo> dataProvider = new ListDataProvider<ServiceSecurityAssessmentPojo>();
 	private SingleSelectionModel<ServiceSecurityAssessmentPojo> selectionModel;
@@ -85,16 +87,19 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
-	@UiField Button testURLButton;
-	@UiField ListBox statusLB;
+	@UiField Button testAWSURLButton;
+	@UiField Button testSiteURLButton;
+	@UiField ListBox awsStatusLB;
+	@UiField ListBox siteStatusLB;
 	@UiField TextBox alternateNameTB;
 	@UiField TextBox combinedNameTB;
 	@UiField TextBox awsCodeTB;
 	@UiField TextBox awsNameTB;
-	@UiField TextBox landingPageURLTB;
+	@UiField TextBox awsLandingPageURLTB;
+	@UiField TextBox siteLandingPageURLTB;
 	@UiField TextArea descriptionTA;
 	@UiField CheckBox awsHipaaEligibleCB;
-	@UiField CheckBox emoryHipaaEligibleCB;
+	@UiField CheckBox siteHipaaEligibleCB;
 	
 	int tagRowNum = 0;
 	int tagColumnNum = 0;
@@ -129,7 +134,10 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	void createButtonClicked(ClickEvent e) {
 		populateServiceWithFormData();
 		presenter.saveService(false);
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_ASSESSMENT, presenter.getService());
+		// navigation to the create assessment interfaces is handled in the presenter (saveService)
+		// it's done this way because the service may have pending updates when this button
+		// is clicked so we need to make sure the service is saved BEFORE we navigate 
+		// to the assessment maintenance page(s)
 	}
 	
 	@UiHandler("actionsButton")
@@ -250,11 +258,12 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		presenter.getService().setAwsServiceName(awsNameTB.getText());
 		presenter.getService().setAlternateServiceName(alternateNameTB.getText());
 		presenter.getService().setCombinedServiceName(combinedNameTB.getText());
-		presenter.getService().setEmoryHipaaEligible(emoryHipaaEligibleCB.getValue());
-		presenter.getService().setAwsHipaaEligible(awsHipaaEligibleCB.getValue());
+		presenter.getService().setSiteHipaaEligible(siteHipaaEligibleCB.getValue() ? "true" : "false");
+		presenter.getService().setAwsHipaaEligible(awsHipaaEligibleCB.getValue() ? "true" : "false");
 		presenter.getService().setDescription(descriptionTA.getText());
-		presenter.getService().setLandingPageURL(landingPageURLTB.getText());
-		presenter.getService().setStatus(statusLB.getSelectedValue());
+		presenter.getService().setAwsLandingPageUrl(awsLandingPageURLTB.getText());
+		presenter.getService().setAwsStatus(awsStatusLB.getSelectedValue());
+		presenter.getService().setSiteStatus(siteStatusLB.getSelectedValue());
 		
 		// categories, console categories and tags are added to the service as they're 
 		// added to the page.
@@ -266,9 +275,9 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
 	}
 
-	@UiHandler("testURLButton")
+	@UiHandler("testAWSURLButton")
 	void testURLClick(ClickEvent e) {
-//		Window.Location.assign(landingPageURLTB.getText());
+		Window.open( awsLandingPageURLTB.getText(), "_blank", null);
 	}
 
 	@Override
@@ -291,11 +300,11 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		awsNameTB.setEnabled(false);
 		alternateNameTB.setEnabled(false);
 		combinedNameTB.setEnabled(false);
-		emoryHipaaEligibleCB.setEnabled(false);
+		siteHipaaEligibleCB.setEnabled(false);
 		awsHipaaEligibleCB.setEnabled(false);
 		descriptionTA.setEnabled(false);
-		landingPageURLTB.setEnabled(false);
-		statusLB.setEnabled(false);
+		awsLandingPageURLTB.setEnabled(false);
+		awsStatusLB.setEnabled(false);
 		
 		tagKeyTF.setEnabled(false);
 		tagValueTF.setEnabled(false);
@@ -312,11 +321,11 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		awsNameTB.setEnabled(false);
 		alternateNameTB.setEnabled(false);
 		combinedNameTB.setEnabled(false);
-		emoryHipaaEligibleCB.setEnabled(false);
+		siteHipaaEligibleCB.setEnabled(false);
 		awsHipaaEligibleCB.setEnabled(false);
 		descriptionTA.setEnabled(false);
-		landingPageURLTB.setEnabled(false);
-		statusLB.setEnabled(false);
+		awsLandingPageURLTB.setEnabled(false);
+		awsStatusLB.setEnabled(false);
 		
 		tagKeyTF.setEnabled(false);
 		tagValueTF.setEnabled(false);
@@ -362,12 +371,14 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		if (presenter.getService() != null) {
 			awsCodeTB.setText(presenter.getService().getAwsServiceCode());
 			awsNameTB.setText(presenter.getService().getAwsServiceName());
-			landingPageURLTB.setText(presenter.getService().getLandingPageURL());
+			awsLandingPageURLTB.setText(presenter.getService().getAwsLandingPageUrl());
+			siteLandingPageURLTB.setText(presenter.getService().getSiteLandingPageUrl());
 			descriptionTA.setText(presenter.getService().getDescription());
 			alternateNameTB.setText(presenter.getService().getAlternateServiceName());
 			combinedNameTB.setText(presenter.getService().getCombinedServiceName());
+			
 			awsHipaaEligibleCB.setValue(presenter.getService().isAwsHipaaEligible());
-			emoryHipaaEligibleCB.setValue(presenter.getService().isEmoryHipaaEligible());
+			siteHipaaEligibleCB.setValue(presenter.getService().isSiteHipaaEligible());
 		}
 	    initializeTagsPanel();
 	    initializeCategoriesPanel();
@@ -376,11 +387,11 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 	private void addCategoryToService(String category) {
 		if (category != null && category.length() > 0) {
-			if (presenter.getService().getCategories().contains(category)) {
+			if (presenter.getService().getAwsCategories().contains(category)) {
 				showStatus(addCategoryButton, "That Category is alreay in the list, please enter a unique Category.");
 			}
 			else {
-				presenter.getService().getCategories().add(category);
+				presenter.getService().getAwsCategories().add(category);
 				addCategoryToPanel(category);
 			}
 		}
@@ -406,7 +417,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		removeButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				presenter.getService().getCategories().remove(category);
+				presenter.getService().getAwsCategories().remove(category);
 				categoriesTable.remove(l);
 				categoriesTable.remove(removeButton);
 			}
@@ -433,8 +444,8 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		categoryTF.getElement().setPropertyString("placeholder", "enter category");
 		categoriesTable.removeAllRows();
 		if (presenter.getService() != null) {
-			GWT.log("Adding " + presenter.getService().getCategories().size() + " categories to the panel (update).");
-			for (String category : presenter.getService().getCategories()) {
+			GWT.log("Adding " + presenter.getService().getAwsCategories().size() + " categories to the panel (update).");
+			for (String category : presenter.getService().getAwsCategories()) {
 				addCategoryToPanel(category);
 			}
 		}
@@ -589,21 +600,21 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	}
 
 	@Override
-	public void setServiceStatusItems(List<String> serviceStatusTypes) {
-		this.statusTypes = serviceStatusTypes;
-		statusLB.clear();
+	public void setAwsServiceStatusItems(List<String> serviceStatusTypes) {
+		this.awsStatusTypes = serviceStatusTypes;
+		awsStatusLB.clear();
 		
 		if (!editing) {
-			statusLB.addItem("-- Select --");
+			awsStatusLB.addItem("-- Select --");
 		}
-		if (statusTypes != null) {
+		if (awsStatusTypes != null) {
 			int i=0;
-			for (String status : statusTypes) {
-				statusLB.addItem(status, status);
+			for (String status : awsStatusTypes) {
+				awsStatusLB.addItem(status, status);
 				if (presenter.getService() != null) {
-					if (presenter.getService().getStatus() != null) {
-						if (presenter.getService().getStatus().equalsIgnoreCase(status)) {
-							statusLB.setSelectedIndex(i);
+					if (presenter.getService().getAwsStatus() != null) {
+						if (presenter.getService().getAwsStatus().equalsIgnoreCase(status)) {
+							awsStatusLB.setSelectedIndex(i);
 						}
 					}
 				}
@@ -622,11 +633,14 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		if (svc.getAwsServiceName() == null || svc.getAwsServiceName().length() == 0) {
 			fields.add(awsNameTB);
 		}
-		if (svc.getStatus() == null || svc.getStatus().length() == 0) {
-			fields.add(statusLB);
+		if (svc.getAwsStatus() == null || svc.getAwsStatus().length() == 0) {
+			fields.add(awsStatusLB);
 		}
-		if (svc.getLandingPageURL() == null || svc.getLandingPageURL().length() == 0) {
-			fields.add(landingPageURLTB);
+		if (svc.getSiteStatus() == null || svc.getSiteStatus().length() == 0) {
+			fields.add(siteStatusLB);
+		}
+		if (svc.getAwsLandingPageUrl() == null || svc.getAwsLandingPageUrl().length() == 0) {
+			fields.add(awsLandingPageURLTB);
 		}
 		return fields;
 	}
@@ -636,8 +650,8 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		fields.add(awsCodeTB);
 		fields.add(awsNameTB);
-		fields.add(statusLB);
-		fields.add(landingPageURLTB);
+		fields.add(awsStatusLB);
+		fields.add(awsLandingPageURLTB);
 		this.resetFieldStyles(fields);
 	}
 	@Override
@@ -656,11 +670,11 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		awsNameTB.setEnabled(true);
 		alternateNameTB.setEnabled(true);
 		combinedNameTB.setEnabled(true);
-		emoryHipaaEligibleCB.setEnabled(true);
+		siteHipaaEligibleCB.setEnabled(true);
 		awsHipaaEligibleCB.setEnabled(true);
 		descriptionTA.setEnabled(true);
-		landingPageURLTB.setEnabled(true);
-		statusLB.setEnabled(true);
+		awsLandingPageURLTB.setEnabled(true);
+		awsStatusLB.setEnabled(true);
 		
 		tagKeyTF.setEnabled(true);
 		tagValueTF.setEnabled(true);
@@ -970,5 +984,29 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setSiteServiceStatusItems(List<String> serviceStatusTypes) {
+		this.siteStatusTypes = serviceStatusTypes;
+		siteStatusLB.clear();
+		
+		if (!editing) {
+			siteStatusLB.addItem("-- Select --");
+		}
+		if (siteStatusTypes != null) {
+			int i=0;
+			for (String status : siteStatusTypes) {
+				siteStatusLB.addItem(status, status);
+				if (presenter.getService() != null) {
+					if (presenter.getService().getSiteStatus() != null) {
+						if (presenter.getService().getSiteStatus().equalsIgnoreCase(status)) {
+							siteStatusLB.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
+		}
 	}
 }

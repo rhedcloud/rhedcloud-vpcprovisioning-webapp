@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
@@ -91,36 +92,49 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
-				getView().setUserLoggedIn(user);
-				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
+				AsyncCallback<List<String>> awsServiceStatusItemsCB = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						getView().hidePleaseWaitDialog();
-						GWT.log("Exception retrieving e-mail types", caught);
+						GWT.log("Exception retrieving AWS service status types", caught);
 						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving e-mail types.  Message " +
+								"server retrieving AWS service status types.  Message " +
 								"from server is: " + caught.getMessage());
 					}
 
 					@Override
 					public void onSuccess(List<String> result) {
-						// Clear the Vpc list and display it.
-						if (clearList) {
-							getView().clearAssessmentList();
-						}
-
-						getView().setUserLoggedIn(user);
-
-						// Request the service list now.
-						refreshList(user);
-
-						getView().initPage();
-						getView().setServiceStatusItems(result);
-						getView().setInitialFocus();
-						
+						getView().setAwsServiceStatusItems(result);
 					}
 				};
-				VpcProvisioningService.Util.getInstance().getServiceStatusItems(callback);
+				VpcProvisioningService.Util.getInstance().getAwsServiceStatusItems(awsServiceStatusItemsCB);
+
+				AsyncCallback<List<String>> siteServiceStatusItemsCB = new AsyncCallback<List<String>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						getView().hidePleaseWaitDialog();
+						GWT.log("Exception retrieving site service status types", caught);
+						getView().showMessageToUser("There was an exception on the " +
+								"server retrieving site service status types.  Message " +
+								"from server is: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(List<String> result) {
+						getView().setSiteServiceStatusItems(result);
+					}
+				};
+				VpcProvisioningService.Util.getInstance().getSiteServiceStatusItems(siteServiceStatusItemsCB);
+
+				getView().setUserLoggedIn(user);
+				// Clear the Vpc list and display it.
+				if (clearList) {
+					getView().clearAssessmentList();
+				}
+				// Request the service assessment list now.
+				refreshList(user);
+				getView().initPage();
+				getView().setInitialFocus();
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
@@ -160,6 +174,9 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 			ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
 			filter.setServiceId(this.serviceId);
 			VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, callback);
+		}
+		else {
+			setAssessmentList(Collections.<ServiceSecurityAssessmentPojo> emptyList());
 		}
 	}
 

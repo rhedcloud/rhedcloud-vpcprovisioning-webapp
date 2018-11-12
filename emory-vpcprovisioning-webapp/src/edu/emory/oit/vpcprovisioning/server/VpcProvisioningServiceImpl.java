@@ -195,6 +195,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
 	private static final String ROLE_ASSIGNMENT_PROPERTIES = "RoleAssignmentProperties";
+	private static final String AWS_SERVICE_STATUS_PROPERTIES = "AwsServiceStatusProperties";
+	private static final String SITE_SERVICE_STATUS_PROPERTIES = "SiteServiceStatusProperties";
 //	private static String LOGTAG = "[" + VpcProvisioningServiceImpl.class.getSimpleName()
 //			+ "]";
 	private Logger log = Logger.getLogger(getClass().getName());
@@ -4437,8 +4439,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			for (AWSServicePojo service : servicesResult.getResults()) {
 		    	// see if this category is already in the awsServicesMap
 				String category = "Unknown";
-				if (service.getCategories() != null && service.getCategories().size() > 0) {
-					category = service.getCategories().get(0);
+				if (service.getAwsCategories() != null && service.getAwsCategories().size() > 0) {
+					category = service.getAwsCategories().get(0);
 				}
 	    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
 	    		if (servicesForCat == null) {
@@ -4470,21 +4472,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setServiceId(pojo.getServiceId());
 		moa.setAwsServiceCode(pojo.getAwsServiceCode());
 		moa.setAwsServiceName(pojo.getAwsServiceName());
-		moa.setAlternateServiceName(pojo.getAlternateServiceName());
 		moa.setCombinedServiceName(pojo.getCombinedServiceName());
-		moa.setStatus(pojo.getStatus());
-		moa.setServiceLandingPageUrl(pojo.getLandingPageURL());
+		moa.setAlternateServiceName(pojo.getAlternateServiceName());
+		moa.setAwsStatus(pojo.getAwsStatus());
+		moa.setSiteStatus(pojo.getSiteStatus());
+		moa.setAwsServiceLandingPageUrl(pojo.getAwsLandingPageUrl());
+		moa.setSiteServiceLandingPageUrl(moa.getSiteServiceLandingPageUrl());
 		moa.setDescription(pojo.getDescription());
 		moa.setAwsHipaaEligible(this.toStringFromBoolean(pojo.isAwsHipaaEligible()));
-		moa.setEmoryHipaaEligible(this.toStringFromBoolean(pojo.isEmoryHipaaEligible()));
+		moa.setSiteHipaaEligible(this.toStringFromBoolean(pojo.isSiteHipaaEligible()));
 		
 		if (pojo.getConsoleCategories().size() > 0) {
 			for (String consoleCat : pojo.getConsoleCategories()) {
 				moa.addConsoleCategory(consoleCat);
 			}
 		}
-		if (pojo.getCategories().size() > 0) {
-			for (String cat : pojo.getCategories()) {
+		if (pojo.getAwsCategories().size() > 0) {
+			for (String cat : pojo.getAwsCategories()) {
 				moa.addCategory(cat);
 			}
 		}
@@ -4507,13 +4511,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setServiceId(moa.getServiceId());
 		pojo.setAwsServiceCode(moa.getAwsServiceCode());
 		pojo.setAwsServiceName(moa.getAwsServiceName());
+		pojo.setCombinedServiceName(moa.getCombinedServiceName());
 		pojo.setAlternateServiceName(moa.getAlternateServiceName());
-		pojo.setCombinedServiceName(moa.getCombinedKeyValue());
-		pojo.setStatus(moa.getStatus());
-		pojo.setLandingPageURL(moa.getServiceLandingPageUrl());
+		pojo.setAwsStatus(moa.getAwsStatus());
+		pojo.setSiteStatus(moa.getSiteStatus());
+		pojo.setAwsLandingPageUrl(moa.getAwsServiceLandingPageUrl());
+		pojo.setSiteLandingPageUrl(moa.getSiteServiceLandingPageUrl());
 		pojo.setDescription(moa.getDescription());
-		pojo.setAwsHipaaEligible(this.toBooleanFromString(moa.getAwsHipaaEligible()));
-		pojo.setEmoryHipaaEligible(this.toBooleanFromString(moa.getEmoryHipaaEligible()));
+		pojo.setAwsHipaaEligible(moa.getAwsHipaaEligible());
+		pojo.setSiteHipaaEligible(moa.getSiteHipaaEligible());
 		if (moa.getConsoleCategoryLength() > 0) {
 			for (String consoleCat : (List<String>)moa.getConsoleCategory()) {
 				pojo.getConsoleCategories().add(consoleCat);
@@ -4521,7 +4527,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		if (moa.getCategoryLength() > 0) {
 			for (String cat : (List<String>)moa.getCategory()) {
-				pojo.getCategories().add(cat);
+				pojo.getAwsCategories().add(cat);
 			}
 		}
 		if (moa.getTagLength() > 0) {
@@ -4553,7 +4559,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filter != null) {
 				queryObject.setServiceId(filter.getServiceId());
 				queryObject.setAwsServiceCode(filter.getServiceCode());
-				queryObject.setStatus(filter.getStatus());
+				queryObject.setAwsStatus(filter.getStatus());
 			}
 
 			List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> moas = actionable.query(queryObject,
@@ -4561,6 +4567,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
 
 			for (com.amazon.aws.moa.jmsobjects.services.v1_0.Service service : moas) {
+				info("Service MOA: " + service.toXmlString());
 				AWSServicePojo pojo = new AWSServicePojo();
 				AWSServicePojo baseline = new AWSServicePojo();
 				this.populateAWSServicePojo(service, pojo);
@@ -4699,13 +4706,50 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public List<String> getServiceStatusItems() {
+	public List<String> getAwsServiceStatusItems() {
 		List<String> statusItems = new java.util.ArrayList<String>();
-		statusItems.add("Available");
-		statusItems.add("Available with Countermeasures");
-		statusItems.add("Blocked");
-		statusItems.add("Blocked Pending Review");
-		statusItems.add("Fully Available");
+		try {
+			Properties props = 	getAppConfig().getProperties(AWS_SERVICE_STATUS_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				statusItems.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+
+//		statusItems.add("active");
+//		statusItems.add("deprecated");
+		return statusItems;
+	}
+
+	@Override
+	public List<String> getSiteServiceStatusItems() {
+		List<String> statusItems = new java.util.ArrayList<String>();
+		
+		try {
+			Properties props = 	getAppConfig().getProperties(SITE_SERVICE_STATUS_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				statusItems.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+
+//		statusItems.add("Available");
+//		statusItems.add("Available with Countermeasures");
+//		statusItems.add("Blocked");
+//		statusItems.add("Blocked Pending Review");
+//		statusItems.add("Fully Available");
 		return statusItems;
 	}
 

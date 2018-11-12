@@ -319,9 +319,9 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			public SafeHtml getValue(AWSServicePojo object) {
 				StringBuffer categories = new StringBuffer();
 				int cntr = 1;
-				if (object.getCategories().size() > 0) {
-					for (String category : object.getCategories()) {
-						if (cntr == object.getCategories().size()) {
+				if (object.getAwsCategories().size() > 0) {
+					for (String category : object.getAwsCategories()) {
+						if (cntr == object.getAwsCategories().size()) {
 							categories.append(category);
 							
 						}
@@ -335,7 +335,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No categories yet");
 			}
 		};
-		serviceListTable.addColumn(awsCategoryColumn, "AWS Category");
+		serviceListTable.addColumn(awsCategoryColumn, "AWS Category(ies)");
 
 		// AWS Code column
 		Column<AWSServicePojo, String> awsCodeColumn = 
@@ -377,13 +377,13 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return object.getStatus();
+				return object.getAwsStatus();
 			}
 		};
 		statusColumn.setSortable(true);
 		sortHandler.setComparator(statusColumn, new Comparator<AWSServicePojo>() {
 			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				return o1.getStatus().compareTo(o2.getStatus());
+				return o1.getAwsStatus().compareTo(o2.getAwsStatus());
 			}
 		});
 		serviceListTable.addColumn(statusColumn, "Status");
@@ -447,7 +447,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				new TextCell()) {
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return (object.isEmoryHipaaEligible() ? "Yes" : "No");
+				return (object.isSiteHipaaEligible() ? "Yes" : "No");
 			}
 		};
 		serviceListTable.addColumn(emoryHipaaEligibleColumn, "Emory HIPAA Eligible");
