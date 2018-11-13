@@ -440,7 +440,24 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No console categories yet");
 			}
 		};
-		serviceListTable.addColumn(emoryCategoryColumn, "Emory Category");
+		serviceListTable.addColumn(emoryCategoryColumn, "Emory Category(ies)");
+		
+		// emory status
+		Column<AWSServicePojo, String> emoryStatusColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getSiteStatus();
+			}
+		};
+		emoryStatusColumn.setSortable(true);
+		sortHandler.setComparator(emoryStatusColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getSiteStatus().compareTo(o2.getSiteStatus());
+			}
+		});
+		serviceListTable.addColumn(emoryStatusColumn, "Emory Status");
 
 		// emory hipaa eligible
 		Column<AWSServicePojo, String> emoryHipaaEligibleColumn = new Column<AWSServicePojo, String>(

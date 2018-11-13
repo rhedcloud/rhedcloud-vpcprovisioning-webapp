@@ -10,6 +10,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -892,6 +894,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.setWidth("1200px");
 		productsPopup.setHeight("800px");
 		productsPopup.setAnimationEnabled(true);
+		productsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		productsPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				productsShowing = false;
+			}
+		});
 		
 		ScrollPanel sp = new ScrollPanel();
 		sp.setHeight("99%");
@@ -899,7 +908,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.add(sp);
 		VerticalPanel refreshPanel = new VerticalPanel();
 		sp.add(refreshPanel);
-		refreshPanel.add(refreshButton);
+//		refreshPanel.add(refreshButton);
 
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setWidth("100%");
@@ -933,6 +942,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("using vp number " + vpCntr);
 				VerticalPanel vp = vpList.get(vpCntr);
 				vp.addStyleName("productColumn");
+				vp.setSpacing(6);
 				HTMLPanel catHtml = new HTMLPanel(catName);
 				catHtml.addStyleName("productCategory");
 				vp.add(catHtml);
@@ -942,16 +952,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					GWT.log("Adding service: " + svc.getAwsServiceName());
 					Anchor svcAnchor = new Anchor("* " + svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
 					svcAnchor.addStyleName("productAnchor");
-					svcAnchor.setTitle("STATUS: " + svc.getAwsStatus() + 
+					svcAnchor.setTitle("STATUS: " + svc.getSiteStatus() + 
 							"  DESCRIPTION: " + svc.getDescription());
 					svcAnchor.setHref(svc.getAwsLandingPageUrl());
 					svcAnchor.setTarget("_blank");
-					if (svc.getAwsStatus().toLowerCase().contains("blocked")) {
+					if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
 						svcAnchor.addStyleName("productAnchorBlocked");
 					}
 					vp.add(svcAnchor);
 				}
-				HTMLPanel html = new HTMLPanel("<hr>");
+				HTMLPanel html = new HTMLPanel("</br>");
 				vp.add(html);
 			}
 			catCntr++;
