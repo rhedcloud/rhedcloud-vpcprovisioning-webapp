@@ -929,12 +929,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		GWT.log("catsPerPanel: " + catsPerPanel);
 		int catCntr = 0;
 		int vpCntr = 0;
-//		Iterator<String> keys = awsServices.keySet().iterator();
 		
 		Object[] keys = awsServices.keySet().toArray();
 		Arrays.sort(keys);
 		for (Object catName : keys) {
-//			String catName = keys.next();
 			GWT.log("Category is: " + catName);
 			if (catCntr >= catsPerPanel) {
 				catCntr = 0;
@@ -954,18 +952,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 				for (AWSServicePojo svc : services) {
 					GWT.log("Adding service: " + svc.getAwsServiceName());
-//					Anchor svcAnchor = new Anchor("* " + svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
 					Anchor svcAnchor = new Anchor();
-					if (svc.getCombinedServiceName() != null) {
-//						svcAnchor.setText(svc.getCombinedServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+					if (svc.getCombinedServiceName() != null && 
+						svc.getCombinedServiceName().length() > 0) {
 						svcAnchor.setText(svc.getCombinedServiceName());
 					}
-					else if (svc.getAlternateServiceName() != null) {
-//						svcAnchor.setText(svc.getAlternateServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+					else if (svc.getAlternateServiceName() != null && 
+							svc.getAlternateServiceName().length() > 0 ) {
 						svcAnchor.setText(svc.getAlternateServiceName());
 					}
 					else {
-//						svcAnchor.setText(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
 						svcAnchor.setText(svc.getAwsServiceName());
 					}
 					svcAnchor.addStyleName("productAnchor");
@@ -983,8 +979,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			catCntr++;
 		}
-//		while (keys.hasNext()) {
-//		}
+
 		// add last VP to the HP because it gets populated but not added above
 		if (hp.getWidgetCount() < 4) {
 			for (int i=hp.getWidgetCount(); i<4; i++) {
@@ -994,6 +989,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 		productsPopup.showRelativeTo(linksPanel);
 	}
+	
 	void showServices() {
 		if (!productsShowing) {
 			productsShowing = true;
@@ -1013,6 +1009,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			hidePleaseWaitDialog();
 		}
 	}
+	
 	private void refreshServiceMap(final boolean showPopup) {
 		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
 			@Override

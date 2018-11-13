@@ -4461,11 +4461,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
     			boolean doAdd = true;
     			svcLoop: for (AWSServicePojo existingSvc : servicesForCat) {
     				if (existingSvc.getCombinedServiceName() != null && 
+       					existingSvc.getCombinedServiceName().length() > 0 &&
     					existingSvc.getCombinedServiceName().equalsIgnoreCase(service.getCombinedServiceName())) {
     					doAdd = false;
     					break svcLoop;
     				}
     				else if (existingSvc.getAlternateServiceName() != null && 
+       					existingSvc.getAlternateServiceName().length() > 0 &&
        					existingSvc.getAlternateServiceName().equalsIgnoreCase(service.getAlternateServiceName())) {
     					doAdd = false;
     					break svcLoop;
