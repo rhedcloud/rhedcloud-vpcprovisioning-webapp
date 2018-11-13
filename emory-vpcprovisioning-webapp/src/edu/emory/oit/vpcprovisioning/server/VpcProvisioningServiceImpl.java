@@ -4439,7 +4439,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			for (AWSServicePojo service : servicesResult.getResults()) {
 		    	// see if this category is already in the awsServicesMap
 				String category = "Unknown";
-				if (service.getAwsCategories() != null && service.getAwsCategories().size() > 0) {
+				if (service.getConsoleCategories() != null && 
+					service.getConsoleCategories().size() > 0) {
+					
+					category = service.getConsoleCategories().get(0);
+				}
+				else if (service.getAwsCategories() != null && 
+						service.getAwsCategories().size() > 0) {
+					
 					category = service.getAwsCategories().get(0);
 				}
 	    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
@@ -4567,7 +4574,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
 
 			for (com.amazon.aws.moa.jmsobjects.services.v1_0.Service service : moas) {
-				info("Service MOA: " + service.toXmlString());
+//				info("Service MOA: " + service.toXmlString());
 				AWSServicePojo pojo = new AWSServicePojo();
 				AWSServicePojo baseline = new AWSServicePojo();
 				this.populateAWSServicePojo(service, pojo);

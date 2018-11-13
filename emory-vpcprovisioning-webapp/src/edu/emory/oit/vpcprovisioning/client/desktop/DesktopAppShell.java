@@ -872,11 +872,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	void showProductsPopup() {
-		/*
-	border-radius: 3px;
-	height: 30px;
-	width: 30px;
-		 */
 		PushButton refreshButton = new PushButton();
 		refreshButton.setTitle("Refresh list");
 		refreshButton.setWidth("30px");
