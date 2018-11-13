@@ -239,9 +239,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	// Key is account id, List is a list of Bills for that account id
 	private HashMap<String, List<BillPojo>> billsByAccount = new HashMap<String, List<BillPojo>>();
 
-	// key is category
-	private HashMap<String, List<AWSServicePojo>> awsServicesMap = new HashMap<String, List<AWSServicePojo>>();
-	
 	// temporary
 	List<UserNotificationPojo> notificationList = new java.util.ArrayList<UserNotificationPojo>();
 	List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
@@ -4434,44 +4431,52 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		AWSServiceQueryResultPojo servicesResult = this.getServicesForFilter(null);
 		
-		if (awsServicesMap.isEmpty()) {
-			svcCnt = servicesResult.getResults().size();
-			for (AWSServicePojo service : servicesResult.getResults()) {
-		    	// see if this category is already in the awsServicesMap
-				String category = "Unknown";
-				if (service.getConsoleCategories() != null && 
-					service.getConsoleCategories().size() > 0) {
-					
-					category = service.getConsoleCategories().get(0);
-				}
-				else if (service.getAwsCategories() != null && 
-						service.getAwsCategories().size() > 0) {
-					
-					category = service.getAwsCategories().get(0);
-				}
-	    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
-	    		if (servicesForCat == null) {
-	    			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
-	    			servicesForCat.add(service);
-	    			awsServicesMap.put(category, servicesForCat);
-	    		}
-	    		else {
-	    			servicesForCat.add(service);
-	    		}
+		// key is category
+		HashMap<String, List<AWSServicePojo>> awsServicesMap = 
+			new HashMap<String, List<AWSServicePojo>>();
+		
+		svcCnt = servicesResult.getResults().size();
+		for (AWSServicePojo service : servicesResult.getResults()) {
+	    	// see if this category is already in the awsServicesMap
+			String category = "Unknown";
+			if (service.getConsoleCategories() != null && 
+				service.getConsoleCategories().size() > 0) {
+				
+				category = service.getConsoleCategories().get(0);
 			}
-		}
-	    else {
-    		Iterator<String> keys = awsServicesMap.keySet().iterator();
-    		while (keys.hasNext()) {
-    			String catName = keys.next();
-				List<AWSServicePojo> services = awsServicesMap.get(catName);
-				for (AWSServicePojo svc : services) {
-					info(catName + ": " + svc.getAwsServiceName());
-					svcCnt++;
-				}
+			else if (service.getAwsCategories() != null && 
+					service.getAwsCategories().size() > 0) {
+				
+				category = service.getAwsCategories().get(0);
+			}
+    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
+    		if (servicesForCat == null) {
+    			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
+    			servicesForCat.add(service);
+    			awsServicesMap.put(category, servicesForCat);
     		}
-	    }
-	    info("returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
+    		else {
+    			// need to see if a service by this combined name, alternate name, aws name 
+    			// exists and if it does, don't add it
+    			boolean doAdd = true;
+    			svcLoop: for (AWSServicePojo existingSvc : servicesForCat) {
+    				if (existingSvc.getCombinedServiceName() != null && 
+    					existingSvc.getCombinedServiceName().equalsIgnoreCase(service.getCombinedServiceName())) {
+    					doAdd = false;
+    					break svcLoop;
+    				}
+    				else if (existingSvc.getAlternateServiceName() != null && 
+       					existingSvc.getAlternateServiceName().equalsIgnoreCase(service.getAlternateServiceName())) {
+    					doAdd = false;
+    					break svcLoop;
+        			}
+    			}
+    			if (doAdd) {
+        			servicesForCat.add(service);
+    			}
+    		}
+		}
+	    info("[getAWSServiceMap] returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
 		return awsServicesMap;
 	}
 
@@ -4557,7 +4562,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException {
 		AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
 		result.setFilterUsed(filter);
-		
+		List<AWSServicePojo> pojos = new java.util.ArrayList<AWSServicePojo>();
+
 		try {
 			com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = 
 					(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
@@ -4581,21 +4587,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateAWSServicePojo(service, baseline);
 				pojo.setBaseline(baseline);
 
-				result.getResults().add(pojo);
+				pojos.add(pojo);
 			}
-		} catch (EnterpriseConfigurationObjectException e) {
+			
+			Collections.sort(pojos);
+			result.setResults(pojos);
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
+		} 
+		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectQueryException e) {
+		} 
+		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (JMSException e) {
+		} 
+		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseFieldException e) {
+		} 
+		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}

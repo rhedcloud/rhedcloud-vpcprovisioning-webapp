@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -134,7 +135,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 //		startServiceRefreshTimer();
-		this.refreshServiceMap(false);
+//		this.refreshServiceMap(false);
 		showAuditorTabs();
 
 		GWT.log("DesktopAppShell:  constructor");
@@ -908,7 +909,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.add(sp);
 		VerticalPanel refreshPanel = new VerticalPanel();
 		sp.add(refreshPanel);
-//		refreshPanel.add(refreshButton);
+		refreshPanel.add(refreshButton);
 
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.setWidth("100%");
@@ -928,9 +929,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		GWT.log("catsPerPanel: " + catsPerPanel);
 		int catCntr = 0;
 		int vpCntr = 0;
-		Iterator<String> keys = awsServices.keySet().iterator();
-		while (keys.hasNext()) {
-			String catName = keys.next();
+//		Iterator<String> keys = awsServices.keySet().iterator();
+		
+		Object[] keys = awsServices.keySet().toArray();
+		Arrays.sort(keys);
+		for (Object catName : keys) {
+//			String catName = keys.next();
 			GWT.log("Category is: " + catName);
 			if (catCntr >= catsPerPanel) {
 				catCntr = 0;
@@ -943,14 +947,27 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				VerticalPanel vp = vpList.get(vpCntr);
 				vp.addStyleName("productColumn");
 				vp.setSpacing(6);
-				HTMLPanel catHtml = new HTMLPanel(catName);
+				HTMLPanel catHtml = new HTMLPanel((String)catName);
 				catHtml.addStyleName("productCategory");
 				vp.add(catHtml);
 				List<AWSServicePojo> services = awsServices.get(catName);
 				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 				for (AWSServicePojo svc : services) {
 					GWT.log("Adding service: " + svc.getAwsServiceName());
-					Anchor svcAnchor = new Anchor("* " + svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+//					Anchor svcAnchor = new Anchor("* " + svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+					Anchor svcAnchor = new Anchor();
+					if (svc.getCombinedServiceName() != null) {
+//						svcAnchor.setText(svc.getCombinedServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+						svcAnchor.setText(svc.getCombinedServiceName());
+					}
+					else if (svc.getAlternateServiceName() != null) {
+//						svcAnchor.setText(svc.getAlternateServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+						svcAnchor.setText(svc.getAlternateServiceName());
+					}
+					else {
+//						svcAnchor.setText(svc.getAwsServiceName() + (svc.getAwsServiceCode() != null ? " (" + svc.getAwsServiceCode() + ")" : ""));
+						svcAnchor.setText(svc.getAwsServiceName());
+					}
 					svcAnchor.addStyleName("productAnchor");
 					svcAnchor.setTitle("STATUS: " + svc.getSiteStatus() + 
 							"  DESCRIPTION: " + svc.getDescription());
@@ -966,6 +983,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			catCntr++;
 		}
+//		while (keys.hasNext()) {
+//		}
 		// add last VP to the HP because it gets populated but not added above
 		if (hp.getWidgetCount() < 4) {
 			for (int i=hp.getWidgetCount(); i<4; i++) {

@@ -1,12 +1,13 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
-public class AWSServicePojo extends SharedObject implements IsSerializable {
+public class AWSServicePojo extends SharedObject implements IsSerializable, Comparable<AWSServicePojo> {
 	/*
 	<!ELEMENT Service (
 		ServiceId?, 
@@ -264,6 +265,47 @@ public class AWSServicePojo extends SharedObject implements IsSerializable {
 
 	public void setSiteLandingPageUrl(String siteLandingPageUrl) {
 		this.siteLandingPageUrl = siteLandingPageUrl;
+	}
+
+
+	@Override
+	public int compareTo(AWSServicePojo o) {
+		String c1 = this.getCombinedServiceName();
+		String c2 = o.getCombinedServiceName();
+		String a1 = this.getAlternateServiceName();
+		String a2 = o.getAlternateServiceName();
+		String aws1 = this.getAwsServiceName();
+		String aws2 = o.getAwsServiceName();
+		
+		if (c1 != null && c2 != null) {
+			return c1.compareTo(c2);
+		}
+		if (c1 != null && a2 != null) {
+			return c1.compareTo(a2);
+		}
+		if (c1 != null && aws2 != null) {
+			return c1.compareTo(aws2);
+		}
+		if (a1 != null && c2 != null) {
+			return a1.compareTo(c2);
+		}
+		if (a1 != null && a2 != null) {
+			return a1.compareTo(a2);
+		}
+		if (a1 != null && aws2 != null) {
+			return a1.compareTo(aws2);
+		}
+		if (aws1 != null && c2 != null) {
+			return aws1.compareTo(c2);
+		}
+		if (aws1 != null && a2 != null) {
+			return aws1.compareTo(a2);
+		}
+		if (aws1 != null && aws2 != null) {
+			return aws1.compareTo(aws2);
+		}
+
+		return 0;
 	}
 
 }

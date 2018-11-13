@@ -386,7 +386,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				return o1.getAwsStatus().compareTo(o2.getAwsStatus());
 			}
 		});
-		serviceListTable.addColumn(statusColumn, "Status");
+		serviceListTable.addColumn(statusColumn, "AWS Status");
 
 		// description
 		Column<AWSServicePojo, String> descColumn = 
@@ -469,6 +469,40 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		};
 		serviceListTable.addColumn(emoryHipaaEligibleColumn, "Emory HIPAA Eligible");
 		serviceListTable.setColumnWidth(emoryHipaaEligibleColumn, 40, Unit.PX);
+
+		// combined name
+		Column<AWSServicePojo, String> combinedNameColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getCombinedServiceName();
+			}
+		};
+		combinedNameColumn.setSortable(true);
+		sortHandler.setComparator(combinedNameColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getCombinedServiceName().compareTo(o2.getCombinedServiceName());
+			}
+		});
+		serviceListTable.addColumn(combinedNameColumn, "Combined Name");
+
+		// combined name
+		Column<AWSServicePojo, String> alternateNameColumn = 
+				new Column<AWSServicePojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(AWSServicePojo object) {
+				return object.getAlternateServiceName();
+			}
+		};
+		alternateNameColumn.setSortable(true);
+		sortHandler.setComparator(alternateNameColumn, new Comparator<AWSServicePojo>() {
+			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+				return o1.getAlternateServiceName().compareTo(o2.getAlternateServiceName());
+			}
+		});
+		serviceListTable.addColumn(alternateNameColumn, "Alternate Name");
 
 		// create user
 		Column<AWSServicePojo, String> createUserColumn = 
