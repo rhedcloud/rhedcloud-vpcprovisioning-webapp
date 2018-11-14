@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListServicePresenter extends PresenterBase implements ListServiceView.Presenter {
@@ -314,5 +315,33 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+	}
+
+	@Override
+	public void filterByAwsHipaaStatus(String status) {
+		getView().showPleaseWaitDialog("Filtering services by AWS HIPAA eligibility...");
+		filter = new AWSServiceQueryFilterPojo();
+		if (status.equalsIgnoreCase(Constants.YES)) {
+			status = Constants.TRUE;
+		}
+		if (status.equalsIgnoreCase(Constants.NO)) {
+			status = Constants.FALSE;
+		}
+		filter.setAwsHipaaEligible(status);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterBySiteHipaaStatus(String status) {
+		getView().showPleaseWaitDialog("Filtering services by Emory HIPAA eligibility...");
+		filter = new AWSServiceQueryFilterPojo();
+		if (status.equalsIgnoreCase(Constants.YES)) {
+			status = Constants.TRUE;
+		}
+		if (status.equalsIgnoreCase(Constants.NO)) {
+			status = Constants.FALSE;
+		}
+		filter.setSiteHipaaEligible(status);
+		this.getUserAndRefreshList();
 	}
 }

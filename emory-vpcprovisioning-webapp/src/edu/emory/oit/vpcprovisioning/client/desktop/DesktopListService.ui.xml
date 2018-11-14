@@ -53,6 +53,8 @@
 							<g:RadioButton ui:field="awsServiceNameRB" text="AWS Service Name" name="filterType" title="The AWS Service name"/>
 							<g:RadioButton ui:field="awsStatusRB" text="AWS Service Status" name="filterType" title="The AWS Service status (active/deprecated)"/>
 							<g:RadioButton ui:field="siteStatusRB" text="Emory Service Status" name="filterType" title="The Emory Service status (available, blocked etc.)"/>
+							<g:RadioButton ui:field="awsHipaaStatusRB" text="AWS HIPAA Eligibility" name="filterType" title="The AWS HIPAA eligibility (yes, no, true, false, unknown etc.)"/>
+							<g:RadioButton ui:field="siteHipaaStatusRB" text="Emory HIPAA Eligibility" name="filterType" title="The Emory Service eligibility (yes, no, true, false, unknown etc.)"/>
 						</g:VerticalPanel>
 						</g:CaptionPanel>
 					</g:customCell>

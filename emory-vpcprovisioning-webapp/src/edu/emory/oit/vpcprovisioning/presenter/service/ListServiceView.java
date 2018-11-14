@@ -32,6 +32,8 @@ public interface ListServiceView extends IsWidget, View {
 		void filterByAwsServiceName(String name);
 		void filterByAwsStatus(String status);
 		void filterBySiteStatus(String status);
+		void filterByAwsHipaaStatus(String status);
+		void filterBySiteHipaaStatus(String status);
 		void clearFilter();
 	}
 

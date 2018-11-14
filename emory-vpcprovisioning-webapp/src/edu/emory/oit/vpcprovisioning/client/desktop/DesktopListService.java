@@ -80,6 +80,8 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@UiField RadioButton awsServiceNameRB;
 	@UiField RadioButton awsStatusRB;
 	@UiField RadioButton siteStatusRB;
+	@UiField RadioButton awsHipaaStatusRB;
+	@UiField RadioButton siteHipaaStatusRB;
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox filterTB;
@@ -102,6 +104,12 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		}
 		else if (siteStatusRB.getValue()) {
 			presenter.filterBySiteStatus(filterTB.getText());
+		}
+		else if (siteHipaaStatusRB.getValue()) {
+			presenter.filterBySiteHipaaStatus(filterTB.getText());
+		}
+		else if (awsHipaaStatusRB.getValue()) {
+			presenter.filterByAwsHipaaStatus(filterTB.getText());
 		}
 		else {
 			this.showMessageToUser("Please select a Filter Type");

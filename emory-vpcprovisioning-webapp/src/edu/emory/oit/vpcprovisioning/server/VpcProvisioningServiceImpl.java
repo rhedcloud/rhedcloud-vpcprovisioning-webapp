@@ -4581,6 +4581,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setAwsServiceName(filter.getAwsServiceName());
 				queryObject.setAwsStatus(filter.getAwsStatus());
 				queryObject.setSiteStatus(filter.getSiteStatus());
+				queryObject.setAwsHipaaEligible(filter.getAwsHipaaEligible());
+				queryObject.setSiteHipaaEligible(filter.getSiteHipaaEligible());
 				for (String consoleCat : filter.getConsoleCategories()) {
 					info("[getServicesForFilter] adding " + consoleCat + " to the query object.");
 					queryObject.addConsoleCategory(consoleCat);
