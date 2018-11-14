@@ -109,7 +109,6 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
-//				setServiceList(Collections.<AWSServicePojo> emptyList());
 
 				// Request the service list now.
 				refreshList(userLoggedIn);
@@ -253,5 +252,66 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Service " + 
 				selectedService.getAwsServiceName() + 
 				" (" + selectedService.getAwsServiceCode() + ") was not deleted.");
+	}
+
+	@Override
+	public void filterByConsoleCategories(String categories) {
+		getView().showPleaseWaitDialog("Filtering services by Console categories...");
+		filter = new AWSServiceQueryFilterPojo();
+		String[] catArray = categories.split(",");
+		for (int i=0; i<catArray.length; i++) {
+			String cat = catArray[i];
+			GWT.log("Adding category: " + cat + " to the service query filter");
+			filter.getConsoleCategories().add(cat);
+		}
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByAwsServiceName(String name) {
+		getView().showPleaseWaitDialog("Filtering services by AWS Service name...");
+		filter = new AWSServiceQueryFilterPojo();
+		filter.setAwsServiceName(name);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByAwsStatus(String status) {
+		getView().showPleaseWaitDialog("Filtering services by AWS Service status...");
+		filter = new AWSServiceQueryFilterPojo();
+		filter.setAwsStatus(status);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterBySiteStatus(String status) {
+		getView().showPleaseWaitDialog("Filtering services by AWS Site status...");
+		filter = new AWSServiceQueryFilterPojo();
+		filter.setSiteStatus(status);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void clearFilter() {
+		getView().showPleaseWaitDialog("Clearing filter...");
+		filter = null;
+		this.getUserAndRefreshList();
+	}
+
+	private void getUserAndRefreshList() {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				refreshList(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 }

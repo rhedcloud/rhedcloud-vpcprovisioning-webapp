@@ -27,6 +27,12 @@ public interface ListServiceView extends IsWidget, View {
 		void deleteService(AWSServicePojo service);
 		public void logMessageOnServer(final String message);
 		void refreshList(final UserAccountPojo user);
+		
+		void filterByConsoleCategories(String categories);
+		void filterByAwsServiceName(String name);
+		void filterByAwsStatus(String status);
+		void filterBySiteStatus(String status);
+		void clearFilter();
 	}
 
 	/**

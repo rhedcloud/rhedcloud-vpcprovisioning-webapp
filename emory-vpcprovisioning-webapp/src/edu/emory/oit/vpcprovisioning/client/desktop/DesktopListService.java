@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -39,7 +41,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
-import edu.emory.oit.vpcprovisioning.shared.AWSServiceCategoryPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -75,7 +76,36 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@UiField Button createServiceButton;
 	@UiField Button actionsButton;
 	@UiField PushButton refreshButton;
+	@UiField RadioButton consoleCategoriesRB;
+	@UiField RadioButton awsServiceNameRB;
+	@UiField RadioButton awsStatusRB;
+	@UiField RadioButton siteStatusRB;
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
 
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		presenter.clearFilter();
+	}
+	@UiHandler("filterButton") 
+	void filterButtonClicked(ClickEvent e) {
+		if (consoleCategoriesRB.getValue()) {
+			presenter.filterByConsoleCategories(filterTB.getText());
+		}
+		else if (awsServiceNameRB.getValue()) {
+			presenter.filterByAwsServiceName(filterTB.getText());
+		}
+		else if (awsStatusRB.getValue()) {
+			presenter.filterByAwsStatus(filterTB.getText());
+		}
+		else if (siteStatusRB.getValue()) {
+			presenter.filterBySiteStatus(filterTB.getText());
+		}
+		else {
+			this.showMessageToUser("Please select a Filter Type");
+		}
+	}
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
 		presenter.refreshList(userLoggedIn);

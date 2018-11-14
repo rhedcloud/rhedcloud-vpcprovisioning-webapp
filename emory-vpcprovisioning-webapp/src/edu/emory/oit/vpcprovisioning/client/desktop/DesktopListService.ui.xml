@@ -47,6 +47,16 @@
 							ui:field="filterTB" debugId="filterTB"/>
 			    	</g:customCell>
 					<g:customCell>
+						<g:CaptionPanel addStyleNames="{style.light-captionpanel}" captionHTML="Select a Filter Type">
+						<g:VerticalPanel>
+							<g:RadioButton ui:field="consoleCategoriesRB" text="Console Categories" name="filterType" title="Comman separated list of Emory categories"/>
+							<g:RadioButton ui:field="awsServiceNameRB" text="AWS Service Name" name="filterType" title="The AWS Service name"/>
+							<g:RadioButton ui:field="awsStatusRB" text="AWS Service Status" name="filterType" title="The AWS Service status (active/deprecated)"/>
+							<g:RadioButton ui:field="siteStatusRB" text="Emory Service Status" name="filterType" title="The Emory Service status (available, blocked etc.)"/>
+						</g:VerticalPanel>
+						</g:CaptionPanel>
+					</g:customCell>
+					<g:customCell>
 						<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
 					</g:customCell>
 					<g:customCell>

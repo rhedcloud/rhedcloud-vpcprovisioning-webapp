@@ -4572,11 +4572,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ServiceQuerySpecification queryObject = (ServiceQuerySpecification) getObject(Constants.MOA_SERVICE_QUERY_SPEC);
 			
 			if (filter != null) {
+//				String awsHipaaEligible;
+//				String siteHipaaEligible;
+//				List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
+
 				queryObject.setServiceId(filter.getServiceId());
-				queryObject.setAwsServiceCode(filter.getServiceCode());
-				queryObject.setAwsStatus(filter.getStatus());
+				queryObject.setAwsServiceCode(filter.getAwsServiceCode());
+				queryObject.setAwsServiceName(filter.getAwsServiceName());
+				queryObject.setAwsStatus(filter.getAwsStatus());
+				queryObject.setSiteStatus(filter.getSiteStatus());
+				for (String consoleCat : filter.getConsoleCategories()) {
+					info("[getServicesForFilter] adding " + consoleCat + " to the query object.");
+					queryObject.addConsoleCategory(consoleCat);
+				}
+				for (String cat : filter.getCategories()) {
+					queryObject.addCategory(cat);
+				}
 			}
 
+			info("[getServicesForFilter] query object is: " + queryObject.toXmlString());
 			List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
