@@ -934,49 +934,47 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		Arrays.sort(keys);
 		for (Object catName : keys) {
 			GWT.log("Category is: " + catName);
+			List<AWSServicePojo> services = awsServices.get(catName);
+			GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 			if (catCntr >= catsPerPanel) {
 				catCntr = 0;
 				GWT.log("adding vp number " + vpCntr + " to the HP");
 				hp.add(vpList.get(vpCntr));
 				vpCntr++;
 			}
-			else {
-				GWT.log("using vp number " + vpCntr);
-				VerticalPanel vp = vpList.get(vpCntr);
-				vp.addStyleName("productColumn");
-				vp.setSpacing(6);
-				HTMLPanel catHtml = new HTMLPanel((String)catName);
-				catHtml.addStyleName("productCategory");
-				vp.add(catHtml);
-				List<AWSServicePojo> services = awsServices.get(catName);
-				GWT.log("There are " + services.size() + " services in the " + catName + " category.");
-				for (AWSServicePojo svc : services) {
-					GWT.log("Adding service: " + svc.getAwsServiceName());
-					Anchor svcAnchor = new Anchor();
-					if (svc.getCombinedServiceName() != null && 
-						svc.getCombinedServiceName().length() > 0) {
-						svcAnchor.setText(svc.getCombinedServiceName());
-					}
-					else if (svc.getAlternateServiceName() != null && 
-							svc.getAlternateServiceName().length() > 0 ) {
-						svcAnchor.setText(svc.getAlternateServiceName());
-					}
-					else {
-						svcAnchor.setText(svc.getAwsServiceName());
-					}
-					svcAnchor.addStyleName("productAnchor");
-					svcAnchor.setTitle("STATUS: " + svc.getSiteStatus() + 
-							"  DESCRIPTION: " + svc.getDescription());
-					svcAnchor.setHref(svc.getAwsLandingPageUrl());
-					svcAnchor.setTarget("_blank");
-					if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
-						svcAnchor.addStyleName("productAnchorBlocked");
-					}
-					vp.add(svcAnchor);
+			GWT.log("using vp number " + vpCntr);
+			VerticalPanel vp = vpList.get(vpCntr);
+			vp.addStyleName("productColumn");
+			vp.setSpacing(6);
+			HTMLPanel catHtml = new HTMLPanel((String)catName);
+			catHtml.addStyleName("productCategory");
+			vp.add(catHtml);
+			for (AWSServicePojo svc : services) {
+				GWT.log("Adding service: " + svc.getAwsServiceName());
+				Anchor svcAnchor = new Anchor();
+				if (svc.getCombinedServiceName() != null && 
+					svc.getCombinedServiceName().length() > 0) {
+					svcAnchor.setText(svc.getCombinedServiceName());
 				}
-				HTMLPanel html = new HTMLPanel("</br>");
-				vp.add(html);
+				else if (svc.getAlternateServiceName() != null && 
+						svc.getAlternateServiceName().length() > 0 ) {
+					svcAnchor.setText(svc.getAlternateServiceName());
+				}
+				else {
+					svcAnchor.setText(svc.getAwsServiceName());
+				}
+				svcAnchor.addStyleName("productAnchor");
+				svcAnchor.setTitle("STATUS: " + svc.getSiteStatus() + 
+						"  DESCRIPTION: " + svc.getDescription());
+				svcAnchor.setHref(svc.getAwsLandingPageUrl());
+				svcAnchor.setTarget("_blank");
+				if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
+					svcAnchor.addStyleName("productAnchorBlocked");
+				}
+				vp.add(svcAnchor);
 			}
+			HTMLPanel html = new HTMLPanel("</br>");
+			vp.add(html);
 			catCntr++;
 		}
 
