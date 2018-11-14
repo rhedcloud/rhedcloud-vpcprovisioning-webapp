@@ -256,14 +256,15 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 
 	@Override
 	public void filterByConsoleCategories(String categories) {
-		getView().showPleaseWaitDialog("Filtering services by Console categories...");
+		getView().showPleaseWaitDialog("Filtering services by Console category...");
 		filter = new AWSServiceQueryFilterPojo();
-		String[] catArray = categories.split(",");
-		for (int i=0; i<catArray.length; i++) {
-			String cat = catArray[i];
-			GWT.log("Adding category: " + cat + " to the service query filter");
-			filter.getConsoleCategories().add(cat.trim());
-		}
+//		String[] catArray = categories.split(",");
+//		for (int i=0; i<catArray.length; i++) {
+//			String cat = catArray[i];
+//			GWT.log("Adding category: " + cat + " to the service query filter");
+//			filter.getConsoleCategories().add(cat.trim());
+//		}
+		filter.getConsoleCategories().add(categories);
 		this.getUserAndRefreshList();
 	}
 
