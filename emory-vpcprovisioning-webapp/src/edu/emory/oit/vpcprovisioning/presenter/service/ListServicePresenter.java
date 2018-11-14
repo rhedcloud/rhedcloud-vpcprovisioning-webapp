@@ -262,7 +262,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		for (int i=0; i<catArray.length; i++) {
 			String cat = catArray[i];
 			GWT.log("Adding category: " + cat + " to the service query filter");
-			filter.getConsoleCategories().add(cat);
+			filter.getConsoleCategories().add(cat.trim());
 		}
 		this.getUserAndRefreshList();
 	}

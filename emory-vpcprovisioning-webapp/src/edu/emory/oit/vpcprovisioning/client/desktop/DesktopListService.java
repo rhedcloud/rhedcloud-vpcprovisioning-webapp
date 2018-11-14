@@ -86,6 +86,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
+		filterTB.setText("");
 		presenter.clearFilter();
 	}
 	@UiHandler("filterButton") 
