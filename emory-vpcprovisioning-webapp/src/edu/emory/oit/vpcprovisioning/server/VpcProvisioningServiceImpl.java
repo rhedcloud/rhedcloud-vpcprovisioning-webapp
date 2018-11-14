@@ -4442,44 +4442,57 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (service.getConsoleCategories() != null && 
 				service.getConsoleCategories().size() > 0) {
 				
-				category = service.getConsoleCategories().get(0);
+//				category = service.getConsoleCategories().get(0);
+				for (String l_category : service.getConsoleCategories()) {
+					this.addServiceToCategory(l_category, service, awsServicesMap);
+				}
 			}
 			else if (service.getAwsCategories() != null && 
 					service.getAwsCategories().size() > 0) {
 				
-				category = service.getAwsCategories().get(0);
+				// TODO: have to check all the categories they're in...not just the fist one
+//				category = service.getAwsCategories().get(0);
+				for (String l_category : service.getAwsCategories()) {
+					this.addServiceToCategory(l_category, service, awsServicesMap);
+				}
 			}
-    		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
-    		if (servicesForCat == null) {
-    			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
-    			servicesForCat.add(service);
-    			awsServicesMap.put(category, servicesForCat);
-    		}
-    		else {
-    			// need to see if a service by this combined name, alternate name, aws name 
-    			// exists and if it does, don't add it
-    			boolean doAdd = true;
-    			svcLoop: for (AWSServicePojo existingSvc : servicesForCat) {
-    				if (existingSvc.getCombinedServiceName() != null && 
-       					existingSvc.getCombinedServiceName().length() > 0 &&
-    					existingSvc.getCombinedServiceName().equalsIgnoreCase(service.getCombinedServiceName())) {
-    					doAdd = false;
-    					break svcLoop;
-    				}
-    				else if (existingSvc.getAlternateServiceName() != null && 
-       					existingSvc.getAlternateServiceName().length() > 0 &&
-       					existingSvc.getAlternateServiceName().equalsIgnoreCase(service.getAlternateServiceName())) {
-    					doAdd = false;
-    					break svcLoop;
-        			}
-    			}
-    			if (doAdd) {
-        			servicesForCat.add(service);
-    			}
-    		}
+			else {
+				// add service to the unknown category
+			}
 		}
 	    info("[getAWSServiceMap] returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
 		return awsServicesMap;
+	}
+	
+	private void addServiceToCategory(String category, AWSServicePojo service, HashMap<String, List<AWSServicePojo>> awsServicesMap) {
+		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
+		if (servicesForCat == null) {
+			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
+			servicesForCat.add(service);
+			awsServicesMap.put(category, servicesForCat);
+		}
+		else {
+			// need to see if a service by this combined name, alternate name, aws name 
+			// exists and if it does, don't add it
+			boolean doAdd = true;
+			svcLoop: for (AWSServicePojo existingSvc : servicesForCat) {
+				if (existingSvc.getCombinedServiceName() != null && 
+   					existingSvc.getCombinedServiceName().length() > 0 &&
+					existingSvc.getCombinedServiceName().equalsIgnoreCase(service.getCombinedServiceName())) {
+					doAdd = false;
+					break svcLoop;
+				}
+				else if (existingSvc.getAlternateServiceName() != null && 
+   					existingSvc.getAlternateServiceName().length() > 0 &&
+   					existingSvc.getAlternateServiceName().equalsIgnoreCase(service.getAlternateServiceName())) {
+					doAdd = false;
+					break svcLoop;
+    			}
+			}
+			if (doAdd) {
+    			servicesForCat.add(service);
+			}
+		}
 	}
 
 	private void populateAWSServiceMoa(AWSServicePojo pojo, com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException, EnterpriseFieldException {

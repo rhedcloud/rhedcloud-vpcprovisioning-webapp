@@ -3,14 +3,18 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -875,6 +879,185 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	void showProductsPopup() {
+		PushButton refreshButton = new PushButton();
+		refreshButton.setTitle("Refresh list");
+		refreshButton.setWidth("30px");
+		refreshButton.setHeight("30px");
+		Image img = new Image("images/refresh_icon.png");
+		img.setWidth("30px");
+		img.setHeight("30px");
+		refreshButton.getUpFace().setImage(img);
+		refreshButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				refreshServiceMap(false);
+			}
+		});
+
+		productsPopup.clear();
+		productsPopup.setAutoHideEnabled(true);
+		productsPopup.setWidth("1200px");
+		productsPopup.setHeight("800px");
+		productsPopup.setAnimationEnabled(true);
+		productsPopup.getElement().getStyle().setBackgroundColor("#232f3e");
+		productsPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
+			@Override
+			public void onClose(CloseEvent<PopupPanel> event) {
+				productsShowing = false;
+			}
+		});
+		
+		ScrollPanel sp = new ScrollPanel();
+		sp.getElement().getStyle().setBackgroundColor("#232f3e");
+		sp.getElement().getStyle().setBorderColor("black");
+		sp.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		sp.setHeight("99%");
+		sp.setWidth("100%");
+		productsPopup.add(sp);
+		
+		VerticalPanel mainPanel = new VerticalPanel();
+		mainPanel.setWidth("100%");
+		mainPanel.setHeight("800px");
+		mainPanel.getElement().getStyle().setBackgroundColor("#232f3e");
+		sp.add(mainPanel);
+//		mainPanel.add(refreshButton);
+
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.getElement().getStyle().setBackgroundColor("#232f3e");
+		hp.setHeight("100%");
+		hp.setSpacing(12);
+		mainPanel.add(hp);
+		
+		Object[] categories = awsServices.keySet().toArray();
+		Arrays.sort(categories);
+
+		final VerticalPanel categoryVp = new VerticalPanel();
+		categoryVp.getElement().getStyle().setBackgroundColor("#232f3e");
+		categoryVp.getElement().getStyle().setBorderColor("black");
+		categoryVp.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		categoryVp.getElement().getStyle().setBorderWidth(1, Unit.PX);
+		categoryVp.setHeight("100%");
+		categoryVp.setWidth("300px");
+		categoryVp.setSpacing(8);
+		hp.add(categoryVp);
+		
+//		HTML categoryHeader = new HTML("Categories of Services");
+//		categoryHeader.getElement().getStyle().setBackgroundColor("#232f3e");
+//		categoryHeader.addStyleName("categoryHeader");
+//		categoryHeader.getElement().getStyle().setColor("#ddd");
+//		categoryHeader.getElement().getStyle().setFontSize(18, Unit.PX);
+//		categoryHeader.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+//		categoryVp.add(categoryHeader);
+
+		final Grid categoryGrid = new Grid(categories.length, 1);
+		categoryGrid.getElement().getStyle().setBackgroundColor("#232f3e");
+		categoryVp.add(categoryGrid);
+
+		final VerticalPanel servicesVp = new VerticalPanel();
+		servicesVp.getElement().getStyle().setBackgroundColor("#232f3e");
+		servicesVp.setWidth("400px");
+		servicesVp.setSpacing(8);
+		hp.add(servicesVp);
+		
+		final VerticalPanel resourcesVp = new VerticalPanel();
+		resourcesVp.getElement().getStyle().setBackgroundColor("#232f3e");
+		resourcesVp.setHeight("100%");
+		resourcesVp.setWidth("400px");
+		resourcesVp.setSpacing(8);
+		hp.add(resourcesVp);
+		
+		Object[] keys = awsServices.keySet().toArray();
+		Arrays.sort(keys);
+		int categoryRowCnt = 0;
+		for (final Object catName : keys) {
+			GWT.log("Category is: " + catName);
+			Anchor categoryAnchor = new Anchor((String)catName);
+			categoryAnchor.addStyleName("categoryAnchor");
+			categoryAnchor.getElement().getStyle().setBackgroundColor("#232f3e");
+			categoryAnchor.getElement().getStyle().setColor("#ddd");
+			categoryAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
+			categoryAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			categoryAnchor.addMouseOverHandler(new MouseOverHandler() {
+				@Override
+				public void onMouseOver(MouseOverEvent event) {
+					resourcesVp.clear();
+					HTML resourcesHeading = new HTML("Resources and Media");
+					resourcesHeading.getElement().getStyle().setBackgroundColor("#232f3e");
+					resourcesHeading.getElement().getStyle().setColor("#ddd");
+					resourcesHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+					resourcesHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					resourcesVp.add(resourcesHeading);
+
+					servicesVp.clear();
+					HTML svcCatHeading = new HTML((String)catName);
+					svcCatHeading.getElement().getStyle().setBackgroundColor("#232f3e");
+					svcCatHeading.getElement().getStyle().setColor("#ddd");
+					svcCatHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+					svcCatHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					servicesVp.add(svcCatHeading);
+
+					List<AWSServicePojo> services = awsServices.get(catName);
+					for (AWSServicePojo svc : services) {
+						GWT.log("Adding service: " + svc.getAwsServiceName());
+						VerticalPanel svcVp = new VerticalPanel();
+						svcVp.getElement().getStyle().setBackgroundColor("#232f3e");
+						svcVp.setSpacing(4);
+						svcVp.setWidth("100%");
+						servicesVp.add(svcVp);
+
+						HorizontalPanel svcHp = new HorizontalPanel();
+						svcHp.getElement().getStyle().setBackgroundColor("#232f3e");
+						svcVp.add(svcHp);
+						
+						Anchor svcAnchor = new Anchor();
+						svcHp.add(svcAnchor);
+						if (svc.getCombinedServiceName() != null && 
+							svc.getCombinedServiceName().length() > 0) {
+							svcAnchor.setText(svc.getCombinedServiceName());
+						}
+						else if (svc.getAlternateServiceName() != null && 
+								svc.getAlternateServiceName().length() > 0 ) {
+							svcAnchor.setText(svc.getAlternateServiceName());
+						}
+						else {
+							svcAnchor.setText(svc.getAwsServiceName());
+						}
+						svcAnchor.addStyleName("productAnchor");
+						svcAnchor.getElement().getStyle().setFontSize(14, Unit.PX);
+						svcAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
+						svcAnchor.setHref(svc.getAwsLandingPageUrl());
+						svcAnchor.setTarget("_blank");
+						if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
+							svcAnchor.addStyleName("productAnchorBlocked");
+						}
+
+						if (svc.isSiteHipaaEligible()) {
+							Image img = new Image("images/green-checkbox-icon-15.jpg");
+							img.getElement().getStyle().setBackgroundColor("#232f3e");
+							img.setWidth("16px");
+							img.setHeight("16px");
+							img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
+							svcHp.add(img);
+						}
+						
+						HTML svcDesc = new HTML(svc.getDescription());
+						svcDesc.addStyleName("productDescription");
+						svcDesc.getElement().getStyle().setColor("#ddd");
+						svcDesc.getElement().getStyle().setFontSize(12, Unit.PX);
+						svcVp.add(svcDesc);
+					}
+				}
+			});
+//			categoryVp.add(categoryAnchor);
+			categoryGrid.setWidget(categoryRowCnt, 0, categoryAnchor);
+			categoryRowCnt++;
+		}
+
+		productsPopup.showRelativeTo(linksPanel);
+	}
+	
+	void showProductsPopup_old() {
 		PushButton refreshButton = new PushButton();
 		refreshButton.setTitle("Refresh list");
 		refreshButton.setWidth("30px");
