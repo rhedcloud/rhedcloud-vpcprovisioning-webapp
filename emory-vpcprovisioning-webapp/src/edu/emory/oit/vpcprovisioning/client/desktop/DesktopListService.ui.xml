@@ -48,7 +48,7 @@
 			    	</g:customCell>
 					<g:customCell>
 						<g:CaptionPanel addStyleNames="{style.light-captionpanel}" captionHTML="Select a Filter Type">
-						<g:VerticalPanel>
+						<g:VerticalPanel spacing="6">
 							<g:RadioButton ui:field="consoleCategoriesRB" text="Console Category" name="filterType" title="ONE Emory Console Category"/>
 							<g:RadioButton ui:field="awsServiceNameRB" text="AWS Service Name" name="filterType" title="The AWS Service name"/>
 							<g:RadioButton ui:field="awsStatusRB" text="AWS Service Status" name="filterType" title="The AWS Service status (active/deprecated)"/>
