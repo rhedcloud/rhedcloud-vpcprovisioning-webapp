@@ -106,6 +106,9 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
@@ -961,7 +964,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		final VerticalPanel assessmentVp = new VerticalPanel();
 		assessmentVp.getElement().getStyle().setBackgroundColor("#232f3e");
-		assessmentVp.setHeight("100%");
 		assessmentVp.setWidth("400px");
 		assessmentVp.setSpacing(8);
 		hp.add(assessmentVp);
@@ -991,7 +993,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					servicesVp.add(svcCatHeading);
 
 					List<AWSServicePojo> services = awsServices.get(catName);
-					for (AWSServicePojo svc : services) {
+					for (final AWSServicePojo svc : services) {
 						GWT.log("Adding service: " + svc.getAwsServiceName());
 						VerticalPanel svcVp = new VerticalPanel();
 						svcVp.getElement().getStyle().setBackgroundColor("#232f3e");
@@ -1003,7 +1005,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						svcHp.getElement().getStyle().setBackgroundColor("#232f3e");
 						svcVp.add(svcHp);
 						
-						Anchor svcAnchor = new Anchor();
+						final Anchor svcAnchor = new Anchor();
 						svcHp.add(svcAnchor);
 						if (svc.getCombinedServiceName() != null && 
 							svc.getCombinedServiceName().length() > 0) {
@@ -1039,14 +1041,48 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							@Override
 							public void onMouseOver(MouseOverEvent event) {
 								assessmentVp.clear();
-								HTML assessmentHeading = new HTML("Service Assessment");
+								HTML assessmentHeading = new HTML("Assessment of the " + svcAnchor.getText() + " service." );
 								assessmentHeading.getElement().getStyle().setBackgroundColor("#232f3e");
 								assessmentHeading.getElement().getStyle().setColor("#ddd");
 								assessmentHeading.getElement().getStyle().setFontSize(16, Unit.PX);
 								assessmentHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 								assessmentVp.add(assessmentHeading);
 								
-								// TODO: add service assessment info if it exists
+								// add service assessment info if it exists
+								ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+								filter.setServiceId(svc.getServiceId());
+								AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assessmentCb = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+									@Override
+									public void onFailure(Throwable caught) {
+										HTML assessmentHtml = new HTML("Error retrieving assessment information.");
+										assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
+										assessmentHtml.getElement().getStyle().setColor("#ddd");
+										assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+										assessmentVp.add(assessmentHtml);
+									}
+
+									@Override
+									public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+										if (result.getResults().size() > 0) {
+											// TODO: get all relevant assessment info for the service
+											for (ServiceSecurityAssessmentPojo assessment : result.getResults()) {
+												HTML assessmentHtml = new HTML("<b>Assessment status:</b>  " + assessment.getStatus());
+												assessmentHtml.getElement().getStyle().setColor("orange");
+												assessmentHtml.getElement().getStyle().setColor("#ddd");
+												assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+												assessmentVp.add(assessmentHtml);
+											}
+										}
+										else {
+											HTML assessmentHtml = new HTML("No assessment performed yet.");
+											assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
+											assessmentHtml.getElement().getStyle().setColor("#ddd");
+											assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+											assessmentVp.add(assessmentHtml);
+										}
+									}
+								};
+								VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, assessmentCb);
 							}
 						});
 						
