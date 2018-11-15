@@ -1021,6 +1021,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						svcAnchor.addStyleName("productAnchor");
 						svcAnchor.getElement().getStyle().setFontSize(14, Unit.PX);
 						svcAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						svcAnchor.getElement().getStyle().setColor("#fff");
 						svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
 						svcAnchor.setHref(svc.getAwsLandingPageUrl());
 						svcAnchor.setTarget("_blank");
