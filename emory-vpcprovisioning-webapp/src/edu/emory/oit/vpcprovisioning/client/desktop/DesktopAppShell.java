@@ -959,12 +959,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		servicesVp.setSpacing(8);
 		hp.add(servicesVp);
 		
-		final VerticalPanel resourcesVp = new VerticalPanel();
-		resourcesVp.getElement().getStyle().setBackgroundColor("#232f3e");
-		resourcesVp.setHeight("100%");
-		resourcesVp.setWidth("400px");
-		resourcesVp.setSpacing(8);
-		hp.add(resourcesVp);
+		final VerticalPanel assessmentVp = new VerticalPanel();
+		assessmentVp.getElement().getStyle().setBackgroundColor("#232f3e");
+		assessmentVp.setHeight("100%");
+		assessmentVp.setWidth("400px");
+		assessmentVp.setSpacing(8);
+		hp.add(assessmentVp);
 		
 		Object[] keys = awsServices.keySet().toArray();
 		Arrays.sort(keys);
@@ -980,13 +980,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			categoryAnchor.addMouseOverHandler(new MouseOverHandler() {
 				@Override
 				public void onMouseOver(MouseOverEvent event) {
-					resourcesVp.clear();
-					HTML resourcesHeading = new HTML("Resources and Media");
-					resourcesHeading.getElement().getStyle().setBackgroundColor("#232f3e");
-					resourcesHeading.getElement().getStyle().setColor("#ddd");
-					resourcesHeading.getElement().getStyle().setFontSize(16, Unit.PX);
-					resourcesHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-					resourcesVp.add(resourcesHeading);
+					assessmentVp.clear();
 
 					servicesVp.clear();
 					HTML svcCatHeading = new HTML((String)catName);
@@ -1028,9 +1022,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
 						svcAnchor.setHref(svc.getAwsLandingPageUrl());
 						svcAnchor.setTarget("_blank");
-						if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
-							svcAnchor.addStyleName("productAnchorBlocked");
-						}
+//						if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
+//							svcAnchor.addStyleName("productAnchorBlocked");
+//						}
 
 						if (svc.isSiteHipaaEligible()) {
 							Image img = new Image("images/green-checkbox-icon-15.jpg");
@@ -1040,6 +1034,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
 							svcHp.add(img);
 						}
+						
+						svcAnchor.addMouseOverHandler(new MouseOverHandler() {
+							@Override
+							public void onMouseOver(MouseOverEvent event) {
+								assessmentVp.clear();
+								HTML assessmentHeading = new HTML("Service Assessment");
+								assessmentHeading.getElement().getStyle().setBackgroundColor("#232f3e");
+								assessmentHeading.getElement().getStyle().setColor("#ddd");
+								assessmentHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+								assessmentHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+								assessmentVp.add(assessmentHeading);
+								
+								// TODO: add service assessment info if it exists
+							}
+						});
+						
+						HTML svcStatus = new HTML("STATUS: " + svc.getSiteStatus());
+						svcStatus.addStyleName("productDescription");
+						svcStatus.getElement().getStyle().setColor("orange");
+						svcStatus.getElement().getStyle().setFontSize(12, Unit.PX);
+						svcStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						svcVp.add(svcStatus);
 						
 						HTML svcDesc = new HTML(svc.getDescription());
 						svcDesc.addStyleName("productDescription");
