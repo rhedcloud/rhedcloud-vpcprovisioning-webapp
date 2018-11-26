@@ -52,8 +52,8 @@ public class Constants implements IsSerializable {
 	public static final String MOA_VPC_MAINTAIN = "MaintainVirtualPrivateCloud.v1_0";
 	public static final String MOA_VPC_REQUISITION = "VirtualPrivateCloudRequisition.v1_0";
 	public static final String MOA_VPCP_QUERY_SPEC = "VirtualPrivateCloudProvisioningQuerySpecification.v1_0";
-	public static final String MOA_VPCP_MAINTAIN = "MaintainVirtualPrivateCloudProvisioning.v1_0";
-	public static final String MOA_VPCP_GENERATE = "GenerateVirtualPrivateCloudProvisioning.v1_0";
+	public static final String MOA_VPCP = "VirtualPrivateCloudProvisioning.v1_0";
+	public static final String MOA_VPCP_GENERATE = "VirtualPrivateCloudProvisioning.Generate.v1_0";
 	public static final String MOA_ACCOUNT_QUERY_SPEC = "AccountQuerySpecification.v1_0";
 	public static final String MOA_ACCOUNT = "Account.v1_0";
 //	public static final String MOA_AUTHORIZATION = "Authorization.v2_0";
@@ -137,8 +137,8 @@ public class Constants implements IsSerializable {
 	public static final String LIST_CENTRAL_ADMIN = "listCentralAdmin";
 	public static final String MOA_ACCOUNT_PROVISIONING_AUTHORIZATION_QUERY_SPECIFICATION = "AccountProvisioningAuthorizationQuerySpecification.v1_0";
 	public static final String MOA_ACCOUNT_PROVISIONING_AUTHORIZATION = "AccountProvisioningAuthorization.v1_0";
-	public static final String MOA_INCIDENT_GENERATE = "GenerateIncident.v2_0";
-	public static final String MOA_INCIDENT_MAINTAIN = "MaintainIncident.v2_0";
+	public static final String MOA_INCIDENT_GENERATE = "Incident.Generate.v2_0";
+	public static final String MOA_INCIDENT = "Incident.v2_0";
 	public static final String MOA_INCIDENT_QUERY_SPEC = "IncidentQuerySpecification.v2_0";
 	public static final String MOA_INCIDENT_REQUISITION = "IncidentRequisition.v2_0";
 	

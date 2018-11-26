@@ -1060,7 +1060,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
 	    	}
 	    });
-		typeColumn.setCellStyleNames("productAnchor");
+		typeColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(typeColumn, "Type");
 		
 		Column<AccountNotificationPojo, String> priorityColumn = 
@@ -1083,7 +1083,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
 	    	}
 	    });
-	    priorityColumn.setCellStyleNames("productAnchor");
+	    priorityColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(priorityColumn, "Priority");
 		
 		Column<AccountNotificationPojo, String> subjectColumn = 
@@ -1107,7 +1107,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				return o1.getSubject().compareTo(o2.getSubject());
 			}
 		});
-		subjectColumn.setCellStyleNames("productAnchor");
+		subjectColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(subjectColumn, "Subject");
 
 		// Reference id column
@@ -1136,7 +1136,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	    		}
 	    	}
 	    });
-		referenceId.setCellStyleNames("productAnchor");
+		referenceId.setCellStyleNames("tableAnchor");
 		listTable.addColumn(referenceId, "Reference ID");
 
 		Column<AccountNotificationPojo, String> createTime = 
@@ -1166,7 +1166,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
 	    	}
 	    });
-	    createTime.setCellStyleNames("productAnchor");
+	    createTime.setCellStyleNames("tableAnchor");
 		listTable.addColumn(createTime, "Create Time");
 		
 		Column<AccountNotificationPojo, String> updateTime = 
@@ -1195,7 +1195,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT_NOTIFICATION, presenter.getAccount(), object);
 	    	}
 	    });
-	    updateTime.setCellStyleNames("productAnchor");
+	    updateTime.setCellStyleNames("tableAnchor");
 		listTable.addColumn(updateTime, "Update Time");
 	}
 	@Override

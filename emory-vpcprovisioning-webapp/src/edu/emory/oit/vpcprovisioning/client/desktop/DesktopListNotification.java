@@ -405,7 +405,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		notificationIdColumn.setCellStyleNames("productAnchor");
+		notificationIdColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(notificationIdColumn, "ID");
 
 		// Type column
@@ -429,7 +429,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		typeColumn.setCellStyleNames("productAnchor");
+		typeColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(typeColumn, "Type");
 		
 		// Priority column
@@ -453,7 +453,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		priorityColumn.setCellStyleNames("productAnchor");
+		priorityColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(priorityColumn, "Priority");
 		
 		// Subject column
@@ -477,7 +477,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		subjectColumn.setCellStyleNames("productAnchor");
+		subjectColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(subjectColumn, "Subject");
 		
 		// FullText column
@@ -501,7 +501,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		fullTextColumn.setCellStyleNames("productAnchor");
+		fullTextColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(fullTextColumn, "Text");
 		
 		// Reference id column
@@ -526,7 +526,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 //				ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SRD_FOR_USER_NOTIFICATION, object);
 	    	}
 	    });
-		referenceId.setCellStyleNames("productAnchor");
+		referenceId.setCellStyleNames("tableAnchor");
 		listTable.addColumn(referenceId, "Reference ID");
 
 		// create time
@@ -557,7 +557,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		createTimeColumn.setCellStyleNames("productAnchor");
+		createTimeColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(createTimeColumn, "Create Time");
 
 		// read time
@@ -591,7 +591,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_NOTIFICATION, object);
 	    	}
 	    });
-		readTimeColumn.setCellStyleNames("productAnchor");
+		readTimeColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(readTimeColumn, "Read Time");
 	}
 

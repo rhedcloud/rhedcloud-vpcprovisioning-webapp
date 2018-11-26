@@ -787,7 +787,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), object);
 	    	}
 	    });
-		acctIdColumn.setCellStyleNames("productAnchor");
+		acctIdColumn.setCellStyleNames("tableAnchor");
 		assessmentListTable.addColumn(acctIdColumn, "Assessment ID");
 		
 		// status
@@ -811,7 +811,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), object);
 	    	}
 	    });
-		statusColumn.setCellStyleNames("productAnchor");
+		statusColumn.setCellStyleNames("tableAnchor");
 		assessmentListTable.addColumn(statusColumn, "Status");
 		
 		// service ids/names
@@ -953,7 +953,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_TEST_PLAN, presenter.getService(), object, object.getServiceTestPlan());
 		    	}
 		    });
-			testPlan.setCellStyleNames("productAnchor");
+			testPlan.setCellStyleNames("tableAnchor");
 		}
 		assessmentListTable.addColumn(testPlan, "Test Plan");
 	}

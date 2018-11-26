@@ -316,9 +316,33 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		}
 		else {
 			if (!this.isEditing) {
-				// it's a create
-				getView().showPleaseWaitDialog("Generating VPC Provisioning object...");
-				VpcProvisioningService.Util.getInstance().generateVpncp(vpnConnectionRequisition, vpncpCallback);
+				// it's a generate
+				// TODO: create VpnConnectionProfileAssignment using the profile passed in with the requisition
+				AsyncCallback<VpnConnectionProfileAssignmentPojo> vcpaCb = new AsyncCallback<VpnConnectionProfileAssignmentPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						getView().hidePleaseWaitDialog();
+						GWT.log("Exception creating the VpnConnectionProfileAssignment", caught);
+						getView().showMessageToUser("There was an exception on the " +
+								"server saving the VpnConnectionProfileAssignment.  Message " +
+								"from server is: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(VpnConnectionProfileAssignmentPojo result) {
+						getView().hidePleaseWaitDialog();
+						getView().showPleaseWaitDialog("Generating VPC Provisioning object...");
+						VpcProvisioningService.Util.getInstance().generateVpncp(vpnConnectionRequisition, vpncpCallback);
+					}
+				};
+				getView().showPleaseWaitDialog("Creating the VPN Connection Profile Assignment object...");
+				VpnConnectionProfileAssignmentPojo vcpa = new VpnConnectionProfileAssignmentPojo();
+				vcpa.setVpnConnectionProfileId(vpnConnectionRequisition.getProfile().getVpnConnectionProfileId());
+				vcpa.setOwnerId(vpnConnectionRequisition.getOwnerId());
+				// TODO: description and purpose are required fields but we're not collecting that data yet...
+				vcpa.setDescription("Unknown description");
+				vcpa.setPurpose("Unknown purpose");
+				VpcProvisioningService.Util.getInstance().createVpnConnectionProfileAssignment(vcpa, vcpaCb);
 			}
 			else {
 				// it's an update

@@ -3459,7 +3459,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		try {
 			VirtualPrivateCloudProvisioningQuerySpecification queryObject = (VirtualPrivateCloudProvisioningQuerySpecification) getObject(Constants.MOA_VPCP_QUERY_SPEC);
-			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP_MAINTAIN);
+			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP);
 
 			if (filter != null) {
 				if (filter.isDefaultMaxVpcps()) {
@@ -3681,7 +3681,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				return vpcpPojo;
 			}
 			info("generating Vpcp on the server...");
-			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP_GENERATE);
+			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP);
 			VirtualPrivateCloudRequisition seed = (VirtualPrivateCloudRequisition) getObject(Constants.MOA_VPC_REQUISITION);
 			info("populating moa");
 			this.populateVpcRequisitionMoa(vpcRequisition, seed);
@@ -4276,7 +4276,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				ElasticIpRequisition requisition = (ElasticIpRequisition) getObject(Constants.MOA_ELASTIC_IP_REQUISITION);
 				requisition.setOwnerId(req.getOwnerId());
 
-				ElasticIpAssignment moa = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT_GENERATE);
+				ElasticIpAssignment moa = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
 
 				info("generating elastic ip Assignment record on the server:  " + requisition.toXmlString());
 				List<ActionableEnterpriseObject> results = this.doGenerate(moa, requisition, getElasticIpRequestService());
@@ -8233,7 +8233,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<IncidentPojo> pojos = new java.util.ArrayList<IncidentPojo>();
 		try {
 			IncidentQuerySpecification queryObject = (IncidentQuerySpecification) getObject(Constants.MOA_INCIDENT_QUERY_SPEC);
-			Incident actionable = (Incident) getObject(Constants.MOA_INCIDENT_MAINTAIN);
+			Incident actionable = (Incident) getObject(Constants.MOA_INCIDENT);
 
 			if (filter != null) {
 				queryObject.setNumber(filter.getNumber());
@@ -8398,7 +8398,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public IncidentPojo generateIncident(IncidentRequisitionPojo incidentRequisition) throws RpcException {
 		try {
 			info("generating Incident on the server...");
-			Incident actionable = (Incident) getObject(Constants.MOA_INCIDENT_GENERATE);
+			Incident actionable = (Incident) getObject(Constants.MOA_INCIDENT);
 			IncidentRequisition seed = (IncidentRequisition) getObject(Constants.MOA_INCIDENT_REQUISITION);
 			info("populating moa");
 			this.populateIncidentRequisitionMoa(incidentRequisition, seed);
@@ -9074,6 +9074,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		} 
 	}
 
+	private void populateVpnConnectionProfileAssignmentMoa(VpnConnectionProfileAssignmentPojo pojo,
+			VpnConnectionProfileAssignment moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+
+		moa.setVpnConnectionProfileAssignmentId(pojo.getVpnConnectionProfileAssignmentId());
+		moa.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
+		moa.setOwnerId(pojo.getOwnerId());
+		moa.setDescription(pojo.getDescription());
+		moa.setPurpose(pojo.getPurpose());
+		moa.setDeleteUser(pojo.getDeleteUser());
+		if (pojo.getDeleteTime() != null) {
+			Datetime dt = new Datetime("DeleteDatetime");
+			populateDatetime(dt, pojo.getDeleteTime());
+			moa.setDeleteDatetime(dt);
+		}
+		
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
 	private void populateVpnConnectionProfileAssignmentPojo(VpnConnectionProfileAssignment moa,
 			VpnConnectionProfileAssignmentPojo pojo) {
 
@@ -9278,6 +9296,66 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	@Override
+	public VpnConnectionProfileAssignmentPojo createVpnConnectionProfileAssignment(
+			VpnConnectionProfileAssignmentPojo profileAssignment) throws RpcException {
+
+		profileAssignment.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
+		try {
+			info("creating VpnConnectionProfileAssignment on the server...");
+			VpnConnectionProfileAssignment moa = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
+			info("populating moa");
+			this.populateVpnConnectionProfileAssignmentMoa(profileAssignment, moa);
+			info("Creating VpnConnectionProfileAssignment: " + moa.toXmlString());
+			
+			info("doing the VpnConnectionProfileAssignment.create...");
+			this.doCreate(moa, getNetworkOpsRequestService());
+			info("VpnConnectionProfileAssignment.create is complete...");
+
+			return profileAssignment;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectCreateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
 
 	@Override
 	public VpnConnectionProfileAssignmentPojo generateVpnConnectionProfileAssignment(

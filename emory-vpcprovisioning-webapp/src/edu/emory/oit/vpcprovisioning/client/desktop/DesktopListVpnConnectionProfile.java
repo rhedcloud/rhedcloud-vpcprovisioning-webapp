@@ -63,7 +63,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	SimplePager listPager;
 //	@UiField Button assignButton;
 	@UiField Button createButton;
-	@UiField Button provisionButton;
+//	@UiField Button provisionButton;
 	@UiField Button actionsButton;
 	@UiField(provided = true)
 	CellTable<VpnConnectionProfileSummaryPojo> listTable = new CellTable<VpnConnectionProfileSummaryPojo>(15,
@@ -143,10 +143,10 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
 	}
 	
-	@UiHandler("provisionButton")
-	void provisionButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING);
-	}
+//	@UiHandler("provisionButton")
+//	void provisionButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING);
+//	}
 
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
@@ -155,7 +155,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(3, 1);
+		Grid grid = new Grid(4, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -244,44 +244,44 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		});
 		grid.setWidget(1, 0, deleteAnchor);
 
-//		Anchor provisionAnchor = new Anchor("Provisiong VPN Connection");
-//		provisionAnchor.addStyleName("productAnchor");
-//		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		provisionAnchor.setTitle("Provision selected profile");
-//		provisionAnchor.ensureDebugId(provisionAnchor.getText());
-//		provisionAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				actionsPopup.hide();
-//				if (selectionModel.getSelectedSet().size() == 0) {
-//					showMessageToUser("Please select an item from the list");
-//					return;
-//				}
-//				if (selectionModel.getSelectedSet().size() > 1) {
-//					showMessageToUser("Please select one Profile to provision");
-//					return;
-//				}
-//				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-//				
-//				VpnConnectionProfileSummaryPojo m = nIter.next();
-//				if (m != null) {
-//					if (userLoggedIn.isNetworkAdmin()) {
-//						if (m.getAssignment() != null) {
-//							showMessageToUser("You cannot provision a VPN that has an assignment associated to it.");
-//							return;
-//						}
-//						ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m.getProfile());
-//					}
-//					else {
-//						showMessageToUser("You are not authorized to perform this action.");
-//					}
-//				}
-//				else {
-//					showMessageToUser("Please select an item from the list");
-//				}
-//			}
-//		});
-//		grid.setWidget(2, 0, provisionAnchor);
+		Anchor provisionAnchor = new Anchor("Provisiong VPN Connection");
+		provisionAnchor.addStyleName("productAnchor");
+		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		provisionAnchor.setTitle("Provision selected profile");
+		provisionAnchor.ensureDebugId(provisionAnchor.getText());
+		provisionAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				if (selectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select one Profile to provision");
+					return;
+				}
+				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				
+				VpnConnectionProfileSummaryPojo m = nIter.next();
+				if (m != null) {
+					if (userLoggedIn.isNetworkAdmin()) {
+						if (m.getAssignment() != null) {
+							showMessageToUser("You cannot provision a VPN that has an assignment associated to it.");
+							return;
+						}
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m.getProfile());
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this action.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, provisionAnchor);
 
 		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
 		deprovisionAnchor.addStyleName("productAnchor");
@@ -317,7 +317,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				}
 			}
 		});
-		grid.setWidget(2, 0, deprovisionAnchor);
+		grid.setWidget(3, 0, deprovisionAnchor);
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
@@ -627,7 +627,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	    		}
 	    	}
 	    });
-		assignmentStatusColumn.setCellStyleNames("productAnchor");
+		assignmentStatusColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(assignmentStatusColumn, "Assignment Status");
 
 		// create user

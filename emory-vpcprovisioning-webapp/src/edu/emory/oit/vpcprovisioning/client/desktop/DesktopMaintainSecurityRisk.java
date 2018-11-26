@@ -504,7 +504,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_COUNTER_MEASURE, presenter.getSecurityAssessment(), presenter.getSecurityRisk(), object);
 	    	}
 	    });
-		statusColumn.setCellStyleNames("productAnchor");
+		statusColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(statusColumn, "Status");
 		
 		Column<CounterMeasurePojo, String> descriptionColumn = 
@@ -527,7 +527,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_COUNTER_MEASURE, presenter.getSecurityAssessment(), presenter.getSecurityRisk(), object);
 	    	}
 	    });
-	    descriptionColumn.setCellStyleNames("productAnchor");
+	    descriptionColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(descriptionColumn, "Description");
 		
 		Column<CounterMeasurePojo, String> verifierColumn = 
@@ -550,7 +550,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				return o1.getVerifier().compareTo(o2.getVerifier());
 			}
 		});
-		verifierColumn.setCellStyleNames("productAnchor");
+		verifierColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(verifierColumn, "Verifier");
 
 		Column<CounterMeasurePojo, String> verificationDateColumn = 
@@ -579,7 +579,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_COUNTER_MEASURE, presenter.getSecurityAssessment(), presenter.getSecurityRisk(), object);
 	    	}
 	    });
-	    verificationDateColumn.setCellStyleNames("productAnchor");
+	    verificationDateColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(verificationDateColumn, "Verification Date");
 	}
 	@Override

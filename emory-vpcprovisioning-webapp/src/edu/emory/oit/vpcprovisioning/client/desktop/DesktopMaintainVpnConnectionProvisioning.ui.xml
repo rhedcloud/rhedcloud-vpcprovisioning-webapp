@@ -8,7 +8,7 @@
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:Label addStyleNames="{style.mediumLabel}">Provision a new VPN Connection</g:Label>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="12" visible="false">
+			<g:Grid cellSpacing="12">
 				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">VPC Address:</g:Label>
@@ -21,7 +21,7 @@
 			</g:Grid>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
-			<g:ScrollPanel width="96%" visible="false">
+			<g:ScrollPanel width="96%">
 				<g:VerticalPanel spacing="8" ui:field="tunnelsVP" height="100%">
 					<g:Label addStyleNames="{style.mediumLabel}">Tunnel Profiles:</g:Label>
 					<c:CellTable width="100%" ui:field="tunnelProfileTable"  title="Existing Tunnels"/>
