@@ -52,6 +52,7 @@ public interface ListServiceView extends IsWidget, View {
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeServiceFromView(AWSServicePojo service);
+	void setFilterTypeItems(List<String> filterTypes);
 
 
 }

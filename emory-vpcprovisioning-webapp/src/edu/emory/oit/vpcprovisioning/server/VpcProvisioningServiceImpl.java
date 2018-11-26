@@ -4442,7 +4442,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (service.getConsoleCategories() != null && 
 				service.getConsoleCategories().size() > 0) {
 				
-//				category = service.getConsoleCategories().get(0);
 				for (String l_category : service.getConsoleCategories()) {
 					this.addServiceToCategory(l_category, service, awsServicesMap);
 				}
@@ -4451,7 +4450,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					service.getAwsCategories().size() > 0) {
 				
 				// TODO: have to check all the categories they're in...not just the fist one
-//				category = service.getAwsCategories().get(0);
 				for (String l_category : service.getAwsCategories()) {
 					this.addServiceToCategory(l_category, service, awsServicesMap);
 				}

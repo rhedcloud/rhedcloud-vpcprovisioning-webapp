@@ -1025,9 +1025,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
 						svcAnchor.setHref(svc.getAwsLandingPageUrl());
 						svcAnchor.setTarget("_blank");
-//						if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
-//							svcAnchor.addStyleName("productAnchorBlocked");
-//						}
 
 						if (svc.isSiteHipaaEligible()) {
 							Image img = new Image("images/green-checkbox-icon-15.jpg");
@@ -1035,6 +1032,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							img.setWidth("16px");
 							img.setHeight("16px");
 							img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
+							svcHp.add(img);
+						}
+						else {
+							// red circle with line NOT hipaa eligible
+							Image img = new Image("images/red-circle-white-x.png");
+							img.getElement().getStyle().setBackgroundColor("#232f3e");
+							img.setWidth("16px");
+							img.setHeight("16px");
+							img.setTitle("This service IS NOT HIPAA eligible according to Emory's HIPAA policy");
 							svcHp.add(img);
 						}
 						

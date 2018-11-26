@@ -110,6 +110,15 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
+				
+				List<String> filterTypeItems = new java.util.ArrayList<String>();
+				filterTypeItems.add(Constants.SVC_FILTER_AWS_HIPAA_STATUS);
+				filterTypeItems.add(Constants.SVC_FILTER_AWS_NAME);
+				filterTypeItems.add(Constants.SVC_FILTER_AWS_STATUS);
+				filterTypeItems.add(Constants.SVC_FILTER_CONSOLE_CATEGORY);
+				filterTypeItems.add(Constants.SVC_FILTER_SITE_HIPAA_STATUS);
+				filterTypeItems.add(Constants.SVC_FILTER_SITE_HIPAA_STATUS);
+				getView().setFilterTypeItems(filterTypeItems);
 
 				// Request the service list now.
 				refreshList(userLoggedIn);

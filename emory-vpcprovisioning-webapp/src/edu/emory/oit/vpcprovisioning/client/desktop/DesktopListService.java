@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.RadioButton;
@@ -42,6 +43,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListService extends ViewImplBase implements ListServiceView {
@@ -52,6 +54,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
 	boolean skeletonOnly=true;
+	List<String> filterTypeItems;
 
 	private static DesktopListServiceUiBinder uiBinder = GWT.create(DesktopListServiceUiBinder.class);
 
@@ -76,15 +79,16 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	@UiField Button createServiceButton;
 	@UiField Button actionsButton;
 	@UiField PushButton refreshButton;
-	@UiField RadioButton consoleCategoriesRB;
-	@UiField RadioButton awsServiceNameRB;
-	@UiField RadioButton awsStatusRB;
-	@UiField RadioButton siteStatusRB;
-	@UiField RadioButton awsHipaaStatusRB;
-	@UiField RadioButton siteHipaaStatusRB;
+//	@UiField RadioButton consoleCategoriesRB;
+//	@UiField RadioButton awsServiceNameRB;
+//	@UiField RadioButton awsStatusRB;
+//	@UiField RadioButton siteStatusRB;
+//	@UiField RadioButton awsHipaaStatusRB;
+//	@UiField RadioButton siteHipaaStatusRB;
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox filterTB;
+	@UiField ListBox filterTypesLB;
 
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
@@ -93,26 +97,35 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	}
 	@UiHandler("filterButton") 
 	void filterButtonClicked(ClickEvent e) {
-		if (consoleCategoriesRB.getValue()) {
-			presenter.filterByConsoleCategories(filterTB.getText());
-		}
-		else if (awsServiceNameRB.getValue()) {
-			presenter.filterByAwsServiceName(filterTB.getText());
-		}
-		else if (awsStatusRB.getValue()) {
-			presenter.filterByAwsStatus(filterTB.getText());
-		}
-		else if (siteStatusRB.getValue()) {
-			presenter.filterBySiteStatus(filterTB.getText());
-		}
-		else if (siteHipaaStatusRB.getValue()) {
-			presenter.filterBySiteHipaaStatus(filterTB.getText());
-		}
-		else if (awsHipaaStatusRB.getValue()) {
-			presenter.filterByAwsHipaaStatus(filterTB.getText());
+		String filterType = filterTypesLB.getSelectedValue();
+		String filterValue = filterTB.getText();
+		
+		if ((filterType != null && filterType.length() > 0) &&
+			 (filterValue != null && filterValue.length() > 0)) {
+			if (filterType.equalsIgnoreCase(Constants.SVC_FILTER_AWS_HIPAA_STATUS)) {
+				presenter.filterByAwsHipaaStatus(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.SVC_FILTER_AWS_NAME)) {
+				presenter.filterByAwsServiceName(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.SVC_FILTER_AWS_STATUS)) {
+				presenter.filterByAwsStatus(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.SVC_FILTER_CONSOLE_CATEGORY)) {
+				presenter.filterByConsoleCategories(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.SVC_FILTER_SITE_HIPAA_STATUS)) {
+				presenter.filterBySiteHipaaStatus(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.SVC_FILTER_SITE_STATUS)) {
+				presenter.filterBySiteStatus(filterValue);
+			}
+			else {
+				// invalid filter type...but how?
+			}
 		}
 		else {
-			this.showMessageToUser("Please select a Filter Type");
+			this.showMessageToUser("Please enter a Filter Value AND select a Filter Type");
 		}
 	}
 	@UiHandler("refreshButton")
@@ -351,30 +364,30 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		serviceListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		// aws category column
-		Column<AWSServicePojo, SafeHtml> awsCategoryColumn = 
-				new Column<AWSServicePojo, SafeHtml> (new SafeHtmlCell()) {
-
-			@Override
-			public SafeHtml getValue(AWSServicePojo object) {
-				StringBuffer categories = new StringBuffer();
-				int cntr = 1;
-				if (object.getAwsCategories().size() > 0) {
-					for (String category : object.getAwsCategories()) {
-						if (cntr == object.getAwsCategories().size()) {
-							categories.append(category);
-							
-						}
-						else {
-							cntr++;
-							categories.append(category + "</br>");
-						}
-					}
-					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(categories.toString());
-				}
-				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No categories yet");
-			}
-		};
-		serviceListTable.addColumn(awsCategoryColumn, "AWS Category(ies)");
+//		Column<AWSServicePojo, SafeHtml> awsCategoryColumn = 
+//				new Column<AWSServicePojo, SafeHtml> (new SafeHtmlCell()) {
+//
+//			@Override
+//			public SafeHtml getValue(AWSServicePojo object) {
+//				StringBuffer categories = new StringBuffer();
+//				int cntr = 1;
+//				if (object.getAwsCategories().size() > 0) {
+//					for (String category : object.getAwsCategories()) {
+//						if (cntr == object.getAwsCategories().size()) {
+//							categories.append(category);
+//							
+//						}
+//						else {
+//							cntr++;
+//							categories.append(category + "</br>");
+//						}
+//					}
+//					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(categories.toString());
+//				}
+//				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No categories yet");
+//			}
+//		};
+//		serviceListTable.addColumn(awsCategoryColumn, "AWS Category(ies)");
 
 		// AWS Code column
 		Column<AWSServicePojo, String> awsCodeColumn = 
@@ -433,7 +446,13 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 			@Override
 			public String getValue(AWSServicePojo object) {
-				return object.getDescription();
+				String desc = object.getDescription();
+				if (desc != null && desc.length() > 50) {
+					return desc.substring(0, 49) + "...";
+				}
+				else {
+					return desc;
+				}
 			}
 		};
 		descColumn.setSortable(true);
@@ -697,5 +716,20 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public void setFilterTypeItems(List<String> filterTypes) {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter filter value");
+
+		this.filterTypeItems = filterTypes;
+		filterTypesLB.clear();
+		
+		filterTypesLB.addItem("-- Select Filter Type --");
+		if (filterTypeItems != null) {
+			for (String filterType : filterTypeItems) {
+				filterTypesLB.addItem(filterType, filterType);
+			}
+		}
 	}
 }
