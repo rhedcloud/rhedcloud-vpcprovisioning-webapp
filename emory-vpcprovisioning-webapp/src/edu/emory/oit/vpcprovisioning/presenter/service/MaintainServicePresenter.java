@@ -67,6 +67,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().showPleaseWaitDialog("Retrieving Service details, please wait...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
