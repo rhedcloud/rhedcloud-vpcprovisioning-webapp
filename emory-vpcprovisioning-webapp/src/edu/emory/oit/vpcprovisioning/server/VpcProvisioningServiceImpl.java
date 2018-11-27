@@ -2803,7 +2803,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		try {
 			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(Constants.MOA_VPC_QUERY_SPEC);
-			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
+			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
 	
 			queryObject.setAccountId(accountId);
 			
@@ -2880,7 +2880,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		try {
 			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(Constants.MOA_VPC_QUERY_SPEC);
-			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
+			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
 
 			if (filter != null) {
 				queryObject.setAccountId(filter.getAccountId());
@@ -2949,7 +2949,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			try {
 				info("creating vpc record on the server...");
-				VirtualPrivateCloud moa = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
+				VirtualPrivateCloud moa = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
 				info("populating moa");
 				this.populateVpcMoa(vpc, moa);
 
@@ -3005,8 +3005,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		vpc.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating Vpc on the server...");
-            VirtualPrivateCloud newData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
-            VirtualPrivateCloud baselineData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
+            VirtualPrivateCloud newData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
+            VirtualPrivateCloud baselineData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
 
             info("populating newData...");
             populateVpcMoa(vpc, newData);
@@ -3033,7 +3033,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			try {
 				info("deleting VPC record on the server...");
-				VirtualPrivateCloud moa = (VirtualPrivateCloud) getObject(Constants.MOA_VPC_MAINTAIN);
+				VirtualPrivateCloud moa = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
 				info("populating moa");
 				this.populateVpcMoa(vpc, moa);
 

@@ -49,7 +49,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_SPEEDCHART = "SPEEDCHART.v1_0";
 	public static final String MOA_VPC_QUERY_SPEC = "VirtualPrivateCloudQuerySpecification.v1_0";
 //	public static final String MOA_VPC_GENERATE = "GenerateVirtualPrivateCloud.v1_0";
-	public static final String MOA_VPC_MAINTAIN = "MaintainVirtualPrivateCloud.v1_0";
+	public static final String MOA_VPC = "VirtualPrivateCloud.v1_0";
 	public static final String MOA_VPC_REQUISITION = "VirtualPrivateCloudRequisition.v1_0";
 	public static final String MOA_VPCP_QUERY_SPEC = "VirtualPrivateCloudProvisioningQuerySpecification.v1_0";
 	public static final String MOA_VPCP = "VirtualPrivateCloudProvisioning.v1_0";
