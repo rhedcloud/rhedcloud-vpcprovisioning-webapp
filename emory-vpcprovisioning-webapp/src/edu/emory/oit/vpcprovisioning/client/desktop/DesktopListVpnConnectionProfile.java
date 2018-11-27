@@ -459,7 +459,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	}
 
 	private void initializeListTable() {
-		GWT.log("initializing ElasticIP list table...");
+		GWT.log("initializing VpnConnectionPforile list table...");
 		listTable.setTableLayoutFixed(false);
 		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 

@@ -48,6 +48,9 @@ public class VpncpStatusPlace extends Place {
 		return new VpncpStatusPlace(vpncp.getProvisioningId(), vpncp);
 	}
 
+	public static VpncpStatusPlace createVpncpStatusPlaceFromGenerate(VpnConnectionProvisioningPojo vpncp) {
+		return new VpncpStatusPlace(vpncp.getProvisioningId(), vpncp, true);
+	}
 	/**
 	 * Get the singleton instance of the {@link AddCaseRecordPlace} used to create a new
 	 * caseRecord.
@@ -63,6 +66,7 @@ public class VpncpStatusPlace extends Place {
 
 	private final VpnConnectionProvisioningPojo vpncp;
 	private final String provisioningId;
+	private final boolean fromGenerate;
 	public String getProvisioningId() {
 		return provisioningId;
 	}
@@ -76,8 +80,14 @@ public class VpncpStatusPlace extends Place {
 	private VpncpStatusPlace(String provisioningId, VpnConnectionProvisioningPojo vpncp) {
 		this.provisioningId = provisioningId;
 		this.vpncp = vpncp;
+		this.fromGenerate = false;
 	}
 
+	private VpncpStatusPlace(String provisioningId, VpnConnectionProvisioningPojo vpncp, boolean fromGenerate) {
+		this.provisioningId = provisioningId;
+		this.vpncp = vpncp;
+		this.fromGenerate = fromGenerate;
+	}
 	/**
 	 * Get the caseRecord to edit.
 	 * 
@@ -85,5 +95,8 @@ public class VpncpStatusPlace extends Place {
 	 */
 	public VpnConnectionProvisioningPojo getVpncp() {
 		return vpncp;
+	}
+	public boolean isFromGenerate() {
+		return this.fromGenerate;
 	}
 }

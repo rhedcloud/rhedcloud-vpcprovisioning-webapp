@@ -62,7 +62,12 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 			@Override
 			public void onClick(ClickEvent event) {
 				stopTimer();
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
+				if (presenter.isFromGenerate()) {
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
+				}
+				else {
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
+				}
 			}
 		}, ClickEvent.getType());
 		
@@ -317,6 +322,25 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 			}
 			else if (psp.getStepResult().trim().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
 				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
+			}
+			else {
+				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
+			}
+		}
+		else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_ROLLED_BACK)) {
+			if (psp.getStepResult() == null) {
+				applyGridRowFormat(stepsGrid, gridRow);
+			}
+			else if (psp.getStepResult().trim().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
+			}
+			else {
+				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
+			}
+		}
+		else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_PENDING)) {
+			if (psp.getStepResult() == null) {
+				applyGridRowFormat(stepsGrid, gridRow);
 			}
 			else {
 				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");

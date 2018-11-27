@@ -246,7 +246,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 	}
 
 	private Widget initializeVpnConnectionProvisioninglistTable() {
-		GWT.log("initializing VPCP list table...");
+		GWT.log("initializing VPN Connection Provisioning list table...");
 		listTable.setTableLayoutFixed(false);
 		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 

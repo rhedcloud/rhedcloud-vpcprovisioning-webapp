@@ -23,6 +23,7 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 	private String provisioningId;
 	private VpnConnectionProvisioningPojo vpncp;
 	private VpnConnectionProfilePojo profile;
+	boolean fromGenerate;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -49,6 +50,16 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 		this.provisioningId = vpncp.getProvisioningId();
 		this.clientFactory = clientFactory;
 		this.vpncp = vpncp;
+		this.fromGenerate = false;
+		getView().setPresenter(this);
+	}
+
+	public VpncpStatusPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpncp, boolean fromGenerate) {
+		this.isEditing = true;
+		this.provisioningId = vpncp.getProvisioningId();
+		this.clientFactory = clientFactory;
+		this.vpncp = vpncp;
+		this.fromGenerate = fromGenerate;
 		getView().setPresenter(this);
 	}
 
@@ -247,5 +258,15 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 
 	public void setProfile(VpnConnectionProfilePojo profile) {
 		this.profile = profile;
+	}
+
+	@Override
+	public boolean isFromGenerate() {
+		return this.fromGenerate;
+	}
+
+	@Override
+	public void setFromGenerate(boolean fromGenerate) {
+		this.fromGenerate = fromGenerate;
 	}
 }

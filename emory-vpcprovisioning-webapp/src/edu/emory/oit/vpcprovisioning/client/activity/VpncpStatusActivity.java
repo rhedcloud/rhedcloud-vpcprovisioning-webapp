@@ -64,7 +64,14 @@ public class VpncpStatusActivity extends AbstractActivity {
 	}
 
 	private PresentsWidgets startShowStatus(VpnConnectionProvisioningPojo vpcp) {
-		PresentsWidgets rtn = new VpncpStatusPresenter(clientFactory, vpcp);
+		PresentsWidgets rtn = null;
+		if (place.isFromGenerate()) {
+			rtn = new VpncpStatusPresenter(clientFactory, vpcp, true);	
+		}
+		else {
+			rtn = new VpncpStatusPresenter(clientFactory, vpcp);	
+		}
+		
 		rtn.start(childEventBus);
 		return rtn;
 	}

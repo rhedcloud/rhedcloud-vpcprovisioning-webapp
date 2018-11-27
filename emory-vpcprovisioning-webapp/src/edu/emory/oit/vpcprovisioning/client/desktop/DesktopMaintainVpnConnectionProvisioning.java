@@ -316,7 +316,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	}
 
 	private Widget initializeTunnelProfileListTable() {
-		GWT.log("initializing VPCP list table...");
+		GWT.log("initializing Tunnel Profile list table...");
 		tunnelProfileTable.setTableLayoutFixed(false);
 		tunnelProfileTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 

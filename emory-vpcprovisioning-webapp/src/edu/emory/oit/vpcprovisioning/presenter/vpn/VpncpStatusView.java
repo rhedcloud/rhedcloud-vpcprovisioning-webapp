@@ -30,6 +30,8 @@ public interface VpncpStatusView extends Editor<VpnConnectionProvisioningPojo>, 
 		public void refreshProvisioningStatusForId(String provisioningId);
 		public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w);
 		public void logMessageOnServer(final String message);
+		public boolean isFromGenerate();
+		public void setFromGenerate(boolean fromGenerate);
 	}
 
 	/**

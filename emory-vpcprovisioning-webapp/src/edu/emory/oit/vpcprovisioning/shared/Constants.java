@@ -93,6 +93,7 @@ public class Constants implements IsSerializable {
 
 	public static final String PROVISIONING_STEP_STATUS_ROLLED_BACK = "rolled back";
 	public static final String PROVISIONING_STEP_STATUS_COMPLETED = "completed";
+	public static final String PROVISIONING_STEP_STATUS_PENDING = "pending";
 	public static final String VPCP_STEP_STATUS_PENDING = "pending";
 	public static final String VPCP_STEP_RESULT_SUCCESS = "success";
 	public static final String VPCP_STEP_RESULT_FAILURE = "failure";

@@ -1708,7 +1708,7 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.VPNCP_GENERATED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncp()));
+				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlaceFromGenerate(event.getVpncp()));
 			}
 		});
 
