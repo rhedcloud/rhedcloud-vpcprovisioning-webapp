@@ -356,6 +356,16 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 					public void onSuccess(VpnConnectionProfileAssignmentPojo result) {
 						getView().hidePleaseWaitDialog();
 						getView().showPleaseWaitDialog("Generating VPC Provisioning object...");
+						
+						VpnConnectionProfilePojo vcp = vpnConnectionRequisition.getProfile();
+						for (TunnelProfilePojo tpp : vcp.getTunnelProfiles()) {
+							GWT.log("tunnel description is: " + tpp.getTunnelDescription());
+							String newDesc = tpp.getTunnelDescription().replaceAll(Constants.TUNNEL_AVAILABLE, vpnConnectionRequisition.getOwnerId());
+							GWT.log("new tunnel description is: " + newDesc);
+							tpp.setTunnelDescription(newDesc);
+						}
+						vpnConnectionRequisition.setProfile(vcp);
+
 						VpcProvisioningService.Util.getInstance().generateVpncp(vpnConnectionRequisition, vpncpCallback);
 					}
 				};

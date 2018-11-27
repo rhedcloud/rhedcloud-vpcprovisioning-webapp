@@ -117,7 +117,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				filterTypeItems.add(Constants.SVC_FILTER_AWS_STATUS);
 				filterTypeItems.add(Constants.SVC_FILTER_CONSOLE_CATEGORY);
 				filterTypeItems.add(Constants.SVC_FILTER_SITE_HIPAA_STATUS);
-				filterTypeItems.add(Constants.SVC_FILTER_SITE_HIPAA_STATUS);
+				filterTypeItems.add(Constants.SVC_FILTER_SITE_STATUS);
 				getView().setFilterTypeItems(filterTypeItems);
 
 				// Request the service list now.
