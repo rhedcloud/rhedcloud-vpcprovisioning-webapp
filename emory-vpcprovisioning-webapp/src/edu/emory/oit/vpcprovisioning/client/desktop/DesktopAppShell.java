@@ -611,8 +611,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-		//		if (w instanceof ListCentralAdminPresenter || 
-		//			w instanceof MaintainCentralAdminPresenter) {
 		if (w instanceof ListCentralAdminPresenter) {
 			centralAdminContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -677,7 +675,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			return;
 		}
-		if (mainTabPanel.getSelectedIndex() == 9 && w instanceof VpncpStatusPresenter) {
+		if (mainTabPanel.getSelectedIndex() == 9 && 
+			(w instanceof VpncpStatusPresenter || 
+			 w instanceof ListVpnConnectionProfilePresenter)) {
 			vpnConnectionProfileContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstVpnConnectionProfileContentWidget) {

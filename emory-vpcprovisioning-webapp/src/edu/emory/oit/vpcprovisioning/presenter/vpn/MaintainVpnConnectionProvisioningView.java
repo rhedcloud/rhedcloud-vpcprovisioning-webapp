@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.vpn;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -7,6 +9,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
@@ -36,6 +39,8 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 		public void logMessageOnServer(final String message);
 		public void setOwnerDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getOwnerDirectoryPerson();
+		public VpcPojo getSelectedVpc();
+		public void setSelectedVpc(VpcPojo vpc);
 	}
 
 	/**
@@ -69,4 +74,5 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 	void setPresenter(Presenter presenter);
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
+	void setVpcItems(List<VpcPojo> vpcs);
 }

@@ -181,4 +181,6 @@ public class Constants implements IsSerializable {
 	public static final String SVC_FILTER_SITE_STATUS = "Emory Status";
 	public static final String SVC_FILTER_AWS_HIPAA_STATUS = "AWS HIPAA Eligibility";
 	public static final String SVC_FILTER_SITE_HIPAA_STATUS = "Emory HIPAA Eligibility";
+	public static final String VPN_CONNECTION_PROFILES = "vpnConnectionProfiles";
+	public static final String SUGGESTION_TYPE_VPC_ID = "vpcIdSuggestion";
 }

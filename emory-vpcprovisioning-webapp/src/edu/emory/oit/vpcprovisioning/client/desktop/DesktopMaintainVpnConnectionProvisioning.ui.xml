@@ -36,9 +36,12 @@
 						<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<!-- <g:SuggestBox ui:field="ownerLookupSB" debugId="ownerLookupSB" addStyleNames="{style.field} {style.glowing-border}"/> -->
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="ownerIdTB" debugId="ownerIdTB" title="ID of the VPC you want to assign this profile to."/>
+						<g:ListBox addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="vpcLB" debugId="vpcLB" />
+						<!-- <g:SuggestBox ui:field="vpcIdSB" debugId="vpcIdSB" 
+							addStyleNames="{style.field} {style.glowing-border}"/> -->
+						<!-- <g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="ownerIdTB" debugId="ownerIdTB" title="ID of the VPC you want to assign this profile to."/> -->
 			    	</g:customCell>
 				</g:row>
 				<g:row>

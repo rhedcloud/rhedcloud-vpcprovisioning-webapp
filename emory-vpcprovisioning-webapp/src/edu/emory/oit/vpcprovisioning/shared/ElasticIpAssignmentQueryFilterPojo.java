@@ -9,6 +9,7 @@ public class ElasticIpAssignmentQueryFilterPojo extends SharedObject implements 
 	String assignmentId;
 	String ownerId;		// NOTE: this is the VPC ID
 	String elasticIpId;
+	String elasticIpAddress;
 
 	public ElasticIpAssignmentQueryFilterPojo() {
 	}
@@ -35,6 +36,14 @@ public class ElasticIpAssignmentQueryFilterPojo extends SharedObject implements 
 
 	public void setElasticIpId(String elasticIpId) {
 		this.elasticIpId = elasticIpId;
+	}
+
+	public String getElasticIpAddress() {
+		return elasticIpAddress;
+	}
+
+	public void setElasticIpAddress(String elasticIpAddress) {
+		this.elasticIpAddress = elasticIpAddress;
 	}
 
 }

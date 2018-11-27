@@ -16,6 +16,9 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
@@ -33,6 +36,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	private VpnConnectionProfilePojo vpnConnectionProfile;
 	private UserAccountPojo userLoggedIn;
 	private DirectoryPersonPojo ownerDirectoryPerson;
+	private VpcPojo selectedVpc;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -77,6 +81,26 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		getView().showPleaseWaitDialog("Retrieving VPN Profile detail from the Network OPs service...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
+
+		AsyncCallback<VpcQueryResultPojo> vpc_callback = new AsyncCallback<VpcQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+				GWT.log("problem getting vpcs..." + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(VpcQueryResultPojo result) {
+				GWT.log("got " + result.getResults().size() + " vpcs back.");
+				getView().setVpcItems(result.getResults());
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+			}
+		};
+		// just get all VPCs.
+		VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
+		VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
 
 		setReleaseInfo(clientFactory);
 		
@@ -131,8 +155,8 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 					+ "appear to be associated to any valid roles for this page.");
 			getView().applyAWSAccountAuditorMask();
 		}
-		getView().hidePleaseWaitDialog();
-		getView().hidePleaseWaitPanel();
+//		getView().hidePleaseWaitDialog();
+//		getView().hidePleaseWaitPanel();
 	}
 
 	private void startCreate() {
@@ -414,5 +438,15 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	@Override
 	public DirectoryPersonPojo getOwnerDirectoryPerson() {
 		return this.ownerDirectoryPerson;
+	}
+
+	@Override
+	public VpcPojo getSelectedVpc() {
+		return selectedVpc;
+	}
+
+	@Override
+	public void setSelectedVpc(VpcPojo vpc) {
+		this.selectedVpc = vpc;
 	}
 }

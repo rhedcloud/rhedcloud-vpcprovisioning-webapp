@@ -3968,6 +3968,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		ElasticIpQueryResultPojo result = new ElasticIpQueryResultPojo();
 		List<ElasticIpSummaryPojo> summaries = new java.util.ArrayList<ElasticIpSummaryPojo>();
 		try {
+			
+			// get ALL assignments first and process them in memory instead 
+			// of doing individual queries by elastic ip id.
+			ElasticIpAssignmentQueryFilterPojo eia_filter = new ElasticIpAssignmentQueryFilterPojo();
+			ElasticIpAssignmentQueryResultPojo eia_result = this.getElasticIpAssignmentsForFilter(eia_filter);
+			
 			ElasticIpQuerySpecification queryObject = (ElasticIpQuerySpecification) getObject(Constants.MOA_ELASTIC_IP_QUERY_SPEC);
 			ElasticIp actionable = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
 
@@ -3979,7 +3985,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getCidrsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			info("[getElasticIpsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
 			@SuppressWarnings("unchecked")
 			List<ElasticIp> moas = actionable.query(queryObject,
@@ -3994,12 +4000,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.setBaseline(baseline);
 				summary.setElasticIp(pojo);
 				
-				// query for ElasticIPAssignment by ElasticIpId
-				ElasticIpAssignmentQueryFilterPojo eia_filter = new ElasticIpAssignmentQueryFilterPojo();
-				eia_filter.setElasticIpId(pojo.getElasticIpId());
-				ElasticIpAssignmentQueryResultPojo eia_result = this.getElasticIpAssignmentsForFilter(eia_filter);
-				if (eia_result.getResults().size() > 0) {
-					summary.setElasticIpAssignment(eia_result.getResults().get(0));
+				// just go through the internal list here instead of doing an individual query
+				assignmentLoop: for (ElasticIpAssignmentPojo assignment : eia_result.getResults()) {
+					if (assignment.getElasticIp().getElasticIpId().equals(pojo.getElasticIpId())) {
+						summary.setElasticIpAssignment(assignment);
+						// TODO: remove assignment from eia_result.getResults()??
+						break assignmentLoop;
+					}
 				}
 				summaries.add(summary);
 			}
@@ -4215,6 +4222,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setElasticIpAssignmentId(filter.getAssignmentId());
 				queryObject.setOwnerId(filter.getOwnerId());
 				queryObject.setElasticIpId(filter.getElasticIpId());
+				queryObject.setElasticIpAddress(filter.getElasticIpAddress());
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
@@ -8763,12 +8771,48 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public VpnConnectionProfileQueryResultPojo getVpnConnectionProfilesForFilter(
 			VpnConnectionProfileQueryFilterPojo filter) throws RpcException {
 		
 		VpnConnectionProfileQueryResultPojo result = new VpnConnectionProfileQueryResultPojo();
 		List<VpnConnectionProfileSummaryPojo> summaries = new java.util.ArrayList<VpnConnectionProfileSummaryPojo>();
+		
+		// get ALL VpnConnectionProfileAssignments and go through them in memory
+		// instead of doing an individual query by profile id.
+		// this speeds things up significantly but could potentially lead to other resource issues down the road
+		VpnConnectionProfileAssignmentQueryFilterPojo eia_filter = new VpnConnectionProfileAssignmentQueryFilterPojo();
+		VpnConnectionProfileAssignmentQueryResultPojo eia_result = this.getVpnConnectionProfileAssignmentsForFilter(eia_filter);
+		
+		// check the cache for cached VpnConnectionProfiles (by current session id)
+		// if they've already been cached, just get them from there
+		// and pull back any assignments for those
+		List<VpnConnectionProfilePojo> cached_profiles = (List<VpnConnectionProfilePojo>) Cache.getCache().get(
+				Constants.VPN_CONNECTION_PROFILES + getCurrentSessionId());
+		if (cached_profiles != null && cached_profiles.size() > 0) {
+			info("[getVpnConnectionProfilesForFilter] using cached VpnConnectionProfile objects");
+			for (VpnConnectionProfilePojo profile : cached_profiles) {
+				VpnConnectionProfileSummaryPojo summary = new VpnConnectionProfileSummaryPojo();
+				summary.setProfile(profile);
+				assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+					if (assignment.getVpnConnectionProfileId().equals(profile.getVpnConnectionProfileId())) {
+						summary.setAssignment(assignment);
+						// TODO: remove assignment from eia_result.getResults()??
+						break assignmentLoop;
+					}
+				}
+				summaries.add(summary);
+			}
+			Collections.sort(summaries);
+			result.setResults(summaries);
+			result.setFilterUsed(filter);
+			return result;
+		}
+		else {
+			info("[getVpnConnectionProfilesForFilter] getting VpnConnectionProfile objects from the service");
+		}
+		
 		try {
 			VpnConnectionProfileQuerySpecification queryObject = (VpnConnectionProfileQuerySpecification) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_QUERY_SPEC);
 			VpnConnectionProfile actionable = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
@@ -8784,10 +8828,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpnConnectionProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			@SuppressWarnings("unchecked")
 			List<VpnConnectionProfile> moas = actionable.query(queryObject,
 					this.getNetworkOpsRequestService());
 			info("[getVpnConnectionProfilesForFilter] got " + moas.size() + " VPN COnnection profiles back from the ESB.");
+			
+			List<VpnConnectionProfilePojo> profiles_to_cache = new java.util.ArrayList<VpnConnectionProfilePojo>();
+			
 			for (VpnConnectionProfile moa : moas) {
 				VpnConnectionProfileSummaryPojo summary = new VpnConnectionProfileSummaryPojo();
 				
@@ -8797,16 +8843,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateVpnConnectionProfilePojo(moa, baseline);
 				pojo.setBaseline(baseline);
 				summary.setProfile(pojo);
+				profiles_to_cache.add(pojo);
 				
-				// query for ElasticIPAssignment by ElasticIpId
-				VpnConnectionProfileAssignmentQueryFilterPojo eia_filter = new VpnConnectionProfileAssignmentQueryFilterPojo();
-				eia_filter.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
-				VpnConnectionProfileAssignmentQueryResultPojo eia_result = this.getVpnConnectionProfileAssignmentsForFilter(eia_filter);
-				if (eia_result.getResults().size() > 0) {
-					summary.setAssignment(eia_result.getResults().get(0));
+				assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+					if (assignment.getVpnConnectionProfileId().equals(pojo.getVpnConnectionProfileId())) {
+						summary.setAssignment(assignment);
+						// TODO: remove assignment from eia_result.getResults()??
+						break assignmentLoop;
+					}
 				}
 				summaries.add(summary);
 			}
+			// cache the profiles for later since they don't change often
+			// they'll be cached for this session only
+			Cache.getCache().put(Constants.VPN_CONNECTION_PROFILES + getCurrentSessionId(), profiles_to_cache);
 
 			Collections.sort(summaries);
 			result.setResults(summaries);

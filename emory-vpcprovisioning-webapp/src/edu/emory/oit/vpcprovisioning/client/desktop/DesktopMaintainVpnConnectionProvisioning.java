@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -16,6 +17,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -29,6 +31,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
 
 public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase implements MaintainVpnConnectionProvisioningView {
@@ -36,9 +39,10 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	boolean editing;
 	boolean locked;
 	UserAccountPojo userLoggedIn;
-//	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
+//	private final VpcRpcSuggestOracle vpcSuggestions = new VpcRpcSuggestOracle(Constants.SUGGESTION_TYPE_VPC_ID);
 	private ListDataProvider<TunnelProfilePojo> dataProvider = new ListDataProvider<TunnelProfilePojo>();
 	private SingleSelectionModel<TunnelProfilePojo> selectionModel;
+	List<VpcPojo> vpcItems = new java.util.ArrayList<VpcPojo>();
 
 	private static DesktopMaintainVpnConnectionProvisioningUiBinder uiBinder = GWT
 			.create(DesktopMaintainVpnConnectionProvisioningUiBinder.class);
@@ -58,19 +62,36 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	}
 
 	@UiField TextBox vpcTB;
-//	@UiField(provided=true) SuggestBox ownerLookupSB = new SuggestBox(personSuggestions, new TextBox());
-	@UiField TextBox ownerIdTB;
+//	@UiField(provided=true) SuggestBox vpcIdSB = new SuggestBox(vpcSuggestions, new TextBox());
+//	@UiField TextBox ownerIdTB;
+	@UiField ListBox vpcLB;
 	@UiField TextBox remoteVpnIpAddressTB;
 	@UiField TextArea presharedKeyTA;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
 	@UiField(provided=true) CellTable<TunnelProfilePojo> tunnelProfileTable = new CellTable<TunnelProfilePojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	
+	@UiHandler ("vpcLB")
+	void vpcLbChanged(ChangeEvent e) {
+		if (vpcLB.getSelectedIndex() == 0) {
+			presenter.setSelectedVpc(null);
+		}
+		else {
+			presenter.setSelectedVpc(vpcItems.get(vpcLB.getSelectedIndex() - 1));
+			GWT.log("selected vpc is: " + presenter.getSelectedVpc().getVpcId());
+		}
+	}
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
 		// populate requisition object, generate VPNCP
 //		presenter.getVpnConnectionRequisition().setOwnerId(presenter.getOwnerDirectoryPerson().getKey());
-		presenter.getVpnConnectionRequisition().setOwnerId(ownerIdTB.getText());
+//		presenter.getVpnConnectionRequisition().setOwnerId(ownerIdTB.getText());
+		if (presenter.getSelectedVpc() != null) {
+			presenter.getVpnConnectionRequisition().setOwnerId(presenter.getSelectedVpc().getVpcId());
+		}
+		else {
+			presenter.getVpnConnectionRequisition().setOwnerId(null);
+		}
 		presenter.getVpnConnectionRequisition().setRemoteVpnIpAddress(remoteVpnIpAddressTB.getText());
 		if (!this.isValidIp(presenter.getVpnConnectionRequisition().getRemoteVpnIpAddress())) {
 			showMessageToUser("Invalid Remote VPN IP address.  Please enter a valid IP address.");
@@ -106,19 +127,19 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	ownerIdTB.setFocus(true);
+	        	vpcLB.setFocus(true);
 	        }
 	    });
 	}
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return ownerIdTB;
+		return vpcLB;
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		ownerIdTB.setEnabled(true);
+		vpcLB.setEnabled(true);
 		remoteVpnIpAddressTB.setEnabled(true);
 		presharedKeyTA.setEnabled(true);
 		okayButton.setEnabled(true);
@@ -126,7 +147,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void applyCentralAdminMask() {
-		ownerIdTB.setEnabled(false);
+		vpcLB.setEnabled(false);
 		remoteVpnIpAddressTB.setEnabled(false);
 		presharedKeyTA.setEnabled(false);
 		okayButton.setEnabled(false);
@@ -134,7 +155,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		ownerIdTB.setEnabled(false);
+		vpcLB.setEnabled(false);
 		remoteVpnIpAddressTB.setEnabled(false);
 		presharedKeyTA.setEnabled(false);
 		okayButton.setEnabled(false);
@@ -142,7 +163,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		ownerIdTB.setEnabled(false);
+		vpcLB.setEnabled(false);
 		remoteVpnIpAddressTB.setEnabled(false);
 		presharedKeyTA.setEnabled(false);
 		okayButton.setEnabled(false);
@@ -158,7 +179,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		VpnConnectionRequisitionPojo req = presenter.getVpnConnectionRequisition(); 
 		if (req.getOwnerId() == null || req.getOwnerId().length() == 0) {
-			fields.add(ownerIdTB);
+			fields.add(vpcLB);
 		}
 		if (req.getRemoteVpnIpAddress() == null || req.getRemoteVpnIpAddress().length() == 0) {
 			fields.add(remoteVpnIpAddressTB);
@@ -172,7 +193,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	@Override
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		fields.add(ownerIdTB);
+		fields.add(vpcLB);
 		fields.add(remoteVpnIpAddressTB);
 		fields.add(presharedKeyTA);
 		this.resetFieldStyles(fields);
@@ -260,7 +281,8 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 //		ownerLookupSB.getElement().setPropertyString("placeholder", "enter name");
 		remoteVpnIpAddressTB.setText("");
 		presharedKeyTA.setText("");
-		ownerIdTB.setText("");
+//		vpcIdSB.setText("");
+//		vpcIdSB.getElement().setPropertyString("placeholder", "enter VPC id");
 	}
 
 	private void registerHandlers() {
@@ -271,6 +293,17 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 //				if (dp_suggestion.getDirectoryPerson() != null) {
 //					presenter.setOwnerDirectoryPerson(dp_suggestion.getDirectoryPerson());
 //					ownerLookupSB.setTitle(presenter.getOwnerDirectoryPerson().toString());
+//				}
+//			}
+//		});
+		
+//		vpcIdSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+//			@Override
+//			public void onSelection(SelectionEvent<Suggestion> event) {
+//				VpcSuggestion suggestion = (VpcSuggestion)event.getSelectedItem();
+//				if (suggestion.getVpc() != null) {
+//					presenter.setSelectedVpc(suggestion.getVpc());
+//					vpcIdSB.setTitle(presenter.getSelectedVpc().toString());
 //				}
 //			}
 //		});
@@ -449,5 +482,17 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 			}
 		});
 		tunnelProfileTable.addColumn(column8, "VPN Inside CIDR 2");
+	}
+	@Override
+	public void setVpcItems(List<VpcPojo> vpcs) {
+		this.vpcItems = vpcs;
+		
+		vpcLB.clear();
+		vpcLB.addItem("-- Select VPC --");
+		if (vpcItems != null) {
+			for (VpcPojo vpc : vpcItems) {
+				vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());
+			}
+		}
 	}
 }
