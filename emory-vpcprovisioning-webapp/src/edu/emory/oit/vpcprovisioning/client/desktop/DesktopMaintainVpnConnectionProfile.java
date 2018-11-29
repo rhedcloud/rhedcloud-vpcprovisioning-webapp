@@ -177,8 +177,7 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 		editImage.setHeight("30px");
 		editButton.getUpFace().setImage(editImage);
 		// disable buttons if userLoggedIn is NOT a network admin
-		// TODO: network admin
-		if (this.userLoggedIn.isNetworkAdmin()  || userLoggedIn.isCentralAdmin()) {
+		if (this.userLoggedIn.isNetworkAdmin()) {
 			editButton.setEnabled(true);
 		}
 		else {
@@ -208,7 +207,6 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 		removeImage.setHeight("30px");
 		removeTunnelButton.getUpFace().setImage(removeImage);
 		// disable buttons if userLoggedIn is NOT a network admin
-		// TODO: network admin
 		if (this.userLoggedIn.isNetworkAdmin()) {
 			if (presenter.getVpnConnectionProfile().isAssigned()) {
 				removeTunnelButton.setEnabled(false);
