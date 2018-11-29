@@ -99,7 +99,10 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 			}
 		};
 		// just get all VPCs.
+		// TODO: get all UNASSIGNED VPCs.  That is, all VPCs that have NOT been assigned
+		// to a VpnConnectionProfile.  So, a new service method will be needed.
 		VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
+		filter.setExcludeVpcsAssignedToVpnConnectionProfiles(true);
 		VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
 
 		setReleaseInfo(clientFactory);

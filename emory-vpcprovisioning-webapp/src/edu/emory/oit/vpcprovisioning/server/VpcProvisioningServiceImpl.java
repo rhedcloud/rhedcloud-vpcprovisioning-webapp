@@ -2878,6 +2878,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 
+		VpnConnectionProfileAssignmentQueryResultPojo eia_result = new VpnConnectionProfileAssignmentQueryResultPojo();
+		if (filter != null && filter.isExcludeVpcsAssignedToVpnConnectionProfiles()) {
+			// get all VpnConnectionProfileAssignments so we can weed out any VPCs that have
+			// already been used in an existing assignment
+			VpnConnectionProfileAssignmentQueryFilterPojo eia_filter = new VpnConnectionProfileAssignmentQueryFilterPojo();
+			eia_result = this.getVpnConnectionProfileAssignmentsForFilter(eia_filter);
+		}
+
 		try {
 			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(Constants.MOA_VPC_QUERY_SPEC);
 			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
@@ -2904,7 +2912,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateVpcPojo(moa, pojo);
 				this.populateVpcPojo(moa, baseline);
 				pojo.setBaseline(baseline);
-				pojos.add(pojo);
+
+				boolean isAssigned = false;
+				if (eia_result.getResults().size() > 0) {
+					// weed out any VPCs that have already been used in a profile assignment
+					assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+						if (assignment.getOwnerId().equalsIgnoreCase(pojo.getVpcId())) {
+							isAssigned = true;
+							break assignmentLoop;
+						}
+					}
+				}
+
+				// only add the VPC to the list IF that VPC has not already been
+				// used in a VpnConnectionprofileAssignment
+				if (!isAssigned) {
+					pojos.add(pojo);
+				}
 			}
 
 			Collections.sort(pojos);
@@ -8797,6 +8821,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				summary.setProfile(profile);
 				assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
 					if (assignment.getVpnConnectionProfileId().equals(profile.getVpnConnectionProfileId())) {
+						// TODO: go through the tunnel profiles in the profile and remove the "(AVAILABLE)" string?
 						summary.setAssignment(assignment);
 						// TODO: remove assignment from eia_result.getResults()??
 						break assignmentLoop;

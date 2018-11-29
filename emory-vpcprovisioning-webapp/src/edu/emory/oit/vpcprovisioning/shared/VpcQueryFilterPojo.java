@@ -10,6 +10,7 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable, 
 	String type;
 	String customerAdminUserId;
 	UserAccountPojo userLoggedIn;
+	boolean excludeVpcsAssignedToVpnConnectionProfiles;
 //	String createUser;
 //	String lastUpdateUser;
 
@@ -55,6 +56,14 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable, 
 
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
 		this.userLoggedIn = userLoggedIn;
+	}
+
+	public boolean isExcludeVpcsAssignedToVpnConnectionProfiles() {
+		return excludeVpcsAssignedToVpnConnectionProfiles;
+	}
+
+	public void setExcludeVpcsAssignedToVpnConnectionProfiles(boolean excludeVpcsAssignedToVpnConnectionProfiles) {
+		this.excludeVpcsAssignedToVpnConnectionProfiles = excludeVpcsAssignedToVpnConnectionProfiles;
 	}
 
 }
