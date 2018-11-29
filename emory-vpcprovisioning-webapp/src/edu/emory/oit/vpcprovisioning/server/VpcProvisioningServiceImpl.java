@@ -101,6 +101,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
@@ -8821,7 +8822,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				summary.setProfile(profile);
 				assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
 					if (assignment.getVpnConnectionProfileId().equals(profile.getVpnConnectionProfileId())) {
-						// TODO: go through the tunnel profiles in the profile and remove the "(AVAILABLE)" string?
+						profile.setAssigned(true);
+						// go through the tunnel profiles in the profile and remove the "(AVAILABLE)" string?
+						for (TunnelProfilePojo tunnel : profile.getTunnelProfiles()) {
+							String newDesc = tunnel.getTunnelDescription().replaceAll(Constants.TUNNEL_AVAILABLE, assignment.getOwnerId());
+							tunnel.setTunnelDescription(newDesc);
+						}
 						summary.setAssignment(assignment);
 						// TODO: remove assignment from eia_result.getResults()??
 						break assignmentLoop;

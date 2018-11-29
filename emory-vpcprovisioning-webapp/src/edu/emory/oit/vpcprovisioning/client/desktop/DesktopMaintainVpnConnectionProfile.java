@@ -210,7 +210,12 @@ public class DesktopMaintainVpnConnectionProfile extends ViewImplBase implements
 		// disable buttons if userLoggedIn is NOT a network admin
 		// TODO: network admin
 		if (this.userLoggedIn.isNetworkAdmin()) {
-			removeTunnelButton.setEnabled(true);
+			if (presenter.getVpnConnectionProfile().isAssigned()) {
+				removeTunnelButton.setEnabled(false);
+			}
+			else {
+				removeTunnelButton.setEnabled(true);
+			}
 		}
 		else {
 			removeTunnelButton.setEnabled(false);

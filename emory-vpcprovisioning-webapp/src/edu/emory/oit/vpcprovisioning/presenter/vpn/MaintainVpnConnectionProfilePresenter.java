@@ -107,6 +107,11 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 				else {
 					getView().applyAWSAccountAuditorMask();
 				}
+				
+				if (vpnConnectionProfile != null && vpnConnectionProfile.isAssigned()) {
+					// if a profile is assigned, it cannot be edited.
+					getView().applyAWSAccountAuditorMask();
+				}
                 getView().hidePleaseWaitDialog();
 			}
 		};
