@@ -6,6 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class PropertyPojo extends SharedObject implements IsSerializable {
 	String name;
 	String value;
+	String prettyName;
 
 	public PropertyPojo() {
 		// TODO Auto-generated constructor stub
@@ -25,6 +26,14 @@ public class PropertyPojo extends SharedObject implements IsSerializable {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+
+	public String getPrettyName() {
+		return prettyName;
+	}
+
+	public void setPrettyName(String prettyName) {
+		this.prettyName = prettyName;
 	}
 
 }

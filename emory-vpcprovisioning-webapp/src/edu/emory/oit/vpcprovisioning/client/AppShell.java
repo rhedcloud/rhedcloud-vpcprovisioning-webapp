@@ -32,7 +32,7 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	
 	void startNotificationTimer();
 	void initializeAwsServiceMap();
-	void initiliizeUserProfile();
+	void initializeUserProfile();
 	void validateTermsOfUse();
 	void lockView(String errorInformation);
 	void showNetworkAdminTabs();

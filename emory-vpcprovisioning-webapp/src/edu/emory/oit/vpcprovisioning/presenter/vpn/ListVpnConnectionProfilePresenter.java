@@ -281,8 +281,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
-		
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection Profile was NOT deleted");
 	}
 
 	@Override

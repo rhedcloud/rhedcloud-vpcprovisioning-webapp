@@ -12,16 +12,20 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String provisioningId;
 	private VpnConnectionProvisioningPojo vpncp;
+	private VpnConnectionDeprovisioningPojo vpncdp;
+	private VpnConnectionProvisioningSummaryPojo vpncpSummary;
 	private VpnConnectionProfilePojo profile;
 	boolean fromGenerate;
 
@@ -37,6 +41,8 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 	public VpncpStatusPresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
 		this.vpncp = null;
+		this.vpncdp = null;
+		this.vpncpSummary = null;
 		this.provisioningId = null;
 		this.clientFactory = clientFactory;
 		getView().setPresenter(this);
@@ -45,20 +51,34 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 	/**
 	 * For editing an existing VPC.
 	 */
-	public VpncpStatusPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpncp) {
+	public VpncpStatusPresenter(ClientFactory clientFactory, VpnConnectionProvisioningSummaryPojo vpncpSummary) {
 		this.isEditing = true;
-		this.provisioningId = vpncp.getProvisioningId();
 		this.clientFactory = clientFactory;
-		this.vpncp = vpncp;
+		this.vpncpSummary = vpncpSummary;
+		this.vpncp = vpncpSummary.getProvisioning();
+		this.vpncdp = vpncpSummary.getDeprovisioning();
+		if (vpncpSummary.isProvision()) {
+			this.provisioningId = vpncp.getProvisioningId();
+		}
+		else {
+			this.provisioningId = vpncdp.getProvisioningId();
+		}
 		this.fromGenerate = false;
 		getView().setPresenter(this);
 	}
 
-	public VpncpStatusPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpncp, boolean fromGenerate) {
+	public VpncpStatusPresenter(ClientFactory clientFactory, VpnConnectionProvisioningSummaryPojo vpncpSummary, boolean fromGenerate) {
 		this.isEditing = true;
-		this.provisioningId = vpncp.getProvisioningId();
+		this.vpncpSummary = vpncpSummary;
+		this.vpncp = vpncpSummary.getProvisioning();
+		this.vpncdp = vpncpSummary.getDeprovisioning();
+		if (vpncpSummary.isProvision()) {
+			this.provisioningId = vpncp.getProvisioningId();
+		}
+		else {
+			this.provisioningId = vpncdp.getProvisioningId();
+		}
 		this.clientFactory = clientFactory;
-		this.vpncp = vpncp;
 		this.fromGenerate = fromGenerate;
 		getView().setPresenter(this);
 	}
@@ -234,9 +254,18 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 				}
 				else {
 					// expected behavior
-					setVpncp(result.getResults().get(0));
-					if (vpncp.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-						getView().stopTimer();
+					setVpncpSummary(result.getResults().get(0));
+					if (getVpncpSummary().isProvision()) {
+						setVpncp(result.getResults().get(0).getProvisioning());
+						if (vpncp.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+							getView().stopTimer();
+						}
+					}
+					else {
+						setVpncdp(result.getResults().get(0).getDeprovisioning());
+						if (vpncdp.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+							getView().stopTimer();
+						}
 					}
 					getView().refreshProvisioningStatusInformation();
 	                getView().hidePleaseWaitDialog();
@@ -246,10 +275,10 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 		};
 
 		GWT.log("[PRESENTER] refreshing Vpncp object for provisioning id:  " + provisioningId);
-        getView().showPleaseWaitDialog("Retrieving VPCs for the provisioning id: " + provisioningId);
+        getView().showPleaseWaitDialog("Retrieving VPNCP Summaries for the provisioning id: " + provisioningId);
 		VpnConnectionProvisioningQueryFilterPojo filter = new VpnConnectionProvisioningQueryFilterPojo();
 		filter.setProvisioningId(provisioningId);
-		VpcProvisioningService.Util.getInstance().getVpncpsForFilter(filter, callback);
+		VpcProvisioningService.Util.getInstance().getVpncpSummariesForFilter(filter, callback);
 	}
 
 	public VpnConnectionProfilePojo getProfile() {
@@ -268,5 +297,21 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 	@Override
 	public void setFromGenerate(boolean fromGenerate) {
 		this.fromGenerate = fromGenerate;
+	}
+
+	public VpnConnectionDeprovisioningPojo getVpncdp() {
+		return vpncdp;
+	}
+
+	public void setVpncdp(VpnConnectionDeprovisioningPojo vpncdp) {
+		this.vpncdp = vpncdp;
+	}
+
+	public VpnConnectionProvisioningSummaryPojo getVpncpSummary() {
+		return vpncpSummary;
+	}
+
+	public void setVpncpSummary(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
+		this.vpncpSummary = vpncpSummary;
 	}
 }

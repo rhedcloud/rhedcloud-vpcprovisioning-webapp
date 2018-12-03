@@ -8,7 +8,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.event.VpncpStatusEvent;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class VpncpStatusActivity extends AbstractActivity {
@@ -51,25 +51,25 @@ public class VpncpStatusActivity extends AbstractActivity {
 		this.childEventBus = new ResettableEventBus(eventBus);
 		eventBus.addHandler(VpncpStatusEvent.TYPE, new VpncpStatusEvent.Handler() {
 			@Override
-			public void onShowVpncpStatus(VpncpStatusEvent event) {
+			public void onShowVpncpSummaryStatus(VpncpStatusEvent event) {
 				// Stop the read presenter
 				onStop();
-				presenter = startShowStatus(event.getVpncp());
+				presenter = startShowStatus(event.getVpncpSummary());
 				container.setWidget(presenter);
 			}
 		});
 
-		presenter = startShowStatus(place.getVpncp());
+		presenter = startShowStatus(place.getVpncpSummary());
 		container.setWidget(presenter);
 	}
 
-	private PresentsWidgets startShowStatus(VpnConnectionProvisioningPojo vpcp) {
+	private PresentsWidgets startShowStatus(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
 		PresentsWidgets rtn = null;
 		if (place.isFromGenerate()) {
-			rtn = new VpncpStatusPresenter(clientFactory, vpcp, true);	
+			rtn = new VpncpStatusPresenter(clientFactory, vpncpSummary, true);	
 		}
 		else {
-			rtn = new VpncpStatusPresenter(clientFactory, vpcp);	
+			rtn = new VpncpStatusPresenter(clientFactory, vpncpSummary);	
 		}
 		
 		rtn.start(childEventBus);

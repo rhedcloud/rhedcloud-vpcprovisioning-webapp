@@ -155,7 +155,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(4, 1);
+		Grid grid = new Grid(3, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -283,41 +283,41 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		});
 		grid.setWidget(2, 0, provisionAnchor);
 
-		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
-		deprovisionAnchor.addStyleName("productAnchor");
-		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
-		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
-		deprovisionAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				if (selectionModel.getSelectedSet().size() == 0) {
-					showMessageToUser("Please select one or more item(s) from the list");
-					return;
-				}
-
-				// TODO: presenter.deleteVpnConnectionProfiles(profilesToDelete);
-
-				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-				while (nIter.hasNext()) {
-					VpnConnectionProfileSummaryPojo m = nIter.next();
-					if (m != null) {
-						if (userLoggedIn.isNetworkAdmin()) {
-							showMessageToUser("This feature is not yet implemented.");
-	//							presenter.deprovisionVpnConnectionProfile(m);
-						}
-						else {
-							showMessageToUser("You are not authorized to perform this action.");
-						}
-					} 
-					else {
-						showMessageToUser("Please select one or more item(s) from the list");
-					}
-				}
-			}
-		});
-		grid.setWidget(3, 0, deprovisionAnchor);
+//		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
+//		deprovisionAnchor.addStyleName("productAnchor");
+//		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
+//		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
+//		deprovisionAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				if (selectionModel.getSelectedSet().size() == 0) {
+//					showMessageToUser("Please select one or more item(s) from the list");
+//					return;
+//				}
+//
+//				// TODO: presenter.deleteVpnConnectionProfiles(profilesToDelete);
+//
+//				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+//				while (nIter.hasNext()) {
+//					VpnConnectionProfileSummaryPojo m = nIter.next();
+//					if (m != null) {
+//						if (userLoggedIn.isNetworkAdmin()) {
+//							showMessageToUser("This feature is not yet implemented.");
+//	//							presenter.deprovisionVpnConnectionProfile(m);
+//						}
+//						else {
+//							showMessageToUser("You are not authorized to perform this action.");
+//						}
+//					} 
+//					else {
+//						showMessageToUser("Please select one or more item(s) from the list");
+//					}
+//				}
+//			}
+//		});
+//		grid.setWidget(3, 0, deprovisionAnchor);
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 

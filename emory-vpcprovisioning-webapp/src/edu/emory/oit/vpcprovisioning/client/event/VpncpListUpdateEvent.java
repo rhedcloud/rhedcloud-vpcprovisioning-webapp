@@ -6,6 +6,7 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public class VpncpListUpdateEvent extends GwtEvent<VpncpListUpdateEvent.Handler> {
 
@@ -22,9 +23,9 @@ public class VpncpListUpdateEvent extends GwtEvent<VpncpListUpdateEvent.Handler>
 
 	  public static final Type<VpncpListUpdateEvent.Handler> TYPE = new Type<VpncpListUpdateEvent.Handler>();
 
-	  private final List<VpnConnectionProvisioningPojo> vpncps;
+	  private final List<VpnConnectionProvisioningSummaryPojo> vpncps;
 
-	  public VpncpListUpdateEvent(List<VpnConnectionProvisioningPojo> vpncps) {
+	  public VpncpListUpdateEvent(List<VpnConnectionProvisioningSummaryPojo> vpncps) {
 	    this.vpncps = vpncps;
 	  }
 
@@ -33,7 +34,7 @@ public class VpncpListUpdateEvent extends GwtEvent<VpncpListUpdateEvent.Handler>
 	    return TYPE;
 	  }
 
-	  public List<VpnConnectionProvisioningPojo> getVpncps() {
+	  public List<VpnConnectionProvisioningSummaryPojo> getVpncps() {
 	    return vpncps;
 	  }
 

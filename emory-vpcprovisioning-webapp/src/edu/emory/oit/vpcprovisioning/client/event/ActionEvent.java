@@ -59,6 +59,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 
 /**
@@ -111,6 +112,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private VpnConnectionProfilePojo vpnConnectionProfile;
 	private VpnConnectionProfileAssignmentPojo vpnConnectonProfileAssignment;
 	private VpnConnectionProfileSummaryPojo vpnConnectionProfileSummary;
+	private VpnConnectionProvisioningSummaryPojo vpncpSummary;
 	private VpnConnectionProvisioningPojo vpncp;
 	private VpnConnectionDeprovisioningPojo vpncdp;
 	private FirewallExceptionAddRequestPojo fwea_request;
@@ -349,6 +351,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProvisioningPojo m) {
+		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProvisioningSummaryPojo m) {
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
@@ -611,6 +617,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(VpnConnectionProvisioningPojo m) {
 		this.vpncp = m;
+	}
+	public ActionEvent(VpnConnectionProvisioningSummaryPojo m) {
+		this.vpncpSummary = m;
+		this.vpncp = m.getProvisioning();
+		this.vpncdp = m.getDeprovisioning();
 	}
 
 	public ActionEvent(VpnConnectionDeprovisioningPojo vpncdp2) {
@@ -942,6 +953,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setVpncdp(VpnConnectionDeprovisioningPojo vpncdp) {
 		this.vpncdp = vpncdp;
+	}
+
+	public VpnConnectionProvisioningSummaryPojo getVpncpSummary() {
+		return vpncpSummary;
+	}
+
+	public void setVpncpSummary(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
+		this.vpncpSummary = vpncpSummary;
 	}
 
 }

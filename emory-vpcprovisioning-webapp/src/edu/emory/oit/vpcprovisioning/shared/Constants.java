@@ -120,7 +120,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_USER_PROFILE_QUERY_SPEC = "UserProfileQuerySpecification.v1_0";
 	public static final String MOA_USER_PROFILE = "UserProfile.v1_0";
 	
-	public static final String PROFILE_SETTING_RECEIVE_NOTIFICATIONS = "send e-mail notifications in addition to in-app notifications";
+	public static final String PROFILE_SETTING_RECEIVE_NOTIFICATIONS = "sendUserNotificationEmails";
 	public static final String MOA_SVC_SECURITY_ASSESSMENT = "ServiceSecurityAssessment.v1_0";
 	public static final String MOA_SVC_SECURITY_ASSESSMENT_QUERY_SPEC = "ServiceSecurityAssessmentQuerySpecification.v1_0";
 	public static final String MOA_USER_ACTION = "UserAction.v1_0";
@@ -164,6 +164,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_VPNCP = "VpnConnectionProvisioning.v1_0";
 	public static final String MOA_VPNCP_GENERATE = "VpnConnectionProvisioning.Generate.v1_0";
 	public static final String MOA_VPNC_DEPROVISIONING = "VpnConnectionDeprovisioning.v1_0";
+	public static final String MOA_VPNC_DEPROVISIONING_QUERY_SPEC = "VpnConnectionDeprovisioningQuerySpecification.v1_0";
 	public static final String MOA_VPN_CONNECTION_REQUISITION = "VpnConnectionRequisition.v1_0";
 	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION = "VpnConnectionProfileAssignmentRequisition.v1_0";
 
@@ -184,4 +185,7 @@ public class Constants implements IsSerializable {
 	public static final String SVC_FILTER_SITE_HIPAA_STATUS = "Emory HIPAA Eligibility";
 	public static final String VPN_CONNECTION_PROFILES = "vpnConnectionProfiles";
 	public static final String SUGGESTION_TYPE_VPC_ID = "vpcIdSuggestion";
+
+	public static final String VPN_PROVISIONING = "Provision";
+	public static final String VPN_DEPROVISIONING = "Deprovision";
 }

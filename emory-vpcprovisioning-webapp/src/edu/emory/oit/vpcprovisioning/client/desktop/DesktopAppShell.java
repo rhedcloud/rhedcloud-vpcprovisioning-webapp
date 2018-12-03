@@ -238,8 +238,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField HorizontalPanel generalInfoPanel;
 	@UiField HorizontalPanel linksPanel;
 	@UiField HTML notificationsHTML;
-	@UiField Anchor esbServiceStatusAnchor;
+//	@UiField Anchor esbServiceStatusAnchor;
 	@UiField MenuItem tkiClientItem;
+	@UiField MenuItem esbServiceStatusItem;
 
 	/**
 	 * A boolean indicating that we have not yet seen the first content widget.
@@ -268,34 +269,33 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	Command tkiClientCommand = new Command() {
 		public void execute() {
-//			AsyncCallback<AmazonS3AccessWrapperPojo> callback = new AsyncCallback<AmazonS3AccessWrapperPojo>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					GWT.log("Exception getting TKI Access wrapper", caught);
-//					showMessageToUser("There was an exception on the " +
-//							"server getting TKI Access wrapper.  Processing can continue.  Message " +
-//							"from server is: " + caught.getMessage());
-//				}
-//
-//				@Override
-//				public void onSuccess(AmazonS3AccessWrapperPojo result) {
-//					GWT.log("TKI Access Wrapper: " + result);
-//					String url = GWT.getModuleBaseURL() + "downloadTkiClient"
-//						+ "?accessId=" + result.getAccessId()
-//						+ "&secretKey=" + result.getSecretKey()
-//						+ "&bucketName=" + result.getBucketName()
-//						+ "&keyName=" + result.getKeyName();
-//					Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
-//				}
-//			};
-//			VpcProvisioningService.Util.getInstance().getTkiClientS3AccessWrapper(callback);
-
 			String url = GWT.getModuleBaseURL() + "s3download?type=TkiClient";
 			Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
 		}
 	};
+	Command esbServiceStatusCommand = new Command() {
+		public void execute() {
+			AsyncCallback<String> callback = new AsyncCallback<String>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					String msg = "Exception getting ESB service status URL."; 
+					GWT.log(msg, caught);
+					showMessageToUser(msg + 
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+				}
+
+				@Override
+				public void onSuccess(String result) {
+					GWT.log("opening " + result);
+					Window.open(result, "_blank", "");
+				}
+			};
+			VpcProvisioningService.Util.getInstance().getEsbServiceStatusURL(callback);
+		}
+	};
 	private void registerEvents() {
 		tkiClientItem.setScheduledCommand(tkiClientCommand);
+		esbServiceStatusItem.setScheduledCommand(esbServiceStatusCommand);
 
 		Event.sinkEvents(logoElem, Event.ONCLICK);
 		Event.setEventListener(logoElem, new EventListener() {
@@ -335,7 +335,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					g.setWidget(0, 1, valueHeader);
 					for (int i=0; i<userProfile.getProperties().size(); i++) {
 						final PropertyPojo prop = userProfile.getProperties().get(i);
-						HTML key = new HTML(prop.getName());
+						HTML key = new HTML(prop.getPrettyName());
 						String value = prop.getValue();
 						final CheckBox valueCb = new CheckBox();
 						valueCb.setValue(Boolean.parseBoolean(value));
@@ -416,25 +416,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		filter.setUserId(userLoggedIn.getPublicId());
 		ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION, filter);
 	}
-	@UiHandler("esbServiceStatusAnchor")
-	void esbServiceStatusAnchorClick(ClickEvent e) {
-		AsyncCallback<String> callback = new AsyncCallback<String>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				String msg = "Exception getting ESB service status URL."; 
-				GWT.log(msg, caught);
-				showMessageToUser(msg + 
-					"<p>Message from server is: " + caught.getMessage() + "</p>");
-			}
-
-			@Override
-			public void onSuccess(String result) {
-				GWT.log("opening " + result);
-				Window.open(result, "_blank", "");
-			}
-		};
-		VpcProvisioningService.Util.getInstance().getEsbServiceStatusURL(callback);
-	}
+//	@UiHandler("esbServiceStatusAnchor")
+//	void esbServiceStatusAnchorClick(ClickEvent e) {
+//		AsyncCallback<String> callback = new AsyncCallback<String>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				String msg = "Exception getting ESB service status URL."; 
+//				GWT.log(msg, caught);
+//				showMessageToUser(msg + 
+//					"<p>Message from server is: " + caught.getMessage() + "</p>");
+//			}
+//
+//			@Override
+//			public void onSuccess(String result) {
+//				GWT.log("opening " + result);
+//				Window.open(result, "_blank", "");
+//			}
+//		};
+//		VpcProvisioningService.Util.getInstance().getEsbServiceStatusURL(callback);
+//	}
 
 	@UiHandler ("mainTabPanel") 
 	void tabSelected(SelectionEvent<Integer> e) {
@@ -853,7 +853,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							n.show(notificationsHTML);
 							notificationsHTML.setHTML(
 									"<img class=\"notification\" src=\"images/bell-with-dot-512.png\" width=\"24\" height=\"24\"/>");
-							esbServiceStatusAnchor.addStyleName("notification");
+							notificationsHTML.addStyleName("notification");
 						}
 						else {
 							clearNotifications();
@@ -1303,7 +1303,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void initiliizeUserProfile() {
+	public void initializeUserProfile() {
 		AsyncCallback<UserProfileQueryResultPojo> up_callback = new AsyncCallback<UserProfileQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

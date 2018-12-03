@@ -207,7 +207,7 @@ public class AppBootstrapper {
 				shell.validateTermsOfUse();
 				shell.startNotificationTimer();
 				shell.initializeAwsServiceMap();
-				shell.initiliizeUserProfile();
+				shell.initializeUserProfile();
 
 				activityManager.setDisplay(shell);
 
@@ -1708,14 +1708,21 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.VPNCP_GENERATED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlaceFromGenerate(event.getVpncp()));
+				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlaceFromGenerate(event.getVpncpSummary()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.VPNCDP_GENERATED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlaceFromGenerate(event.getVpncpSummary()));
 			}
 		});
 
 		ActionEvent.register(eventBus, ActionNames.SHOW_VPNCP_STATUS, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncp()));
+				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncpSummary()));
 			}
 		});
 

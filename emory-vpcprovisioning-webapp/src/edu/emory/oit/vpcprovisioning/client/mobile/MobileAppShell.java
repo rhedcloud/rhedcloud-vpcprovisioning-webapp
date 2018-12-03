@@ -291,7 +291,7 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void initiliizeUserProfile() {
+	public void initializeUserProfile() {
 		// TODO Auto-generated method stub
 		
 	}

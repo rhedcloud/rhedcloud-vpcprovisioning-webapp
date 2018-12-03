@@ -11,6 +11,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.VpncpListUpdateEvent;
@@ -21,6 +22,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public class ListVpnConnectionProvisioningPresenter extends PresenterBase implements ListVpnConnectionProvisioningView.Presenter {
 	private static final Logger log = Logger.getLogger(ListVpcPresenter.class.getName());
@@ -41,7 +43,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	
 	VpnConnectionProvisioningQueryFilterPojo filter;
 	UserAccountPojo userLoggedIn;
-
+	VpnConnectionProvisioningPojo selectedProvisioning;
 
 	public ListVpnConnectionProvisioningPresenter(ClientFactory clientFactory, boolean clearList, VpnConnectionProvisioningQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
@@ -139,7 +141,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 			@Override
 			public void onSuccess(VpnConnectionProvisioningQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " VpnConnectionProvisionings for " + result.getFilterUsed());
-				setVpnConnectionProvisioningList(result.getResults());
+				setVpnConnectionProvisioningSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.isNetworkAdmin()) {
 					getView().applyNetworkAdminMask();
@@ -156,7 +158,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 		};
 
 		GWT.log("refreshing VpnConnectionProvisioning list...");
-		VpcProvisioningService.Util.getInstance().getVpncpsForFilter(filter, callback);
+		VpcProvisioningService.Util.getInstance().getVpncpSummariesForFilter(filter, callback);
 	}
 
 	@Override
@@ -206,9 +208,9 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	/**
 	 * Set the list of Vpcs.
 	 */
-	private void setVpnConnectionProvisioningList(List<VpnConnectionProvisioningPojo> vpcps) {
-		getView().setVpnConnectionProvisionings(vpcps);
-		eventBus.fireEventFromSource(new VpncpListUpdateEvent(vpcps), this);
+	private void setVpnConnectionProvisioningSummaryList(List<VpnConnectionProvisioningSummaryPojo> summaries) {
+		getView().setVpnConnectionProvisioningSummaries(summaries);
+		eventBus.fireEventFromSource(new VpncpListUpdateEvent(summaries), this);
 	}
 
 	@Override
@@ -255,43 +257,23 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	}
 
 	@Override
-	public void deleteVpnConnectionProvisioning(final VpnConnectionProvisioningPojo vpcp) {
-//		if (Window.confirm("Delete the AWS VpnConnectionProvisioning " + vpcp.getProvisioningId() + "?")) {
-//			getView().showPleaseWaitDialog("Deleting VPC Provisioning item...");
-//			AsyncCallback<Void> callback = new AsyncCallback<Void>() {
-//
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server deleting the Vpc.  Message " +
-//							"from server is: " + caught.getMessage());
-//					getView().hidePleaseWaitDialog();
-//				}
-//
-//				@Override
-//				public void onSuccess(Void result) {
-//					// remove from dataprovider
-//					getView().removeVpnConnectionProvisioningFromView(vpcp);
-//					getView().hidePleaseWaitDialog();
-//					// status message
-//					getView().showStatus(getView().getStatusMessageSource(), "VpnConnectionProvisioning was deleted.");
-//					
-//					// TODO fire list Vpcs event...
-//				}
-//			};
-//			VpcProvisioningService.Util.getInstance().deleteVpnConnectionProvisioning(vpcp, callback);
-//		}
+	public void deprovisionVpnConnection(final VpnConnectionProvisioningPojo provisionedVpnConnection) {
+		selectedProvisioning = provisionedVpnConnection;
+		VpcpConfirm.confirm(
+			ListVpnConnectionProvisioningPresenter.this, 
+			"Confirm Deprovision VPN Connection", 
+			"Deprovisiong the VPN Connection " + selectedProvisioning.getRequisition().getProfile().getVpcNetwork() + "?");
 	}
 
 	@Override
-	public void deprovisionVpnConnection(final VpnConnectionProvisioningPojo provisionedVpnConnection) {
+	public void vpcpConfirmOkay() {
 		AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hidePleaseWaitDialog();
-				GWT.log("Exception saving the VpnConnectionDeprovisioning", caught);
+				GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server saving the VpnConnectionDeprovisioning.  Message " +
+						"server generating the VpnConnectionDeprovisioning.  Message " +
 						"from server is: " + caught.getMessage());
 			}
 
@@ -311,11 +293,18 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 				final VpnConnectionDeprovisioningPojo vpncdp = result;
 				GWT.log("VPNCDP was generated on the server, showing status page.  "
 						+ "VPNCDP is: " + vpncdp);
-				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncdp);
+				VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+				vpncpSummary.setDeprovisioning(vpncdp);
+				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
 			}
 		};
-		getView().showPleaseWaitDialog("Generating VPC Provisioning object...");
-		VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(provisionedVpnConnection.getRequisition(), callback);
+		getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
+		VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(selectedProvisioning.getRequisition(), callback);
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN was NOT deprovisioned");
 	}
 
 }

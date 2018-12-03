@@ -262,7 +262,7 @@ public interface VpcProvisioningService extends RemoteService {
 	VpnConnectionProfileAssignmentQueryResultPojo getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException;
 
 	// VPNCP
-	VpnConnectionProvisioningQueryResultPojo getVpncpsForFilter(VpnConnectionProvisioningQueryFilterPojo filter) throws RpcException;
+	VpnConnectionProvisioningQueryResultPojo getVpncpSummariesForFilter(VpnConnectionProvisioningQueryFilterPojo filter) throws RpcException;
 //	void deleteVpncp(VpnConnectionProvisioningPojo vpncp) throws RpcException;
 	VpnConnectionProvisioningPojo generateVpncp(VpnConnectionRequisitionPojo vpncpRequisition) throws RpcException;
 	VpnConnectionDeprovisioningPojo generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition) throws RpcException;

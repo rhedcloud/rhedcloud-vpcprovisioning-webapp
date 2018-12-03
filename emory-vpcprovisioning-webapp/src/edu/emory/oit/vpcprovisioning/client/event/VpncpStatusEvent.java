@@ -4,13 +4,14 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public class VpncpStatusEvent extends GwtEvent<VpncpStatusEvent.Handler> {
 	  /**
 	   * Implemented by objects that handle {@link EditVpncpEvent}.
 	   */
 	  public interface Handler extends EventHandler {
-	    void onShowVpncpStatus(VpncpStatusEvent event);
+	    void onShowVpncpSummaryStatus(VpncpStatusEvent event);
 	  }
 
 	  /**
@@ -18,10 +19,10 @@ public class VpncpStatusEvent extends GwtEvent<VpncpStatusEvent.Handler> {
 	   */
 	  public static final Type<VpncpStatusEvent.Handler> TYPE = new Type<VpncpStatusEvent.Handler>();
 
-	  private final VpnConnectionProvisioningPojo vpncp;
+	  private final VpnConnectionProvisioningSummaryPojo vpncpSummary;
 
-	  public VpncpStatusEvent(VpnConnectionProvisioningPojo vpncp) {
-	    this.vpncp = vpncp;
+	  public VpncpStatusEvent(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
+	    this.vpncpSummary = vpncpSummary;
 	  }
 
 	  @Override
@@ -29,12 +30,12 @@ public class VpncpStatusEvent extends GwtEvent<VpncpStatusEvent.Handler> {
 	    return TYPE;
 	  }
 
-	  public VpnConnectionProvisioningPojo getVpncp() {
-	    return vpncp;
+	  public VpnConnectionProvisioningSummaryPojo getVpncpSummary() {
+	    return vpncpSummary;
 	  }
 
 	  @Override
 	  protected void dispatch(VpncpStatusEvent.Handler handler) {
-	    handler.onShowVpncpStatus(this);
+	    handler.onShowVpncpSummaryStatus(this);
 	  }
 }

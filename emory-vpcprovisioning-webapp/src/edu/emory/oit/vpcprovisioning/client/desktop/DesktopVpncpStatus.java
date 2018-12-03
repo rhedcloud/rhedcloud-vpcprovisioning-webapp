@@ -42,6 +42,7 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 	@UiField Button refreshButton;
 	
 	@UiField Label provisioningIdLabel;
+	@UiField Label provisioningTypeLabel;
 	@UiField Label statusLabel;
 	@UiField Label provisioningResultLabel;
 	@UiField Label anticipatedTimeLabel;
@@ -63,7 +64,15 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 			public void onClick(ClickEvent event) {
 				stopTimer();
 				if (presenter.isFromGenerate()) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
+					// need to account for vpn connection deprovision generates here too
+					// if it's from a generate BUT is a deprovision, we'll want to go to GO_HOME_VPNCP
+					// because that's where VPNs are deprovisioned from
+					if (presenter.getVpncpSummary().isProvision()) {
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
+					}
+					else {
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
+					}
 				}
 				else {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
@@ -75,7 +84,13 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 			@Override
 			public void onClick(ClickEvent event) {
 				startTimer = false;
-				presenter.refreshProvisioningStatusForId(presenter.getVpncp().getProvisioningId());
+				if (presenter.getVpncpSummary().isProvision()) {
+					presenter.refreshProvisioningStatusForId(presenter.getVpncp().getProvisioningId());
+				}
+				else {
+					// refresh the deprovisioing object
+					presenter.refreshProvisioningStatusForId(presenter.getVpncdp().getProvisioningId());
+				}
 			}
 		}, ClickEvent.getType());
 	}
@@ -219,11 +234,20 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
 			@Override
 			public boolean execute() {
+				if (presenter.getVpncpSummary().isProvision()) {
 					presenter.refreshProvisioningStatusForId(presenter.getVpncp().getProvisioningId());
 					if (presenter.getVpncp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
 						startTimer = false;
 					}
 					return startTimer;
+				}
+				else {
+					presenter.refreshProvisioningStatusForId(presenter.getVpncdp().getProvisioningId());
+					if (presenter.getVpncdp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+						startTimer = false;
+					}
+					return startTimer;
+				}
 			}
 		}, delayMs);
 	}
@@ -243,11 +267,32 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 	public void refreshProvisioningStatusInformation() {
 		GWT.log("[DesktopVpcpStatus.refreshVpcpStatusInformation]");
 
-		provisioningIdLabel.setText(presenter.getVpncp().getProvisioningId());
-		statusLabel.setText(presenter.getVpncp().getStatus());
-		provisioningResultLabel.setText(presenter.getVpncp().getProvisioningResult());
-		anticipatedTimeLabel.setText(presenter.getVpncp().getAnticipatedTime());
-		actualTimeLabel.setText(presenter.getVpncp().getActualTime());
+		if (presenter.getVpncpSummary().isProvision()) {
+			provisioningIdLabel.setText(presenter.getVpncp().getProvisioningId());
+			provisioningTypeLabel.setText(Constants.VPN_PROVISIONING);
+			statusLabel.setText(presenter.getVpncp().getStatus());
+			if (presenter.getVpncp().getProvisioningResult() == null) {
+				provisioningResultLabel.setText(Constants.NOT_APPLICABLE);
+			}
+			else {
+				provisioningResultLabel.setText(presenter.getVpncp().getProvisioningResult());
+			}
+			anticipatedTimeLabel.setText(presenter.getVpncp().getAnticipatedTime());
+			actualTimeLabel.setText(presenter.getVpncp().getActualTime());
+		}
+		else {
+			provisioningIdLabel.setText(presenter.getVpncdp().getProvisioningId());
+			provisioningTypeLabel.setText(Constants.VPN_DEPROVISIONING);
+			statusLabel.setText(presenter.getVpncdp().getStatus());
+			if (presenter.getVpncdp().getProvisioningResult() == null) {
+				provisioningResultLabel.setText(Constants.NOT_APPLICABLE);
+			}
+			else {
+				provisioningResultLabel.setText(presenter.getVpncdp().getProvisioningResult());
+			}
+			anticipatedTimeLabel.setText(presenter.getVpncdp().getAnticipatedTime());
+			actualTimeLabel.setText(presenter.getVpncdp().getActualTime());
+		}
 		
 		setProvisioningProgress();
 		
@@ -256,7 +301,12 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 
 	private void refreshProvisioningStepInformation() {
 		Grid stepsGrid = null;
-		stepsGrid = new Grid(presenter.getVpncp().getProvisioningSteps().size() + 1, 8);
+		if (presenter.getVpncpSummary().isProvision()) {
+			stepsGrid = new Grid(presenter.getVpncp().getProvisioningSteps().size() + 1, 8);
+		}
+		else {
+			stepsGrid = new Grid(presenter.getVpncdp().getProvisioningSteps().size() + 1, 8);
+		}
 		stepsGrid.setCellPadding(8);
 		stepsPanel.clear();
 
@@ -270,10 +320,19 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 		stepsGrid.setWidget(0, 7, new HTML("<b>Properties</b>"));
 
 		int gridRow = 1;
-		for (int i=0; i<presenter.getVpncp().getProvisioningSteps().size(); i++) {
-			final ProvisioningStepPojo psp = presenter.getVpncp().getProvisioningSteps().get(i);
-			addStepToGrid(gridRow, stepsGrid, psp);
-			gridRow++;
+		if (presenter.getVpncpSummary().isProvision()) {
+			for (int i=0; i<presenter.getVpncp().getProvisioningSteps().size(); i++) {
+				final ProvisioningStepPojo psp = presenter.getVpncp().getProvisioningSteps().get(i);
+				addStepToGrid(gridRow, stepsGrid, psp);
+				gridRow++;
+			}
+		}
+		else {
+			for (int i=0; i<presenter.getVpncdp().getProvisioningSteps().size(); i++) {
+				final ProvisioningStepPojo psp = presenter.getVpncdp().getProvisioningSteps().get(i);
+				addStepToGrid(gridRow, stepsGrid, psp);
+				gridRow++;
+			}
 		}
 		stepsPanel.add(stepsGrid);
 	}
@@ -352,7 +411,13 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 	}
 
 	private void setProvisioningProgress() {
-        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncp().getTotalStepCount(), presenter.getVpncp().getCompletedStepCount());
-        progressHTML.setHTML(sh);
+		if (presenter.getVpncpSummary().isProvision()) {
+	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncp().getTotalStepCount(), presenter.getVpncp().getCompletedStepCount());
+	        progressHTML.setHTML(sh);
+		}
+		else {
+	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncdp().getTotalStepCount(), presenter.getVpncdp().getCompletedStepCount());
+	        progressHTML.setHTML(sh);
+		}
 	}
 }

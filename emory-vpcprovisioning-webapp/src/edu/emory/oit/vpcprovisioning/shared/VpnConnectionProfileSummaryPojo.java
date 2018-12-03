@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -42,7 +44,39 @@ public class VpnConnectionProfileSummaryPojo extends SharedObject implements IsS
 
 	@Override
 	public int compareTo(VpnConnectionProfileSummaryPojo o) {
-		// TODO Auto-generated method stub
+		// TODO: change this appropriately
+//		if (this.isProvision() && o.isProvision()) {
+//			Date c1 = o.getProvisioning().getCreateTime();
+//			Date c2 = this.getProvisioning().getCreateTime();
+//			if (c1 == null || c2 == null) {
+//				return 0;
+//			}
+//			return c1.compareTo(c2);
+//		}
+//		else if (!this.isProvision() && !o.isProvision()) {
+//			Date c1 = o.getDeprovisioning().getCreateTime();
+//			Date c2 = this.getDeprovisioning().getCreateTime();
+//			if (c1 == null || c2 == null) {
+//				return 0;
+//			}
+//			return c1.compareTo(c2);
+//		}
+//		else if (this.isProvision() && !o.isProvision()) {
+//			Date c1 = o.getDeprovisioning().getCreateTime();
+//			Date c2 = this.getProvisioning().getCreateTime();
+//			if (c1 == null || c2 == null) {
+//				return 0;
+//			}
+//			return c1.compareTo(c2);
+//		}
+//		else if (!this.isProvision() && o.isProvision()) {
+//			Date c1 = o.getProvisioning().getCreateTime();
+//			Date c2 = this.getDeprovisioning().getCreateTime();
+//			if (c1 == null || c2 == null) {
+//				return 0;
+//			}
+//			return c1.compareTo(c2);
+//		}
 		return 0;
 	}
 

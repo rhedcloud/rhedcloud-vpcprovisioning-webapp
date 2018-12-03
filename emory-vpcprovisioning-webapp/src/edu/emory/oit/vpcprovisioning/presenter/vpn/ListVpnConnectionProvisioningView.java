@@ -6,17 +6,18 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.presenter.PresentsConfirmation;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public interface ListVpnConnectionProvisioningView extends IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends PresentsConfirmation {
 		/**
 		 * Select a caseRecord.
 		 * 
@@ -29,7 +30,6 @@ public interface ListVpnConnectionProvisioningView extends IsWidget, View {
 		/**
 		 * Delete the current Vpc or cancel the creation of a Vpc.
 		 */
-		void deleteVpnConnectionProvisioning(VpnConnectionProvisioningPojo vpcp);
 		public void logMessageOnServer(final String message);
 		void refreshList(final UserAccountPojo user);
 		
@@ -55,7 +55,7 @@ public interface ListVpnConnectionProvisioningView extends IsWidget, View {
 	 * 
 	 * @param cidrs the list of caseRecords
 	 */
-	void setVpnConnectionProvisionings(List<VpnConnectionProvisioningPojo> vpcps);
+	void setVpnConnectionProvisioningSummaries(List<VpnConnectionProvisioningSummaryPojo> summaries);
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeVpnConnectionProvisioningFromView(VpnConnectionProvisioningPojo vpcp);

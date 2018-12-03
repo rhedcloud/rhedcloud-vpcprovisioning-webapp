@@ -66,6 +66,12 @@
 							<g:Label ui:field="provisioningIdLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Provisioning Type:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="provisioningTypeLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
 	 						<g:Label addStyleNames="{style.label}">Overall Status:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>

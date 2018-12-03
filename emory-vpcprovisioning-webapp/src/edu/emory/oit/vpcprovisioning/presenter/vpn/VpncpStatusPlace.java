@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public class VpncpStatusPlace extends Place {
 	/**
@@ -44,12 +45,22 @@ public class VpncpStatusPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static VpncpStatusPlace createVpncpStatusPlace(VpnConnectionProvisioningPojo vpncp) {
-		return new VpncpStatusPlace(vpncp.getProvisioningId(), vpncp);
+	public static VpncpStatusPlace createVpncpStatusPlace(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
+		if (vpncpSummary.isProvision()) {
+			return new VpncpStatusPlace(vpncpSummary.getProvisioning().getProvisioningId(), vpncpSummary);
+		}
+		else {
+			return new VpncpStatusPlace(vpncpSummary.getDeprovisioning().getProvisioningId(), vpncpSummary);
+		}
 	}
 
-	public static VpncpStatusPlace createVpncpStatusPlaceFromGenerate(VpnConnectionProvisioningPojo vpncp) {
-		return new VpncpStatusPlace(vpncp.getProvisioningId(), vpncp, true);
+	public static VpncpStatusPlace createVpncpStatusPlaceFromGenerate(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
+		if (vpncpSummary.isProvision()) {
+			return new VpncpStatusPlace(vpncpSummary.getProvisioning().getProvisioningId(), vpncpSummary, true);
+		}
+		else {
+			return new VpncpStatusPlace(vpncpSummary.getDeprovisioning().getProvisioningId(), vpncpSummary, true);
+		}
 	}
 	/**
 	 * Get the singleton instance of the {@link AddCaseRecordPlace} used to create a new
@@ -64,7 +75,7 @@ public class VpncpStatusPlace extends Place {
 		return singleton;
 	}
 
-	private final VpnConnectionProvisioningPojo vpncp;
+	private final VpnConnectionProvisioningSummaryPojo vpncpSummary;
 	private final String provisioningId;
 	private final boolean fromGenerate;
 	public String getProvisioningId() {
@@ -77,15 +88,15 @@ public class VpncpStatusPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private VpncpStatusPlace(String provisioningId, VpnConnectionProvisioningPojo vpncp) {
+	private VpncpStatusPlace(String provisioningId, VpnConnectionProvisioningSummaryPojo vpncpSummary) {
 		this.provisioningId = provisioningId;
-		this.vpncp = vpncp;
+		this.vpncpSummary = vpncpSummary;
 		this.fromGenerate = false;
 	}
 
-	private VpncpStatusPlace(String provisioningId, VpnConnectionProvisioningPojo vpncp, boolean fromGenerate) {
+	private VpncpStatusPlace(String provisioningId, VpnConnectionProvisioningSummaryPojo vpncpSummary, boolean fromGenerate) {
 		this.provisioningId = provisioningId;
-		this.vpncp = vpncp;
+		this.vpncpSummary = vpncpSummary;
 		this.fromGenerate = fromGenerate;
 	}
 	/**
@@ -93,8 +104,8 @@ public class VpncpStatusPlace extends Place {
 	 * 
 	 * @return the caseRecord to edit, or null if not available
 	 */
-	public VpnConnectionProvisioningPojo getVpncp() {
-		return vpncp;
+	public VpnConnectionProvisioningSummaryPojo getVpncpSummary() {
+		return vpncpSummary;
 	}
 	public boolean isFromGenerate() {
 		return this.fromGenerate;

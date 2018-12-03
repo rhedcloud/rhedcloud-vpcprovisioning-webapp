@@ -101,7 +101,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
@@ -168,6 +167,7 @@ import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v1_0.StaticNatDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.StaticNatProvisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
@@ -198,6 +198,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String ROLE_ASSIGNMENT_PROPERTIES = "RoleAssignmentProperties";
 	private static final String AWS_SERVICE_STATUS_PROPERTIES = "AwsServiceStatusProperties";
 	private static final String SITE_SERVICE_STATUS_PROPERTIES = "SiteServiceStatusProperties";
+	private static final String USER_PROFILE_PROPERTIES = "UserProfileProperties";
 //	private static String LOGTAG = "[" + VpcProvisioningServiceImpl.class.getSimpleName()
 //			+ "]";
 	private Logger log = Logger.getLogger(getClass().getName());
@@ -7130,7 +7131,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@SuppressWarnings({ "unused", "unchecked" })
 	private void populateUserProfilePojo(UserProfile moa,
 			UserProfilePojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
+			ParseException, EnterpriseConfigurationObjectException {
 		
 		pojo.setUserId(moa.getUserId());
 		if (moa.getLastLoginDatetime() != null) {
@@ -7141,6 +7142,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				PropertyPojo prop = new PropertyPojo();
 				prop.setName(m_prop.getKey());
 				prop.setValue(m_prop.getValue());
+				Properties props = getAppConfig().getProperties(USER_PROFILE_PROPERTIES);
+				String prettyName = props.getProperty(prop.getName(), null);
+				if (prettyName == null) {
+					prop.setPrettyName(prop.getName());
+				}
+				else {
+					prop.setPrettyName(prettyName);
+				}
+
 				pojo.getProperties().add(prop);
 			}
 		}
@@ -7221,7 +7231,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		profile.setCreateInfo(this.getCachedUser().getPublicId(),
 				new java.util.Date());
         try {
-            info("creating UserNotification on the server...");
+            info("creating UserProfile on the server...");
             UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
 
             info("populating newData...");
@@ -9188,18 +9198,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public VpnConnectionProvisioningQueryResultPojo getVpncpsForFilter(VpnConnectionProvisioningQueryFilterPojo filter)
+	public VpnConnectionProvisioningQueryResultPojo getVpncpSummariesForFilter(VpnConnectionProvisioningQueryFilterPojo filter)
 			throws RpcException {
 
 		VpnConnectionProvisioningQueryResultPojo result = new VpnConnectionProvisioningQueryResultPojo();
-		List<VpnConnectionProvisioningPojo> pojos = new java.util.ArrayList<VpnConnectionProvisioningPojo>();
+//		List<VpnConnectionProvisioningPojo> pojos = new java.util.ArrayList<VpnConnectionProvisioningPojo>();
+		List<VpnConnectionProvisioningSummaryPojo> summaries = new java.util.ArrayList<VpnConnectionProvisioningSummaryPojo>();
 		try {
 			VpnConnectionProvisioningQuerySpecification queryObject = (VpnConnectionProvisioningQuerySpecification) getObject(Constants.MOA_VPNCP_QUERY_SPEC);
 			VpnConnectionProvisioning actionable = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
 
 			if (filter != null) {
 				if (filter.isDefaultMaxVpncps()) {
-					info("[getVpncpsForFilter] using 'maxVpncps' query language to get VPCPs");
+					info("[getVpncpSummariesForFilter] using 'maxVpncps' query language to get VPCPs");
 //					QueryLanguage ql = queryObject.newQueryLanguage();
 //					ql.setName("maxVpncps");
 //					ql.setType("hql");
@@ -9207,7 +9218,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //					queryObject.setQueryLanguage(ql);
 				}
 				else if (filter.isAllVpncps()) {
-					info("[getVpncpsForFilter] using 'allVpncps' query language to get VPCPs");
+					info("[getVpncpSummariesForFilter] using 'allVpncps' query language to get VPCPs");
 //					QueryLanguage ql = queryObject.newQueryLanguage();
 //					ql.setName("allVpncps");
 //					ql.setType("hql");
@@ -9218,16 +9229,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					queryObject.setType(filter.getType());
 					queryObject.setCreateUser(filter.getCreateUser());
 					queryObject.setLastUpdateUser(filter.getUpdateUser());
-					info("[getVpncpsForFilter] getting VPNCPs for filter: " + queryObject.toXmlString());
+					info("[getVpncpSummariesForFilter] getting VPNCPs for filter: " + queryObject.toXmlString());
 				}
 			}
 			else {
-				info("[getVpncpsForFilter] no filter passed in.  Getting all VPNCPs");
+				info("[getVpncpSummariesForFilter] no filter passed in.  Getting all VPNCPs");
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getVpncpsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			info("[getVpncpSummariesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = generalProps.getProperty("vpcpListTimeoutMillis", "30000");
@@ -9243,18 +9254,61 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<VpnConnectionProvisioning> moas = 
 				actionable.query(queryObject, reqSvc);
 			
-			info("[getVpncpsForFilter] got " + moas.size() + " VPNCPs back from the server.");
+			info("[getVpncpSummariesForFilter] got " + moas.size() + " VPNCPs back from the server.");
 			for (VpnConnectionProvisioning moa : moas) {
 				VpnConnectionProvisioningPojo pojo = new VpnConnectionProvisioningPojo();
 				VpnConnectionProvisioningPojo baseline = new VpnConnectionProvisioningPojo();
 				this.populateVpncpPojo(moa, pojo);
 				this.populateVpncpPojo(moa, baseline);
 				pojo.setBaseline(baseline);
-				pojos.add(pojo);
+				VpnConnectionProvisioningSummaryPojo summary = new VpnConnectionProvisioningSummaryPojo();
+				summary.setProvisioning(pojo);
+				summaries.add(summary);
+//				pojos.add(pojo);
+			}
+			
+			// TODO: now get the VPNCDPs (deprovisioning objects)
+			VpnConnectionDeprovisioningQuerySpecification deprov_queryObject = (VpnConnectionDeprovisioningQuerySpecification) getObject(Constants.MOA_VPNC_DEPROVISIONING_QUERY_SPEC);
+			VpnConnectionDeprovisioning deprov_actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
+
+			if (filter != null) {
+				if (filter.isDefaultMaxVpncps()) {
+					info("[getVpncpSummariesForFilter] using 'maxVpncps' query language to get VPCDPs");
+				}
+				else if (filter.isAllVpncps()) {
+					info("[getVpncpSummariesForFilter] using 'allVpncps' query language to get VPCDPs");
+				}
+				else {
+					deprov_queryObject.setProvisioningId(filter.getProvisioningId());
+					deprov_queryObject.setType(filter.getType());
+					deprov_queryObject.setCreateUser(filter.getCreateUser());
+					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
+					info("[getVpncpSummariesForFilter] getting VPNCDPs for filter: " + deprov_queryObject.toXmlString());
+				}
+			}
+			else {
+				info("[getVpncpSummariesForFilter] no filter passed in.  Getting all VPNCDPs");
 			}
 
-			Collections.sort(pojos);
-			result.setResults(pojos);
+			info("VpnConnectionDeprovisioningQuerySpec: " + deprov_queryObject.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<VpnConnectionDeprovisioning> deprov_moas = 
+				deprov_actionable.query(deprov_queryObject, reqSvc);
+			
+			info("[getVpncpSummariesForFilter] got " + deprov_moas.size() + " VPNCDPs back from the server.");
+			for (VpnConnectionDeprovisioning moa : deprov_moas) {
+				VpnConnectionDeprovisioningPojo pojo = new VpnConnectionDeprovisioningPojo();
+				VpnConnectionDeprovisioningPojo baseline = new VpnConnectionDeprovisioningPojo();
+				this.populateVpnDeprovisioningPojo(moa, pojo);
+				this.populateVpnDeprovisioningPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				VpnConnectionProvisioningSummaryPojo summary = new VpnConnectionProvisioningSummaryPojo();
+				summary.setDeprovisioning(pojo);
+				summaries.add(summary);
+			}
+
+			Collections.sort(summaries);
+			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
 		} 
@@ -9602,6 +9656,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (moa.getVpnConnectionProfile() != null) {
 			VpnConnectionProfilePojo vcp = new VpnConnectionProfilePojo();
 			this.populateVpnConnectionProfilePojo(moa.getVpnConnectionProfile(), vcp);
+			pojo.setProfile(vcp);
 		}
 	}
 

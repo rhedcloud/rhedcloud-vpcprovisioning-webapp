@@ -7,7 +7,9 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface VpncpStatusView extends Editor<VpnConnectionProvisioningPojo>, IsWidget, View {
@@ -25,6 +27,8 @@ public interface VpncpStatusView extends Editor<VpnConnectionProvisioningPojo>, 
 		 * inputs.
 		 */
 		VpnConnectionProvisioningPojo getVpncp();
+		VpnConnectionDeprovisioningPojo getVpncdp();
+		VpnConnectionProvisioningSummaryPojo getVpncpSummary();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void refreshProvisioningStatusForId(String provisioningId);

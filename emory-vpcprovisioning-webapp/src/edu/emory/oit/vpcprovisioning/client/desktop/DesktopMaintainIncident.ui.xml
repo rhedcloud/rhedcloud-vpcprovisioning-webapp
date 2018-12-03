@@ -28,7 +28,7 @@
 				</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label ui:field="tAcctOwnerApprovesLabel" addStyleNames="{style.label}">Please confirm the Account Owner (ACCOUNT_OWNER) is aware and approves the termination of this account:</g:Label>
+						<g:Label ui:field="tAcctOwnerApprovesLabel" addStyleNames="{style.label-left}">Please confirm the Account Owner (ACCOUNT_OWNER) is aware and approves the termination of this account:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
@@ -37,7 +37,7 @@
 		    	</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label ui:field="tAcctReadyLabel" addStyleNames="{style.label}">Please confirm all services and infrastructure in the account have been terminated:</g:Label>
+						<g:Label ui:field="tAcctReadyLabel" addStyleNames="{style.label-left}">Please confirm all services and infrastructure in the account have been terminated:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
@@ -46,7 +46,7 @@
 		    	</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label ui:field="tAcctConfirmLabel" addStyleNames="{style.label}">Terminating an account is a permanent act.  When an account is deleted, it will no longer be accessible.  Are you sure you want to terminate this account?:</g:Label>
+						<g:Label ui:field="tAcctConfirmLabel" addStyleNames="{style.label-left}">Terminating an account is a permanent act.  When an account is deleted, it will no longer be accessible.  Are you sure you want to terminate this account?:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
