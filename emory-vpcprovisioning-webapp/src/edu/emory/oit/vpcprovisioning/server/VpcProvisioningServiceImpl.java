@@ -2551,20 +2551,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							info("[getAccountsForFilter] got account from cache...");
 							inCache = true;
 						}
-//						AccountPojo acct = this.getAccountById(arp.getAccountId());
+						
 						if (cached_acct != null) {
-							info("[getAccountsForFilter] adding account " + cached_acct.getAccountId() + 
-								" to list of accounts for the user logged in" );
-							pojos.add(cached_acct);
-							if (!inCache) {
-								Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
+							// currently, they can only filter by account id so this
+							// should work for now.  May need to re-visit if we ever do 
+							// other types of filtering
+							if (filter.getAccountId() != null) {
+								if (cached_acct.getAccountId().equalsIgnoreCase(filter.getAccountId())) {
+									info("[getAccountsForFilter-withAccountIdFilter] adding account " + cached_acct.getAccountId() + 
+											" to list of accounts for the user logged in" );
+									pojos.add(cached_acct);
+									if (!inCache) {
+										Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
+									}
+								}
+							}
+							else {
+								info("[getAccountsForFilter] adding account " + cached_acct.getAccountId() + 
+										" to list of accounts for the user logged in" );
+								pojos.add(cached_acct);
+								if (!inCache) {
+									Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
+								}
 							}
 						}
-//						else {
-//							String errorMsg = "[getAccountsForFilter] null result from getAccountById, this is an issue.";
-//							info(errorMsg);
-//							throw new RpcException(errorMsg);
-//						}
 					}
 					Collections.sort(pojos);
 					result.setResults(pojos);

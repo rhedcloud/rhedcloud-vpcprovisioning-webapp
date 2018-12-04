@@ -164,10 +164,12 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 						getView().applyAWSAccountAuditorMask();
 					}
 					else {
-						getView().showMessageToUser("An error has occurred.  The user logged in does not "
-								+ "appear to be associated to any valid roles for this account.");
-						getView().applyAWSAccountAuditorMask();
-						// TODO: need to not show them the list of accounts???
+						if (result.getResults().size() > 0) {
+							getView().showMessageToUser("An error has occurred.  The user logged in does not "
+									+ "appear to be associated to any valid roles for this account.");
+							getView().applyAWSAccountAuditorMask();
+						}
+						// just means no rows were returned.
 					}
 				}
 				
