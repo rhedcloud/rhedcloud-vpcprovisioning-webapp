@@ -308,4 +308,13 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		return 0;
 	}
 
+	public boolean isBlocked() {
+		if (siteStatus == null) {
+			return true;
+		}
+		if (siteStatus.toLowerCase().indexOf("blocked") >= 0) {
+			return true;
+		}
+		return false;
+	}
 }

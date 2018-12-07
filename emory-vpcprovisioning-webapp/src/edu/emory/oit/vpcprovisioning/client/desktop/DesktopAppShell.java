@@ -2,7 +2,6 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,10 +31,12 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -103,9 +104,12 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisio
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceStatisticPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
@@ -124,7 +128,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	EventBus eventBus;
 	UserAccountPojo userLoggedIn;
 	UserProfilePojo userProfile;
-	HashMap<String, List<AWSServicePojo>> awsServices;
+	AWSServiceSummaryPojo serviceSummary;
 	HomeView homeView;
 	String hash=null;
 	ReleaseInfo releaseInfo;
@@ -925,13 +929,69 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		sp.add(mainPanel);
 //		mainPanel.add(refreshButton);
 
+		VerticalPanel svcStatsVp = new VerticalPanel();
+		mainPanel.add(svcStatsVp);
+		svcStatsVp.setSpacing(8);
+		svcStatsVp.getElement().getStyle().setBackgroundColor("#232f3e");
+		svcStatsVp.getElement().getStyle().setBorderColor("black");
+		svcStatsVp.setWidth("100%");
+		HTML svcStatsHeading = new HTML("AWS at Emory Service at a Glance");
+		svcStatsHeading.getElement().getStyle().setColor("#ddd");
+		svcStatsHeading.getElement().getStyle().setFontSize(20, Unit.PX);
+		svcStatsHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		svcStatsVp.add(svcStatsHeading);
+		
+		if (serviceSummary != null) {
+			StringBuffer sbuf = new StringBuffer();
+			sbuf.append("<ul>");
+
+			FlexTable svcStatsTable = new FlexTable();
+			svcStatsTable.setCellSpacing(12);
+			svcStatsVp.add(svcStatsTable);
+			int statTableRow=0;
+			int statTableColumn=0;
+			for (AWSServiceStatisticPojo stat : serviceSummary.getServiceStatistics()) {
+				if (statTableRow >= 9) {
+					sbuf.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
+					sbuf.append("</ul>");
+					HTML statHtml = new HTML(sbuf.toString());
+					statHtml.getElement().getStyle().setColor("orange");
+					statHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+					statHtml.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					svcStatsTable.setWidget(0, statTableColumn, statHtml);
+					svcStatsTable.getCellFormatter().setVerticalAlignment(0, statTableColumn, HasVerticalAlignment.ALIGN_TOP);
+					statTableRow = 0;
+					statTableColumn++;
+					sbuf = new StringBuffer();
+					sbuf.append("<ul>");
+				}
+				else {
+					sbuf.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
+					statTableRow++;
+				}
+			}
+			if (sbuf.length() > 0) {
+				statTableColumn++;
+				sbuf.append("</ul>");
+				HTML statHtml = new HTML(sbuf.toString());
+				statHtml.getElement().getStyle().setColor("orange");
+				statHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+				statHtml.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				svcStatsTable.setWidget(0, statTableColumn, statHtml);
+				svcStatsTable.getCellFormatter().setVerticalAlignment(0, statTableColumn, HasVerticalAlignment.ALIGN_TOP);
+			}
+		}
+		else {
+			svcStatsVp.add(new HTML("Service Statistics not available yet.  Try again in a bit."));
+		}
+		
 		HorizontalPanel hp = new HorizontalPanel();
 		hp.getElement().getStyle().setBackgroundColor("#232f3e");
 		hp.setHeight("100%");
 		hp.setSpacing(12);
 		mainPanel.add(hp);
 		
-		Object[] categories = awsServices.keySet().toArray();
+		Object[] categories = serviceSummary.getServiceMap().keySet().toArray();
 		Arrays.sort(categories);
 
 		final VerticalPanel categoryVp = new VerticalPanel();
@@ -944,14 +1004,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		categoryVp.setSpacing(8);
 		hp.add(categoryVp);
 		
-//		HTML categoryHeader = new HTML("Categories of Services");
-//		categoryHeader.getElement().getStyle().setBackgroundColor("#232f3e");
-//		categoryHeader.addStyleName("categoryHeader");
-//		categoryHeader.getElement().getStyle().setColor("#ddd");
-//		categoryHeader.getElement().getStyle().setFontSize(18, Unit.PX);
-//		categoryHeader.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-//		categoryVp.add(categoryHeader);
-
 		final Grid categoryGrid = new Grid(categories.length, 1);
 		categoryGrid.getElement().getStyle().setBackgroundColor("#232f3e");
 		categoryVp.add(categoryGrid);
@@ -968,7 +1020,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		assessmentVp.setSpacing(8);
 		hp.add(assessmentVp);
 		
-		Object[] keys = awsServices.keySet().toArray();
+		Object[] keys = serviceSummary.getServiceMap().keySet().toArray();
 		Arrays.sort(keys);
 		int categoryRowCnt = 0;
 		for (final Object catName : keys) {
@@ -979,34 +1031,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			categoryAnchor.getElement().getStyle().setColor("#ddd");
 			categoryAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
 			categoryAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			categoryAnchor.addMouseOverHandler(new MouseOverHandler() {
+			categoryAnchor.addClickHandler(new ClickHandler() {
 				@Override
-				public void onMouseOver(MouseOverEvent event) {
+				public void onClick(ClickEvent event) {
 					assessmentVp.clear();
-
 					servicesVp.clear();
+					
 					HTML svcCatHeading = new HTML((String)catName);
 					svcCatHeading.getElement().getStyle().setBackgroundColor("#232f3e");
 					svcCatHeading.getElement().getStyle().setColor("#ddd");
-					svcCatHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+					svcCatHeading.getElement().getStyle().setFontSize(20, Unit.PX);
 					svcCatHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 					servicesVp.add(svcCatHeading);
 
-					List<AWSServicePojo> services = awsServices.get(catName);
+					List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
 					for (final AWSServicePojo svc : services) {
 						GWT.log("Adding service: " + svc.getAwsServiceName());
-						VerticalPanel svcVp = new VerticalPanel();
-						svcVp.getElement().getStyle().setBackgroundColor("#232f3e");
-						svcVp.setSpacing(4);
-						svcVp.setWidth("100%");
-						servicesVp.add(svcVp);
-
-						HorizontalPanel svcHp = new HorizontalPanel();
-						svcHp.getElement().getStyle().setBackgroundColor("#232f3e");
-						svcVp.add(svcHp);
+						Grid svcGrid = new Grid(4, 2);
+						svcGrid.getElement().getStyle().setBackgroundColor("#232f3e");
+						servicesVp.add(svcGrid);
 						
 						final Anchor svcAnchor = new Anchor();
-						svcHp.add(svcAnchor);
+						svcGrid.setWidget(0, 0, svcAnchor);
 						if (svc.getCombinedServiceName() != null && 
 							svc.getCombinedServiceName().length() > 0) {
 							svcAnchor.setText(svc.getCombinedServiceName());
@@ -1018,32 +1064,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						else {
 							svcAnchor.setText(svc.getAwsServiceName());
 						}
+						
 						svcAnchor.addStyleName("productAnchor");
-						svcAnchor.getElement().getStyle().setFontSize(14, Unit.PX);
+						svcAnchor.getElement().getStyle().setFontSize(15, Unit.PX);
 						svcAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 						svcAnchor.getElement().getStyle().setColor("#fff");
 						svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
 						svcAnchor.setHref(svc.getAwsLandingPageUrl());
 						svcAnchor.setTarget("_blank");
 
-						if (svc.isSiteHipaaEligible()) {
-							Image img = new Image("images/green-checkbox-icon-15.jpg");
-							img.getElement().getStyle().setBackgroundColor("#232f3e");
-							img.setWidth("16px");
-							img.setHeight("16px");
-							img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
-							svcHp.add(img);
-						}
-						else {
-							// red circle with line NOT hipaa eligible
-							Image img = new Image("images/red-circle-white-x.png");
-							img.getElement().getStyle().setBackgroundColor("#232f3e");
-							img.setWidth("16px");
-							img.setHeight("16px");
-							img.setTitle("This service IS NOT HIPAA eligible according to Emory's HIPAA policy");
-							svcHp.add(img);
-						}
-						
 						svcAnchor.addMouseOverHandler(new MouseOverHandler() {
 							@Override
 							public void onMouseOver(MouseOverEvent event) {
@@ -1073,15 +1102,30 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 										if (result.getResults().size() > 0) {
 											// TODO: get all relevant assessment info for the service
 											for (ServiceSecurityAssessmentPojo assessment : result.getResults()) {
-												HTML assessmentHtml = new HTML("<b>Assessment status:</b>  " + assessment.getStatus());
-												assessmentHtml.getElement().getStyle().setColor("orange");
+												StringBuffer sbuf = new StringBuffer();
+												sbuf.append("<b>Assessment status:</b>  " + assessment.getStatus());
+												sbuf.append("<ol>");
+												for (SecurityRiskPojo sr : assessment.getSecurityRisks()) {
+													sbuf.append("<li>" + sr.getDescription() + "</li>");
+												}
+												sbuf.append("</ol>");
+												HTML assessmentHtml = new HTML(sbuf.toString());
+												assessmentHtml.getElement().getStyle().setColor("#232f3e");
 												assessmentHtml.getElement().getStyle().setColor("#ddd");
 												assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
 												assessmentVp.add(assessmentHtml);
 											}
 										}
 										else {
-											HTML assessmentHtml = new HTML("No assessment performed yet.");
+											StringBuffer sbuf = new StringBuffer();
+											sbuf.append("<b>Assessment status:</b>  test");
+											sbuf.append("<ol>");
+											for (int i=0; i<3; i++) {
+												sbuf.append("<li>Security Risk " + i + "  security risk description text goes here...</li>");
+											}
+											sbuf.append("</ol>");
+											HTML assessmentHtml = new HTML(sbuf.toString());
+//											HTML assessmentHtml = new HTML("No assessment performed yet.");
 											assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
 											assessmentHtml.getElement().getStyle().setColor("#ddd");
 											assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
@@ -1093,22 +1137,65 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							}
 						});
 						
+						// emory status
 						HTML svcStatus = new HTML("STATUS: " + svc.getSiteStatus());
 						svcStatus.addStyleName("productDescription");
 						svcStatus.getElement().getStyle().setColor("orange");
 						svcStatus.getElement().getStyle().setFontSize(12, Unit.PX);
 						svcStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						svcVp.add(svcStatus);
+						svcGrid.setWidget(1, 0, svcStatus);
 						
+						if (!svc.isBlocked()) {
+							Image img = new Image("images/green-checkbox-icon-15.jpg");
+							img.getElement().getStyle().setBackgroundColor("#232f3e");
+							img.setWidth("16px");
+							img.setHeight("16px");
+							svcGrid.setWidget(1, 1, img);
+						}
+						else {
+							// red circle with line = blocked in some way
+							Image img = new Image("images/red-circle-white-x.png");
+							img.getElement().getStyle().setBackgroundColor("#232f3e");
+							img.setWidth("16px");
+							img.setHeight("16px");
+							svcGrid.setWidget(1, 1, img);
+						}
+
+						// emory hipaa eligibility
+						HTML svcHipaaStatus = new HTML("Emory HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
+						svcHipaaStatus.addStyleName("productDescription");
+						svcHipaaStatus.getElement().getStyle().setColor("orange");
+						svcHipaaStatus.getElement().getStyle().setFontSize(12, Unit.PX);
+						svcHipaaStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						svcGrid.setWidget(2, 0, svcHipaaStatus);
+
+						if (svc.isSiteHipaaEligible()) {
+							Image img = new Image("images/green-checkbox-icon-15.jpg");
+							img.getElement().getStyle().setBackgroundColor("#232f3e");
+							img.setWidth("16px");
+							img.setHeight("16px");
+							img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
+							svcGrid.setWidget(2, 1, img);
+						}
+						else {
+							// red circle with line NOT hipaa eligible
+							Image img = new Image("images/red-circle-white-x.png");
+							img.getElement().getStyle().setBackgroundColor("#232f3e");
+							img.setWidth("16px");
+							img.setHeight("16px");
+							img.setTitle("This service IS NOT HIPAA eligible according to Emory's HIPAA policy");
+							svcGrid.setWidget(2, 1, img);
+						}
+
+						// service description
 						HTML svcDesc = new HTML(svc.getDescription());
 						svcDesc.addStyleName("productDescription");
 						svcDesc.getElement().getStyle().setColor("#ddd");
 						svcDesc.getElement().getStyle().setFontSize(12, Unit.PX);
-						svcVp.add(svcDesc);
+						svcGrid.setWidget(3, 0, svcDesc);
 					}
 				}
 			});
-//			categoryVp.add(categoryAnchor);
 			categoryGrid.setWidget(categoryRowCnt, 0, categoryAnchor);
 			categoryRowCnt++;
 		}
@@ -1164,19 +1251,19 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		vpList.add(new VerticalPanel());
 		vpList.add(new VerticalPanel());
 		
-		int catsPerPanel = (int) Math.ceil(awsServices.size() / 4.0);
+		int catsPerPanel = (int) Math.ceil(serviceSummary.getServiceMap().size() / 4.0);
 		if (catsPerPanel < 5) {
-			catsPerPanel = awsServices.size();
+			catsPerPanel = serviceSummary.getServiceMap().size();
 		}
 		GWT.log("catsPerPanel: " + catsPerPanel);
 		int catCntr = 0;
 		int vpCntr = 0;
 		
-		Object[] keys = awsServices.keySet().toArray();
+		Object[] keys = serviceSummary.getServiceMap().keySet().toArray();
 		Arrays.sort(keys);
 		for (Object catName : keys) {
 			GWT.log("Category is: " + catName);
-			List<AWSServicePojo> services = awsServices.get(catName);
+			List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
 			GWT.log("There are " + services.size() + " services in the " + catName + " category.");
 			if (catCntr >= catsPerPanel) {
 				catCntr = 0;
@@ -1241,7 +1328,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		this.showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
-		if (awsServices == null || awsServices.size() == 0) {
+		if (serviceSummary.getServiceMap() == null || serviceSummary.getServiceMap().size() == 0) {
 			this.refreshServiceMap(true);
 		}
 		else {
@@ -1251,7 +1338,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 	
 	private void refreshServiceMap(final boolean showPopup) {
-		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
+		AsyncCallback<AWSServiceSummaryPojo> callback = new AsyncCallback<AWSServiceSummaryPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				hidePleaseWaitDialog();
@@ -1262,10 +1349,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 
 			@Override
-			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
-				awsServices = result;
-				GWT.log("got " + result.size() + " categories of services back.");
-				if (awsServices == null || awsServices.size() == 0) {
+			public void onSuccess(AWSServiceSummaryPojo result) {
+				serviceSummary = result;
+				GWT.log("got " + result.getServiceMap().size() + " categories of services back.");
+				if (serviceSummary.getServiceMap() == null || serviceSummary.getServiceMap().size() == 0) {
 					// there's an issue
 					showMessageToUser("Unable to display product information at this time.  Please try again later.");
 				}
@@ -1283,7 +1370,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void initializeAwsServiceMap() {
 		GWT.log("Desktop shell...initializing AWS Service map");
 
-		AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback = new AsyncCallback<HashMap<String, List<AWSServicePojo>>>() {
+		AsyncCallback<AWSServiceSummaryPojo> callback = new AsyncCallback<AWSServiceSummaryPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				GWT.log("problem getting services..." + caught.getMessage());
@@ -1294,9 +1381,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 
 			@Override
-			public void onSuccess(HashMap<String, List<AWSServicePojo>> result) {
-				awsServices = result;
-				GWT.log("got " + result.size() + " categories of services back.");
+			public void onSuccess(AWSServiceSummaryPojo result) {
+				serviceSummary = result;
+				GWT.log("got " + result.getServiceMap().size() + " categories of services back.");
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);

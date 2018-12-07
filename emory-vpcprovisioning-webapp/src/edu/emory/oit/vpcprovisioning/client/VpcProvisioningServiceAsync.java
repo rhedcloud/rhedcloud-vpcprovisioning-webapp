@@ -14,7 +14,6 @@
  *******************************************************************************/
 package edu.emory.oit.vpcprovisioning.client;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -132,7 +131,7 @@ public interface VpcProvisioningServiceAsync {
 	void getAwsServiceStatusItems(AsyncCallback<List<String>> callback);
 	void getSiteServiceStatusItems(AsyncCallback<List<String>> callback);
 
-	void getAWSServiceMap(AsyncCallback<HashMap<String, List<AWSServicePojo>>> callback) throws RpcException;
+	void getAWSServiceMap(AsyncCallback<AWSServiceSummaryPojo> callback) throws RpcException;
 	
 	// SpeedChart
 	void getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter, AsyncCallback<SpeedChartQueryResultPojo> callback);

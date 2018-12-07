@@ -4470,7 +4470,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException {
+	public AWSServiceSummaryPojo getAWSServiceMap() throws RpcException {
 		int svcCnt = 0;
 
 		AWSServiceQueryResultPojo servicesResult = this.getServicesForFilter(null);
@@ -4503,7 +4503,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 	    info("[getAWSServiceMap] returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
-		return awsServicesMap;
+	    AWSServiceSummaryPojo summary = new AWSServiceSummaryPojo();
+	    summary.setServiceList(servicesResult.getResults());
+	    summary.setServiceMap(awsServicesMap);
+	    summary.initializeStatistics();
+		return summary;
 	}
 	
 	private void addServiceToCategory(String category, AWSServicePojo service, HashMap<String, List<AWSServicePojo>> awsServicesMap) {
@@ -4627,10 +4631,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ServiceQuerySpecification queryObject = (ServiceQuerySpecification) getObject(Constants.MOA_SERVICE_QUERY_SPEC);
 			
 			if (filter != null) {
-//				String awsHipaaEligible;
-//				String siteHipaaEligible;
-//				List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
-
 				queryObject.setServiceId(filter.getServiceId());
 				queryObject.setAwsServiceCode(filter.getAwsServiceCode());
 				queryObject.setAwsServiceName(filter.getAwsServiceName());
@@ -4653,7 +4653,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
 
 			for (com.amazon.aws.moa.jmsobjects.services.v1_0.Service service : moas) {
-//				info("Service MOA: " + service.toXmlString());
 				AWSServicePojo pojo = new AWSServicePojo();
 				AWSServicePojo baseline = new AWSServicePojo();
 				this.populateAWSServicePojo(service, pojo);
@@ -6862,11 +6861,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException("Error");
 		}
-		HashMap<String, List<AWSServicePojo>> svcMap = this.getAWSServiceMap(); 
+		AWSServiceSummaryPojo svcSummary = this.getAWSServiceMap();
 		applicationEnvironment = generalProps.getProperty("applicationEnvironment", "DEV");
 
 		info("appId: " + this.getAppId());
-		info("AWS service map: " + svcMap);
+		info("AWS service map: " + svcSummary.getServiceMap());
 		info("appConfig is: " + appConfig);
 		info("AppConfig stats: " + this.getAppConfig().dumpStats());
 		
@@ -6882,8 +6881,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getVpcpHealthCheck] got " + moas.size() + " accounts from ESB service");
 			
 			if (applicationEnvironment != null && 
-					svcMap != null && 
-					svcMap.size() > 0) {
+					svcSummary.getServiceMap() != null && 
+					svcSummary.getServiceMap().size() > 0) {
 			
 					return "GOOD";
 				}
@@ -9350,7 +9349,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		try {
 			info("generating VpnConnectionDeprovisioning on the server...");
-			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
+			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING_GENERATE);
 			VpnConnectionRequisition seed = (VpnConnectionRequisition) getObject(Constants.MOA_VPN_CONNECTION_REQUISITION);
 			info("populating moa");
 			this.populateVpncpRequisitionMoa(requisition, seed);

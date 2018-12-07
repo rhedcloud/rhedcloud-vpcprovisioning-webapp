@@ -88,7 +88,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel(null);
+		getView().showPleaseWaitPanel("Retrieving Account details, please wait...");
+//		getView().showPleaseWaitDialog("Retrieving Account details, please wait...");
 		getView().disableAdminMaintenance();
 
 		if (accountId == null) {

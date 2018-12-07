@@ -14,7 +14,6 @@
  *******************************************************************************/
 package edu.emory.oit.vpcprovisioning.client;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -211,7 +210,7 @@ public interface VpcProvisioningService extends RemoteService {
 	void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment) throws RpcException;
 	List<RoleAssignmentSummaryPojo> getCentralAdmins() throws RpcException;
 	
-	HashMap<String, List<AWSServicePojo>> getAWSServiceMap() throws RpcException;
+	AWSServiceSummaryPojo getAWSServiceMap() throws RpcException;
 
 	// user profile
 	UserProfileQueryResultPojo getUserProfilesForFilter(UserProfileQueryFilterPojo filter) throws RpcException;

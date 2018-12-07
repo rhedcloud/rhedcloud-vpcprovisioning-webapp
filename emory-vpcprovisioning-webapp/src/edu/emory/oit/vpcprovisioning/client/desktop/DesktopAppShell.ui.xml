@@ -64,8 +64,8 @@
 											<a id="emoryAwsLoginAnchor" title="Login to your AWS Account" target="_self" href="http://console.aws.emory.edu/">Login</a> to your AWS account, then click the Support Link in the upper right corner</g:MenuItem>
 									</g:MenuBar>
 								</g:MenuItem>
-								<g:MenuItem ui:field="esbServiceStatusItem" debugId="esbServiceStatusItem" title="Check System Status" styleName="{style.linksMenuItem}">Check System Status</g:MenuItem>
 								<g:MenuItem ui:field="emoryAwsItem" debugId="emoryAwsItem" title="Contact Emory Support" styleName="{style.linksMenuItem}"><a id="emoryAwsSupportAnchor" target="_self" href="https://emory.service-now.com/sp?id=sc_cat_item&amp;sys_id=62b4a2a3db771700d1b958a8dc961994">Contact Emory Support</a></g:MenuItem>
+								<g:MenuItem ui:field="esbServiceStatusItem" debugId="esbServiceStatusItem" title="Check System Status" styleName="{style.linksMenuItem}">Check System Status (Central Admins)</g:MenuItem>
 							</g:MenuBar>
 						</g:MenuItem>
 					</g:MenuBar>

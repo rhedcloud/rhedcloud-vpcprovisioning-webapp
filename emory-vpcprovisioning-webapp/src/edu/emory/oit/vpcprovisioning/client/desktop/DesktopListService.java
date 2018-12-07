@@ -607,48 +607,48 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		serviceListTable.addColumn(createTimeColumn, "Create Time");
 
 		// last update user
-		Column<AWSServicePojo, String> lastUpdateUserColumn = 
-				new Column<AWSServicePojo, String> (new TextCell()) {
-
-			@Override
-			public String getValue(AWSServicePojo object) {
-				return object.getUpdateUser();
-			}
-		};
-		lastUpdateUserColumn.setSortable(true);
-		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<AWSServicePojo>() {
-			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				return o1.getUpdateUser().compareTo(o2.getUpdateUser());
-			}
-		});
-		serviceListTable.addColumn(lastUpdateUserColumn, "Update User");
+//		Column<AWSServicePojo, String> lastUpdateUserColumn = 
+//				new Column<AWSServicePojo, String> (new TextCell()) {
+//
+//			@Override
+//			public String getValue(AWSServicePojo object) {
+//				return object.getUpdateUser();
+//			}
+//		};
+//		lastUpdateUserColumn.setSortable(true);
+//		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<AWSServicePojo>() {
+//			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+//				return o1.getUpdateUser().compareTo(o2.getUpdateUser());
+//			}
+//		});
+//		serviceListTable.addColumn(lastUpdateUserColumn, "Update User");
 
 		// update time
-		Column<AWSServicePojo, String> updateTimeColumn = 
-				new Column<AWSServicePojo, String> (new TextCell()) {
-
-			@Override
-			public String getValue(AWSServicePojo object) {
-				if (object.getUpdateTime() != null) {
-					return dateFormat.format(object.getUpdateTime());
-				}
-				else {
-					return "Uknown";
-				}
-			}
-		};
-		updateTimeColumn.setSortable(true);
-		sortHandler.setComparator(updateTimeColumn, new Comparator<AWSServicePojo>() {
-			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
-				if (o1.getUpdateTime() != null) {
-					return o1.getUpdateTime().compareTo(o2.getUpdateTime());
-				}
-				else {
-					return 0;
-				}
-			}
-		});
-		serviceListTable.addColumn(updateTimeColumn, "Update Time");
+//		Column<AWSServicePojo, String> updateTimeColumn = 
+//				new Column<AWSServicePojo, String> (new TextCell()) {
+//
+//			@Override
+//			public String getValue(AWSServicePojo object) {
+//				if (object.getUpdateTime() != null) {
+//					return dateFormat.format(object.getUpdateTime());
+//				}
+//				else {
+//					return "Uknown";
+//				}
+//			}
+//		};
+//		updateTimeColumn.setSortable(true);
+//		sortHandler.setComparator(updateTimeColumn, new Comparator<AWSServicePojo>() {
+//			public int compare(AWSServicePojo o1, AWSServicePojo o2) {
+//				if (o1.getUpdateTime() != null) {
+//					return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+//				}
+//				else {
+//					return 0;
+//				}
+//			}
+//		});
+//		serviceListTable.addColumn(updateTimeColumn, "Update Time");
 	}
 	@Override
 	public List<Widget> getMissingRequiredFields() {

@@ -616,6 +616,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 	public ActionEvent(VpnConnectionProvisioningPojo m) {
+		this.vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+		this.vpncpSummary.setProvisioning(m);
 		this.vpncp = m;
 	}
 	public ActionEvent(VpnConnectionProvisioningSummaryPojo m) {
@@ -625,6 +627,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 	public ActionEvent(VpnConnectionDeprovisioningPojo vpncdp2) {
+		this.vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+		this.vpncpSummary.setDeprovisioning(vpncdp2);
 		this.vpncdp = vpncdp2;
 	}
 

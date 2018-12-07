@@ -164,6 +164,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_VPNCP = "VpnConnectionProvisioning.v1_0";
 	public static final String MOA_VPNCP_GENERATE = "VpnConnectionProvisioning.Generate.v1_0";
 	public static final String MOA_VPNC_DEPROVISIONING = "VpnConnectionDeprovisioning.v1_0";
+	public static final String MOA_VPNC_DEPROVISIONING_GENERATE = "VpnConnectionDeprovisioning.Generate.v1_0";
 	public static final String MOA_VPNC_DEPROVISIONING_QUERY_SPEC = "VpnConnectionDeprovisioningQuerySpecification.v1_0";
 	public static final String MOA_VPN_CONNECTION_REQUISITION = "VpnConnectionRequisition.v1_0";
 	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION = "VpnConnectionProfileAssignmentRequisition.v1_0";
