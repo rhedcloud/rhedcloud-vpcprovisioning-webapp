@@ -24,6 +24,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -59,7 +60,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager listPager;
+	@UiField(provided=true) SimplePager listPager = new SimplePager(TextLocation.RIGHT, false, true);
 //	@UiField Button generateButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<VpnConnectionProvisioningSummaryPojo> listTable = new CellTable<VpnConnectionProvisioningSummaryPojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));

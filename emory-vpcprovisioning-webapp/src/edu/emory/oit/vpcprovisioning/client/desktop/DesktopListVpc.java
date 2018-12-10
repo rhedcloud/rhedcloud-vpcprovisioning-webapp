@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -19,6 +21,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -47,7 +50,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager vpcListPager;
+	@UiField(provided=true) SimplePager vpcListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button registerVpcButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<VpcPojo> vpcListTable = new CellTable<VpcPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
@@ -301,25 +304,25 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 			vpcListTable.addColumn(cidrColumn, "CIDR");
 		
 		// vpn profile
-			Column<VpcPojo, String> vpnProfileColumn = 
-					new Column<VpcPojo, String> (new TextCell()) {
-					
-					@Override
-					public String getValue(VpcPojo object) {
-						return object.getVpnConnectionProfileId();
-					}
-				};
-				vpnProfileColumn.setSortable(true);
-				sortHandler.setComparator(vpnProfileColumn, new Comparator<VpcPojo>() {
-					public int compare(VpcPojo o1, VpcPojo o2) {
-						return o1.getVpnConnectionProfileId().compareTo(o2.getVpnConnectionProfileId());
-					}
-				});
-				vpcListTable.addColumn(vpnProfileColumn, "VPN Profile ID");
+		Column<VpcPojo, String> vpnProfileColumn = 
+				new Column<VpcPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(VpcPojo object) {
+				return object.getVpnConnectionProfileId();
+			}
+		};
+		vpnProfileColumn.setSortable(true);
+		sortHandler.setComparator(vpnProfileColumn, new Comparator<VpcPojo>() {
+			public int compare(VpcPojo o1, VpcPojo o2) {
+				return o1.getVpnConnectionProfileId().compareTo(o2.getVpnConnectionProfileId());
+			}
+		});
+		vpcListTable.addColumn(vpnProfileColumn, "VPN Profile ID");
 		
 		// create user
 		Column<VpcPojo, String> createUserColumn = 
-				new Column<VpcPojo, String> (new TextCell()) {
+				new Column<VpcPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(VpcPojo object) {
@@ -332,6 +335,13 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				return o1.getCreateUser().compareTo(o2.getCreateUser());
 			}
 		});
+		createUserColumn.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
+	    	@Override
+	    	public void update(int index, VpcPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		createUserColumn.setCellStyleNames("tableAnchor");
 		vpcListTable.addColumn(createUserColumn, "Create User");
 		
 		// create time
@@ -363,7 +373,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 		// last update user
 		Column<VpcPojo, String> lastUpdateUserColumn = 
-				new Column<VpcPojo, String> (new TextCell()) {
+				new Column<VpcPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(VpcPojo object) {
@@ -376,6 +386,13 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				return o1.getUpdateUser().compareTo(o2.getUpdateUser());
 			}
 		});
+		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<VpcPojo, String>() {
+	    	@Override
+	    	public void update(int index, VpcPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getUpdateUser());
+	    	}
+	    });
+		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
 		vpcListTable.addColumn(lastUpdateUserColumn, "Update User");
 		
 		// update time

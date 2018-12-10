@@ -22,6 +22,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -62,8 +63,8 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager firewallRuleListPager;
-	@UiField SimplePager firewallExceptionRequestListPager;
+	@UiField(provided=true) SimplePager firewallRuleListPager = new SimplePager(TextLocation.RIGHT, false, true);
+	@UiField(provided=true) SimplePager firewallExceptionRequestListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button firewallExceptionRequestButton;
 	@UiField Button firewallExceptionRequestActionsButton;
 	@UiField Button firewallRuleActionsButton;

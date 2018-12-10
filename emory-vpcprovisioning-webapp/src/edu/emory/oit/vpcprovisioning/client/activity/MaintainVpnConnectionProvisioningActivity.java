@@ -8,6 +8,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.event.EditVpnConnectionProvisioningEvent;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningPresenter;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -61,7 +62,14 @@ public class MaintainVpnConnectionProvisioningActivity extends AbstractActivity 
 		});
 
 		if (place.getProvisioningId() == null) {
-			presenter = startCreate(place.getVpnConnectionProfile());
+			if (place.getVpnConnectionProfileAssignment() != null) {
+				// re-use existing assignment
+				presenter = startCreate(place.getVpnConnectionProfile(), place.getVpnConnectionProfileAssignment());
+			}
+			else {
+				// create new assignment
+				presenter = startCreate(place.getVpnConnectionProfile());
+			}
 		} else {
 			presenter = startEdit(place.getVpnConnectionProvisioning());
 		}
@@ -70,6 +78,12 @@ public class MaintainVpnConnectionProvisioningActivity extends AbstractActivity 
 
 	private PresentsWidgets startCreate(VpnConnectionProfilePojo profile) {
 		PresentsWidgets rtn = new MaintainVpnConnectionProvisioningPresenter(clientFactory, profile);
+		rtn.start(childEventBus);
+		return rtn;
+	}
+
+	private PresentsWidgets startCreate(VpnConnectionProfilePojo profile, VpnConnectionProfileAssignmentPojo profileAssignment) {
+		PresentsWidgets rtn = new MaintainVpnConnectionProvisioningPresenter(clientFactory, profile, profileAssignment);
 		rtn.start(childEventBus);
 		return rtn;
 	}

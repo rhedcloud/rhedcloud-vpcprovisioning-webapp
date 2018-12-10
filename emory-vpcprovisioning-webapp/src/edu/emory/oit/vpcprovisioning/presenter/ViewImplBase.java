@@ -6,6 +6,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Grid;
@@ -18,8 +19,11 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 
 public abstract class ViewImplBase extends Composite {
 	protected final DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
@@ -133,6 +137,17 @@ public abstract class ViewImplBase extends Composite {
         }
 	}
 	
+	public void showStatus(String message) {
+		PopupPanel popup = new PopupPanel(true, true);
+		Label l = new Label(message);
+		l.addStyleName("infoLabel");
+		popup.setWidget(l);
+		popup.addStyleDependentName(Constants.STYLE_INFO_POPUP_MESSAGE);
+		popup.setAnimationEnabled(true);
+		popup.setGlassEnabled(true);
+        popup.show();
+	}
+	
 	public void applyGridRowFormat(Grid theGrid, int gridRow) {
 		if ((gridRow & 1) == 0) {
 			// even
@@ -191,5 +206,32 @@ public abstract class ViewImplBase extends Composite {
 	}
 	public void setFieldViolations(boolean fieldViolations) {
 		this.fieldViolations = fieldViolations;
+	}
+	
+	public void showDirectoryMetaDataForPublicId(final String ppid) {
+		AsyncCallback<DirectoryPersonQueryResultPojo> cb = new AsyncCallback<DirectoryPersonQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				showStatus(null, ppid + " - no Directory information found.");
+			}
+
+			@Override
+			public void onSuccess(DirectoryPersonQueryResultPojo result) {
+				if (result.getResults().size() > 0) {
+					showStatus(null, result.getResults().get(0).toString());
+				}
+				else {
+					showStatus(null, ppid + " - no Directory information found.");
+				}
+			}
+		};
+		if (ppid != null) {
+			DirectoryPersonQueryFilterPojo filter = new DirectoryPersonQueryFilterPojo();
+			filter.setKey(ppid);
+			VpcProvisioningService.Util.getInstance().getDirectoryPersonsForFilter(filter, cb);
+		}
+		else {
+			showStatus(null, "No Directory information found.");
+		}
 	}
 }

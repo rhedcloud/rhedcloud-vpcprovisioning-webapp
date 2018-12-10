@@ -13,6 +13,8 @@ import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
 
 public interface ListVpnConnectionProfileView extends IsWidget, View {
 	/**
@@ -40,6 +42,7 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 		void filterByVpcAddress(String vpcAddress);
 		void filterByVpnConnectionProfileId(String profileId);
 		void clearFilter();
+		void deprovisionVpnConnection(VpnConnectionRequisitionPojo vpnConnectionRequisition);
 	}
 
 	/**

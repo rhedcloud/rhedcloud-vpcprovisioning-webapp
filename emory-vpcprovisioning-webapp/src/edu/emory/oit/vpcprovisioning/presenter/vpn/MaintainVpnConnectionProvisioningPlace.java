@@ -4,6 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 
@@ -53,6 +54,10 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 		return new MaintainVpnConnectionProvisioningPlace(profile);
 	}
 
+	public static MaintainVpnConnectionProvisioningPlace createMaintainVpnConnectionProvisioningPlace(VpnConnectionProfilePojo profile, VpnConnectionProfileAssignmentPojo profileAssignment) {
+		return new MaintainVpnConnectionProvisioningPlace(profile, profileAssignment);
+	}
+
 	/**
 	 * Get the singleton instance of the {@link AddCaseRecordPlace} used to create a new
 	 * caseRecord.
@@ -61,13 +66,14 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 	 */
 	public static MaintainVpnConnectionProvisioningPlace getMaintainVpnConnectionProvisioningPlace() {
 		if (singleton == null) {
-			singleton = new MaintainVpnConnectionProvisioningPlace(null, null);
+			singleton = new MaintainVpnConnectionProvisioningPlace();
 		}
 		return singleton;
 	}
 
 	private final VpnConnectionProvisioningPojo vpncp;
 	private final VpnConnectionProfilePojo vpnConnectionProfile;
+	private final VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment;
 	private final String provisioningId;
 	public String getProvisioningId() {
 		return provisioningId;
@@ -79,15 +85,29 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
+	private MaintainVpnConnectionProvisioningPlace() {
+		this.provisioningId = null;
+		this.vpncp = null;
+		this.vpnConnectionProfile = null;
+		this.vpnConnectionProfileAssignment = null;
+	}
 	private MaintainVpnConnectionProvisioningPlace(String provisioningId, VpnConnectionProvisioningPojo vpncp) {
 		this.provisioningId = provisioningId;
 		this.vpncp = vpncp;
 		this.vpnConnectionProfile = null;
+		this.vpnConnectionProfileAssignment = null;
 	}
 	private MaintainVpnConnectionProvisioningPlace(VpnConnectionProfilePojo profile) {
 		this.provisioningId = null;
 		this.vpncp = null;
 		this.vpnConnectionProfile = profile;
+		this.vpnConnectionProfileAssignment = null;
+	}
+	private MaintainVpnConnectionProvisioningPlace(VpnConnectionProfilePojo profile, VpnConnectionProfileAssignmentPojo profileAssignment) {
+		this.provisioningId = null;
+		this.vpncp = null;
+		this.vpnConnectionProfile = profile;
+		this.vpnConnectionProfileAssignment = profileAssignment;
 	}
 
 	/**
@@ -100,5 +120,8 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 	}
 	public VpnConnectionProfilePojo getVpnConnectionProfile() {
 		return vpnConnectionProfile;
+	}
+	public VpnConnectionProfileAssignmentPojo getVpnConnectionProfileAssignment() {
+		return vpnConnectionProfileAssignment;
 	}
 }

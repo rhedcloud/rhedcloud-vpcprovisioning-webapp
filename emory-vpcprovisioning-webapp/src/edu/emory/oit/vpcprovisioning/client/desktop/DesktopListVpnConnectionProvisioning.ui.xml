@@ -69,7 +69,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="listPager" debugId="listPager" location="CENTER"/>
+						<c:SimplePager ui:field="listPager" debugId="listPager"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

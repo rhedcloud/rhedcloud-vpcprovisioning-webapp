@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.client.common;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -11,6 +12,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 
 public class VpcpPrompt extends DialogBox {
 
@@ -35,6 +37,12 @@ public class VpcpPrompt extends DialogBox {
 		tb.setTitle(hint);
 		hpanel.add(tb);
 		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	tb.setFocus(true);
+	        }
+	    });
+
 		HorizontalPanel buttonPanel = new HorizontalPanel();
 		buttonPanel.setWidth("100%");
 		buttonPanel.setSpacing(8);

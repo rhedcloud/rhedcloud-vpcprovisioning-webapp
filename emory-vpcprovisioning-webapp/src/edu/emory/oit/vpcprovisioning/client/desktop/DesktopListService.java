@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -23,6 +25,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -31,7 +34,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -72,19 +74,12 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	     public CellTable.Style cellTableStyle();
 	}
 	/*** FIELDS ***/
-	@UiField SimplePager serviceListPager;
+	@UiField(provided=true) SimplePager serviceListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
-//	@UiField Button closeOtherFeaturesButton;
 	@UiField Button createServiceButton;
 	@UiField Button actionsButton;
 	@UiField PushButton refreshButton;
-//	@UiField RadioButton consoleCategoriesRB;
-//	@UiField RadioButton awsServiceNameRB;
-//	@UiField RadioButton awsStatusRB;
-//	@UiField RadioButton siteStatusRB;
-//	@UiField RadioButton awsHipaaStatusRB;
-//	@UiField RadioButton siteHipaaStatusRB;
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox filterTB;
@@ -564,7 +559,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 		// create user
 		Column<AWSServicePojo, String> createUserColumn = 
-				new Column<AWSServicePojo, String> (new TextCell()) {
+				new Column<AWSServicePojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(AWSServicePojo object) {
@@ -577,6 +572,14 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				return o1.getCreateUser().compareTo(o2.getCreateUser());
 			}
 		});
+		createUserColumn.setFieldUpdater(new FieldUpdater<AWSServicePojo, String>() {
+	    	@Override
+	    	public void update(int index, AWSServicePojo object, String value) {
+	    		GWT.log("showing directory data for: " + object.getCreateUser());
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		createUserColumn.setCellStyleNames("tableAnchor");
 		serviceListTable.addColumn(createUserColumn, "Create User");
 
 		// create time

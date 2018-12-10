@@ -27,6 +27,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -45,10 +46,13 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
 
 public class DesktopListVpnConnectionProfile extends ViewImplBase implements ListVpnConnectionProfileView {
 	Presenter presenter;
@@ -59,11 +63,8 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField
-	SimplePager listPager;
-//	@UiField Button assignButton;
+	@UiField(provided=true) SimplePager listPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button createButton;
-//	@UiField Button provisionButton;
 	@UiField Button actionsButton;
 	@UiField(provided = true)
 	CellTable<VpnConnectionProfileSummaryPojo> listTable = new CellTable<VpnConnectionProfileSummaryPojo>(15,
@@ -155,12 +156,9 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(3, 1);
+		Grid grid = new Grid(4, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
-
-		// TODO:
-		// - view/maintain
 
 		Anchor maintainAnchor = new Anchor("View/Maintain Profile");
 		maintainAnchor.addStyleName("productAnchor");
@@ -267,6 +265,9 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				if (m != null) {
 					if (userLoggedIn.isNetworkAdmin()) {
 						if (m.getAssignment() != null) {
+							// TODO: if it's already assigned, just do a VpnConnectionProvisioning.Generate 
+							// again using that assignment.  i.e., don't create a VpnConnectionProfileAssignment
+							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m);
 							showMessageToUser("You cannot provision a VPN that has an assignment associated to it.");
 							return;
 						}
@@ -283,41 +284,55 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		});
 		grid.setWidget(2, 0, provisionAnchor);
 
-//		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
-//		deprovisionAnchor.addStyleName("productAnchor");
-//		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
-//		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
-//		deprovisionAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				actionsPopup.hide();
-//				if (selectionModel.getSelectedSet().size() == 0) {
-//					showMessageToUser("Please select one or more item(s) from the list");
-//					return;
-//				}
-//
-//				// TODO: presenter.deleteVpnConnectionProfiles(profilesToDelete);
-//
-//				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-//				while (nIter.hasNext()) {
-//					VpnConnectionProfileSummaryPojo m = nIter.next();
-//					if (m != null) {
-//						if (userLoggedIn.isNetworkAdmin()) {
-//							showMessageToUser("This feature is not yet implemented.");
-//	//							presenter.deprovisionVpnConnectionProfile(m);
-//						}
-//						else {
-//							showMessageToUser("You are not authorized to perform this action.");
-//						}
-//					} 
-//					else {
-//						showMessageToUser("Please select one or more item(s) from the list");
-//					}
-//				}
-//			}
-//		});
-//		grid.setWidget(3, 0, deprovisionAnchor);
+		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
+		deprovisionAnchor.addStyleName("productAnchor");
+		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
+		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
+		deprovisionAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one or more item(s) from the list");
+					return;
+				}
+
+				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				while (nIter.hasNext()) {
+					VpnConnectionProfileSummaryPojo m = nIter.next();
+					if (m != null) {
+						if (userLoggedIn.isNetworkAdmin()) {
+							if (m.getAssignment() == null) {
+								showMessageToUser("It does not appear that this profile is currently "
+									+ "assigned to a VPC.  In order to de-provision a VPN, the profile "
+									+ "must be assigned to a VPC.  Please select a profile that is "
+									+ "assigned to a VPC and try again.");
+								return;
+							}
+							else {
+								showMessageToUser("This feature is not yet implemented.");
+								return;
+							}
+//							VpnConnectionRequisitionPojo vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
+//							vpnConnectionRequisition.setProfile(m.getProfile());
+//							vpnConnectionRequisition.setOwnerId(m.getAssignment().getOwnerId());
+//							// TODO: need to get this data somehow
+////							vpnConnectionRequisition.setRemoteVpnIpAddress(remoteVpnIpAddress);
+////							vpnConnectionRequisition.setPresharedKey(presharedKey);
+//							presenter.deprovisionVpnConnection(vpnConnectionRequisition);
+						}
+						else {
+							showMessageToUser("You are not authorized to perform this action.");
+						}
+					} 
+					else {
+						showMessageToUser("Please select one or more item(s) from the list");
+					}
+				}
+			}
+		});
+		grid.setWidget(3, 0, deprovisionAnchor);
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
@@ -632,7 +647,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 
 		// create user
 		Column<VpnConnectionProfileSummaryPojo, String> createUserColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
-				new TextCell()) {
+				new ClickableTextCell()) {
 
 			@Override
 			public String getValue(VpnConnectionProfileSummaryPojo object) {
@@ -653,6 +668,17 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				}
 			}
 		});
+		createUserColumn.setFieldUpdater(new FieldUpdater<VpnConnectionProfileSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, VpnConnectionProfileSummaryPojo object, String value) {
+				if (object.getProfile() != null) {
+					showDirectoryMetaDataForPublicId(object.getProfile().getCreateUser());
+				} else {
+					showDirectoryMetaDataForPublicId(object.getAssignment().getCreateUser());
+				}
+	    	}
+	    });
+		createUserColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(createUserColumn, "Create User");
 
 		// create time
@@ -694,7 +720,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 
 		// last update user
 		Column<VpnConnectionProfileSummaryPojo, String> lastUpdateUserColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
-				new TextCell()) {
+				new ClickableTextCell()) {
 
 			@Override
 			public String getValue(VpnConnectionProfileSummaryPojo object) {
@@ -715,6 +741,13 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				}
 			}
 		});
+		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<VpnConnectionProfileSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, VpnConnectionProfileSummaryPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(lastUpdateUserColumn, "Update User");
 
 		// update time

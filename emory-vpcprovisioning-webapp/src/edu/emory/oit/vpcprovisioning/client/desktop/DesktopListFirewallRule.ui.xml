@@ -68,7 +68,7 @@
 									</g:row>
 									<g:row>
 										<g:customCell>
-											<c:SimplePager ui:field="firewallRuleListPager" debugId="firewallRuleListPager" location="CENTER"/>
+											<c:SimplePager ui:field="firewallRuleListPager" debugId="firewallRuleListPager"/>
 										</g:customCell>
 									</g:row>
 								</g:Grid>
@@ -119,7 +119,7 @@
 								</g:row>
 								<g:row>
 									<g:customCell>
-										<c:SimplePager ui:field="firewallExceptionRequestListPager" debugId="firewallExceptionRequestListPager" location="CENTER"/>
+										<c:SimplePager ui:field="firewallExceptionRequestListPager" debugId="firewallExceptionRequestListPager"/>
 									</g:customCell>
 								</g:row>
 							</g:Grid>

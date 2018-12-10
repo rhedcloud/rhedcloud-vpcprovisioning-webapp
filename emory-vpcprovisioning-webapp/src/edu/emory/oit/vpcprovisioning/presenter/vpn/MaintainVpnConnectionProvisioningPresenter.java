@@ -34,6 +34,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	private VpnConnectionProvisioningPojo vpncp;
 	private VpnConnectionRequisitionPojo vpnConnectionRequisition;
 	private VpnConnectionProfilePojo vpnConnectionProfile;
+	private VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment;
 	private UserAccountPojo userLoggedIn;
 	private DirectoryPersonPojo ownerDirectoryPerson;
 	private VpcPojo selectedVpc;
@@ -43,12 +44,14 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	 * new case record.
 	 */
 	private boolean isEditing;
+	private boolean isRegen;
 
 	/**
-	 * For creating a new VpnConnectionProvisioning.
+	 * For creating a new VpnConnectionProvisioning with a new profile assignemtn.
 	 */
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProfilePojo profile) {
 		this.isEditing = false;
+		this.isRegen = false;
 		this.vpncp = null;
 		this.vpnConnectionRequisition = null;
 		this.provisioningId = null;
@@ -58,10 +61,26 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	}
 
 	/**
+	 * For re-generating a VpnConnectionProvisioning with an existing profile assignemtn.
+	 */
+	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProfilePojo profile, VpnConnectionProfileAssignmentPojo profileAssignment) {
+		this.isEditing = false;
+		this.isRegen = true;
+		this.vpncp = null;
+		this.vpnConnectionRequisition = null;
+		this.provisioningId = null;
+		this.vpnConnectionProfile = profile;
+		this.vpnConnectionProfileAssignment = profileAssignment;
+		this.clientFactory = clientFactory;
+		getView().setPresenter(this);
+	}
+
+	/**
 	 * For editing an existing VPC.
 	 */
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpcp) {
 		this.isEditing = true;
+		this.isRegen = false;
 		this.provisioningId = vpcp.getProvisioningId();
 		this.clientFactory = clientFactory;
 		this.vpncp = vpcp;
@@ -238,6 +257,22 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		final AsyncCallback<VpnConnectionProvisioningPojo> vpncpCallback = new AsyncCallback<VpnConnectionProvisioningPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				// delete the VpnConnectionProfileAssignment that was created for this
+				if (vpnConnectionProfileAssignment != null) {
+					AsyncCallback<VpnConnectionProfileAssignmentPojo> cb = new AsyncCallback<VpnConnectionProfileAssignmentPojo>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							GWT.log("failed to delete the VpnConnectionProfileAssignment...");
+						}
+
+						@Override
+						public void onSuccess(VpnConnectionProfileAssignmentPojo result) {
+							// nop							
+						}
+					};
+					VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfileAssignment(vpnConnectionProfileAssignment, cb);
+				}
+				
 				getView().hidePleaseWaitDialog();
 				GWT.log("Exception generating the VpnConnectionProvisioning", caught);
 				getView().showMessageToUser("There was an exception on the " +
@@ -272,7 +307,10 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		};
 
 		if (vpnConnectionRequisition.getProfile() == null) {
-			// TODO: vpnProvisioningProfile is null, we need to generate
+			// TODO: the code within this block can probably be removed because we won't be generating
+			// profile assignments, we'll probably only ever be creating them...
+			
+			// vpnProvisioningProfile is null, we need to generate
 			// a VpnConnectionProfileAssignment to get the next available
 			// profile, then, we'll use that profile in our generate.
 			getView().showPleaseWaitDialog("Generating VPN Connection Profile Assignment...");
@@ -324,7 +362,6 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 								VpcProvisioningService.Util.getInstance().generateVpncp(vpnConnectionRequisition, vpncpCallback);
 							}
 							else {
-								// TODO:  Error
 								getView().hidePleaseWaitDialog();
 								getView().showMessageToUser("Incorrect number of "
 									+ "VpnConnectionProfiles returned in query.  Expected EXACTLY 1 and "
@@ -344,7 +381,6 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		else {
 			if (!this.isEditing) {
 				// it's a generate
-				// TODO: create VpnConnectionProfileAssignment using the profile passed in with the requisition
 				AsyncCallback<VpnConnectionProfileAssignmentPojo> vcpaCb = new AsyncCallback<VpnConnectionProfileAssignmentPojo>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -357,8 +393,9 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 
 					@Override
 					public void onSuccess(VpnConnectionProfileAssignmentPojo result) {
+						vpnConnectionProfileAssignment = result;
 						getView().hidePleaseWaitDialog();
-						getView().showPleaseWaitDialog("Generating VPC Provisioning object...");
+						getView().showPleaseWaitDialog("Generating VPC Provisioning object using a new Profile Assignment...");
 						
 						VpnConnectionProfilePojo vcp = vpnConnectionRequisition.getProfile();
 						for (TunnelProfilePojo tpp : vcp.getTunnelProfiles()) {
@@ -372,14 +409,33 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 						VpcProvisioningService.Util.getInstance().generateVpncp(vpnConnectionRequisition, vpncpCallback);
 					}
 				};
-				getView().showPleaseWaitDialog("Creating the VPN Connection Profile Assignment object...");
-				VpnConnectionProfileAssignmentPojo vcpa = new VpnConnectionProfileAssignmentPojo();
-				vcpa.setVpnConnectionProfileId(vpnConnectionRequisition.getProfile().getVpnConnectionProfileId());
-				vcpa.setOwnerId(vpnConnectionRequisition.getOwnerId());
-				// TODO: description and purpose are required fields but we're not collecting that data yet...
-				vcpa.setDescription("Unknown description");
-				vcpa.setPurpose("Unknown purpose");
-				VpcProvisioningService.Util.getInstance().createVpnConnectionProfileAssignment(vcpa, vcpaCb);
+				if (!this.isRegen) {
+					// create VpnConnectionProfileAssignment using the profile passed in with the requisition
+					getView().showPleaseWaitDialog("Creating the VPN Connection Profile Assignment object...");
+					VpnConnectionProfileAssignmentPojo vcpa = new VpnConnectionProfileAssignmentPojo();
+					vcpa.setVpnConnectionProfileId(vpnConnectionRequisition.getProfile().getVpnConnectionProfileId());
+					vcpa.setOwnerId(vpnConnectionRequisition.getOwnerId());
+					// TODO: description and purpose are required fields but we're not collecting that data yet...
+					vcpa.setDescription("Unknown description");
+					vcpa.setPurpose("Unknown purpose");
+					VpcProvisioningService.Util.getInstance().createVpnConnectionProfileAssignment(vcpa, vcpaCb);
+				}
+				else {
+					// re-use the existing profile assignemnt that was passed in
+					getView().hidePleaseWaitDialog();
+					getView().showPleaseWaitDialog("Generating VPC Provisioning object using existing Profile Assignment...");
+					
+					VpnConnectionProfilePojo vcp = vpnConnectionRequisition.getProfile();
+					for (TunnelProfilePojo tpp : vcp.getTunnelProfiles()) {
+						GWT.log("tunnel description is: " + tpp.getTunnelDescription());
+						String newDesc = tpp.getTunnelDescription().replaceAll(Constants.TUNNEL_AVAILABLE, vpnConnectionRequisition.getOwnerId());
+						GWT.log("new tunnel description is: " + newDesc);
+						tpp.setTunnelDescription(newDesc);
+					}
+					vpnConnectionRequisition.setProfile(vcp);
+
+					VpcProvisioningService.Util.getInstance().generateVpncp(vpnConnectionRequisition, vpncpCallback);
+				}
 			}
 			else {
 				// it's an update

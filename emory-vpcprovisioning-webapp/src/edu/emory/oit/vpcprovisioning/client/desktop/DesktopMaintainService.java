@@ -23,6 +23,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
@@ -80,7 +81,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
-	@UiField SimplePager assessmentListPager;
+	@UiField(provided=true) SimplePager assessmentListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) CellTable<ServiceSecurityAssessmentPojo> assessmentListTable = new CellTable<ServiceSecurityAssessmentPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField Button createAssessmentButton;
 	@UiField Button actionsButton;

@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -23,6 +25,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -39,6 +42,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
+import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -52,7 +56,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager elasticIpListPager;
+	@UiField(provided=true) SimplePager elasticIpListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button createElasticIpButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<ElasticIpSummaryPojo> elasticIpListTable = new CellTable<ElasticIpSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
@@ -300,7 +304,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 		// create user
 		Column<ElasticIpSummaryPojo, String> createUserColumn = 
-				new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
+				new Column<ElasticIpSummaryPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(ElasticIpSummaryPojo object) {
@@ -324,6 +328,13 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 				}
 			}
 		});
+		createUserColumn.setFieldUpdater(new FieldUpdater<ElasticIpSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, ElasticIpSummaryPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		createUserColumn.setCellStyleNames("tableAnchor");
 		elasticIpListTable.addColumn(createUserColumn, "Create User");
 		
 		// create time
@@ -367,7 +378,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 		// last update user
 		Column<ElasticIpSummaryPojo, String> lastUpdateUserColumn = 
-				new Column<ElasticIpSummaryPojo, String> (new TextCell()) {
+				new Column<ElasticIpSummaryPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(ElasticIpSummaryPojo object) {
@@ -391,6 +402,13 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 				}
 			}
 		});
+		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<ElasticIpSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, ElasticIpSummaryPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
 		elasticIpListTable.addColumn(lastUpdateUserColumn, "Update User");
 		
 		// update time

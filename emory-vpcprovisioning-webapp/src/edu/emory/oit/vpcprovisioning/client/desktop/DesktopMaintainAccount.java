@@ -25,6 +25,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
@@ -89,7 +90,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	     public CellTable.Style cellTableStyle();
 	}
 	@UiField VerticalPanel notificationListPanel;
-	@UiField SimplePager listPager;
+	@UiField(provided=true) SimplePager listPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) CellTable<AccountNotificationPojo> listTable = new CellTable<AccountNotificationPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 
 	@UiField HorizontalPanel pleaseWaitPanel;

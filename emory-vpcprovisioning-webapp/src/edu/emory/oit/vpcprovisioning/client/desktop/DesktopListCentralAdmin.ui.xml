@@ -64,7 +64,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="centralAdminListPager" debugId="centralAdminListPager" location="CENTER"/>
+						<c:SimplePager ui:field="centralAdminListPager" debugId="centralAdminListPager"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

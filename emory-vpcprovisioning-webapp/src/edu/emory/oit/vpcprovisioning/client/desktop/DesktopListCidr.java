@@ -4,6 +4,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -21,6 +23,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -55,7 +58,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager cidrListPager;
+	@UiField(provided=true) SimplePager cidrListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button addCidrButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<CidrSummaryPojo> cidrListTable = new CellTable<CidrSummaryPojo>();
@@ -402,7 +405,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 			
 		// create user
 		Column<CidrSummaryPojo, String> createUserColumn = 
-				new Column<CidrSummaryPojo, String> (new TextCell()) {
+				new Column<CidrSummaryPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(CidrSummaryPojo object) {
@@ -427,6 +430,13 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 				}
 			}
 		});
+		createUserColumn.setFieldUpdater(new FieldUpdater<CidrSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, CidrSummaryPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		createUserColumn.setCellStyleNames("tableAnchor");
 		cidrListTable.addColumn(createUserColumn, "Create User");
 
 		// create time
@@ -469,7 +479,7 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 
 		// last update user
 		Column<CidrSummaryPojo, String> lastUpdateUserColumn = 
-				new Column<CidrSummaryPojo, String> (new TextCell()) {
+				new Column<CidrSummaryPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(CidrSummaryPojo object) {
@@ -494,6 +504,13 @@ public class DesktopListCidr extends ViewImplBase implements ListCidrView {
 				}
 			}
 		});
+		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<CidrSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, CidrSummaryPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
 		cidrListTable.addColumn(lastUpdateUserColumn, "Update User");
 
 		// update time

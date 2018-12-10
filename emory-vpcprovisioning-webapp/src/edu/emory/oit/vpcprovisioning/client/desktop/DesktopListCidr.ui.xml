@@ -55,7 +55,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="cidrListPager" debugId="cidrListPager" location="CENTER"/>
+						<c:SimplePager ui:field="cidrListPager" debugId="cidrListPager"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

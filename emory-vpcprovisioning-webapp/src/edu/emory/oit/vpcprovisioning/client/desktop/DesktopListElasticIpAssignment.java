@@ -18,6 +18,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
@@ -49,7 +50,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
     ElasticIpAssignmentPojo selectedEia = null;
 
 	/*** FIELDS ***/
-	@UiField SimplePager elasticIpAssignmentListPager;
+	@UiField(provided=true) SimplePager elasticIpAssignmentListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) CellTable<ElasticIpAssignmentPojo> elasticIpAssignmentListTable = new CellTable<ElasticIpAssignmentPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button allocateAddressButton;
@@ -144,18 +145,23 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 				ElasticIpAssignmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					// elastic ip assignment update to have NO private IP in it
-					boolean confirmed = Window.confirm("Dissasociate the private IP: " + m.getElasticIp().getAssociatedIpAddress() + "?");
-					if (confirmed) {
-						if (m.getElasticIp() != null) {
-							m.getElasticIp().setAssociatedIpAddress(null);
+					if (m.getElasticIp() != null && m.getElasticIp().getAssociatedIpAddress() != null) {
+						boolean confirmed = Window.confirm("Dissasociate the private IP: " + m.getElasticIp().getAssociatedIpAddress() + "?");
+						if (confirmed) {
+							if (m.getElasticIp() != null) {
+								m.getElasticIp().setAssociatedIpAddress(null);
+							}
+							else {
+								showMessageToUser("The selected Elastic IP Assignment doesn't have an "
+										+ "associated private IP address.  Please select a different Elastic "
+										+ "IP Assignment object.");
+								return;
+							}
+							presenter.saveElasticIpAssignment(m);
 						}
-						else {
-							showMessageToUser("The selected Elastic IP Assignment doesn't have an "
-									+ "associated private IP address.  Please select a different Elastic "
-									+ "IP Assignment object.");
-							return;
-						}
-						presenter.saveElasticIpAssignment(m);
+					}
+					else {
+						showMessageToUser("Please select an item that has an associated private IP address.");
 					}
 				}
 				else {

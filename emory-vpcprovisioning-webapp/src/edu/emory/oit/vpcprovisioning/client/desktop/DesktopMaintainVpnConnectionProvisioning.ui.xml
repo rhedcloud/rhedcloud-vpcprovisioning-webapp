@@ -50,7 +50,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="remoteVpnIpAddressTB" debugId="remoteVpnIpAddressTB"/>
+							ui:field="remoteVpnIpAddressTB" debugId="remoteVpnIpAddressTB" title="For TESTING use:  72.21.209.225"/>
 			    	</g:customCell>
 				</g:row>
 				<g:row>
@@ -59,7 +59,7 @@
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.longField} {style.glowing-border}"
-							ui:field="presharedKeyTA" debugId="presharedKeyTA"/>
+							ui:field="presharedKeyTA" debugId="presharedKeyTA" title="For TESTING use 'testnnn' where 'nnn' is the profile id preceded by an appropriate number of zeros.  For example for profile 1, the value would be 'test001'.  For profile 15, the value would be 'test015'.  For profile 150, the value would be 'test150' etc."/>
 			    	</g:customCell>
 				</g:row>
 			</g:Grid>

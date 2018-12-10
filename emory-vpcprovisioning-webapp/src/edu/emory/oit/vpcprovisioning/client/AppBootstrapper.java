@@ -1702,7 +1702,12 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpnConnectionProfile()));
+				if (event.getVpnConnectonProfileAssignment() != null) {
+					placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpnConnectionProfile(), event.getVpnConnectonProfileAssignment()));
+				}
+				else {
+					placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpnConnectionProfile()));
+				}
 			}
 		});
 

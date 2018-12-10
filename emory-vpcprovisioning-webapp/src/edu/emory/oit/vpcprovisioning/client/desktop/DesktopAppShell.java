@@ -951,7 +951,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			int statTableRow=0;
 			int statTableColumn=0;
 			for (AWSServiceStatisticPojo stat : serviceSummary.getServiceStatistics()) {
-				if (statTableRow >= 9) {
+				if (statTableRow >= 6) {
 					sbuf.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
 					sbuf.append("</ul>");
 					HTML statHtml = new HTML(sbuf.toString());

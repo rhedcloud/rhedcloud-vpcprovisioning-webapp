@@ -21,6 +21,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -53,7 +54,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager accountListPager;
+	@UiField(provided=true) SimplePager accountListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button addAccountButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<AccountPojo> accountListTable = new CellTable<AccountPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));

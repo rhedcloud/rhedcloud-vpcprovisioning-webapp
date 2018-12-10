@@ -613,6 +613,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(VpnConnectionProfileSummaryPojo profileSummary) {
 		this.vpnConnectionProfileSummary = profileSummary;
+		this.vpnConnectionProfile = profileSummary.getProfile();
+		this.vpnConnectonProfileAssignment = profileSummary.getAssignment();
 	}
 
 	public ActionEvent(VpnConnectionProvisioningPojo m) {
@@ -966,5 +968,4 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setVpncpSummary(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
 		this.vpncpSummary = vpncpSummary;
 	}
-
 }

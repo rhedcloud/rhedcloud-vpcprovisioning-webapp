@@ -11,15 +11,20 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.VpnConnectionProfileListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
 
 public class ListVpnConnectionProfilePresenter extends PresenterBase implements ListVpnConnectionProfileView.Presenter {
 	/**
@@ -41,6 +46,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 	VpcPojo vpc;
 	VpnConnectionProfileSummaryPojo selectedSummary;
 	List<VpnConnectionProfileSummaryPojo> selectedSummaries;
+	VpnConnectionRequisitionPojo selectedVpnConnectionRequisition;
 	UserAccountPojo userLoggedIn;
 
 	boolean showStatus = false;
@@ -228,64 +234,100 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 	@Override
 	public void vpcpConfirmOkay() {
-		showStatus = false;
-		deletedCount = 0;
-		totalToDelete = selectedSummaries.size();
-		deleteErrors = new StringBuffer();
-		for (int i=0; i<selectedSummaries.size(); i++) {
-			final VpnConnectionProfileSummaryPojo summary = selectedSummaries.get(i);
-			final int listCounter = i;
-			
-			AsyncCallback<VpnConnectionProfilePojo> callback = new AsyncCallback<VpnConnectionProfilePojo>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					deleteErrors.append("There was an exception on the " +
-							"server deleting the VPN Connection Profile (id=" + summary.getProfile().getVpnConnectionProfileId() + ").  " +
-							"<p>Message from server is: " + caught.getMessage() + "</p>");
-					if (!showStatus) {
-						deleteErrors.append("\n");
+		if (selectedVpnConnectionRequisition == null) {
+			showStatus = false;
+			deletedCount = 0;
+			totalToDelete = selectedSummaries.size();
+			deleteErrors = new StringBuffer();
+			for (int i=0; i<selectedSummaries.size(); i++) {
+				final VpnConnectionProfileSummaryPojo summary = selectedSummaries.get(i);
+				final int listCounter = i;
+				
+				AsyncCallback<VpnConnectionProfilePojo> callback = new AsyncCallback<VpnConnectionProfilePojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						deleteErrors.append("There was an exception on the " +
+								"server deleting the VPN Connection Profile (id=" + summary.getProfile().getVpnConnectionProfileId() + ").  " +
+								"<p>Message from server is: " + caught.getMessage() + "</p>");
+						if (!showStatus) {
+							deleteErrors.append("\n");
+						}
+						if (listCounter == totalToDelete - 1) {
+							showStatus = true;
+						}
 					}
-					if (listCounter == totalToDelete - 1) {
-						showStatus = true;
+		
+					@Override
+					public void onSuccess(VpnConnectionProfilePojo result) {
+						deletedCount++;
+						if (listCounter == totalToDelete - 1) {
+							showStatus = true;
+						}
 					}
-				}
-	
-				@Override
-				public void onSuccess(VpnConnectionProfilePojo result) {
-					deletedCount++;
-					if (listCounter == totalToDelete - 1) {
-						showStatus = true;
+				};
+				VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfile(summary.getProfile(), callback);
+			}
+			if (!showStatus) {
+				// wait for all the creates to finish processing
+				int delayMs = 500;
+				Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
+					@Override
+					public boolean execute() {
+						if (showStatus) {
+							startTimer = false;
+							showDeleteListStatus();
+						}
+						return startTimer;
 					}
-				}
-			};
-			VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfile(summary.getProfile(), callback);
-		}
-		if (!showStatus) {
-			// wait for all the creates to finish processing
-			int delayMs = 500;
-			Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
-				@Override
-				public boolean execute() {
-					if (showStatus) {
-						startTimer = false;
-						showDeleteListStatus();
-					}
-					return startTimer;
-				}
-			}, delayMs);
+				}, delayMs);
+			}
+			else {
+				showDeleteListStatus();
+			}
 		}
 		else {
-			showDeleteListStatus();
+			// is a VPN Connection de-provision
+			AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					getView().hidePleaseWaitDialog();
+					GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
+					getView().showMessageToUser("There was an exception on the " +
+							"server generating the VpnConnectionDeprovisioning.  Message " +
+							"from server is: " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(VpnConnectionDeprovisioningPojo result) {
+					getView().hidePleaseWaitDialog();
+					// it was a generate, we'll take them to the VPNCP status view
+					final VpnConnectionDeprovisioningPojo vpncdp = result;
+					GWT.log("VPNCDP was generated on the server, showing status page.  "
+							+ "VPNCDP is: " + vpncdp);
+					VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+					vpncpSummary.setDeprovisioning(vpncdp);
+					ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
+				}
+			};
+			getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
+			VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(selectedVpnConnectionRequisition, callback);
 		}
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection Profile was NOT deleted");
+		if (selectedVpnConnectionRequisition == null) {
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection Profile was NOT deleted");
+		}
+		else {
+			// is a de-provision
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection was NOT de-provisioned");
+		}
 	}
 
 	@Override
 	public void deleteVpnConnectionProfiles(List<VpnConnectionProfileSummaryPojo> summaries) {
+		selectedVpnConnectionRequisition = null;
 		selectedSummaries = summaries;
 		VpcpConfirm.confirm(
 			ListVpnConnectionProfilePresenter.this, 
@@ -352,5 +394,17 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 	@Override
 	public void clearFilter() {
 		this.filter = null;
+	}
+
+	@Override
+	public void deprovisionVpnConnection(VpnConnectionRequisitionPojo vpnConnectionRequisition) {
+		selectedSummaries = new java.util.ArrayList<VpnConnectionProfileSummaryPojo>();
+		selectedVpnConnectionRequisition = vpnConnectionRequisition;
+		
+		VpcpConfirm.confirm(
+				ListVpnConnectionProfilePresenter.this, 
+				"Confirm Deprovision VPN Connection", 
+				"Deprovisiong the VPN Connection " + selectedVpnConnectionRequisition.getProfile().getVpcNetwork() + "?");
+
 	}
 }

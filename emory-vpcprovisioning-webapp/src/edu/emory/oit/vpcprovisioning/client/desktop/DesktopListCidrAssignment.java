@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.cell.client.ButtonCell;
 import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
@@ -20,6 +21,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -38,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrAssignmentView {
@@ -49,7 +52,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager cidrAssignmentSummaryListPager;
+	@UiField(provided=true) SimplePager cidrAssignmentSummaryListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button addCidrAssignmentButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<CidrAssignmentSummaryPojo> cidrAssignmentSummaryListTable = new CellTable<CidrAssignmentSummaryPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
@@ -352,7 +355,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 
 		// create user
 		Column<CidrAssignmentSummaryPojo, String> createUserColumn = 
-				new Column<CidrAssignmentSummaryPojo, String> (new TextCell()) {
+				new Column<CidrAssignmentSummaryPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(CidrAssignmentSummaryPojo object) {
@@ -365,6 +368,13 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 				return o1.getCidrAssignment().getCreateUser().compareTo(o2.getCidrAssignment().getCreateUser());
 			}
 		});
+		createUserColumn.setFieldUpdater(new FieldUpdater<CidrAssignmentSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, CidrAssignmentSummaryPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		createUserColumn.setCellStyleNames("tableAnchor");
 		cidrAssignmentSummaryListTable.addColumn(createUserColumn, "Create User");
 
 		// create time
@@ -386,7 +396,7 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 
 		// last update user
 		Column<CidrAssignmentSummaryPojo, String> lastUpdateUserColumn = 
-				new Column<CidrAssignmentSummaryPojo, String> (new TextCell()) {
+				new Column<CidrAssignmentSummaryPojo, String> (new ClickableTextCell()) {
 
 			@Override
 			public String getValue(CidrAssignmentSummaryPojo object) {
@@ -399,6 +409,13 @@ public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrA
 				return o1.getCidrAssignment().getUpdateUser().compareTo(o2.getCidrAssignment().getUpdateUser());
 			}
 		});
+		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<CidrAssignmentSummaryPojo, String>() {
+	    	@Override
+	    	public void update(int index, CidrAssignmentSummaryPojo object, String value) {
+	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+	    	}
+	    });
+		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
 		cidrAssignmentSummaryListTable.addColumn(lastUpdateUserColumn, "Update User");
 
 		// update time

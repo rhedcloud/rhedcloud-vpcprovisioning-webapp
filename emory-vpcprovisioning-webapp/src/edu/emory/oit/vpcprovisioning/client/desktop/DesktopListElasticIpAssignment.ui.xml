@@ -63,7 +63,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="elasticIpAssignmentListPager" location="CENTER"/>
+						<c:SimplePager ui:field="elasticIpAssignmentListPager"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

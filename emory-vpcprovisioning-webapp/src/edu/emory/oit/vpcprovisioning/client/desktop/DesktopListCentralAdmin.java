@@ -15,6 +15,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -45,17 +46,12 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
-	@UiField SimplePager centralAdminListPager;
-//	@UiField Button addCentralAdminButton;
+	@UiField(provided=true) SimplePager centralAdminListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<RoleAssignmentSummaryPojo> centralAdminListTable = new CellTable<RoleAssignmentSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField VerticalPanel centralAdminListPanel;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField HTML introBodyHTML;
-
-//	@UiField Button filterButton;
-//	@UiField Button clearFilterButton;
-//	@UiField TextBox centralAdminIdTB;
 
 	@UiField PushButton refreshButton;
 

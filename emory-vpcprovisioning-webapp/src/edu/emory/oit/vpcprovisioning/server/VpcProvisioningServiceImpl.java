@@ -4384,13 +4384,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
             info("populating newData...");
             populateElasticIpAssignmentMoa(elasticIpAssignment, newData);
+            info("[updateElasticIpAssignment] moa's associated private ip is: " + newData.getElasticIp().getAssociatedIpAddress());
 
             info("populating baselineData...");
             populateElasticIpAssignmentMoa(elasticIpAssignment.getBaseline(), baselineData);
             newData.setBaseline(baselineData);
 
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = generalProps.getProperty("vpcpListTimeoutMillis", "30000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getElasticIpRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
             info("doing the update...");
-            doUpdate(newData, getElasticIpRequestService());
+            doUpdate(newData, reqSvc);
             info("update is complete...");
         } catch (Throwable t) {
             t.printStackTrace();
@@ -9349,7 +9359,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		try {
 			info("generating VpnConnectionDeprovisioning on the server...");
-			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING_GENERATE);
+			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
 			VpnConnectionRequisition seed = (VpnConnectionRequisition) getObject(Constants.MOA_VPN_CONNECTION_REQUISITION);
 			info("populating moa");
 			this.populateVpncpRequisitionMoa(requisition, seed);
@@ -9560,12 +9570,66 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
+	public VpnConnectionProfileAssignmentPojo deleteVpnConnectionProfileAssignment(
+			VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment) throws RpcException {
+		
+		try {
+			info("deleting VpnConnectionProfileAssignment record on the server...");
+			VpnConnectionProfileAssignment moa = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
+			info("populating moa");
+			this.populateVpnConnectionProfileAssignmentMoa(vpnConnectionProfileAssignment, moa);
+
+			
+			info("doing the VpnConnectionProfileAssignmentPojo.delete...");
+			this.doDelete(moa, getNetworkOpsRequestService());
+			info("VpnConnectionProfileAssignmentPojo.delete is complete...");
+
+			return vpnConnectionProfileAssignment;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
 	public VpnConnectionProvisioningPojo generateVpncp(VpnConnectionRequisitionPojo vpncpRequisition)
 			throws RpcException {
 		
 		try {
 			info("generating VpnConnectionProvisioning on the server...");
-			VpnConnectionProvisioning actionable = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP_GENERATE);
+			VpnConnectionProvisioning actionable = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
 			VpnConnectionRequisition seed = (VpnConnectionRequisition) getObject(Constants.MOA_VPN_CONNECTION_REQUISITION);
 			info("populating moa");
 			this.populateVpncpRequisitionMoa(vpncpRequisition, seed);

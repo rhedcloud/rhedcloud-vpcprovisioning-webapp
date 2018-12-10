@@ -164,7 +164,7 @@
 							<g:DeckLayoutPanel ui:field="staticNatContentContainer" width="100%"/>
 						</g:tab>
 						<g:tab>
-							<g:header>VPN Connections</g:header>
+							<g:header>VPN Provisioning</g:header>
 							<g:DeckLayoutPanel ui:field="vpnConnectionContentContainer" width="100%"/>
 						</g:tab>
 						<g:tab>

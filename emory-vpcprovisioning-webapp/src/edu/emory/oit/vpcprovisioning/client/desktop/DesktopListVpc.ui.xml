@@ -52,7 +52,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="vpcListPager" debugId="vpcListPager" location="CENTER"/>
+						<c:SimplePager ui:field="vpcListPager" debugId="vpcListPager"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

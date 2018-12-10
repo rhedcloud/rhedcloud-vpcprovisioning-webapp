@@ -62,7 +62,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:SimplePager ui:field="cidrAssignmentSummaryListPager" location="CENTER"/>
+						<c:SimplePager ui:field="cidrAssignmentSummaryListPager"/>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

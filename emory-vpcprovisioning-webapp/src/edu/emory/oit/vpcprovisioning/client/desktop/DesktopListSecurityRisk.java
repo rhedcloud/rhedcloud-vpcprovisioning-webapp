@@ -18,6 +18,7 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
@@ -60,7 +61,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	     public CellTable.Style cellTableStyle();
 	}
 	/*** FIELDS ***/
-	@UiField SimplePager listPager;
+	@UiField(provided=true) SimplePager listPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) CellTable<SecurityRiskPojo> listTable = new CellTable<SecurityRiskPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 //	@UiField Button closeOtherFeaturesButton;

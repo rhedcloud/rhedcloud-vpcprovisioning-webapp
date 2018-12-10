@@ -158,7 +158,7 @@
 								</g:row>
 								<g:row>
 									<g:customCell>
-										<c:SimplePager ui:field="assessmentListPager" debugId="assessmentListPager" location="CENTER"/>
+										<c:SimplePager ui:field="assessmentListPager" debugId="assessmentListPager"/>
 									</g:customCell>
 								</g:row>
 							</g:Grid>
