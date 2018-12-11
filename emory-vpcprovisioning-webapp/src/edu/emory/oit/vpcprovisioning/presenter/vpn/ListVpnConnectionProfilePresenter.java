@@ -235,6 +235,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 	@Override
 	public void vpcpConfirmOkay() {
 		if (selectedVpnConnectionRequisition == null) {
+			// VPN Connection Profile Delete
 			showStatus = false;
 			deletedCount = 0;
 			totalToDelete = selectedSummaries.size();
@@ -286,7 +287,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 			}
 		}
 		else {
-			// is a VPN Connection de-provision
+			// is a VPN Connection de-provision (generate)
 			AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
 				@Override
 				public void onFailure(Throwable caught) {

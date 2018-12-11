@@ -28,6 +28,7 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 	}
 
 	public void initializeStatistics() {
+		serviceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
 		
 //		Object[] keys = serviceMap.keySet().toArray();
 		int blockedPendingReviewCount = 0;

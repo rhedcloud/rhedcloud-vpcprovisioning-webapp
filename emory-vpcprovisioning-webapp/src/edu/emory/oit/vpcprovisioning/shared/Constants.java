@@ -11,6 +11,7 @@ public class Constants implements IsSerializable {
 	public final static long MILLIS_PER_HOUR = 60 * 60 * 1000;
 	public static final String CIDR_ASSIGNMENT = "CidrAssignment";
 	public static final String CIDR = "Cidr";
+	public static final String SERVICE_SUMMARY = "ServiceSummary";
 	public static final String USER_ACCOUNT = "UserAccount";
 	public static final String NET_ID = "NetId=";
 	public static final String SESSION_TIMEOUT = "SessionTimeout";

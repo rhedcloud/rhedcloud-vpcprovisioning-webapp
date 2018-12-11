@@ -34,7 +34,6 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -129,6 +128,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	UserAccountPojo userLoggedIn;
 	UserProfilePojo userProfile;
 	AWSServiceSummaryPojo serviceSummary;
+	boolean refreshingServices=false;
 	HomeView homeView;
 	String hash=null;
 	ReleaseInfo releaseInfo;
@@ -996,14 +996,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 		final VerticalPanel categoryVp = new VerticalPanel();
 		categoryVp.getElement().getStyle().setBackgroundColor("#232f3e");
-		categoryVp.getElement().getStyle().setBorderColor("black");
-		categoryVp.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-		categoryVp.getElement().getStyle().setBorderWidth(1, Unit.PX);
 		categoryVp.setHeight("100%");
 		categoryVp.setWidth("300px");
 		categoryVp.setSpacing(8);
 		hp.add(categoryVp);
 		
+		HTML catHeading = new HTML("Service Categories");
+		catHeading.getElement().getStyle().setBackgroundColor("#232f3e");
+		catHeading.getElement().getStyle().setColor("#ddd");
+		catHeading.getElement().getStyle().setFontSize(20, Unit.PX);
+		catHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		categoryVp.add(catHeading);
+
 		final Grid categoryGrid = new Grid(categories.length, 1);
 		categoryGrid.getElement().getStyle().setBackgroundColor("#232f3e");
 		categoryVp.add(categoryGrid);
@@ -1016,7 +1020,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		final VerticalPanel assessmentVp = new VerticalPanel();
 		assessmentVp.getElement().getStyle().setBackgroundColor("#232f3e");
-		assessmentVp.setWidth("400px");
+		assessmentVp.setWidth("425px");
 		assessmentVp.setSpacing(8);
 		hp.add(assessmentVp);
 		
@@ -1066,13 +1070,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						}
 						
 						svcAnchor.addStyleName("productAnchor");
-						svcAnchor.getElement().getStyle().setFontSize(15, Unit.PX);
+						svcAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
 						svcAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 						svcAnchor.getElement().getStyle().setColor("#fff");
 						svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
 						svcAnchor.setHref(svc.getAwsLandingPageUrl());
 						svcAnchor.setTarget("_blank");
 
+						// get service assessment info on mouseover
 						svcAnchor.addMouseOverHandler(new MouseOverHandler() {
 							@Override
 							public void onMouseOver(MouseOverEvent event) {
@@ -1100,7 +1105,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 									@Override
 									public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
 										if (result.getResults().size() > 0) {
-											// TODO: get all relevant assessment info for the service
+											// get all relevant assessment info for the service
 											for (ServiceSecurityAssessmentPojo assessment : result.getResults()) {
 												StringBuffer sbuf = new StringBuffer();
 												sbuf.append("<b>Assessment status:</b>  " + assessment.getStatus());
@@ -1141,7 +1146,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						HTML svcStatus = new HTML("STATUS: " + svc.getSiteStatus());
 						svcStatus.addStyleName("productDescription");
 						svcStatus.getElement().getStyle().setColor("orange");
-						svcStatus.getElement().getStyle().setFontSize(12, Unit.PX);
+						svcStatus.getElement().getStyle().setFontSize(14, Unit.PX);
 						svcStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 						svcGrid.setWidget(1, 0, svcStatus);
 						
@@ -1165,7 +1170,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						HTML svcHipaaStatus = new HTML("Emory HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
 						svcHipaaStatus.addStyleName("productDescription");
 						svcHipaaStatus.getElement().getStyle().setColor("orange");
-						svcHipaaStatus.getElement().getStyle().setFontSize(12, Unit.PX);
+						svcHipaaStatus.getElement().getStyle().setFontSize(14, Unit.PX);
 						svcHipaaStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 						svcGrid.setWidget(2, 0, svcHipaaStatus);
 
@@ -1191,7 +1196,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						HTML svcDesc = new HTML(svc.getDescription());
 						svcDesc.addStyleName("productDescription");
 						svcDesc.getElement().getStyle().setColor("#ddd");
-						svcDesc.getElement().getStyle().setFontSize(12, Unit.PX);
+						svcDesc.getElement().getStyle().setFontSize(14, Unit.PX);
 						svcGrid.setWidget(3, 0, svcDesc);
 					}
 				}
@@ -1203,137 +1208,28 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.showRelativeTo(linksPanel);
 	}
 	
-	void showProductsPopup_old() {
-		PushButton refreshButton = new PushButton();
-		refreshButton.setTitle("Refresh list");
-		refreshButton.setWidth("30px");
-		refreshButton.setHeight("30px");
-		Image img = new Image("images/refresh_icon.png");
-		img.setWidth("30px");
-		img.setHeight("30px");
-		refreshButton.getUpFace().setImage(img);
-		refreshButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				refreshServiceMap(false);
-			}
-		});
-
-		productsPopup.clear();
-		productsPopup.setAutoHideEnabled(true);
-		productsPopup.setWidth("1200px");
-		productsPopup.setHeight("800px");
-		productsPopup.setAnimationEnabled(true);
-		productsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		productsPopup.addCloseHandler(new CloseHandler<PopupPanel>() {
-			@Override
-			public void onClose(CloseEvent<PopupPanel> event) {
-				productsShowing = false;
-			}
-		});
-		
-		ScrollPanel sp = new ScrollPanel();
-		sp.setHeight("99%");
-		sp.setWidth("100%");
-		productsPopup.add(sp);
-		VerticalPanel refreshPanel = new VerticalPanel();
-		sp.add(refreshPanel);
-		refreshPanel.add(refreshButton);
-
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.setWidth("100%");
-		hp.setSpacing(12);
-		refreshPanel.add(hp);
-		// 4 columns
-		List<VerticalPanel> vpList = new java.util.ArrayList<VerticalPanel>();
-		vpList.add(new VerticalPanel());
-		vpList.add(new VerticalPanel());
-		vpList.add(new VerticalPanel());
-		vpList.add(new VerticalPanel());
-		
-		int catsPerPanel = (int) Math.ceil(serviceSummary.getServiceMap().size() / 4.0);
-		if (catsPerPanel < 5) {
-			catsPerPanel = serviceSummary.getServiceMap().size();
-		}
-		GWT.log("catsPerPanel: " + catsPerPanel);
-		int catCntr = 0;
-		int vpCntr = 0;
-		
-		Object[] keys = serviceSummary.getServiceMap().keySet().toArray();
-		Arrays.sort(keys);
-		for (Object catName : keys) {
-			GWT.log("Category is: " + catName);
-			List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
-			GWT.log("There are " + services.size() + " services in the " + catName + " category.");
-			if (catCntr >= catsPerPanel) {
-				catCntr = 0;
-				GWT.log("adding vp number " + vpCntr + " to the HP");
-				hp.add(vpList.get(vpCntr));
-				vpCntr++;
-			}
-			GWT.log("using vp number " + vpCntr);
-			VerticalPanel vp = vpList.get(vpCntr);
-			vp.addStyleName("productColumn");
-			vp.setSpacing(6);
-			HTMLPanel catHtml = new HTMLPanel((String)catName);
-			catHtml.addStyleName("productCategory");
-			vp.add(catHtml);
-			for (AWSServicePojo svc : services) {
-				GWT.log("Adding service: " + svc.getAwsServiceName());
-				Anchor svcAnchor = new Anchor();
-				if (svc.getCombinedServiceName() != null && 
-					svc.getCombinedServiceName().length() > 0) {
-					svcAnchor.setText(svc.getCombinedServiceName());
-				}
-				else if (svc.getAlternateServiceName() != null && 
-						svc.getAlternateServiceName().length() > 0 ) {
-					svcAnchor.setText(svc.getAlternateServiceName());
-				}
-				else {
-					svcAnchor.setText(svc.getAwsServiceName());
-				}
-				svcAnchor.addStyleName("productAnchor");
-				svcAnchor.setTitle("STATUS: " + svc.getSiteStatus() + 
-						"  DESCRIPTION: " + svc.getDescription());
-				svcAnchor.setHref(svc.getAwsLandingPageUrl());
-				svcAnchor.setTarget("_blank");
-				if (svc.getSiteStatus().toLowerCase().contains("blocked")) {
-					svcAnchor.addStyleName("productAnchorBlocked");
-				}
-				vp.add(svcAnchor);
-			}
-			HTMLPanel html = new HTMLPanel("</br>");
-			vp.add(html);
-			catCntr++;
-		}
-
-		// add last VP to the HP because it gets populated but not added above
-		if (hp.getWidgetCount() < 4) {
-			for (int i=hp.getWidgetCount(); i<4; i++) {
-				hp.add(vpList.get(i));
-			}
-		}
-
-		productsPopup.showRelativeTo(linksPanel);
-	}
-	
 	void showServices() {
-		if (!productsShowing) {
-			productsShowing = true;
+		if (!refreshingServices) {
+			if (!productsShowing) {
+				productsShowing = true;
+			}
+			else {
+				productsShowing = false;
+				productsPopup.hide();
+				return;
+			}
+	
+			this.showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
+			if (serviceSummary.getServiceMap() == null || serviceSummary.getServiceMap().size() == 0) {
+				this.refreshServiceMap(true);
+			}
+			else {
+				this.showProductsPopup();
+				hidePleaseWaitDialog();
+			}
 		}
 		else {
-			productsShowing = false;
-			productsPopup.hide();
-			return;
-		}
-
-		this.showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
-		if (serviceSummary.getServiceMap() == null || serviceSummary.getServiceMap().size() == 0) {
-			this.refreshServiceMap(true);
-		}
-		else {
-			this.showProductsPopup();
-			hidePleaseWaitDialog();
+			showMessageToUser("Product information is being refreshed, please try again in a few seconds.");
 		}
 	}
 	
@@ -1341,6 +1237,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		AsyncCallback<AWSServiceSummaryPojo> callback = new AsyncCallback<AWSServiceSummaryPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				refreshingServices = false;
 				hidePleaseWaitDialog();
 				GWT.log("problem getting services..." + caught.getMessage());
 				showMessageToUser("Unable to display product information at this "
@@ -1350,6 +1247,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 			@Override
 			public void onSuccess(AWSServiceSummaryPojo result) {
+				refreshingServices = false;
 				serviceSummary = result;
 				GWT.log("got " + result.getServiceMap().size() + " categories of services back.");
 				if (serviceSummary.getServiceMap() == null || serviceSummary.getServiceMap().size() == 0) {
@@ -1364,7 +1262,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				hidePleaseWaitDialog();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+		if (!refreshingServices) {
+			refreshingServices = true;
+			VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+		}
 	}
 	@Override
 	public void initializeAwsServiceMap() {
@@ -1373,6 +1274,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		AsyncCallback<AWSServiceSummaryPojo> callback = new AsyncCallback<AWSServiceSummaryPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				refreshingServices = false;
 				GWT.log("problem getting services..." + caught.getMessage());
 				showMessageToUser("Unable to display product information at this "
 						+ "time.  Please try again later.  "
@@ -1382,11 +1284,15 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 			@Override
 			public void onSuccess(AWSServiceSummaryPojo result) {
+				refreshingServices = false;
 				serviceSummary = result;
 				GWT.log("got " + result.getServiceMap().size() + " categories of services back.");
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+		if (!refreshingServices) {
+			refreshingServices = true;
+			VpcProvisioningService.Util.getInstance().getAWSServiceMap(callback);
+		}
 	}
 
 	@Override

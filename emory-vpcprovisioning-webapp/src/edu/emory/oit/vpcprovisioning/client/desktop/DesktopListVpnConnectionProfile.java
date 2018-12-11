@@ -265,7 +265,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				if (m != null) {
 					if (userLoggedIn.isNetworkAdmin()) {
 						if (m.getAssignment() != null) {
-							// TODO: if it's already assigned, just do a VpnConnectionProvisioning.Generate 
+							// if it's already assigned, just do a VpnConnectionProvisioning.Generate 
 							// again using that assignment.  i.e., don't create a VpnConnectionProfileAssignment
 							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m);
 							showMessageToUser("You cannot provision a VPN that has an assignment associated to it.");
@@ -311,9 +311,11 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 								return;
 							}
 							else {
-								showMessageToUser("This feature is not yet implemented.");
+								showMessageToUser("This feature is not fully implemented yet.");
 								return;
 							}
+							// TODO: maybe we just need to go to the VPNCP maintenance page and collect 
+							// the vpnipaddress and shared key
 //							VpnConnectionRequisitionPojo vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
 //							vpnConnectionRequisition.setProfile(m.getProfile());
 //							vpnConnectionRequisition.setOwnerId(m.getAssignment().getOwnerId());

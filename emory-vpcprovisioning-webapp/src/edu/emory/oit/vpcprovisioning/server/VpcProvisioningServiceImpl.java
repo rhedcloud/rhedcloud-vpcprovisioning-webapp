@@ -240,6 +240,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private List<BillPojo> masterBills = new java.util.ArrayList<BillPojo>();
 	// Key is account id, List is a list of Bills for that account id
 	private HashMap<String, List<BillPojo>> billsByAccount = new HashMap<String, List<BillPojo>>();
+	AWSServiceSummaryPojo serviceSummary;
 
 	// temporary
 	List<UserNotificationPojo> notificationList = new java.util.ArrayList<UserNotificationPojo>();
@@ -320,10 +321,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					IDENTITY_SERVICE_NAME);
 			awsProducerPool = (ProducerPool) getAppConfig().getObject(
 					AWS_SERVICE_NAME);
-//			cidrProducerPool = (ProducerPool) getAppConfig().getObject(
-//					CIDR_SERVICE_NAME);
-//			authzProducerPool = (ProducerPool) getAppConfig().getObject(
-//					AUTHZ_SERVICE_NAME);
 			firewallProducerPool = (ProducerPool) getAppConfig().getObject(
 					FIREWALL_SERVICE_NAME);
 			serviceNowProducerPool = (ProducerPool) getAppConfig().getObject(
@@ -341,11 +338,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
-//			baseLoginURL = generalProps.getProperty("baseLoginURL", null);
-//			if (baseLoginURL == null) {
-//				info("'baseLoginURL' property from config doc is null, defaulting to DEV IDP URL.");
-//				baseLoginURL = "nothing";
-//			}
+			this.getAWSServiceMap();
 			
 			String redirect = generalProps.getProperty("manageSessionLocally", "false");
 			manageSessionLocally = Boolean.parseBoolean(redirect);
@@ -4481,6 +4474,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AWSServiceSummaryPojo getAWSServiceMap() throws RpcException {
+		info("checking cache for existing service summary...");
+		serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
+				Constants.SERVICE_SUMMARY + getCurrentSessionId());
+
+		if (serviceSummary == null) {
+			info("no service summary found in cache, building service summary.");
+		    serviceSummary = new AWSServiceSummaryPojo();
+		}
+		else {
+			// check how long it's been there and refresh if it's "stale"
+			java.util.Date currentTime = new java.util.Date();
+			if (serviceSummary.getUpdateTime() != null) {
+				long millisSinceUpdated = currentTime.getTime() - serviceSummary.getUpdateTime().getTime();
+				// if it's less than one minute, don't refresh
+				if (millisSinceUpdated <= 60000) {
+					info("service summary found in cache and it's NOT stale, returning cached service summary");
+				    info("[getAWSServiceMap] there are " + serviceSummary.getServiceStatistics().size() + " service stats in the cached summary.");
+					return serviceSummary;
+				}
+				info("service summary was found in cached but it's stale, refreshing service summary");
+			}
+			info("service summary was found in cache but it has no last updated time, refreshing service summary");
+		}
+
 		int svcCnt = 0;
 
 		AWSServiceQueryResultPojo servicesResult = this.getServicesForFilter(null);
@@ -4513,11 +4530,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 	    info("[getAWSServiceMap] returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
-	    AWSServiceSummaryPojo summary = new AWSServiceSummaryPojo();
-	    summary.setServiceList(servicesResult.getResults());
-	    summary.setServiceMap(awsServicesMap);
-	    summary.initializeStatistics();
-		return summary;
+	    serviceSummary.setServiceList(servicesResult.getResults());
+	    serviceSummary.setServiceMap(awsServicesMap);
+	    serviceSummary.initializeStatistics();
+	    serviceSummary.setUpdateTime(new java.util.Date());
+		Cache.getCache().put(Constants.SERVICE_SUMMARY + getCurrentSessionId(), serviceSummary);
+		return serviceSummary;
 	}
 	
 	private void addServiceToCategory(String category, AWSServicePojo service, HashMap<String, List<AWSServicePojo>> awsServicesMap) {
