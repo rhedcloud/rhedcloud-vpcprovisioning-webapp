@@ -168,7 +168,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	public void setVpcTypeItems(List<String> vpcTypes) {
 		this.vpcTypes = vpcTypes;
 		vpcTypeLB.clear();
-		vpcTypeLB.addItem("-- Select --");
+		vpcTypeLB.addItem("-- Select --", "");
 		if (vpcTypes != null) {
 			int i=1;
 			for (String type : vpcTypes) {
@@ -189,7 +189,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	public void setAccountItems(List<AccountPojo> accounts) {
 		this.accounts = accounts;
 		accountLB.clear();
-		accountLB.addItem("-- Select --");
+		accountLB.addItem("-- Select --", "");
 		if (accounts != null) {
 			int i=1;
 			for (AccountPojo account : accounts) {
@@ -301,10 +301,10 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
 		this.regionTypes = regionTypes;
 		regionLB.clear();
-		regionLB.addItem("-- Select --");
+		regionLB.addItem("-- Select --", "");
 		if (regionTypes != null) {
 			for (AWSRegionPojo region : regionTypes) {
-				regionLB.addItem(region.getCode(), region.getValue());
+				regionLB.addItem(region.getValue(), region.getCode());
 			}
 		}
 	}

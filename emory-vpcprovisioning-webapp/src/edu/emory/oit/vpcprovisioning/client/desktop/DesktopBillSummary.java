@@ -207,7 +207,7 @@ public class DesktopBillSummary extends ViewImplBase implements BillSummaryView 
 		billSummaryPanel.setVisible(false);
 		this.billsForAccount = bills;
 		billLB.clear();
-		billLB.addItem("-- Select Bill --");
+		billLB.addItem("-- Select --", "");
 		if (billsForAccount != null) {
 			for (int i=0; i<billsForAccount.size(); i++) {
 				BillPojo bill = billsForAccount.get(i);

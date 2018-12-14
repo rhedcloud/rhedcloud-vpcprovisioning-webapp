@@ -606,7 +606,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		awsStatusLB.clear();
 		
 		if (!editing) {
-			awsStatusLB.addItem("-- Select --");
+			awsStatusLB.addItem("-- Select --", "");
 		}
 		if (awsStatusTypes != null) {
 			int i=0;
@@ -993,7 +993,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		siteStatusLB.clear();
 		
 		if (!editing) {
-			siteStatusLB.addItem("-- Select --");
+			siteStatusLB.addItem("-- Select --", "");
 		}
 		if (siteStatusTypes != null) {
 			int i=0;

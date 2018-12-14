@@ -609,7 +609,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	public void setTestExpectedResultItems(List<String> items) {
 		this.testExpectedResultItems = items;
 		testExpectedResultLB.clear();
-		testExpectedResultLB.addItem("-- Select --");
+		testExpectedResultLB.addItem("-- Select --", "");
 		if (testExpectedResultLB != null) {
 			for (String type : testExpectedResultItems) {
 				testExpectedResultLB.addItem(type, type);

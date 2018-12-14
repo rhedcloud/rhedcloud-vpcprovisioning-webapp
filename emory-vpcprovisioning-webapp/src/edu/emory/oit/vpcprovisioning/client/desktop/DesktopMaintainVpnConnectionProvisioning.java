@@ -500,7 +500,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		
 		vpcLB.clear();
 		if (!this.deprovision) {
-			vpcLB.addItem("-- Select VPC --");
+			vpcLB.addItem("-- Select --", "");
 			if (vpcItems != null) {
 				for (VpcPojo vpc : vpcItems) {
 					vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());

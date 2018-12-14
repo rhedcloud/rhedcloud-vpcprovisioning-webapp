@@ -403,7 +403,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	public void setAssessmentStatusItems(List<String> assessmentStatusTypes) {
 		this.statusTypes = assessmentStatusTypes;
 		statusLB.clear();
-		statusLB.addItem("-- Select --");
+		statusLB.addItem("-- Select --", "");
 		if (statusLB != null) {
 			int i=1;
 			for (String type : statusTypes) {

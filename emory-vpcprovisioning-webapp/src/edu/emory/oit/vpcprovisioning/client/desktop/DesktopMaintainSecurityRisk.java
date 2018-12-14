@@ -411,7 +411,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	public void setRiskLevelItems(List<String> riskLevels) {
 		this.riskLevelItems = riskLevels;
 		riskLevelLB.clear();
-		riskLevelLB.addItem("-- Select --");
+		riskLevelLB.addItem("-- Select --", "");
 		if (riskLevelItems != null) {
 			int i=1;
 			for (String type : riskLevelItems) {

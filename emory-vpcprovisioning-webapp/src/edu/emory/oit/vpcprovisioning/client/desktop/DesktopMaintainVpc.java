@@ -610,12 +610,12 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			if (regionTypes != null) {
 				int i=0;
 				if (presenter.getVpc().getRegion() == null) {
-					regionLB.addItem("-- Select --");
+					regionLB.addItem("-- Select --", "");
 					i = 1;
 				}
 				
 				for (AWSRegionPojo region : regionTypes) {
-					regionLB.addItem(region.getCode(), region.getValue());
+					regionLB.addItem(region.getValue(), region.getCode());
 					if (presenter.getVpc() != null) {
 						if (presenter.getVpc().getRegion() != null) {
 							if (presenter.getVpc().getRegion().equals(region.getCode())) {
@@ -631,9 +631,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			reqRegionLB.clear();
 			if (regionTypes != null) {
 				int i=1;
-				reqRegionLB.addItem("-- Select --");
+				reqRegionLB.addItem("-- Select --", "");
 				for (AWSRegionPojo region : regionTypes) {
-					regionLB.addItem(region.getCode(), region.getValue());
+					regionLB.addItem(region.getValue(), region.getCode());
 					if (presenter.getVpcRequisition() != null) {
 						if (presenter.getVpcRequisition().getRegion() != null) {
 							if (presenter.getVpcRequisition().getRegion().equals(region.getCode())) {

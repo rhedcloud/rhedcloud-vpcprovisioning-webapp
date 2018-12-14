@@ -866,7 +866,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void setComplianceClassItems(List<String> complianceClassTypes) {
 		this.complianceClassTypes = complianceClassTypes;
 		complianceClassLB.clear();
-		complianceClassLB.addItem("-- Select --");
+		complianceClassLB.addItem("-- Select --", "");
 		if (complianceClassLB != null) {
 			int i=1;
 			for (String type : complianceClassTypes) {

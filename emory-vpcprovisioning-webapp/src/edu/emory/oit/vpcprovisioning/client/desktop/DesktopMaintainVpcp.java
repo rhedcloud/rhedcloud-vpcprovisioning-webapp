@@ -447,7 +447,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		}
 		else {
 			vpcpReqTypeLB.clear();
-			vpcpReqTypeLB.addItem("-- Select --");
+			vpcpReqTypeLB.addItem("-- Select --", "");
 			if (vpcTypes != null) {
 				int i=1;
 				for (String type : vpcTypes) {
@@ -468,7 +468,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public void setAccountItems(List<AccountPojo> accounts) {
 		this.accounts = accounts;
 		accountLB.clear();
-		accountLB.addItem("-- Select --");
+		accountLB.addItem("-- Select --", "");
 		if (accounts != null) {
 			for (AccountPojo account : accounts) {
 				accountLB.addItem(account.getAccountId(), account.getAccountId());
@@ -479,7 +479,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public void setComplianceClassItems(List<String> complianceClassTypes) {
 		this.complianceClassTypes = complianceClassTypes;
 		vpcpReqComplianceClassLB.clear();
-		vpcpReqComplianceClassLB.addItem("-- Select --");
+		vpcpReqComplianceClassLB.addItem("-- Select --", "");
 		if (complianceClassTypes != null) {
 			for (String type : complianceClassTypes) {
 				vpcpReqComplianceClassLB.addItem(type, type);
@@ -612,10 +612,10 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
 		this.regionTypes = regionTypes;
 		regionLB.clear();
-		regionLB.addItem("-- Select --");
+		regionLB.addItem("-- Select --", "");
 		if (regionTypes != null) {
 			for (AWSRegionPojo region : regionTypes) {
-				regionLB.addItem(region.getCode(), region.getValue());
+				regionLB.addItem(region.getValue(), region.getCode());
 			}
 		}
 	}

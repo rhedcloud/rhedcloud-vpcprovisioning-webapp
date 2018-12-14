@@ -348,7 +348,7 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 	public void setPriorityItems(List<String> priorities) {
 		this.priorities = priorities;
 		priorityLB.clear();
-		priorityLB.addItem("-- Select --");
+		priorityLB.addItem("-- Select --", "");
 		if (priorities != null) {
 			int i=1;
 			for (String priority : priorities) {

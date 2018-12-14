@@ -728,7 +728,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		this.filterTypeItems = filterTypes;
 		filterTypesLB.clear();
 		
-		filterTypesLB.addItem("-- Select Filter Type --");
+		filterTypesLB.addItem("-- Select Filter Type --", "");
 		if (filterTypeItems != null) {
 			for (String filterType : filterTypeItems) {
 				filterTypesLB.addItem(filterType, filterType);

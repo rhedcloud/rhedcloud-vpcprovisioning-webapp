@@ -312,7 +312,7 @@ public class DesktopMaintainNotification extends ViewImplBase implements Maintai
 	public void setPriorityItems(List<String> priorities) {
 		this.priorities = priorities;
 		priorityLB.clear();
-		priorityLB.addItem("-- Select --");
+		priorityLB.addItem("-- Select --", "");
 		if (priorities != null) {
 			int i=1;
 			for (String priority : priorities) {

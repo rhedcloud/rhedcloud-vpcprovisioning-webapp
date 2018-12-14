@@ -1080,7 +1080,7 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 	public void setTimeRuleItems(List<String> timeRules) {
 		this.timeRules = timeRules;
 		timeRuleLB.clear();
-		timeRuleLB.addItem("-- Select --");
+		timeRuleLB.addItem("-- Select --", "");
 		if (timeRules != null) {
 			int i=1;
 			for (String type : timeRules) {

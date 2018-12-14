@@ -376,7 +376,7 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 	public void setAssociatedCidrTypeItems(List<String> associatedCidrTypes) {
 		this.associatedCidrTypes = associatedCidrTypes;
 		addCidrTypeLB.clear();
-		addCidrTypeLB.addItem("-- Select --");
+		addCidrTypeLB.addItem("-- Select --", "");
 		if (associatedCidrTypes != null) {
 			for (String type : associatedCidrTypes) {
 				addCidrTypeLB.addItem(type, type);
