@@ -16,6 +16,7 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 	String type;
 	String complianceClass;
 	String purpose;
+	String region;
 	boolean notifyAdmins;
 	List<String> sensitiveDataList = new java.util.ArrayList<String>();
 	
@@ -109,6 +110,14 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 
 	public void setSensitiveDataList(List<String> sensitiveDataList) {
 		this.sensitiveDataList = sensitiveDataList;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public void setRegion(String region) {
+		this.region = region;
 	}
 
 }

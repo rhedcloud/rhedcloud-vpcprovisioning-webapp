@@ -376,10 +376,9 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 		}
 
 		if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
-			if (psp.getStepResult() == null) {
-				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
-			}
-			else if (psp.getStepResult().trim().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+			if (psp.getStepResult() == null || 
+				psp.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+				
 				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
 			}
 			else {
@@ -389,9 +388,6 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 		else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_ROLLED_BACK)) {
 			if (psp.getStepResult() == null) {
 				applyGridRowFormat(stepsGrid, gridRow);
-			}
-			else if (psp.getStepResult().trim().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
-				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
 			}
 			else {
 				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");

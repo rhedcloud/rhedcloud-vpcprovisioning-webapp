@@ -1711,6 +1711,13 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.GENERATE_VPN_CONNECTION_DEPROVISIONING, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpncRequisition(), event.getVpnConnectonProfileAssignment()));
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.VPNCP_GENERATED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {

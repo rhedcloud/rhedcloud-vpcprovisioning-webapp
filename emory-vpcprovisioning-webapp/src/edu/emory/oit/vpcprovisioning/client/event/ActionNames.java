@@ -187,4 +187,5 @@ public interface ActionNames {
 	final String VPNCP_SAVED = "vpncpSaved";
 	final String GENERATE_VPN_CONNECTION_PROVISIONING = "generateVpnConnectionProvisioning";
 	final String VPNCDP_GENERATED = "vpncdpGenerated";
+	final String GENERATE_VPN_CONNECTION_DEPROVISIONING = "generateVpnConnectionDeprovisioning";;
 }

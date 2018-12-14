@@ -10,6 +10,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
@@ -101,4 +102,5 @@ public interface MaintainVpcpView extends Editor<VpcpPojo>, IsWidget, View {
 	void setSpeedTypeConfirmed(boolean confirmed);
 	boolean isSpeedTypeConfirmed();
 	void addAdminUserId(String userId, String title);
+	void setAwsRegionItems(List<AWSRegionPojo> regionTypes);
 }

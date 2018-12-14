@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -33,6 +34,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	boolean locked;
 	List<String> vpcTypes;
 	List<AccountPojo> accounts;
+	List<AWSRegionPojo> regionTypes;
 	UserAccountPojo userLoggedIn;
 
 	@UiField Button okayButton;
@@ -44,6 +46,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	@UiField CaptionPanel accountCP;
 	@UiField TextBox vpcIdTB;
 	@UiField ListBox vpcTypeLB;
+	@UiField ListBox regionLB;
 	@UiField TextBox cidrTB;
 	@UiField TextBox vpnProfileIdTB;
 	@UiField TextArea purposeTA;
@@ -218,6 +221,9 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		if (vpc.getPurpose() == null || vpc.getPurpose().length() == 0) {
 			fields.add(purposeTA);
 		}
+		if (vpc.getRegion() == null || vpc.getRegion().length() == 0) {
+			fields.add(regionLB);
+		}
 		return fields;
 	}
 
@@ -289,5 +295,17 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
+		this.regionTypes = regionTypes;
+		regionLB.clear();
+		regionLB.addItem("-- Select --");
+		if (regionTypes != null) {
+			for (AWSRegionPojo region : regionTypes) {
+				regionLB.addItem(region.getCode(), region.getValue());
+			}
+		}
 	}
 }

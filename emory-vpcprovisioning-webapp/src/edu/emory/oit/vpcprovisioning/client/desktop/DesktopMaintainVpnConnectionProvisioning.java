@@ -38,6 +38,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	Presenter presenter;
 	boolean editing;
 	boolean locked;
+	boolean deprovision;
 	UserAccountPojo userLoggedIn;
 //	private final VpcRpcSuggestOracle vpcSuggestions = new VpcRpcSuggestOracle(Constants.SUGGESTION_TYPE_VPC_ID);
 	private ListDataProvider<TunnelProfilePojo> dataProvider = new ListDataProvider<TunnelProfilePojo>();
@@ -84,26 +85,30 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
 		// populate requisition object, generate VPNCP
-//		presenter.getVpnConnectionRequisition().setOwnerId(presenter.getOwnerDirectoryPerson().getKey());
-//		presenter.getVpnConnectionRequisition().setOwnerId(ownerIdTB.getText());
-		if (presenter.getSelectedVpc() != null) {
-			presenter.getVpnConnectionRequisition().setOwnerId(presenter.getSelectedVpc().getVpcId());
+		if (!this.deprovision) {
+			// provision generate/update
+			if (presenter.getSelectedVpc() != null) {
+				presenter.getVpnConnectionRequisition().setOwnerId(presenter.getSelectedVpc().getVpcId());
+			}
+			else {
+				presenter.getVpnConnectionRequisition().setOwnerId(null);
+			}
+			presenter.getVpnConnectionRequisition().setRemoteVpnIpAddress(remoteVpnIpAddressTB.getText());
+			if (!this.isValidIp(presenter.getVpnConnectionRequisition().getRemoteVpnIpAddress())) {
+				showMessageToUser("Invalid Remote VPN IP address.  Please enter a valid IP address.");
+				Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+			        public void execute () {
+			        	remoteVpnIpAddressTB.setFocus(true);
+			        }
+			    });
+				return;
+			}
+			presenter.getVpnConnectionRequisition().setPresharedKey(presharedKeyTA.getText());
+			presenter.saveVpnConnectionProvisioning();
 		}
 		else {
-			presenter.getVpnConnectionRequisition().setOwnerId(null);
+			// do a de-provision generate
 		}
-		presenter.getVpnConnectionRequisition().setRemoteVpnIpAddress(remoteVpnIpAddressTB.getText());
-		if (!this.isValidIp(presenter.getVpnConnectionRequisition().getRemoteVpnIpAddress())) {
-			showMessageToUser("Invalid Remote VPN IP address.  Please enter a valid IP address.");
-			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-		        public void execute () {
-		        	remoteVpnIpAddressTB.setFocus(true);
-		        }
-		    });
-			return;
-		}
-		presenter.getVpnConnectionRequisition().setPresharedKey(presharedKeyTA.getText());
-		presenter.saveVpnConnectionProvisioning();
 	}
 	
 	@UiHandler ("cancelButton")
@@ -139,7 +144,13 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void applyNetworkAdminMask() {
-		vpcLB.setEnabled(true);
+		if (!this.deprovision) {
+			vpcLB.setEnabled(true);
+		}
+		else {
+			// if this is a de-provision, the VPC id can't be changed
+			vpcLB.setEnabled(false);
+		}
 		remoteVpnIpAddressTB.setEnabled(true);
 		presharedKeyTA.setEnabled(true);
 		okayButton.setEnabled(true);
@@ -488,11 +499,26 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		this.vpcItems = vpcs;
 		
 		vpcLB.clear();
-		vpcLB.addItem("-- Select VPC --");
-		if (vpcItems != null) {
-			for (VpcPojo vpc : vpcItems) {
-				vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());
+		if (!this.deprovision) {
+			vpcLB.addItem("-- Select VPC --");
+			if (vpcItems != null) {
+				for (VpcPojo vpc : vpcItems) {
+					vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());
+				}
 			}
 		}
+		else {
+			if (vpcItems != null) {
+				for (VpcPojo vpc : vpcItems) {
+					vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());
+				}
+				vpcLB.setSelectedIndex(0);
+				vpcLB.setEnabled(false);
+			}
+		}
+	}
+	@Override
+	public void setDeprovisioning(boolean isDeprovision) {
+		this.deprovision = isDeprovision;
 	}
 }

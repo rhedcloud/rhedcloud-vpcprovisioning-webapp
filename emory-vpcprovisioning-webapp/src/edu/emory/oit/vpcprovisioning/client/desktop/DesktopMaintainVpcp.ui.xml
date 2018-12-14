@@ -189,6 +189,16 @@
 			    	</g:customCell>
 				</g:row>
 				<g:row>
+					<g:customCell>
+						<g:Label addStyleNames="{style.label}">AWS Region:</g:Label>
+					</g:customCell>
+					<g:customCell>
+						<g:ListBox
+							addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="regionLB" debugId="regionLB" />
+					</g:customCell>
+				</g:row>					
+				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
 			    	</g:customCell>

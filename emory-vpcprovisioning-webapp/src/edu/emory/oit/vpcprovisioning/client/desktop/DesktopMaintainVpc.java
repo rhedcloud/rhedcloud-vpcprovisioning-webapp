@@ -37,13 +37,17 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElast
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 
 public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView {
 	Presenter presenter;
 	boolean editing;
 	boolean locked;
 	List<String> vpcTypes;
+	List<AWSRegionPojo> regionTypes;
 	UserAccountPojo userLoggedIn;
 	String speedTypeBeingTyped=null;
 	
@@ -75,6 +79,8 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiField DeckLayoutPanel firewallContainer;
 //	@UiField DeckLayoutPanel cidrAssignmentContainer;
 	@UiField DeckLayoutPanel elasticIpAssignmentContainer;
+	@UiField ListBox regionLB;
+	@UiField ListBox reqRegionLB;
 
 //	private boolean firstCidrWidget = true;
 	private boolean firstElasticIpWidget = true;
@@ -105,6 +111,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 					presenter.getVpc().setCidr(cidrTB.getText());
 					presenter.getVpc().setVpnConnectionProfileId(vpnProfileIdTB.getText());
 					presenter.getVpc().setPurpose(purposeTA.getText());
+					presenter.getVpc().setRegion(regionLB.getSelectedValue());
 					// admin net ids are added as they're added in the interface
 				}
 				else {
@@ -112,6 +119,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 					presenter.getVpcRequisition().setAccountOwnerUserId(vpcReqOwnerNetIdTB.getText());
 					presenter.getVpcRequisition().setSpeedType(vpcReqSpeedTypeTB.getText());
 					presenter.getVpcRequisition().setType(vpcReqTypeLB.getSelectedValue());
+					presenter.getVpcRequisition().setRegion(reqRegionLB.getSelectedValue());
 					// admin net ids are added as they're added in the interface
 				}
 				presenter.saveVpc();
@@ -453,8 +461,47 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		/*
+		<!ELEMENT VirtualPrivateCloud (
+			VpcId, 
+			AccountId, 
+			Cidr, 
+			VpnConnectionProfileId, 
+			Region, 
+			Type, 
+			Purpose, CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+		 */
+		VpcPojo vpc = presenter.getVpc();
+		if (vpc.getVpcId() == null || vpc.getVpcId().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(vpcIdTB);
+		}
+		if (vpc.getAccountId() == null || vpc.getAccountId().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(accountIdTB);
+		}
+		if (vpc.getCidr() == null || vpc.getCidr().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(cidrTB);
+		}
+		if (vpc.getVpnConnectionProfileId() == null || vpc.getVpnConnectionProfileId().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(vpnProfileIdTB);
+		}
+		if (vpc.getRegion() == null || vpc.getRegion().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(regionLB);
+		}
+		if (vpc.getType() == null || vpc.getType().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(vpcTypeLB);
+		}
+		if (vpc.getPurpose() == null || vpc.getPurpose().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(purposeTA);
+		}
+		return fields;
 	}
 
 	@Override
@@ -543,6 +590,60 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			// hide maintain grid, show generate grid
 			maintainVpcGrid.setVisible(false);
 			generateVpcGrid.setVisible(true);
+		}
+	}
+
+	@Override
+	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
+		// TODO: if region type matches current VPC, select that item (when editing)
+		this.regionTypes = regionTypes;
+//		regionLB.clear();
+//		regionLB.addItem("-- Select --");
+//		if (regionTypes != null) {
+//			for (AWSRegionPojo region : regionTypes) {
+//				regionLB.addItem(region.getCode(), region.getValue());
+//			}
+//		}
+
+		if (editing) {
+			regionLB.clear();
+			if (regionTypes != null) {
+				int i=0;
+				if (presenter.getVpc().getRegion() == null) {
+					regionLB.addItem("-- Select --");
+					i = 1;
+				}
+				
+				for (AWSRegionPojo region : regionTypes) {
+					regionLB.addItem(region.getCode(), region.getValue());
+					if (presenter.getVpc() != null) {
+						if (presenter.getVpc().getRegion() != null) {
+							if (presenter.getVpc().getRegion().equals(region.getCode())) {
+								regionLB.setSelectedIndex(i);
+							}
+						}
+					}
+					i++;
+				}
+			}
+		}
+		else {
+			reqRegionLB.clear();
+			if (regionTypes != null) {
+				int i=1;
+				reqRegionLB.addItem("-- Select --");
+				for (AWSRegionPojo region : regionTypes) {
+					regionLB.addItem(region.getCode(), region.getValue());
+					if (presenter.getVpcRequisition() != null) {
+						if (presenter.getVpcRequisition().getRegion() != null) {
+							if (presenter.getVpcRequisition().getRegion().equals(region.getCode())) {
+								reqRegionLB.setSelectedIndex(i);
+							}
+						}
+					}
+					i++;
+				}
+			}
 		}
 	}
 }

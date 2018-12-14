@@ -60,6 +60,7 @@ import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
 
 
 /**
@@ -115,6 +116,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private VpnConnectionProvisioningSummaryPojo vpncpSummary;
 	private VpnConnectionProvisioningPojo vpncp;
 	private VpnConnectionDeprovisioningPojo vpncdp;
+	private VpnConnectionRequisitionPojo vpncRequisition;
 	private FirewallExceptionAddRequestPojo fwea_request;
 	private FirewallExceptionRemoveRequestPojo fwer_request;
 	private FirewallExceptionRequestSummaryPojo fwer_summary;
@@ -340,6 +342,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfilePojo profile) {
 		eventBus.fireEventFromSource(new ActionEvent(profile), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName,
+			VpnConnectionRequisitionPojo vpnConnectionRequisition, VpnConnectionProfileAssignmentPojo assignment) {
+		eventBus.fireEventFromSource(new ActionEvent(vpnConnectionRequisition, assignment), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfileSummaryPojo profileSummary) {
@@ -655,6 +662,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.firewallExceptionAddRequest = b;
 	}
 
+	public ActionEvent(VpnConnectionRequisitionPojo vpnConnectionRequisition, VpnConnectionProfileAssignmentPojo assignment) {
+		this.vpnConnectonProfileAssignment = assignment;
+		this.vpncRequisition = vpnConnectionRequisition;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -967,5 +979,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setVpncpSummary(VpnConnectionProvisioningSummaryPojo vpncpSummary) {
 		this.vpncpSummary = vpncpSummary;
+	}
+
+	public VpnConnectionRequisitionPojo getVpncRequisition() {
+		return vpncRequisition;
+	}
+
+	public void setVpncRequisition(VpnConnectionRequisitionPojo vpncRequisition) {
+		this.vpncRequisition = vpncRequisition;
 	}
 }

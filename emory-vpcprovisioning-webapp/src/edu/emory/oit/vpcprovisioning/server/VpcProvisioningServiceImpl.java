@@ -195,6 +195,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String NETWORK_OPS_SERVICE_NAME = "NetworkOpsRequestService";
 	private static final String GENERAL_PROPERTIES = "GeneralProperties";
 	private static final String AWS_URL_PROPERTIES = "AWSUrlProperties";
+	private static final String AWS_REGION_PROPERTIES = "AWSRegionProperties";
 	private static final String ROLE_ASSIGNMENT_PROPERTIES = "RoleAssignmentProperties";
 	private static final String AWS_SERVICE_STATUS_PROPERTIES = "AwsServiceStatusProperties";
 	private static final String SITE_SERVICE_STATUS_PROPERTIES = "SiteServiceStatusProperties";
@@ -1157,6 +1158,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //            moa.addCustomerAdminNetId(p);
 //        }
 
+		moa.setRegion(pojo.getRegion());
 		moa.setCidr(pojo.getCidr());
 		moa.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
 		moa.setPurpose(pojo.getPurpose());
@@ -1176,6 +1178,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			pojo.setAccountName("Unknown");
 		}
+		pojo.setRegion(moa.getRegion());
 		pojo.setVpcId(moa.getVpcId());
 		pojo.setType(moa.getType());
 		pojo.setCidr(moa.getCidr());
@@ -1201,6 +1204,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (pojo.getAccountId() != null) {
 			moa.setAccountId(pojo.getAccountId());
 		}
+		moa.setRegion(pojo.getRegion());
 		moa.setAccountOwnerUserId(pojo.getAccountOwnerUserId());
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setType(pojo.getType());
@@ -1223,6 +1227,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			VpcRequisitionPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
 
+		pojo.setRegion(moa.getRegion());
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setAccountOwnerUserId(moa.getAccountOwnerUserId());
 		pojo.setSpeedType(moa.getFinancialAccountNumber());
@@ -10439,5 +10444,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		Collections.sort(pojos);
 		result.setResults(pojos);
 		return result;
+	}
+
+	@Override
+	public List<AWSRegionPojo> getAwsRegionItems() throws RpcException {
+		List<AWSRegionPojo> results = new java.util.ArrayList<AWSRegionPojo>();
+		try {
+			Properties regionProps = getAppConfig().getProperties(AWS_REGION_PROPERTIES);
+			Iterator<Object> keys = regionProps.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				String value = (String)regionProps.get(key);
+				AWSRegionPojo region = new AWSRegionPojo();
+				region.setCode(key);
+				region.setValue(value);
+				results.add(region);
+			}
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+
+		return results;
 	}
 }

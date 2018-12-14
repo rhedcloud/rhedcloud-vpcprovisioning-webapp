@@ -247,4 +247,5 @@ public interface VpcProvisioningServiceAsync {
 	void deleteVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 
 //	void getTkiClientS3AccessWrapper(AsyncCallback<AmazonS3AccessWrapperPojo> callback);
+	void getAwsRegionItems(AsyncCallback<List<AWSRegionPojo>> callback);
 }

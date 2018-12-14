@@ -7,6 +7,7 @@ import com.google.gwt.place.shared.Prefix;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
 
 public class MaintainVpnConnectionProvisioningPlace extends Place {
 	/**
@@ -58,6 +59,10 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 		return new MaintainVpnConnectionProvisioningPlace(profile, profileAssignment);
 	}
 
+	public static Place createMaintainVpnConnectionProvisioningPlace(VpnConnectionRequisitionPojo vpncRequisition, VpnConnectionProfileAssignmentPojo assignment) {
+		return new MaintainVpnConnectionProvisioningPlace(vpncRequisition, assignment);
+	}
+
 	/**
 	 * Get the singleton instance of the {@link AddCaseRecordPlace} used to create a new
 	 * caseRecord.
@@ -74,6 +79,7 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 	private final VpnConnectionProvisioningPojo vpncp;
 	private final VpnConnectionProfilePojo vpnConnectionProfile;
 	private final VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment;
+	private final VpnConnectionRequisitionPojo vpncRequisition;
 	private final String provisioningId;
 	public String getProvisioningId() {
 		return provisioningId;
@@ -86,28 +92,39 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
 	private MaintainVpnConnectionProvisioningPlace() {
+		this.vpncRequisition = null;
 		this.provisioningId = null;
 		this.vpncp = null;
 		this.vpnConnectionProfile = null;
 		this.vpnConnectionProfileAssignment = null;
 	}
 	private MaintainVpnConnectionProvisioningPlace(String provisioningId, VpnConnectionProvisioningPojo vpncp) {
+		this.vpncRequisition = null;
 		this.provisioningId = provisioningId;
 		this.vpncp = vpncp;
 		this.vpnConnectionProfile = null;
 		this.vpnConnectionProfileAssignment = null;
 	}
 	private MaintainVpnConnectionProvisioningPlace(VpnConnectionProfilePojo profile) {
+		this.vpncRequisition = null;
 		this.provisioningId = null;
 		this.vpncp = null;
 		this.vpnConnectionProfile = profile;
 		this.vpnConnectionProfileAssignment = null;
 	}
 	private MaintainVpnConnectionProvisioningPlace(VpnConnectionProfilePojo profile, VpnConnectionProfileAssignmentPojo profileAssignment) {
+		this.vpncRequisition = null;
 		this.provisioningId = null;
 		this.vpncp = null;
 		this.vpnConnectionProfile = profile;
 		this.vpnConnectionProfileAssignment = profileAssignment;
+	}
+	private MaintainVpnConnectionProvisioningPlace(VpnConnectionRequisitionPojo requisition, VpnConnectionProfileAssignmentPojo assignment) {
+		this.vpncRequisition = requisition;
+		this.vpnConnectionProfileAssignment = assignment;
+		this.provisioningId = null;
+		this.vpncp = null;
+		this.vpnConnectionProfile = null;
 	}
 
 	/**
@@ -123,5 +140,8 @@ public class MaintainVpnConnectionProvisioningPlace extends Place {
 	}
 	public VpnConnectionProfileAssignmentPojo getVpnConnectionProfileAssignment() {
 		return vpnConnectionProfileAssignment;
+	}
+	public VpnConnectionRequisitionPojo getVpncRequisition() {
+		return vpncRequisition;
 	}
 }

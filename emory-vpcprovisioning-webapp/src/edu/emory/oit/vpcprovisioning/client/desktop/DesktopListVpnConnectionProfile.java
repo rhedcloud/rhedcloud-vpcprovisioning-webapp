@@ -27,8 +27,9 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -46,8 +47,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
-import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
@@ -268,10 +267,11 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 							// if it's already assigned, just do a VpnConnectionProvisioning.Generate 
 							// again using that assignment.  i.e., don't create a VpnConnectionProfileAssignment
 							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m);
-							showMessageToUser("You cannot provision a VPN that has an assignment associated to it.");
-							return;
 						}
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m.getProfile());
+						else {
+							// create the assignment and then generate the provisioning request
+							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, m.getProfile());
+						}
 					}
 					else {
 						showMessageToUser("You are not authorized to perform this action.");
@@ -310,15 +310,22 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 									+ "assigned to a VPC and try again.");
 								return;
 							}
-							else {
-								showMessageToUser("This feature is not fully implemented yet.");
-								return;
-							}
+//							else {
+//								String remoteVpnIp = Window.prompt("Remote VPN IP Address", "");
+//								String presharedKey = Window.prompt("Preshared Key", "");
+//								showMessageToUser("This feature is not fully implemented yet.  "
+//									+ "Remote VPN IP: " + remoteVpnIp + "  Preshared Key: " + presharedKey);
+//								return;
+//							}
+							VpnConnectionRequisitionPojo vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
+							vpnConnectionRequisition.setProfile(m.getProfile());
+							vpnConnectionRequisition.setOwnerId(m.getAssignment().getOwnerId());
+
 							// TODO: maybe we just need to go to the VPNCP maintenance page and collect 
-							// the vpnipaddress and shared key
-//							VpnConnectionRequisitionPojo vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
-//							vpnConnectionRequisition.setProfile(m.getProfile());
-//							vpnConnectionRequisition.setOwnerId(m.getAssignment().getOwnerId());
+							// the vpnipaddress and shared key, passing the requisition
+							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_DEPROVISIONING, vpnConnectionRequisition, m.getAssignment());
+
+							// OR, we just have to collect the necessary data...
 //							// TODO: need to get this data somehow
 ////							vpnConnectionRequisition.setRemoteVpnIpAddress(remoteVpnIpAddress);
 ////							vpnConnectionRequisition.setPresharedKey(presharedKey);

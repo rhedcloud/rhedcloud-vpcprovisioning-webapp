@@ -269,6 +269,23 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		});
 		vpcListTable.addColumn(vpcIdColumn, "VPC ID");
 		
+		// VPC region column
+		Column<VpcPojo, String> regionColumn = 
+			new Column<VpcPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(VpcPojo object) {
+				return object.getRegion();
+			}
+		};
+		regionColumn.setSortable(true);
+		sortHandler.setComparator(regionColumn, new Comparator<VpcPojo>() {
+			public int compare(VpcPojo o1, VpcPojo o2) {
+				return o1.getRegion().compareTo(o2.getRegion());
+			}
+		});
+		vpcListTable.addColumn(regionColumn, "Region");
+		
 		// type
 		Column<VpcPojo, String> vpcTypeColumn = 
 			new Column<VpcPojo, String> (new TextCell()) {

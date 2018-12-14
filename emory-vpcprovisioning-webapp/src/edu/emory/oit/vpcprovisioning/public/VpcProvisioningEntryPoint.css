@@ -484,6 +484,9 @@ a:visited {
 	color: lightgrey;
 	background-color:Crimson;
 }
+.pspGridRow-rolledBack {
+  	background-color:Orange;
+}
 .productColumn {
  	border: 1px solid;
     border-radius: 5px;

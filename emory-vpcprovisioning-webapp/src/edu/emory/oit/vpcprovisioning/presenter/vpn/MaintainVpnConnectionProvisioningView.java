@@ -30,6 +30,7 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 		 * inputs.
 		 */
 		void saveVpnConnectionProvisioning();
+		void saveVpnConnectionDeprovisioning();
 		VpnConnectionProvisioningPojo getVpnConnectionProvisioning();
 		VpnConnectionRequisitionPojo getVpnConnectionRequisition();
 		VpnConnectionProfilePojo getVpnConnectionProfile();
@@ -50,6 +51,7 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 	 * @param isEditing true if editing, false if creating
 	 */
 	void setEditing(boolean isEditing);
+	void setDeprovisioning(boolean isDeprovision);
 
 	/**
 	 * Lock or unlock the UI so the user cannot enter data. The UI is locked until

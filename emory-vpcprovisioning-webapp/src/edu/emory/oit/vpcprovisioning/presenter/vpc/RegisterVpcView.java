@@ -8,6 +8,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -73,4 +74,5 @@ public interface RegisterVpcView  extends Editor<VpcPojo>, IsWidget, View {
 	void setReleaseInfo(String releaseInfoHTML);
 	void setVpcTypeItems(List<String> vpcTypes);
 	void setAccountItems(List<AccountPojo> accounts);
+	void setAwsRegionItems(List<AWSRegionPojo> regionTypes);
 }

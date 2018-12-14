@@ -66,6 +66,17 @@
 
 					<g:row>
 						<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Region:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:ListBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="regionLB" debugId="regionLB" />
+						</g:customCell>
+					</g:row>
+					
+					<g:row>
+						<g:customCell>
 							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
 						</g:customCell>
 						<g:customCell>
@@ -147,6 +158,17 @@
 								addStyleNames="{style.label}">SpeedType status</g:Label>
 						</g:customCell>
 					</g:row>
+					<g:row>
+						<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Region:</g:Label>
+						</g:customCell>
+						<g:customCell>
+							<g:ListBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="reqRegionLB" debugId="reqRegionLB" />
+						</g:customCell>
+					</g:row>
+					
 					<g:row>
 						<g:customCell>
 							<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>

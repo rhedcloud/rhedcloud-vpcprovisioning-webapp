@@ -40,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -51,6 +52,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	boolean locked;
 	List<String> complianceClassTypes;
 	List<String> vpcTypes;
+	List<AWSRegionPojo> regionTypes;
 	List<AccountPojo> accounts;
 	UserAccountPojo userLoggedIn;
 	int netIdRowNum = 0;
@@ -97,6 +99,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField(provided=true) SuggestBox adminLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField Button addAdminButton;
 	@UiField FlexTable adminTable;
+	@UiField ListBox regionLB;
 
 	@UiHandler ("vpcpReqSpeedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
@@ -177,6 +180,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				presenter.getVpcRequisition().setAccountId(accountLB.getSelectedValue());
 				presenter.getVpcRequisition().setType(vpcpReqTypeLB.getSelectedValue());
 				presenter.getVpcRequisition().setPurpose(vpcpReqPurposeTA.getText());
+				presenter.getVpcRequisition().setRegion(regionLB.getSelectedValue());
 				// customer admin net id list is already maintained as they add/remove them
 				
 				presenter.saveVpcp();
@@ -516,6 +520,10 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			this.setFieldViolations(true);
 			fields.add(vpcpReqComplianceClassLB);
 		}
+		if (vpcr.getRegion() == null || vpcr.getRegion().length() == 0) {
+			this.setFieldViolations(true);
+			fields.add(regionLB);
+		}
 		return fields;
 	}
 	@Override
@@ -527,6 +535,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		fields.add(adminLookupSB);
 		fields.add(vpcTypeLB);
 		fields.add(vpcpReqComplianceClassLB);
+		fields.add(regionLB);
 		this.resetFieldStyles(fields);
 	}
 
@@ -598,5 +607,16 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
+		this.regionTypes = regionTypes;
+		regionLB.clear();
+		regionLB.addItem("-- Select --");
+		if (regionTypes != null) {
+			for (AWSRegionPojo region : regionTypes) {
+				regionLB.addItem(region.getCode(), region.getValue());
+			}
+		}
 	}
 }

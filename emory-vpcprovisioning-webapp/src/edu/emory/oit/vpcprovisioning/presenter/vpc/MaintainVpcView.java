@@ -11,6 +11,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -82,4 +83,5 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 	void setSpeedTypeColor(String color);
 	Widget getSpeedTypeWidget();
 	void initDataEntryPanels();
+	void setAwsRegionItems(List<AWSRegionPojo> regionTypes);
 }

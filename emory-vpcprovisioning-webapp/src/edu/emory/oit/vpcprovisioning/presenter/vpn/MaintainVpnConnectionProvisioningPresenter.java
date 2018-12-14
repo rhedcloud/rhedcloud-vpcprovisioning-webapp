@@ -45,6 +45,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	 */
 	private boolean isEditing;
 	private boolean isRegen;
+	private boolean isDeprovision;
 
 	/**
 	 * For creating a new VpnConnectionProvisioning with a new profile assignemtn.
@@ -52,6 +53,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProfilePojo profile) {
 		this.isEditing = false;
 		this.isRegen = false;
+		this.isDeprovision = false;
 		this.vpncp = null;
 		this.vpnConnectionRequisition = null;
 		this.provisioningId = null;
@@ -66,6 +68,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProfilePojo profile, VpnConnectionProfileAssignmentPojo profileAssignment) {
 		this.isEditing = false;
 		this.isRegen = true;
+		this.isDeprovision = false;
 		this.vpncp = null;
 		this.vpnConnectionRequisition = null;
 		this.provisioningId = null;
@@ -76,7 +79,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	}
 
 	/**
-	 * For editing an existing VPC.
+	 * For editing an existing VPNC (n/a).
 	 */
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpcp) {
 		this.isEditing = true;
@@ -85,6 +88,24 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		this.clientFactory = clientFactory;
 		this.vpncp = vpcp;
 		this.vpnConnectionRequisition = vpcp.getRequisition();
+		getView().setPresenter(this);
+	}
+
+	/*
+	 * For de-provisioning a VPN Connection
+	 */
+	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory2,
+			VpnConnectionRequisitionPojo vpncRequisition, VpnConnectionProfileAssignmentPojo assignment) {
+
+		this.isEditing = false;
+		this.isRegen = false;
+		this.isDeprovision = true;
+		this.vpncp = null;
+		this.vpnConnectionRequisition = vpncRequisition;
+		this.provisioningId = null;
+		this.vpnConnectionProfile = vpncRequisition.getProfile();
+		this.vpnConnectionProfileAssignment = assignment;
+		this.clientFactory = clientFactory2;
 		getView().setPresenter(this);
 	}
 
@@ -101,6 +122,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
+		
 		AsyncCallback<VpcQueryResultPojo> vpc_callback = new AsyncCallback<VpcQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -118,18 +140,34 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 			}
 		};
 		// just get all VPCs.
-		// TODO: get all UNASSIGNED VPCs.  That is, all VPCs that have NOT been assigned
+		// get all UNASSIGNED VPCs.  That is, all VPCs that have NOT been assigned
 		// to a VpnConnectionProfile.  So, a new service method will be needed.
-		VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
-		filter.setExcludeVpcsAssignedToVpnConnectionProfiles(true);
-		VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
+		if (!isDeprovision) {
+			VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
+			filter.setExcludeVpcsAssignedToVpnConnectionProfiles(true);
+			VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
+		}
+		else {
+			// just set the vpc listbox to have one item that cannot be changed
+			// need to get this specific VPC
+			VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
+			filter.setVpcId(vpnConnectionRequisition.getOwnerId());
+			VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
+		}
 
 		setReleaseInfo(clientFactory);
 		
 		if (provisioningId == null) {
-			clientFactory.getShell().setSubTitle("Generate VPNCP");
-			startCreate();
-		} else {
+			if (!isDeprovision) {
+				clientFactory.getShell().setSubTitle("Generate VPNCP");
+				startCreate();
+			}
+			else {
+				clientFactory.getShell().setSubTitle("Generate VPNCDP");
+				startCreate();
+			}
+		} 
+		else {
 			clientFactory.getShell().setSubTitle("Edit VPNCP");
 			startEdit();
 		}
@@ -185,14 +223,19 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		GWT.log("Maintain vpcp: create/generate");
 		isEditing = false;
 		getView().setEditing(false);
-		vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
-		vpnConnectionRequisition.setProfile(vpnConnectionProfile);
+		if (!this.isDeprovision) {
+			getView().setDeprovisioning(false);
+			vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
+			vpnConnectionRequisition.setProfile(vpnConnectionProfile);
+		}
+		else {
+			getView().setDeprovisioning(true);
+		}
 	}
 
 	private void startEdit() {
 		GWT.log("Maintain vpcp presenter: edit.  VPC: " + getVpnConnectionProvisioning().getProvisioningId());
 		isEditing = true;
-		getView().setEditing(true);
 		// Lock the display until the vpcp is loaded.
 		getView().setLocked(true);
 		getView().setEditing(true);
@@ -442,6 +485,24 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 //				VpcProvisioningService.Util.getInstance().updateVpncp(vpcp, callback);
 			}
 		}
+	}
+
+	@Override
+	public void saveVpnConnectionDeprovisioning() {
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().resetFieldStyles();
+		}
+		
+		// generate vpn connection de-provisioning object
+		
+		// delete the assignment
 	}
 
 	@Override

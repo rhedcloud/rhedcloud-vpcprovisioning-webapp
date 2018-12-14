@@ -45,6 +45,7 @@ import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
 public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
@@ -324,6 +325,23 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		});
 		vpcpListTable.addColumn(statusColumn, "Status");
 
+		// VPC region column
+		Column<VpcpPojo, String> regionColumn = 
+			new Column<VpcpPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(VpcpPojo object) {
+				return object.getVpcRequisition().getRegion();
+			}
+		};
+		regionColumn.setSortable(true);
+		sortHandler.setComparator(regionColumn, new Comparator<VpcpPojo>() {
+			public int compare(VpcpPojo o1, VpcpPojo o2) {
+				return o1.getVpcRequisition().getRegion().compareTo(o2.getVpcRequisition().getRegion());
+			}
+		});
+		vpcpListTable.addColumn(regionColumn, "Region");
+		
 		// Provisioning result
 		Column<VpcpPojo, String> resultColumn = 
 				new Column<VpcpPojo, String> (new TextCell()) {
