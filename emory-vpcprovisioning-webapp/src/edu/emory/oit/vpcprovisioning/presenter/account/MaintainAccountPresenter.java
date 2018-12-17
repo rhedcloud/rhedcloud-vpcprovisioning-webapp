@@ -188,8 +188,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					public void onSuccess(List<String> result) {
 						getView().setEmailTypeItems(result);
 						List<String> complianceClassTypes = new java.util.ArrayList<String>();
-						complianceClassTypes.add("HIPAA");
 						complianceClassTypes.add("Standard");
+						complianceClassTypes.add("HIPAA");
 						getView().setComplianceClassItems(complianceClassTypes);
 
 						getView().initPage();
@@ -383,6 +383,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void setSpeedChartStatusForKeyOnWidget(final String key, final Widget w, final boolean confirmSpeedType) {
+		GWT.log("[setSpeedChartStatusForKeyOnWidget] validating speed type: " + key);
 		AsyncCallback<SpeedChartPojo> callback = new AsyncCallback<SpeedChartPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
@@ -403,6 +404,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				}
 				else {
 //				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
+					GWT.log("[setSpeedChartStatusForKeyOnWidget] got a speed chart.");
 					speedType = scp;
 					String deptId = scp.getDepartmentId();
 					String deptDesc = scp.getDepartmentDescription();
@@ -416,6 +418,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				    		desc + "<b>";
 					w.setTitle(statusDescString);
 					getView().setSpeedTypeStatus(statusDescHTML);
+					GWT.log("[setSpeedChartStatusForKeyOnWidget] set speed type status html.");
 					if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
 						getView().setSpeedTypeColor(Constants.COLOR_GREEN);
 						w.getElement().getStyle().setBackgroundColor(null);
@@ -451,9 +454,10 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void setSpeedChartStatusForKey(String key, Label label, boolean confirmSpeedType) {
+		GWT.log("[setSpeedChartStatusForKey] validating speed type: " + key);
 		// null check / length
 		if (key == null || key.length() != 10) {
-			label.setText("Invalid length");
+			getView().setSpeedTypeStatus("<b>Invalid length</b>");
 			getView().setSpeedTypeColor(Constants.COLOR_RED);
 			getView().setFieldViolations(true);
 			return;
@@ -465,25 +469,28 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public boolean didConfirmSpeedType() {
-		boolean confirmed = Window.confirm("Are you sure you want to use this SpeedType?  "
-				+ "NOTE:  Using an invalid SpeedType is a violoation of Emory's Terms of Use.");
-		if (confirmed) {
-			// TODO: log that the user acknowldged the speed type (on the server)
-			DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
-			String msg = "User " + this.userLoggedIn.getPublicId() + " acknowledged "
-					+ "the SpeedType " + this.account.getSpeedType() 
-					+ " for account " + this.account.getAccountId() 
-					+ " (" + this.account.getAccountName() + ") "  
-					+ "is the correct SpeedType for this account at: " + new Date();
-			this.logMessageOnServer(msg);
-			getView().showMessageToUser("Logged " + msg);
-			getView().setSpeedTypeConfirmed(true);
-			return true;
+		if (this.account != null && 
+			this.account.getSpeedType() != null && 
+			this.account.getAccountId() != null) {
+			
+			boolean confirmed = Window.confirm("Are you sure you want to use this SpeedType?  "
+					+ "NOTE:  Using an invalid SpeedType is a violoation of Emory's Terms of Use.");
+			if (confirmed) {
+				// TODO: log that the user acknowldged the speed type (on the server)
+				DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
+				String msg = "User " + this.userLoggedIn.getPublicId() + " acknowledged "
+						+ "the SpeedType " + this.account.getSpeedType() 
+						+ " for account " + this.account.getAccountId() 
+						+ " (" + this.account.getAccountName() + ") "  
+						+ "is the correct SpeedType for this account at: " + new Date();
+				this.logMessageOnServer(msg);
+				getView().showMessageToUser("Logged " + msg);
+				getView().setSpeedTypeConfirmed(true);
+				return true;
+			}
 		}
-//		else {
-//			getView().showMessageToUser("Please enter a valid SpeedType.");
-//		}
-		// user decided they didn't want to use this speed type, what now?
+		// user decided they didn't want to use this speed type, or the account hasn't been 
+		// entered yet
 		getView().setSpeedTypeConfirmed(false);
 		return false;
 	}

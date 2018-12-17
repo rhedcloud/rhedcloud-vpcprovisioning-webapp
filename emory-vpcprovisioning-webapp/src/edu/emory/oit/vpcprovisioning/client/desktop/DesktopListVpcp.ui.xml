@@ -67,7 +67,7 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
-						<c:CellTable width="100%" ui:field="vpcpListTable"  title="Existing CIDRs"/>
+						<c:CellTable width="100%" ui:field="vpcpListTable"  title="Existing VPCPs"/>
 					</g:customCell>
 				</g:row>
 				<g:row>

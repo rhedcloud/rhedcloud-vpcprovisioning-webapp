@@ -39,6 +39,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	private VpcRequisitionPojo vpcRequisition;
 	private SpeedChartPojo speedType;
 	private AccountPojo selectedAccount;
+	private String selectedSpeedType;
 	private UserAccountPojo userLoggedIn;
 	private DirectoryPersonPojo adminDirectoryPerson;
 	private DirectoryPersonPojo ownerDirectoryPerson;
@@ -450,8 +451,9 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	@Override
 	public void setSpeedChartStatusForKey(String key, Label label, boolean confirmSpeedType) {
 		// null check / length
+		this.selectedSpeedType = key;
 		if (key == null || key.length() != 10) {
-			label.setText("Invalid length");
+			getView().setSpeedTypeStatus("<b>Invalid length</b>");
 			getView().setSpeedTypeColor(Constants.COLOR_RED);
 			getView().setFieldViolations(true);
 			return;
@@ -466,12 +468,12 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 		boolean confirmed = Window.confirm("Are you sure you want to use this SpeedType?  "
 				+ "NOTE:  Using an invalid SpeedType is a violoation of Emory's Terms of Use.");
 		if (confirmed) {
-			// TODO: log that the user acknowldged the speed type (on the server)
-			this.logMessageOnServer("User " + this.userLoggedIn.getEppn() + " acknowledged "
-					+ "the SpeedType " + this.selectedAccount.getSpeedType()
-					+ "is the correct SpeedType for this account at: " + new Date());
-			getView().showMessageToUser("Logged that [user] acknowledged the SpeedType [SpeedType] "
-					+ "is the correct SpeedType for this account at [time].");
+			// log that the user acknowldged the speed type (on the server)
+			String msg = "User " + this.userLoggedIn.getPublicId() + " acknowledged "
+					+ "the SpeedType " + this.selectedSpeedType
+					+ " is the correct SpeedType for this account at: " + new Date();
+			this.logMessageOnServer(msg);
+			getView().showMessageToUser("Logged that: " + msg);
 			getView().setSpeedTypeConfirmed(true);
 			return true;
 		}

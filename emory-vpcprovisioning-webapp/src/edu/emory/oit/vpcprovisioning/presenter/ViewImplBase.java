@@ -167,8 +167,6 @@ public abstract class ViewImplBase extends Composite {
 				return false;
 			case KeyCodes.KEY_ALT:
 				return false;
-//			case KeyCodes.KEY_BACKSPACE:
-//				return false;
 			case KeyCodes.KEY_CTRL:
 				return false;
 			case KeyCodes.KEY_DELETE:
@@ -199,6 +197,7 @@ public abstract class ViewImplBase extends Composite {
 				return false;
 		}
 		
+		GWT.log("[isValidKey] KeyCode: " + keyCode + " IS valid");
 		return true;
 	}
 	public boolean hasFieldViolations() {

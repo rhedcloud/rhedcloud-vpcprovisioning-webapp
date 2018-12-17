@@ -8,10 +8,12 @@ import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -25,8 +27,8 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -281,35 +283,39 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 
 	@UiHandler ("speedTypeTB")
+	void speedTypeBlur(BlurEvent e) {
+		presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeHTML, true);
+	}
+	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
 		String acct = speedTypeTB.getText();
 		presenter.setSpeedChartStatusForKeyOnWidget(acct, speedTypeTB, false);
 	}
 	@UiHandler ("speedTypeTB")
-	void speedTypeKeyPressed(KeyPressEvent e) {
+	void speedTypeKeyDown(KeyDownEvent e) {
 		this.setSpeedTypeConfirmed(false);
-		GWT.log("SpeedType key pressed...");
-		int keyCode = e.getNativeEvent().getKeyCode();
-		char ccode = e.getCharCode();
+		int keyCode = e.getNativeKeyCode();
+		char ccode = (char)keyCode;
 
 		if (keyCode == KeyCodes.KEY_BACKSPACE) {
-			if (speedTypeBeingTyped.length() > 0) {
-				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
+			if (speedTypeBeingTyped != null) {
+				if (speedTypeBeingTyped.length() > 0) {
+					speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
+				}
+				presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
+				return;
 			}
-			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
-			return;
 		}
 		
-		if (keyCode == KeyCodes.KEY_TAB) {
-			presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeHTML, true);
-			return;
-		}
-
 		if (!isValidKey(keyCode)) {
+			GWT.log("[speedTypeKeyPressed] invalid key: " + keyCode);
 			return;
 		}
 		else {
-			speedTypeBeingTyped += ccode;
+			if (speedTypeBeingTyped == null) {
+				speedTypeBeingTyped = "";
+			}
+			speedTypeBeingTyped += String.valueOf(ccode);
 		}
 
 		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);

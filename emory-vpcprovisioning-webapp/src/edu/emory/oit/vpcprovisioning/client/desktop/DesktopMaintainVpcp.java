@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
@@ -107,29 +109,34 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		presenter.setSpeedChartStatusForKeyOnWidget(acct, vpcpReqSpeedTypeTB, false);
 	}
 	@UiHandler ("vpcpReqSpeedTypeTB")
-	void speedTypeKeyPressed(KeyPressEvent e) {
-		GWT.log("SpeedType key pressed...");
-		int keyCode = e.getNativeEvent().getKeyCode();
-		char ccode = e.getCharCode();
+	void speedTypeBlur(BlurEvent e) {
+		presenter.setSpeedChartStatusForKey(vpcpReqSpeedTypeTB.getText(), speedTypeHTML, true);
+	}
+	@UiHandler ("vpcpReqSpeedTypeTB")
+	void speedTypeKeyDown(KeyDownEvent e) {
+		this.setSpeedTypeConfirmed(false);
+		int keyCode = e.getNativeKeyCode();
+		char ccode = (char)keyCode;
 
 		if (keyCode == KeyCodes.KEY_BACKSPACE) {
-			if (speedTypeBeingTyped.length() > 0) {
-				speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
+			if (speedTypeBeingTyped != null) {
+				if (speedTypeBeingTyped.length() > 0) {
+					speedTypeBeingTyped = speedTypeBeingTyped.substring(0, speedTypeBeingTyped.length() - 1);
+				}
+				presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
+				return;
 			}
-			presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
-			return;
 		}
 		
-		if (keyCode == KeyCodes.KEY_TAB) {
-			presenter.setSpeedChartStatusForKey(vpcpReqSpeedTypeTB.getText(), speedTypeHTML, true);
-			return;
-		}
-
 		if (!isValidKey(keyCode)) {
+			GWT.log("[speedTypeKeyPressed] invalid key: " + keyCode);
 			return;
 		}
 		else {
-			speedTypeBeingTyped += ccode;
+			if (speedTypeBeingTyped == null) {
+				speedTypeBeingTyped = "";
+			}
+			speedTypeBeingTyped += String.valueOf(ccode);
 		}
 
 		presenter.setSpeedChartStatusForKey(speedTypeBeingTyped, speedTypeHTML, false);
@@ -400,6 +407,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			vpcpReqNotifyAdminsCB.setValue(false);
 			accountCP.clear();
 		}
+		presenter.setSpeedChartStatusForKey(presenter.getVpcRequisition().getSpeedType(), speedTypeHTML, false);
 	}
 
 	@Override
