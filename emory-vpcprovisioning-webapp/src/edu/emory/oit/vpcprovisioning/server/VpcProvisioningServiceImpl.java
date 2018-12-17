@@ -3790,8 +3790,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public List<String> getComplianceClassItems() throws RpcException {
 		List<String> types = new java.util.ArrayList<String>();
-		types.add("HIPAA");
 		types.add("Standard");
+		types.add("HIPAA");
 		return types;
 	}
 
@@ -10466,6 +10466,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		}
 
+		Collections.sort(results);
 		return results;
 	}
 }
