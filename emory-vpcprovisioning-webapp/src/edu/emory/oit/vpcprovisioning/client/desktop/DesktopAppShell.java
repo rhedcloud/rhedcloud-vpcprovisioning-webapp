@@ -442,10 +442,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@UiHandler ("mainTabPanel") 
 	void tabSelected(SelectionEvent<Integer> e) {
+		clientFactory.getVpcpStatusView().stopTimer();
+		clientFactory.getVpncpStatusView().stopTimer();
+		clientFactory.getStaticNatProvisioningStatusView().stopTimer();
 		switch (e.getSelectedItem()) {
 		case 0:
 			GWT.log("need to get Home Content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstHomeContentWidget = true;
 			homeContentContainer.clear();
 			HomeView view = clientFactory.getHomeView();
@@ -454,7 +456,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 1:
 			GWT.log("need to get Account Maintenance Content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstAccountContentWidget = true;
 			accountContentContainer.clear();
 			ListAccountView listAccountView = clientFactory.getListAccountView();
@@ -468,7 +469,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 2:
 			GWT.log("need to get VPC Maintentenance content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstVpcContentWidget = true;
 			vpcContentContainer.clear();
 			ListVpcView listVpcView = clientFactory.getListVpcView();
@@ -480,7 +480,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 3:
 			GWT.log("need to get VPCP Maintentenance content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstVpcpContentWidget = true;
 			vpcpContentContainer.clear();
 			ListVpcpView listVpcpView = clientFactory.getListVpcpView();
@@ -494,7 +493,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 4:
 			GWT.log("need to get Services content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstServicesContentWidget = true;
 			servicesContentContainer.clear();
 			ListServiceView listServiceView = clientFactory.getListServiceView();
@@ -506,7 +504,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 5:
 			GWT.log("need to get Central Admin Content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstCentralAdminContentWidget = true;
 			centralAdminContentContainer.clear();
 			ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
@@ -516,7 +513,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 6:
 			GWT.log("need to get Elastic IP content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstElasticIpContentWidget = true;
 			elasticIpContentContainer.clear();
 			ListElasticIpView listElasticIpView = clientFactory.getListElasticIpView();
@@ -528,7 +524,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 7:
 			GWT.log("need to get Static NAT content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstStaticNatContentWidget = true;
 			staticNatContentContainer.clear();
 			ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
@@ -540,7 +535,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 8:
 			GWT.log("need to get VPN Connection content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstVpnConnectionContentWidget = true;
 			vpnConnectionContentContainer.clear();
 			ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
@@ -552,7 +546,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			break;
 		case 9:
 			GWT.log("need to get VPN Connection Profile content.");
-			clientFactory.getVpcpStatusView().stopTimer();
 			firstVpnConnectionProfileContentWidget = true;
 			vpnConnectionProfileContentContainer.clear();
 			ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
