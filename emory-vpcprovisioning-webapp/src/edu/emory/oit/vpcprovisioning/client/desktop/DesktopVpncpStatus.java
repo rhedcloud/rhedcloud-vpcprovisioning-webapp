@@ -67,12 +67,12 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 					// need to account for vpn connection deprovision generates here too
 					// if it's from a generate BUT is a deprovision, we'll want to go to GO_HOME_VPNCP
 					// because that's where VPNs are deprovisioned from
-					if (presenter.getVpncpSummary().isProvision()) {
+//					if (presenter.getVpncpSummary().isProvision()) {
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
-					}
-					else {
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
-					}
+//					}
+//					else {
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
+//					}
 				}
 				else {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
@@ -375,27 +375,42 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 			stepsGrid.setWidget(gridRow, 7, hProps);
 		}
 
+//		if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
+//			if (psp.getStepResult() == null || 
+//				psp.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+//				
+//				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
+//			}
+//			else {
+//				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
+//			}
+//		}
+//		else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_ROLLED_BACK)) {
+//			if (psp.getStepResult() == null) {
+//				applyGridRowFormat(stepsGrid, gridRow);
+//			}
+//			else {
+//				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
+//			}
+//		}
+//		else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_PENDING)) {
+//			if (psp.getStepResult() == null) {
+//				applyGridRowFormat(stepsGrid, gridRow);
+//			}
+//			else {
+//				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
+//			}
+//		}
+//		else {
+//			applyGridRowFormat(stepsGrid, gridRow);
+//		}
+
 		if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
-			if (psp.getStepResult() == null || 
-				psp.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
-				
+			if (psp.getStepResult() == null) {
 				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
 			}
-			else {
-				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
-			}
-		}
-		else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_ROLLED_BACK)) {
-			if (psp.getStepResult() == null) {
-				applyGridRowFormat(stepsGrid, gridRow);
-			}
-			else {
-				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
-			}
-		}
-		else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_PENDING)) {
-			if (psp.getStepResult() == null) {
-				applyGridRowFormat(stepsGrid, gridRow);
+			else if (psp.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
 			}
 			else {
 				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
@@ -408,11 +423,11 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 
 	private void setProvisioningProgress() {
 		if (presenter.getVpncpSummary().isProvision()) {
-	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncp().getTotalStepCount(), presenter.getVpncp().getCompletedStepCount());
+	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncp().getTotalStepCount(), presenter.getVpncp().getSuccessfullStepCount());
 	        progressHTML.setHTML(sh);
 		}
 		else {
-	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncdp().getTotalStepCount(), presenter.getVpncdp().getCompletedStepCount());
+	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncdp().getTotalStepCount(), presenter.getVpncdp().getSuccessfullStepCount());
 	        progressHTML.setHTML(sh);
 		}
 	}

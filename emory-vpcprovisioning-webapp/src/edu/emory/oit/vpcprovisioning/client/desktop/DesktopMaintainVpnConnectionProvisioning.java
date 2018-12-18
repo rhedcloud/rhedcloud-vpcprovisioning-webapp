@@ -39,6 +39,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	boolean editing;
 	boolean locked;
 	boolean deprovision;
+	boolean reprovision;
 	UserAccountPojo userLoggedIn;
 //	private final VpcRpcSuggestOracle vpcSuggestions = new VpcRpcSuggestOracle(Constants.SUGGESTION_TYPE_VPC_ID);
 	private ListDataProvider<TunnelProfilePojo> dataProvider = new ListDataProvider<TunnelProfilePojo>();
@@ -84,30 +85,31 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	}
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		// populate requisition object, generate VPNCP
+		// populate requisition object, generate VPNCP or VPNCDP
+		if (presenter.getSelectedVpc() != null) {
+			presenter.getVpnConnectionRequisition().setOwnerId(presenter.getSelectedVpc().getVpcId());
+		}
+		else {
+			presenter.getVpnConnectionRequisition().setOwnerId(null);
+		}
+		presenter.getVpnConnectionRequisition().setRemoteVpnIpAddress(remoteVpnIpAddressTB.getText());
+		if (!this.isValidIp(presenter.getVpnConnectionRequisition().getRemoteVpnIpAddress())) {
+			showMessageToUser("Invalid Remote VPN IP address.  Please enter a valid IP address.");
+			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+		        public void execute () {
+		        	remoteVpnIpAddressTB.setFocus(true);
+		        }
+		    });
+			return;
+		}
+		presenter.getVpnConnectionRequisition().setPresharedKey(presharedKeyTA.getText());
 		if (!this.deprovision) {
-			// provision generate/update
-			if (presenter.getSelectedVpc() != null) {
-				presenter.getVpnConnectionRequisition().setOwnerId(presenter.getSelectedVpc().getVpcId());
-			}
-			else {
-				presenter.getVpnConnectionRequisition().setOwnerId(null);
-			}
-			presenter.getVpnConnectionRequisition().setRemoteVpnIpAddress(remoteVpnIpAddressTB.getText());
-			if (!this.isValidIp(presenter.getVpnConnectionRequisition().getRemoteVpnIpAddress())) {
-				showMessageToUser("Invalid Remote VPN IP address.  Please enter a valid IP address.");
-				Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-			        public void execute () {
-			        	remoteVpnIpAddressTB.setFocus(true);
-			        }
-			    });
-				return;
-			}
-			presenter.getVpnConnectionRequisition().setPresharedKey(presharedKeyTA.getText());
+			// provision generate/update (provsion or re-provision)
 			presenter.saveVpnConnectionProvisioning();
 		}
 		else {
 			// do a de-provision generate
+			presenter.saveVpnConnectionDeprovisioning();
 		}
 	}
 	
@@ -144,12 +146,12 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void applyNetworkAdminMask() {
-		if (!this.deprovision) {
-			vpcLB.setEnabled(true);
+		if (deprovision || reprovision) {
+			// if this is a de-provision or a re-provision, the VPC id can't be changed
+			vpcLB.setEnabled(false);
 		}
 		else {
-			// if this is a de-provision, the VPC id can't be changed
-			vpcLB.setEnabled(false);
+			vpcLB.setEnabled(true);
 		}
 		remoteVpnIpAddressTB.setEnabled(true);
 		presharedKeyTA.setEnabled(true);
@@ -188,7 +190,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	@Override
 	public List<Widget> getMissingRequiredFields() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		VpnConnectionRequisitionPojo req = presenter.getVpnConnectionRequisition(); 
+		VpnConnectionRequisitionPojo req = presenter.getVpnConnectionRequisition();
 		if (req.getOwnerId() == null || req.getOwnerId().length() == 0) {
 			fields.add(vpcLB);
 		}
@@ -499,15 +501,8 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		this.vpcItems = vpcs;
 		
 		vpcLB.clear();
-		if (!this.deprovision) {
-			vpcLB.addItem("-- Select --", "");
-			if (vpcItems != null) {
-				for (VpcPojo vpc : vpcItems) {
-					vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());
-				}
-			}
-		}
-		else {
+		if (deprovision || reprovision) {
+			// de-provision OR re-provision
 			if (vpcItems != null) {
 				for (VpcPojo vpc : vpcItems) {
 					vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());
@@ -516,9 +511,21 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 				vpcLB.setEnabled(false);
 			}
 		}
+		else {
+			vpcLB.addItem("-- Select --", "");
+			if (vpcItems != null) {
+				for (VpcPojo vpc : vpcItems) {
+					vpcLB.addItem(vpc.getVpcId() + " - " + vpc.getAccountName());
+				}
+			}
+		}
 	}
 	@Override
 	public void setDeprovisioning(boolean isDeprovision) {
 		this.deprovision = isDeprovision;
+	}
+	@Override
+	public void setReprovisioning(boolean isReprovision) {
+		this.reprovision = isReprovision;
 	}
 }

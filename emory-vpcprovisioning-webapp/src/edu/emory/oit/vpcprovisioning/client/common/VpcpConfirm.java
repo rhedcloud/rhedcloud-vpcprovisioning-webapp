@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.presenter.PresentsConfirmation;
+import edu.emory.oit.vpcprovisioning.ui.client.PresentsConfirmation;
 
 public class VpcpConfirm extends DialogBox {
 

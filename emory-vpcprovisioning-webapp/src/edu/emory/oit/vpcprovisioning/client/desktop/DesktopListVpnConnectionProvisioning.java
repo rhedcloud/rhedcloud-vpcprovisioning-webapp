@@ -151,7 +151,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(2, 1);
+		Grid grid = new Grid(1, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -175,34 +175,34 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 		});
 		grid.setWidget(0, 0, assignAnchor);
 
-		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
-		deprovisionAnchor.addStyleName("productAnchor");
-		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deprovisionAnchor.setTitle("De-Provision selected VPN Connection");
-		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
-		deprovisionAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				VpnConnectionProvisioningSummaryPojo m = selectionModel.getSelectedObject();
-				if (m != null) {
-					if (userLoggedIn.isNetworkAdmin()) {
-						if (!m.isProvision()) {
-							showMessageToUser("You cannot de-provision a VPN that is NOT in a provisioned status.");
-							return;
-						}
-						presenter.deprovisionVpnConnection(m.getProvisioning());
-					}
-					else {
-						showMessageToUser("You are not authorized to perform this action.");
-					}
-				} 
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
-			}
-		});
-		grid.setWidget(1, 0, deprovisionAnchor);
+//		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
+//		deprovisionAnchor.addStyleName("productAnchor");
+//		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		deprovisionAnchor.setTitle("De-Provision selected VPN Connection");
+//		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
+//		deprovisionAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				VpnConnectionProvisioningSummaryPojo m = selectionModel.getSelectedObject();
+//				if (m != null) {
+//					if (userLoggedIn.isNetworkAdmin()) {
+//						if (!m.isProvision()) {
+//							showMessageToUser("You cannot de-provision a VPN that is NOT in a provisioned status.");
+//							return;
+//						}
+//						presenter.deprovisionVpnConnection(m.getProvisioning());
+//					}
+//					else {
+//						showMessageToUser("You are not authorized to perform this action.");
+//					}
+//				} 
+//				else {
+//					showMessageToUser("Please select an item from the list");
+//				}
+//			}
+//		});
+//		grid.setWidget(1, 0, deprovisionAnchor);
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 

@@ -172,13 +172,8 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		okayButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-//				if (fismaCB.getValue() || pciCB.getValue()) {
-//					showMessageToUser("Please contact LITS Security.");
-//					return;
-//				}
 				// populate vpcrequisition that will be used as seed data
 				// for the vpcp.generate
-//				presenter.getVpcRequisition().setTicketId(vpcpReqTicketIdTB.getText());
 				presenter.getVpcRequisition().setAuthenticatedRequestorUserId(presenter.getRequestorDirectoryPerson().getKey());
 				presenter.getVpcRequisition().setAccountOwnerUserId(presenter.getOwnerDirectoryPerson().getKey());
 				presenter.getVpcRequisition().setSpeedType(vpcpReqSpeedTypeTB.getText());

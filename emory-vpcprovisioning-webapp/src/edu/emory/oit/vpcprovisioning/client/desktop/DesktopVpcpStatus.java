@@ -303,7 +303,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	}
 
 	private void setVpcpProgress() {
-        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpcp().getTotalStepCount(), presenter.getVpcp().getCompletedStepCount());
+        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpcp().getTotalStepCount(), presenter.getVpcp().getSuccessfullStepCount());
         progressHTML.setHTML(sh);
 	}
 

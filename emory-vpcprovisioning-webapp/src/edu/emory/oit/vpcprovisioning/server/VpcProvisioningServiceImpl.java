@@ -147,6 +147,7 @@ import edu.emory.moa.jmsobjects.network.v1_0.ElasticIp;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatProvisioning;
+import edu.emory.moa.jmsobjects.network.v1_0.VpnConnection;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
@@ -154,24 +155,31 @@ import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProvisioning;
 import edu.emory.moa.objects.resources.v1_0.AssociatedCidr;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.CryptoIpsecProfile;
+import edu.emory.moa.objects.resources.v1_0.CryptoIpsecTransformSet;
+import edu.emory.moa.objects.resources.v1_0.CryptoIsakmpProfile;
+import edu.emory.moa.objects.resources.v1_0.CryptoKeyring;
 import edu.emory.moa.objects.resources.v1_0.DirectoryPersonQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.ElasticIpAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.ElasticIpQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.ElasticIpRequisition;
 import edu.emory.moa.objects.resources.v1_0.Email;
 import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
+import edu.emory.moa.objects.resources.v1_0.LocalAddress;
 import edu.emory.moa.objects.resources.v1_0.Property;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v1_0.StaticNatDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.StaticNatProvisioningQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.TunnelInterface;
 import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProvisioningQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.VpnConnectionQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
 import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
@@ -8865,8 +8873,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// check the cache for cached VpnConnectionProfiles (by current session id)
 		// if they've already been cached, just get them from there
 		// and pull back any assignments for those
-		List<VpnConnectionProfilePojo> cached_profiles = (List<VpnConnectionProfilePojo>) Cache.getCache().get(
-				Constants.VPN_CONNECTION_PROFILES + getCurrentSessionId());
+//		List<VpnConnectionProfilePojo> cached_profiles = (List<VpnConnectionProfilePojo>) Cache.getCache().get(
+//				Constants.VPN_CONNECTION_PROFILES + getCurrentSessionId());
+		List<VpnConnectionProfilePojo> cached_profiles = new java.util.ArrayList<VpnConnectionProfilePojo>();
 		if (cached_profiles != null && cached_profiles.size() > 0) {
 			info("[getVpnConnectionProfilesForFilter] using cached VpnConnectionProfile objects");
 			for (VpnConnectionProfilePojo profile : cached_profiles) {
@@ -8939,7 +8948,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			// cache the profiles for later since they don't change often
 			// they'll be cached for this session only
-			Cache.getCache().put(Constants.VPN_CONNECTION_PROFILES + getCurrentSessionId(), profiles_to_cache);
+//			Cache.getCache().put(Constants.VPN_CONNECTION_PROFILES + getCurrentSessionId(), profiles_to_cache);
 
 			Collections.sort(summaries);
 			result.setResults(summaries);
@@ -10468,5 +10477,209 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		Collections.sort(results);
 		return results;
+	}
+
+	@Override
+	public VpnConnectionQueryResultPojo getVpnConnectionsForFilter(VpnConnectionQueryFilterPojo filter)
+			throws RpcException {
+
+		VpnConnectionQueryResultPojo result = new VpnConnectionQueryResultPojo();		
+		List<VpnConnectionPojo> pojos = new java.util.ArrayList<VpnConnectionPojo>();
+		try {
+			VpnConnectionQuerySpecification queryObject = (VpnConnectionQuerySpecification) getObject(Constants.MOA_VPN_CONNECTION_QUERY_SPEC);
+			VpnConnection actionable = (VpnConnection) getObject(Constants.MOA_VPN_CONNECTION);
+
+			if (filter != null) {
+				queryObject.setVpnId(filter.getVpnId());
+				queryObject.setVpcId(filter.getVpcId());
+				info("[getVpnConnectionsForFilter] getting items for filter: " + queryObject.toXmlString());
+			}
+			else {
+				info("[getVpnConnectionsForFilter] no filter passed in.  Getting all StaticNat Provisioning objects");
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getVpnConnectionsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = generalProps.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getNetworkOpsRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
+			@SuppressWarnings("unchecked")
+			List<VpnConnection> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getVpnConnectionsForFilter] got " + moas.size() + " VPN Connection objects back from the server.");
+			for (VpnConnection moa : moas) {
+				VpnConnectionPojo pojo = new VpnConnectionPojo();
+				this.populateVpnConnectionPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateVpnConnectionPojo(VpnConnection moa, VpnConnectionPojo pojo) {
+		/*
+		<!ELEMENT VpnConnection (
+			VpnId, 
+			VpcId, 
+			CryptoKeyring, 
+			CryptoIsakmpProfile, 
+			CryptoIpsecTransformSet, 
+			CryptoIpsecProfile, 
+			TunnelInterface+)>
+		 */
+
+		pojo.setVpnId(moa.getVpnId());
+		pojo.setVpcId(moa.getVpcId());
+		CryptoKeyringPojo ck = new CryptoKeyringPojo();
+		populateCryptoKeyringPojo(moa.getCryptoKeyring(), ck);
+		pojo.setCryptoKeyring(ck);
+		
+		CryptoIsakmpProfilePojo cip = new CryptoIsakmpProfilePojo();
+		populateCryptoIsakmpProfilePojo(moa.getCryptoIsakmpProfile(), cip);
+		pojo.setCryptoIsakmpProfile(cip);
+		
+		CryptoIpsecTransformSetPojo cit = new CryptoIpsecTransformSetPojo();
+		populateCryptoIpsecTransformSetPojo(moa.getCryptoIpsecTransformSet(), cit);
+		pojo.setCryptoIpsedTransformSet(cit);
+		
+		CryptoIpsecProfilePojo cipsec = new CryptoIpsecProfilePojo();
+		poplateCryptoIpsecProfilePojo(moa.getCryptoIpsecProfile(), cipsec);
+		pojo.setCryptoIpsecProfile(cipsec);
+
+		// tunnel interfaces
+		List<TunnelInterfacePojo> tiList = new java.util.ArrayList<TunnelInterfacePojo>();
+		for (TunnelInterface ti_moa : (List<TunnelInterface>) moa.getTunnelInterface()) {
+			TunnelInterfacePojo ti_pojo = new TunnelInterfacePojo();
+			this.populateTunnelInterfacePojo(ti_moa, ti_pojo);
+			tiList.add(ti_pojo);
+		}
+		pojo.setTunnelInterfaces(tiList);
+	}
+	
+	private void populateTunnelInterfacePojo(TunnelInterface moa, TunnelInterfacePojo pojo) {
+		pojo.setAdministrativeState(moa.getAdministrativeState());
+		
+		if (moa.getBgpPrefixes() != null) {
+			BgpPrefixesPojo bgpp = new BgpPrefixesPojo();
+			bgpp.setSent(moa.getBgpPrefixes().getSent());
+			bgpp.setReceived(moa.getBgpPrefixes().getReceived());
+			pojo.setBgpPrefixes(bgpp);
+		}
+
+		if (moa.getBgpState() != null) {
+			BgpStatePojo bgpState = new BgpStatePojo();
+			bgpState.setNeighborId(moa.getBgpState().getNeighborId());
+			bgpState.setStatus(moa.getBgpState().getStatus());
+			bgpState.setUptime(moa.getBgpState().getUptime());
+			pojo.setBgpState(bgpState);
+		}
+		
+		CryptoIpsecProfilePojo cipsec = new CryptoIpsecProfilePojo();
+		poplateCryptoIpsecProfilePojo(moa.getCryptoIpsecProfile(), cipsec);
+		pojo.setCryptoIpsecProfile(cipsec);
+		
+		pojo.setDescription(moa.getDescription());
+		pojo.setIpAddress(moa.getIpAddress());
+		pojo.setName(moa.getName());
+		pojo.setOperationalStatus(moa.getOperationalStatus());
+		pojo.setTcpMaximumSegmentSize(moa.getTcpMaximumSegmentSize());
+		pojo.setTunnelDestination(moa.getTunnelDestination());
+		pojo.setTunnelMode(moa.getTunnelMode());
+		pojo.setTunnelSource(moa.getTunnelSource());
+		pojo.setVirtualRouteForwarding(moa.getVirtualRouteForwarding());
+		
+	}
+	
+	private void poplateCryptoIpsecProfilePojo(CryptoIpsecProfile moa, CryptoIpsecProfilePojo pojo) {
+		if (moa == null) {
+			return;
+		}
+		CryptoIpsecTransformSetPojo cit = new CryptoIpsecTransformSetPojo();
+		populateCryptoIpsecTransformSetPojo(moa.getCryptoIpsecTransformSet(), cit);
+		pojo.setCryptoIpsecTransformSet(cit);
+		
+		pojo.setDescription(moa.getDescription());
+		pojo.setName(moa.getName());
+		pojo.setPerfectForwardSecrecy(moa.getPerfectForwardSecrecy());
+	}
+	
+	private void populateCryptoIpsecTransformSetPojo(CryptoIpsecTransformSet moa, CryptoIpsecTransformSetPojo pojo) {
+		if (moa == null) {
+			return;
+		}
+		pojo.setBits(moa.getBits());
+		pojo.setCipher(moa.getCipher());
+		pojo.setMode(moa.getMode());
+		pojo.setName(moa.getName());
+	}
+	
+	private void populateCryptoIsakmpProfilePojo(CryptoIsakmpProfile moa, CryptoIsakmpProfilePojo pojo) {
+		if (moa == null) {
+			return;
+		}
+		CryptoKeyringPojo ck = new CryptoKeyringPojo();
+		populateCryptoKeyringPojo(moa.getCryptoKeyring(), ck);
+		pojo.setCryptoKeyring(ck);
+		pojo.setDescription(moa.getDescription());
+		if (moa.getLocalAddress() != null) {
+			LocalAddressPojo la = new LocalAddressPojo();
+			populateLocalAddressPojo(moa.getLocalAddress(), la);
+			pojo.setLocalAddress(la);
+		}
+		pojo.setName(moa.getName());
+		pojo.setVirtualRouteForwarding(moa.getVirtualRouteForwarding());
+	}
+	
+	private void populateCryptoKeyringPojo(CryptoKeyring moa, CryptoKeyringPojo pojo) {
+		if (moa == null) {
+			return;
+		}
+		pojo.setDescription(moa.getDescription());
+		if (moa.getLocalAddress() != null) {
+			LocalAddressPojo la = new LocalAddressPojo();
+			populateLocalAddressPojo(moa.getLocalAddress(), la);
+			pojo.setLocalAddress(la);
+		}
+		pojo.setName(moa.getName());
+		pojo.setPresharedKey(moa.getPresharedKey());
+	}
+	
+	private void populateLocalAddressPojo(LocalAddress moa, LocalAddressPojo pojo) {
+		pojo.setIpAddress(moa.getIpAddress());
+		pojo.setVirualRouteForwarding(moa.getVirtualRouteForwarding());
 	}
 }

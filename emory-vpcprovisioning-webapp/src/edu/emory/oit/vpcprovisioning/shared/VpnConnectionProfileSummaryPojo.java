@@ -1,7 +1,5 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
-import java.util.Date;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -9,6 +7,7 @@ import com.google.gwt.view.client.ProvidesKey;
 public class VpnConnectionProfileSummaryPojo extends SharedObject implements IsSerializable, Comparable<VpnConnectionProfileSummaryPojo> {
 	VpnConnectionProfilePojo profile;
 	VpnConnectionProfileAssignmentPojo assignment;
+	boolean fromProfilePage=false;
 	
 	public static final ProvidesKey<VpnConnectionProfileSummaryPojo> KEY_PROVIDER = new ProvidesKey<VpnConnectionProfileSummaryPojo>() {
 		@Override
@@ -78,6 +77,14 @@ public class VpnConnectionProfileSummaryPojo extends SharedObject implements IsS
 //			return c1.compareTo(c2);
 //		}
 		return 0;
+	}
+
+	public boolean isFromProfilePage() {
+		return fromProfilePage;
+	}
+
+	public void setFromProfilePage(boolean fromProfilePage) {
+		this.fromProfilePage = fromProfilePage;
 	}
 
 }

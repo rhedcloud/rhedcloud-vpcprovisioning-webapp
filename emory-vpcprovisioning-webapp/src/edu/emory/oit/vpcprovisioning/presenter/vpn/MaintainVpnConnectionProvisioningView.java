@@ -13,13 +13,13 @@ import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
+import edu.emory.oit.vpcprovisioning.ui.client.PresentsConfirmation;
 
 public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnectionProvisioningPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends PresentsConfirmation {
 		/**
 		 * Delete the current VpnConnectionProvisioning or cancel the creation of a VpnConnectionProvisioning.
 		 */
@@ -34,6 +34,7 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 		VpnConnectionProvisioningPojo getVpnConnectionProvisioning();
 		VpnConnectionRequisitionPojo getVpnConnectionRequisition();
 		VpnConnectionProfilePojo getVpnConnectionProfile();
+		public void setVpnConnectionRequisition(VpnConnectionRequisitionPojo requisition);
 		public boolean isValidVpnConnectionProvisioningId(String value);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
@@ -52,6 +53,7 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 	 */
 	void setEditing(boolean isEditing);
 	void setDeprovisioning(boolean isDeprovision);
+	void setReprovisioning(boolean isReprovision);
 
 	/**
 	 * Lock or unlock the UI so the user cannot enter data. The UI is locked until

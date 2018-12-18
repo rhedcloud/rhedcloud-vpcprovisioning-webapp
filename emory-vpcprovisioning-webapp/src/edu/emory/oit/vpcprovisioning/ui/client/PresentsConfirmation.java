@@ -1,6 +1,4 @@
-package edu.emory.oit.vpcprovisioning.presenter;
-
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
+package edu.emory.oit.vpcprovisioning.ui.client;
 
 public interface PresentsConfirmation extends PresentsWidgets {
 	void vpcpConfirmOkay();

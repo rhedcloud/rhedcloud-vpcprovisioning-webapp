@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.client.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.ResettableEventBus;
 
@@ -63,16 +64,19 @@ public class MaintainVpnConnectionProvisioningActivity extends AbstractActivity 
 		});
 
 		if (place.getProvisioningId() == null) {
-			if (place.getVpnConnectionProfileAssignment() != null) {
+			if (place.getVpnConnectionProfileAssignment() != null && place.getVpncRequisition() == null) {
 				// re-use existing assignment (provision)
+				GWT.log("[MaintainVpnConnectionProvisioningActivity] PROVISION (re-use assignment)");
 				presenter = startCreate(place.getVpnConnectionProfile(), place.getVpnConnectionProfileAssignment());
 			}
-			else if (place.getVpnConnectionProfile() != null) {
+			else if (place.getVpnConnectionProfile() != null && place.getVpncRequisition() == null) {
 				// create new assignment (provision)
+				GWT.log("[MaintainVpnConnectionProvisioningActivity] PROVISION (create new assignment)");
 				presenter = startCreate(place.getVpnConnectionProfile());
 			}
 			else if (place.getVpncRequisition() != null) {
 				// de-provision
+				GWT.log("[MaintainVpnConnectionProvisioningActivity] DE-PROVISION");
 				presenter = startCreate(place.getVpncRequisition(), place.getVpnConnectionProfileAssignment());
 			}
 		} else {

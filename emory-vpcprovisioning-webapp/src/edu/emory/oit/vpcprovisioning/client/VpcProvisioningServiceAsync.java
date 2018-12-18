@@ -237,6 +237,7 @@ public interface VpcProvisioningServiceAsync {
 	void updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<VpnConnectionProfilePojo> callback);
 	void deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile, AsyncCallback<VpnConnectionProfilePojo> callback);
 	void getVpnConnectionProfileAssignmentsForFilter(VpnConnectionProfileAssignmentQueryFilterPojo filter, AsyncCallback<VpnConnectionProfileAssignmentQueryResultPojo> callback);
+	void getVpnConnectionsForFilter(VpnConnectionQueryFilterPojo filter, AsyncCallback<VpnConnectionQueryResultPojo> callback);
 
 	// vpncp
 	void getVpncpSummariesForFilter(VpnConnectionProvisioningQueryFilterPojo filter, AsyncCallback<VpnConnectionProvisioningQueryResultPojo> callback);

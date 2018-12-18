@@ -22,8 +22,20 @@ public class VpnConnectionProvisioningPojo extends SharedObject implements IsSer
 		return provisioningSteps.size();
 	}
 	
+	public int getSuccessfullStepCount() {
+		// if result is 'success' increment counter
+		int successfulStepCount = 0;
+		for (ProvisioningStepPojo step : provisioningSteps) {
+			if (step.getStepResult() != null) {
+				if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+					successfulStepCount++;
+				}
+			}
+		}
+		return successfulStepCount;
+	}
 	public int getCompletedStepCount() {
-		// if status is 'complete' and stepResult is 'success' increment counter
+		// if status is 'complete' increment counter
 		int completeStepCount = 0;
 		for (ProvisioningStepPojo step : provisioningSteps) {
 			if (step.getStatus() != null) {

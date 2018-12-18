@@ -6,7 +6,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
-import edu.emory.oit.vpcprovisioning.presenter.PresentsConfirmation;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryQueryFilterPojo;
@@ -16,6 +15,7 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.ui.client.PresentsConfirmation;
 
 public interface ListFirewallRuleView extends IsWidget, View {
 	/**
