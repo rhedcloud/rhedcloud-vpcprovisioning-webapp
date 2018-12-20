@@ -249,4 +249,6 @@ public interface VpcProvisioningServiceAsync {
 
 //	void getTkiClientS3AccessWrapper(AsyncCallback<AmazonS3AccessWrapperPojo> callback);
 	void getAwsRegionItems(AsyncCallback<List<AWSRegionPojo>> callback);
+
+	void getCurrentSystemTime(AsyncCallback<Long> callback);
 }

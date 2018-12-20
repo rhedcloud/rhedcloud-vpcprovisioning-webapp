@@ -274,4 +274,6 @@ public interface VpcProvisioningService extends RemoteService {
 	// TKI Client Download
 //	AmazonS3AccessWrapperPojo getTkiClientS3AccessWrapper() throws RpcException;
 	List<AWSRegionPojo> getAwsRegionItems();
+	
+	long getCurrentSystemTime();
 }

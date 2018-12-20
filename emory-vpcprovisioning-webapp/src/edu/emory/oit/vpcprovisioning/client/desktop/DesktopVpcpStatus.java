@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -320,25 +321,31 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 							}
 						}
 						if (startTime != 0) {
+							NumberFormat df2 = NumberFormat.getFormat("000.00");
 							GWT.log("Start time formated: " + new java.util.Date(startTime));
 							String s_anticipatedTime = psp.getAnticipatedTime();
-							long anticipatedTime = Long.parseLong(s_anticipatedTime);
-							long currentTime = System.currentTimeMillis();
-							GWT.log("Current time formated: " + new java.util.Date(currentTime));
-							long elapsedTime = currentTime - startTime;
+							double anticipatedTime = Double.parseDouble(s_anticipatedTime);
+							double currentTime = System.currentTimeMillis();
+							GWT.log("Current time formated: " + new java.util.Date((long)currentTime));
+							double elapsedTime = currentTime - startTime;
 							StringBuffer s_elapsedHtml = new StringBuffer();
 							s_elapsedHtml.append("Elapsed time: " + elapsedTime + "</br>");
-							long pctComplete = (elapsedTime / anticipatedTime) * 100;
+							double raw = (elapsedTime / anticipatedTime);
+							double pctComplete = new Double(df2.format(raw)).doubleValue() * 100;
+							GWT.log("PCT Complete: " + pctComplete);
 							if (pctComplete > 100) {
-								s_elapsedHtml.append("% Complete:   Overdue");
+								s_elapsedHtml.append("Overdue");
 							}
 							else {
-								s_elapsedHtml.append("% Complete:   " + pctComplete);
+								s_elapsedHtml.append("%" + pctComplete);
 							}
 							HTML hElapsedTime = new HTML(s_elapsedHtml.toString());
 							stepsGrid.setWidget(gridRow, 6, hElapsedTime);
 						}
 					}
+				}
+				else {
+					GWT.log("Step is in progress but actual time is greater than zero so this is weird.");
 				}
 			}
 			else {

@@ -166,6 +166,7 @@ import edu.emory.moa.objects.resources.v1_0.ElasticIpRequisition;
 import edu.emory.moa.objects.resources.v1_0.Email;
 import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
 import edu.emory.moa.objects.resources.v1_0.LocalAddress;
+import edu.emory.moa.objects.resources.v1_0.MatchIdentity;
 import edu.emory.moa.objects.resources.v1_0.Property;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
@@ -10660,10 +10661,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			populateLocalAddressPojo(moa.getLocalAddress(), la);
 			pojo.setLocalAddress(la);
 		}
+		if (moa.getMatchIdentity() != null) {
+			MatchIdentityPojo mi = new MatchIdentityPojo();
+			populateMatchIdentityPojo(moa.getMatchIdentity(), mi);
+			pojo.setMatchIdentity(mi);
+		}
 		pojo.setName(moa.getName());
 		pojo.setVirtualRouteForwarding(moa.getVirtualRouteForwarding());
 	}
 	
+	private void populateMatchIdentityPojo(MatchIdentity moa, MatchIdentityPojo pojo) {
+		pojo.setIpAddress(moa.getIpAddress());
+		pojo.setNetMask(moa.getNetmask());
+		pojo.setVirtualRouteForwarding(moa.getVirtualRouteForwarding());
+	}
+
 	private void populateCryptoKeyringPojo(CryptoKeyring moa, CryptoKeyringPojo pojo) {
 		if (moa == null) {
 			return;
@@ -10681,5 +10693,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private void populateLocalAddressPojo(LocalAddress moa, LocalAddressPojo pojo) {
 		pojo.setIpAddress(moa.getIpAddress());
 		pojo.setVirualRouteForwarding(moa.getVirtualRouteForwarding());
+	}
+
+	@Override
+	public long getCurrentSystemTime() {
+		return System.currentTimeMillis();
 	}
 }

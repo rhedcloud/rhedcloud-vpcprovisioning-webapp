@@ -718,7 +718,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		TreeItem ti_cryptoKeyringLocalAddress = ti_cryptoKeyring.addTextItem("Local Address");
 		ti_cryptoKeyringLocalAddress.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoKeyring().getLocalAddress().getIpAddress()));
 		ti_cryptoKeyringLocalAddress.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoKeyring().getLocalAddress().getVirualRouteForwarding()));
-		ti_cryptoKeyring.addItem(new HTML("<b>Preshared key:  </b>" + vc.getCryptoKeyring().getPresharedKey()));
+		ti_cryptoKeyring.addItem(new HTML("<b>Preshared key:  </b>" + "***********"));
 		ti_cryptoKeyring.addTextItem("");
 		
 		// Crypto ISAKMP Profile
@@ -732,27 +732,27 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		ti_cryptoIsakmpProfileCryptoKeyring.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getDescription()));
 		
 		TreeItem ti_cryptoIsakmpProfileCryptoKeyringLocalAddress = ti_cryptoIsakmpProfileCryptoKeyring.addTextItem("Local Address");
-		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addTextItem("IP Address");
-		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addTextItem("Virtual Route forwarding");
-		ti_cryptoIsakmpProfileCryptoKeyring.addTextItem("Preshared key");
+		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getLocalAddress().getIpAddress()));
+		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getLocalAddress().getVirualRouteForwarding()));
+		ti_cryptoIsakmpProfileCryptoKeyring.addItem(new HTML("<b>Preshared key:  </b>" + "***********"));
 
 		TreeItem ti_cryptoIsakmpProfileMatchIdentity = ti_cryptoIsakmpProfile.addTextItem("Match Identity");
-		ti_cryptoIsakmpProfileMatchIdentity.addTextItem("IP Address");
-		ti_cryptoIsakmpProfileMatchIdentity.addTextItem("Net Mask");
-		ti_cryptoIsakmpProfileMatchIdentity.addTextItem("Virtual Route forwarding");
+		ti_cryptoIsakmpProfileMatchIdentity.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoIsakmpProfile().getMatchIdentity().getIpAddress()));
+		ti_cryptoIsakmpProfileMatchIdentity.addItem(new HTML("<b>Net Mask:  </b>" + vc.getCryptoIsakmpProfile().getMatchIdentity().getNetMask()));
+		ti_cryptoIsakmpProfileMatchIdentity.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoIsakmpProfile().getMatchIdentity().getVirtualRouteForwarding()));
 
 		TreeItem ti_cryptoIsakmpProfileLocalAddress = ti_cryptoIsakmpProfile.addTextItem("Local Address");
-		ti_cryptoIsakmpProfileLocalAddress.addTextItem("IP Address");
-		ti_cryptoIsakmpProfileLocalAddress.addTextItem("Virtual Route forwarding");
+		ti_cryptoIsakmpProfileLocalAddress.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoIsakmpProfile().getLocalAddress().getIpAddress()));
+		ti_cryptoIsakmpProfileLocalAddress.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoIsakmpProfile().getLocalAddress().getVirualRouteForwarding()));
 
 		ti_cryptoIsakmpProfile.addTextItem("");
 
 		// IPSEC transform set
 		TreeItem ti_cryptoIpsecTransformSet = vpn_tree.addTextItem("Crypto IPSEC Transform Set");
-		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet name");
-		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet cipher");
-		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet bits");
-		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet mode");
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIpsedTransformSet().getName()));
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Cipher:  </b>" + vc.getCryptoIpsedTransformSet().getCipher()));
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Bits:  </b>" + vc.getCryptoIpsedTransformSet().getBits()));
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Mode:  </b>" + vc.getCryptoIpsedTransformSet().getMode()));
 		ti_cryptoIpsecTransformSet.addTextItem("");
 
 		// IPSEC profile
