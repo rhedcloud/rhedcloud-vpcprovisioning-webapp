@@ -18,13 +18,21 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
@@ -38,9 +46,10 @@ import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresente
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
+import edu.emory.oit.vpcprovisioning.shared.TunnelInterfacePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionPojo;
 
 public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView {
 	Presenter presenter;
@@ -50,6 +59,8 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	List<AWSRegionPojo> regionTypes;
 	UserAccountPojo userLoggedIn;
 	String speedTypeBeingTyped=null;
+	Tree vpn_tree;
+	PopupPanel vpnPleaseWaitDialog;
 	
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button okayButton;
@@ -82,6 +93,12 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiField ListBox regionLB;
 	@UiField ListBox reqRegionLB;
 
+	@UiField PushButton expandButton;
+	@UiField PushButton collapseButton;
+	@UiField PushButton refreshButton;
+	@UiField VerticalPanel vpnInfoOuterPanel;
+	@UiField ScrollPanel vpnInfoPanel;
+
 //	private boolean firstCidrWidget = true;
 	private boolean firstElasticIpWidget = true;
 	private boolean firstFirewallWidget = true;
@@ -93,6 +110,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	public DesktopMaintainVpc() {
 		initWidget(uiBinder.createAndBindUi(this));
+		setRefreshButtonImage(refreshButton);
 		GWT.log("maintain VPC view init...");
 		cancelButton.addDomHandler(new ClickHandler() {
 			@Override
@@ -125,6 +143,36 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 				presenter.saveVpc();
 			}
 		}, ClickEvent.getType());
+	}
+
+	@UiHandler("expandButton")
+	void expandButtonClicked(ClickEvent e) {
+		if (vpn_tree == null) {
+			return;
+		}
+		int ti_count = vpn_tree.getItemCount();
+		for (int i=0; i<ti_count; i++) {
+			TreeItem ti = vpn_tree.getItem(i);
+			ti.setState(true, false);
+		}
+	}
+
+	@UiHandler("collapseButton")
+	void collapseButtonClicked(ClickEvent e) {
+		if (vpn_tree == null) {
+			return;
+		}
+		int ti_count = vpn_tree.getItemCount();
+		for (int i=0; i<ti_count; i++) {
+			TreeItem ti = vpn_tree.getItem(i);
+			ti.setState(false, false);
+		}
+	}
+
+	@UiHandler("refreshButton")
+	void refreshButtonClicked(ClickEvent e) {
+		vpnInfoPanel.setWidget(new HTML("<b>Refreshing...</b>"));
+		presenter.refreshVpnConnectionInfo();
 	}
 
 	@UiHandler ("vpcReqSpeedTypeTB")
@@ -257,6 +305,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		this.setFieldViolations(false);
 		if (editing) {
 			GWT.log("maintain VPC view initPage.  editing");
+			vpnInfoPanel.setWidget(new HTML("<b>Refreshing...</b>"));
 //			// hide generate grid, show maintain grid
 //			generateVpcGrid.setVisible(false);
 //			maintainVpcGrid.setVisible(true);
@@ -644,6 +693,146 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 					i++;
 				}
 			}
+		}
+	}
+
+	@Override
+	public void refreshVpnConnectionInfo(VpnConnectionPojo vpnConnection) {
+		if (vpnConnection != null) {
+			Tree vpnInfoTree = createVpnInfoTree(vpnConnection);
+			vpnInfoPanel.setWidget(vpnInfoTree);
+		}
+		else {
+			vpnInfoPanel.setWidget(new HTML("<b>No VPN Information available</b>"));
+		}
+	}
+
+	private Tree createVpnInfoTree(VpnConnectionPojo vc) {
+		vpn_tree = new Tree();
+		
+		// Crypto Keyring
+		TreeItem ti_cryptoKeyring = vpn_tree.addTextItem("Crypto Keyring");
+		ti_cryptoKeyring.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoKeyring().getName()));
+		ti_cryptoKeyring.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoKeyring().getDescription()));
+		
+		TreeItem ti_cryptoKeyringLocalAddress = ti_cryptoKeyring.addTextItem("Local Address");
+		ti_cryptoKeyringLocalAddress.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoKeyring().getLocalAddress().getIpAddress()));
+		ti_cryptoKeyringLocalAddress.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoKeyring().getLocalAddress().getVirualRouteForwarding()));
+		ti_cryptoKeyring.addItem(new HTML("<b>Preshared key:  </b>" + vc.getCryptoKeyring().getPresharedKey()));
+		ti_cryptoKeyring.addTextItem("");
+		
+		// Crypto ISAKMP Profile
+		TreeItem ti_cryptoIsakmpProfile = vpn_tree.addTextItem("Crypto ISAKMP Profile");
+		ti_cryptoIsakmpProfile.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIsakmpProfile().getName()));
+		ti_cryptoIsakmpProfile.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoIsakmpProfile().getDescription()));
+		ti_cryptoIsakmpProfile.addItem(new HTML("<b>Virtual Route Forwarding:  </b>" + vc.getCryptoIsakmpProfile().getVirtualRouteForwarding()));
+		
+		TreeItem ti_cryptoIsakmpProfileCryptoKeyring = ti_cryptoIsakmpProfile.addTextItem("Crypto Keyring");
+		ti_cryptoIsakmpProfileCryptoKeyring.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getName()));
+		ti_cryptoIsakmpProfileCryptoKeyring.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getDescription()));
+		
+		TreeItem ti_cryptoIsakmpProfileCryptoKeyringLocalAddress = ti_cryptoIsakmpProfileCryptoKeyring.addTextItem("Local Address");
+		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addTextItem("IP Address");
+		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addTextItem("Virtual Route forwarding");
+		ti_cryptoIsakmpProfileCryptoKeyring.addTextItem("Preshared key");
+
+		TreeItem ti_cryptoIsakmpProfileMatchIdentity = ti_cryptoIsakmpProfile.addTextItem("Match Identity");
+		ti_cryptoIsakmpProfileMatchIdentity.addTextItem("IP Address");
+		ti_cryptoIsakmpProfileMatchIdentity.addTextItem("Net Mask");
+		ti_cryptoIsakmpProfileMatchIdentity.addTextItem("Virtual Route forwarding");
+
+		TreeItem ti_cryptoIsakmpProfileLocalAddress = ti_cryptoIsakmpProfile.addTextItem("Local Address");
+		ti_cryptoIsakmpProfileLocalAddress.addTextItem("IP Address");
+		ti_cryptoIsakmpProfileLocalAddress.addTextItem("Virtual Route forwarding");
+
+		ti_cryptoIsakmpProfile.addTextItem("");
+
+		// IPSEC transform set
+		TreeItem ti_cryptoIpsecTransformSet = vpn_tree.addTextItem("Crypto IPSEC Transform Set");
+		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet name");
+		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet cipher");
+		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet bits");
+		ti_cryptoIpsecTransformSet.addTextItem("ti_cryptoIpsecTransformSet mode");
+		ti_cryptoIpsecTransformSet.addTextItem("");
+
+		// IPSEC profile
+		TreeItem ti_cryptoIpsecProfile = vpn_tree.addTextItem("Crypto IPSEC Profile");
+		ti_cryptoIpsecProfile.addTextItem("ti_cryptoIsakmpProfile name");
+		ti_cryptoIpsecProfile.addTextItem("ti_cryptoIsakmpProfile description");
+
+		TreeItem ti_cryptoIpsecProfileCryptoIpsecTransformSet = ti_cryptoIpsecProfile.addTextItem("Crypto IPSEC Transform Set");
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("name");
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("cipher");
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("bits");
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("mode");
+		ti_cryptoIpsecProfile.addTextItem("perfect forward secrecy");
+		ti_cryptoIpsecProfile.addTextItem("");
+		
+		// Tunnel Interfaces
+		TreeItem ti_tunnels = vpn_tree.addTextItem("Tunnel Interfaces");
+		for (TunnelInterfacePojo ti : vc.getTunnelInterfaces()) {
+			TreeItem ti_tunnel = ti_tunnels.addTextItem("Tunnel Interface " + ti.getName());
+			ti_tunnel.addTextItem("Description");
+			ti_tunnel.addTextItem("VirtualRouteForwarding");
+			ti_tunnel.addTextItem("IpAddress");
+			ti_tunnel.addTextItem("Netmask");
+			ti_tunnel.addTextItem("TcpMaximumSegmentSize");
+			ti_tunnel.addTextItem("AdministrativeState");
+			ti_tunnel.addTextItem("TunnelSource");
+			ti_tunnel.addTextItem("TunnelModel");
+			ti_tunnel.addTextItem("TunnelDestination");
+			TreeItem ti_tunnelIpsecProfile = ti_tunnel.addTextItem("CryptoIpsecProfile");
+			ti_tunnelIpsecProfile.addTextItem("Name");
+			ti_tunnelIpsecProfile.addTextItem("Description");
+			TreeItem ti_tunnelIpsecProfileTransformSet = ti_tunnelIpsecProfile.addTextItem("Transform set");
+			ti_tunnelIpsecProfileTransformSet.addTextItem("Name");
+			ti_tunnelIpsecProfileTransformSet.addTextItem("Cipher");
+			ti_tunnelIpsecProfileTransformSet.addTextItem("Bits");
+			ti_tunnelIpsecProfileTransformSet.addTextItem("Mode");
+			ti_tunnelIpsecProfile.addTextItem("PerfectForwardSecrecy");
+			ti_tunnel.addTextItem("IpVirtualReassembly");
+			ti_tunnel.addTextItem("OperationalStatus");
+			TreeItem ti_bgpState = ti_tunnel.addTextItem("BgpState");
+			ti_bgpState.addTextItem("Status");
+			ti_bgpState.addTextItem("Uptime");
+			ti_bgpState.addTextItem("NeighborId");
+			TreeItem ti_bgpPrefixes = ti_tunnel.addTextItem("BgpPrefixes");
+			ti_bgpPrefixes.addTextItem("Sent");
+			ti_bgpPrefixes.addTextItem("Received");
+			ti_tunnel.addTextItem("");
+		}
+		ti_tunnels.addTextItem("");
+
+		return vpn_tree;
+	}
+
+	@Override
+	public void showVpnConnectionPleaseWaitDialog(String message) {
+		if (vpnPleaseWaitDialog == null) {
+			vpnPleaseWaitDialog = new PopupPanel(false);
+		}
+		else {
+			vpnPleaseWaitDialog.clear();
+		}
+		VerticalPanel vp = new VerticalPanel();
+		vp.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		Image img = new Image();
+		img.setUrl("images/ajax-loader.gif");
+		vp.add(img);
+		HTML h = new HTML(message);
+		vp.add(h);
+		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+		vpnPleaseWaitDialog.setWidget(vp);
+		vpnPleaseWaitDialog.center();
+		vpnPleaseWaitDialog.show();
+//		vpnPleaseWaitDialog.showRelativeTo(vpnInfoOuterPanel);
+	}
+
+	@Override
+	public void hideVpnConnectionPleaseWaitDialog() {
+		if (vpnPleaseWaitDialog != null) {
+			vpnPleaseWaitDialog.hide();
 		}
 	}
 }

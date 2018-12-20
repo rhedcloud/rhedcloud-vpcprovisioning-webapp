@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWidget, View {
@@ -39,6 +40,9 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
 		public void setSpeedChartStatusForKey(String key, Label label);
 		public void logMessageOnServer(final String message);
+		
+		public VpnConnectionPojo getVpnConnection();
+		public void refreshVpnConnectionInfo();
 	}
 
 	/**
@@ -84,4 +88,7 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 	Widget getSpeedTypeWidget();
 	void initDataEntryPanels();
 	void setAwsRegionItems(List<AWSRegionPojo> regionTypes);
+	void refreshVpnConnectionInfo(VpnConnectionPojo vpnConnection);
+	void showVpnConnectionPleaseWaitDialog(String message);
+	void hideVpnConnectionPleaseWaitDialog();
 }

@@ -480,6 +480,9 @@ a:visited {
 .pspGridRow-success {
   	background-color:LightGreen;
 }
+.pspGridRow-inProgress {
+  	background-color:Yellow;
+}
 .pspGridRow-failure {
 	color: lightgrey;
 	background-color:Crimson;

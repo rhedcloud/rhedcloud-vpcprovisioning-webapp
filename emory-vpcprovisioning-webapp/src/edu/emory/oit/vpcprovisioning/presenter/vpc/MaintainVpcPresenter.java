@@ -21,6 +21,9 @@ import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionQueryResultPojo;
 
 public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcView.Presenter {
 	private final ClientFactory clientFactory;
@@ -28,6 +31,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 	private String vpcId;
 	private VpcPojo vpc;
 	private VpcRequisitionPojo vpcRequisition;
+	private VpnConnectionPojo vpnConnection;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -79,6 +83,10 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 			startEdit();
 		}
 		getView().initDataEntryPanels();
+		
+		if (isEditing) {
+			refreshVpnConnectionInfo();
+		}
 		
 		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
 			@Override
@@ -344,5 +352,43 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 		// TODO: numeric characters
 		
 		setSpeedChartStatusForKeyOnWidget(key, getView().getSpeedTypeWidget());
+	}
+
+	public VpnConnectionPojo getVpnConnection() {
+		return vpnConnection;
+	}
+
+	public void setVpnConnection(VpnConnectionPojo vpnConnection) {
+		this.vpnConnection = vpnConnection;
+	}
+
+	@Override
+	public void refreshVpnConnectionInfo() {
+		AsyncCallback<VpnConnectionQueryResultPojo> vpnConnectionCB = new AsyncCallback<VpnConnectionQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hideVpnConnectionPleaseWaitDialog();
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the VPN Connection information for this VPC.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(VpnConnectionQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " VPN Connections back.");
+				if (result.getResults().size() > 0) {
+					vpnConnection = result.getResults().get(0);
+				}
+				else {
+					vpnConnection = null;
+				}
+				getView().refreshVpnConnectionInfo(vpnConnection);
+				getView().hideVpnConnectionPleaseWaitDialog();
+			}
+		};
+		getView().showVpnConnectionPleaseWaitDialog("Refreshing VPN Connection info...");
+		VpnConnectionQueryFilterPojo vpnFilter = new VpnConnectionQueryFilterPojo();
+		vpnFilter.setVpcId(getVpcId());
+		VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(vpnFilter, vpnConnectionCB);
 	}
 }

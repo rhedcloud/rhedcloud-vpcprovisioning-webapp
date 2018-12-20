@@ -267,6 +267,8 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 				while (iter.hasNext()) {
 					String key = iter.next();
 					String value = (String) psp.getProperties().get(key);
+					// TODO: if step status is in-progress and property name is "startTime"
+					// get the startTime property and calculate running actual time and percent complete
 					if (firstKey) {
 						firstKey = false;
 						sProps.append(key + "=" + value);
@@ -292,6 +294,51 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 				}
 				else {
 					stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
+				}
+			}
+			else if (psp.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_INPROGRESS)) {
+				long actualTime = 0;
+				String s_actualTime = psp.getActualTime();
+				if (s_actualTime != null) {
+					actualTime = Long.parseLong(s_actualTime);
+				}
+				stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-inProgress");
+				if (actualTime == 0) {
+					if (psp.getProperties().size() > 0) {
+						Iterator<String> iter = psp.getProperties().keySet().iterator();
+						long startTime=0;
+						propertyLoop: while (iter.hasNext()) {
+							String key = iter.next();
+							if (key.equalsIgnoreCase(Constants.PROVISIONING_STEP_PROP_STARTTIME)) {
+								String s_startTime = (String) psp.getProperties().get(key);
+								if (s_startTime != null) {
+									// if step status is in-progress and property name is "startTime"
+									// get the startTime property and calculate running actual time and percent complete
+									startTime = Long.parseLong(s_startTime);
+								}
+								break propertyLoop;
+							}
+						}
+						if (startTime != 0) {
+							GWT.log("Start time formated: " + new java.util.Date(startTime));
+							String s_anticipatedTime = psp.getAnticipatedTime();
+							long anticipatedTime = Long.parseLong(s_anticipatedTime);
+							long currentTime = System.currentTimeMillis();
+							GWT.log("Current time formated: " + new java.util.Date(currentTime));
+							long elapsedTime = currentTime - startTime;
+							StringBuffer s_elapsedHtml = new StringBuffer();
+							s_elapsedHtml.append("Elapsed time: " + elapsedTime + "</br>");
+							long pctComplete = (elapsedTime / anticipatedTime) * 100;
+							if (pctComplete > 100) {
+								s_elapsedHtml.append("% Complete:   Overdue");
+							}
+							else {
+								s_elapsedHtml.append("% Complete:   " + pctComplete);
+							}
+							HTML hElapsedTime = new HTML(s_elapsedHtml.toString());
+							stepsGrid.setWidget(gridRow, 6, hElapsedTime);
+						}
+					}
 				}
 			}
 			else {

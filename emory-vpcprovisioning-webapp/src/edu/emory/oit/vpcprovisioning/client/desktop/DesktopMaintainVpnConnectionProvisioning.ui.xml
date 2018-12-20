@@ -32,16 +32,18 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
 			<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="12">
 				<g:row>
+					<g:customCell>
+						<g:CheckBox ui:field="editCB" 
+							title="Edit the derived values that were pulled directly from AWS based on the profile you selected (future feature).">Edit the derived values (future feature)</g:CheckBox>
+					</g:customCell>
+				</g:row>
+				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">VPC ID:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.longField} {style.glowing-border}"
 							ui:field="vpcLB" debugId="vpcLB" />
-						<!-- <g:SuggestBox ui:field="vpcIdSB" debugId="vpcIdSB" 
-							addStyleNames="{style.field} {style.glowing-border}"/> -->
-						<!-- <g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="ownerIdTB" debugId="ownerIdTB" title="ID of the VPC you want to assign this profile to."/> -->
 			    	</g:customCell>
 				</g:row>
 				<g:row>

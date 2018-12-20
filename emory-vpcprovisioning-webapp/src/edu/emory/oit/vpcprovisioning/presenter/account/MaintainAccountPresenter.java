@@ -474,7 +474,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			this.account.getAccountId() != null) {
 			
 			boolean confirmed = Window.confirm("Are you sure you want to use this SpeedType?  "
-					+ "NOTE:  Using an invalid SpeedType is a violoation of Emory's Terms of Use.");
+					+ "NOTE:  Using an invalid SpeedType is a violation of Emory's Terms of Use.");
 			if (confirmed) {
 				// TODO: log that the user acknowldged the speed type (on the server)
 				DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
