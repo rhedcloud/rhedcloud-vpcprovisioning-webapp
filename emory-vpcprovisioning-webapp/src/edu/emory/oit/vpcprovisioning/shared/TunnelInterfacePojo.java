@@ -21,6 +21,16 @@ public class TunnelInterfacePojo extends SharedObject implements IsSerializable 
 	String operationalStatus;
 	BgpStatePojo bgpState;
 	BgpPrefixesPojo bgpPrefixes;
+	String badStateReason;
+	
+	public String getBadStateReason() {
+		return badStateReason;
+	}
+	public boolean isOperational() {
+		// TODO: determine if it's operational and if it isn't, set the badStateReason...
+		badStateReason = "bad state reason from the tunnel interface pojo";
+		return false;
+	}
 	public String getName() {
 		return name;
 	}

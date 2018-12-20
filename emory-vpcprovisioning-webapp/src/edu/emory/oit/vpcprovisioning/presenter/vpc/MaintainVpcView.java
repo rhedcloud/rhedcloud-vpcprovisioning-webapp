@@ -91,4 +91,14 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 	void refreshVpnConnectionInfo(VpnConnectionPojo vpnConnection);
 	void showVpnConnectionPleaseWaitDialog(String message);
 	void hideVpnConnectionPleaseWaitDialog();
+
+	void setOperationalStatusSummary(String string);
+
+	void setTunnel2StatusBad(String reason);
+
+	void setTunnel2StatusGood();
+
+	void setTunnel1StatusBad(String reason);
+
+	void setTunnel1StatusGood();
 }

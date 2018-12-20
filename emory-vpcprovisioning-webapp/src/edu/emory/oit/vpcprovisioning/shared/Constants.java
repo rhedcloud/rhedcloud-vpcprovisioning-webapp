@@ -192,4 +192,6 @@ public class Constants implements IsSerializable {
 	public static final String VPN_DEPROVISIONING = "Deprovision";
 	public static final String PROVISIONING_STEP_STATUS_INPROGRESS = "In progress";
 	public static final String PROVISIONING_STEP_PROP_STARTTIME = "startTime";
+	public static final String PROVISIONING_STEP_PROP_EXECUTION_METHOD = "stepExecutionMethod";
+	public static final String PROVISIONING_STEP_EXECUTION_METHOD_SIMULATED = "simulated";
 }

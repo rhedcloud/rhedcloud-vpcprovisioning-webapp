@@ -487,6 +487,9 @@ a:visited {
 	color: lightgrey;
 	background-color:Crimson;
 }
+.pspGridRow-simulated {
+  	background-color:LightBlue;
+}
 .pspGridRow-rolledBack {
   	background-color:Orange;
 }

@@ -93,11 +93,15 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiField ListBox regionLB;
 	@UiField ListBox reqRegionLB;
 
+	// VPN connection info
 	@UiField PushButton expandButton;
 	@UiField PushButton collapseButton;
 	@UiField PushButton refreshButton;
 	@UiField VerticalPanel vpnInfoOuterPanel;
 	@UiField ScrollPanel vpnInfoPanel;
+	@UiField Image tunnel1StatusImage;
+	@UiField Image tunnel2StatusImage;
+	@UiField TextArea operationalSummaryTA;
 
 //	private boolean firstCidrWidget = true;
 	private boolean firstElasticIpWidget = true;
@@ -111,6 +115,15 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	public DesktopMaintainVpc() {
 		initWidget(uiBinder.createAndBindUi(this));
 		setRefreshButtonImage(refreshButton);
+		Image expandImg = new Image("images/expand.png");
+		expandImg.setWidth("30px");
+		expandImg.setHeight("30px");
+		expandButton.getUpFace().setImage(expandImg);
+
+		Image collapseImg = new Image("images/collapse.png");
+		collapseImg.setWidth("30px");
+		collapseImg.setHeight("30px");
+		collapseButton.getUpFace().setImage(collapseImg);
 		GWT.log("maintain VPC view init...");
 		cancelButton.addDomHandler(new ClickHandler() {
 			@Override
@@ -699,6 +712,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void refreshVpnConnectionInfo(VpnConnectionPojo vpnConnection) {
 		if (vpnConnection != null) {
+			// TODO: update operational status info (images and summary)
 			Tree vpnInfoTree = createVpnInfoTree(vpnConnection);
 			vpnInfoPanel.setWidget(vpnInfoTree);
 		}
@@ -834,5 +848,32 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		if (vpnPleaseWaitDialog != null) {
 			vpnPleaseWaitDialog.hide();
 		}
+	}
+
+	@Override
+	public void setOperationalStatusSummary(String string) {
+		operationalSummaryTA.setText(string);
+	}
+
+	@Override
+	public void setTunnel2StatusBad(String reason) {
+		tunnel2StatusImage.setUrl("images/red_circle_icon.jpg");
+		tunnel2StatusImage.setTitle(reason);
+	}
+
+	@Override
+	public void setTunnel2StatusGood() {
+		tunnel2StatusImage.setUrl("images/green_circle_icon.png");
+	}
+
+	@Override
+	public void setTunnel1StatusBad(String reason) {
+		tunnel1StatusImage.setUrl("images/red_circle_icon.jpg");
+		tunnel1StatusImage.setTitle(reason);
+	}
+
+	@Override
+	public void setTunnel1StatusGood() {
+		tunnel2StatusImage.setUrl("images/green_circle_icon.png");
 	}
 }

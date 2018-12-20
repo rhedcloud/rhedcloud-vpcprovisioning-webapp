@@ -151,7 +151,7 @@
 									<g:Label addStyleNames="{style.label}">Tunnel 1 Status:</g:Label>
 						    	</g:customCell>
 						    	<g:customCell>
-    								<g:Image ui:field="tunnel1StatusImage" width="16px" height="16px" url="images/green_circle_icon.png"/>						    		
+    								<g:Image ui:field="tunnel1StatusImage" width="16px" height="16px"/>						    		
 						    	</g:customCell>
 						    </g:row>
 							<g:row>
@@ -159,7 +159,7 @@
 									<g:Label addStyleNames="{style.label}">Tunnel 2 Status:</g:Label>
 						    	</g:customCell>
 						    	<g:customCell>
-    								<g:Image ui:field="tunnel2StatusImage" width="16px" height="16px" url="images/red_circle_icon.jpg"/>						    		
+    								<g:Image ui:field="tunnel2StatusImage" width="16px" height="16px"/>						    		
 						    	</g:customCell>
 						    </g:row>
 							<g:row>

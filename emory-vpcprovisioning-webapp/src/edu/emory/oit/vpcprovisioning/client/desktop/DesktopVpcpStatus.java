@@ -261,6 +261,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 			stepsGrid.setWidget(gridRow, 4, hResult);
 			stepsGrid.setWidget(gridRow, 5, hAnticipatedTime);
 			stepsGrid.setWidget(gridRow, 6, hActualTime);
+			boolean isSimulatedStep = false;
 			if (psp.getProperties().size() > 0) {
 				StringBuffer sProps = new StringBuffer();
 				Iterator<String> iter = psp.getProperties().keySet().iterator();
@@ -268,8 +269,13 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 				while (iter.hasNext()) {
 					String key = iter.next();
 					String value = (String) psp.getProperties().get(key);
-					// TODO: if step status is in-progress and property name is "startTime"
-					// get the startTime property and calculate running actual time and percent complete
+					// chedk for the stepExecutionMethod=simulated, if the step is simulated, 
+					// we'll make the row blue below
+					if (key.equalsIgnoreCase(Constants.PROVISIONING_STEP_PROP_EXECUTION_METHOD)) {
+						if (value != null && value.equalsIgnoreCase(Constants.PROVISIONING_STEP_EXECUTION_METHOD_SIMULATED)) {
+							isSimulatedStep = true;
+						}
+					}
 					if (firstKey) {
 						firstKey = false;
 						sProps.append(key + "=" + value);
@@ -291,7 +297,12 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 					stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
 				}
 				else if (psp.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
-					stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
+					if (isSimulatedStep) {
+						stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-simulated");
+					}
+					else {
+						stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-success");
+					}
 				}
 				else {
 					stepsGrid.getRowFormatter().addStyleName(gridRow, "pspGridRow-failure");
