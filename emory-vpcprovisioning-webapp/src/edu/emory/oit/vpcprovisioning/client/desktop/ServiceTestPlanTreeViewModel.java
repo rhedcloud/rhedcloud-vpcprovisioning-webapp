@@ -210,43 +210,64 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 	public boolean isLeaf(Object value) {
 		// test step is the leaf (final cell)
 		boolean leaf = value instanceof ServiceTestStepPojo;
-//		if (leaf) {
-//			GWT.log(" IS a leaf");
-//		}
-//		else {
-//			GWT.log(" IS NOT a leaf");
-//		}
 
-		if (value instanceof ServiceTestRequirementPojo) {
-			GWT.log("[isLeaf] it's a requirement");
-			if (presenter != null) {
-				presenter.setSelectedTestRequirement((ServiceTestRequirementPojo)value);
-				presenter.requirementSelected();
-			}
-			else {
-				GWT.log("[isLeaf] presenter is null, can't set it yet");
-			}
-		}
-		else if (value instanceof ServiceTestPojo) {
-			GWT.log("[isLeaf] it's a test");
-			if (presenter != null) {
-				presenter.setSelectedTest((ServiceTestPojo)value);
-				presenter.testSelected();
-			}
-			else {
-				GWT.log("[isLeaf] presenter is null, can't set it yet");
-			}
-		}
-		else if (value instanceof ServiceTestStepPojo) {
-			GWT.log("[isLeaf] it's a step");
-			if (presenter != null) {
-				presenter.setSelectedTestStep((ServiceTestStepPojo)value);
-				presenter.stepSelected();
-			}
-			else {
-				GWT.log("[isLeaf] presenter is null, can't set it yet");
-			}
-		}
+//		if (value instanceof ServiceTestRequirementPojo) {
+//			if (presenter != null) {
+//				if (presenter.getAssessment().
+//						getServiceTestPlan().
+//						getServiceTestRequirements().size() == 1) {
+//					
+//					presenter.setSelectedTestRequirement((ServiceTestRequirementPojo)value);
+//					presenter.requirementSelected();
+//				}
+//				else {
+//					GWT.log("[isLeaf] not firing requirementSelected");
+//				}
+//			}
+//			else {
+//				GWT.log("[isLeaf] presenter is null, can't set it yet");
+//			}
+//		}
+//		else if (value instanceof ServiceTestPojo) {
+//			if (presenter != null) {
+//				if (presenter.getAssessment().
+//						getServiceTestPlan().
+//						getServiceTestRequirements().size() == 1 && 
+//						presenter.getSelectedTestRequirement() != null && 
+//						presenter.getSelectedTestRequirement().
+//						getServiceTests().size() == 1) {
+//					
+//					presenter.setSelectedTest((ServiceTestPojo)value);
+//					presenter.testSelected();
+//				}
+//				else {
+//					GWT.log("[isLeaf] not firing testSelected");
+//				}
+//			}
+//			else {
+//				GWT.log("[isLeaf] presenter is null, can't set it yet");
+//			}
+//		}
+//		else if (value instanceof ServiceTestStepPojo) {
+//			if (presenter != null) {
+//				if (presenter.getAssessment().
+//						getServiceTestPlan().
+//						getServiceTestRequirements().size() == 1 && 
+//						presenter.getSelectedTest() != null && 
+//						presenter.getSelectedTest().
+//						getServiceTestSteps().size() == 1) {
+//					
+//					presenter.setSelectedTestStep((ServiceTestStepPojo)value);
+//					presenter.stepSelected();
+//				}
+//				else {
+//					GWT.log("[isLeaf] not firing testSelected");
+//				}
+//			}
+//			else {
+//				GWT.log("[isLeaf] presenter is null, can't set it yet");
+//			}
+//		}
 		return leaf;
 	}
 

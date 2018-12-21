@@ -400,7 +400,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 			@Override
 			public SafeHtml getValue(VpcpPojo value) {
-				SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getTotalStepCount(), value.getCompletedStepCount());
+				SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getTotalStepCount(), value.getCompletedSuccessfulCount());
 				return sh;
 			}
 		};		 

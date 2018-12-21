@@ -575,10 +575,12 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void requirementSelected() {
-//		ServiceTestRequirementPojo selected = reqSelectionModel.getSelectedObject();
 		ServiceTestRequirementPojo selectedFromModel = reqSelectionModel.getSelectedObject();
-		GWT.log("REQ:selectedFromModel is: " + selectedFromModel);
 		ServiceTestRequirementPojo selected = presenter.getSelectedTestRequirement();
+		if (selected == null) {
+			presenter.setSelectedTestRequirement(selectedFromModel);
+			selected = presenter.getSelectedTestRequirement();
+		}
 		reqSelectionModel.setSelected(selected, true);
 		GWT.log("[REQ:onSelectionChange] requirment selected: " + selected);
 		presenter.setSelectedTestRequirement(selected);
@@ -606,10 +608,12 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void testSelected() {
-//		ServiceTestPojo selected = testSelectionModel.getSelectedObject();
 		ServiceTestPojo selectedFromModel = testSelectionModel.getSelectedObject();
-		GWT.log("TEST:selectedFromModel is: " + selectedFromModel);
 		ServiceTestPojo selected = presenter.getSelectedTest();
+		if (selected == null) {
+			presenter.setSelectedTest(selectedFromModel);
+			selected = presenter.getSelectedTest();
+		}
 		testSelectionModel.setSelected(selected, true);
 		GWT.log("[TEST:onSelectionChange] test selected: " + selected);
 		presenter.setSelectedTest(selected);
@@ -652,10 +656,12 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void stepSelected() {
-//		ServiceTestStepPojo selected = stepSelectionModel.getSelectedObject();
 		ServiceTestStepPojo selectedFromModel = stepSelectionModel.getSelectedObject();
-		GWT.log("STEP:selectedFromModel is: " + selectedFromModel);
 		ServiceTestStepPojo selected = presenter.getSelectedTestStep();
+		if (selected == null) {
+			presenter.setSelectedTestStep(selectedFromModel);
+			selected = presenter.getSelectedTestStep();
+		}
 		stepSelectionModel.setSelected(selected, true);
 		GWT.log("[STEP: onSelectionChange] step selected: " + selected);
 		presenter.setSelectedTestStep(selected);
