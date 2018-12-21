@@ -575,13 +575,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void requirementSelected() {
-		ServiceTestRequirementPojo selectedFromModel = reqSelectionModel.getSelectedObject();
-		ServiceTestRequirementPojo selected = presenter.getSelectedTestRequirement();
-		if (selected == null) {
-			presenter.setSelectedTestRequirement(selectedFromModel);
-			selected = presenter.getSelectedTestRequirement();
-		}
-		reqSelectionModel.setSelected(selected, true);
+		ServiceTestRequirementPojo selected = reqSelectionModel.getSelectedObject();
+//		ServiceTestRequirementPojo selected = presenter.getSelectedTestRequirement();
+//		if (selected == null) {
+//			presenter.setSelectedTestRequirement(selectedFromModel);
+//			selected = presenter.getSelectedTestRequirement();
+//		}
+//		reqSelectionModel.setSelected(selected, true);
 		GWT.log("[REQ:onSelectionChange] requirment selected: " + selected);
 		presenter.setSelectedTestRequirement(selected);
 		saveReqButton.setText(SAVE);
@@ -608,13 +608,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void testSelected() {
-		ServiceTestPojo selectedFromModel = testSelectionModel.getSelectedObject();
-		ServiceTestPojo selected = presenter.getSelectedTest();
-		if (selected == null) {
-			presenter.setSelectedTest(selectedFromModel);
-			selected = presenter.getSelectedTest();
-		}
-		testSelectionModel.setSelected(selected, true);
+		ServiceTestPojo selected = testSelectionModel.getSelectedObject();
+//		ServiceTestPojo selected = presenter.getSelectedTest();
+//		if (selected == null) {
+//			presenter.setSelectedTest(selectedFromModel);
+//			selected = presenter.getSelectedTest();
+//		}
+//		testSelectionModel.setSelected(selected, true);
 		GWT.log("[TEST:onSelectionChange] test selected: " + selected);
 		presenter.setSelectedTest(selected);
 		saveTestButton.setText(SAVE);
@@ -656,13 +656,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void stepSelected() {
-		ServiceTestStepPojo selectedFromModel = stepSelectionModel.getSelectedObject();
-		ServiceTestStepPojo selected = presenter.getSelectedTestStep();
-		if (selected == null) {
-			presenter.setSelectedTestStep(selectedFromModel);
-			selected = presenter.getSelectedTestStep();
-		}
-		stepSelectionModel.setSelected(selected, true);
+		ServiceTestStepPojo selected = stepSelectionModel.getSelectedObject();
+//		ServiceTestStepPojo selected = presenter.getSelectedTestStep();
+//		if (selected == null) {
+//			presenter.setSelectedTestStep(selectedFromModel);
+//			selected = presenter.getSelectedTestStep();
+//		}
+//		stepSelectionModel.setSelected(selected, true);
 		GWT.log("[STEP: onSelectionChange] step selected: " + selected);
 		presenter.setSelectedTestStep(selected);
 		saveStepButton.setText(SAVE);
