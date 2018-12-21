@@ -134,6 +134,11 @@ public class DesktopListServiceGuideline extends ViewImplBase implements ListSer
 
 	@UiHandler ("createButton")
 	void createServiceGuidelineClicked(ClickEvent e) {
+		if (presenter.getAssessment() == null || presenter.getAssessment().getStatus() == null) {
+			this.showMessageToUser("Please select an Assessment Status from the list above and "
+					+ "save the Assessment before adding a Service Guideline");
+			return;
+		}
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_GUIDELINE, presenter.getService(), presenter.getAssessment());
 	}
 	

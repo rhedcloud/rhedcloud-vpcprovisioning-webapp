@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import edu.emory.oit.vpcprovisioning.presenter.View;
-import edu.emory.oit.vpcprovisioning.shared.Constants;
 
 public class VpcpPrompt extends DialogBox {
 

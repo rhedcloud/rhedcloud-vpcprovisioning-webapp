@@ -45,7 +45,6 @@ import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
 public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {

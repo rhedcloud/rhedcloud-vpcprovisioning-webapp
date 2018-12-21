@@ -17,7 +17,6 @@ import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
-import edu.emory.oit.vpcprovisioning.shared.UUID;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainSecurityRiskPresenter extends PresenterBase implements MaintainSecurityRiskView.Presenter {

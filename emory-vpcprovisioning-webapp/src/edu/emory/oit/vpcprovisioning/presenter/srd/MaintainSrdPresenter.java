@@ -1,7 +1,5 @@
 package edu.emory.oit.vpcprovisioning.presenter.srd;
 
-import java.util.List;
-
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,12 +8,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
-import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
-import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 

@@ -40,7 +40,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListCidrAssignment extends ViewImplBase implements ListCidrAssignmentView {

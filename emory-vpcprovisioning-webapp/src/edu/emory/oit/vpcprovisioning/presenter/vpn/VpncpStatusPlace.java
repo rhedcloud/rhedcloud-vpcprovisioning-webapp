@@ -4,7 +4,6 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public class VpncpStatusPlace extends Place {

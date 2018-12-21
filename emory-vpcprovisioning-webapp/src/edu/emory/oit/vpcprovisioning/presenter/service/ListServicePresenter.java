@@ -275,6 +275,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 //			filter.getConsoleCategories().add(cat.trim());
 //		}
 		filter.getConsoleCategories().add(categories);
+		filter.setFuzzyFilter(true);
 		this.getUserAndRefreshList();
 	}
 
@@ -283,6 +284,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		getView().showPleaseWaitDialog("Filtering services by AWS Service name...");
 		filter = new AWSServiceQueryFilterPojo();
 		filter.setAwsServiceName(name);
+		filter.setFuzzyFilter(true);
 		this.getUserAndRefreshList();
 	}
 

@@ -102,6 +102,8 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiField Image tunnel1StatusImage;
 	@UiField Image tunnel2StatusImage;
 	@UiField TextArea operationalSummaryTA;
+	@UiField Grid vpnInfoHeaderGrid;
+	@UiField Grid operationalStatusGrid;
 
 //	private boolean firstCidrWidget = true;
 	private boolean firstElasticIpWidget = true;
@@ -319,9 +321,8 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		if (editing) {
 			GWT.log("maintain VPC view initPage.  editing");
 			vpnInfoPanel.setWidget(new HTML("<b>Refreshing...</b>"));
-//			// hide generate grid, show maintain grid
-//			generateVpcGrid.setVisible(false);
-//			maintainVpcGrid.setVisible(true);
+			operationalStatusGrid.setVisible(false);
+			
 			// clear the page
 			accountIdTB.setText("");
 			accountNameTB.setText("");
@@ -715,8 +716,10 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			// TODO: update operational status info (images and summary)
 			Tree vpnInfoTree = createVpnInfoTree(vpnConnection);
 			vpnInfoPanel.setWidget(vpnInfoTree);
+			operationalStatusGrid.setVisible(true);
 		}
 		else {
+			operationalStatusGrid.setVisible(false);
 			vpnInfoPanel.setWidget(new HTML("<b>No VPN Information available</b>"));
 		}
 	}
@@ -864,6 +867,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void setTunnel2StatusGood() {
 		tunnel2StatusImage.setUrl("images/green_circle_icon.png");
+		tunnel2StatusImage.setTitle("Tunnel is good");
 	}
 
 	@Override
@@ -874,6 +878,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void setTunnel1StatusGood() {
-		tunnel2StatusImage.setUrl("images/green_circle_icon.png");
+		tunnel1StatusImage.setUrl("images/green_circle_icon.png");
+		tunnel1StatusImage.setTitle("Tunnel is good");
 	}
 }

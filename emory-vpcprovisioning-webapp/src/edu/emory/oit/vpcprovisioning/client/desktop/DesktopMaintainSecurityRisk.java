@@ -385,7 +385,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	public void initPage() {
 		GWT.log("DesktopMaintainSecurityRisk: initPage");
 		registerHandlers();
-		if (presenter.getSecurityRisk() != null) {
+		if (editing) {
 			SecurityRiskPojo srp = presenter.getSecurityRisk();
 			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
 			riskNameTB.setText(srp.getSecurityRiskName());

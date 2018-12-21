@@ -31,6 +31,7 @@ public class AWSServiceQueryFilterPojo extends SharedObject implements IsSeriali
 	String awsHipaaEligible;
 	String siteHipaaEligible;
 	List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
+	boolean fuzzyFilter=false;
 
 	public AWSServiceQueryFilterPojo() {
 	}
@@ -135,6 +136,14 @@ public class AWSServiceQueryFilterPojo extends SharedObject implements IsSeriali
 
 	public void setAwsStatus(String awsStatus) {
 		this.awsStatus = awsStatus;
+	}
+
+	public boolean isFuzzyFilter() {
+		return fuzzyFilter;
+	}
+
+	public void setFuzzyFilter(boolean fuzzyFilter) {
+		this.fuzzyFilter = fuzzyFilter;
 	}
 
 }

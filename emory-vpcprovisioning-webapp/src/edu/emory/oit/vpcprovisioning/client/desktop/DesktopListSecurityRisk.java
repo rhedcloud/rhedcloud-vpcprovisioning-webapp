@@ -134,6 +134,11 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 
 	@UiHandler ("createButton")
 	void createSecurityRiskClicked(ClickEvent e) {
+		if (presenter.getAssessment() == null || presenter.getAssessment().getStatus() == null) {
+			this.showMessageToUser("Please select an Assessment Status from the list above and "
+					+ "save the Assessment before adding a Security Risk");
+			return;
+		}
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_RISK, presenter.getService(), presenter.getAssessment());
 	}
 	

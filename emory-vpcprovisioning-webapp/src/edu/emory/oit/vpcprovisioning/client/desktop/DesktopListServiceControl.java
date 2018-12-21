@@ -133,6 +133,11 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 
 	@UiHandler ("createButton")
 	void createServiceControlClicked(ClickEvent e) {
+		if (presenter.getAssessment() == null || presenter.getAssessment().getStatus() == null) {
+			this.showMessageToUser("Please select an Assessment Status from the list above and "
+					+ "save the Assessment before adding a Servic Control");
+			return;
+		}
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment());
 	}
 	

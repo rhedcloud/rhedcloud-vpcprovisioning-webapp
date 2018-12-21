@@ -2,7 +2,6 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
@@ -47,7 +46,6 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 

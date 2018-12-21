@@ -5,7 +5,6 @@ import java.util.List;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
 
 public class VpncpListUpdateEvent extends GwtEvent<VpncpListUpdateEvent.Handler> {

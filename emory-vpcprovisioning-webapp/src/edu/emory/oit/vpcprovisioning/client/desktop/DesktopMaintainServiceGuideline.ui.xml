@@ -56,7 +56,7 @@
 						<g:customCell>
 							<g:TextBox 
 								addStyleNames="{style.field} {style.glowing-border}" 
-								ui:field="controlNameTB" debugId="controlNameTB" />
+								ui:field="guidelineNameTB" debugId="guidelineNameTB" />
 						</g:customCell>
 					</g:row>
 					<g:row>
@@ -66,7 +66,7 @@
 						<g:customCell>
 							<g:TextArea 
 								addStyleNames="{style.longField} {style.glowing-border}" 
-								ui:field="controlDescriptionTA" debugId="controlDescriptionTA" />
+								ui:field="guidelineDescriptionTA" debugId="guidelineDescriptionTA" />
 						</g:customCell>
 					</g:row>
 					<g:row>

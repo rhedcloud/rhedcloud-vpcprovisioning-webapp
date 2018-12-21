@@ -383,42 +383,45 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 				else {
 					vpnConnection = null;
 				}
-				if (vpnConnection.getTunnelInterfaces().size() == 2) {
-					TunnelInterfacePojo t1 = vpnConnection.getTunnelInterfaces().get(0);
-					TunnelInterfacePojo t2 = vpnConnection.getTunnelInterfaces().get(1);
-					if (t1.isOperational()) {
-						getView().setTunnel1StatusGood();
+				if (vpnConnection != null) {
+					if (vpnConnection.getTunnelInterfaces().size() == 2) {
+						TunnelInterfacePojo t1 = vpnConnection.getTunnelInterfaces().get(0);
+						TunnelInterfacePojo t2 = vpnConnection.getTunnelInterfaces().get(1);
+						if (t1.isOperational()) {
+							getView().setTunnel1StatusGood();
+						}
+						else {
+							getView().setTunnel1StatusBad(t1.getBadStateReasons().toString());
+						}
+						if (t2.isOperational()) {
+							getView().setTunnel2StatusGood();
+						}
+						else {
+							getView().setTunnel2StatusBad(t2.getBadStateReasons().toString());
+						}
+						if (t1.isOperational() && t2.isOperational()) {
+							getView().setOperationalStatusSummary("Both tunnels are operational so this VPN "
+									+ "Connection should be in working order.");
+						}
+						else if (t1.isOperational()) {
+							getView().setOperationalStatusSummary("Tunnel 1 is operational so this VPN "
+									+ "Connection should be in working order.");
+						}
+						else if (t2.isOperational()) {
+							getView().setOperationalStatusSummary("Tunnel 2 is operational so this VPN "
+									+ "Connection should be in working order.");
+						}
+						else {
+							getView().setOperationalStatusSummary("Neither tunnel interface is operatonal "
+									+ "at this time so this VPN Connection will NOT work based on it's current status.  "
+									+ "You can refresh the status and this may change as the VPN Connection "
+									+ "is built which can take some time.\n\nHover your mouse over the "
+									+ "red circles above for more details.");
+						}
 					}
 					else {
-						getView().setTunnel1StatusBad(t1.getBadStateReason());
+						// TODO: something goofy with the tunnel interfaces
 					}
-					if (t2.isOperational()) {
-						getView().setTunnel2StatusGood();
-					}
-					else {
-						getView().setTunnel2StatusBad(t2.getBadStateReason());
-					}
-					if (t1.isOperational() && t2.isOperational()) {
-						getView().setOperationalStatusSummary("Both tunnels are operational so this VPN "
-								+ "Connection should be in working order.");
-					}
-					else if (t1.isOperational()) {
-						getView().setOperationalStatusSummary("Tunnel 1 is operational so this VPN "
-								+ "Connection should be in working order.");
-					}
-					else if (t2.isOperational()) {
-						getView().setOperationalStatusSummary("Tunnel 2 is operational so this VPN "
-								+ "Connection should be in working order.");
-					}
-					else {
-						getView().setOperationalStatusSummary("Neither tunnel interface is operatonal "
-								+ "so this VPN Connection will NOT work based on it's current status.  "
-								+ "You can refresh the status and this may change as the VPN Connection "
-								+ "is built which can take some time.");
-					}
-				}
-				else {
-					// TODO: something goofy with the tunnel interfaces
 				}
 				getView().refreshVpnConnectionInfo(vpnConnection);
 				getView().hideVpnConnectionPleaseWaitDialog();

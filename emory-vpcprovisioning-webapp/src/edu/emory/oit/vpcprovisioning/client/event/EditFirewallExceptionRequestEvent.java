@@ -19,7 +19,6 @@ package edu.emory.oit.vpcprovisioning.client.event;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 
 /**

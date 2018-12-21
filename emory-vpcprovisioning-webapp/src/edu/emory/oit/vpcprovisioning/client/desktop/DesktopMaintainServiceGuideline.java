@@ -54,8 +54,8 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 	@UiField Button cancelButton;
 	@UiField TextBox serviceNameTB;
 	@UiField TextBox sequenceNumberTB;
-	@UiField TextBox controlNameTB;
-	@UiField TextArea controlDescriptionTA;
+	@UiField TextBox guidelineNameTB;
+	@UiField TextArea guidelineDescriptionTA;
 	@UiField(provided=true) SuggestBox assessorLookupSB = new SuggestBox(assessorSuggestions, new TextBox());
 	@UiField DateBox assessmentDB;
 
@@ -76,8 +76,8 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 	private void populateServiceGuidelineWithFormData() {
 		// populate/save service
 		presenter.getServiceGuideline().setServiceId(presenter.getService().getServiceId());
-		presenter.getServiceGuideline().setServiceGuidelineName(controlNameTB.getText());
-		presenter.getServiceGuideline().setDescription(controlDescriptionTA.getText());
+		presenter.getServiceGuideline().setServiceGuidelineName(guidelineNameTB.getText());
+		presenter.getServiceGuideline().setDescription(guidelineDescriptionTA.getText());
 		presenter.getServiceGuideline().setSequenceNumber(Integer.parseInt(sequenceNumberTB.getText()));
 		if (presenter.getAssessorDirectoryPerson() != null) {
 			presenter.getServiceGuideline().setAssessorId(presenter.getAssessorDirectoryPerson().getKey());
@@ -127,8 +127,8 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 	public void applyCentralAdminMask() {
 		serviceNameTB.setEnabled(true);
 		sequenceNumberTB.setEnabled(true);
-		controlNameTB.setEnabled(true);
-		controlDescriptionTA.setEnabled(true);
+		guidelineNameTB.setEnabled(true);
+		guidelineDescriptionTA.setEnabled(true);
 		assessorLookupSB.setEnabled(true);
 		assessmentDB.setEnabled(true);
 	}
@@ -137,8 +137,8 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 	public void applyAWSAccountAdminMask() {
 		serviceNameTB.setEnabled(false);
 		sequenceNumberTB.setEnabled(false);
-		controlNameTB.setEnabled(false);
-		controlDescriptionTA.setEnabled(false);
+		guidelineNameTB.setEnabled(false);
+		guidelineDescriptionTA.setEnabled(false);
 		assessorLookupSB.setEnabled(false);
 		assessmentDB.setEnabled(false);
 	}
@@ -147,8 +147,8 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 	public void applyAWSAccountAuditorMask() {
 		serviceNameTB.setEnabled(false);
 		sequenceNumberTB.setEnabled(false);
-		controlNameTB.setEnabled(false);
-		controlDescriptionTA.setEnabled(false);
+		guidelineNameTB.setEnabled(false);
+		guidelineDescriptionTA.setEnabled(false);
 		assessorLookupSB.setEnabled(false);
 		assessmentDB.setEnabled(false);
 	}
@@ -163,10 +163,10 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		ServiceGuidelinePojo control = presenter.getServiceGuideline();
 		if (control.getServiceGuidelineName() == null || control.getServiceGuidelineName().length() == 0) {
-			fields.add(controlNameTB);
+			fields.add(guidelineNameTB);
 		}
 		if (control.getDescription() == null || control.getDescription().length() == 0) {
-			fields.add(controlDescriptionTA);
+			fields.add(guidelineDescriptionTA);
 		}
 		if (control.getAssessorId() == null|| control.getAssessorId().length() == 0) {
 			fields.add(assessorLookupSB);
@@ -180,8 +180,8 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 	@Override
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
-		fields.add(controlNameTB);
-		fields.add(controlDescriptionTA);
+		fields.add(guidelineNameTB);
+		fields.add(guidelineDescriptionTA);
 		fields.add(assessorLookupSB);
 		fields.add(assessmentDB);
 		this.resetFieldStyles(fields);
@@ -245,11 +245,15 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 		if (editing) {
 			ServiceGuidelinePojo srp = presenter.getServiceGuideline();
 			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
-			controlNameTB.setText(srp.getServiceGuidelineName());
-			controlDescriptionTA.setText(srp.getDescription());
+			guidelineNameTB.setText(srp.getServiceGuidelineName());
+			guidelineDescriptionTA.setText(srp.getDescription());
 			// TODO: this will have to be a lookup to get the name of the person
 			assessorLookupSB.setText(srp.getAssessorId());
 			assessmentDB.setValue(srp.getAssessmentDate());
+		}
+		else {
+			assessorLookupSB.setText("");
+			assessorLookupSB.getElement().setPropertyString("placeholder", "enter name");
 		}
 		GWT.log("service name from presenter is: " + presenter.getService().getAwsServiceName());
 		serviceNameTB.setText(presenter.getService().getAwsServiceName());

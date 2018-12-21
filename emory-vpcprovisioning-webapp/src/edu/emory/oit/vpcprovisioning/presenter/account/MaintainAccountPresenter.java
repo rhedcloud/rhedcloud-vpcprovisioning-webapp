@@ -31,7 +31,6 @@ import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
-import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainAccountPresenter extends PresenterBase implements MaintainAccountView.Presenter {

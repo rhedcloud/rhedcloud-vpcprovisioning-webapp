@@ -42,7 +42,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
-import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;

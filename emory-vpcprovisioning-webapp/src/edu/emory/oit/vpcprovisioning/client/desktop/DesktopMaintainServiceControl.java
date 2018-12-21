@@ -89,7 +89,10 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		if (presenter.getVerifierDirectoryPerson() != null) {
 			presenter.getServiceControl().setVerifier(presenter.getVerifierDirectoryPerson().getKey());
 		}
-		presenter.getServiceControl().setVerificationDate(verificationDB.getValue());
+		GWT.log("verification date (widget);" + verificationDB.getValue());
+		if (verificationDB.getValue() != null) {
+			presenter.getServiceControl().setVerificationDate(verificationDB.getValue());
+		}
 	}
 
 	private void registerHandlers() {
@@ -276,6 +279,12 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 			verifierLookupSB.setText(srp.getVerifier());
 			verificationDB.setValue(srp.getVerificationDate());
 			assessmentDB.setValue(srp.getAssessmentDate());
+		}
+		else {
+			assessorLookupSB.setText("");
+			assessorLookupSB.getElement().setPropertyString("placeholder", "enter name");
+			verifierLookupSB.setText("");
+			verifierLookupSB.getElement().setPropertyString("placeholder", "enter name");
 		}
 		GWT.log("service name from presenter is: " + presenter.getService().getAwsServiceName());
 		serviceNameTB.setText(presenter.getService().getAwsServiceName());

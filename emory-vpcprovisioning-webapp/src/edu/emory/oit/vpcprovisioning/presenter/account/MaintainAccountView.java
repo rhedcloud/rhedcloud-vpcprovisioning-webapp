@@ -16,7 +16,6 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
-import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 

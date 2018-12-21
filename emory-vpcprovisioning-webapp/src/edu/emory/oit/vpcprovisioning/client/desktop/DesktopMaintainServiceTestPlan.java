@@ -46,6 +46,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider = 
 			new ListDataProvider<ServiceTestRequirementPojo>(new ArrayList<ServiceTestRequirementPojo>());
+	
 	SingleSelectionModel<ServiceTestRequirementPojo> reqSelectionModel = 
 			new SingleSelectionModel<ServiceTestRequirementPojo>(ServiceTestRequirementPojo.KEY_PROVIDER);
 	SingleSelectionModel<ServiceTestPojo> testSelectionModel = 

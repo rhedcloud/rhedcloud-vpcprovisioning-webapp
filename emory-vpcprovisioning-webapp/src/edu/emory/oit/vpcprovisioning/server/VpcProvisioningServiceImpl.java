@@ -4673,19 +4673,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ServiceQuerySpecification queryObject = (ServiceQuerySpecification) getObject(Constants.MOA_SERVICE_QUERY_SPEC);
 			
 			if (filter != null) {
-				queryObject.setServiceId(filter.getServiceId());
-				queryObject.setAwsServiceCode(filter.getAwsServiceCode());
-				queryObject.setAwsServiceName(filter.getAwsServiceName());
-				queryObject.setAwsStatus(filter.getAwsStatus());
-				queryObject.setSiteStatus(filter.getSiteStatus());
-				queryObject.setAwsHipaaEligible(filter.getAwsHipaaEligible());
-				queryObject.setSiteHipaaEligible(filter.getSiteHipaaEligible());
-				for (String consoleCat : filter.getConsoleCategories()) {
-					info("[getServicesForFilter] adding " + consoleCat + " to the query object.");
-					queryObject.addConsoleCategory(consoleCat);
+				if (!filter.isFuzzyFilter()) {
+					queryObject.setServiceId(filter.getServiceId());
+					queryObject.setAwsServiceCode(filter.getAwsServiceCode());
+					queryObject.setAwsServiceName(filter.getAwsServiceName());
+					queryObject.setAwsStatus(filter.getAwsStatus());
+					queryObject.setSiteStatus(filter.getSiteStatus());
+					queryObject.setAwsHipaaEligible(filter.getAwsHipaaEligible());
+					queryObject.setSiteHipaaEligible(filter.getSiteHipaaEligible());
+					for (String consoleCat : filter.getConsoleCategories()) {
+						queryObject.addConsoleCategory(consoleCat);
+					}
+					for (String cat : filter.getCategories()) {
+						queryObject.addCategory(cat);
+					}
 				}
-				for (String cat : filter.getCategories()) {
-					queryObject.addCategory(cat);
+				else {
+					info("[getServicesForFilter] performing a fuzzy filter...");
 				}
 			}
 
@@ -4695,13 +4699,40 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
 
 			for (com.amazon.aws.moa.jmsobjects.services.v1_0.Service service : moas) {
-				AWSServicePojo pojo = new AWSServicePojo();
-				AWSServicePojo baseline = new AWSServicePojo();
-				this.populateAWSServicePojo(service, pojo);
-				this.populateAWSServicePojo(service, baseline);
-				pojo.setBaseline(baseline);
+				if (filter != null && filter.isFuzzyFilter()) {
+					boolean includeInList=false;
+					if (filter.getAwsServiceName() != null && filter.getAwsServiceName().length() > 0) {
+						if (service.getAwsServiceName().toLowerCase().indexOf(filter.getAwsServiceName().toLowerCase()) >= 0) {
+							includeInList = true;
+						}
+					}
+					else if (filter.getConsoleCategories().size() > 0) {
+						String filterCat = filter.getConsoleCategories().get(0);
+						for (String consoleCat : (List<String>)service.getConsoleCategory()) {
+							if (consoleCat.toLowerCase().indexOf(filterCat.toLowerCase()) >= 0) {
+								includeInList = true;
+							}
+						}
+					}
+					if (includeInList) {
+						AWSServicePojo pojo = new AWSServicePojo();
+						AWSServicePojo baseline = new AWSServicePojo();
+						this.populateAWSServicePojo(service, pojo);
+						this.populateAWSServicePojo(service, baseline);
+						pojo.setBaseline(baseline);
 
-				pojos.add(pojo);
+						pojos.add(pojo);
+					}
+				}
+				else {
+					AWSServicePojo pojo = new AWSServicePojo();
+					AWSServicePojo baseline = new AWSServicePojo();
+					this.populateAWSServicePojo(service, pojo);
+					this.populateAWSServicePojo(service, baseline);
+					pojo.setBaseline(baseline);
+
+					pojos.add(pojo);
+				}
 			}
 			
 			Collections.sort(pojos);
@@ -7707,14 +7738,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				scp.setAssessorId(sc.getAssessorId());
 				scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
 				scp.setVerifier(sc.getVerifier());
-				scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
+				if (sc.getVerificationDatetime() != null) {
+					scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
+				}
 				pojo.getServiceControls().add(scp);
 			}
 		}
 		if (moa.getServiceGuideline() != null) {
 			for (ServiceGuideline sg : (List<ServiceGuideline>)moa.getServiceGuideline()) {
 				ServiceGuidelinePojo sgp = new ServiceGuidelinePojo();
-				sgp.setServiceGuidelineName(sg.getServiceId());
+				sgp.setServiceId(sg.getServiceId());
 				sgp.setSequenceNumber(this.toIntFromString(sg.getSequenceNumber()));
 				sgp.setServiceGuidelineName(sg.getServiceGuidelineName());
 				sgp.setDescription(sg.getDescription());
@@ -7818,16 +7851,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			moa_scp.setVerifier(sc.getVerifier());
 			
-			org.openeai.moa.objects.resources.Datetime verifyDT = moa_scp.newVerificationDatetime();
-			this.populateDatetime(verifyDT, sc.getVerificationDate());
-			moa_scp.setVerificationDatetime(verifyDT);
+			if (sc.getVerificationDate() != null) {
+				org.openeai.moa.objects.resources.Datetime verifyDT = moa_scp.newVerificationDatetime();
+				this.populateDatetime(verifyDT, sc.getVerificationDate());
+				moa_scp.setVerificationDatetime(verifyDT);
+			}
 			
 			moa.addServiceControl(moa_scp);
 		}
 
 		for (ServiceGuidelinePojo sg : pojo.getServiceGuidelines()) {
 			ServiceGuideline moa_sg = moa.newServiceGuideline();
-			moa_sg.setServiceGuidelineName(sg.getServiceId());
+			moa_sg.setServiceId(sg.getServiceId());
 			moa_sg.setSequenceNumber(this.toStringFromInt(sg.getSequenceNumber()));
 			moa_sg.setServiceGuidelineName(sg.getServiceGuidelineName());
 			moa_sg.setDescription(sg.getDescription());

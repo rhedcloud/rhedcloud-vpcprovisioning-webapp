@@ -73,7 +73,7 @@
 					<g:customCell>
 						<g:Button
 							addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+							ui:field="cancelButton" debugId="cancelButton">Close</g:Button>
 					</g:customCell>
 					<g:customCell>
 						<g:Button

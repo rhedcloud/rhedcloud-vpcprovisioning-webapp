@@ -8,7 +8,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;

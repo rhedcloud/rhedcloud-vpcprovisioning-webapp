@@ -20,7 +20,6 @@ import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 /**
  * Fired when the user wants to edit a case record.
