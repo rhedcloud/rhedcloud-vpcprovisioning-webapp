@@ -348,7 +348,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
-			this.getAWSServiceMap();
+			try {
+				this.getAWSServiceMap();
+			}
+			catch (RpcException e) {
+				e.printStackTrace();
+				info("Could not load the AWS Service map during initialization but "
+					+ "will allow the web app to initialize.");
+			}
 			
 			String redirect = generalProps.getProperty("manageSessionLocally", "false");
 			manageSessionLocally = Boolean.parseBoolean(redirect);

@@ -10,6 +10,7 @@ import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestStepPojo;
@@ -17,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.shared.ServiceTestStepPojo;
 public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 
 //	private final ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider;
+	MaintainServiceTestPlanPresenter presenter;
 	ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider;
 
 	// need a selection model for each cell so we 
@@ -32,8 +34,10 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 			ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider,
 			final SelectionModel<ServiceTestRequirementPojo> testRequirementSelectionModel,
 			final SelectionModel<ServiceTestPojo> testSelectionModel,
-			final SelectionModel<ServiceTestStepPojo> testStepSelectionModel) {
+			final SelectionModel<ServiceTestStepPojo> testStepSelectionModel,
+			final MaintainServiceTestPlanPresenter presenter) {
 
+		this.presenter = presenter;
 		this.testRequirementSelectionModel = testRequirementSelectionModel;
 		this.testSelectionModel = testSelectionModel;
 		this.testStepSelectionModel = testStepSelectionModel;
@@ -214,6 +218,34 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 		else {
 			GWT.log(value + " IS NOT a leaf");
 		}
+
+			if (value instanceof ServiceTestRequirementPojo) {
+				GWT.log("[isLeaf] it's a requirement");
+				if (presenter != null) {
+					presenter.setSelectedTestRequirement((ServiceTestRequirementPojo)value);
+				}
+				else {
+					GWT.log("[isLeaf] presenter is null, can't set it yet");
+				}
+			}
+			else if (value instanceof ServiceTestPojo) {
+				GWT.log("[isLeaf] it's a test");
+				if (presenter != null) {
+					presenter.setSelectedTest((ServiceTestPojo)value);
+				}
+				else {
+					GWT.log("[isLeaf] presenter is null, can't set it yet");
+				}
+			}
+			else if (value instanceof ServiceTestStepPojo) {
+				GWT.log("[isLeaf] it's a step");
+				if (presenter != null) {
+					presenter.setSelectedTestStep((ServiceTestStepPojo)value);
+				}
+				else {
+					GWT.log("[isLeaf] presenter is null, can't set it yet");
+				}
+			}
 		return leaf;
 	}
 
@@ -223,6 +255,14 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 
 	public void setRequirementDataProvider(ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider) {
 		this.requirementDataProvider = requirementDataProvider;
+	}
+
+	public MaintainServiceTestPlanPresenter getPresenter() {
+		return presenter;
+	}
+
+	public void setPresenter(MaintainServiceTestPlanPresenter presenter) {
+		this.presenter = presenter;
 	}
 
 }

@@ -27,6 +27,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
@@ -459,6 +460,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		addStepButton.setVisible(false);
 		removeStepButton.setVisible(false);
 		
+		if (presenter.getSelectedTestRequirement() == null) {
+			this.showMessageToUser("[add test ] no selected test requirement.");
+			return;
+		}
 		testRequirementForTestLabel.setText(Integer.toString(
 				presenter.getSelectedTestRequirement().getSequenceNumber()));
 		
@@ -483,6 +488,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		
 		removeStepButton.setVisible(false);
 		
+		if (presenter.getSelectedTestRequirement() == null) {
+			this.showMessageToUser("[add step] no selected test requirement.");
+			return;
+		}
 		testRequirementForStepLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
 		
 		testForStepLabel.setText(Integer.toString(presenter.getSelectedTest().getSequenceNumber()));
@@ -545,6 +554,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 					testPanel.setVisible(true);
 					testSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
 					testDescriptionTA.setText(selected.getDescription());
+					if (presenter.getSelectedTestRequirement() == null) {
+						showMessageToUser("[test changed] no selected test requirement.");
+						return;
+					}
 					testRequirementForTestLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
 					testExpectedResultLB.setSelectedIndex(0);
 					int i=1;
@@ -584,6 +597,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 					testStepPanel.setVisible(true);
 					stepSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
 					stepDescriptionTA.setText(selected.getDescription());
+					if (presenter.getSelectedTestRequirement() == null) {
+						showMessageToUser("[test changed] no selected test requirement.");
+						return;
+					}
 					testRequirementForStepLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
 					testForStepLabel.setText(Integer.toString(presenter.getSelectedTest().getSequenceNumber()));
 				}
@@ -597,7 +614,8 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				requirementDataProvider,
 				reqSelectionModel, 
 				testSelectionModel, 
-				stepSelectionModel);
+				stepSelectionModel,
+				(MaintainServiceTestPlanPresenter)presenter);
 		CellBrowser.Builder<Object> builder = new CellBrowser.Builder<Object>(model, null);
 		cellBrowser = builder.build();
 	}

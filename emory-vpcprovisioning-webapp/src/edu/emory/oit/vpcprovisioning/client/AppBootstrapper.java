@@ -173,6 +173,33 @@ public class AppBootstrapper {
 			public void onFailure(Throwable caught) {
 				GWT.log("Exception Retrieving User Logged in", caught);
 				parentView.remove(pleaseWaitPanel);
+				
+				HorizontalPanel siteDownPanel = new HorizontalPanel();
+				siteDownPanel.setWidth("100%");
+				siteDownPanel.setHeight("100%");
+				
+				VerticalPanel siteDownVP = new VerticalPanel();
+				siteDownVP.setSpacing(8);
+				siteDownPanel.add(siteDownVP);
+				siteDownPanel.setCellHorizontalAlignment(siteDownVP, HasHorizontalAlignment.ALIGN_CENTER);
+				siteDownPanel.setCellVerticalAlignment(siteDownVP, HasVerticalAlignment.ALIGN_MIDDLE);
+				
+//				Image loader = new Image();
+//				loader.setUrl("images/ajax-loader.gif");
+//				vp.add(loader);
+				
+				HTML siteDownMessage = new HTML();
+				siteDownMessage.setHTML("<p><b>The VPCP Console is having technical issues.  "
+						+ "We're looking into it.  We apologize fo any inconvenience.</b></p>");
+				siteDownVP.add(siteDownMessage);
+
+//				vp.setCellHorizontalAlignment(loader, HasHorizontalAlignment.ALIGN_CENTER);
+//				vp.setCellVerticalAlignment(loader, HasVerticalAlignment.ALIGN_MIDDLE);
+				siteDownVP.setCellHorizontalAlignment(siteDownMessage, HasHorizontalAlignment.ALIGN_CENTER);
+				siteDownVP.setCellVerticalAlignment(siteDownMessage, HasVerticalAlignment.ALIGN_MIDDLE);
+				
+				parentView.add(siteDownPanel);
+				
 				shell.hidePleaseWaitDialog();
 				shell.hidePleaseWaitPanel();
 				shell.showMessageToUser("[AppBootstrapper:FATAL] There was an exception on the " +
