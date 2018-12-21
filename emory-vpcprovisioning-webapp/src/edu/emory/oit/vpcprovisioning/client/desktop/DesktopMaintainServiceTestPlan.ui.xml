@@ -87,7 +87,7 @@
 						animationEnabled="true" 
 						ui:field="cellBrowser" 
 						title="Existing Test Requirements"/>
-					<g:HTML addStyleNames="{style.statusLabel}">View/maintain the test requirement, 
+					<g:HTML addStyleNames="{style.longStatusLabel}">View/maintain the test requirement, 
 					test and step information below.  Click the 
 					Save button to save each item and the Security Assessment will also be saved.</g:HTML>
 				</g:VerticalPanel>

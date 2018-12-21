@@ -385,4 +385,19 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 		return this.selectedStep;
 	}
 
+	@Override
+	public void requirementSelected() {
+		getView().requirementSelected();
+	}
+
+	@Override
+	public void testSelected() {
+		getView().testSelected();
+	}
+
+	@Override
+	public void stepSelected() {
+		getView().stepSelected();
+	}
+
 }

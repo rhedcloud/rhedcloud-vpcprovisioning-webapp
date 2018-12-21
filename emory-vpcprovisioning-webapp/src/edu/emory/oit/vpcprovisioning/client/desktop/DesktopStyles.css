@@ -663,6 +663,17 @@ a:visited {
 	border: 2px solid;
     border-radius: 7px;
 }
+.longStatusLabel {
+	color: grey;
+	font-size: 10pt;
+	padding: 3px;
+	font-weight: normal;
+	text-align: left;
+	border: 2px solid;
+    border-radius: 5px;
+    min-width: 150px;
+    max-width: 1000px;
+}
 .statusLabel {
 	color: grey;
 	font-size: 10pt;

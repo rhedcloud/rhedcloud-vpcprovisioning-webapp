@@ -34,10 +34,8 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 			ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider,
 			final SelectionModel<ServiceTestRequirementPojo> testRequirementSelectionModel,
 			final SelectionModel<ServiceTestPojo> testSelectionModel,
-			final SelectionModel<ServiceTestStepPojo> testStepSelectionModel,
-			final MaintainServiceTestPlanPresenter presenter) {
+			final SelectionModel<ServiceTestStepPojo> testStepSelectionModel) {
 
-		this.presenter = presenter;
 		this.testRequirementSelectionModel = testRequirementSelectionModel;
 		this.testSelectionModel = testSelectionModel;
 		this.testStepSelectionModel = testStepSelectionModel;
@@ -212,40 +210,43 @@ public class ServiceTestPlanTreeViewModel implements TreeViewModel {
 	public boolean isLeaf(Object value) {
 		// test step is the leaf (final cell)
 		boolean leaf = value instanceof ServiceTestStepPojo;
-		if (leaf) {
-			GWT.log(value + " IS a leaf");
-		}
-		else {
-			GWT.log(value + " IS NOT a leaf");
-		}
+//		if (leaf) {
+//			GWT.log(" IS a leaf");
+//		}
+//		else {
+//			GWT.log(" IS NOT a leaf");
+//		}
 
-			if (value instanceof ServiceTestRequirementPojo) {
-				GWT.log("[isLeaf] it's a requirement");
-				if (presenter != null) {
-					presenter.setSelectedTestRequirement((ServiceTestRequirementPojo)value);
-				}
-				else {
-					GWT.log("[isLeaf] presenter is null, can't set it yet");
-				}
+		if (value instanceof ServiceTestRequirementPojo) {
+			GWT.log("[isLeaf] it's a requirement");
+			if (presenter != null) {
+				presenter.setSelectedTestRequirement((ServiceTestRequirementPojo)value);
+				presenter.requirementSelected();
 			}
-			else if (value instanceof ServiceTestPojo) {
-				GWT.log("[isLeaf] it's a test");
-				if (presenter != null) {
-					presenter.setSelectedTest((ServiceTestPojo)value);
-				}
-				else {
-					GWT.log("[isLeaf] presenter is null, can't set it yet");
-				}
+			else {
+				GWT.log("[isLeaf] presenter is null, can't set it yet");
 			}
-			else if (value instanceof ServiceTestStepPojo) {
-				GWT.log("[isLeaf] it's a step");
-				if (presenter != null) {
-					presenter.setSelectedTestStep((ServiceTestStepPojo)value);
-				}
-				else {
-					GWT.log("[isLeaf] presenter is null, can't set it yet");
-				}
+		}
+		else if (value instanceof ServiceTestPojo) {
+			GWT.log("[isLeaf] it's a test");
+			if (presenter != null) {
+				presenter.setSelectedTest((ServiceTestPojo)value);
+				presenter.testSelected();
 			}
+			else {
+				GWT.log("[isLeaf] presenter is null, can't set it yet");
+			}
+		}
+		else if (value instanceof ServiceTestStepPojo) {
+			GWT.log("[isLeaf] it's a step");
+			if (presenter != null) {
+				presenter.setSelectedTestStep((ServiceTestStepPojo)value);
+				presenter.stepSelected();
+			}
+			else {
+				GWT.log("[isLeaf] presenter is null, can't set it yet");
+			}
+		}
 		return leaf;
 	}
 

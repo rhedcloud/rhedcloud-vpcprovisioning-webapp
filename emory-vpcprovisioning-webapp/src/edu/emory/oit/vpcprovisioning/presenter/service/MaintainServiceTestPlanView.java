@@ -43,12 +43,15 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 		
 		public void setSelectedTestRequirement(ServiceTestRequirementPojo selected);
 		public ServiceTestRequirementPojo getSelectedTestRequirement();
+		public void requirementSelected();
 		
 		public void setSelectedTest(ServiceTestPojo selected);
 		public ServiceTestPojo getSelectedTest();
+		public void testSelected();
 		
 		public void setSelectedTestStep(ServiceTestStepPojo selected);
 		public ServiceTestStepPojo getSelectedTestStep();
+		public void stepSelected();
 	}
 
 	/**
@@ -78,4 +81,7 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 	void setReleaseInfo(String releaseInfoHTML);
 	void setTestExpectedResultItems(List<String> items);
 	void refreshDataProvider();
+	public void requirementSelected();
+	public void testSelected();
+	public void stepSelected();
 }

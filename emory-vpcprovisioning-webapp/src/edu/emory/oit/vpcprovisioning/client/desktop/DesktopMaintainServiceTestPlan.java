@@ -268,6 +268,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	public void initPage() {
 		GWT.log("MaintainServiceTestPlan.initPage()");
 		
+		model.setPresenter((MaintainServiceTestPlanPresenter)presenter);
 		removeReqButton.setVisible(false);
 		addTestButton.setVisible(false);
 		removeTestButton.setVisible(false);
@@ -334,6 +335,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	void removeReqButtonClicked(ClickEvent e) {
 		ServiceTestPlanPojo stp = presenter.getServiceTestPlan();
 		stp.removeServiceRequirement(presenter.getSelectedTestRequirement());
+		presenter.setSelectedTestRequirement(null);
 		presenter.saveAssessment();
 	}
 
@@ -384,6 +386,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	void removeTestButtonClicked(ClickEvent e) {
 		ServiceTestRequirementPojo str = presenter.getSelectedTestRequirement();
 		str.removeServiceTest(presenter.getSelectedTest());
+		presenter.setSelectedTest(null);
 		presenter.saveAssessment();
 	}
 
@@ -421,6 +424,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	void removeStepButtonClicked(ClickEvent e) {
 		ServiceTestPojo str = presenter.getSelectedTest();
 		str.removeServiceTestStep(presenter.getSelectedTestStep());
+		presenter.setSelectedTestStep(null);
 		presenter.saveAssessment();
 	}
 
@@ -510,103 +514,21 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		reqSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				ServiceTestRequirementPojo selected = reqSelectionModel.getSelectedObject();
-				GWT.log("[onSelectionChange] requirment selected: " + selected);
-				presenter.setSelectedTestRequirement(selected);
-				saveReqButton.setText(SAVE);
-
-				if (selected == null) {
-					hidePanels();
-					hideButtons();
-				}
-				else {
-					testPanel.setVisible(false);
-					testStepPanel.setVisible(false);
-					requirementPanel.setVisible(true);
-					reqSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
-					reqDescriptionTA.setText(selected.getDescription());
-				}
-
-				addTestButton.setVisible(true);
-				removeTestButton.setVisible(false);
-				addStepButton.setVisible(false);
-				removeStepButton.setVisible(false);
-				addReqButton.setVisible(true);
-				removeReqButton.setVisible(true);
+				requirementSelected();
 			}
 		});
 
 		testSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				ServiceTestPojo selected = testSelectionModel.getSelectedObject();
-				GWT.log("[onSelectionChange] test selected: " + selected);
-				presenter.setSelectedTest(selected);
-				saveTestButton.setText(SAVE);
-
-				if (selected == null) {
-					hidePanels();
-					hideButtons();
-				}
-				else {
-					testStepPanel.setVisible(false);
-					requirementPanel.setVisible(false);
-					testPanel.setVisible(true);
-					testSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
-					testDescriptionTA.setText(selected.getDescription());
-					if (presenter.getSelectedTestRequirement() == null) {
-						showMessageToUser("[test changed] no selected test requirement.");
-						return;
-					}
-					testRequirementForTestLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
-					testExpectedResultLB.setSelectedIndex(0);
-					int i=1;
-					erLoop: for (String type : testExpectedResultItems) {
-						if (selected.getServiceTestExpectedResult() != null) {
-							if (selected.getServiceTestExpectedResult().equalsIgnoreCase(type)) {
-								testExpectedResultLB.setSelectedIndex(i);
-								break erLoop;
-							}
-						}
-						i++;
-					}
-				}
-				
-				addTestButton.setVisible(true);
-				removeTestButton.setVisible(true);
-				addStepButton.setVisible(true);
-				removeStepButton.setVisible(false);
+				testSelected();
 			}
 		});
 
 		stepSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				ServiceTestStepPojo selected = stepSelectionModel.getSelectedObject();
-				GWT.log("[onSelectionChange] step selected: " + selected);
-				presenter.setSelectedTestStep(selected);
-				saveStepButton.setText(SAVE);
-
-				if (selected == null) {
-					hidePanels();
-					hideButtons();
-				}
-				else {
-					requirementPanel.setVisible(false);
-					testPanel.setVisible(false);
-					testStepPanel.setVisible(true);
-					stepSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
-					stepDescriptionTA.setText(selected.getDescription());
-					if (presenter.getSelectedTestRequirement() == null) {
-						showMessageToUser("[test changed] no selected test requirement.");
-						return;
-					}
-					testRequirementForStepLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
-					testForStepLabel.setText(Integer.toString(presenter.getSelectedTest().getSequenceNumber()));
-				}
-
-				addStepButton.setVisible(true);
-				removeStepButton.setVisible(true);
+				stepSelected();
 			}
 		});
 
@@ -614,8 +536,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				requirementDataProvider,
 				reqSelectionModel, 
 				testSelectionModel, 
-				stepSelectionModel,
-				(MaintainServiceTestPlanPresenter)presenter);
+				stepSelectionModel);
 		CellBrowser.Builder<Object> builder = new CellBrowser.Builder<Object>(model, null);
 		cellBrowser = builder.build();
 	}
@@ -650,5 +571,127 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void requirementSelected() {
+//		ServiceTestRequirementPojo selected = reqSelectionModel.getSelectedObject();
+		ServiceTestRequirementPojo selectedFromModel = reqSelectionModel.getSelectedObject();
+		GWT.log("REQ:selectedFromModel is: " + selectedFromModel);
+		ServiceTestRequirementPojo selected = presenter.getSelectedTestRequirement();
+		reqSelectionModel.setSelected(selected, true);
+		GWT.log("[REQ:onSelectionChange] requirment selected: " + selected);
+		presenter.setSelectedTestRequirement(selected);
+		saveReqButton.setText(SAVE);
+
+		if (selected == null) {
+			hidePanels();
+			hideButtons();
+		}
+		else {
+			testPanel.setVisible(false);
+			testStepPanel.setVisible(false);
+			requirementPanel.setVisible(true);
+			reqSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
+			reqDescriptionTA.setText(selected.getDescription());
+		}
+
+		addTestButton.setVisible(true);
+		removeTestButton.setVisible(false);
+		addStepButton.setVisible(false);
+		removeStepButton.setVisible(false);
+		addReqButton.setVisible(true);
+		removeReqButton.setVisible(true);
+	}
+
+	@Override
+	public void testSelected() {
+//		ServiceTestPojo selected = testSelectionModel.getSelectedObject();
+		ServiceTestPojo selectedFromModel = testSelectionModel.getSelectedObject();
+		GWT.log("TEST:selectedFromModel is: " + selectedFromModel);
+		ServiceTestPojo selected = presenter.getSelectedTest();
+		testSelectionModel.setSelected(selected, true);
+		GWT.log("[TEST:onSelectionChange] test selected: " + selected);
+		presenter.setSelectedTest(selected);
+		saveTestButton.setText(SAVE);
+
+		if (selected == null) {
+			hidePanels();
+			hideButtons();
+		}
+		else {
+			if (presenter.getSelectedTestRequirement() == null) {
+				GWT.log("[TEST:onSelectionChange] no selected test requirement.");
+				hidePanels();
+				hideButtons();
+				return;
+			}
+			testStepPanel.setVisible(false);
+			requirementPanel.setVisible(false);
+			testPanel.setVisible(true);
+			testSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
+			testDescriptionTA.setText(selected.getDescription());
+			testRequirementForTestLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
+			testExpectedResultLB.setSelectedIndex(0);
+			int i=1;
+			erLoop: for (String type : testExpectedResultItems) {
+				if (selected.getServiceTestExpectedResult() != null) {
+					if (selected.getServiceTestExpectedResult().equalsIgnoreCase(type)) {
+						testExpectedResultLB.setSelectedIndex(i);
+						break erLoop;
+					}
+				}
+				i++;
+			}
+			addTestButton.setVisible(true);
+			removeTestButton.setVisible(true);
+			addStepButton.setVisible(true);
+			removeStepButton.setVisible(false);
+		}
+	}
+
+	@Override
+	public void stepSelected() {
+//		ServiceTestStepPojo selected = stepSelectionModel.getSelectedObject();
+		ServiceTestStepPojo selectedFromModel = stepSelectionModel.getSelectedObject();
+		GWT.log("STEP:selectedFromModel is: " + selectedFromModel);
+		ServiceTestStepPojo selected = presenter.getSelectedTestStep();
+		stepSelectionModel.setSelected(selected, true);
+		GWT.log("[STEP: onSelectionChange] step selected: " + selected);
+		presenter.setSelectedTestStep(selected);
+		saveStepButton.setText(SAVE);
+
+		if (selected == null) {
+			hidePanels();
+			hideButtons();
+		}
+		else {
+			if (presenter.getSelectedTestRequirement() == null) {
+				GWT.log("[STEP: onSelectionChange]  no selected test requirement.");
+				hidePanels();
+				hideButtons();
+				return;
+			}
+			if (presenter.getSelectedTest() == null) {
+				GWT.log("[STEP: onSelectionChange]  no selected test.");
+				addStepButton.setVisible(false);
+				removeStepButton.setVisible(false);
+				requirementPanel.setVisible(true);
+				testPanel.setVisible(false);
+				testStepPanel.setVisible(false);
+			}
+			else {
+				requirementPanel.setVisible(false);
+				testPanel.setVisible(false);
+				testStepPanel.setVisible(true);
+				stepSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
+				stepDescriptionTA.setText(selected.getDescription());
+				testRequirementForStepLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
+				testForStepLabel.setText(Integer.toString(presenter.getSelectedTest().getSequenceNumber()));
+				addStepButton.setVisible(true);
+				removeStepButton.setVisible(true);
+			}
+		}
+
 	}
 }
