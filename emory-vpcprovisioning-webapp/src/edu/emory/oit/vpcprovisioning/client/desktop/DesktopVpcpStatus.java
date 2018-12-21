@@ -332,7 +332,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 							}
 						}
 						if (startTime != 0) {
-							NumberFormat df2 = NumberFormat.getFormat("000.00");
+							NumberFormat df2 = NumberFormat.getFormat("#00.##");
 							GWT.log("Start time formated: " + new java.util.Date(startTime));
 							String s_anticipatedTime = psp.getAnticipatedTime();
 							double anticipatedTime = Double.parseDouble(s_anticipatedTime);
@@ -340,15 +340,15 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 							GWT.log("Current time formated: " + new java.util.Date((long)currentTime));
 							double elapsedTime = currentTime - startTime;
 							StringBuffer s_elapsedHtml = new StringBuffer();
-							s_elapsedHtml.append("Elapsed time: " + elapsedTime + "</br>");
+							s_elapsedHtml.append(elapsedTime + " ");
 							double raw = (elapsedTime / anticipatedTime);
 							double pctComplete = new Double(df2.format(raw)).doubleValue() * 100;
 							GWT.log("PCT Complete: " + pctComplete);
 							if (pctComplete > 100) {
-								s_elapsedHtml.append("Overdue");
+								s_elapsedHtml.append("(Overdue)");
 							}
 							else {
-								s_elapsedHtml.append("%" + pctComplete);
+								s_elapsedHtml.append("(" + pctComplete + "%)");
 							}
 							HTML hElapsedTime = new HTML(s_elapsedHtml.toString());
 							stepsGrid.setWidget(gridRow, 6, hElapsedTime);
