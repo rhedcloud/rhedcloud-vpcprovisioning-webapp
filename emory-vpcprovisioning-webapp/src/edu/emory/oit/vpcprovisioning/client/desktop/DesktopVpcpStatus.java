@@ -351,6 +351,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 								s_elapsedHtml.append("(" + pctComplete + "%)");
 							}
 							HTML hElapsedTime = new HTML(s_elapsedHtml.toString());
+							stepsGrid.getColumnFormatter().setWidth(6, "200px");
 							stepsGrid.setWidget(gridRow, 6, hElapsedTime);
 						}
 					}
