@@ -280,6 +280,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		testStepPanel.setVisible(false);
 		
 		if (model != null) {
+			initializeCellBrowser();
 			refreshDataProvider();
 		}
 		else {
@@ -561,10 +562,18 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	public void refreshDataProvider() {
 		GWT.log("refreshing data provider...test " + 
 			"requirement count is: " + 
-			presenter.getServiceTestPlan().getServiceTestRequirements().size());
-		requirementDataProvider.setList(
-				presenter.getServiceTestPlan().getServiceTestRequirements());
+		presenter.getServiceTestPlan().getServiceTestRequirements().size());
+		requirementDataProvider.setList(presenter.getServiceTestPlan().getServiceTestRequirements());
 		requirementDataProvider.refresh();
+		if (presenter.getServiceTestPlan().getServiceTestRequirements().size() > 0) {
+			
+			ServiceTestRequirementPojo str = presenter.getServiceTestPlan().getServiceTestRequirements().get(0);
+			reqSelectionModel.setSelected(str, true);
+			SelectionChangeEvent.fire(reqSelectionModel);
+		}
+		else {
+			GWT.log("[refreshDataProvider] can't get a test requirement from the current assessment.");
+		}
 	}
 
 	@Override

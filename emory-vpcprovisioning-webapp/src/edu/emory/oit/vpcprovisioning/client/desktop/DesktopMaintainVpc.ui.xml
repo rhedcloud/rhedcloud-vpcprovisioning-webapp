@@ -195,6 +195,28 @@
 			   		</g:cell>
 				</g:VerticalPanel>
 			</g:cell>
+			<g:cell horizontalAlignment="ALIGN_LEFT"
+				verticalAlignment="ALIGN_TOP">
+				<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="propertiesVP" height="100%">
+					<g:Label addStyleNames="{style.mediumLabel}">Add/Update/Remove Properties:</g:Label>
+					<g:HorizontalPanel ui:field="addPropertyHP" spacing="16">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:TextBox ui:field="propertyKeyTF" debugId="propertyKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:TextBox ui:field="propertyValueTF" debugId="propertyValueTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:Button ui:field="addPropertyButton" debugId="addPropertyButton"
+								addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+						</g:cell>
+					</g:HorizontalPanel>
+					<g:VerticalPanel spacing="8">
+						<g:Label addStyleNames="{style.mediumLabel}">Properties associated to this VPC:</g:Label>
+						<g:FlexTable ui:field="propertiesTable" debugId="propertiesTable" cellSpacing="3" cellPadding="3"/>
+					</g:VerticalPanel>
+				</g:VerticalPanel>
+			</g:cell>
 			<!-- hide this one when maintaining (not used anymore) -->
 			<g:cell horizontalAlignment="ALIGN_LEFT"
 				verticalAlignment="ALIGN_MIDDLE">

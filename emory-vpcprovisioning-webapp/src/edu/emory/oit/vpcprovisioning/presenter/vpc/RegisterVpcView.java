@@ -10,6 +10,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
@@ -33,6 +34,10 @@ public interface RegisterVpcView  extends Editor<VpcPojo>, IsWidget, View {
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void logMessageOnServer(final String message);
+		
+		public void setSelectedProperty(PropertyPojo prop);
+		public PropertyPojo getSelectedProperty();
+		public void updateProperty(PropertyPojo prop);
 	}
 
 	/**

@@ -11,13 +11,19 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CaptionPanel;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
@@ -26,6 +32,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
 import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -50,6 +57,13 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 	@UiField TextBox cidrTB;
 	@UiField TextBox vpnProfileIdTB;
 	@UiField TextArea purposeTA;
+
+	// VPC associated properties
+	@UiField VerticalPanel propertiesVP;
+	@UiField TextBox propertyKeyTF;
+	@UiField TextBox propertyValueTF;
+	@UiField Button addPropertyButton;
+	@UiField FlexTable propertiesTable;
 
 	private static DesktopRegisterVpcUiBinder uiBinder = GWT.create(DesktopRegisterVpcUiBinder.class);
 
@@ -90,6 +104,136 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 				}
 			}
 		});
+	}
+
+	@UiHandler ("addPropertyButton")
+	void addPropertyButtonClick(ClickEvent e) {
+		propertyKeyTF.setEnabled(true);
+		if (addPropertyButton.getText().equalsIgnoreCase("Add")) {
+			addProperty();
+		}
+		else {
+			// update existing property
+			PropertyPojo property = createPropertyFromFormData();
+			presenter.updateProperty(property);
+			initializeVpcPropertiesPanel();
+		}
+		propertyKeyTF.setText("");
+		propertyValueTF.setText("");
+	}
+	
+	private void initializeVpcPropertiesPanel() {
+		addPropertyButton.setText("Add");
+		propertyKeyTF.setEnabled(true);
+		propertiesTable.removeAllRows();
+		for (PropertyPojo prop : presenter.getVpc().getProperties()) {
+			this.addPropertyToPanel(prop);
+		}
+	}
+
+	private void addPropertyToPanel(final PropertyPojo prop) {
+		final int numRows = propertiesTable.getRowCount();
+		
+		final Label keyLabel = new Label(prop.getName());
+		keyLabel.addStyleName("emailLabel");
+		
+		final Label valueLabel = new Label(prop.getValue());
+		valueLabel.addStyleName("emailLabel");
+		
+		final PushButton editButton = new PushButton();
+		editButton.setTitle("Edit this Property.");
+		Image editImage = new Image("images/edit_icon.png");
+		editImage.setWidth("30px");
+		editImage.setHeight("30px");
+		editButton.getUpFace().setImage(editImage);
+		if (this.userLoggedIn.isCentralAdmin() || 
+			this.userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId())) {
+			editButton.setEnabled(true);
+		}
+		else {
+			editButton.setEnabled(false);
+		}
+		editButton.addStyleName("glowing-border");
+		editButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.setSelectedProperty(prop);
+				propertyKeyTF.setText(prop.getName());
+				propertyKeyTF.setEnabled(false);
+				propertyValueTF.setText(prop.getValue());
+				addPropertyButton.setText("Update");
+				Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+			        public void execute () {
+			        	propertyValueTF.setFocus(true);
+			        }
+			    });
+			}
+		});
+		
+		final PushButton removeButton = new PushButton();
+		removeButton.setTitle("Remove this Property.");
+		Image removeImage = new Image("images/delete_icon.png");
+		removeImage.setWidth("30px");
+		removeImage.setHeight("30px");
+		removeButton.getUpFace().setImage(removeImage);
+		// disable buttons if userLoggedIn is NOT a network admin
+		if (this.userLoggedIn.isCentralAdmin()  || 
+			this.userLoggedIn.isAdminForAccount(presenter.getVpc().getAccountId())) {
+			removeButton.setEnabled(true);
+		}
+		else {
+			removeButton.setEnabled(false);
+		}
+		removeButton.addStyleName("glowing-border");
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.getVpc().getProperties().remove(prop);
+				initPage();
+			}
+		});
+		
+		propertiesTable.setWidget(numRows, 0, keyLabel);
+		propertiesTable.setWidget(numRows, 1, new Label("="));
+		propertiesTable.setWidget(numRows, 2, valueLabel);
+		propertiesTable.setWidget(numRows, 3, editButton);
+		propertiesTable.setWidget(numRows, 4, removeButton);
+	}
+
+	private void addProperty() {
+		List<Widget> fields = getMissingPropertyFields();
+		if (fields != null && fields.size() > 0) {
+			setFieldViolations(true);
+			applyStyleToMissingFields(fields);
+			showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			setFieldViolations(false);
+			resetFieldStyles();
+		}
+		PropertyPojo property = createPropertyFromFormData();
+		presenter.getVpc().getProperties().add(property);
+		addPropertyToPanel(property);
+		this.resetFieldStyles();
+	}
+
+	private PropertyPojo createPropertyFromFormData() {
+		PropertyPojo prop = new PropertyPojo();
+		prop.setName(propertyKeyTF.getText());
+		prop.setValue(propertyValueTF.getText());
+		return prop;
+	}
+
+	private List<Widget> getMissingPropertyFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		if (propertyKeyTF.getText() == null || propertyKeyTF.getText().length() == 0) {
+			fields.add(propertyKeyTF);
+		}
+		if (propertyValueTF.getText() == null || propertyValueTF.getText().length() == 0) {
+			fields.add(propertyValueTF);
+		}
+		return fields;
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelInterfacePojo;
@@ -33,6 +34,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 	private VpcPojo vpc;
 	private VpcRequisitionPojo vpcRequisition;
 	private VpnConnectionPojo vpnConnection;
+	PropertyPojo selectedProperty;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -431,5 +433,35 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 		VpnConnectionQueryFilterPojo vpnFilter = new VpnConnectionQueryFilterPojo();
 		vpnFilter.setVpcId(getVpcId());
 		VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(vpnFilter, vpnConnectionCB);
+	}
+
+	@Override
+	public void setSelectedProperty(PropertyPojo prop) {
+		this.selectedProperty = prop;
+	}
+
+	@Override
+	public PropertyPojo getSelectedProperty() {
+		return this.selectedProperty;
+	}
+
+	@Override
+	public void updateProperty(PropertyPojo prop) {
+		int index = -1;
+		propertyLoop: for (int i=0; i<vpc.getProperties().size(); i++) {
+			PropertyPojo tpp = vpc.getProperties().get(i);
+			if (tpp.getName().equalsIgnoreCase(prop.getName())) {
+				index = i;
+				break propertyLoop;
+			}
+		}
+		if (index >= 0) {
+			GWT.log("Updating property: " + index);
+			vpc.getProperties().remove(index);
+			vpc.getProperties().add(prop);
+		}
+		else {
+			GWT.log("Counldn't find a property to update...problem");
+		}
 	}
 }

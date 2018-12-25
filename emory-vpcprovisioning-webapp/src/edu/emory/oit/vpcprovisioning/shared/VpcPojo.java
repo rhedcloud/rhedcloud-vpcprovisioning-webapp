@@ -21,6 +21,7 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 	String vpnConnectionProfileId;
 	String purpose;
 	String region;
+	List<PropertyPojo> properties = new java.util.ArrayList<PropertyPojo>();
 	VpcPojo baseline;
 	
 	public static final ProvidesKey<VpcPojo> KEY_PROVIDER = new ProvidesKey<VpcPojo>() {
@@ -117,6 +118,14 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 
 	public void setRegion(String region) {
 		this.region = region;
+	}
+
+	public List<PropertyPojo> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<PropertyPojo> properties) {
+		this.properties = properties;
 	}
 
 //	public String getComplianceClass() {

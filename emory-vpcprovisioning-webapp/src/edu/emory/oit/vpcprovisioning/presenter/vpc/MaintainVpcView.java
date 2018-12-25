@@ -12,6 +12,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionPojo;
@@ -43,6 +44,10 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 		
 		public VpnConnectionPojo getVpnConnection();
 		public void refreshVpnConnectionInfo();
+		
+		public void setSelectedProperty(PropertyPojo prop);
+		public PropertyPojo getSelectedProperty();
+		public void updateProperty(PropertyPojo prop);
 	}
 
 	/**

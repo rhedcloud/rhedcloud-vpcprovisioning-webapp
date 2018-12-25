@@ -1174,6 +1174,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //            moa.addCustomerAdminNetId(p);
 //        }
 
+        for (PropertyPojo p : pojo.getProperties()) {
+        	com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
+        	mp.setKey(p.getName());
+        	mp.setValue(p.getValue());
+        	moa.addProperty(mp);
+        }
+
 		moa.setRegion(pojo.getRegion());
 		moa.setCidr(pojo.getCidr());
 		moa.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
@@ -1182,6 +1189,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void populateVpcPojo(VirtualPrivateCloud moa,
 			VpcPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
@@ -1205,6 +1213,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
 //			pojo.getCustomerAdminNetIdList().add(netId);
 //		}
+		
+		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			PropertyPojo p = new PropertyPojo();
+			p.setName(mp.getKey());
+			p.setValue(mp.getValue());
+			pojo.getProperties().add(p);
+		}
 		
 		pojo.setCidr(moa.getCidr());
 		this.setPojoCreateInfo(pojo, moa);
@@ -3662,7 +3677,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setVirtualPrivateCloudRequisition(vpcr);
 		}
 
-		// provisioningsteps
+        // provisioningsteps
 		for (ProvisioningStepPojo psp : pojo.getProvisioningSteps()) {
 			ProvisioningStep ps = moa.newProvisioningStep();
 			this.populateProvisioningStepMoa(psp, ps);
