@@ -9,6 +9,7 @@ public class Constants implements IsSerializable {
 	public final static long MILLIS_PER_3HR = 3 * 60 * 60 * 1000;
 	public final static long MILLIS_PER_HR = 60 * 60 * 1000;
 	public final static long MILLIS_PER_HOUR = 60 * 60 * 1000;
+	public final static long MILLIS_PER_MINUTE = 60 * 1000;
 	public static final String CIDR_ASSIGNMENT = "CidrAssignment";
 	public static final String CIDR = "Cidr";
 	public static final String SERVICE_SUMMARY = "ServiceSummary";

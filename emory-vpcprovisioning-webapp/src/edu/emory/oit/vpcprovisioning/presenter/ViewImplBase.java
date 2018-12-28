@@ -30,6 +30,35 @@ public abstract class ViewImplBase extends Composite {
 	PopupPanel pleaseWaitDialog;
 	protected boolean fieldViolations = false;
 	
+	public String formatMillisForDisplay(String millis) {
+		String formatted = "";
+		
+		if (millis == null || millis.length() == 0) {
+			return formatted;
+		}
+		
+		long l_millis = Long.parseLong(millis);
+		if (l_millis < Constants.MILLIS_PER_MINUTE) {
+			// less than a minute
+			int seconds = (int) (l_millis / 1000) % 60 ;
+			formatted = seconds + "s";
+		}
+		else if (l_millis >= Constants.MILLIS_PER_MINUTE && l_millis < Constants.MILLIS_PER_HR) {
+			// mm ss
+			int seconds = (int) (l_millis / 1000) % 60 ;
+			int minutes = (int) ((l_millis / (1000*60)) % 60);
+			return minutes + "m, " + seconds + "s";
+		}
+		else {
+			// h mm ss
+			int seconds = (int) (l_millis / 1000) % 60 ;
+			int minutes = (int) ((l_millis / (1000*60)) % 60);
+			int hours   = (int) ((l_millis / (1000*60*60)) % 24);
+			return hours + "h, " + minutes + "m, " + seconds + "s";
+		}
+		return formatted;
+	}
+	
 	public boolean isValidIp(String ipAddress) {
 		if (ipAddress == null || ipAddress.length() == 0) {
 			return false;
@@ -37,6 +66,7 @@ public abstract class ViewImplBase extends Composite {
 		RegExp re = RegExp.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$");
 		return re.test(ipAddress);
 	}
+	
 	public boolean isValidCidr(String cidr) {
 		/*
 			^([0-9]{1,3}\.){3}[0-9]{1,3}(\/([0-9]|[1-2][0-9]|3[0-2]))?$
@@ -47,6 +77,7 @@ public abstract class ViewImplBase extends Composite {
 		RegExp re = RegExp.compile("^([0-9]{1,3}\\.){3}[0-9]{1,3}(\\/([0-9]|[1-2][0-9]|3[0-2]))?$");
 		return re.test(cidr);
 	}
+	
 	public void setRefreshButtonImage(PushButton refreshButton) {
 		Image img = new Image("images/refresh_icon.png");
 		img.setWidth("30px");
@@ -59,6 +90,7 @@ public abstract class ViewImplBase extends Composite {
 			w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);
 		}
 	}
+	
 	public void resetFieldStyles(List<Widget> fields) {
 		for (Widget w : fields) {
 			w.getElement().getStyle().setBackgroundColor(null);
@@ -105,6 +137,7 @@ public abstract class ViewImplBase extends Composite {
 		}
 		VpcpAlert.alert(title, message, postFocus);
 	}
+	
 	public void showMessageToUser(String message) {
 		VpcpAlert.alert("Alert", message);
 	}
@@ -192,9 +225,11 @@ public abstract class ViewImplBase extends Composite {
 		GWT.log("[isValidKey] KeyCode: " + keyCode + " IS valid");
 		return true;
 	}
+	
 	public boolean hasFieldViolations() {
 		return fieldViolations;
 	}
+	
 	public void setFieldViolations(boolean fieldViolations) {
 		this.fieldViolations = fieldViolations;
 	}

@@ -252,8 +252,8 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 			HTML hDescription = new HTML(psp.getDescription());
 			HTML hStatus = new HTML(psp.getStatus());
 			HTML hResult = new HTML(psp.getStepResult());
-			HTML hAnticipatedTime = new HTML(psp.getAnticipatedTime());
-			HTML hActualTime = new HTML(psp.getActualTime());
+			HTML hAnticipatedTime = new HTML(formatMillisForDisplay(psp.getAnticipatedTime()));
+			HTML hActualTime = new HTML(formatMillisForDisplay(psp.getActualTime()));
 			stepsGrid.setWidget(gridRow, 0, hStepId);
 			stepsGrid.setWidget(gridRow, 1, hType);
 			stepsGrid.setWidget(gridRow, 2, hDescription);
@@ -340,16 +340,16 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 							GWT.log("Current time formated: " + new java.util.Date((long)currentTime));
 							double elapsedTime = currentTime - startTime;
 							StringBuffer s_elapsedHtml = new StringBuffer();
-							s_elapsedHtml.append(elapsedTime + " ");
+							s_elapsedHtml.append(formatMillisForDisplay(Double.toString(elapsedTime)) + " ");
 							double raw = (elapsedTime / anticipatedTime);
 							double pctComplete = new Double(df2.format(raw)).doubleValue() * 100;
 							GWT.log("PCT Complete: " + pctComplete);
-							if (pctComplete > 100) {
-								s_elapsedHtml.append("(Overdue)");
-							}
-							else {
+//							if (pctComplete > 100) {
+//								s_elapsedHtml.append("(Overdue)");
+//							}
+//							else {
 								s_elapsedHtml.append("(" + pctComplete + "%)");
-							}
+//							}
 							HTML hElapsedTime = new HTML(s_elapsedHtml.toString());
 							stepsGrid.getColumnFormatter().setWidth(6, "200px");
 							stepsGrid.setWidget(gridRow, 6, hElapsedTime);
