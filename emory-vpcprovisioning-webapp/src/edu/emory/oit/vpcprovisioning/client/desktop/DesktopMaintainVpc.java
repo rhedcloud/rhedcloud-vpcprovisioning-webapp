@@ -916,41 +916,41 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 		// IPSEC profile
 		TreeItem ti_cryptoIpsecProfile = vpn_tree.addTextItem("Crypto IPSEC Profile");
-		ti_cryptoIpsecProfile.addTextItem("ti_cryptoIsakmpProfile name");
-		ti_cryptoIpsecProfile.addTextItem("ti_cryptoIsakmpProfile description");
+		ti_cryptoIpsecProfile.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIpsecProfile().getName()));
+		ti_cryptoIpsecProfile.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoIpsecProfile().getDescription()));
 
 		TreeItem ti_cryptoIpsecProfileCryptoIpsecTransformSet = ti_cryptoIpsecProfile.addTextItem("Crypto IPSEC Transform Set");
-		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("name");
-		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("cipher");
-		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("bits");
-		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addTextItem("mode");
-		ti_cryptoIpsecProfile.addTextItem("perfect forward secrecy");
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIpsedTransformSet().getName()));
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Cipher:  </b>" + vc.getCryptoIpsedTransformSet().getCipher()));
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Bits:  </b>" + vc.getCryptoIpsedTransformSet().getBits()));
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Mode:  </b>" + vc.getCryptoIpsedTransformSet().getMode()));
+		ti_cryptoIpsecProfile.addItem(new HTML("<b>PerfectForwardSecrecy:  </b>" + vc.getCryptoIpsecProfile().getPerfectForwardSecrecy()));
 		ti_cryptoIpsecProfile.addTextItem("");
 		
 		// Tunnel Interfaces
 		TreeItem ti_tunnels = vpn_tree.addTextItem("Tunnel Interfaces");
 		for (TunnelInterfacePojo ti : vc.getTunnelInterfaces()) {
 			TreeItem ti_tunnel = ti_tunnels.addTextItem("Tunnel Interface " + ti.getName());
-			ti_tunnel.addItem(new HTML("<b>Description: </b>" + ti.getDescription()));
-			ti_tunnel.addItem(new HTML("<b>VirtualRouteForwarding: </b>" + ti.getVirtualRouteForwarding()));
-			ti_tunnel.addItem(new HTML("<b>IpAddress: </b>" + ti.getIpAddress()));
+			ti_tunnel.addItem(new HTML("<b>Description:  </b>" + ti.getDescription()));
+			ti_tunnel.addItem(new HTML("<b>VirtualRouteForwarding:  </b>" + ti.getVirtualRouteForwarding()));
+			ti_tunnel.addItem(new HTML("<b>IpAddress:  </b>" + ti.getIpAddress()));
 			ti_tunnel.addTextItem("Netmask");
-			ti_tunnel.addItem(new HTML("<b>TcpMaximumSegmentSize: </b>" + ti.getTcpMaximumSegmentSize()));
-			ti_tunnel.addItem(new HTML("<b>AdministrativeState: </b>" + ti.getAdministrativeState()));
-			ti_tunnel.addItem(new HTML("<b>TunnelSource: </b>" + ti.getTunnelSource()));
-			ti_tunnel.addItem(new HTML("<b>TunnelMode: </b>" + ti.getTunnelMode()));
-			ti_tunnel.addItem(new HTML("<b>TunnelDestination: </b>" + ti.getTunnelDestination()));
+			ti_tunnel.addItem(new HTML("<b>TcpMaximumSegmentSize:  </b>" + ti.getTcpMaximumSegmentSize()));
+			ti_tunnel.addItem(new HTML("<b>AdministrativeState:  </b>" + ti.getAdministrativeState()));
+			ti_tunnel.addItem(new HTML("<b>TunnelSource:  </b>" + ti.getTunnelSource()));
+			ti_tunnel.addItem(new HTML("<b>TunnelMode:  </b>" + ti.getTunnelMode()));
+			ti_tunnel.addItem(new HTML("<b>TunnelDestination:  </b>" + ti.getTunnelDestination()));
 			TreeItem ti_tunnelIpsecProfile = ti_tunnel.addTextItem("CryptoIpsecProfile");
-			ti_tunnelIpsecProfile.addItem(new HTML("<b>Name: </b>" + ti.getCryptoIpsecProfile().getName()));
-			ti_tunnelIpsecProfile.addItem(new HTML("<b>Description: </b>" + ti.getCryptoIpsecProfile().getDescription()));
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>Name:  </b>" + ti.getCryptoIpsecProfile().getName()));
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>Description:  </b>" + ti.getCryptoIpsecProfile().getDescription()));
 			TreeItem ti_tunnelIpsecProfileTransformSet = ti_tunnelIpsecProfile.addTextItem("Transform set");
-			ti_tunnelIpsecProfileTransformSet.addTextItem("Name");
-			ti_tunnelIpsecProfileTransformSet.addTextItem("Cipher");
-			ti_tunnelIpsecProfileTransformSet.addTextItem("Bits");
-			ti_tunnelIpsecProfileTransformSet.addTextItem("Mode");
-			ti_tunnelIpsecProfile.addTextItem("PerfectForwardSecrecy");
-			ti_tunnel.addTextItem("IpVirtualReassembly");
-			ti_tunnel.addTextItem("OperationalStatus");
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Name:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getName()));
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Cipher:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getCipher()));
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Bits:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getBits()));
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Mode:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getMode()));
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>PerfectForwardSecrecy:  </b>" + ti.getCryptoIpsecProfile().getPerfectForwardSecrecy()));
+			ti_tunnel.addItem(new HTML("<b>IpVirtualReassembly:  </b>" + ti.getIpVirtualReassembly()));
+			ti_tunnel.addItem(new HTML("<b>OperationalStatus:  </b>" + ti.getOperationalStatus()));
 			TreeItem ti_bgpState = ti_tunnel.addTextItem("BgpState");
 			ti_bgpState.addItem(new HTML("<b>Status: </b>" + ti.getBgpState().getStatus()));
 			ti_bgpState.addItem(new HTML("<b>Uptime: </b>" + ti.getBgpState().getUptime()));
