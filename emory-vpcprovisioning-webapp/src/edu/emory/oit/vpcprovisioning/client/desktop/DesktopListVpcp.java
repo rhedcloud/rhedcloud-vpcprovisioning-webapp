@@ -364,7 +364,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 			@Override
 			public String getValue(VpcpPojo object) {
-				return object.getAnticipatedTime();
+				return formatMillisForDisplay(object.getAnticipatedTime());
 			}
 		};
 		anticipatedTimeColumn.setSortable(true);
@@ -381,7 +381,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 
 			@Override
 			public String getValue(VpcpPojo object) {
-				return object.getActualTime();
+				return formatMillisForDisplay(object.getActualTime());
 			}
 		};
 		actualTimeColumn.setSortable(true);

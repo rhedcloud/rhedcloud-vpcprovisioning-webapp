@@ -931,18 +931,18 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		TreeItem ti_tunnels = vpn_tree.addTextItem("Tunnel Interfaces");
 		for (TunnelInterfacePojo ti : vc.getTunnelInterfaces()) {
 			TreeItem ti_tunnel = ti_tunnels.addTextItem("Tunnel Interface " + ti.getName());
-			ti_tunnel.addTextItem("Description");
-			ti_tunnel.addTextItem("VirtualRouteForwarding");
-			ti_tunnel.addTextItem("IpAddress");
+			ti_tunnel.addItem(new HTML("<b>Description: </b>" + ti.getDescription()));
+			ti_tunnel.addItem(new HTML("<b>VirtualRouteForwarding: </b>" + ti.getVirtualRouteForwarding()));
+			ti_tunnel.addItem(new HTML("<b>IpAddress: </b>" + ti.getIpAddress()));
 			ti_tunnel.addTextItem("Netmask");
-			ti_tunnel.addTextItem("TcpMaximumSegmentSize");
-			ti_tunnel.addTextItem("AdministrativeState");
-			ti_tunnel.addTextItem("TunnelSource");
-			ti_tunnel.addTextItem("TunnelModel");
-			ti_tunnel.addTextItem("TunnelDestination");
+			ti_tunnel.addItem(new HTML("<b>TcpMaximumSegmentSize: </b>" + ti.getTcpMaximumSegmentSize()));
+			ti_tunnel.addItem(new HTML("<b>AdministrativeState: </b>" + ti.getAdministrativeState()));
+			ti_tunnel.addItem(new HTML("<b>TunnelSource: </b>" + ti.getTunnelSource()));
+			ti_tunnel.addItem(new HTML("<b>TunnelMode: </b>" + ti.getTunnelMode()));
+			ti_tunnel.addItem(new HTML("<b>TunnelDestination: </b>" + ti.getTunnelDestination()));
 			TreeItem ti_tunnelIpsecProfile = ti_tunnel.addTextItem("CryptoIpsecProfile");
-			ti_tunnelIpsecProfile.addTextItem("Name");
-			ti_tunnelIpsecProfile.addTextItem("Description");
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>Name: </b>" + ti.getCryptoIpsecProfile().getName()));
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>Description: </b>" + ti.getCryptoIpsecProfile().getDescription()));
 			TreeItem ti_tunnelIpsecProfileTransformSet = ti_tunnelIpsecProfile.addTextItem("Transform set");
 			ti_tunnelIpsecProfileTransformSet.addTextItem("Name");
 			ti_tunnelIpsecProfileTransformSet.addTextItem("Cipher");
@@ -952,12 +952,12 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			ti_tunnel.addTextItem("IpVirtualReassembly");
 			ti_tunnel.addTextItem("OperationalStatus");
 			TreeItem ti_bgpState = ti_tunnel.addTextItem("BgpState");
-			ti_bgpState.addTextItem("Status");
-			ti_bgpState.addTextItem("Uptime");
-			ti_bgpState.addTextItem("NeighborId");
+			ti_bgpState.addItem(new HTML("<b>Status: </b>" + ti.getBgpState().getStatus()));
+			ti_bgpState.addItem(new HTML("<b>Uptime: </b>" + ti.getBgpState().getUptime()));
+			ti_bgpState.addItem(new HTML("<b>NeighborId: </b>" + ti.getBgpState().getNeighborId()));
 			TreeItem ti_bgpPrefixes = ti_tunnel.addTextItem("BgpPrefixes");
-			ti_bgpPrefixes.addTextItem("Sent");
-			ti_bgpPrefixes.addTextItem("Received");
+			ti_bgpPrefixes.addItem(new HTML("<b>Sent: </b>" + ti.getBgpPrefixes().getSent()));
+			ti_bgpPrefixes.addItem(new HTML("<b>Received: </b>" + ti.getBgpPrefixes().getReceived()));
 			ti_tunnel.addTextItem("");
 		}
 		ti_tunnels.addTextItem("");

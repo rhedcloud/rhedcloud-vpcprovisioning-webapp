@@ -214,8 +214,8 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		provisioningIdLabel.setText(presenter.getVpcp().getProvisioningId());
 		vpcpStatusLabel.setText(presenter.getVpcp().getStatus());
 		provisioningResultLabel.setText(presenter.getVpcp().getProvisioningResult());
-		anticipatedTimeLabel.setText(presenter.getVpcp().getAnticipatedTime());
-		actualTimeLabel.setText(presenter.getVpcp().getActualTime());
+		anticipatedTimeLabel.setText(formatMillisForDisplay(presenter.getVpcp().getAnticipatedTime()));
+		actualTimeLabel.setText(formatMillisForDisplay(presenter.getVpcp().getActualTime()));
 		requestorNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAuthenticatedRequestorUserId());
 		ownerNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAccountOwnerUserId());
 		speedTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getSpeedType());
@@ -344,12 +344,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 							double raw = (elapsedTime / anticipatedTime);
 							double pctComplete = new Double(df2.format(raw)).doubleValue() * 100;
 							GWT.log("PCT Complete: " + pctComplete);
-//							if (pctComplete > 100) {
-//								s_elapsedHtml.append("(Overdue)");
-//							}
-//							else {
-								s_elapsedHtml.append("(" + pctComplete + "%)");
-//							}
+							s_elapsedHtml.append("(" + pctComplete + "%)");
 							HTML hElapsedTime = new HTML(s_elapsedHtml.toString());
 							stepsGrid.getColumnFormatter().setWidth(6, "200px");
 							stepsGrid.setWidget(gridRow, 6, hElapsedTime);

@@ -8,6 +8,7 @@ public class Constants implements IsSerializable {
 	public final static long MILLIS_PER_6HR = 6 * 60 * 60 * 1000;
 	public final static long MILLIS_PER_3HR = 3 * 60 * 60 * 1000;
 	public final static long MILLIS_PER_HR = 60 * 60 * 1000;
+	public final static long MILLIS_PER_SECOND = 1000;
 	public final static long MILLIS_PER_HOUR = 60 * 60 * 1000;
 	public final static long MILLIS_PER_MINUTE = 60 * 1000;
 	public static final String CIDR_ASSIGNMENT = "CidrAssignment";

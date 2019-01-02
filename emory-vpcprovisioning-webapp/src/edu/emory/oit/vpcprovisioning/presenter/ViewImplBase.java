@@ -38,6 +38,9 @@ public abstract class ViewImplBase extends Composite {
 		}
 		
 		long l_millis = Long.parseLong(millis);
+		if (l_millis < Constants.MILLIS_PER_SECOND) {
+			return "<1s";
+		}
 		if (l_millis < Constants.MILLIS_PER_MINUTE) {
 			// less than a minute
 			int seconds = (int) (l_millis / 1000) % 60 ;

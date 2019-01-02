@@ -515,10 +515,10 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 			@Override
 			public String getValue(VpnConnectionProvisioningSummaryPojo object) {
 				if (object.isProvision()) {
-					return object.getProvisioning().getAnticipatedTime();
+					return formatMillisForDisplay(object.getProvisioning().getAnticipatedTime());
 				}
 				else {
-					return object.getDeprovisioning().getAnticipatedTime();
+					return formatMillisForDisplay(object.getDeprovisioning().getAnticipatedTime());
 				}
 			}
 		};
@@ -551,10 +551,10 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 			@Override
 			public String getValue(VpnConnectionProvisioningSummaryPojo object) {
 				if (object.isProvision()) {
-					return object.getProvisioning().getActualTime();
+					return formatMillisForDisplay(object.getProvisioning().getActualTime());
 				}
 				else {
-					return object.getDeprovisioning().getActualTime();
+					return formatMillisForDisplay(object.getDeprovisioning().getActualTime());
 				}
 			}
 		};
