@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
@@ -45,6 +46,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -103,6 +105,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisio
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceStatisticPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
@@ -978,11 +982,32 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			svcStatsVp.add(new HTML("Service Statistics not available yet.  Try again in a bit."));
 		}
 		
-		HorizontalPanel hp = new HorizontalPanel();
-		hp.getElement().getStyle().setBackgroundColor("#232f3e");
-		hp.setHeight("100%");
-		hp.setSpacing(12);
-		mainPanel.add(hp);
+		// add a search panel to the mainPanel above the catSvcAssessmentHP
+		Grid searchGrid = new Grid(2,2);
+		searchGrid.getElement().getStyle().setBackgroundColor("#232f3e");
+		mainPanel.add(searchGrid);
+		HTML searchIntro = new HTML("<b>Search for a specific service</b>");
+		searchIntro.getElement().getStyle().setBackgroundColor("#232f3e");
+		searchIntro.getElement().getStyle().setColor("#ddd");
+		searchIntro.getElement().getStyle().setFontSize(16, Unit.PX);
+		searchIntro.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		searchGrid.setWidget(0, 0, searchIntro);
+		final TextBox searchTB = new TextBox();
+		searchGrid.setWidget(1, 0, searchTB);
+		searchTB.setText("");
+		searchTB.getElement().setPropertyString("placeholder", "enter all or part of the service name");
+		searchTB.addStyleName("field");
+		searchTB.addStyleName("glowing-border");
+		Button searchButton = new Button("Search");
+		searchGrid.setWidget(1, 1, searchButton);
+		searchButton.addStyleName("normalButton");
+		searchButton.addStyleName("glowing-border");
+		
+		HorizontalPanel catSvcAssessmentHP = new HorizontalPanel();
+		catSvcAssessmentHP.getElement().getStyle().setBackgroundColor("#232f3e");
+		catSvcAssessmentHP.setHeight("100%");
+		catSvcAssessmentHP.setSpacing(12);
+		mainPanel.add(catSvcAssessmentHP);
 		
 		Object[] categories = serviceSummary.getServiceMap().keySet().toArray();
 		Arrays.sort(categories);
@@ -992,7 +1017,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		categoryVp.setHeight("100%");
 		categoryVp.setWidth("300px");
 		categoryVp.setSpacing(8);
-		hp.add(categoryVp);
+		catSvcAssessmentHP.add(categoryVp);
 		
 		HTML catHeading = new HTML("Service Categories");
 		catHeading.getElement().getStyle().setBackgroundColor("#232f3e");
@@ -1009,14 +1034,59 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		servicesVp.getElement().getStyle().setBackgroundColor("#232f3e");
 		servicesVp.setWidth("400px");
 		servicesVp.setSpacing(8);
-		hp.add(servicesVp);
+		catSvcAssessmentHP.add(servicesVp);
 		
 		final VerticalPanel assessmentVp = new VerticalPanel();
 		assessmentVp.getElement().getStyle().setBackgroundColor("#232f3e");
 		assessmentVp.setWidth("425px");
 		assessmentVp.setSpacing(8);
-		hp.add(assessmentVp);
+		catSvcAssessmentHP.add(assessmentVp);
 		
+		// get service that have a "fuzzy" match to the info typed in the search text box
+		searchButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
+				AWSServiceQueryFilterPojo filter;
+				filter = new AWSServiceQueryFilterPojo();
+				filter.setAwsServiceName(searchTB.getText());
+				filter.setFuzzyFilter(true);
+				
+				AsyncCallback<AWSServiceQueryResultPojo> callback = new AsyncCallback<AWSServiceQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+		                hidePleaseWaitDialog();
+						log.log(Level.SEVERE, "Exception Retrieving Services", caught);
+						showMessageToUser("There was an exception on the " +
+								"server retrieving the list of Services.  " +
+								"<p>Message from server is: " + caught.getMessage() + "</p>");
+					}
+
+					@Override
+					public void onSuccess(AWSServiceQueryResultPojo result) {
+						GWT.log("Got " + result.getResults().size() + " Services for " + result.getFilterUsed());
+						servicesVp.clear();
+						assessmentVp.clear();
+						if (result == null || result.getResults().size() == 0) {
+							// no services found
+							HTML notFoundHTML = new HTML("-- No Services Found --");
+							notFoundHTML.getElement().getStyle().setFontSize(16, Unit.PX);
+							notFoundHTML.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+							notFoundHTML.getElement().getStyle().setColor("#fff");
+							servicesVp.add(notFoundHTML);
+						}
+						for (final AWSServicePojo svc : result.getResults()) {
+							addServiceToServicesPanel(servicesVp, assessmentVp, svc);
+						}
+		                hidePleaseWaitDialog();
+					}
+				};
+
+				GWT.log("refreshing Services list...");
+				VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, callback);
+			}
+		});
+
 		Object[] keys = serviceSummary.getServiceMap().keySet().toArray();
 		Arrays.sort(keys);
 		int categoryRowCnt = 0;
@@ -1043,154 +1113,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 					List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
 					for (final AWSServicePojo svc : services) {
-						GWT.log("Adding service: " + svc.getAwsServiceName());
-						Grid svcGrid = new Grid(4, 2);
-						svcGrid.getElement().getStyle().setBackgroundColor("#232f3e");
-						servicesVp.add(svcGrid);
-						
-						final Anchor svcAnchor = new Anchor();
-						svcGrid.setWidget(0, 0, svcAnchor);
-						if (svc.getCombinedServiceName() != null && 
-							svc.getCombinedServiceName().length() > 0) {
-							svcAnchor.setText(svc.getCombinedServiceName());
-						}
-						else if (svc.getAlternateServiceName() != null && 
-								svc.getAlternateServiceName().length() > 0 ) {
-							svcAnchor.setText(svc.getAlternateServiceName());
-						}
-						else {
-							svcAnchor.setText(svc.getAwsServiceName());
-						}
-						
-						svcAnchor.addStyleName("productAnchor");
-						svcAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
-						svcAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						svcAnchor.getElement().getStyle().setColor("#fff");
-						svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
-						svcAnchor.setHref(svc.getAwsLandingPageUrl());
-						svcAnchor.setTarget("_blank");
-
-						// get service assessment info on mouseover
-						svcAnchor.addMouseOverHandler(new MouseOverHandler() {
-							@Override
-							public void onMouseOver(MouseOverEvent event) {
-								assessmentVp.clear();
-								HTML assessmentHeading = new HTML("Assessment of the " + svcAnchor.getText() + " service." );
-								assessmentHeading.getElement().getStyle().setBackgroundColor("#232f3e");
-								assessmentHeading.getElement().getStyle().setColor("#ddd");
-								assessmentHeading.getElement().getStyle().setFontSize(16, Unit.PX);
-								assessmentHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-								assessmentVp.add(assessmentHeading);
-								
-								// add service assessment info if it exists
-								ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
-								filter.setServiceId(svc.getServiceId());
-								AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assessmentCb = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
-									@Override
-									public void onFailure(Throwable caught) {
-										HTML assessmentHtml = new HTML("Error retrieving assessment information.");
-										assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
-										assessmentHtml.getElement().getStyle().setColor("#ddd");
-										assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
-										assessmentVp.add(assessmentHtml);
-									}
-
-									@Override
-									public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
-										if (result.getResults().size() > 0) {
-											// get all relevant assessment info for the service
-											for (ServiceSecurityAssessmentPojo assessment : result.getResults()) {
-												StringBuffer sbuf = new StringBuffer();
-												sbuf.append("<b>Assessment status:</b>  " + assessment.getStatus());
-												sbuf.append("<ol>");
-												for (SecurityRiskPojo sr : assessment.getSecurityRisks()) {
-													sbuf.append("<li>" + sr.getDescription() + "</li>");
-												}
-												sbuf.append("</ol>");
-												HTML assessmentHtml = new HTML(sbuf.toString());
-												assessmentHtml.getElement().getStyle().setColor("#232f3e");
-												assessmentHtml.getElement().getStyle().setColor("#ddd");
-												assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
-												assessmentVp.add(assessmentHtml);
-											}
-										}
-										else {
-											StringBuffer sbuf = new StringBuffer();
-											sbuf.append("<b>Assessment status:</b>  test");
-											sbuf.append("<ol>");
-											for (int i=0; i<3; i++) {
-												sbuf.append("<li>Security Risk " + i + "  security risk description text goes here...</li>");
-											}
-											sbuf.append("</ol>");
-											HTML assessmentHtml = new HTML(sbuf.toString());
-//											HTML assessmentHtml = new HTML("No assessment performed yet.");
-											assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
-											assessmentHtml.getElement().getStyle().setColor("#ddd");
-											assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
-											assessmentVp.add(assessmentHtml);
-										}
-									}
-								};
-								VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, assessmentCb);
-							}
-						});
-						
-						// emory status
-						HTML svcStatus = new HTML("STATUS: " + svc.getSiteStatus());
-						svcStatus.addStyleName("productDescription");
-						svcStatus.getElement().getStyle().setColor("orange");
-						svcStatus.getElement().getStyle().setFontSize(14, Unit.PX);
-						svcStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						svcGrid.setWidget(1, 0, svcStatus);
-						
-						if (!svc.isBlocked()) {
-							Image img = new Image("images/green-checkbox-icon-15.jpg");
-							img.getElement().getStyle().setBackgroundColor("#232f3e");
-							img.setWidth("16px");
-							img.setHeight("16px");
-							svcGrid.setWidget(1, 1, img);
-						}
-						else {
-							// red circle with line = blocked in some way
-							Image img = new Image("images/red-circle-white-x.png");
-							img.getElement().getStyle().setBackgroundColor("#232f3e");
-							img.setWidth("16px");
-							img.setHeight("16px");
-							svcGrid.setWidget(1, 1, img);
-						}
-
-						// emory hipaa eligibility
-						HTML svcHipaaStatus = new HTML("Emory HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
-						svcHipaaStatus.addStyleName("productDescription");
-						svcHipaaStatus.getElement().getStyle().setColor("orange");
-						svcHipaaStatus.getElement().getStyle().setFontSize(14, Unit.PX);
-						svcHipaaStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-						svcGrid.setWidget(2, 0, svcHipaaStatus);
-
-						if (svc.isSiteHipaaEligible()) {
-							Image img = new Image("images/green-checkbox-icon-15.jpg");
-							img.getElement().getStyle().setBackgroundColor("#232f3e");
-							img.setWidth("16px");
-							img.setHeight("16px");
-							img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
-							svcGrid.setWidget(2, 1, img);
-						}
-						else {
-							// red circle with line NOT hipaa eligible
-							Image img = new Image("images/red-circle-white-x.png");
-							img.getElement().getStyle().setBackgroundColor("#232f3e");
-							img.setWidth("16px");
-							img.setHeight("16px");
-							img.setTitle("This service IS NOT HIPAA eligible according to Emory's HIPAA policy");
-							svcGrid.setWidget(2, 1, img);
-						}
-
-						// service description
-						HTML svcDesc = new HTML(svc.getDescription());
-						svcDesc.addStyleName("productDescription");
-						svcDesc.getElement().getStyle().setColor("#ddd");
-						svcDesc.getElement().getStyle().setFontSize(14, Unit.PX);
-						svcGrid.setWidget(3, 0, svcDesc);
+						addServiceToServicesPanel(servicesVp, assessmentVp, svc);
 					}
 				}
 			});
@@ -1199,6 +1122,157 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		productsPopup.showRelativeTo(linksPanel);
+	}
+
+	// this method will be used by the normal functionality and the search functionality
+	void addServiceToServicesPanel(VerticalPanel servicesVp, final VerticalPanel assessmentVp, final AWSServicePojo svc) {
+		GWT.log("Adding service: " + svc.getAwsServiceName());
+		Grid svcGrid = new Grid(4, 2);
+		svcGrid.getElement().getStyle().setBackgroundColor("#232f3e");
+		servicesVp.add(svcGrid);
+		
+		final Anchor svcAnchor = new Anchor();
+		svcGrid.setWidget(0, 0, svcAnchor);
+		if (svc.getCombinedServiceName() != null && 
+			svc.getCombinedServiceName().length() > 0) {
+			svcAnchor.setText(svc.getCombinedServiceName());
+		}
+		else if (svc.getAlternateServiceName() != null && 
+				svc.getAlternateServiceName().length() > 0 ) {
+			svcAnchor.setText(svc.getAlternateServiceName());
+		}
+		else {
+			svcAnchor.setText(svc.getAwsServiceName());
+		}
+		
+		svcAnchor.addStyleName("productAnchor");
+		svcAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
+		svcAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		svcAnchor.getElement().getStyle().setColor("#fff");
+		svcAnchor.setTitle("STATUS: " + svc.getSiteStatus()); 
+		svcAnchor.setHref(svc.getAwsLandingPageUrl());
+		svcAnchor.setTarget("_blank");
+
+		// get service assessment info on mouseover
+		svcAnchor.addMouseOverHandler(new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				assessmentVp.clear();
+				HTML assessmentHeading = new HTML("Assessment of the " + svcAnchor.getText() + " service." );
+				assessmentHeading.getElement().getStyle().setBackgroundColor("#232f3e");
+				assessmentHeading.getElement().getStyle().setColor("#ddd");
+				assessmentHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+				assessmentHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				assessmentVp.add(assessmentHeading);
+				
+				// add service assessment info if it exists
+				ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+				filter.setServiceId(svc.getServiceId());
+				AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assessmentCb = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						HTML assessmentHtml = new HTML("Error retrieving assessment information.");
+						assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
+						assessmentHtml.getElement().getStyle().setColor("#ddd");
+						assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+						assessmentVp.add(assessmentHtml);
+					}
+
+					@Override
+					public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+						if (result.getResults().size() > 0) {
+							// get all relevant assessment info for the service
+							for (ServiceSecurityAssessmentPojo assessment : result.getResults()) {
+								StringBuffer sbuf = new StringBuffer();
+								sbuf.append("<b>Assessment status:</b>  " + assessment.getStatus());
+								sbuf.append("<ol>");
+								for (SecurityRiskPojo sr : assessment.getSecurityRisks()) {
+									sbuf.append("<li>" + sr.getDescription() + "</li>");
+								}
+								sbuf.append("</ol>");
+								HTML assessmentHtml = new HTML(sbuf.toString());
+								assessmentHtml.getElement().getStyle().setColor("#232f3e");
+								assessmentHtml.getElement().getStyle().setColor("#ddd");
+								assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+								assessmentVp.add(assessmentHtml);
+							}
+						}
+						else {
+							StringBuffer sbuf = new StringBuffer();
+							sbuf.append("<b>Assessment status:</b>  test");
+							sbuf.append("<ol>");
+							for (int i=0; i<3; i++) {
+								sbuf.append("<li>Security Risk " + i + "  security risk description text goes here...</li>");
+							}
+							sbuf.append("</ol>");
+							HTML assessmentHtml = new HTML(sbuf.toString());
+							assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
+							assessmentHtml.getElement().getStyle().setColor("#ddd");
+							assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+							assessmentVp.add(assessmentHtml);
+						}
+					}
+				};
+				VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, assessmentCb);
+			}
+		});
+		
+		// emory status
+		HTML svcStatus = new HTML("STATUS: " + svc.getSiteStatus());
+		svcStatus.addStyleName("productDescription");
+		svcStatus.getElement().getStyle().setColor("orange");
+		svcStatus.getElement().getStyle().setFontSize(14, Unit.PX);
+		svcStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		svcGrid.setWidget(1, 0, svcStatus);
+		
+		if (!svc.isBlocked()) {
+			Image img = new Image("images/green-checkbox-icon-15.jpg");
+			img.getElement().getStyle().setBackgroundColor("#232f3e");
+			img.setWidth("16px");
+			img.setHeight("16px");
+			svcGrid.setWidget(1, 1, img);
+		}
+		else {
+			// red circle with line = blocked in some way
+			Image img = new Image("images/red-circle-white-x.png");
+			img.getElement().getStyle().setBackgroundColor("#232f3e");
+			img.setWidth("16px");
+			img.setHeight("16px");
+			svcGrid.setWidget(1, 1, img);
+		}
+
+		// emory hipaa eligibility
+		HTML svcHipaaStatus = new HTML("Emory HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
+		svcHipaaStatus.addStyleName("productDescription");
+		svcHipaaStatus.getElement().getStyle().setColor("orange");
+		svcHipaaStatus.getElement().getStyle().setFontSize(14, Unit.PX);
+		svcHipaaStatus.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		svcGrid.setWidget(2, 0, svcHipaaStatus);
+
+		if (svc.isSiteHipaaEligible()) {
+			Image img = new Image("images/green-checkbox-icon-15.jpg");
+			img.getElement().getStyle().setBackgroundColor("#232f3e");
+			img.setWidth("16px");
+			img.setHeight("16px");
+			img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
+			svcGrid.setWidget(2, 1, img);
+		}
+		else {
+			// red circle with line NOT hipaa eligible
+			Image img = new Image("images/red-circle-white-x.png");
+			img.getElement().getStyle().setBackgroundColor("#232f3e");
+			img.setWidth("16px");
+			img.setHeight("16px");
+			img.setTitle("This service IS NOT HIPAA eligible according to Emory's HIPAA policy");
+			svcGrid.setWidget(2, 1, img);
+		}
+
+		// service description
+		HTML svcDesc = new HTML(svc.getDescription());
+		svcDesc.addStyleName("productDescription");
+		svcDesc.getElement().getStyle().setColor("#ddd");
+		svcDesc.getElement().getStyle().setFontSize(14, Unit.PX);
+		svcGrid.setWidget(3, 0, svcDesc);
 	}
 	
 	void showServices() {
