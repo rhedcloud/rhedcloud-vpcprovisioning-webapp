@@ -16,6 +16,8 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.AssessmentListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
@@ -27,6 +29,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	private String serviceId;
 	private AWSServicePojo service;
 	private ServiceSecurityAssessmentPojo selectedSSA;
+	private UserAccountPojo userLoggedIn;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -93,6 +96,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
 				AsyncCallback<List<String>> awsServiceStatusItemsCB = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -277,7 +281,48 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 				}
 				else {
 					GWT.log("Creating assessment for " + result.getAwsServiceCode() + "/" + result.getAwsServiceName());
-					ActionEvent.fire(eventBus, ActionNames.CREATE_SECURITY_ASSESSMENT, result);
+					// TODO: just create an assessment with skeleton data and refresh the assessments list
+					AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							getView().hidePleaseWaitDialog();
+							getView().hidePleaseWaitPanel();
+							GWT.log("Exception saving the Security Assessment", caught);
+							getView().showMessageToUser("There was an exception on the " +
+									"server saving the Security Assessment.  Message " +
+									"from server is: " + caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(ServiceSecurityAssessmentPojo result) {
+							AsyncCallback<AWSServiceQueryResultPojo> svcCb = new AsyncCallback<AWSServiceQueryResultPojo>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									// TODO Auto-generated method stub
+									
+								}
+
+								@Override
+								public void onSuccess(AWSServiceQueryResultPojo result) {
+									service = result.getResults().get(0);
+									refreshList(userLoggedIn);
+									getView().hidePleaseWaitDialog();
+									getView().hidePleaseWaitPanel();
+								}
+							};
+							// TODO: get the service again so we have the latest version
+							AWSServiceQueryFilterPojo svcFilter = new AWSServiceQueryFilterPojo();
+							svcFilter.setServiceId(serviceId);
+							VpcProvisioningService.Util.getInstance().getServicesForFilter(svcFilter, svcCb);
+						}
+					};
+					ServiceSecurityAssessmentPojo assessment = new ServiceSecurityAssessmentPojo();
+					assessment.getServiceIds().add(result.getServiceId());
+					assessment.setStatus("In Progress");
+					VpcProvisioningService.Util.getInstance().createSecurityAssessment(assessment, callback);
+
+//					ActionEvent.fire(eventBus, ActionNames.CREATE_SECURITY_ASSESSMENT, result);
 				}
 			}
 		};
