@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
@@ -37,8 +38,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
@@ -51,7 +52,7 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 public class DesktopListService extends ViewImplBase implements ListServiceView {
 	Presenter presenter;
 	private ListDataProvider<AWSServicePojo> dataProvider = new ListDataProvider<AWSServicePojo>();
-	private SingleSelectionModel<AWSServicePojo> selectionModel;
+	private MultiSelectionModel<AWSServicePojo> selectionModel;
 	List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
@@ -137,10 +138,10 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 		Grid grid;
 		if (userLoggedIn.isCentralAdmin()) {
-			grid = new Grid(2, 1);
+			grid = new Grid(3, 1);
 		}
 		else {
-			grid = new Grid(1,1);
+			grid = new Grid(2,1);
 		}
 
 		grid.setCellSpacing(8);
@@ -155,7 +156,21 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				AWSServicePojo m = selectionModel.getSelectedObject();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one item from the list");
+					return;
+				}
+				if (selectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select one item from the list");
+					return;
+				}
+
+				Iterator<AWSServicePojo> nIter = selectionModel.getSelectedSet().iterator();
+				AWSServicePojo m = null;
+				svcLoop:  while (nIter.hasNext()) {
+					m = nIter.next();
+					break svcLoop;
+				}
 				if (m != null) {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE, m);
 				}
@@ -165,6 +180,36 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 			}
 		});
 		grid.setWidget(0, 0, editAnchor);
+
+		Anchor assessmentAnchor = new Anchor("Security Assessment Report");
+		assessmentAnchor.addStyleName("productAnchor");
+		assessmentAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		assessmentAnchor.setTitle("Generate Security Assessment Report for all or selected Service(s)");
+		assessmentAnchor.ensureDebugId(assessmentAnchor.getText());
+		assessmentAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+						
+				if (selectionModel.getSelectedSet().size() == 0) {
+					// TODO: fire assessment report event passing the list of ALL services (serviceList)
+					showMessageToUser("Security Assessment Report (all services)...coming soon...");
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, serviceList);
+				}
+				else {
+					List<AWSServicePojo> svcsToAssess = new java.util.ArrayList<AWSServicePojo>();
+					Iterator<AWSServicePojo> nIter = selectionModel.getSelectedSet().iterator();
+					while (nIter.hasNext()) {
+						AWSServicePojo m = nIter.next();
+						svcsToAssess.add(m);
+					}
+					// TODO: fire assessment report event passing the list of selected services (svcsToAssess)
+					showMessageToUser("Security Assessment Report (selected " + svcsToAssess.size() + " services)...coming soon...");
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, svcsToAssess);
+				}
+				
+			}
+		});
 
 		if (userLoggedIn.isCentralAdmin()) {
 			Anchor deleteAnchor = new Anchor("Delete Service");
@@ -176,7 +221,20 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				@Override
 				public void onClick(ClickEvent event) {
 					actionsPopup.hide();
-					AWSServicePojo m = selectionModel.getSelectedObject();
+					if (selectionModel.getSelectedSet().size() == 0) {
+						showMessageToUser("Please select one item from the list");
+						return;
+					}
+					if (selectionModel.getSelectedSet().size() > 1) {
+						showMessageToUser("Please select one item from the list");
+						return;
+					}
+					Iterator<AWSServicePojo> nIter = selectionModel.getSelectedSet().iterator();
+					AWSServicePojo m = null;
+					svcLoop:  while (nIter.hasNext()) {
+						m = nIter.next();
+						break svcLoop;
+					}
 					if (m != null) {
 						presenter.deleteService(m);
 					}
@@ -186,6 +244,10 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				}
 			});
 			grid.setWidget(1, 0, deleteAnchor);
+			grid.setWidget(2, 0, assessmentAnchor);
+		}
+		else {
+			grid.setWidget(1, 0, assessmentAnchor);
 		}
 
 		actionsPopup.showRelativeTo(actionsButton);
@@ -291,28 +353,28 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		dataProvider.getList().addAll(this.serviceList);
 
 		selectionModel = 
-				new SingleSelectionModel<AWSServicePojo>(AWSServicePojo.KEY_PROVIDER);
+				new MultiSelectionModel<AWSServicePojo>(AWSServicePojo.KEY_PROVIDER);
 
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				AWSServicePojo m = selectionModel.getSelectedObject();
-				GWT.log("Selected service is: " + m.getServiceId());
-
-				// set RowStyles
-				serviceListTable.setRowStyles(new RowStyles<AWSServicePojo>() {
-					@Override
-					public String getStyleNames(AWSServicePojo row, int rowIndex) {
-						if (row.isSkeleton()) {
-							GWT.log("skeleton service: " + row.getAwsServiceName());
-							return "skeletonService";
-						}
-						else {
-							GWT.log("normal row: " + row.getAwsServiceName());
-							return null;
-						}
-					}
-				});
+//				AWSServicePojo m = selectionModel.getSelectedObject();
+//				GWT.log("Selected service is: " + m.getServiceId());
+//
+//				// set RowStyles
+//				serviceListTable.setRowStyles(new RowStyles<AWSServicePojo>() {
+//					@Override
+//					public String getStyleNames(AWSServicePojo row, int rowIndex) {
+//						if (row.isSkeleton()) {
+//							GWT.log("skeleton service: " + row.getAwsServiceName());
+//							return "skeletonService";
+//						}
+//						else {
+//							GWT.log("normal row: " + row.getAwsServiceName());
+//							return null;
+//						}
+//					}
+//				});
 			}
 		});
 		serviceListTable.setSelectionModel(selectionModel);
