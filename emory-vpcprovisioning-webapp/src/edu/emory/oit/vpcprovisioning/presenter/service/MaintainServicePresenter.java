@@ -280,6 +280,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 					ActionEvent.fire(eventBus, ActionNames.SERVICE_SAVED, service);
 				}
 				else {
+					getView().showPleaseWaitDialog("Creating assessment...");
 					GWT.log("Creating assessment for " + result.getAwsServiceCode() + "/" + result.getAwsServiceName());
 					// TODO: just create an assessment with skeleton data and refresh the assessments list
 					AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
@@ -300,7 +301,8 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 								@Override
 								public void onFailure(Throwable caught) {
 									// TODO Auto-generated method stub
-									
+									getView().hidePleaseWaitDialog();
+									getView().hidePleaseWaitPanel();
 								}
 
 								@Override
