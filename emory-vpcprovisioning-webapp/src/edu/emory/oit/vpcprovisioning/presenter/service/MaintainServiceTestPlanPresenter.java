@@ -160,6 +160,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 		isEditing = false;
 		getView().setEditing(false);
 		serviceTestPlan = new ServiceTestPlanPojo();
+		getSecurityAssessment().setServiceTestPlan(serviceTestPlan);
 	}
 
 	private void startEdit() {
