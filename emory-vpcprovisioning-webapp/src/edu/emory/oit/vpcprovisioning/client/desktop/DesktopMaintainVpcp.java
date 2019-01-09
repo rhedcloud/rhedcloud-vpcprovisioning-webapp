@@ -573,8 +573,9 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	}
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(true);
+		provisioningIdTB.setEnabled(true);
+		vpcTypeLB.setEnabled(true);
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {

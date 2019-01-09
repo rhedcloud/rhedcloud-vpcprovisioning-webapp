@@ -144,7 +144,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 		grid.setWidget(0, 0, editAnchor);
 
 		if (userLoggedIn.isCentralAdmin()) {
-			Anchor deleteAnchor = new Anchor("Delete Security Risk");
+			Anchor deleteAnchor = new Anchor("Delete Counter Measure");
 			deleteAnchor.addStyleName("productAnchor");
 			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
 			deleteAnchor.setTitle("Delete selected Security Risk");
