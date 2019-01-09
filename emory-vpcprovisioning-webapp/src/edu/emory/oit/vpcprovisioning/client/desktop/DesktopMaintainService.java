@@ -314,6 +314,8 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		addCategoryButton.setEnabled(false);
 		consoleCategoryTF.setEnabled(false);
 		addConsoleCategoryButton.setEnabled(false);
+		createAssessmentButton.setEnabled(false);
+		actionsButton.setEnabled(false);
 	}
 
 	@Override
@@ -335,6 +337,8 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		addCategoryButton.setEnabled(false);
 		consoleCategoryTF.setEnabled(false);
 		addConsoleCategoryButton.setEnabled(false);
+		createAssessmentButton.setEnabled(false);
+		actionsButton.setEnabled(false);
 	}
 
 	@Override
@@ -684,6 +688,8 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		addCategoryButton.setEnabled(true);
 		consoleCategoryTF.setEnabled(true);
 		addConsoleCategoryButton.setEnabled(true);
+		createAssessmentButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 
 	@Override

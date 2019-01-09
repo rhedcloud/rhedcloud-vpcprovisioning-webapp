@@ -15,13 +15,14 @@ import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestStepPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.ui.client.PresentsConfirmation;
 
 public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends PresentsConfirmation {
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String userId, Widget w);
@@ -52,6 +53,19 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 		public void setSelectedTestStep(ServiceTestStepPojo selected);
 		public ServiceTestStepPojo getSelectedTestStep();
 		public void stepSelected();
+		
+		void refreshRequirementList(final UserAccountPojo user);
+		void refreshTestList(final UserAccountPojo user);
+		void refreshStepList(final UserAccountPojo user);
+		void deleteRequirement(ServiceTestRequirementPojo selected);
+		void deleteTest(ServiceTestPojo selected);
+		void deleteStep(ServiceTestStepPojo selected);
+		void createRequirement();
+		void maintainRequirement(ServiceTestRequirementPojo selected);
+		void createTest();
+		void maintainTest(ServiceTestPojo selected);
+		void createStep();
+		void maintainStep(ServiceTestStepPojo selected);
 	}
 
 	/**
@@ -84,4 +98,11 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 	public void requirementSelected();
 	public void testSelected();
 	public void stepSelected();
+	
+	public void setRequirements(List<ServiceTestRequirementPojo> requirements);
+	public void setTests(List<ServiceTestPojo> tests);
+	public void setSteps(List<ServiceTestStepPojo> steps);
+	public void showRequirementMaintenanceDialog(boolean isEdit, ServiceTestRequirementPojo selected);
+	public void showTestMaintenanceDialog(boolean isEdit, ServiceTestPojo selected);
+	public void showStepMaintenanceDialog(boolean isEdit, ServiceTestStepPojo selected);
 }

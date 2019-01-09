@@ -81,6 +81,8 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	public void start(EventBus eventBus) {
 		GWT.log("List services presenter...");
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
@@ -171,7 +173,9 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	 */
 	private void setServiceList(List<AWSServicePojo> services) {
 		getView().setServices(services);
-		eventBus.fireEventFromSource(new ServiceListUpdateEvent(services), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new ServiceListUpdateEvent(services), this);
+		}
 	}
 
 	@Override

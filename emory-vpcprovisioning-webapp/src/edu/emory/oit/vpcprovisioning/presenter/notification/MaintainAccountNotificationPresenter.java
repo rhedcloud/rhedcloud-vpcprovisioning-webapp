@@ -85,6 +85,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		getView().showPleaseWaitDialog("Retrieving Notification Details...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();

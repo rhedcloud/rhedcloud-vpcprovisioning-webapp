@@ -75,9 +75,7 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 
 	@Override
 	public void start(EventBus eventBus) {
-		GWT.log("List service controls presenter...");
-		GWT.log("service is: " + this.service);
-		GWT.log("assessment is: " + this.assessment);
+		getView().applyAWSAccountAuditorMask();
 		getView().showPleaseWaitDialog("Retrieving service controls...");
 		this.eventBus = eventBus;
 		getView().setFieldViolations(false);
@@ -132,7 +130,9 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 	 */
 	private void setServiceGuidelineList(List<ServiceGuidelinePojo> serviceGuidelines) {
 		getView().setServiceGuidelines(serviceGuidelines);
-		eventBus.fireEventFromSource(new ServiceGuidelineListUpdateEvent(serviceGuidelines), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new ServiceGuidelineListUpdateEvent(serviceGuidelines), this);
+		}
 	}
 
 	@Override

@@ -70,6 +70,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		getView().showPleaseWaitDialog("Retrieving Service details, please wait...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
@@ -187,7 +188,9 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 	private void setAssessmentList(List<ServiceSecurityAssessmentPojo> services) {
 		getView().setAssessments(services);
-		eventBus.fireEventFromSource(new AssessmentListUpdateEvent(services), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new AssessmentListUpdateEvent(services), this);
+		}
 	}
 
 	private void startCreate() {

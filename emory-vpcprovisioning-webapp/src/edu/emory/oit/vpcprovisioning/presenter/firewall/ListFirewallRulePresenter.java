@@ -95,6 +95,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -236,12 +237,16 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 	 */
 	private void setFirewallRuleList(List<FirewallRulePojo> firewallRules) {
 		getView().setFirewallRules(firewallRules);
-		eventBus.fireEventFromSource(new FirewallRuleListUpdateEvent(firewallRules), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new FirewallRuleListUpdateEvent(firewallRules), this);
+		}
 	}
 
 	private void setFirewallExceptionRequestList(List<FirewallExceptionRequestSummaryPojo> summaries) {
 		getView().setFirewallExceptionRequestSummaries(summaries);
-		eventBus.fireEventFromSource(new FirewallExceptionRequestListUpdateEvent(summaries), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new FirewallExceptionRequestListUpdateEvent(summaries), this);
+		}
 	}
 
 	@Override

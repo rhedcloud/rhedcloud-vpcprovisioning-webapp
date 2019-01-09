@@ -66,6 +66,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
+		getView().applyAWSAccountAuditorMask();
 		getView().showPleaseWaitDialog("Retrieving Service Guideline information...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();

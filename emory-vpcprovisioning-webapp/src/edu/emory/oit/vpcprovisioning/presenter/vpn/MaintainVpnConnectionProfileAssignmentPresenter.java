@@ -65,6 +65,7 @@ public class MaintainVpnConnectionProfileAssignmentPresenter extends PresenterBa
 	@Override
 	public void start(EventBus eventBus) {
 		getView().showPleaseWaitDialog("Retrieving VPN Connection ProfileAssignment details...");
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;

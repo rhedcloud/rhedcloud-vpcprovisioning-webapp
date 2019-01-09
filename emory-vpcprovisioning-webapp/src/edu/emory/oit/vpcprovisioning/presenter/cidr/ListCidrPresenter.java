@@ -80,6 +80,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -179,7 +180,9 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 	private void setCidrSummaryList(List<CidrSummaryPojo> cidrSummaries) {
 		this.cidrSummaryList = cidrSummaries;
 		getView().setCidrSummaries(cidrSummaries);
-		eventBus.fireEventFromSource(new CidrListUpdateEvent(cidrSummaries), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new CidrListUpdateEvent(cidrSummaries), this);
+		}
 	}
 
 	@Override
@@ -303,7 +306,9 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 			}
 		}
 		getView().setCidrSummaries(filteredList);
-		eventBus.fireEventFromSource(new CidrListUpdateEvent(filteredList), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new CidrListUpdateEvent(filteredList), this);
+		}
         getView().hidePleaseWaitPanel();
         getView().hidePleaseWaitDialog();
 	}

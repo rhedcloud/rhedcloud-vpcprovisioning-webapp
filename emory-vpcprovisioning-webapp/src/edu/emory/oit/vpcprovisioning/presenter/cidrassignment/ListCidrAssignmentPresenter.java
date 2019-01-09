@@ -76,6 +76,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -125,7 +126,9 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 	private void setCidrAssignmentSummaryList(List<CidrAssignmentSummaryPojo> cidrAssignmentSummaries) {
 		getView().setCidrAssignmentSummaries(cidrAssignmentSummaries);
 		GWT.log("back to presenter, firing CidrAssignemt list update event...");
-		eventBus.fireEventFromSource(new CidrAssignmentSummaryListUpdateEvent(cidrAssignmentSummaries), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new CidrAssignmentSummaryListUpdateEvent(cidrAssignmentSummaries), this);
+		}
 	}
 
 

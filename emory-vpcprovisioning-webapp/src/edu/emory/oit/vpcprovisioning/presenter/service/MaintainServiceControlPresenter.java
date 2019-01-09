@@ -70,6 +70,7 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitDialog("Retrieving Service Control information...");
 		getView().setFieldViolations(false);

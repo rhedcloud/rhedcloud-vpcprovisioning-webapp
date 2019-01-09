@@ -85,6 +85,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	public void start(EventBus eventBus) {
 		GWT.log("List notifications presenter...");
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		setReleaseInfo(clientFactory);
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
@@ -206,7 +207,9 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 	 */
 	private void setNotificationList(List<UserNotificationPojo> notifications) {
 		getView().setNotifications(notifications);
-		eventBus.fireEventFromSource(new NotificationListUpdateEvent(notifications), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new NotificationListUpdateEvent(notifications), this);
+		}
 	}
 
 	@Override

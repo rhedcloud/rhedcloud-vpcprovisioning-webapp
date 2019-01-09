@@ -84,6 +84,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -221,7 +222,9 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 	private void setVpnConnectionProfileSummaryList(List<VpnConnectionProfileSummaryPojo> list) {
 		getView().setVpnConnectionProfileSummaries(list);
-		eventBus.fireEventFromSource(new VpnConnectionProfileListUpdateEvent(list), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new VpnConnectionProfileListUpdateEvent(list), this);
+		}
 	}
 
 	public VpcPojo getVpc() {

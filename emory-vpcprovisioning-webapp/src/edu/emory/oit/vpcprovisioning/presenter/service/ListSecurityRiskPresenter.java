@@ -82,9 +82,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 
 	@Override
 	public void start(EventBus eventBus) {
-		GWT.log("List security risks presenter...");
-		GWT.log("service is: " + this.service);
-		GWT.log("assessment is: " + this.assessment);
+		getView().applyAWSAccountAuditorMask();
 		getView().showPleaseWaitDialog("Retrieving security risks...");
 		this.eventBus = eventBus;
 		getView().setFieldViolations(false);
@@ -139,7 +137,9 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	 */
 	private void setSecurityRiskList(List<SecurityRiskPojo> securityRisks) {
 		getView().setSecurityRisks(securityRisks);
-		eventBus.fireEventFromSource(new SecurityRiskListUpdateEvent(securityRisks), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new SecurityRiskListUpdateEvent(securityRisks), this);
+		}
 	}
 
 	@Override

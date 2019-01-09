@@ -74,6 +74,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
@@ -210,7 +211,9 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	 */
 	private void setVpnConnectionProvisioningSummaryList(List<VpnConnectionProvisioningSummaryPojo> summaries) {
 		getView().setVpnConnectionProvisioningSummaries(summaries);
-		eventBus.fireEventFromSource(new VpncpListUpdateEvent(summaries), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new VpncpListUpdateEvent(summaries), this);
+		}
 	}
 
 	@Override

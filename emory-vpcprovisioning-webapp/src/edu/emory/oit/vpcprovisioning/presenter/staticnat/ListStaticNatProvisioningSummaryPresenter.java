@@ -72,6 +72,7 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
@@ -155,7 +156,9 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 	 */
 	private void setStaticNatProvisioningSummaryList(List<StaticNatProvisioningSummaryPojo> summaries) {
 		getView().setProvisioningSummaries(summaries);
-		eventBus.fireEventFromSource(new StaticNatProvisioningSummaryListUpdateEvent(summaries), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new StaticNatProvisioningSummaryListUpdateEvent(summaries), this);
+		}
 	}
 
 	@Override

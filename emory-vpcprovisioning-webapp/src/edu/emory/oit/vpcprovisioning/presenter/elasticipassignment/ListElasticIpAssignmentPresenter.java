@@ -61,6 +61,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -113,7 +114,9 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 	private void setElasticIpAssignmentList(List<ElasticIpAssignmentPojo> summaries) {
 		getView().setElasticIpAssignments(summaries);
 		GWT.log("back to presenter, firing Elastic IP Assignemt list update event...");
-		eventBus.fireEventFromSource(new ElasticIpAssignmentListUpdateEvent(summaries), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new ElasticIpAssignmentListUpdateEvent(summaries), this);
+		}
 	}
 	
 	/**

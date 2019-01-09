@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gwt.core.shared.GWT;
@@ -9,8 +10,13 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.client.event.ServiceListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ServiceTestListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ServiceTestRequirementListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ServiceTestStepListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
@@ -33,6 +39,9 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	private ServiceTestRequirementPojo selectedRequirement;
 	private ServiceTestPojo selectedTest;
 	private ServiceTestStepPojo selectedStep;
+	boolean isDeletingRequirement=false;
+	boolean isDeletingTest=false;
+	boolean isDeletingStep=false;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -72,6 +81,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
+		getView().applyAWSAccountAuditorMask();
 		getView().showPleaseWaitDialog("Retrieving Service Test Plan information...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
@@ -127,6 +137,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 				expectedResults.add("Pass");
 				expectedResults.add("Fail");
 				getView().setTestExpectedResultItems(expectedResults);
+				refreshRequirementList(userLoggedIn);
 				getView().initPage();
 				getView().setInitialFocus();
 				
@@ -243,7 +254,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 						}
 //						getView().hidePleaseWaitDialog();
 //						getView().hidePleaseWaitPanel();
-						getView().refreshDataProvider();
+//						getView().refreshDataProvider();
 //						getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
 						ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
 					}
@@ -398,6 +409,176 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	@Override
 	public void stepSelected() {
 		getView().stepSelected();
+	}
+
+	@Override
+	public void refreshRequirementList(UserAccountPojo user) {
+		if (serviceTestPlan != null) {
+			setRequirementList(this.serviceTestPlan.getServiceTestRequirements());
+		}
+	}
+
+	private void setRequirementList(List<ServiceTestRequirementPojo> requirements) {
+		getView().setRequirements(requirements);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new ServiceTestRequirementListUpdateEvent(requirements), this);
+		}
+	}
+
+	@Override
+	public void refreshTestList(UserAccountPojo user) {
+		if (selectedRequirement != null) {
+			getView().setTests(selectedRequirement.getServiceTests());
+			if (eventBus != null) {
+				eventBus.fireEventFromSource(new ServiceTestListUpdateEvent(selectedRequirement.getServiceTests()), this);
+			}
+		}
+		else {
+			getView().setTests(Collections.<ServiceTestPojo> emptyList());
+			if (eventBus != null) {
+				eventBus.fireEventFromSource(new ServiceTestListUpdateEvent(Collections.<ServiceTestPojo> emptyList()), this);
+			}
+		}
+	}
+
+	@Override
+	public void refreshStepList(UserAccountPojo user) {
+		if (selectedTest != null) {
+			getView().setSteps(selectedTest.getServiceTestSteps());
+			if (eventBus != null) {
+				eventBus.fireEventFromSource(new ServiceTestStepListUpdateEvent(selectedTest.getServiceTestSteps()), this);
+			}
+		}
+		else {
+			getView().setSteps(Collections.<ServiceTestStepPojo> emptyList());
+			if (eventBus != null) {
+				eventBus.fireEventFromSource(new ServiceTestStepListUpdateEvent(Collections.<ServiceTestStepPojo> emptyList()), this);
+			}
+		}
+	}
+
+	@Override
+	public void vpcpConfirmOkay() {
+		if (isDeletingRequirement) {
+			serviceTestPlan.getServiceTestRequirements().remove(selectedRequirement);
+			refreshRequirementList(userLoggedIn);
+		}
+		else if (isDeletingTest) {
+			selectedRequirement.getServiceTests().remove(selectedTest);
+			refreshTestList(userLoggedIn);
+		}
+		else {
+			selectedTest.getServiceTestSteps().remove(selectedStep);
+			refreshStepList(userLoggedIn);
+		}
+		// save the assessment
+		getAssessment().setServiceTestPlan(getServiceTestPlan());
+		saveAssessment();
+	}
+
+	@Override
+	public void vpcpConfirmCancel() {
+		if (isDeletingRequirement) {
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Requirement " + 
+					selectedRequirement.getDescription() + 
+					" (Sequence: " + selectedRequirement.getSequenceNumber() + ") was not deleted.");
+		}
+		else if (isDeletingTest) {
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Test " + 
+					selectedTest.getDescription() + 
+					" (Sequence: " + selectedTest.getSequenceNumber() + ") was not deleted.");
+		}
+		else {
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Step " + 
+					selectedStep.getDescription() + 
+					" (Sequence: " + selectedStep.getSequenceNumber() + ") was not deleted.");
+		}
+	}
+
+	@Override
+	public void deleteRequirement(ServiceTestRequirementPojo selected) {
+		isDeletingRequirement=true;
+		isDeletingTest=false;
+		isDeletingStep=false;
+		selectedRequirement = selected;
+		VpcpConfirm.confirm(
+				MaintainServiceTestPlanPresenter.this, 
+			"Confirm Delete Service Test Requirement", 
+			"Delete the Service Test Requirement " + selectedRequirement.getDescription() + 
+				" (Sequence: " + selectedRequirement.getSequenceNumber() + ")" + "?");
+	}
+
+	@Override
+	public void deleteTest(ServiceTestPojo selected) {
+		isDeletingRequirement=false;
+		isDeletingTest=true;
+		isDeletingStep=false;
+		selectedTest = selected;
+		VpcpConfirm.confirm(
+				MaintainServiceTestPlanPresenter.this, 
+			"Confirm Delete Service Test", 
+			"Delete the Service Test " + selectedTest.getDescription() + 
+				" (Sequence: " + selectedTest.getSequenceNumber() + ")" + "?");
+	}
+
+	@Override
+	public void deleteStep(ServiceTestStepPojo selected) {
+		isDeletingRequirement=false;
+		isDeletingTest=false;
+		isDeletingStep=true;
+		selectedStep = selected;
+		VpcpConfirm.confirm(
+				MaintainServiceTestPlanPresenter.this, 
+			"Confirm Delete Service Test Step", 
+			"Delete the Service Test Step " + selectedStep.getDescription() + 
+				" (Sequence: " + selectedStep.getSequenceNumber() + ")" + "?");
+	}
+
+	@Override
+	public void createRequirement() {
+		ServiceTestRequirementPojo req = new ServiceTestRequirementPojo();
+		req.setSequenceNumber(serviceTestPlan.getServiceTestRequirements().size() + 1);
+		getView().showRequirementMaintenanceDialog(false, req);
+	}
+
+	@Override
+	public void maintainRequirement(ServiceTestRequirementPojo selected) {
+		selectedRequirement = selected;
+		getView().showRequirementMaintenanceDialog(true, selected);
+	}
+
+	@Override
+	public void createTest() {
+		if (selectedRequirement == null) {
+			getView().showMessageToUser("Please select a test requirement from the list before adding a test.");
+			return;
+		}
+		ServiceTestPojo test = new ServiceTestPojo();
+		test.setSequenceNumber(selectedRequirement.getServiceTests().size() + 1);
+		getView().showTestMaintenanceDialog(false, test);
+	}
+
+	@Override
+	public void maintainTest(ServiceTestPojo selected) {
+		selectedTest = selected;
+		getView().showTestMaintenanceDialog(true, selected);
+	}
+
+	@Override
+	public void createStep() {
+		if (selectedTest == null) {
+			getView().showMessageToUser("Please select a test from the list before adding a test step.");
+			return;
+		}
+		ServiceTestStepPojo step = new ServiceTestStepPojo();
+		step.setSequenceNumber(selectedTest.getServiceTestSteps().size() + 1);
+		getView().showStepMaintenanceDialog(false, step);
+	}
+
+	@Override
+	public void maintainStep(ServiceTestStepPojo selected) {
+		selectedStep = selected;
+		getView().showStepMaintenanceDialog(true, selected);
 	}
 
 }

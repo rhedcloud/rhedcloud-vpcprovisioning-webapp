@@ -75,9 +75,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 
 	@Override
 	public void start(EventBus eventBus) {
-		GWT.log("List service controls presenter...");
-		GWT.log("service is: " + this.service);
-		GWT.log("assessment is: " + this.assessment);
+		getView().applyAWSAccountAuditorMask();
 		getView().showPleaseWaitDialog("Retrieving service controls...");
 		this.eventBus = eventBus;
 		getView().setFieldViolations(false);
@@ -132,7 +130,9 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	 */
 	private void setServiceControlList(List<ServiceControlPojo> serviceControls) {
 		getView().setServiceControls(serviceControls);
-		eventBus.fireEventFromSource(new ServiceControlListUpdateEvent(serviceControls), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new ServiceControlListUpdateEvent(serviceControls), this);
+		}
 	}
 
 	@Override

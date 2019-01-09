@@ -76,6 +76,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -179,7 +180,9 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 	 */
 	private void setCentralAdminList(List<RoleAssignmentSummaryPojo> centralAdmins) {
 		getView().setCentralAdmins(centralAdmins);
-		eventBus.fireEventFromSource(new CentralAdminListUpdateEvent(centralAdmins), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new CentralAdminListUpdateEvent(centralAdmins), this);
+		}
 	}
 
 	@Override

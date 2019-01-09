@@ -62,6 +62,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;

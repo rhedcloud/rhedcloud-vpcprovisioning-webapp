@@ -81,6 +81,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -215,7 +216,9 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	private void setElasticIpSummaryList(List<ElasticIpSummaryPojo> list) {
 		getView().setElasticIpSummaries(list);
-		eventBus.fireEventFromSource(new ElasticIpListUpdateEvent(list), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new ElasticIpListUpdateEvent(list), this);
+		}
 	}
 
 	public VpcPojo getVpc() {

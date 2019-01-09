@@ -73,6 +73,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 

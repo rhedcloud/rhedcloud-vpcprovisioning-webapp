@@ -79,6 +79,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		setReleaseInfo(clientFactory);
@@ -171,7 +172,9 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	 */
 	private void setVpcList(List<VpcPojo> Vpcs) {
 		getView().setVpcs(Vpcs);
-		eventBus.fireEventFromSource(new VpcListUpdateEvent(Vpcs), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new VpcListUpdateEvent(Vpcs), this);
+		}
 	}
 
 	@Override

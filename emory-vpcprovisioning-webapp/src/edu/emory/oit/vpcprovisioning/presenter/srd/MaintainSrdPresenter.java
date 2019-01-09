@@ -121,6 +121,7 @@ public class MaintainSrdPresenter extends PresenterBase implements MaintainSrdVi
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		setReleaseInfo(clientFactory);

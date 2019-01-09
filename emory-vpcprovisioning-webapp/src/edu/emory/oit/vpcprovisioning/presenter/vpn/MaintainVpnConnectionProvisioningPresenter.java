@@ -122,6 +122,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		getView().showPleaseWaitDialog("Retrieving VPN Profile detail from the Network OPs service...");
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		setReleaseInfo(clientFactory);

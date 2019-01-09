@@ -70,6 +70,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;

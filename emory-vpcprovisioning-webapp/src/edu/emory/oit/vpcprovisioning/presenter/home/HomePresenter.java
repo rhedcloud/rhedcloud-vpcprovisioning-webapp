@@ -47,6 +47,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
 		finishedDirectoryPersonCache = false;
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 

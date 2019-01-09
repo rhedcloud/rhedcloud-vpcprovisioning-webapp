@@ -78,6 +78,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
@@ -191,7 +192,9 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	 */
 	private void setAccountList(List<AccountPojo> accounts) {
 		getView().setAccounts(accounts);
-		eventBus.fireEventFromSource(new AccountListUpdateEvent(accounts), this);
+		if (eventBus != null) {
+			eventBus.fireEventFromSource(new AccountListUpdateEvent(accounts), this);
+		}
 	}
 
 	@Override

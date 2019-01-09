@@ -1,19 +1,34 @@
 package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.ClickableTextCell;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.DomEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellBrowser;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -27,9 +42,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
-import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
-import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestStepPojo;
@@ -39,16 +52,27 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
 	boolean editing;
-	PopupPanel actionsPopup = new PopupPanel(true);
-	ServiceTestPlanTreeViewModel model;
+//	PopupPanel actionsPopup = new PopupPanel(true);
 	List<String> testExpectedResultItems = new java.util.ArrayList<String>();
 	static final String SAVE = "Save";
 	static final String ADD = "Add";
+	List<ServiceTestRequirementPojo> requirementList = new java.util.ArrayList<ServiceTestRequirementPojo>();
+
+	DialogBox reqmtPopup = new DialogBox();
+	PopupPanel reqmtActionsPopup = new PopupPanel(true);
+	DialogBox testPopup = new DialogBox();
+	PopupPanel testActionsPopup = new PopupPanel(true);
+	DialogBox stepPopup = new DialogBox(true);
+	PopupPanel stepActionsPopup = new PopupPanel(true);
 
 	ListDataProvider<ServiceTestRequirementPojo> requirementDataProvider = 
 			new ListDataProvider<ServiceTestRequirementPojo>(new ArrayList<ServiceTestRequirementPojo>());
+	ListDataProvider<ServiceTestPojo> testDataProvider = 
+			new ListDataProvider<ServiceTestPojo>(new ArrayList<ServiceTestPojo>());
+	ListDataProvider<ServiceTestStepPojo> stepDataProvider = 
+			new ListDataProvider<ServiceTestStepPojo>(new ArrayList<ServiceTestStepPojo>());
 	
-	SingleSelectionModel<ServiceTestRequirementPojo> reqSelectionModel = 
+	SingleSelectionModel<ServiceTestRequirementPojo> reqmtSelectionModel = 
 			new SingleSelectionModel<ServiceTestRequirementPojo>(ServiceTestRequirementPojo.KEY_PROVIDER);
 	SingleSelectionModel<ServiceTestPojo> testSelectionModel = 
 			new SingleSelectionModel<ServiceTestPojo>(ServiceTestPojo.KEY_PROVIDER);
@@ -58,33 +82,18 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 //	@UiField Button okayButton;
 //	@UiField Button cancelButton;
 	@UiField HorizontalPanel pleaseWaitPanel;
-	@UiField (provided=true) CellBrowser cellBrowser;
-	@UiField VerticalPanel requirementPanel;
-	@UiField VerticalPanel testPanel;
-	@UiField VerticalPanel testStepPanel;
-	@UiField TextBox reqSequenceNumberTB;
-	@UiField TextArea reqDescriptionTA;
-	@UiField TextBox testSequenceNumberTB;
-	@UiField TextArea testDescriptionTA;
-	@UiField ListBox testExpectedResultLB;
-	@UiField TextBox stepSequenceNumberTB;
-	@UiField TextArea stepDescriptionTA;
-	
-	@UiField Button addReqButton;
-	@UiField Button removeReqButton;
-	@UiField Button saveReqButton;
-	
-	@UiField Button addTestButton;
-	@UiField Button removeTestButton;
-	@UiField Button saveTestButton;
-
-	@UiField Button addStepButton;
-	@UiField Button removeStepButton;
-	@UiField Button saveStepButton;
-	
-	@UiField Label testRequirementForTestLabel;
-	@UiField Label testRequirementForStepLabel;
-	@UiField Label testForStepLabel;
+	@UiField(provided=true) SimplePager reqmtListPager = new SimplePager(TextLocation.RIGHT, false, true);
+	@UiField(provided=true) SimplePager testListPager = new SimplePager(TextLocation.RIGHT, false, true);
+	@UiField(provided=true) SimplePager stepListPager = new SimplePager(TextLocation.RIGHT, false, true);
+	@UiField(provided=true) CellTable<ServiceTestRequirementPojo> reqmtListTable = new CellTable<ServiceTestRequirementPojo>(5, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<ServiceTestPojo> testListTable = new CellTable<ServiceTestPojo>(5, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<ServiceTestStepPojo> stepListTable = new CellTable<ServiceTestStepPojo>(5, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField Button createReqmtButton;
+	@UiField Button reqmtActionsButton;
+	@UiField Button createTestButton;
+	@UiField Button testActionsButton;
+	@UiField Button createStepButton;
+	@UiField Button stepActionsButton;
 
 	private static DesktopMaintainServiceTestPlanUiBinder uiBinder = GWT
 			.create(DesktopMaintainServiceTestPlanUiBinder.class);
@@ -93,10 +102,198 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	}
 
 	public DesktopMaintainServiceTestPlan() {
-		initializeCellBrowser();
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
+	public interface MyCellTableResources extends CellTable.Resources {
+
+	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
+	     public CellTable.Style cellTableStyle();
+	}
+
+	@UiHandler("reqmtActionsButton")
+	void reqmtActionsButtonClicked(ClickEvent e) {
+		reqmtActionsPopup.clear();
+		reqmtActionsPopup.setAutoHideEnabled(true);
+		reqmtActionsPopup.setAnimationEnabled(true);
+		reqmtActionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid;
+		grid = new Grid(2,1);
+
+		grid.setCellSpacing(8);
+		reqmtActionsPopup.add(grid);
+
+		Anchor editAnchor = new Anchor("View/Maintain Requirement");
+		editAnchor.addStyleName("productAnchor");
+		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editAnchor.setTitle("View/Maintain selected Requirement");
+		editAnchor.ensureDebugId(editAnchor.getText());
+		editAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				reqmtActionsPopup.hide();
+				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
+				if (m == null) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				// view/maintain requirement (via requirement popup)
+				presenter.maintainRequirement(m);
+			}
+		});
+		grid.setWidget(0, 0, editAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Requirement");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected Requirement");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				reqmtActionsPopup.hide();
+				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
+				if (m == null) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				// delete requirement and refresh list (via presenter)
+				presenter.deleteRequirement(m);
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
+
+		reqmtActionsPopup.showRelativeTo(reqmtActionsButton);
+	}
+
+	@UiHandler ("createReqmtButton")
+	void createReqmtClicked(ClickEvent e) {
+		presenter.createRequirement();
+	}
+
+	@UiHandler("testActionsButton")
+	void testActionsButtonClicked(ClickEvent e) {
+		testActionsPopup.clear();
+		testActionsPopup.setAutoHideEnabled(true);
+		testActionsPopup.setAnimationEnabled(true);
+		testActionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid;
+		grid = new Grid(2,1);
+
+		grid.setCellSpacing(8);
+		testActionsPopup.add(grid);
+
+		Anchor editAnchor = new Anchor("View/Maintain Test");
+		editAnchor.addStyleName("productAnchor");
+		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editAnchor.setTitle("View/Maintain selected Test");
+		editAnchor.ensureDebugId(editAnchor.getText());
+		editAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				testActionsPopup.hide();
+				ServiceTestPojo m = testSelectionModel.getSelectedObject();
+				if (m == null) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				// view/maintain requirement (via requirement popup)
+				presenter.maintainTest(m);
+			}
+		});
+		grid.setWidget(0, 0, editAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Test");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected Test");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				testActionsPopup.hide();
+				ServiceTestPojo m = testSelectionModel.getSelectedObject();
+				if (m == null) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				// delete test and refresh list (via presenter)
+				presenter.deleteTest(m);
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
+
+		testActionsPopup.showRelativeTo(testActionsButton);
+	}
+
+	@UiHandler ("createTestButton")
+	void createTestClicked(ClickEvent e) {
+		presenter.createTest();
+	}
+
+	@UiHandler("stepActionsButton")
+	void stepActionsButtonClicked(ClickEvent e) {
+		stepActionsPopup.clear();
+		stepActionsPopup.setAutoHideEnabled(true);
+		stepActionsPopup.setAnimationEnabled(true);
+		stepActionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		Grid grid;
+		grid = new Grid(2,1);
+
+		grid.setCellSpacing(8);
+		stepActionsPopup.add(grid);
+
+		Anchor editAnchor = new Anchor("View/Maintain Test Step");
+		editAnchor.addStyleName("productAnchor");
+		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		editAnchor.setTitle("View/Maintain selected Test Step");
+		editAnchor.ensureDebugId(editAnchor.getText());
+		editAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				stepActionsPopup.hide();
+				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
+				if (m == null) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				// view/maintain step (via step popup)
+				presenter.maintainStep(m);
+			}
+		});
+		grid.setWidget(0, 0, editAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Test Step");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete selected Test Step");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				stepActionsPopup.hide();
+				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
+				if (m == null) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				// delete step and refresh list (via presenter)
+				presenter.deleteStep(m);
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
+
+		stepActionsPopup.showRelativeTo(stepActionsButton);
+	}
+
+	@UiHandler ("createStepButton")
+	void createStepClicked(ClickEvent e) {
+		presenter.createStep();
+	}
+
 	@Override
 	public void hidePleaseWaitPanel() {
 		pleaseWaitPanel.setVisible(false);
@@ -111,77 +308,43 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	reqDescriptionTA.setFocus(true);
 	        }
 	    });
 	}
 
 	@Override
 	public Widget getStatusMessageSource() {
-		return addReqButton;
+		return null;
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
-		addReqButton.setEnabled(true);
-		removeReqButton.setEnabled(true);
-		saveReqButton.setEnabled(true);
-		addTestButton.setEnabled(true);
-		removeTestButton.setEnabled(true);
-		saveTestButton.setEnabled(true);
-		addStepButton.setEnabled(true);
-		removeStepButton.setEnabled(true);
-		saveStepButton.setEnabled(true);
-		
-		reqSequenceNumberTB.setEnabled(true);
-		reqDescriptionTA.setEnabled(true);
-		testSequenceNumberTB.setEnabled(true);
-		testDescriptionTA.setEnabled(true);
-		testExpectedResultLB.setEnabled(true);
-		stepSequenceNumberTB.setEnabled(true);
-		stepDescriptionTA.setEnabled(true);
+		createReqmtButton.setEnabled(true);
+		reqmtActionsButton.setEnabled(true);
+		createTestButton.setEnabled(true);
+		testActionsButton.setEnabled(true);
+		createStepButton.setEnabled(true);
+		stepActionsButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		addReqButton.setEnabled(false);
-		removeReqButton.setEnabled(false);
-		saveReqButton.setEnabled(false);
-		addTestButton.setEnabled(false);
-		removeTestButton.setEnabled(false);
-		saveTestButton.setEnabled(false);
-		addStepButton.setEnabled(false);
-		removeStepButton.setEnabled(false);
-		saveStepButton.setEnabled(false);
-		
-		reqSequenceNumberTB.setEnabled(false);
-		reqDescriptionTA.setEnabled(false);
-		testSequenceNumberTB.setEnabled(false);
-		testDescriptionTA.setEnabled(false);
-		testExpectedResultLB.setEnabled(false);
-		stepSequenceNumberTB.setEnabled(false);
-		stepDescriptionTA.setEnabled(false);
+		createReqmtButton.setEnabled(false);
+		reqmtActionsButton.setEnabled(false);
+		createTestButton.setEnabled(false);
+		testActionsButton.setEnabled(false);
+		createStepButton.setEnabled(false);
+		stepActionsButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		addReqButton.setEnabled(false);
-		removeReqButton.setEnabled(false);
-		saveReqButton.setEnabled(false);
-		addTestButton.setEnabled(false);
-		removeTestButton.setEnabled(false);
-		saveTestButton.setEnabled(false);
-		addStepButton.setEnabled(false);
-		removeStepButton.setEnabled(false);
-		saveStepButton.setEnabled(false);
-		
-		reqSequenceNumberTB.setEnabled(false);
-		reqDescriptionTA.setEnabled(false);
-		testSequenceNumberTB.setEnabled(false);
-		testDescriptionTA.setEnabled(false);
-		testExpectedResultLB.setEnabled(false);
-		stepSequenceNumberTB.setEnabled(false);
-		stepDescriptionTA.setEnabled(false);
+		createReqmtButton.setEnabled(false);
+		reqmtActionsButton.setEnabled(false);
+		createTestButton.setEnabled(false);
+		testActionsButton.setEnabled(false);
+		createStepButton.setEnabled(false);
+		stepActionsButton.setEnabled(false);
 	}
 
 	@Override
@@ -226,28 +389,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void disableButtons() {
-		addReqButton.setEnabled(false);
-		removeReqButton.setEnabled(false);
-		saveReqButton.setEnabled(false);
-		addTestButton.setEnabled(false);
-		removeTestButton.setEnabled(false);
-		saveTestButton.setEnabled(false);
-		addStepButton.setEnabled(false);
-		removeStepButton.setEnabled(false);
-		saveStepButton.setEnabled(false);
 	}
 
 	@Override
 	public void enableButtons() {
-		addReqButton.setEnabled(true);
-		removeReqButton.setEnabled(true);
-		saveReqButton.setEnabled(true);
-		addTestButton.setEnabled(true);
-		removeTestButton.setEnabled(true);
-		saveTestButton.setEnabled(true);
-		addStepButton.setEnabled(true);
-		removeStepButton.setEnabled(true);
-		saveStepButton.setEnabled(true);
 	}
 
 	@Override
@@ -268,278 +413,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	public void initPage() {
 		GWT.log("MaintainServiceTestPlan.initPage()");
 		
-		model.setPresenter((MaintainServiceTestPlanPresenter)presenter);
-		removeReqButton.setVisible(false);
-		addTestButton.setVisible(false);
-		removeTestButton.setVisible(false);
-		addStepButton.setVisible(false);
-		
-		removeStepButton.setVisible(false);
-		requirementPanel.setVisible(false);
-		testPanel.setVisible(false);
-		testStepPanel.setVisible(false);
-		
-		if (model != null) {
-			initializeCellBrowser();
-			refreshDataProvider();
-		}
-		else {
-			GWT.log("[MaintainServiceTestPlan] model is null.  Can't initialize it");
-		}
+//		refreshDataProvider();
 	}
 
 	private void hidePanels() {
-		testPanel.setVisible(false);
-		testStepPanel.setVisible(false);
-		requirementPanel.setVisible(false);
 	}
 	
 	private void hideButtons() {
-		addTestButton.setVisible(false);
-		removeTestButton.setVisible(false);
-		addStepButton.setVisible(false);
-		removeStepButton.setVisible(false);
-		removeReqButton.setVisible(false);
-	}
-	
-	@UiHandler ("saveReqButton")
-	void saveReqButtonClicked(ClickEvent e) {
-		// TODO: add vs. update
-		if (saveReqButton.getText().equals(ADD)) {
-			GWT.log("Add new requirement.");
-		}
-		else {
-			GWT.log("Save selected requirement.");
-		}
-		ServiceTestPlanPojo stp = presenter.getServiceTestPlan();
-		ServiceTestRequirementPojo str = new ServiceTestRequirementPojo();
-		str.setSequenceNumber(Integer.parseInt(reqSequenceNumberTB.getText()));
-		str.setDescription(reqDescriptionTA.getText());
-		if (stp.hasRequirement(str.getSequenceNumber())) {
-			showMessageToUser("A requirement with this sequence number already "
-					+ "exists.  Please use a different sequence number.");
-			return;
-		}
-		stp.getServiceTestRequirements().add(str);
-
-		removeReqButton.setVisible(false);
-		addTestButton.setVisible(false);
-		removeTestButton.setVisible(false);
-		addStepButton.setVisible(false);
-		removeStepButton.setVisible(false);
-		
-		presenter.getSecurityAssessment().setServiceTestPlan(stp);
-		presenter.saveAssessment();
-		saveReqButton.setText(SAVE);
-	}
-	@UiHandler ("removeReqButton")
-	void removeReqButtonClicked(ClickEvent e) {
-		ServiceTestPlanPojo stp = presenter.getServiceTestPlan();
-		stp.removeServiceRequirement(presenter.getSelectedTestRequirement());
-		presenter.setSelectedTestRequirement(null);
-		presenter.saveAssessment();
-	}
-
-	@UiHandler ("saveTestButton")
-	void saveTestButtonClicked(ClickEvent e) {
-		// TODO: add vs. update
-		if (saveTestButton.getText().equals(ADD)) {
-			GWT.log("Add new test.");
-		}
-		else {
-			GWT.log("Save selected test.");
-		}
-		ServiceTestPojo st = new ServiceTestPojo();
-		st.setSequenceNumber(Integer.parseInt(testSequenceNumberTB.getText()));
-		st.setDescription(testDescriptionTA.getText());
-		st.setServiceTestExpectedResult(testExpectedResultLB.getSelectedValue());
-
-		if (presenter.getSelectedTestRequirement().hasTest(st.getSequenceNumber())) {
-			showMessageToUser("A test for the selected requirement with this sequence number already "
-					+ "exists.  Please use a different sequence number.");
-			return;
-		}
-		presenter.getSelectedTestRequirement().getServiceTests().add(st);
-		
-		removeTestButton.setVisible(false);
-		addStepButton.setVisible(false);
-		removeStepButton.setVisible(false);
-		
-		// fire selection to show the new test
-//		GWT.log("firing a selection change event on the requirements selection model (trying)");
-//		GWT.log("presenters selected requirement (before clear) is: " + presenter.getSelectedTestRequirement());
-//		GWT.log("selected requirement (before clear) is: " + reqSelectionModel.getSelectedObject());
-//		reqSelectionModel.clear();
-//		GWT.log("selected requirement (after clear) is: " + reqSelectionModel.getSelectedObject());
-//		GWT.log("presenters selected requirement (after clear) is: " + presenter.getSelectedTestRequirement());
-//		reqSelectionModel.setSelected(reqSelectionModel.getSelectedObject(), false);
-//		GWT.log("selected requirement (after setting to false) is: " + reqSelectionModel.getSelectedObject());
-//		GWT.log("presenters selected requirement (after setting it to false) is: " + presenter.getSelectedTestRequirement());
-//		reqSelectionModel.setSelected(reqSelectionModel.getSelectedObject(), true);
-//		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), reqSelectionModel);
-		
-		presenter.saveAssessment();
-		saveTestButton.setText(SAVE);
-//		model.getNodeInfo(st);
-		DomEvent.fireNativeEvent(Document.get().createChangeEvent(), reqSelectionModel);
-	}
-	@UiHandler ("removeTestButton")
-	void removeTestButtonClicked(ClickEvent e) {
-		ServiceTestRequirementPojo str = presenter.getSelectedTestRequirement();
-		str.removeServiceTest(presenter.getSelectedTest());
-		presenter.setSelectedTest(null);
-		presenter.saveAssessment();
-	}
-
-	@UiHandler ("saveStepButton")
-	void saveStepButtonClicked(ClickEvent e) {
-		// TODO: add vs. update
-		if (saveReqButton.getText().equals(ADD)) {
-			GWT.log("Add new step.");
-		}
-		else {
-			GWT.log("Save selected step.");
-		}
-		ServiceTestStepPojo str = new ServiceTestStepPojo();
-		str.setSequenceNumber(Integer.parseInt(stepSequenceNumberTB.getText()));
-		str.setDescription(stepDescriptionTA.getText());
-		str.setServiceTestId(presenter.getSelectedTest().getServiceTestId());
-		
-		if (presenter.getSelectedTest().hasStep(str.getSequenceNumber())) {
-			showMessageToUser("A test step for the selected test with this sequence number already "
-					+ "exists.  Please use a different sequence number.");
-			return;
-		}
-		presenter.getSelectedTest().getServiceTestSteps().add(str);
-		
-		removeStepButton.setVisible(false);
-		
-		// fire selection to show the new test step
-//		testSelectionModel.setSelected(presenter.getSelectedTest(), true);
-
-		presenter.saveAssessment();
-		saveStepButton.setText(SAVE);
-	}
-
-	@UiHandler ("removeStepButton")
-	void removeStepButtonClicked(ClickEvent e) {
-		ServiceTestPojo str = presenter.getSelectedTest();
-		str.removeServiceTestStep(presenter.getSelectedTestStep());
-		presenter.setSelectedTestStep(null);
-		presenter.saveAssessment();
-	}
-
-	@UiHandler ("addReqButton")
-	void addReqButtonClicked(ClickEvent e) {
-		saveReqButton.setText(ADD);
-		testPanel.setVisible(false);
-		testStepPanel.setVisible(false);
-		requirementPanel.setVisible(true);
-
-		removeReqButton.setVisible(false);
-		addTestButton.setVisible(false);
-		removeTestButton.setVisible(false);
-		addStepButton.setVisible(false);
-		removeStepButton.setVisible(false);
-		
-		ServiceTestPlanPojo stp = presenter.getServiceTestPlan();
-		reqSequenceNumberTB.setText(Integer.toString(stp.getServiceTestRequirements().size() + 1));
-		reqDescriptionTA.setText("");
-		reqDescriptionTA.getElement().setPropertyString("placeholder", "description");
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-	        public void execute () {
-	        	reqDescriptionTA.setFocus(true);
-	        }
-	    });
-	}
-
-	@UiHandler ("addTestButton")
-	void addTestButtonClicked(ClickEvent e) {
-		saveTestButton.setText(ADD);
-		testStepPanel.setVisible(false);
-		requirementPanel.setVisible(false);
-		testPanel.setVisible(true);
-		
-		addTestButton.setVisible(true);
-		removeTestButton.setVisible(false);
-		addStepButton.setVisible(false);
-		removeStepButton.setVisible(false);
-		
-		if (presenter.getSelectedTestRequirement() == null) {
-			this.showMessageToUser("[add test ] no selected test requirement.");
-			return;
-		}
-		testRequirementForTestLabel.setText(Integer.toString(
-				presenter.getSelectedTestRequirement().getSequenceNumber()));
-		
-		testSequenceNumberTB.setText(Integer.toString(
-				presenter.getSelectedTestRequirement().getServiceTests().size() + 1));
-		testDescriptionTA.setText("");
-		testDescriptionTA.getElement().setPropertyString("placeholder", "description");
-		testExpectedResultLB.setSelectedIndex(0);
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-	        public void execute () {
-	        	testDescriptionTA.setFocus(true);
-	        }
-	    });
-	}
-
-	@UiHandler ("addStepButton")
-	void addStepButtonClicked(ClickEvent e) {
-		saveStepButton.setText(ADD);
-		testPanel.setVisible(false);
-		requirementPanel.setVisible(false);
-		testStepPanel.setVisible(true);
-		
-		removeStepButton.setVisible(false);
-		
-		if (presenter.getSelectedTestRequirement() == null) {
-			this.showMessageToUser("[add step] no selected test requirement.");
-			return;
-		}
-		testRequirementForStepLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
-		
-		testForStepLabel.setText(Integer.toString(presenter.getSelectedTest().getSequenceNumber()));
-		stepSequenceNumberTB.setText(Integer.toString(
-				presenter.getSelectedTest().getServiceTestSteps().size() + 1));
-		stepDescriptionTA.setText("");
-		stepDescriptionTA.getElement().setPropertyString("placeholder", "description");
-		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-	        public void execute () {
-	        	stepDescriptionTA.setFocus(true);
-	        }
-	    });
-	}
-
-	private void initializeCellBrowser() {
-		reqSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				requirementSelected();
-			}
-		});
-
-		testSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				testSelected();
-			}
-		});
-
-		stepSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
-			@Override
-			public void onSelectionChange(SelectionChangeEvent event) {
-				stepSelected();
-			}
-		});
-
-		model = new ServiceTestPlanTreeViewModel(
-				requirementDataProvider,
-				reqSelectionModel, 
-				testSelectionModel, 
-				stepSelectionModel);
-		CellBrowser.Builder<Object> builder = new CellBrowser.Builder<Object>(model, null);
-		cellBrowser = builder.build();
 	}
 
 	@Override
@@ -549,13 +429,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	@Override
 	public void setTestExpectedResultItems(List<String> items) {
 		this.testExpectedResultItems = items;
-		testExpectedResultLB.clear();
-		testExpectedResultLB.addItem("-- Select --", "");
-		if (testExpectedResultLB != null) {
-			for (String type : testExpectedResultItems) {
-				testExpectedResultLB.addItem(type, type);
-			}
-		}
+//		testExpectedResultLB.clear();
+//		testExpectedResultLB.addItem("-- Select --", "");
+//		if (testExpectedResultLB != null) {
+//			for (String type : testExpectedResultItems) {
+//				testExpectedResultLB.addItem(type, type);
+//			}
+//		}
 	}
 
 	@Override
@@ -568,8 +448,8 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		if (presenter.getServiceTestPlan().getServiceTestRequirements().size() > 0) {
 			
 			ServiceTestRequirementPojo str = presenter.getServiceTestPlan().getServiceTestRequirements().get(0);
-			reqSelectionModel.setSelected(str, true);
-			SelectionChangeEvent.fire(reqSelectionModel);
+			reqmtSelectionModel.setSelected(str, true);
+			SelectionChangeEvent.fire(reqmtSelectionModel);
 		}
 		else {
 			GWT.log("[refreshDataProvider] can't get a test requirement from the current assessment.");
@@ -584,129 +464,763 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 
 	@Override
 	public void requirementSelected() {
-		ServiceTestRequirementPojo selected = reqSelectionModel.getSelectedObject();
-//		ServiceTestRequirementPojo selected = presenter.getSelectedTestRequirement();
-//		if (selected == null) {
-//			presenter.setSelectedTestRequirement(selectedFromModel);
-//			selected = presenter.getSelectedTestRequirement();
-//		}
-//		reqSelectionModel.setSelected(selected, true);
+		ServiceTestRequirementPojo selected = reqmtSelectionModel.getSelectedObject();
 		GWT.log("[REQ:onSelectionChange] requirment selected: " + selected);
 		presenter.setSelectedTestRequirement(selected);
-		saveReqButton.setText(SAVE);
-
-		if (selected == null) {
-			hidePanels();
-			hideButtons();
-		}
-		else {
-			testPanel.setVisible(false);
-			testStepPanel.setVisible(false);
-			requirementPanel.setVisible(true);
-			reqSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
-			reqDescriptionTA.setText(selected.getDescription());
-		}
-
-		addTestButton.setVisible(true);
-		removeTestButton.setVisible(false);
-		addStepButton.setVisible(false);
-		removeStepButton.setVisible(false);
-		addReqButton.setVisible(true);
-		removeReqButton.setVisible(true);
 	}
 
 	@Override
 	public void testSelected() {
 		ServiceTestPojo selected = testSelectionModel.getSelectedObject();
-//		ServiceTestPojo selected = presenter.getSelectedTest();
-//		if (selected == null) {
-//			presenter.setSelectedTest(selectedFromModel);
-//			selected = presenter.getSelectedTest();
-//		}
-//		testSelectionModel.setSelected(selected, true);
 		GWT.log("[TEST:onSelectionChange] test selected: " + selected);
 		presenter.setSelectedTest(selected);
-		saveTestButton.setText(SAVE);
-
-		if (selected == null) {
-			hidePanels();
-			hideButtons();
-		}
-		else {
-			if (presenter.getSelectedTestRequirement() == null) {
-				GWT.log("[TEST:onSelectionChange] no selected test requirement.");
-				hidePanels();
-				hideButtons();
-				return;
-			}
-			testStepPanel.setVisible(false);
-			requirementPanel.setVisible(false);
-			testPanel.setVisible(true);
-			testSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
-			testDescriptionTA.setText(selected.getDescription());
-			testRequirementForTestLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
-			testExpectedResultLB.setSelectedIndex(0);
-			int i=1;
-			erLoop: for (String type : testExpectedResultItems) {
-				if (selected.getServiceTestExpectedResult() != null) {
-					if (selected.getServiceTestExpectedResult().equalsIgnoreCase(type)) {
-						testExpectedResultLB.setSelectedIndex(i);
-						break erLoop;
-					}
-				}
-				i++;
-			}
-			addTestButton.setVisible(true);
-			removeTestButton.setVisible(true);
-			addStepButton.setVisible(true);
-			removeStepButton.setVisible(false);
-		}
 	}
 
 	@Override
 	public void stepSelected() {
 		ServiceTestStepPojo selected = stepSelectionModel.getSelectedObject();
-//		ServiceTestStepPojo selected = presenter.getSelectedTestStep();
-//		if (selected == null) {
-//			presenter.setSelectedTestStep(selectedFromModel);
-//			selected = presenter.getSelectedTestStep();
-//		}
-//		stepSelectionModel.setSelected(selected, true);
 		GWT.log("[STEP: onSelectionChange] step selected: " + selected);
 		presenter.setSelectedTestStep(selected);
-		saveStepButton.setText(SAVE);
+	}
 
-		if (selected == null) {
-			hidePanels();
-			hideButtons();
+	@Override
+	public void setRequirements(List<ServiceTestRequirementPojo> requirements) {
+		GWT.log("[DesktopMaintainServiceTestPlanView.setRequirements] there are " + requirements.size() + " requirements in this test plan.");
+		this.requirementList = requirements;
+		this.initializeRequirementListTable();
+		reqmtListPager.setDisplay(reqmtListTable);
+		presenter.setSelectedTestRequirement(null);
+		presenter.refreshTestList(userLoggedIn);
+	}
+
+	private Widget initializeRequirementListTable() {
+		GWT.log("initializing requirements list table...");
+		reqmtListTable.setTableLayoutFixed(false);
+		reqmtListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		// set range to display
+		reqmtListTable.setVisibleRange(0, 5);
+
+		// create dataprovider
+		requirementDataProvider = new ListDataProvider<ServiceTestRequirementPojo>();
+		requirementDataProvider.addDataDisplay(reqmtListTable);
+		requirementDataProvider.getList().clear();
+		requirementDataProvider.getList().addAll(this.requirementList);
+
+		reqmtSelectionModel = 
+				new SingleSelectionModel<ServiceTestRequirementPojo>(ServiceTestRequirementPojo.KEY_PROVIDER);
+
+		reqmtSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
+				// refresh tests table
+				presenter.setSelectedTestRequirement(m);
+				presenter.refreshTestList(userLoggedIn);
+			}
+		});
+		reqmtListTable.setSelectionModel(reqmtSelectionModel);
+
+		ListHandler<ServiceTestRequirementPojo> sortHandler = 
+				new ListHandler<ServiceTestRequirementPojo>(requirementDataProvider.getList());
+		reqmtListTable.addColumnSortHandler(sortHandler);
+
+		if (reqmtListTable.getColumnCount() == 0) {
+			initRequirementListTableColumns(sortHandler);
+		}
+		
+		return reqmtListTable;
+	}
+	
+	private void initRequirementListTableColumns(ListHandler<ServiceTestRequirementPojo> sortHandler) {
+		GWT.log("initializing requirement list table columns...");
+
+		Column<ServiceTestRequirementPojo, Boolean> checkColumn = new Column<ServiceTestRequirementPojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(ServiceTestRequirementPojo object) {
+				// Get the value from the selection model.
+				return reqmtSelectionModel.isSelected(object);
+			}
+		};
+		reqmtListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		reqmtListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+		
+		// sequence column
+		Column<ServiceTestRequirementPojo, String> sequenceColumn = 
+				new Column<ServiceTestRequirementPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceTestRequirementPojo object) {
+				return Integer.toString(object.getSequenceNumber());
+			}
+		};
+		sequenceColumn.setSortable(true);
+		sortHandler.setComparator(sequenceColumn, new Comparator<ServiceTestRequirementPojo>() {
+			public int compare(ServiceTestRequirementPojo o1, ServiceTestRequirementPojo o2) {
+				if (o1.getSequenceNumber() == o2.getSequenceNumber()) {
+					return 0;
+				}
+				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
+					return 1;
+				}
+				return -1;
+			}
+		});
+		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestRequirementPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceTestRequirementPojo object, String value) {
+	    		presenter.maintainRequirement(object);
+	    	}
+	    });
+		sequenceColumn.setCellStyleNames("tableAnchor");
+		reqmtListTable.addColumn(sequenceColumn, "Sequence Number");
+		
+		// description column
+		Column<ServiceTestRequirementPojo, String> descColumn = 
+				new Column<ServiceTestRequirementPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceTestRequirementPojo object) {
+				return object.getDescription();
+			}
+		};
+		descColumn.setSortable(true);
+		sortHandler.setComparator(descColumn, new Comparator<ServiceTestRequirementPojo>() {
+			public int compare(ServiceTestRequirementPojo o1, ServiceTestRequirementPojo o2) {
+				return o1.getDescription().compareTo(o2.getDescription());
+			}
+		});
+		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestRequirementPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceTestRequirementPojo object, String value) {
+	    		presenter.maintainRequirement(object);
+	    	}
+	    });
+		descColumn.setCellStyleNames("tableAnchor");
+		reqmtListTable.addColumn(descColumn, "Description");
+	}
+
+	@Override
+	public void setTests(List<ServiceTestPojo> tests) {
+		GWT.log("[DesktopMaintainServiceTestPlanView.setSteps] there are " + tests.size() + " tests in the selected requirement.");
+		this.initializeTestListTable();
+		testListPager.setDisplay(testListTable);
+		presenter.setSelectedTest(null);
+		presenter.refreshStepList(userLoggedIn);
+	}
+
+	private Widget initializeTestListTable() {
+		GWT.log("initializing test list table...");
+		testListTable.setTableLayoutFixed(false);
+		testListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		// set range to display
+		testListTable.setVisibleRange(0, 5);
+
+		// create dataprovider
+		testDataProvider = new ListDataProvider<ServiceTestPojo>();
+		testDataProvider.addDataDisplay(testListTable);
+		testDataProvider.getList().clear();
+		if (presenter.getSelectedTestRequirement() != null) {
+			testDataProvider.getList().addAll(presenter.getSelectedTestRequirement().getServiceTests());
+		}
+
+		testSelectionModel = 
+				new SingleSelectionModel<ServiceTestPojo>(ServiceTestPojo.KEY_PROVIDER);
+
+		testSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				ServiceTestPojo m = testSelectionModel.getSelectedObject();
+				// refresh tests table
+				presenter.setSelectedTest(m);
+				presenter.refreshStepList(userLoggedIn);
+			}
+		});
+		testListTable.setSelectionModel(testSelectionModel);
+
+		ListHandler<ServiceTestPojo> sortHandler = 
+				new ListHandler<ServiceTestPojo>(testDataProvider.getList());
+		testListTable.addColumnSortHandler(sortHandler);
+
+		if (testListTable.getColumnCount() == 0) {
+			initTestListTableColumns(sortHandler);
+		}
+		
+		return testListTable;
+	}
+
+	private void initTestListTableColumns(ListHandler<ServiceTestPojo> sortHandler) {
+		GWT.log("initializing test list table columns...");
+
+		Column<ServiceTestPojo, Boolean> checkColumn = new Column<ServiceTestPojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(ServiceTestPojo object) {
+				// Get the value from the selection model.
+				return testSelectionModel.isSelected(object);
+			}
+		};
+		testListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		testListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+		
+		// sequence column
+		Column<ServiceTestPojo, String> sequenceColumn = 
+				new Column<ServiceTestPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceTestPojo object) {
+				return Integer.toString(object.getSequenceNumber());
+			}
+		};
+		sequenceColumn.setSortable(true);
+		sortHandler.setComparator(sequenceColumn, new Comparator<ServiceTestPojo>() {
+			public int compare(ServiceTestPojo o1, ServiceTestPojo o2) {
+				if (o1.getSequenceNumber() == o2.getSequenceNumber()) {
+					return 0;
+				}
+				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
+					return 1;
+				}
+				return -1;
+			}
+		});
+		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceTestPojo object, String value) {
+	    		presenter.maintainTest(object);
+	    	}
+	    });
+		sequenceColumn.setCellStyleNames("tableAnchor");
+		testListTable.addColumn(sequenceColumn, "Sequence Number");
+		
+		// description column
+		Column<ServiceTestPojo, String> descColumn = 
+				new Column<ServiceTestPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceTestPojo object) {
+				return object.getDescription();
+			}
+		};
+		descColumn.setSortable(true);
+		sortHandler.setComparator(descColumn, new Comparator<ServiceTestPojo>() {
+			public int compare(ServiceTestPojo o1, ServiceTestPojo o2) {
+				return o1.getDescription().compareTo(o2.getDescription());
+			}
+		});
+		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceTestPojo object, String value) {
+	    		presenter.maintainTest(object);
+	    	}
+	    });
+		descColumn.setCellStyleNames("tableAnchor");
+		testListTable.addColumn(descColumn, "Description");
+
+		// expected result column
+		Column<ServiceTestPojo, String> expectedResultColumn = 
+				new Column<ServiceTestPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceTestPojo object) {
+				return object.getServiceTestExpectedResult();
+			}
+		};
+		expectedResultColumn.setSortable(true);
+		sortHandler.setComparator(expectedResultColumn, new Comparator<ServiceTestPojo>() {
+			public int compare(ServiceTestPojo o1, ServiceTestPojo o2) {
+				return o1.getServiceTestExpectedResult().compareTo(o2.getServiceTestExpectedResult());
+			}
+		});
+		testListTable.addColumn(expectedResultColumn, "Expected Result");
+	}
+
+	@Override
+	public void setSteps(List<ServiceTestStepPojo> steps) {
+		GWT.log("[DesktopMaintainServiceTestPlanView.setSteps] there are " + steps.size() + " steps in the selected test.");
+		this.initializeTestStepListTable();
+		stepListPager.setDisplay(stepListTable);
+		presenter.setSelectedTestStep(null);
+	}
+
+	private Widget initializeTestStepListTable() {
+		GWT.log("initializing test step list table...");
+		stepListTable.setTableLayoutFixed(false);
+		stepListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		// set range to display
+		stepListTable.setVisibleRange(0, 5);
+
+		// create dataprovider
+		stepDataProvider = new ListDataProvider<ServiceTestStepPojo>();
+		stepDataProvider.addDataDisplay(stepListTable);
+		stepDataProvider.getList().clear();
+		if (presenter.getSelectedTest() != null) {
+			stepDataProvider.getList().addAll(presenter.getSelectedTest().getServiceTestSteps());
+		}
+
+		stepSelectionModel = 
+				new SingleSelectionModel<ServiceTestStepPojo>(ServiceTestStepPojo.KEY_PROVIDER);
+
+		stepSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
+				// refresh tests table
+				presenter.setSelectedTestStep(m);
+			}
+		});
+		stepListTable.setSelectionModel(stepSelectionModel);
+
+		ListHandler<ServiceTestStepPojo> sortHandler = 
+				new ListHandler<ServiceTestStepPojo>(stepDataProvider.getList());
+		stepListTable.addColumnSortHandler(sortHandler);
+
+		if (stepListTable.getColumnCount() == 0) {
+			initStepListTableColumns(sortHandler);
+		}
+		
+		return stepListTable;
+	}
+
+	private void initStepListTableColumns(ListHandler<ServiceTestStepPojo> sortHandler) {
+		GWT.log("initializing step list table columns...");
+
+		Column<ServiceTestStepPojo, Boolean> checkColumn = new Column<ServiceTestStepPojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(ServiceTestStepPojo object) {
+				// Get the value from the selection model.
+				return stepSelectionModel.isSelected(object);
+			}
+		};
+		stepListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		stepListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+		
+		// sequence column
+		Column<ServiceTestStepPojo, String> sequenceColumn = 
+				new Column<ServiceTestStepPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceTestStepPojo object) {
+				return Integer.toString(object.getSequenceNumber());
+			}
+		};
+		sequenceColumn.setSortable(true);
+		sortHandler.setComparator(sequenceColumn, new Comparator<ServiceTestStepPojo>() {
+			public int compare(ServiceTestStepPojo o1, ServiceTestStepPojo o2) {
+				if (o1.getSequenceNumber() == o2.getSequenceNumber()) {
+					return 0;
+				}
+				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
+					return 1;
+				}
+				return -1;
+			}
+		});
+		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceTestStepPojo object, String value) {
+	    		presenter.maintainStep(object);
+	    	}
+	    });
+		sequenceColumn.setCellStyleNames("tableAnchor");
+		stepListTable.addColumn(sequenceColumn, "Sequence Number");
+		
+		// description column
+		Column<ServiceTestStepPojo, String> descColumn = 
+				new Column<ServiceTestStepPojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(ServiceTestStepPojo object) {
+				return object.getDescription();
+			}
+		};
+		descColumn.setSortable(true);
+		sortHandler.setComparator(descColumn, new Comparator<ServiceTestStepPojo>() {
+			public int compare(ServiceTestStepPojo o1, ServiceTestStepPojo o2) {
+				return o1.getDescription().compareTo(o2.getDescription());
+			}
+		});
+		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
+	    	@Override
+	    	public void update(int index, ServiceTestStepPojo object, String value) {
+	    		presenter.maintainStep(object);
+	    	}
+	    });
+		descColumn.setCellStyleNames("tableAnchor");
+		stepListTable.addColumn(descColumn, "Description");
+	}
+
+	@Override
+	public void showRequirementMaintenanceDialog(final boolean isEdit, final ServiceTestRequirementPojo selected) {
+		reqmtPopup.clear();
+		if (isEdit) {
+			reqmtPopup.setText("View/Maintain Test Requirement");
 		}
 		else {
-			if (presenter.getSelectedTestRequirement() == null) {
-				GWT.log("[STEP: onSelectionChange]  no selected test requirement.");
-				hidePanels();
-				hideButtons();
-				return;
+			reqmtPopup.setText("Create Test Requirement");
+		}
+		reqmtPopup.setGlassEnabled(true);
+		reqmtPopup.setAnimationEnabled(true);
+		reqmtPopup.center();
+		reqmtPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(12);
+		reqmtPopup.setWidget(vp);
+		
+		Grid grid;
+		grid = new Grid(2,2);
+
+		grid.setCellSpacing(8);
+		vp.add(grid);
+		
+		Label l_seq = new Label("Sequence Number:");
+		l_seq.addStyleName("label");
+		grid.setWidget(0, 0, l_seq);
+		
+		final TextBox tb_seq = new TextBox();
+		tb_seq.addStyleName("field");
+		tb_seq.addStyleName("glowing-border");
+		tb_seq.getElement().setPropertyString("placeholder", "enter numeric sequence number");
+		tb_seq.setText(Integer.toString(selected.getSequenceNumber()));
+		grid.setWidget(0, 1, tb_seq);
+		
+		Label l_desc = new Label("Description:");
+		l_desc.addStyleName("label");
+		grid.setWidget(1, 0, l_desc);
+
+		final TextArea ta_desc = new TextArea();
+		ta_desc.addStyleName("field");
+		ta_desc.addStyleName("glowing-border");
+		ta_desc.getElement().setPropertyString("placeholder", "enter requirement description");
+		ta_desc.setText(selected.getDescription());
+		grid.setWidget(1, 1, ta_desc);
+		
+		Grid buttonGrid;
+		buttonGrid = new Grid(1,2);
+		buttonGrid.setCellSpacing(12);
+		vp.add(buttonGrid);
+		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		Button okayButton = new Button("Okay");
+		okayButton.addStyleName("normalButton");
+		okayButton.addStyleName("glowing-border");
+		okayButton.setWidth("105px");
+		buttonGrid.setWidget(0, 0, okayButton);
+		okayButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selected.setSequenceNumber(Integer.parseInt(tb_seq.getText()));
+				selected.setDescription(ta_desc.getText());
+
+				// required fields.
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				if (selected.getSequenceNumber() == 0) {
+					fields.add(tb_seq);
+				}
+				if (selected.getDescription() == null || selected.getDescription().length() == 0) {
+					fields.add(ta_desc);
+				}
+				if (fields != null && fields.size() > 0) {
+					setFieldViolations(true);
+					applyStyleToMissingFields(fields);
+					showMessageToUser("Please provide data for the required fields.");
+					return;
+				}
+
+				// if create, add requirement to current test plan and save assessment
+				// otherwise just save the assessment?
+				if (!isEdit) {
+					presenter.getSecurityAssessment().getServiceTestPlan().getServiceTestRequirements().add(selected);
+				}
+				presenter.saveAssessment();
+				reqmtPopup.hide();
 			}
-			if (presenter.getSelectedTest() == null) {
-				GWT.log("[STEP: onSelectionChange]  no selected test.");
-				addStepButton.setVisible(false);
-				removeStepButton.setVisible(false);
-				requirementPanel.setVisible(true);
-				testPanel.setVisible(false);
-				testStepPanel.setVisible(false);
+		});
+
+		Button cancelButton = new Button("Cancel");
+		cancelButton.addStyleName("normalButton");
+		cancelButton.addStyleName("glowing-border");
+		cancelButton.setWidth("105px");
+		buttonGrid.setWidget(0, 1, cancelButton);
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				reqmtPopup.hide();
 			}
-			else {
-				requirementPanel.setVisible(false);
-				testPanel.setVisible(false);
-				testStepPanel.setVisible(true);
-				stepSequenceNumberTB.setText(Integer.toString(selected.getSequenceNumber()));
-				stepDescriptionTA.setText(selected.getDescription());
-				testRequirementForStepLabel.setText(Integer.toString(presenter.getSelectedTestRequirement().getSequenceNumber()));
-				testForStepLabel.setText(Integer.toString(presenter.getSelectedTest().getSequenceNumber()));
-				addStepButton.setVisible(true);
-				removeStepButton.setVisible(true);
+		});
+		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	ta_desc.setFocus(true);
+	        }
+	    });
+
+		reqmtPopup.show();
+		reqmtPopup.center();
+	}
+
+	@Override
+	public void showTestMaintenanceDialog(final boolean isEdit, final ServiceTestPojo selected) {
+		testPopup.clear();
+		if (isEdit) {
+			testPopup.setText("View/Maintain Test");
+		}
+		else {
+			testPopup.setText("Create Test");
+		}
+		testPopup.setGlassEnabled(true);
+		testPopup.setAnimationEnabled(true);
+		testPopup.center();
+		testPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(12);
+		testPopup.setWidget(vp);
+
+		Grid grid;
+		grid = new Grid(3,2);
+
+		grid.setCellSpacing(8);
+		vp.add(grid);
+		
+		Label l_seq = new Label("Sequence Number:");
+		l_seq.addStyleName("label");
+		grid.setWidget(0, 0, l_seq);
+		
+		final TextBox tb_seq = new TextBox();
+		tb_seq.addStyleName("field");
+		tb_seq.addStyleName("glowing-border");
+		tb_seq.getElement().setPropertyString("placeholder", "enter numeric sequence number");
+		tb_seq.setText(Integer.toString(selected.getSequenceNumber()));
+		grid.setWidget(0, 1, tb_seq);
+		
+		Label l_desc = new Label("Description:");
+		l_desc.addStyleName("label");
+		grid.setWidget(1, 0, l_desc);
+
+		final TextArea ta_desc = new TextArea();
+		ta_desc.addStyleName("field");
+		ta_desc.addStyleName("glowing-border");
+		ta_desc.getElement().setPropertyString("placeholder", "enter requirement description");
+		ta_desc.setText(selected.getDescription());
+		grid.setWidget(1, 1, ta_desc);
+		
+		Label l_expectedResult = new Label("Expected Result:");
+		l_expectedResult.addStyleName("label");
+		grid.setWidget(2, 0, l_expectedResult);
+		
+		final ListBox lb_expectedResult = new ListBox();
+		lb_expectedResult.addStyleName("listBoxField");
+		lb_expectedResult.addStyleName("glowing-border");
+		grid.setWidget(2, 1, lb_expectedResult);
+		if (!isEdit) {
+			lb_expectedResult.addItem("-- Select --", "");
+		}
+		if (testExpectedResultItems != null) {
+			int i=0;
+			for (String status : testExpectedResultItems) {
+				lb_expectedResult.addItem(status, status);
+				if (isEdit) {
+					if (selected.getServiceTestExpectedResult() != null) {
+						GWT.log("Comparing " + selected.getServiceTestExpectedResult() + " to " + status);
+						if (selected.getServiceTestExpectedResult().equalsIgnoreCase(status)) {
+							lb_expectedResult.setSelectedIndex(i);
+						}
+					}
+					else {
+						GWT.log("expected result is null");
+					}
+				}
+				else {
+					GWT.log("It's a create???");
+				}
+				i++;
 			}
 		}
 
+		Grid buttonGrid;
+		buttonGrid = new Grid(1,2);
+		buttonGrid.setCellSpacing(12);
+		vp.add(buttonGrid);
+		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		Button okayButton = new Button("Okay");
+		okayButton.addStyleName("normalButton");
+		okayButton.addStyleName("glowing-border");
+		okayButton.setWidth("105px");
+		buttonGrid.setWidget(0, 0, okayButton);
+		okayButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selected.setSequenceNumber(Integer.parseInt(tb_seq.getText()));
+				selected.setDescription(ta_desc.getText());
+				selected.setServiceTestExpectedResult(lb_expectedResult.getSelectedValue());
+				
+				// required fields.
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				if (selected.getSequenceNumber() == 0) {
+					fields.add(tb_seq);
+				}
+				if (selected.getDescription() == null || selected.getDescription().length() == 0) {
+					fields.add(ta_desc);
+				}
+				if (selected.getServiceTestExpectedResult() == null || selected.getServiceTestExpectedResult().length() == 0) {
+					fields.add(lb_expectedResult);
+				}
+				if (fields != null && fields.size() > 0) {
+					setFieldViolations(true);
+					applyStyleToMissingFields(fields);
+					showMessageToUser("Please provide data for the required fields.");
+					return;
+				}
+
+				// if create, add test to selected requirement and save assessment
+				// otherwise just save the assessment?
+				if (!isEdit) {
+					presenter.getSelectedTestRequirement().getServiceTests().add(selected);
+				}
+				presenter.saveAssessment();
+
+				testPopup.hide();
+			}
+		});
+
+		Button cancelButton = new Button("Cancel");
+		cancelButton.addStyleName("normalButton");
+		cancelButton.addStyleName("glowing-border");
+		cancelButton.setWidth("105px");
+		buttonGrid.setWidget(0, 1, cancelButton);
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				testPopup.hide();
+			}
+		});
+		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	ta_desc.setFocus(true);
+	        }
+	    });
+
+		testPopup.show();
+		testPopup.center();
+	}
+
+	@Override
+	public void showStepMaintenanceDialog(final boolean isEdit, final ServiceTestStepPojo selected) {
+		stepPopup.clear();
+		if (isEdit) {
+			stepPopup.setText("View/Maintain Step");
+		}
+		else {
+			stepPopup.setText("Create Step");
+		}
+		stepPopup.setGlassEnabled(true);
+		stepPopup.setAnimationEnabled(true);
+		stepPopup.center();
+		stepPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(12);
+		stepPopup.setWidget(vp);
+		
+		Grid grid;
+		grid = new Grid(2,2);
+
+		grid.setCellSpacing(8);
+		vp.add(grid);
+		
+		Label l_seq = new Label("Sequence Number:");
+		l_seq.addStyleName("label");
+		grid.setWidget(0, 0, l_seq);
+		
+		final TextBox tb_seq = new TextBox();
+		tb_seq.addStyleName("field");
+		tb_seq.addStyleName("glowing-border");
+		tb_seq.getElement().setPropertyString("placeholder", "enter numeric sequence number");
+		tb_seq.setText(Integer.toString(selected.getSequenceNumber()));
+		grid.setWidget(0, 1, tb_seq);
+		
+		Label l_desc = new Label("Description:");
+		l_desc.addStyleName("label");
+		grid.setWidget(1, 0, l_desc);
+
+		final TextArea ta_desc = new TextArea();
+		ta_desc.addStyleName("field");
+		ta_desc.addStyleName("glowing-border");
+		ta_desc.getElement().setPropertyString("placeholder", "enter requirement description");
+		ta_desc.setText(selected.getDescription());
+		grid.setWidget(1, 1, ta_desc);
+		
+		Grid buttonGrid;
+		buttonGrid = new Grid(1,2);
+		buttonGrid.setCellSpacing(12);
+		vp.add(buttonGrid);
+		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		Button okayButton = new Button("Okay");
+		okayButton.addStyleName("normalButton");
+		okayButton.addStyleName("glowing-border");
+		okayButton.setWidth("105px");
+		buttonGrid.setWidget(0, 0, okayButton);
+		okayButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selected.setServiceTestId(presenter.getSelectedTest().getServiceTestId());
+				selected.setSequenceNumber(Integer.parseInt(tb_seq.getText()));
+				selected.setDescription(ta_desc.getText());
+				
+				// required fields.
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				if (selected.getSequenceNumber() == 0) {
+					fields.add(tb_seq);
+				}
+				if (selected.getDescription() == null || selected.getDescription().length() == 0) {
+					fields.add(ta_desc);
+				}
+				if (fields != null && fields.size() > 0) {
+					setFieldViolations(true);
+					applyStyleToMissingFields(fields);
+					showMessageToUser("Please provide data for the required fields.");
+					return;
+				}
+
+				// if create, add step to selected test and save assessment
+				// otherwise just save the assessment?
+				if (!isEdit) {
+					presenter.getSelectedTest().getServiceTestSteps().add(selected);
+				}
+				presenter.saveAssessment();
+				
+				stepPopup.hide();
+			}
+		});
+
+		Button cancelButton = new Button("Cancel");
+		cancelButton.addStyleName("normalButton");
+		cancelButton.addStyleName("glowing-border");
+		cancelButton.setWidth("105px");
+		buttonGrid.setWidget(0, 1, cancelButton);
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				stepPopup.hide();
+			}
+		});
+		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	ta_desc.setFocus(true);
+	        }
+	    });
+
+		stepPopup.show();
+		stepPopup.center();
 	}
 }

@@ -91,6 +91,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;

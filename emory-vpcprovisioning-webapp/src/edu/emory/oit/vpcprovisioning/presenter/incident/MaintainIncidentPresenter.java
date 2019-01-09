@@ -81,6 +81,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
