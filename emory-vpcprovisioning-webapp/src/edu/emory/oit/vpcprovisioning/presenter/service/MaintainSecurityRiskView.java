@@ -14,13 +14,14 @@ import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
-import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.ui.client.PresentsConfirmation;
 
 public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
-	public interface Presenter extends PresentsWidgets {
+	public interface Presenter extends PresentsConfirmation {
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void setDirectoryMetaDataTitleOnWidget(String userId, Widget w);
@@ -39,6 +40,10 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 		SecurityRiskPojo getSecurityRisk();
 		public void setDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getDirectoryPerson();
+		
+		void createCounterMeasure();
+		void maintainCounterMeasure(CounterMeasurePojo selected);
+		void refreshCounterMeasureList(final UserAccountPojo user);
 	}
 
 	/**
@@ -71,4 +76,5 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 	void setCounterMeasureStatusItems(List<String> statuses);
 	void setCounterMeasures(List<CounterMeasurePojo> counterMeasures);
 	void removeCounterMeasureFromView(CounterMeasurePojo pojo);
+	public void showCounterMeasureMaintenanceDialog(final boolean isEdit, final CounterMeasurePojo selected);
 }

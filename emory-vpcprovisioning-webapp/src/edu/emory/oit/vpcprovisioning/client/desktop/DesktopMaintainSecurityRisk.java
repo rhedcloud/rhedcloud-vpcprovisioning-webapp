@@ -21,23 +21,27 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
@@ -57,11 +61,12 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	List<String> riskLevelItems;
 	boolean editing;
 	private ListDataProvider<CounterMeasurePojo> dataProvider = new ListDataProvider<CounterMeasurePojo>();
-	private MultiSelectionModel<CounterMeasurePojo> selectionModel;
+	private SingleSelectionModel<CounterMeasurePojo> selectionModel;
 	List<CounterMeasurePojo> counterMeasureList = new java.util.ArrayList<CounterMeasurePojo>();
 	PopupPanel actionsPopup = new PopupPanel(true);
 	private final DirectoryPersonRpcSuggestOracle assessorSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
-
+	DialogBox counterMeasurePopup = new DialogBox();
+	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 
 	private static DesktopMaintainSecurityRiskUiBinder uiBinder = GWT.create(DesktopMaintainSecurityRiskUiBinder.class);
 
@@ -121,24 +126,13 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				if (selectionModel.getSelectedSet().size() == 0) {
+				CounterMeasurePojo m = selectionModel.getSelectedObject();
+				if (m == null) {
 					showMessageToUser("Please select an item from the list");
 					return;
 				}
-				if (selectionModel.getSelectedSet().size() > 1) {
-					showMessageToUser("Please select one Notification to view");
-					return;
-				}
-				Iterator<CounterMeasurePojo> nIter = selectionModel.getSelectedSet().iterator();
-				
-				CounterMeasurePojo m = nIter.next();
-				if (m != null) {
-					// TODO:
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_COUNTER_MEASURE, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityRisk(), m);
-				}
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
+				// TODO: counter measure maintenance (see service test req, test, step
+				presenter.maintainCounterMeasure(m);
 			}
 		});
 		grid.setWidget(0, 0, editAnchor);
@@ -157,8 +151,6 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 						showMessageToUser("Please select one or more item(s) from the list");
 						return;
 					}
-					
-					// TODO: presenter.deleteSecurityRisks(risksToDelete);
 					
 					Iterator<CounterMeasurePojo> nIter = selectionModel.getSelectedSet().iterator();
 					while (nIter.hasNext()) {
@@ -181,8 +173,9 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@UiHandler ("createButton")
 	void createCounterMeasureClicked(ClickEvent e) {
-		// TODO:
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_COUNTER_MEASURE, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityRisk());
+		// TODO: create a new coutermeasure
+		populateRiskWithFormData();
+		presenter.createCounterMeasure();
 	}
 
 	@UiHandler ("okayButton")
@@ -461,7 +454,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 		dataProvider.getList().addAll(this.counterMeasureList);
 		
 		selectionModel = 
-	    	new MultiSelectionModel<CounterMeasurePojo>(CounterMeasurePojo.KEY_PROVIDER);
+	    	new SingleSelectionModel<CounterMeasurePojo>(CounterMeasurePojo.KEY_PROVIDER);
 		listTable.setSelectionModel(selectionModel);
 	    
 	    selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -598,5 +591,166 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	public void applyNetworkAdminMask() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void showCounterMeasureMaintenanceDialog(final boolean isEdit, final CounterMeasurePojo selected) {
+		counterMeasurePopup.clear();
+		if (isEdit) {
+			counterMeasurePopup.setText("View/Maintain Step");
+		}
+		else {
+			counterMeasurePopup.setText("Create Step");
+		}
+		counterMeasurePopup.setGlassEnabled(true);
+		counterMeasurePopup.setAnimationEnabled(true);
+		counterMeasurePopup.center();
+		counterMeasurePopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(12);
+		counterMeasurePopup.setWidget(vp);
+		
+		Grid grid;
+		grid = new Grid(4,2);
+
+		grid.setCellSpacing(8);
+		vp.add(grid);
+		
+		Label l_seq = new Label("Status:");
+		l_seq.addStyleName("label");
+		grid.setWidget(0, 0, l_seq);
+		
+		final ListBox lb_status = new ListBox();
+		lb_status.addStyleName("listBoxField");
+		lb_status.addStyleName("glowing-border");
+		grid.setWidget(0, 1, lb_status);
+		if (!isEdit) {
+			lb_status.addItem("-- Select --", "");
+		}
+		if (counterMeasureStatusTypes != null) {
+			int i=0;
+			for (String status : counterMeasureStatusTypes) {
+				lb_status.addItem(status, status);
+				if (isEdit) {
+					if (selected.getStatus() != null) {
+						if (selected.getStatus().equalsIgnoreCase(status)) {
+							lb_status.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
+		}
+		
+		Label l_desc = new Label("Description:");
+		l_desc.addStyleName("label");
+		grid.setWidget(1, 0, l_desc);
+
+		final TextArea ta_desc = new TextArea();
+		ta_desc.addStyleName("field");
+		ta_desc.addStyleName("glowing-border");
+		ta_desc.getElement().setPropertyString("placeholder", "enter counter measure description");
+		ta_desc.setText(selected.getDescription());
+		grid.setWidget(1, 1, ta_desc);
+		
+		Label l_verifier = new Label("Verifier:");
+		l_verifier.addStyleName("label");
+		grid.setWidget(2, 0, l_verifier);
+
+		// TODO: verifier (suggestbox)
+		final SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
+		directoryLookupSB.addStyleName("field");
+		directoryLookupSB.addStyleName("glowing-border");
+		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
+		directoryLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (dp_suggestion.getDirectoryPerson() != null) {
+					presenter.setDirectoryPerson(dp_suggestion.getDirectoryPerson());
+					directoryLookupSB.setTitle(presenter.getDirectoryPerson().toString());
+					selected.setVerifier(presenter.getDirectoryPerson().getKey());
+				}
+			}
+		});
+		grid.setWidget(2, 1, directoryLookupSB);
+
+		// TODO: verification date (datebox)
+		Label l_verificationDate = new Label("Verification Date:");
+		l_verificationDate.addStyleName("label");
+		grid.setWidget(3, 0, l_verificationDate);
+		
+		final DateBox verificationDate = new DateBox();
+		verificationDate.addStyleName("field");
+		verificationDate.addStyleName("glowing-border");
+		grid.setWidget(3, 1, verificationDate);
+
+		Grid buttonGrid;
+		buttonGrid = new Grid(1,2);
+		buttonGrid.setCellSpacing(12);
+		vp.add(buttonGrid);
+		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		Button okayButton = new Button("Okay");
+		okayButton.addStyleName("normalButton");
+		okayButton.addStyleName("glowing-border");
+		okayButton.setWidth("105px");
+		buttonGrid.setWidget(0, 0, okayButton);
+		okayButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				selected.setSecurityRiskId(presenter.getSecurityRisk().getSecurityRiskId());
+				selected.setStatus(lb_status.getSelectedValue());
+				selected.setDescription(ta_desc.getText());
+				// verifier is taken care of when a person is selected from the suggestbox
+				selected.setVerificationDate(verificationDate.getValue());
+				
+				// required fields.
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				if (selected.getStatus() == null || selected.getStatus().length() == 0) {
+					fields.add(lb_status);
+				}
+				if (selected.getDescription() == null || selected.getDescription().length() == 0) {
+					fields.add(ta_desc);
+				}
+				if (fields != null && fields.size() > 0) {
+					setFieldViolations(true);
+					applyStyleToMissingFields(fields);
+					showMessageToUser("Please provide data for the required fields.");
+					return;
+				}
+
+				// if create, add step to selected test and save assessment
+				// otherwise just save the assessment?
+				if (!isEdit) {
+					presenter.getSecurityRisk().getCouterMeasures().add(selected);
+				}
+				presenter.saveAssessment();
+				
+				counterMeasurePopup.hide();
+			}
+		});
+
+		Button cancelButton = new Button("Cancel");
+		cancelButton.addStyleName("normalButton");
+		cancelButton.addStyleName("glowing-border");
+		cancelButton.setWidth("105px");
+		buttonGrid.setWidget(0, 1, cancelButton);
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				counterMeasurePopup.hide();
+			}
+		});
+		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	ta_desc.setFocus(true);
+	        }
+	    });
+
+		counterMeasurePopup.show();
+		counterMeasurePopup.center();
 	}
 }

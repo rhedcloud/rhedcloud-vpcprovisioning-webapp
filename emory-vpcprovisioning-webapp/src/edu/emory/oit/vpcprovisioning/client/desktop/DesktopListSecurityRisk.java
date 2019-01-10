@@ -358,17 +358,6 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		});
 		listTable.addColumn(nameColumn, "Name");
 		
-	/*
-		SecurityRiskId, 
-		ServiceId, 
-		SequenceNumber, 
-		ServiceRiskName, 
-		RiskLevel, 
-		Description, 
-		AssessorId, 
-		AssessmentDatetime, 
-		Countermeasure*
-	 */
 		Column<SecurityRiskPojo, String> descColumn = 
 				new Column<SecurityRiskPojo, String> (new TextCell()) {
 

@@ -4997,7 +4997,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getUserNotificationsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
 			RequestService reqSvc = this.getAWSRequestService();
 			// if they're asking for ALL notifications, we'll have to bump 
@@ -5012,9 +5011,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			@SuppressWarnings("unchecked")
 			List<UserNotification> moas = actionable.query(queryObject,
 					reqSvc);
-			info("[getUserNotificationsForFilter] got " + moas.size() + 
-					" UserNotifications from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (UserNotification moa : moas) {
 				UserNotificationPojo pojo = new UserNotificationPojo();
 				UserNotificationPojo baseline = new UserNotificationPojo();
@@ -5069,58 +5065,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		} 
 		
-//		if (notificationList.isEmpty()) {
-//			UserNotificationPojo n1 = new UserNotificationPojo();
-//			n1.setUserNotificationId("1");
-//			n1.setText("Simple notification.");
-//			n1.setCreateTime(new java.util.Date());
-//			notificationList.add(n1);
-//			UserNotificationPojo n2 = new UserNotificationPojo();
-//			n2.setUserNotificationId("2");
-//			n2.setText("Simple notification.");
-//			n2.setCreateTime(new java.util.Date());
-//			notificationList.add(n2);
-//			UserNotificationPojo n3 = new UserNotificationPojo();
-//			n3.setUserNotificationId("3");
-//			n3.setText("Simple notification.");
-//			notificationList.add(n3);
-//			UserNotificationPojo n4 = new UserNotificationPojo();
-//			n4.setUserNotificationId("4");
-//			n4.setText("Simple notification.");
-//			n4.setCreateTime(new java.util.Date());
-//			notificationList.add(n4);
-//			UserNotificationPojo n5 = new UserNotificationPojo();
-//			n5.setUserNotificationId("5");
-//			n5.setText("Simple notification.");
-//			n5.setCreateTime(new java.util.Date());
-//			notificationList.add(n5);
-//			UserNotificationPojo n6 = new UserNotificationPojo();
-//			n6.setUserNotificationId("6");
-//			n6.setText("Simple notification.");
-//			n6.setCreateTime(new java.util.Date());
-//			notificationList.add(n6);
-//			UserNotificationPojo n7 = new UserNotificationPojo();
-//			n7.setUserNotificationId("7");
-//			n7.setText("Simple notification.");
-//			notificationList.add(n7);
-//			UserNotificationPojo n8 = new UserNotificationPojo();
-//			n8.setUserNotificationId("8");
-//			n8.setText("Simple notification.");
-//			n8.setCreateTime(new java.util.Date());
-//			notificationList.add(n8);
-//			UserNotificationPojo n9 = new UserNotificationPojo();
-//			n9.setUserNotificationId("9");
-//			n9.setText("Simple notification.");
-//			n9.setCreateTime(new java.util.Date());
-//			notificationList.add(n9);
-//			UserNotificationPojo n10 = new UserNotificationPojo();
-//			n10.setUserNotificationId("10");
-//			n10.setText("Simple notification.");
-//			notificationList.add(n10);
-//		}
-		
-//		result.setResults(notificationList);
-//		return result;
 	}
 
 	private void populateUserNotificationPojo(UserNotification moa, UserNotificationPojo pojo) throws XmlEnterpriseObjectException {
@@ -7670,7 +7614,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getSecurityAssessmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			info("[getSecurityAssessmentsForFilter] query object is: " + queryObject.toXmlString());
 
 			@SuppressWarnings("unchecked")
 			List<ServiceSecurityAssessment> moas = actionable.query(queryObject,
@@ -8058,15 +8002,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		filter.setRead(false);
 		filter.setUseQueryLanguage(true);
 		filter.setMaxRows(5);
-//		// get notifications created in the last hour
-//		Date now = new Date();
-//		Date yesterday = new Date(now.getTime() - Constants.MILLIS_PER_HR);
-//		filter.setStartDate(yesterday);
-//		filter.setEndDate(now);
 		UserNotificationQueryResultPojo result = this.getUserNotificationsForFilter(filter);
-		info("User " + user.getPublicId() + " has " + 
-				result.getResults().size() + " un-read User Notifications in the last day");
 		if (result.getResults().size() > 0) {
+			info("User " + user.getPublicId() + " has " + 
+					" un-read User Notifications");
 			return true;
 		}
 		return false;
