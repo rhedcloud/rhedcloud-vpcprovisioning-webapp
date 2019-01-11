@@ -48,23 +48,18 @@ public class DesktopServiceAssessmentReport extends ViewImplBase implements Serv
 	
 	@UiHandler("printButton")
 	void printButtonClicked(ClickEvent e) {
-		print(assessmentHTMLPrint);
+		String htmlTop = 
+			"<!DOCTYPE html>\n" + 
+			"<html>\n" + 
+			"<body>";
+		String htmlBottom = 
+			"</body>\n" + 
+			"</html>";
+		String html = htmlTop + assessmentHTML.getElement().getInnerHTML() + htmlBottom;
+//		print(assessmentHTMLPrint);
+		print(html);
 	}
 	
-//	print.addClickHandler(new ClickHandler() {
-//
-//		@Override
-//		public native void onClick(ClickEvent event) /*-{
-//		  var newWindow = open("PrintWindow.html");
-//		  var d = newWindow.document;
-//		  d.open();
-//		  d.write(MyHtmlResources.INSTANCE.getTermsHtml().getText());
-//		  d.close();
-//		  newWindow.print(); 
-//		}-*/;
-//		
-//	});
-
 	@UiHandler("cancelButton")
 	void cancelButtonClicked(ClickEvent e) {
 		// if the report was opened from the assessment maintenance page,
@@ -233,7 +228,10 @@ public class DesktopServiceAssessmentReport extends ViewImplBase implements Serv
 
 	@Override
 	public void clear() {
-		assessmentHTML.setHTML("");
+		String imgString = "<img src=\"images/ajax-loader.gif\" alt=\"Please Wait...\" align=\"middle\">";
+
+		assessmentHTML.setHTML("<table><tr><td><h3>Generating Security Assessment "
+			+ "Report...</h2></td><td>" + imgString + "</td></tr></table>");
 	}
 
 }

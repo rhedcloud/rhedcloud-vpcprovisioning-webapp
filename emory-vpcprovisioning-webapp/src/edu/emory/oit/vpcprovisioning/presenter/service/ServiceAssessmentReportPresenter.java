@@ -65,7 +65,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 		this.eventBus = eventBus;
 		getView().applyAWSAccountAuditorMask();
 		getView().clear();
-		getView().showPleaseWaitDialog("Generating Service Assessment Report, please wait...");
+		getView().showPleaseWaitDialog("Generating Service Assessment Report, please wait...(potential long running task)");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
@@ -96,46 +96,14 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 	}
 
 	private void refreshReport(final UserAccountPojo user) {
-		// TODO: for each service in the list, get the assessment and generate 
+		// for each service in the list, get the assessment and generate 
 		// the appropriate HTML assessment content and pass it to the view
 		
-		String htmlTop = "<!DOCTYPE html>\n" + 
-				"<html>\n" + 
-				"<head>\n" + 
-				"<style>\n" + 
-				"table {\n" + 
-				"  font-family: arial, sans-serif;\n" + 
-				"  border-collapse: collapse;\n" + 
-				"  width: 100%;\n" + 
-				"}\n" + 
-				"\n" + 
-				"td, th {\n" + 
-				"  border: 1px solid #dddddd;\n" + 
-				"  text-align: left;\n" + 
-				"  padding: 8px;\n" + 
-				"}\n" + 
-				"\n" + 
-				"tr:nth-child(even) {\n" + 
-				"  background-color: #ebebeb;\n" + 
-				"}\n" + 
-				"</style>\n" + 
-				"</head>\n" + 
-				"<body>";
-		final String htmlBottom = "</body>\n" + 
-				"</html>";
-
 		final StringBuffer sbView = new StringBuffer();
-		final StringBuffer sbPrint = new StringBuffer();
-		sbPrint.append(htmlTop);
-		sbPrint.append("<h1>Assessment report for " + serviceList.size() + 
+		String personInfo = userLoggedIn.getFullName() + " (" + userLoggedIn.getPublicId() + ")";
+		sbView.append("<h2>Assessment report for " + serviceList.size() + 
 				" services for user: " + 
-				userLoggedIn.getPublicId() + ".</h1>");
-		sbView.append("<h1>Assessment report for " + serviceList.size() + 
-				" services for user: " + 
-				userLoggedIn.getPublicId() + ".</h1>");
-		
-//		sbPrint.append("<p>");
-//		sbView.append("<p>");
+				personInfo + ".</h2>");
 		
 		List<String> serviceIds = new java.util.ArrayList<String>();
 		for (final AWSServicePojo svc : serviceList) {
@@ -157,20 +125,60 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 			public void onSuccess(SecurityAssessmentSummaryQueryResultPojo result) {
 				for (SecurityAssessmentSummaryPojo sas : result.getResults()) {
 					AWSServicePojo svc = sas.getService();
-					sbPrint.append("<h2>Service name: " + svc.getAwsServiceName() + "</h2>");
-					sbView.append("<h2>Service name: " + svc.getAwsServiceName() + "</h2>");
+					String serviceName;
+					if (svc.getCombinedServiceName() != null && 
+							svc.getCombinedServiceName().length() > 0) {
+							serviceName = svc.getCombinedServiceName();
+						}
+						else if (svc.getAlternateServiceName() != null && 
+								svc.getAlternateServiceName().length() > 0 ) {
+							serviceName = svc.getAlternateServiceName();
+						}
+						else {
+							serviceName = svc.getAwsServiceName();
+						}
 
+					sbView.append("<table>");
+					
+					String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
+					sbView.append("<tr><td>");
+					sbView.append("<h3>Service name: " + serviceAnchorString + "</h3>");
+					sbView.append("</td></tr>");
+
+					String imgString;
+					if (!svc.isBlocked()) {
+						imgString = "<img src=\"images/green-checkbox-icon-15.jpg\" alt=\"Smiley face\" height=\"16\" width=\"16\">";
+					}
+					else {
+						imgString = "<img src=\"images/red-circle-white-x.png\" alt=\"Smiley face\" height=\"16\" width=\"16\">";
+					}
+					sbView.append("<tr><td>");
+					sbView.append("<b>STATUS:</b>  " + svc.getSiteStatus());
+					sbView.append("</td><td>" + imgString + "</td>");
+					sbView.append("</tr>");
+					
+					if (svc.isSiteHipaaEligible()) {
+						imgString = "<img src=\"images/green-checkbox-icon-15.jpg\" alt=\"Smiley face\" height=\"16\" width=\"16\">";
+					}
+					else {
+						imgString = "<img src=\"images/red-circle-white-x.png\" alt=\"Smiley face\" height=\"16\" width=\"16\">";
+					}
+					sbView.append("<tr><td>");
+					sbView.append("<b>Emory HIPPA Eligibility:</b>  " + svc.getSiteHipaaEligible());
+					sbView.append("</td><td>" + imgString + "</td>");
+					sbView.append("</tr>");
+
+					sbView.append("</table>");
+					
+					sbView.append("<p>" + svc.getDescription() + "</p>");
+					
 					ServiceSecurityAssessmentPojo assessment = sas.getAssessment();
 					if (assessment != null) {
-						sbPrint.append("<ul style=\"list-style-type:none\">");
 						sbView.append("<ul style=\"list-style-type:none\">");
 						
 						// security risks
-						sbPrint.append("<li><h3>Security Risks: " + assessment.getSecurityRisks().size() + "</h3></li>");
 						sbView.append("<li><h3>Security Risks: " + assessment.getSecurityRisks().size() + "</h3></li>");
 						if (assessment.getSecurityRisks().size() > 0) {
-							sbPrint.append("<table>");
-							sbPrint.append("<tr><th>Name</th><th>Description</th><th>Risk Level</th><th>Assessor</th><th>Assessment Date</th></tr>");
 							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
 							sbView.append("<tr>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
@@ -180,13 +188,6 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
 									+ "</tr>");
 							for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
-								sbPrint.append("<tr>" + 
-									"<td>" + risk.getSecurityRiskName() + "</td>" + 
-									"<td>" + risk.getDescription() + "</td>" + 
-									"<td>" + risk.getRiskLevel() + "</td>" + 
-									"<td>" + risk.getAssessorId() + "</td>" + 
-									"<td>" + dateFormat_short.format(risk.getAssessmentDate()) + "</td>" + 
-									"</tr>");
 								sbView.append("<tr>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getSecurityRiskName() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getDescription() + "</td>" + 
@@ -200,21 +201,15 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									
 								}
 							}
-							sbPrint.append("</table>");
 							sbView.append("</table>");
 						}
 						else {
-							sbPrint.append("<h4>No Security Risks Documented</h4>");
 							sbView.append("<h4>No Security Risks Documented</h4>");
 						}
 						
 						// security controls
-						sbPrint.append("<li><h3>Security Controls: " + assessment.getServiceControls().size() + "</h3></li>");
 						sbView.append("<li><h3>Security Controls: " + assessment.getServiceControls().size() + "</h3></li>");
 						if (assessment.getServiceControls().size() > 0) {
-							sbPrint.append("<table>");
-							sbPrint.append("<tr>"
-									+ "<th>Name</th><th>Description</th><th>Assessor ID</th><th>Assessment Date</th><th>Verifier ID</th><th>Verification Date</th></tr>");
 							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
 							sbView.append("<tr>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
@@ -225,14 +220,6 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th>"
 									+ "</tr>");
 							for (ServiceControlPojo control : assessment.getServiceControls()) {
-								sbPrint.append("<tr>" + 
-									"<td>" + control.getServiceControlName() + "</td>" + 
-									"<td>" + control.getDescription() + "</td>" +  
-									"<td>" + control.getAssessorId() + "</td>" + 
-									"<td>" + dateFormat_short.format(control.getAssessmentDate()) + "</td>" + 
-									"<td>" + control.getVerifier() + "</td>" +
-									"<td>" + dateFormat_short.format(control.getVerificationDate()) + "</td>" +
-									"</tr>");
 								sbView.append("<tr>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getServiceControlName() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getDescription() + "</td>" + 
@@ -242,21 +229,15 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(control.getVerificationDate()) + "</td>" + 
 									"</tr>");
 							}
-							sbPrint.append("</table>");
 							sbView.append("</table>");
 						}
 						else {
-							sbPrint.append("<h4>No Security Controls Documented</h4>");
 							sbView.append("<h4>No Security Controls Documented</h4>");
 						}
 						
 						// security guidelines
-						sbPrint.append("<li><h3>Service Guidelines: " + assessment.getServiceGuidelines().size() + "<h3></li>");
 						sbView.append("<li><h3>Service Guidelines: " + assessment.getServiceGuidelines().size() + "</h3></li>");
 						if (assessment.getServiceGuidelines().size() > 0) {
-							sbPrint.append("<table>");
-							sbPrint.append("<tr>"
-									+ "<th>Name</th><th>Description</th><th>Assessor</th><th>Assessment Date</th></tr>");
 							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
 							sbView.append("<tr>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
@@ -265,12 +246,6 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
 									+ "</tr>");
 							for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
-								sbPrint.append("<tr>" + 
-									"<td>" + guideline.getServiceGuidelineName() + "</td>" + 
-									"<td>" + guideline.getDescription() + "</td>" +  
-									"<td>" + guideline.getAssessorId() + "</td>" + 
-									"<td>" + dateFormat_short.format(guideline.getAssessmentDate()) + "</td>" + 
-									"</tr>");
 								sbView.append("<tr>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getServiceGuidelineName() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getDescription() + "</td>" + 
@@ -278,24 +253,18 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(guideline.getAssessmentDate()) + "</td>" + 
 									"</tr>");
 							}
-							sbPrint.append("</table>");
 							sbView.append("</table>");
 						}
 						else {
-							sbPrint.append("<h4>No Service Guidelines Documented</h4>");
 							sbView.append("<h4>No Service Guidelines Documented</h4>");
 						}
 
 						// test plan
-						sbPrint.append("<li><h3>Test Plan: " + ((assessment.getServiceTestPlan() != null) ? "Yes" : "No") + "</h3></li>");
 						sbView.append("<li><h3>Test Plan: " + ((assessment.getServiceTestPlan() != null) ? "Yes" : "No") + "</h3></li>");
 						if (assessment.getServiceTestPlan() != null) {
 							ServiceTestPlanPojo tp = assessment.getServiceTestPlan();
 							
 							// requirements
-							sbPrint.append("<table>");
-							sbPrint.append("<tr>"
-									+ "<th>Sequence</th><th>Description</th><th>Tests</th></tr>");
 							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
 							sbView.append("<tr>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Sequence</th>"
@@ -304,19 +273,12 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "</tr>");
 							
 							for (ServiceTestRequirementPojo str : tp.getServiceTestRequirements()) {
-								sbPrint.append("<tr>" + 
-									"<td>" + str.getSequenceNumber() + "</td>" + 
-									"<td>" + str.getDescription() + "</td>");  
 								sbView.append("<tr>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + str.getSequenceNumber() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + str.getDescription() + "</td>"); 
 
 								// tests
-								sbPrint.append("<td>");
 								sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">"); 
-								sbPrint.append("<table>");
-								sbPrint.append("<tr>"
-										+ "<th>Sequence</th><th>Description</th><th>Expected Result</th><th>Steps</th></tr>");
 								sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
 								sbView.append("<tr>"
 										+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Sequence</th>"
@@ -326,21 +288,13 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 										+ "</tr>");
 
 								for (ServiceTestPojo test : str.getServiceTests()) {
-									sbPrint.append("<tr>" + 
-										"<td width=\"5%\">" + test.getSequenceNumber() + "</td>" + 
-										"<td width=\"30%\">" + test.getDescription() + "</td>" +  
-										"<td width=\"10%\">" + test.getServiceTestExpectedResult() + "</td>");  
 									sbView.append("<tr>" + 
 										"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + test.getSequenceNumber() + "</td>" + 
 										"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + test.getDescription() + "</td>" + 
 										"<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + test.getServiceTestExpectedResult() + "</td>"); 
 
 									// steps
-									sbPrint.append("<td>");
 									sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">"); 
-									sbPrint.append("<table>");
-									sbPrint.append("<tr>"
-											+ "<th>Sequence</th><th>Description</th></tr>");
 									sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
 									sbView.append("<tr>"
 											+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Sequence</th>"
@@ -348,49 +302,32 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 											+ "</tr>");
 
 									for (ServiceTestStepPojo step : test.getServiceTestSteps()) {
-										sbPrint.append("<tr>" + 
-											"<td width=\"5%\">" + step.getSequenceNumber() + "</td>" + 
-											"<td width=\"50%\">" + step.getDescription() + "</td>");
 										sbView.append("<tr>" + 
 											"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + step.getSequenceNumber() + "</td>" + 
 											"<td width=\"50%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + step.getDescription() + "</td>"); 
 									}
-									sbPrint.append("</table>");
 									sbView.append("</table>");
-
-									sbPrint.append("</td>");
 									sbView.append("</td>");
-
 									// end steps
 
-									sbPrint.append("</tr>"); 
 									sbView.append("</tr>"); 
 								}
-								sbPrint.append("</table>");
 								sbView.append("</table>");
-
-								sbPrint.append("</td>");
 								sbView.append("</td>");
 								// end tests
 
-								sbPrint.append("</tr>");
 								sbView.append("</tr>");
 							}
-							sbPrint.append("</table>");
 							sbView.append("</table>");
 							// end requirements
 						}
 						
-						sbPrint.append("</ul>");
 						sbView.append("</ul>");
 					}
 					else {
-						sbPrint.append("<h4>No assessment performed yet</h4>");
 						sbView.append("<h4>No assessment performed yet</h4>");
 					}
 				}
-				sbPrint.append(htmlBottom);
-				getView().setAssessmentReportToPrint(sbPrint.toString());
 				getView().setAssessmentReportToView(sbView.toString());
 		        getView().hidePleaseWaitDialog();
 			}

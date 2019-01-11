@@ -20,6 +20,14 @@ public class UserAccountPojo implements IsSerializable {
 		// TODO Auto-generated constructor stub
 	}
 
+	public String getFullName() {
+		if (personalName != null) {
+			return personalName.getFirstName() + " " + personalName.getLastName();
+		}
+		else {
+			return "Unknown";
+		}
+	}
 	public String getEppn() {
 		return eppn;
 	}
