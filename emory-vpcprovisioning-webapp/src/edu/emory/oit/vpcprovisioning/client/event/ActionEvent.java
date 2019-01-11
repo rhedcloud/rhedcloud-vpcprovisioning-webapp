@@ -135,171 +135,201 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 	public static void fire(EventBus eventBus, String sourceName) {
+		if (eventBus == null) return;
 		GWT.log("Firing event: " + sourceName);
 		GWT.log("ActionEvent: EventBus passed in is is: " + eventBus);
 		eventBus.fireEventFromSource(new ActionEvent(), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, CidrAssignmentPojo cidrAssignment, Place nextPlace) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(cidrAssignment, nextPlace), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, CidrPojo cidr, CidrAssignmentPojo cidrAssignment, Place nextPlace) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(cidr, cidrAssignment, nextPlace), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, IncidentPojo incident) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(incident), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, CidrPojo cidr) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(cidr), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, CidrSummaryPojo cidrSummary) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(cidrSummary), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, ElasticIpPojo elasticIp) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(elasticIp), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc, ElasticIpAssignmentPojo elasticIpAssignment) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpc, elasticIpAssignment), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, ElasticIpPojo elasticIp, ElasticIpAssignmentPojo elasticIpAssignment, Place nextPlace) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(elasticIp, elasticIpAssignment, nextPlace), sourceName);
 	}
 
 
    	public static void fire(EventBus eventBus, String sourceName, CidrPojo cidr, CidrAssignmentSummaryPojo cidrAssignmentSummary) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(cidr, cidrAssignmentSummary), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, CidrAssignmentPojo cidrAssignment) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(cidrAssignment), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AccountPojo account) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(account), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpc), sourceName);
 	}
 	
 	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc2, boolean b) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpc2, b), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, VpcPojo vpc, FirewallRulePojo rule,
 			boolean b) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpc, rule, b), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpcpPojo vpcp) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpcp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, StaticNatProvisioningSummaryPojo snp) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(snp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, StaticNatProvisioningPojo snp) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(snp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, StaticNatDeprovisioningPojo sndp) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(sndp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, UserNotificationPojo notification) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(notification), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, SecurityRiskDetectionPojo srd, UserNotificationPojo notification) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(srd, notification), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, SecurityRiskDetectionPojo srd, AccountNotificationPojo notification) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(srd, notification), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, FirewallRulePojo rule) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName,
 			FirewallExceptionAddRequestPojo result, VpcPojo vpc2) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(result, vpc2), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName,
 			FirewallExceptionRemoveRequestPojo result, VpcPojo vpc2) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(result, vpc2), sourceName);
 	}
-
-//	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule) {
-//		eventBus.fireEventFromSource(new ActionEvent(rule), sourceName);
-//	}
-//
-//	public static void fire(EventBus eventBus, String sourceName, FirewallExceptionRequestPojo rule, VpcPojo vpc) {
-//		eventBus.fireEventFromSource(new ActionEvent(rule, vpc), sourceName);
-//	}
 
 	public static void fire(EventBus eventBus, String sourceName,
 			FirewallExceptionRequestSummaryPojo m, VpcPojo vpc) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m, vpc), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, FirewallRulePojo rule, VpcPojo vpc) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(rule, vpc), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, FirewallRulePojo m, VpcPojo vpc2,
 			boolean b) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m, vpc2, b), sourceName);
 	}
 
 
 	public static void fire(EventBus eventBus, String sourceName,
 			List<AWSServicePojo> serviceList, ServiceSecurityAssessmentPojo assessment) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(serviceList, assessment), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, ServiceSecurityAssessmentPojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, SecurityRiskPojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, ServiceControlPojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, ServiceGuidelinePojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, ServiceTestPlanPojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AccountNotificationPojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AccountPojo account,
 			AccountNotificationPojo notification) {
 
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(account, notification), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, QueryFilter filter) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(filter), sourceName);
 	}
 
@@ -307,76 +337,92 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo securityRisk,
 			CounterMeasurePojo object) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(assessment, securityRisk, object), sourceName);
 	}
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
 			ServiceSecurityAssessmentPojo securityAssessment2) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment2), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
 			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo m) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
 			ServiceSecurityAssessmentPojo assessment, ServiceControlPojo m) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
 			ServiceSecurityAssessmentPojo assessment, ServiceGuidelinePojo m) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
 			ServiceSecurityAssessmentPojo assessment, ServiceTestPlanPojo m) {
 		
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, TermsOfUseAgreementPojo toua) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(toua), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, UserAccountPojo userLoggedIn) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(userLoggedIn), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfilePojo profile) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(profile), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName,
 			VpnConnectionRequisitionPojo vpnConnectionRequisition, VpnConnectionProfileAssignmentPojo assignment) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpnConnectionRequisition, assignment), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfileSummaryPojo profileSummary) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(profileSummary), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProfileAssignmentPojo profileAssignment) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(profileAssignment), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProvisioningPojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionProvisioningSummaryPojo m) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionDeprovisioningPojo vpncdp) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpncdp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, List<AWSServicePojo> serviceList) {
+		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(serviceList), sourceName);
 	}
 
