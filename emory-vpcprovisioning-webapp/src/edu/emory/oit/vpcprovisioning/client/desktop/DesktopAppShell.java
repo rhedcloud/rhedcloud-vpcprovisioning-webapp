@@ -80,6 +80,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPresenter;
@@ -501,8 +503,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			servicesContentContainer.clear();
 			ListServiceView listServiceView = clientFactory.getListServiceView();
 			MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
+			ServiceAssessmentReportView svcAssessmentReport = clientFactory.getServiceAssessmentReportView();
 			vpcpContentContainer.add(listServiceView);
 			vpcpContentContainer.add(maintainServiceView);
+			vpcpContentContainer.add(svcAssessmentReport);
 			vpcpContentContainer.setAnimationDuration(500);
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
 			break;
@@ -631,7 +635,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 		if (w instanceof ListServicePresenter || 
 				w instanceof MaintainServicePresenter || 
-				w instanceof MaintainSecurityAssessmentPresenter) {
+				w instanceof MaintainSecurityAssessmentPresenter || 
+				w instanceof ServiceAssessmentReportPresenter) {
 			servicesContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstServicesContentWidget) {

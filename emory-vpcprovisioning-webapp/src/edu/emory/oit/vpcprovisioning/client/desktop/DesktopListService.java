@@ -27,15 +27,19 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
@@ -192,20 +196,38 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				actionsPopup.hide();
 						
 				if (selectionModel.getSelectedSet().size() == 0) {
-					// TODO: fire assessment report event passing the list of ALL services (serviceList)
-					showMessageToUser("Security Assessment Report (all services)...coming soon...");
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, serviceList);
+					// This will work but not ideal...
+					/*
+					String url = GWT.getModuleBaseURL() + "securityAssessment"
+							+ "?userId=" + userLoggedIn.getPublicId();
+					Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
+					 */
+					
+					// fire assessment report event passing the list of ALL services (serviceList)
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, serviceList);
 				}
 				else {
-					List<AWSServicePojo> svcsToAssess = new java.util.ArrayList<AWSServicePojo>();
 					Iterator<AWSServicePojo> nIter = selectionModel.getSelectedSet().iterator();
+//					StringBuffer svc_ids = new StringBuffer();
+//					svc_ids.append("[");
+					List<AWSServicePojo> svcsToAssess = new java.util.ArrayList<AWSServicePojo>();
 					while (nIter.hasNext()) {
 						AWSServicePojo m = nIter.next();
 						svcsToAssess.add(m);
+//						svc_ids.append(m.getServiceId() + ",");
 					}
-					// TODO: fire assessment report event passing the list of selected services (svcsToAssess)
-					showMessageToUser("Security Assessment Report (selected " + svcsToAssess.size() + " services)...coming soon...");
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, svcsToAssess);
+//					svc_ids.deleteCharAt(svc_ids.length());
+//					svc_ids.append("]");
+					// this will work but not ideal
+					/*
+					String url = GWT.getModuleBaseURL() + "securityAssessment"
+							+ "?userId=" + userLoggedIn.getPublicId() 
+							+ "&serviceIds=" + svc_ids.toString();
+					Window.open( url, "_blank", "status=0,toolbar=0,menubar=0,location=0");
+					 */
+					
+					// fire assessment report event passing the list of selected services (svcsToAssess)
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, svcsToAssess);
 				}
 				
 			}

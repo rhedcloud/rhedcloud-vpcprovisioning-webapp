@@ -251,6 +251,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	// Key is account id, List is a list of Bills for that account id
 	private HashMap<String, List<BillPojo>> billsByAccount = new HashMap<String, List<BillPojo>>();
 	AWSServiceSummaryPojo serviceSummary;
+	HashMap<String, String> ppidToNameMap = new HashMap<String, String>();
 
 	// temporary
 	List<UserNotificationPojo> notificationList = new java.util.ArrayList<UserNotificationPojo>();
@@ -10694,5 +10695,136 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public long getCurrentSystemTime() {
 		return System.currentTimeMillis();
+	}
+	
+	private String getFullNameForPublicId(String ppid) {
+		DirectoryMetaDataPojo dmd = this.getDirectoryMetaDataForPublicId(ppid);
+		return dmd.getFirstName() + " " + dmd.getLastName();
+	}
+
+	private void dereferencePublicIdsForAssessment(ServiceSecurityAssessmentPojo assessment) {
+		// de-reference ppid on all assessor/verifier fields (getDirectoryMetaDataForPublicId)
+		// store ppid/name map local to this method so we don't have to go get it
+		// from the service each time.
+		
+		// - risk.assessorid
+		for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
+			String assessorName = ppidToNameMap.get(risk.getAssessorId());
+			if (assessorName == null) {
+				assessorName = this.getFullNameForPublicId(risk.getAssessorId());
+				ppidToNameMap.put(risk.getAssessorId(), assessorName);
+			}
+			if (assessorName != null) {
+				risk.setAssessorId(assessorName);
+			}
+			else {
+				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for risk assessor " + risk.getAssessorId());
+			}
+			// - risk.countermeasure.verifierid
+			for (CounterMeasurePojo cm : risk.getCouterMeasures()) {
+				String verifierName = ppidToNameMap.get(cm.getVerifier());
+				if (verifierName == null) {
+					verifierName = this.getFullNameForPublicId(cm.getVerifier());
+					ppidToNameMap.put(cm.getVerifier(), verifierName);
+				}
+				if (verifierName != null) {
+					cm.setVerifier(verifierName);
+				}
+				else {
+					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for counter measure verifier " + risk.getAssessorId());
+				}
+			}
+		}
+		
+		// - servicecontrol.assessorid
+		// - servicecontrol.verifierid
+		for (ServiceControlPojo control : assessment.getServiceControls()) {
+			String assessorName = ppidToNameMap.get(control.getAssessorId());
+			if (assessorName == null) {
+				assessorName = this.getFullNameForPublicId(control.getAssessorId());
+				ppidToNameMap.put(control.getAssessorId(), assessorName);
+			}
+			if (assessorName != null) {
+				control.setAssessorId(assessorName);
+			}
+			else {
+				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
+			}
+
+			String verifierName = ppidToNameMap.get(control.getVerifier());
+			if (verifierName == null) {
+				verifierName = this.getFullNameForPublicId(control.getVerifier());
+				ppidToNameMap.put(control.getVerifier(), verifierName);
+			}
+			if (verifierName != null) {
+				control.setVerifier(verifierName);
+			}
+			else {
+				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
+			}
+		}
+		
+		
+		// - serviceguideline.assessorid
+		for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
+			String assessorName = ppidToNameMap.get(guideline.getAssessorId());
+			if (assessorName == null) {
+				assessorName = this.getFullNameForPublicId(guideline.getAssessorId());
+				ppidToNameMap.put(guideline.getAssessorId(), assessorName);
+			}
+			if (assessorName != null) {
+				guideline.setAssessorId(assessorName);
+			}
+			else {
+				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for guideline assessor " + guideline.getAssessorId());
+			}
+		}
+	}
+	
+	@Override
+	public SecurityAssessmentSummaryQueryResultPojo getSecurityAssessmentSummariesForFilter(
+			SecurityAssessmentSummaryQueryFilterPojo filter) throws RpcException {
+
+		serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
+				Constants.SERVICE_SUMMARY + getCurrentSessionId());
+		
+		SecurityAssessmentSummaryQueryResultPojo result = new SecurityAssessmentSummaryQueryResultPojo();
+		if (serviceSummary != null && filter.getServiceIds().size() == serviceSummary.getServiceList().size()) {
+			info("[getSecurityAssessmentSummariesForFilter] Using cached serviceSummary...");
+			for (AWSServicePojo svc : serviceSummary.getServiceList()) {
+				SecurityAssessmentSummaryPojo sas = new SecurityAssessmentSummaryPojo();
+				sas.setService(svc);
+				
+				ServiceSecurityAssessmentQueryFilterPojo ssa_filter = new ServiceSecurityAssessmentQueryFilterPojo();
+				ssa_filter.setServiceId(svc.getServiceId());
+				ServiceSecurityAssessmentQueryResultPojo ssa_result = this.getSecurityAssessmentsForFilter(ssa_filter);
+				if (ssa_result.getResults().size() > 0) {
+					ServiceSecurityAssessmentPojo assessment = ssa_result.getResults().get(0);
+					dereferencePublicIdsForAssessment(assessment);
+					sas.setAssessment(assessment);
+				}
+				result.getResults().add(sas);
+			}
+		}
+		else {
+			for (String svcId : filter.getServiceIds()) {
+				SecurityAssessmentSummaryPojo sas = new SecurityAssessmentSummaryPojo();
+				AWSServiceQueryFilterPojo svc_filter = new AWSServiceQueryFilterPojo();
+				svc_filter.setServiceId(svcId);
+				AWSServicePojo svc = this.getServicesForFilter(svc_filter).getResults().get(0);
+				sas.setService(svc);
+				
+				ServiceSecurityAssessmentQueryFilterPojo ssa_filter = new ServiceSecurityAssessmentQueryFilterPojo();
+				ssa_filter.setServiceId(svcId);
+				ServiceSecurityAssessmentQueryResultPojo ssa_result = this.getSecurityAssessmentsForFilter(ssa_filter);
+				if (ssa_result.getResults().size() > 0) {
+					ServiceSecurityAssessmentPojo assessment = ssa_result.getResults().get(0);
+					dereferencePublicIdsForAssessment(assessment);
+					sas.setAssessment(assessment);
+				}
+				result.getResults().add(sas);
+			}
+		}
+		return result;
 	}
 }

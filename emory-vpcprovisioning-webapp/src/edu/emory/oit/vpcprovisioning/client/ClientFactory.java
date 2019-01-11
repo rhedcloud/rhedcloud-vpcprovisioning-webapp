@@ -32,6 +32,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlVie
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
@@ -126,4 +127,5 @@ public interface ClientFactory {
 	ListVpnConnectionProvisioningView getListVpnConnectionProvisioningView();
 	VpncpStatusView getVpncpStatusView();
 	MaintainVpnConnectionProvisioningView getMaintainVpnConnectionProvisioningView();
+	ServiceAssessmentReportView getServiceAssessmentReportView();
 }

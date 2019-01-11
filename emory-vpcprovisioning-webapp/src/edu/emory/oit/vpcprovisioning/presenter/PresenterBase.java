@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.presenter;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -12,6 +13,8 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 
 public abstract class PresenterBase {
+	protected final DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
+	protected final DateTimeFormat dateFormat_short = DateTimeFormat.getFormat("MM-dd-yyyy");
 	private static final Logger log = Logger.getLogger(PresenterBase.class.getName());
 //	public static boolean isTimeoutException(final View view, Throwable caught) {
 //		if (caught.getMessage().equals(Constants.SESSION_TIMEOUT)) {

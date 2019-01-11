@@ -27,9 +27,19 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
 
 public abstract class ViewImplBase extends Composite {
 	protected final DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
+	protected final DateTimeFormat dateFormat_short = DateTimeFormat.getFormat("MM-dd-yyyy");
 	PopupPanel pleaseWaitDialog;
 	protected boolean fieldViolations = false;
 	
+	public static final native void print(String html) /*-{
+	  var newWindow = open("PrintWindow.html");
+	  var d = newWindow.document;
+	  d.open();
+	  d.write(html);
+	  d.close();
+	  newWindow.print(); 
+	}-*/;
+
 	public String formatMillisForDisplay(String millis) {
 		String formatted = "";
 		

@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
@@ -14,6 +16,7 @@ ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, Securi
 	public ServiceSecurityAssessmentQueryFilterPojo() {
 		// TODO Auto-generated constructor stub
 	}
+
 
 	public String getAssessmentId() {
 		return assessmentId;

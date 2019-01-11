@@ -53,6 +53,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnection
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfileAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProvisioning;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopServiceAssessmentReport;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopStaticNatProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpncpStatus;
@@ -85,6 +86,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlVie
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
@@ -161,6 +163,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListVpnConnectionProvisioningView listVpnConnectionProvisioningView;
 	private VpncpStatusView vpncpStatusView;
 	private MaintainVpnConnectionProvisioningView maintainVpnConnectionProvisioningView;
+	private ServiceAssessmentReportView serviceAssessmentReportView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -680,5 +683,16 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
     protected MaintainVpnConnectionProvisioningView createMaintainVpnConnectionProvisioningView() {
         return new DesktopMaintainVpnConnectionProvisioning();
+    }
+    
+	@Override
+	public ServiceAssessmentReportView getServiceAssessmentReportView() {
+        if (serviceAssessmentReportView == null) {
+        	serviceAssessmentReportView = createServiceAssessmentReportView();
+        }
+        return serviceAssessmentReportView;
+	}
+    protected ServiceAssessmentReportView createServiceAssessmentReportView() {
+        return new DesktopServiceAssessmentReport();
     }
 }

@@ -40,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlVie
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
+import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
@@ -110,6 +111,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private StaticNatProvisioningStatusView staticNatProvisioningStatusView;
 	private MaintainVpnConnectionProfileAssignmentView maintainVpnConnectionProfileAssignmentView;
 	private MaintainVpnConnectionProvisioningView maintainVpnConnectionProvisioningView;
+	private ServiceAssessmentReportView serviceAssessmentReportView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -380,6 +382,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainVpnConnectionProvisioningView getMaintainVpnConnectionProvisioningView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ServiceAssessmentReportView getServiceAssessmentReportView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

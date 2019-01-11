@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.Place;
@@ -64,6 +66,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPre
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
@@ -1763,6 +1767,38 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlace(event.getVpncpSummary()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(ServiceAssessmentReportPlace.createServiceAssessmentReportPlace(event.getServicesToAssess()));
+				/*
+				final DialogBox db = new DialogBox();
+				db.setText("Service Security Assessment Report");
+				db.setGlassEnabled(true);
+				final ServiceAssessmentReportPresenter presenter = new ServiceAssessmentReportPresenter(clientFactory, event.getServicesToAssess());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				    public void execute() {
+				    	db.center();
+				    }
+				});
+				*/				
 			}
 		});
 

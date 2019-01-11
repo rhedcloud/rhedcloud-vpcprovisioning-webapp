@@ -237,6 +237,7 @@ public interface VpcProvisioningService extends RemoteService {
 	List<String> getRiskLevelTypeItems();
 	List<String> getCounterMeasureStatusTypeItems();
 	SecurityRiskDetectionQueryResultPojo getSecurityRiskDetectionsForFilter(SecurityRiskDetectionQueryFilterPojo filter) throws RpcException;
+	SecurityAssessmentSummaryQueryResultPojo getSecurityAssessmentSummariesForFilter(SecurityAssessmentSummaryQueryFilterPojo filter) throws RpcException;
 
 	// AccountProvisioningAuthorization
 	AccountProvisioningAuthorizationQueryResultPojo getAccountProvisioningAuthorizationsForFilter(AccountProvisioningAuthorizationQueryFilterPojo filter) throws RpcException;

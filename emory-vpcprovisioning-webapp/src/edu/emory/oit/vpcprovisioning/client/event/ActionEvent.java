@@ -16,6 +16,8 @@
 
 package edu.emory.oit.vpcprovisioning.client.event;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.Place;
 import com.google.web.bindery.event.shared.Event;
@@ -121,6 +123,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private FirewallExceptionRequestSummaryPojo fwer_summary;
 	private Place nextPlace;
 	private boolean firewallExceptionAddRequest;
+	private List<AWSServicePojo> servicesToAssess = new java.util.ArrayList<AWSServicePojo>();
+
 
 	public CidrPojo getCidr() {
 		return cidr;
@@ -367,6 +371,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, VpnConnectionDeprovisioningPojo vpncdp) {
 		eventBus.fireEventFromSource(new ActionEvent(vpncdp), sourceName);
 	}
+
+	public static void fire(EventBus eventBus, String sourceName, List<AWSServicePojo> serviceList) {
+		eventBus.fireEventFromSource(new ActionEvent(serviceList), sourceName);
+	}
+
 
 	public static HandlerRegistration register(EventBus eventBus, String sourceName, Handler handler) {
 		return eventBus.addHandlerToSource(TYPE, sourceName, handler);
@@ -664,6 +673,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public ActionEvent(VpnConnectionRequisitionPojo vpnConnectionRequisition, VpnConnectionProfileAssignmentPojo assignment) {
 		this.vpnConnectonProfileAssignment = assignment;
 		this.vpncRequisition = vpnConnectionRequisition;
+	}
+
+	public ActionEvent(List<AWSServicePojo> serviceList) {
+		servicesToAssess = serviceList;
 	}
 
 	@Override
@@ -986,5 +999,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setVpncRequisition(VpnConnectionRequisitionPojo vpncRequisition) {
 		this.vpncRequisition = vpncRequisition;
+	}
+
+	public List<AWSServicePojo> getServicesToAssess() {
+		return servicesToAssess;
+	}
+
+	public void setServicesToAssess(List<AWSServicePojo> servicesToAssess) {
+		this.servicesToAssess = servicesToAssess;
 	}
 }
