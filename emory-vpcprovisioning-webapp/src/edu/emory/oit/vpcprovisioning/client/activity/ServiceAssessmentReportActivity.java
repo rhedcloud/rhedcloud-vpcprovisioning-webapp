@@ -10,6 +10,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class ServiceAssessmentReportActivity extends AbstractActivity {
@@ -60,12 +61,12 @@ public class ServiceAssessmentReportActivity extends AbstractActivity {
 //			}
 //		});
 
-		presenter = startGenerate(place.getServiceList());
+		presenter = startGenerate(place.getServiceList(), place.getAssessment());
 		container.setWidget(presenter);
 	}
 
-	private PresentsWidgets startGenerate(List<AWSServicePojo> services) {
-		PresentsWidgets rtn = new ServiceAssessmentReportPresenter(clientFactory, services);
+	private PresentsWidgets startGenerate(List<AWSServicePojo> services, ServiceSecurityAssessmentPojo assessment) {
+		PresentsWidgets rtn = new ServiceAssessmentReportPresenter(clientFactory, services, assessment);
 		rtn.start(childEventBus);
 		return rtn;
 	}

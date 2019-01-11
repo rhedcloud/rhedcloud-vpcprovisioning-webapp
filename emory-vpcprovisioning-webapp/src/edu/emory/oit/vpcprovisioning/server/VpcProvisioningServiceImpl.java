@@ -10698,8 +10698,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 	
 	private String getFullNameForPublicId(String ppid) {
-		DirectoryMetaDataPojo dmd = this.getDirectoryMetaDataForPublicId(ppid);
-		return dmd.getFirstName() + " " + dmd.getLastName();
+		String name = ppidToNameMap.get(ppid);
+		if (name == null) {
+			DirectoryMetaDataPojo dmd = this.getDirectoryMetaDataForPublicId(ppid);
+			if (dmd != null) {
+				name = dmd.getFirstName() + " " + dmd.getLastName();
+				ppidToNameMap.put(ppid, name);
+			}
+			return name;
+		}
+		return name;
 	}
 
 	private void dereferencePublicIdsForAssessment(ServiceSecurityAssessmentPojo assessment) {
@@ -10709,11 +10717,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		// - risk.assessorid
 		for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
-			String assessorName = ppidToNameMap.get(risk.getAssessorId());
-			if (assessorName == null) {
-				assessorName = this.getFullNameForPublicId(risk.getAssessorId());
-				ppidToNameMap.put(risk.getAssessorId(), assessorName);
-			}
+			String assessorName = this.getFullNameForPublicId(risk.getAssessorId());
 			if (assessorName != null) {
 				risk.setAssessorId(assessorName);
 			}
@@ -10722,11 +10726,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			// - risk.countermeasure.verifierid
 			for (CounterMeasurePojo cm : risk.getCouterMeasures()) {
-				String verifierName = ppidToNameMap.get(cm.getVerifier());
-				if (verifierName == null) {
-					verifierName = this.getFullNameForPublicId(cm.getVerifier());
-					ppidToNameMap.put(cm.getVerifier(), verifierName);
-				}
+				String verifierName = this.getFullNameForPublicId(cm.getVerifier());
 				if (verifierName != null) {
 					cm.setVerifier(verifierName);
 				}
@@ -10739,11 +10739,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// - servicecontrol.assessorid
 		// - servicecontrol.verifierid
 		for (ServiceControlPojo control : assessment.getServiceControls()) {
-			String assessorName = ppidToNameMap.get(control.getAssessorId());
-			if (assessorName == null) {
-				assessorName = this.getFullNameForPublicId(control.getAssessorId());
-				ppidToNameMap.put(control.getAssessorId(), assessorName);
-			}
+			String assessorName = this.getFullNameForPublicId(control.getAssessorId());
 			if (assessorName != null) {
 				control.setAssessorId(assessorName);
 			}
@@ -10751,11 +10747,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
 			}
 
-			String verifierName = ppidToNameMap.get(control.getVerifier());
-			if (verifierName == null) {
-				verifierName = this.getFullNameForPublicId(control.getVerifier());
-				ppidToNameMap.put(control.getVerifier(), verifierName);
-			}
+			String verifierName = this.getFullNameForPublicId(control.getVerifier());
 			if (verifierName != null) {
 				control.setVerifier(verifierName);
 			}
@@ -10767,11 +10759,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		// - serviceguideline.assessorid
 		for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
-			String assessorName = ppidToNameMap.get(guideline.getAssessorId());
-			if (assessorName == null) {
-				assessorName = this.getFullNameForPublicId(guideline.getAssessorId());
-				ppidToNameMap.put(guideline.getAssessorId(), assessorName);
-			}
+			String assessorName = this.getFullNameForPublicId(guideline.getAssessorId());
 			if (assessorName != null) {
 				guideline.setAssessorId(assessorName);
 			}

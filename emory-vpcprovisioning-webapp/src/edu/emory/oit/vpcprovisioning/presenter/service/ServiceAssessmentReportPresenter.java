@@ -18,6 +18,10 @@ import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ServiceAssessmentReportPresenter extends PresenterBase implements ServiceAssessmentReportView.Presenter {
@@ -25,6 +29,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 	private EventBus eventBus;
 	private List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
 	private UserAccountPojo userLoggedIn;
+	private ServiceSecurityAssessmentPojo assessment;
 
 	/**
 	 * For creating a new service.
@@ -40,6 +45,13 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 	public ServiceAssessmentReportPresenter(ClientFactory clientFactory, List<AWSServicePojo> services) {
 		this.clientFactory = clientFactory;
 		this.serviceList = services;
+		clientFactory.getServiceAssessmentReportView().setPresenter(this);
+	}
+
+	public ServiceAssessmentReportPresenter(ClientFactory clientFactory, List<AWSServicePojo> services, ServiceSecurityAssessmentPojo assessment) {
+		this.clientFactory = clientFactory;
+		this.serviceList = services;
+		this.assessment = assessment;
 		clientFactory.getServiceAssessmentReportView().setPresenter(this);
 	}
 
@@ -165,7 +177,8 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Risk Level</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th></tr>");
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
+									+ "</tr>");
 							for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
 								sbPrint.append("<tr>" + 
 									"<td>" + risk.getSecurityRiskName() + "</td>" + 
@@ -181,6 +194,8 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getAssessorId() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(risk.getAssessmentDate()) + "</td>" + 
 									"</tr>");
+								
+								// TODO: counter measures
 								if (risk.getCouterMeasures().size() > 0) {
 									
 								}
@@ -207,7 +222,8 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verifier</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th></tr>");
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th>"
+									+ "</tr>");
 							for (ServiceControlPojo control : assessment.getServiceControls()) {
 								sbPrint.append("<tr>" + 
 									"<td>" + control.getServiceControlName() + "</td>" + 
@@ -246,7 +262,8 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th></tr>");
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
+									+ "</tr>");
 							for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
 								sbPrint.append("<tr>" + 
 									"<td>" + guideline.getServiceGuidelineName() + "</td>" + 
@@ -272,6 +289,97 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 						// test plan
 						sbPrint.append("<li><h3>Test Plan: " + ((assessment.getServiceTestPlan() != null) ? "Yes" : "No") + "</h3></li>");
 						sbView.append("<li><h3>Test Plan: " + ((assessment.getServiceTestPlan() != null) ? "Yes" : "No") + "</h3></li>");
+						if (assessment.getServiceTestPlan() != null) {
+							ServiceTestPlanPojo tp = assessment.getServiceTestPlan();
+							
+							// requirements
+							sbPrint.append("<table>");
+							sbPrint.append("<tr>"
+									+ "<th>Sequence</th><th>Description</th><th>Tests</th></tr>");
+							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
+							sbView.append("<tr>"
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Sequence</th>"
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Tests</th>"
+									+ "</tr>");
+							
+							for (ServiceTestRequirementPojo str : tp.getServiceTestRequirements()) {
+								sbPrint.append("<tr>" + 
+									"<td>" + str.getSequenceNumber() + "</td>" + 
+									"<td>" + str.getDescription() + "</td>");  
+								sbView.append("<tr>" + 
+									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + str.getSequenceNumber() + "</td>" + 
+									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + str.getDescription() + "</td>"); 
+
+								// tests
+								sbPrint.append("<td>");
+								sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">"); 
+								sbPrint.append("<table>");
+								sbPrint.append("<tr>"
+										+ "<th>Sequence</th><th>Description</th><th>Expected Result</th><th>Steps</th></tr>");
+								sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
+								sbView.append("<tr>"
+										+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Sequence</th>"
+										+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
+										+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Expected Result</th>"
+										+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Steps</th>"
+										+ "</tr>");
+
+								for (ServiceTestPojo test : str.getServiceTests()) {
+									sbPrint.append("<tr>" + 
+										"<td width=\"5%\">" + test.getSequenceNumber() + "</td>" + 
+										"<td width=\"30%\">" + test.getDescription() + "</td>" +  
+										"<td width=\"10%\">" + test.getServiceTestExpectedResult() + "</td>");  
+									sbView.append("<tr>" + 
+										"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + test.getSequenceNumber() + "</td>" + 
+										"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + test.getDescription() + "</td>" + 
+										"<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + test.getServiceTestExpectedResult() + "</td>"); 
+
+									// steps
+									sbPrint.append("<td>");
+									sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">"); 
+									sbPrint.append("<table>");
+									sbPrint.append("<tr>"
+											+ "<th>Sequence</th><th>Description</th></tr>");
+									sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
+									sbView.append("<tr>"
+											+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Sequence</th>"
+											+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
+											+ "</tr>");
+
+									for (ServiceTestStepPojo step : test.getServiceTestSteps()) {
+										sbPrint.append("<tr>" + 
+											"<td width=\"5%\">" + step.getSequenceNumber() + "</td>" + 
+											"<td width=\"50%\">" + step.getDescription() + "</td>");
+										sbView.append("<tr>" + 
+											"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + step.getSequenceNumber() + "</td>" + 
+											"<td width=\"50%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + step.getDescription() + "</td>"); 
+									}
+									sbPrint.append("</table>");
+									sbView.append("</table>");
+
+									sbPrint.append("</td>");
+									sbView.append("</td>");
+
+									// end steps
+
+									sbPrint.append("</tr>"); 
+									sbView.append("</tr>"); 
+								}
+								sbPrint.append("</table>");
+								sbView.append("</table>");
+
+								sbPrint.append("</td>");
+								sbView.append("</td>");
+								// end tests
+
+								sbPrint.append("</tr>");
+								sbView.append("</tr>");
+							}
+							sbPrint.append("</table>");
+							sbView.append("</table>");
+							// end requirements
+						}
 						
 						sbPrint.append("</ul>");
 						sbView.append("</ul>");
@@ -338,5 +446,13 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
 		this.userLoggedIn = userLoggedIn;
+	}
+
+	public ServiceSecurityAssessmentPojo getAssessment() {
+		return assessment;
+	}
+
+	public void setAssessment(ServiceSecurityAssessmentPojo assessment) {
+		this.assessment = assessment;
 	}
 }

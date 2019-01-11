@@ -265,6 +265,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 
+	public static void fire(EventBus eventBus, String sourceName,
+			List<AWSServicePojo> serviceList, ServiceSecurityAssessmentPojo assessment) {
+		eventBus.fireEventFromSource(new ActionEvent(serviceList, assessment), sourceName);
+	}
 	public static void fire(EventBus eventBus, String sourceName, ServiceSecurityAssessmentPojo m) {
 		eventBus.fireEventFromSource(new ActionEvent(m), sourceName);
 	}
@@ -679,6 +683,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		servicesToAssess = serviceList;
 	}
 
+	public ActionEvent(List<AWSServicePojo> serviceList, ServiceSecurityAssessmentPojo assessment) {
+		servicesToAssess = serviceList;
+		securityAssessment = assessment;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -1008,4 +1017,5 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setServicesToAssess(List<AWSServicePojo> servicesToAssess) {
 		this.servicesToAssess = servicesToAssess;
 	}
+
 }

@@ -10,6 +10,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ServiceAssessmentReportView extends Editor<AWSServicePojo>, IsWidget, View {
@@ -22,6 +23,7 @@ public interface ServiceAssessmentReportView extends Editor<AWSServicePojo>, IsW
 		public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w);
 		public void logMessageOnServer(final String message);
 		public List<AWSServicePojo> getServiceList();
+		public ServiceSecurityAssessmentPojo getAssessment();
 	}
 
 	/**

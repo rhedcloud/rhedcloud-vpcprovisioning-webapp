@@ -67,8 +67,23 @@ public class DesktopServiceAssessmentReport extends ViewImplBase implements Serv
 
 	@UiHandler("cancelButton")
 	void cancelButtonClicked(ClickEvent e) {
-		GWT.log("close button clicked...");
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE);
+		// if the report was opened from the assessment maintenance page,
+		// we want to go there instead of to the service list.
+
+		if (presenter.getAssessment() != null) {
+			// report was initiated from the service assessment page
+			ActionEvent.fire(
+				presenter.getEventBus(), 
+				ActionNames.MAINTAIN_SECURITY_ASSESSMENT, 
+				presenter.getServiceList().get(0), 
+				presenter.getAssessment());
+		}
+		else {
+			// report was initiated from the service list page
+			ActionEvent.fire(
+				presenter.getEventBus(), 
+				ActionNames.GO_HOME_SERVICE);
+		}
 	}
 
 	@Override

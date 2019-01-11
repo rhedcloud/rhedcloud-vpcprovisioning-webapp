@@ -65,6 +65,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
+	@UiField Button assessmentReportButton;
 	@UiField VerticalPanel servicesVP;
 	@UiField FlexTable servicesTable;
 	@UiField Button addServiceButton;
@@ -84,6 +85,13 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	private boolean firstServiceGuidelineWidget = true;
 	private boolean firstTestPlanWidget = true;
 
+	@UiHandler("assessmentReportButton")
+	void assessmentReportButtonClicked(ClickEvent e) {
+		List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
+		serviceList.add(presenter.getService());
+		ServiceSecurityAssessmentPojo assessment = presenter.getSecurityAssessment();
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, serviceList, assessment);
+	}
 	@UiHandler("okayButton")
 	void okayButtonClicked(ClickEvent e) {
 		// populate assessment and save

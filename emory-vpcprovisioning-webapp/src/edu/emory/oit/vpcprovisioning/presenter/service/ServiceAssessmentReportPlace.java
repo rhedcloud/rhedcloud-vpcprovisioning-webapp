@@ -7,6 +7,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 
 public class ServiceAssessmentReportPlace extends Place {
 	/**
@@ -48,6 +49,9 @@ public class ServiceAssessmentReportPlace extends Place {
 	public static ServiceAssessmentReportPlace createServiceAssessmentReportPlace(List<AWSServicePojo> services) {
 		return new ServiceAssessmentReportPlace(services);
 	}
+	public static ServiceAssessmentReportPlace createServiceAssessmentReportPlace(List<AWSServicePojo> services, ServiceSecurityAssessmentPojo assessment) {
+		return new ServiceAssessmentReportPlace(services, assessment);
+	}
 
 	/**
 	 * Get the singleton instance of the {@link AddCaseRecordPlace} used to create a new
@@ -63,6 +67,7 @@ public class ServiceAssessmentReportPlace extends Place {
 	}
 
 	private final List<AWSServicePojo> serviceList;
+	private final ServiceSecurityAssessmentPojo assessment;
 
 	/**
 	 * Construct a new {@link AddCaseRecordPlace} for the specified caseRecord id.
@@ -72,9 +77,17 @@ public class ServiceAssessmentReportPlace extends Place {
 	 */
 	private ServiceAssessmentReportPlace(List<AWSServicePojo> services) {
 		this.serviceList = services;
+		this.assessment = null;
+	}
+	private ServiceAssessmentReportPlace(List<AWSServicePojo> services, ServiceSecurityAssessmentPojo assessment) {
+		this.serviceList = services;
+		this.assessment = assessment;
 	}
 
 	public List<AWSServicePojo> getServiceList() {
 		return serviceList;
+	}
+	public ServiceSecurityAssessmentPojo getAssessment() {
+		return assessment;
 	}
 }

@@ -1773,7 +1773,14 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(ServiceAssessmentReportPlace.createServiceAssessmentReportPlace(event.getServicesToAssess()));
+				if (event.getSecurityAssessment() == null) {
+					// event was fired from the service list page
+					placeController.goTo(ServiceAssessmentReportPlace.createServiceAssessmentReportPlace(event.getServicesToAssess()));
+				}
+				else {
+					// event was fired from the assessment maintenance page
+					placeController.goTo(ServiceAssessmentReportPlace.createServiceAssessmentReportPlace(event.getServicesToAssess(), event.getSecurityAssessment()));
+				}
 				/*
 				final DialogBox db = new DialogBox();
 				db.setText("Service Security Assessment Report");

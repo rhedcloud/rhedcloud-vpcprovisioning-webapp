@@ -78,7 +78,7 @@
 					<g:customCell>
 						<g:Button
 							addStyleNames="{style.glowing-border} {style.normalButton}"
-							ui:field="viewReportButton" debugId="viewReportButton">View Assessment Report</g:Button>
+							ui:field="assessmentReportButton" debugId="assessmentReportButton">View Assessment Report</g:Button>
 					</g:customCell>
 				</g:row>
 			</g:Grid>

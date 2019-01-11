@@ -567,13 +567,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return -1;
 			}
 		});
-		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestRequirementPojo, String>() {
-	    	@Override
-	    	public void update(int index, ServiceTestRequirementPojo object, String value) {
-	    		presenter.maintainRequirement(object);
-	    	}
-	    });
-		sequenceColumn.setCellStyleNames("tableAnchor");
+//		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestRequirementPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, ServiceTestRequirementPojo object, String value) {
+//	    		presenter.maintainRequirement(object);
+//	    	}
+//	    });
+//		sequenceColumn.setCellStyleNames("tableAnchor");
 		reqmtListTable.addColumn(sequenceColumn, "Sequence Number");
 		
 		// description column
@@ -591,13 +591,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
-		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestRequirementPojo, String>() {
-	    	@Override
-	    	public void update(int index, ServiceTestRequirementPojo object, String value) {
-	    		presenter.maintainRequirement(object);
-	    	}
-	    });
-		descColumn.setCellStyleNames("tableAnchor");
+//		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestRequirementPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, ServiceTestRequirementPojo object, String value) {
+//	    		presenter.maintainRequirement(object);
+//	    	}
+//	    });
+//		descColumn.setCellStyleNames("tableAnchor");
 		reqmtListTable.addColumn(descColumn, "Description");
 	}
 
@@ -686,13 +686,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return -1;
 			}
 		});
-		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
-	    	@Override
-	    	public void update(int index, ServiceTestPojo object, String value) {
-	    		presenter.maintainTest(object);
-	    	}
-	    });
-		sequenceColumn.setCellStyleNames("tableAnchor");
+//		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, ServiceTestPojo object, String value) {
+//	    		presenter.maintainTest(object);
+//	    	}
+//	    });
+//		sequenceColumn.setCellStyleNames("tableAnchor");
 		testListTable.addColumn(sequenceColumn, "Sequence Number");
 		
 		// description column
@@ -710,13 +710,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
-		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
-	    	@Override
-	    	public void update(int index, ServiceTestPojo object, String value) {
-	    		presenter.maintainTest(object);
-	    	}
-	    });
-		descColumn.setCellStyleNames("tableAnchor");
+//		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, ServiceTestPojo object, String value) {
+//	    		presenter.maintainTest(object);
+//	    	}
+//	    });
+//		descColumn.setCellStyleNames("tableAnchor");
 		testListTable.addColumn(descColumn, "Description");
 
 		// expected result column
@@ -820,13 +820,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return -1;
 			}
 		});
-		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
-	    	@Override
-	    	public void update(int index, ServiceTestStepPojo object, String value) {
-	    		presenter.maintainStep(object);
-	    	}
-	    });
-		sequenceColumn.setCellStyleNames("tableAnchor");
+//		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, ServiceTestStepPojo object, String value) {
+//	    		presenter.maintainStep(object);
+//	    	}
+//	    });
+//		sequenceColumn.setCellStyleNames("tableAnchor");
 		stepListTable.addColumn(sequenceColumn, "Sequence Number");
 		
 		// description column
@@ -844,13 +844,13 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
-		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
-	    	@Override
-	    	public void update(int index, ServiceTestStepPojo object, String value) {
-	    		presenter.maintainStep(object);
-	    	}
-	    });
-		descColumn.setCellStyleNames("tableAnchor");
+//		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, ServiceTestStepPojo object, String value) {
+//	    		presenter.maintainStep(object);
+//	    	}
+//	    });
+//		descColumn.setCellStyleNames("tableAnchor");
 		stepListTable.addColumn(descColumn, "Description");
 	}
 
