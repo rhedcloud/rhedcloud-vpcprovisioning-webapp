@@ -125,6 +125,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 			public void onSuccess(SecurityAssessmentSummaryQueryResultPojo result) {
 				for (SecurityAssessmentSummaryPojo sas : result.getResults()) {
 					AWSServicePojo svc = sas.getService();
+					ServiceSecurityAssessmentPojo assessment = sas.getAssessment();
 					String serviceName;
 					if (svc.getCombinedServiceName() != null && 
 							svc.getCombinedServiceName().length() > 0) {
@@ -140,9 +141,15 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 
 					sbView.append("<table>");
 					
+					// service name
 					String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
 					sbView.append("<tr><td>");
-					sbView.append("<h3>Service name: " + serviceAnchorString + "</h3>");
+					sbView.append("<b>Service name:  " + serviceAnchorString + "</b>");
+					sbView.append("</td></tr>");
+					
+					// assessment status
+					sbView.append("<tr><td>");
+					sbView.append("<b>Assessment Status:  " + ((assessment != null ? assessment.getStatus() : "Not Started")) + "</b>");
 					sbView.append("</td></tr>");
 
 					String imgString;
@@ -172,7 +179,6 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 					
 					sbView.append("<p>" + svc.getDescription() + "</p>");
 					
-					ServiceSecurityAssessmentPojo assessment = sas.getAssessment();
 					if (assessment != null) {
 						sbView.append("<ul style=\"list-style-type:none\">");
 						

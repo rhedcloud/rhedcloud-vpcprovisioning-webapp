@@ -3425,11 +3425,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				
 				// should only get one back
 				info("[getDirectoryMetaDataForNetId] got " + moas.size() + " FullPerson moas back from ESB for PublicID '" + publicId + "'");
-				for (FullPerson moa : moas) {
+				FullPerson moa = moas.get(0);
+//				for (FullPerson moa : moas) {
 					dmd.setFirstName(moa.getPerson().getPersonalName().getFirstName());
 					dmd.setLastName(moa.getPerson().getPersonalName().getLastName());
 					dmd.setPublicId(moa.getPublicId());
-				}
+//				}
 
 				Cache.getCache().put(Constants.NET_ID + publicId, dmd);
 				return dmd;
