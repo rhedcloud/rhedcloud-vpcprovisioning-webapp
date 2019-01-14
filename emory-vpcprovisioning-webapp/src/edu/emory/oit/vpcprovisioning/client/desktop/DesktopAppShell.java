@@ -13,6 +13,9 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -1024,7 +1027,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		categoryVp.setSpacing(8);
 		catSvcAssessmentHP.add(categoryVp);
 		
-		HTML catHeading = new HTML("Service Categories");
+		HTML catHeading = new HTML("Browse Service Categories");
 		catHeading.getElement().getStyle().setBackgroundColor("#232f3e");
 		catHeading.getElement().getStyle().setColor("#ddd");
 		catHeading.getElement().getStyle().setFontSize(20, Unit.PX);
@@ -1047,48 +1050,20 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		assessmentVp.setSpacing(8);
 		catSvcAssessmentHP.add(assessmentVp);
 		
+		// allow enter key on search field to trigger search also
 		// get service that have a "fuzzy" match to the info typed in the search text box
+		searchTB.addKeyDownHandler(new KeyDownHandler() {
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+					doServiceSearch(searchTB.getText(), servicesVp, assessmentVp);
+				}
+			}
+		});
 		searchButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
-				AWSServiceQueryFilterPojo filter;
-				filter = new AWSServiceQueryFilterPojo();
-				filter.setAwsServiceName(searchTB.getText());
-				filter.setFuzzyFilter(true);
-				
-				AsyncCallback<AWSServiceQueryResultPojo> callback = new AsyncCallback<AWSServiceQueryResultPojo>() {
-					@Override
-					public void onFailure(Throwable caught) {
-		                hidePleaseWaitDialog();
-						log.log(Level.SEVERE, "Exception Retrieving Services", caught);
-						showMessageToUser("There was an exception on the " +
-								"server retrieving the list of Services.  " +
-								"<p>Message from server is: " + caught.getMessage() + "</p>");
-					}
-
-					@Override
-					public void onSuccess(AWSServiceQueryResultPojo result) {
-						GWT.log("Got " + result.getResults().size() + " Services for " + result.getFilterUsed());
-						servicesVp.clear();
-						assessmentVp.clear();
-						if (result == null || result.getResults().size() == 0) {
-							// no services found
-							HTML notFoundHTML = new HTML("-- No Services Found --");
-							notFoundHTML.getElement().getStyle().setFontSize(16, Unit.PX);
-							notFoundHTML.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-							notFoundHTML.getElement().getStyle().setColor("#fff");
-							servicesVp.add(notFoundHTML);
-						}
-						for (final AWSServicePojo svc : result.getResults()) {
-							addServiceToServicesPanel(servicesVp, assessmentVp, svc);
-						}
-		                hidePleaseWaitDialog();
-					}
-				};
-
-				GWT.log("refreshing Services list...");
-				VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, callback);
+				doServiceSearch(searchTB.getText(), servicesVp, assessmentVp);
 			}
 		});
 
@@ -1129,6 +1104,48 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		productsPopup.showRelativeTo(linksPanel);
 	}
 
+	// called when search is clicked or enter key is pressed on search
+	void doServiceSearch(String searchString, final VerticalPanel servicesVp, final VerticalPanel assessmentVp) {
+		showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
+		AWSServiceQueryFilterPojo filter;
+		filter = new AWSServiceQueryFilterPojo();
+		filter.setAwsServiceName(searchString);
+		filter.setFuzzyFilter(true);
+		
+		AsyncCallback<AWSServiceQueryResultPojo> callback = new AsyncCallback<AWSServiceQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                hidePleaseWaitDialog();
+				log.log(Level.SEVERE, "Exception Retrieving Services", caught);
+				showMessageToUser("There was an exception on the " +
+						"server retrieving the list of Services.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(AWSServiceQueryResultPojo result) {
+				GWT.log("Got " + result.getResults().size() + " Services for " + result.getFilterUsed());
+				servicesVp.clear();
+				assessmentVp.clear();
+				if (result == null || result.getResults().size() == 0) {
+					// no services found
+					HTML notFoundHTML = new HTML("-- No Services Found --");
+					notFoundHTML.getElement().getStyle().setFontSize(16, Unit.PX);
+					notFoundHTML.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					notFoundHTML.getElement().getStyle().setColor("#fff");
+					servicesVp.add(notFoundHTML);
+				}
+				for (final AWSServicePojo svc : result.getResults()) {
+					addServiceToServicesPanel(servicesVp, assessmentVp, svc);
+				}
+                hidePleaseWaitDialog();
+			}
+		};
+
+		GWT.log("refreshing Services list...");
+		VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, callback);
+	}
+	
 	// this method will be used by the normal functionality and the search functionality
 	void addServiceToServicesPanel(VerticalPanel servicesVp, final VerticalPanel assessmentVp, final AWSServicePojo svc) {
 		GWT.log("Adding service: " + svc.getAwsServiceName());
@@ -1163,12 +1180,22 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				assessmentVp.clear();
-				HTML assessmentHeading = new HTML("Assessment of the " + svcAnchor.getText() + " service." );
-				assessmentHeading.getElement().getStyle().setBackgroundColor("#232f3e");
-				assessmentHeading.getElement().getStyle().setColor("#ddd");
-				assessmentHeading.getElement().getStyle().setFontSize(16, Unit.PX);
-				assessmentHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				assessmentVp.add(assessmentHeading);
+				
+				// TODO: add a link to the detailed assessment (Anchor)
+				final Anchor assessmentAnchor = new Anchor((String)"Assessment of the " + svcAnchor.getText() + " service.");
+				assessmentAnchor.addStyleName("categoryAnchor");
+				assessmentAnchor.getElement().getStyle().setBackgroundColor("#232f3e");
+				assessmentAnchor.getElement().getStyle().setColor("#ddd");
+				assessmentAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
+				assessmentAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				assessmentVp.add(assessmentAnchor);
+
+//				HTML assessmentHeading = new HTML("Assessment of the " + svcAnchor.getText() + " service." );
+//				assessmentHeading.getElement().getStyle().setBackgroundColor("#232f3e");
+//				assessmentHeading.getElement().getStyle().setColor("#ddd");
+//				assessmentHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+//				assessmentHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+//				assessmentVp.add(assessmentHeading);
 				
 				// add service assessment info if it exists
 				ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
@@ -1186,8 +1213,20 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					@Override
 					public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
 						if (result.getResults().size() > 0) {
-							// get all relevant assessment info for the service
-							for (ServiceSecurityAssessmentPojo assessment : result.getResults()) {
+							// TODO: get all relevant assessment info for the service
+							for (final ServiceSecurityAssessmentPojo assessment : result.getResults()) {
+								assessmentAnchor.addClickHandler(new ClickHandler() {
+									@Override
+									public void onClick(ClickEvent event) {
+										// link to the detailed assessment
+										if (eventBus != null) {
+											mainTabPanel.selectTab(4, false);
+											productsPopup.hide();
+											ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, svc, assessment);
+										}
+									}
+								});
+
 								StringBuffer sbuf = new StringBuffer();
 								sbuf.append("<b>Assessment status:</b>  " + assessment.getStatus());
 								sbuf.append("<ol>");
@@ -1204,12 +1243,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						}
 						else {
 							StringBuffer sbuf = new StringBuffer();
-							sbuf.append("<b>Assessment status:</b>  test");
-							sbuf.append("<ol>");
-							for (int i=0; i<3; i++) {
-								sbuf.append("<li>Security Risk " + i + "  security risk description text goes here...</li>");
-							}
-							sbuf.append("</ol>");
+							sbuf.append("<b>No Security Assessment Yet</b>");
 							HTML assessmentHtml = new HTML(sbuf.toString());
 							assessmentHtml.getElement().getStyle().setBackgroundColor("#232f3e");
 							assessmentHtml.getElement().getStyle().setColor("#ddd");
