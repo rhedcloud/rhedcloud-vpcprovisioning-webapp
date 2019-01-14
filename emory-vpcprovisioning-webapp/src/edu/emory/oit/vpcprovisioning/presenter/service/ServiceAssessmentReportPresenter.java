@@ -11,6 +11,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryQueryResultPojo;
@@ -177,7 +178,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 
 					sbView.append("</table>");
 					
-					sbView.append("<p>" + svc.getDescription() + "</p>");
+					sbView.append("<p>" + ((svc.getDescription()) != null ? svc.getDescription() : "No service description") + "</p>");
 					
 					if (assessment != null) {
 						sbView.append("<ul style=\"list-style-type:none\">");
@@ -192,6 +193,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Risk Level</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Counter Measures</th>"
 									+ "</tr>");
 							for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
 								sbView.append("<tr>" + 
@@ -199,13 +201,36 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getDescription() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getRiskLevel() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getAssessorId() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(risk.getAssessmentDate()) + "</td>" + 
-									"</tr>");
+									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(risk.getAssessmentDate()) + "</td>");
 								
-								// TODO: counter measures
-								if (risk.getCouterMeasures().size() > 0) {
+									if (risk.getCouterMeasures().size() > 0) {
+										// counter measures go here (nested table)
+										sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">"); 
+										sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
+										sbView.append("<tr>"
+												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Status</th>"
+												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
+												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verifier</th>"
+												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th>"
+												+ "</tr>");
 									
-								}
+										for (CounterMeasurePojo cm : risk.getCouterMeasures()) {
+											sbView.append("<tr>" + 
+													"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getStatus() + "</td>" + 
+													"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getDescription() + "</td>" + 
+													"<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getVerifier() + "</td>" +  
+													"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(cm.getVerificationDate()) + "</td>" +
+													"</tr>");
+										}
+										sbView.append("</table>");
+										sbView.append("</td>");
+									}
+									else {
+										sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">No Counter Measures documented</td>");
+									}
+									// end counter measures
+									
+									sbView.append("</tr>");
 							}
 							sbView.append("</table>");
 						}

@@ -76,7 +76,7 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 	@Override
 	public void start(EventBus eventBus) {
 		getView().applyAWSAccountAuditorMask();
-		getView().showPleaseWaitDialog("Retrieving service controls...");
+		getView().showPleaseWaitDialog("Retrieving service guidelines...");
 		this.eventBus = eventBus;
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();

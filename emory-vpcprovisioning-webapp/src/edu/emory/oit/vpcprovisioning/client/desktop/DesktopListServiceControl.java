@@ -18,6 +18,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
@@ -281,6 +282,11 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 		    initListTableColumns(sortHandler);
 	    }
 		
+		// default sort
+		listTable.getColumnSortList().push(listTable.getColumn(1));
+		listTable.getColumnSortList().push(listTable.getColumn(1));
+		ColumnSortEvent.fire(listTable, listTable.getColumnSortList());
+
 		return listTable;
 	}
 
@@ -437,6 +443,7 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 			}
 		});
 		listTable.addColumn(verificationDate, "Verification Date");
+		
 	}
 
 	@Override

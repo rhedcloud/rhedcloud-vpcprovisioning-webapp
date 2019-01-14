@@ -210,7 +210,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	}
 
 	@Override
-	public void saveAssessment() {
+	public void saveAssessment(final boolean closeRiskDialog) {
 		getView().showPleaseWaitDialog("Saving assessment...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
@@ -240,9 +240,48 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 
 			@Override
 			public void onSuccess(ServiceSecurityAssessmentPojo result) {
-				getView().hidePleaseWaitDialog();
-				getView().hidePleaseWaitPanel();
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+				if (closeRiskDialog) {
+					getView().hidePleaseWaitDialog();
+					getView().hidePleaseWaitPanel();
+					ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+				}
+				else {
+					// TODO: need to just refresh the risk dialog page using the updated security risk
+					// from the assessment now that it's been saved
+					// I think we have to re-query for the assessment here to get the security risk 
+					// with its id...
+					AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assessmentCB = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						@Override
+						public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+							assessmentLoop: for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
+								if (ssa.getServiceSecurityAssessmentId().equalsIgnoreCase(assessment.getServiceSecurityAssessmentId()) ) {
+									assessment = ssa;
+									break assessmentLoop;
+								}
+							}
+							riskLoop: for (SecurityRiskPojo sr : assessment.getSecurityRisks()) {
+								if (sr.getSequenceNumber() == securityRisk.getSequenceNumber()) {
+									securityRisk = sr;
+									securityRiskId = sr.getSecurityRiskId();
+									break riskLoop;
+								}
+							}
+							isEditing = true;
+							start(eventBus);
+						}
+					};
+					getView().hidePleaseWaitDialog();
+					getView().showPleaseWaitDialog("Retrieving Risk details...");
+					ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+					filter.setAssessmentId(assessment.getServiceSecurityAssessmentId());
+					VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, assessmentCB);
+				}
 			}
 		};
 		if (!isEditing) {
@@ -288,12 +327,6 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 
 	public ClientFactory getClientFactory() {
 		return clientFactory;
-	}
-
-	@Override
-	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -449,12 +482,12 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 			}
 		}
 		getSecurityAssessment().getSecurityRisks().add(getSecurityRisk());
-		saveAssessment();
+		saveAssessment(false);
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Requirement " + 
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Counter Measure " + 
 				selectedCounterMeasure.getDescription() + " was not deleted.");
 	}
 

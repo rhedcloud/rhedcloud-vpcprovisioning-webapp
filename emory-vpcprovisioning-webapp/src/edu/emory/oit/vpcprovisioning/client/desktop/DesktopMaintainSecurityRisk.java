@@ -5,15 +5,20 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -23,6 +28,8 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -182,7 +189,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	void okayButtonClicked(ClickEvent e) {
 		if (userLoggedIn.isCentralAdmin()) {
 			populateRiskWithFormData();
-			presenter.saveAssessment();
+			presenter.saveAssessment(true);
 		}
 		else {
 			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
@@ -478,6 +485,17 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	private void initListTableColumns(ListHandler<CounterMeasurePojo> sortHandler) {
 		GWT.log("initializing counter measure list table columns...");
 
+		Column<CounterMeasurePojo, Boolean> checkColumn = new Column<CounterMeasurePojo, Boolean>(
+				new CheckboxCell(true, false)) {
+			@Override
+			public Boolean getValue(CounterMeasurePojo object) {
+				// Get the value from the selection model.
+				return selectionModel.isSelected(object);
+			}
+		};
+		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
 		Column<CounterMeasurePojo, String> statusColumn = 
 				new Column<CounterMeasurePojo, String> (new ClickableTextCell()) {
 
@@ -553,7 +571,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 			@Override
 			public String getValue(CounterMeasurePojo object) {
 				Date createTime = object.getVerificationDate();
-				return createTime != null ? dateFormat.format(createTime) : "Unknown";
+				return createTime != null ? dateFormat_short.format(createTime) : "Unknown";
 			}
 		};
 		verificationDateColumn.setSortable(true);
@@ -658,11 +676,12 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 		l_verifier.addStyleName("label");
 		grid.setWidget(2, 0, l_verifier);
 
-		// TODO: verifier (suggestbox)
+		// verifier (suggestbox)
 		final SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
 		directoryLookupSB.addStyleName("field");
 		directoryLookupSB.addStyleName("glowing-border");
 		directoryLookupSB.getElement().setPropertyString("placeholder", "enter name");
+		directoryLookupSB.setText(selected.getVerifier());
 		directoryLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
 			@Override
 			public void onSelection(SelectionEvent<Suggestion> event) {
@@ -674,9 +693,20 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				}
 			}
 		});
+//		Event.sinkEvents(directoryLookupSB.getElement(), Event.ONMOUSEOVER);
+		Event.setEventListener(directoryLookupSB.getElement(), new EventListener() {
+			@Override
+			public void onBrowserEvent(Event event) {
+				GWT.log("browserEvent for directoryLookupSB..." + event.getTypeInt() + "-" + event.getType());
+				if(Event.ONMOUSEOVER == event.getTypeInt()) {
+					GWT.log("mouse over for directoryLookupSB...");
+					presenter.setDirectoryMetaDataTitleOnWidget(selected.getVerifier(), directoryLookupSB);
+				}
+			}
+		});
 		grid.setWidget(2, 1, directoryLookupSB);
 
-		// TODO: verification date (datebox)
+		// verification date (datebox)
 		Label l_verificationDate = new Label("Verification Date:");
 		l_verificationDate.addStyleName("label");
 		grid.setWidget(3, 0, l_verificationDate);
@@ -684,6 +714,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 		final DateBox verificationDate = new DateBox();
 		verificationDate.addStyleName("field");
 		verificationDate.addStyleName("glowing-border");
+		verificationDate.setValue(selected.getVerificationDate());
 		grid.setWidget(3, 1, verificationDate);
 
 		Grid buttonGrid;
@@ -726,7 +757,9 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				if (!isEdit) {
 					presenter.getSecurityRisk().getCouterMeasures().add(selected);
 				}
-				presenter.saveAssessment();
+				// TODO: need to save the assessment and refresh the security risk maintenance page
+				// NOT go all the way back to the assessment maintenance page
+				presenter.saveAssessment(false);
 				
 				counterMeasurePopup.hide();
 			}

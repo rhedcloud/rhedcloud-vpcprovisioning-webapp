@@ -20,6 +20,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
@@ -529,6 +530,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			initRequirementListTableColumns(sortHandler);
 		}
 		
+		// default sort
+		reqmtListTable.getColumnSortList().push(reqmtListTable.getColumn(1));
+		reqmtListTable.getColumnSortList().push(reqmtListTable.getColumn(1));
+		ColumnSortEvent.fire(reqmtListTable, reqmtListTable.getColumnSortList());
 		return reqmtListTable;
 	}
 	
@@ -562,9 +567,9 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 					return 0;
 				}
 				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
-					return 1;
+					return -1;
 				}
-				return -1;
+				return 1;
 			}
 		});
 //		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestRequirementPojo, String>() {
@@ -599,6 +604,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 //	    });
 //		descColumn.setCellStyleNames("tableAnchor");
 		reqmtListTable.addColumn(descColumn, "Description");
+		
 	}
 
 	@Override
@@ -648,6 +654,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			initTestListTableColumns(sortHandler);
 		}
 		
+		// default sort
+		testListTable.getColumnSortList().push(testListTable.getColumn(1));
+		testListTable.getColumnSortList().push(testListTable.getColumn(1));
+		ColumnSortEvent.fire(testListTable, testListTable.getColumnSortList());
 		return testListTable;
 	}
 
@@ -681,9 +691,9 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 					return 0;
 				}
 				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
-					return 1;
+					return -1;
 				}
-				return -1;
+				return 1;
 			}
 		});
 //		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
@@ -735,6 +745,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			}
 		});
 		testListTable.addColumn(expectedResultColumn, "Expected Result");
+		
 	}
 
 	@Override
@@ -782,6 +793,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			initStepListTableColumns(sortHandler);
 		}
 		
+		// default sort
+		stepListTable.getColumnSortList().push(stepListTable.getColumn(1));
+		stepListTable.getColumnSortList().push(stepListTable.getColumn(1));
+		ColumnSortEvent.fire(stepListTable, stepListTable.getColumnSortList());
 		return stepListTable;
 	}
 
@@ -815,9 +830,9 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 					return 0;
 				}
 				if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
-					return 1;
+					return -1;
 				}
-				return -1;
+				return 1;
 			}
 		});
 //		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {

@@ -7689,7 +7689,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						cmp.setDescription(cm.getDescription());
 						cmp.setVerifier(cm.getVerifier());
 						cmp.setVerificationDate(this.toDateFromDatetime(cm.getVerificationDatetime()));
-						risk.getCountermeasure().add(cmp);
+						rp.getCouterMeasures().add(cmp);
 					}
 				}
 				pojo.getSecurityRisks().add(rp);

@@ -27,7 +27,7 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 		public void setDirectoryMetaDataTitleOnWidget(String userId, Widget w);
 		public void logMessageOnServer(final String message);
 		
-		void saveAssessment();
+		void saveAssessment(boolean closeRiskDialog);
 		void setSecurityAssessment(ServiceSecurityAssessmentPojo assessment);
 		ServiceSecurityAssessmentPojo getSecurityAssessment();
 
