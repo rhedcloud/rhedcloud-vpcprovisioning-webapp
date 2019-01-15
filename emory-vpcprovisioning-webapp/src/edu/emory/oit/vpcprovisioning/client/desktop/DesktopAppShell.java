@@ -1179,6 +1179,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		svcAnchor.addMouseOverHandler(new MouseOverHandler() {
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
+				showPleaseWaitDialog("Retrieving assessment information...");
 				assessmentVp.clear();
 				
 				// TODO: add a link to the detailed assessment (Anchor)
@@ -1208,6 +1209,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						assessmentHtml.getElement().getStyle().setColor("#ddd");
 						assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
 						assessmentVp.add(assessmentHtml);
+						hidePleaseWaitDialog();
 					}
 
 					@Override
@@ -1240,6 +1242,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 								assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
 								assessmentVp.add(assessmentHtml);
 							}
+							hidePleaseWaitDialog();
 						}
 						else {
 							StringBuffer sbuf = new StringBuffer();
@@ -1249,6 +1252,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 							assessmentHtml.getElement().getStyle().setColor("#ddd");
 							assessmentHtml.getElement().getStyle().setFontSize(14, Unit.PX);
 							assessmentVp.add(assessmentHtml);
+							hidePleaseWaitDialog();
 						}
 					}
 				};
