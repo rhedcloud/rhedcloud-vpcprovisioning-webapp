@@ -31,6 +31,32 @@ public abstract class ViewImplBase extends Composite {
 	PopupPanel pleaseWaitDialog;
 	protected boolean fieldViolations = false;
 	
+	public static String extractNumberFromString(final String str) {                
+
+	    if(str == null || str.isEmpty()) return "";
+
+	    StringBuilder sb = new StringBuilder();
+	    boolean found = false;
+	    for(char c : str.toCharArray()) {
+	        if(Character.isDigit(c)){
+	            sb.append(c);
+	            found = true;
+	        } 
+	        else if (found) {
+	            // If we already found a digit before and this 
+	        	// char is not a digit, stop looping
+	            break;                
+	        }
+	    }
+
+//	    if (!found) {
+//	    	GWT.log("returning: " + str);
+//	    	return str;
+//	    }
+//	    GWT.log("returning: " + sb.toString());
+	    return sb.toString();
+	}
+	
 	public static final native void print(String html) /*-{
 	  var newWindow = open("PrintWindow.html");
 	  var d = newWindow.document;
