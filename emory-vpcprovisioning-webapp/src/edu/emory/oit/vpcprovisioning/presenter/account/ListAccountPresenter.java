@@ -17,6 +17,7 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListAccountPresenter extends PresenterBase implements ListAccountView.Presenter {
@@ -111,6 +112,11 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				getView().setUserLoggedIn(userLoggedIn);
 				getView().initPage();
 //				setAccountList(Collections.<AccountPojo> emptyList());
+
+				List<String> filterTypeItems = new java.util.ArrayList<String>();
+				filterTypeItems.add(Constants.FILTER_ACCT_ID);
+				filterTypeItems.add(Constants.FILTER_ACCT_NAME);
+				getView().setFilterTypeItems(filterTypeItems);
 
 				// Request the account list now.
 				refreshList(userLoggedIn);
@@ -311,5 +317,14 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	public void vpcpConfirmCancel() {
 		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Account metadata for " + 
 				selectedAccount.getAccountId() + "/" + selectedAccount.getAccountName() + " was not deleted.");
+	}
+
+	@Override
+	public void filterByAccountName(String name) {
+		getView().showPleaseWaitDialog("Filtering accounts");
+		filter = new AccountQueryFilterPojo();
+		filter.setFuzzyFilter(true);
+		filter.setAccountName(name);
+		this.getUserAndRefreshList();
 	}
 }

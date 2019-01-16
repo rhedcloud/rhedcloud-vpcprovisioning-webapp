@@ -2606,10 +2606,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							}
 						}
 					}
-					Collections.sort(pojos);
-					result.setResults(pojos);
+					
+					// if filter.isFuzzyFilter(), go through the list of pojos (Accounts)
+					// and filter out the ones that don't "fuzzy match" the account name passed in
+					List<AccountPojo> filteredPojos = new java.util.ArrayList<AccountPojo>();
+					if (filter != null && filter.isFuzzyFilter()) {
+						for (AccountPojo acct : pojos) {
+							if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
+								if (acct.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
+									filteredPojos.add(acct);
+								}
+							}
+						}
+					}
+					if (filteredPojos.size() > 0) {
+						Collections.sort(filteredPojos);
+						result.setResults(filteredPojos);
+						info("[getAccountsForFilter] returning " + filteredPojos.size() + " accounts for the user logged in" );
+					}
+					else {
+						Collections.sort(pojos);
+						result.setResults(pojos);
+						info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
+					}
 					result.setFilterUsed(filter);
-					info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
 					return result;
 				}
 				else {
@@ -2628,7 +2648,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			if (filter != null) {
 				queryObject.setAccountId(filter.getAccountId());
-				queryObject.setAccountName(filter.getAccountName());
+				if (!filter.isFuzzyFilter()) {
+					queryObject.setAccountName(filter.getAccountName());
+				}
 				// TODO may have to make email a list in the filter and query spec...
 				if (filter.getEmail() != null) {
 					EmailAddress emailMoa = actionable.newEmailAddress();
@@ -2659,8 +2681,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojos.add(pojo);
 			}
 
-			Collections.sort(pojos);
-			result.setResults(pojos);
+			// if filter.isFuzzyFilter(), go through the list of pojos (Accounts)
+			// and filter out the ones that don't "fuzzy match" the account name passed in
+			List<AccountPojo> filteredPojos = new java.util.ArrayList<AccountPojo>();
+			if (filter != null && filter.isFuzzyFilter()) {
+				for (AccountPojo acct : pojos) {
+					if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
+						if (acct.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
+							filteredPojos.add(acct);
+						}
+					}
+				}
+			}
+			if (filteredPojos.size() > 0) {
+				Collections.sort(filteredPojos);
+				result.setResults(filteredPojos);
+				info("[getAccountsForFilter] returning " + filteredPojos.size() + " accounts for the user logged in" );
+			}
+			else {
+				Collections.sort(pojos);
+				result.setResults(pojos);
+				info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
+			}
 			result.setFilterUsed(filter);
 			return result;
 		} 

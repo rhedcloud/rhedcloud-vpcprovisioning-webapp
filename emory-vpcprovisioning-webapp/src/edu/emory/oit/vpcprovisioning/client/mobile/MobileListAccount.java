@@ -173,4 +173,10 @@ public class MobileListAccount extends ViewImplBase implements ListAccountView {
 		
 	}
 
+	@Override
+	public void setFilterTypeItems(List<String> filterTypes) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

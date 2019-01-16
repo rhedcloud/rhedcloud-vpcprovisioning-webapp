@@ -33,6 +33,7 @@ public interface ListAccountView extends IsWidget, View {
 		public void logMessageOnServer(final String message);
 		
 		void filterByAccountId(String accountId);
+		void filterByAccountName(String name);
 		void clearFilter();
 		void refreshList(final UserAccountPojo user);
 	}
@@ -58,4 +59,5 @@ public interface ListAccountView extends IsWidget, View {
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeAccountFromView(AccountPojo account);
 	void initPage();
+	void setFilterTypeItems(List<String> filterTypes);
 }

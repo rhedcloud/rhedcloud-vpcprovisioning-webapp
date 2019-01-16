@@ -196,4 +196,6 @@ public class Constants implements IsSerializable {
 	public static final String PROVISIONING_STEP_PROP_STARTTIME = "startTime";
 	public static final String PROVISIONING_STEP_PROP_EXECUTION_METHOD = "stepExecutionMethod";
 	public static final String PROVISIONING_STEP_EXECUTION_METHOD_SIMULATED = "simulated";
+	public static final String FILTER_ACCT_ID = "Account Id";
+	public static final String FILTER_ACCT_NAME = "Account Name";
 }

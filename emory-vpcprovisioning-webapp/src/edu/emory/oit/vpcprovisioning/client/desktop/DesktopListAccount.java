@@ -21,13 +21,14 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -42,6 +43,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -52,6 +54,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	List<AccountPojo> accountList = new java.util.ArrayList<AccountPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
+	List<String> filterTypeItems;
 
 	/*** FIELDS ***/
 	@UiField(provided=true) SimplePager accountListPager = new SimplePager(TextLocation.RIGHT, false, true);
@@ -63,7 +66,8 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
-	@UiField TextBox accountIdTB;
+	@UiField TextBox filterTB;
+	@UiField ListBox filterTypesLB;
 	@UiField PushButton refreshButton;
 
 	@UiHandler("refreshButton")
@@ -99,12 +103,29 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	@UiHandler("filterButton")
 	void filterButtonClicked(ClickEvent e) {
 		// filter list by account id typed in accountIdTB
-		presenter.filterByAccountId(accountIdTB.getText());
+		String filterType = filterTypesLB.getSelectedValue();
+		String filterValue = filterTB.getText();
+		
+		if ((filterType != null && filterType.length() > 0) &&
+			 (filterValue != null && filterValue.length() > 0)) {
+			if (filterType.equalsIgnoreCase(Constants.FILTER_ACCT_ID)) {
+				presenter.filterByAccountId(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.FILTER_ACCT_NAME)) {
+				presenter.filterByAccountName(filterValue); 
+			}
+			else {
+				// invalid filter type...but how?
+			}
+		}
+		else {
+			this.showMessageToUser("Please enter a Filter Value AND select a Filter Type");
+		}
 	}
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
 		// clear filter
-		accountIdTB.setText("");
+		filterTB.setText("");
 		presenter.clearFilter();
 	}
 	@UiHandler("actionsButton")
@@ -630,7 +651,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		actionsButton.setEnabled(true);
 		filterButton.setEnabled(true);
 		clearFilterButton.setEnabled(true);
-		accountIdTB.setEnabled(true);
+		filterTB.setEnabled(true);
 	}
 
 	@Override
@@ -640,7 +661,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		actionsButton.setEnabled(true);
 		filterButton.setEnabled(false);
 		clearFilterButton.setEnabled(false);
-		accountIdTB.setEnabled(false);
+		filterTB.setEnabled(false);
 	}
 
 	@Override
@@ -667,14 +688,17 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 
 	@Override
 	public void initPage() {
-		accountIdTB.setText("");
-		accountIdTB.getElement().setPropertyString("placeholder", "enter account id");
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter account id");
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		addAccountButton.setEnabled(true);
+		actionsButton.setEnabled(true);
+		filterButton.setEnabled(true);
+		clearFilterButton.setEnabled(true);
+		filterTB.setEnabled(true);
 	}
 
 	@Override
@@ -721,5 +745,21 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	public void applyNetworkAdminMask() {
 		
 		
+	}
+
+	@Override
+	public void setFilterTypeItems(List<String> filterTypes) {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter filter value");
+
+		this.filterTypeItems = filterTypes;
+		filterTypesLB.clear();
+		
+		filterTypesLB.addItem("-- Select Filter Type --", "");
+		if (filterTypeItems != null) {
+			for (String filterType : filterTypeItems) {
+				filterTypesLB.addItem(filterType, filterType);
+			}
+		}
 	}
 }

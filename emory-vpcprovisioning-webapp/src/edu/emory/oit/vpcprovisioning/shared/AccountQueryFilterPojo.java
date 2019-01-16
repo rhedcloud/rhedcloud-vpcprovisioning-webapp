@@ -13,7 +13,8 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 	String createUser;
 	String lastUpdateUser;
 	UserAccountPojo userLoggedIn;
-	
+	boolean fuzzyFilter=false;
+
 	public AccountQueryFilterPojo() {
 	}
 
@@ -79,6 +80,14 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
 		this.userLoggedIn = userLoggedIn;
+	}
+
+	public boolean isFuzzyFilter() {
+		return fuzzyFilter;
+	}
+
+	public void setFuzzyFilter(boolean fuzzyFilter) {
+		this.fuzzyFilter = fuzzyFilter;
 	}
 
 }
