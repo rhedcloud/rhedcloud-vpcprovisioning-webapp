@@ -10,7 +10,7 @@ public class VpcQueryResultPojo extends SharedObject implements IsSerializable {
 	List<VpcPojo> results;
 
 	public VpcQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcQueryFilterPojo getFilterUsed() {

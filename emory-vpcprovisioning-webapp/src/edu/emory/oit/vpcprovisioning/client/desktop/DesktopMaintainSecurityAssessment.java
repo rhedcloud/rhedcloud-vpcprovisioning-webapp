@@ -273,7 +273,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -309,7 +309,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -325,25 +325,25 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -354,7 +354,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -404,7 +404,7 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -475,17 +475,17 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	}
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

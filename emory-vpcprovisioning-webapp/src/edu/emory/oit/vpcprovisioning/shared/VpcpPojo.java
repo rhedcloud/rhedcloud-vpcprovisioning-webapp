@@ -72,7 +72,7 @@ public class VpcpPojo extends SharedObject implements IsSerializable, Comparable
 	};
 
 	public VpcpPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

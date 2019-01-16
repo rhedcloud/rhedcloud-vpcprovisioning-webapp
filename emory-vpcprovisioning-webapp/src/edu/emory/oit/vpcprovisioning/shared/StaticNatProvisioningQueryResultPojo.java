@@ -10,7 +10,7 @@ public class StaticNatProvisioningQueryResultPojo extends SharedObject implement
 	StaticNatProvisioningQueryFilterPojo filterUsed;
 	
 	public StaticNatProvisioningQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<StaticNatProvisioningPojo> getResults() {

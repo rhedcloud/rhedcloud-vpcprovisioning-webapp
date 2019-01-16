@@ -3617,7 +3617,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteVpcp(VpcpPojo vpc) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -3815,7 +3815,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public VpcpPojo updateVpcp(VpcpPojo vpc) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		vpc.setUpdateInfo(this.getCachedUser().getPublicId());
 		return null;
 	}
@@ -4258,20 +4258,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public boolean isElasticIpAssigned(ElasticIpPojo elasticIp) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public ElasticIpAssignmentStatusPojo getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo elasticIp)
 			throws RpcException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public List<ElasticIpAssignmentPojo> getElasticIpAssignmentsForUserLoggedIn() throws RpcException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -4499,14 +4499,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<ElasticIpPojo> getUnassignedElasticIps() throws RpcException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ElasticIpAssignmentSummaryQueryResultPojo getElasticIpAssignmentSummariesForFilter(
 			ElasticIpAssignmentSummaryQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -5572,7 +5572,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public FirewallRulePojo createFirewallRule(FirewallRulePojo rule) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		
 		// this will be a FirewallExceptionRequest request sent to service now
 		return null;
@@ -5580,7 +5580,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public FirewallRulePojo updateFirewallRule(FirewallRulePojo rule) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		
 		// this will be a request sent to service now
 		return null;
@@ -7151,7 +7151,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteAccountNotification(AccountNotificationPojo notification) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -7329,13 +7329,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteUserProfile(UserProfilePojo notification) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public UserActionQueryResultPojo getUserActionsForFilter(UserActionQueryFilterPojo filter) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -7625,7 +7625,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					" Security Assessments from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (ServiceSecurityAssessment moa : moas) {
-				info("[query] assessment as xml string: " + moa.toXmlString());
 				ServiceSecurityAssessmentPojo pojo = new ServiceSecurityAssessmentPojo();
 				ServiceSecurityAssessmentPojo baseline = new ServiceSecurityAssessmentPojo();
 				this.populateSecurityAssessmentPojo(moa, pojo);
@@ -7730,7 +7729,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			stpp.setServiceId(stpm.getServiceId());
 			// test plan requirement list
 			if (stpm.getServiceTestRequirement() != null) {
-//				List<ServiceTestRequirementPojo> strPojos = new java.util.ArrayList<ServiceTestRequirementPojo>();
 				for (ServiceTestRequirement strm : (List<ServiceTestRequirement>)stpm.getServiceTestRequirement()) {
 					ServiceTestRequirementPojo strp = new ServiceTestRequirementPojo();
 					strp.setServiceTestRequirementId(strm.getServiceTestRequirementId());
@@ -7756,11 +7754,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							strp.getServiceTests().add(stp);
 						}
 					}
-//					strPojos.add(strp);
 					stpp.getServiceTestRequirements().add(strp);
 				}
-//				Collections.sort(strPojos);
-//				stpp.setServiceTestRequirements(strPojos);
 			}
 			pojo.setServiceTestPlan(stpp);
 		}
@@ -7901,7 +7896,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ServiceSecurityAssessmentPojo updateSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
 			throws RpcException {
-		// TODO Auto-generated method stub
 		assessment.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
             info("updating UserNotification on the server...");
@@ -8482,7 +8476,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteIncident(IncidentPojo incident) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -8598,7 +8592,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public IncidentPojo updateIncident(IncidentPojo indident) throws RpcException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -10314,7 +10308,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public FirewallExceptionRemoveRequestPojo updateFirewallExceptionRemoveRequest(
 			FirewallExceptionRemoveRequestPojo rule) throws RpcException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -10698,7 +10691,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return System.currentTimeMillis();
 	}
 	
-	private String getFullNameForPublicId(String ppid) {
+	@Override
+	public String getFullNameForPublicId(String ppid) {
 		String name = ppidToNameMap.get(ppid);
 		if (name == null) {
 			DirectoryMetaDataPojo dmd = this.getDirectoryMetaDataForPublicId(ppid);

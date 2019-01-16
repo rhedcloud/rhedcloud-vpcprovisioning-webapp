@@ -15,7 +15,7 @@ public class ConfigurationItemPojo extends SharedObject implements IsSerializabl
 	String serviceOwnerEventId;
 	
 	public ConfigurationItemPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getName() {

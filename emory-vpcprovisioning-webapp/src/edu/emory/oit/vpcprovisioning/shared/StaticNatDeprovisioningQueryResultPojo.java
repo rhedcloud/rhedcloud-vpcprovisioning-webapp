@@ -10,7 +10,7 @@ public class StaticNatDeprovisioningQueryResultPojo extends SharedObject impleme
 	StaticNatDeprovisioningQueryFilterPojo filterUsed;
 	
 	public StaticNatDeprovisioningQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<StaticNatDeprovisioningPojo> getResults() {

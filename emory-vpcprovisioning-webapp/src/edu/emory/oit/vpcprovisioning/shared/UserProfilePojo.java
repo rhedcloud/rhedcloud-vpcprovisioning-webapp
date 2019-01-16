@@ -32,7 +32,7 @@ public class UserProfilePojo extends SharedObject implements IsSerializable, Com
 		}
 	};
 	public UserProfilePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getUserId() {

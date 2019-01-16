@@ -97,7 +97,6 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
 				SecurityRiskPojo m = selectionModel.getSelectedObject();
-				GWT.log("selected security risk is: " + m.getSecurityRiskId());
 				if (m != null) {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK, presenter.getService(), presenter.getAssessment(), m);
 				}
@@ -155,7 +154,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -186,49 +185,49 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public HasClickHandlers getCancelWidget() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public HasClickHandlers getOkayWidget() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -401,7 +400,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -424,7 +423,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

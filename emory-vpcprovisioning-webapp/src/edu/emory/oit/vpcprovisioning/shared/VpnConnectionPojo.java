@@ -28,7 +28,7 @@ public class VpnConnectionPojo extends SharedObject implements IsSerializable, C
 	VpnConnectionPojo baseline;
 	
 	public VpnConnectionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getVpnId() {

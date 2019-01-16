@@ -11,7 +11,7 @@ public class VpnConnectionRequisitionPojo extends SharedObject implements IsSeri
 	VpnConnectionProfilePojo profile;
 	
 	public VpnConnectionRequisitionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getOwnerId() {

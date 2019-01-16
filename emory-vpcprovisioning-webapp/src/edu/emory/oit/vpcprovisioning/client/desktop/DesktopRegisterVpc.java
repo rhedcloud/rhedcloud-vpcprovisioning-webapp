@@ -247,19 +247,19 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -279,7 +279,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public void setVpcIdViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -395,49 +395,49 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

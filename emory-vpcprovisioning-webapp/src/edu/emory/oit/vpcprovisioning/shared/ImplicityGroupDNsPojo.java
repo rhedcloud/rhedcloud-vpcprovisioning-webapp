@@ -9,7 +9,7 @@ public class ImplicityGroupDNsPojo extends SharedObject implements IsSerializabl
 	List<String> distinguishedNames = new java.util.ArrayList<String>();
 
 	public ImplicityGroupDNsPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getDistinguishedNames() {

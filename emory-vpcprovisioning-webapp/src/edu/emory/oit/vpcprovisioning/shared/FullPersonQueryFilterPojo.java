@@ -12,7 +12,7 @@ public class FullPersonQueryFilterPojo extends SharedObject implements IsSeriali
 	UserAccountPojo userLoggedIn;
 
 	public FullPersonQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getPublicId() {

@@ -10,7 +10,7 @@ public class FullPersonQueryResultPojo extends SharedObject implements IsSeriali
 	List<FullPersonPojo> results = new java.util.ArrayList<FullPersonPojo>();
 
 	public FullPersonQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public FullPersonQueryFilterPojo getFilterUsed() {

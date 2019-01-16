@@ -15,7 +15,7 @@ public class UserProfileQueryFilterPojo extends SharedObject implements IsSerial
 	List<PropertyPojo> properties = new java.util.ArrayList<PropertyPojo>();
 	
 	public UserProfileQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getUserId() {

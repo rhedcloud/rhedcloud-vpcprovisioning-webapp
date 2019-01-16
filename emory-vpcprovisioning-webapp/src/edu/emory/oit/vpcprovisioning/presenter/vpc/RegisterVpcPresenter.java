@@ -55,7 +55,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -80,7 +80,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
@@ -290,7 +290,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 
 	@Override
 	public boolean isValidVpcId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

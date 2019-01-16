@@ -75,7 +75,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -123,13 +123,13 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -140,7 +140,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public void selectElasticIp(ElasticIpPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -285,7 +285,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

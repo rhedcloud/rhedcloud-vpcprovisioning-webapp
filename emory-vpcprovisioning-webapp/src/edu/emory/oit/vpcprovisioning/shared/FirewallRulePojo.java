@@ -56,7 +56,7 @@ public class FirewallRulePojo extends SharedObject implements IsSerializable, Co
 	};
 
 	public FirewallRulePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 

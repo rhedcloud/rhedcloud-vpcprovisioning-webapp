@@ -83,49 +83,49 @@ public class DesktopServiceAssessmentReport extends ViewImplBase implements Serv
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -136,13 +136,13 @@ public class DesktopServiceAssessmentReport extends ViewImplBase implements Serv
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -158,37 +158,37 @@ public class DesktopServiceAssessmentReport extends ViewImplBase implements Serv
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -199,13 +199,13 @@ public class DesktopServiceAssessmentReport extends ViewImplBase implements Serv
 
 	@Override
 	public void initPage() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

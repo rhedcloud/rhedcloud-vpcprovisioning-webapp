@@ -65,7 +65,7 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -163,13 +163,13 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -180,7 +180,7 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 
 	@Override
 	public void selectStaticNatProvisioningSummary(StaticNatProvisioningSummaryPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

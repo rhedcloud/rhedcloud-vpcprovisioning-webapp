@@ -14,7 +14,7 @@ public class EligibilityPojo extends SharedObject implements IsSerializable {
 	String type;
 
 	public EligibilityPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getValue() {

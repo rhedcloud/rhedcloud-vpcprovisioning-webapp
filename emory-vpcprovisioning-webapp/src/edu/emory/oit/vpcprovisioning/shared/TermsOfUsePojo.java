@@ -13,7 +13,7 @@ public class TermsOfUsePojo extends SharedObject implements IsSerializable, Comp
 	String text;
 	
 	public TermsOfUsePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public String getTermsOfUseId() {
@@ -49,7 +49,7 @@ public class TermsOfUsePojo extends SharedObject implements IsSerializable, Comp
 
 	@Override
 	public int compareTo(TermsOfUsePojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

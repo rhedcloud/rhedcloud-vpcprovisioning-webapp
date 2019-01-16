@@ -9,7 +9,7 @@ public class EmailPojo extends SharedObject implements IsSerializable {
 	String emailAddress;
 	
 	public EmailPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getType() {

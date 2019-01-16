@@ -76,7 +76,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -144,13 +144,13 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -161,7 +161,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 
 	@Override
 	public void selectSecurityRisk(SecurityRiskPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

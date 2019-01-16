@@ -11,12 +11,12 @@ public class ResourcePojo extends SharedObject implements IsSerializable, Compar
 	EntitlementPojo entitlement;
 
 	public ResourcePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(ResourcePojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

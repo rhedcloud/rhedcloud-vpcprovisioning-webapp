@@ -10,7 +10,7 @@ public class RoleAssignmentQueryResultPojo extends SharedObject implements IsSer
 	List<RoleAssignmentPojo> results = new java.util.ArrayList<RoleAssignmentPojo>();
 
 	public RoleAssignmentQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RoleAssignmentQueryFilterPojo getFilterUsed() {

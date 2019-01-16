@@ -15,7 +15,7 @@ public class SponsoredPersonPojo extends SharedObject implements IsSerializable 
 	 */
 
 	public SponsoredPersonPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

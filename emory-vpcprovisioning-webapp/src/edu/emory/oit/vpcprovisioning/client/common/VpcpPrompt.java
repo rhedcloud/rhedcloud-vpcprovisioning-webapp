@@ -82,27 +82,27 @@ public class VpcpPrompt extends DialogBox {
 		vpcpPrompt.show();
 	}
 	public VpcpPrompt() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpPrompt(boolean autoHide) {
 		super(autoHide);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpPrompt(Caption captionWidget) {
 		super(captionWidget);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpPrompt(boolean autoHide, boolean modal) {
 		super(autoHide, modal);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpPrompt(boolean autoHide, boolean modal, Caption captionWidget) {
 		super(autoHide, modal, captionWidget);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

@@ -55,7 +55,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -172,7 +172,7 @@ public class ListElasticIpAssignmentPresenter extends PresenterBase implements L
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

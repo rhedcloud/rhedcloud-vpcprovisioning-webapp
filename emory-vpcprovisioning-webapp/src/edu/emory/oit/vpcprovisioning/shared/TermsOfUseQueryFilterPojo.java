@@ -23,7 +23,7 @@ public class TermsOfUseQueryFilterPojo extends SharedObject implements IsSeriali
 	UserAccountPojo userAccount;
 	
 	public TermsOfUseQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getTermsOfUseId() {

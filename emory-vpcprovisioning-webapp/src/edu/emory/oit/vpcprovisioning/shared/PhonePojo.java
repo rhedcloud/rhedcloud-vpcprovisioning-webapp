@@ -22,7 +22,7 @@ public class PhonePojo extends SharedObject implements IsSerializable {
 	String type;
 
 	public PhonePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getCountryCode() {

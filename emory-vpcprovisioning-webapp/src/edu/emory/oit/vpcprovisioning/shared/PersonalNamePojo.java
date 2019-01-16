@@ -21,7 +21,7 @@ public class PersonalNamePojo extends SharedObject implements IsSerializable {
 	String compositeName;
 
 	public PersonalNamePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getLastName() {

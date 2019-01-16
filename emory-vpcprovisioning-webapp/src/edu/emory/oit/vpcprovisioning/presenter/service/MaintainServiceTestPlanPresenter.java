@@ -73,7 +73,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -309,7 +309,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 
 	@Override
 	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

@@ -50,13 +50,13 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -89,19 +89,19 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 
 	@Override
 	public void setEditing(boolean isEditing) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setElasticIpViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -112,13 +112,13 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 
 	@Override
 	public void initPage() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -141,31 +141,31 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 
 	@Override
 	public void setVpcItems(List<VpcPojo> vpcs) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setAccountItems(List<AccountPojo> accounts) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setElasticIpItems(List<ElasticIpPojo> cidrs) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -181,49 +181,49 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

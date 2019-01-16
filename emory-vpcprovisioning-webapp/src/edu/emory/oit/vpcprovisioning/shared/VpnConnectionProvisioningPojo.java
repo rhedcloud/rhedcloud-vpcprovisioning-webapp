@@ -66,7 +66,7 @@ public class VpnConnectionProvisioningPojo extends SharedObject implements IsSer
 	}
 
 	public VpnConnectionProvisioningPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getProvisioningId() {

@@ -27,7 +27,7 @@ public class UserNotificationPojo extends SharedObject implements IsSerializable
 	UserNotificationPojo baseline;
 	
 	public UserNotificationPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

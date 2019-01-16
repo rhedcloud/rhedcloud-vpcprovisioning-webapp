@@ -303,7 +303,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 
 								@Override
 								public void onFailure(Throwable caught) {
-									// TODO Auto-generated method stub
+									
 									getView().hidePleaseWaitDialog();
 									getView().hidePleaseWaitPanel();
 								}

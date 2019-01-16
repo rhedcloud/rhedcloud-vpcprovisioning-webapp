@@ -63,12 +63,12 @@ public class FirewallExceptionRequestPojo extends SharedObject implements IsSeri
 	};
 
 	public FirewallExceptionRequestPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(FirewallExceptionRequestPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

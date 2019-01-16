@@ -10,7 +10,7 @@ public class UserActionQueryResultPojo extends SharedObject implements IsSeriali
 	List<UserActionPojo> results = new java.util.ArrayList<UserActionPojo>();
 
 	public UserActionQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public UserActionQueryFilterPojo getFilterUsed() {

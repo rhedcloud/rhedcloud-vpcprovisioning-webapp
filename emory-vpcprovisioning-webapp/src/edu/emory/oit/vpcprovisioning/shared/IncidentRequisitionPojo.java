@@ -29,7 +29,7 @@ public class IncidentRequisitionPojo extends SharedObject implements IsSerializa
 	String correlationDisplay;
 
 	public IncidentRequisitionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ConfigurationItemPojo getConfigurationItem() {

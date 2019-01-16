@@ -58,7 +58,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -254,7 +254,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 
 	@Override
 	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

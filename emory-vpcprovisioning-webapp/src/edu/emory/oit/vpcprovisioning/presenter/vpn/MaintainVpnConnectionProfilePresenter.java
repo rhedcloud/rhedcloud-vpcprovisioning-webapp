@@ -58,7 +58,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
@@ -140,7 +140,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 	
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -149,7 +149,7 @@ public class MaintainVpnConnectionProfilePresenter extends PresenterBase impleme
 	}
 	@Override
 	public void deleteVpnConnectionProfile() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override

@@ -28,7 +28,7 @@ ServiceId, ServiceControlId, SequenceNumber, ServiceControlName, Description, As
 	Date verificationDate;
 	
 	public ServiceControlPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getServiceId() {

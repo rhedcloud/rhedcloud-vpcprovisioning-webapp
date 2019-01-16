@@ -64,7 +64,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -251,7 +251,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 
 	@Override
 	public boolean isValidElasticIp(ElasticIpPojo value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -267,13 +267,13 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 
 	@Override
 	public void getVpcsForAccount(String accountId) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void getUnassigedElasticIps() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

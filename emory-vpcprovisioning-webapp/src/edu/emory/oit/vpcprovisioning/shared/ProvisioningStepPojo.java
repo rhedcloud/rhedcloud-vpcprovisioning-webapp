@@ -19,7 +19,7 @@ public class ProvisioningStepPojo extends SharedObject implements IsSerializable
 	HashMap<String, String> properties = new HashMap<String, String>();
 	
 	public ProvisioningStepPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

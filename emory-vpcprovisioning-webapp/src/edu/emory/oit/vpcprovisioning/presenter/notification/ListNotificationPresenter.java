@@ -77,7 +77,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -245,13 +245,13 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -262,7 +262,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 	@Override
 	public void selectNotification(UserNotificationPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

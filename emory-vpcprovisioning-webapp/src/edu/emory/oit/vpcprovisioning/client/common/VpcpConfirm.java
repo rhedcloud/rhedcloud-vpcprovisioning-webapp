@@ -117,27 +117,27 @@ public class VpcpConfirm extends DialogBox {
 		vpcpConfirm.show();
 	}
 	public VpcpConfirm() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpConfirm(boolean autoHide) {
 		super(autoHide);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpConfirm(Caption captionWidget) {
 		super(captionWidget);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpConfirm(boolean autoHide, boolean modal) {
 		super(autoHide, modal);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpConfirm(boolean autoHide, boolean modal, Caption captionWidget) {
 		super(autoHide, modal, captionWidget);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

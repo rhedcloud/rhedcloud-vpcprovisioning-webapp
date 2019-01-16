@@ -129,37 +129,37 @@ public class ClientFactoryImplMobile implements ClientFactory {
 
 	@Override
 	public AppBootstrapper getApp() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public EventBus getEventBus() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public PlaceController getPlaceController() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public AppShell getShell() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ListVpcView getListVpcView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public MaintainVpcView getMaintainVpcView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -176,66 +176,66 @@ public class ClientFactoryImplMobile implements ClientFactory {
 
 	@Override
 	public MaintainAccountView getMaintainAccountView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ListCidrView getListCidrView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public MaintainCidrView getMaintainCidrView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ListCidrAssignmentView getListCidrAssignmentView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public MaintainCidrAssignmentView getMaintainCidrAssignmentView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public RegisterVpcView getRegisterVpcView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListVpcpView getListVpcpView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainVpcpView getMaintainVpcpView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public VpcpStatusView getVpcpStatusView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public BillSummaryView getBillSummaryView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListElasticIpView getListElasticIpView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainElasticIpView getMaintainElasticIpView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
@@ -252,142 +252,142 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public ListElasticIpAssignmentView getListElasticIpAssignmentView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainElasticIpAssignmentView getMaintainElasticIpAssignmentView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListServiceView getListServiceView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListFirewallRuleView getListFirewallRuleView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainFirewallExceptionRequestView getMaintainFirewallExceptionRequestView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public HomeView getHomeView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListCentralAdminView getListCentralAdminView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainSecurityAssessmentView getMaintainSecurityAssessmentView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListSecurityRiskView getListSecurityRiskView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainAccountNotificationView getMaintainAccountNotificationView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainSecurityRiskView getMaintainSecurityRiskView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListServiceControlView getListServiceControlView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainServiceControlView getMaintainServiceControlView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListServiceGuidelineView getListServiceGuidelineView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainServiceGuidelineView getMaintainServiceGuidelineView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainServiceTestPlanView getMaintainServiceTestPlanView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainSrdView getMaintainSrdView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainTermsOfUseAgreementView getMaintainTermsOfUseAgreementView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainIncidentView getMaintainIncidentView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListStaticNatProvisioningSummaryView getListStaticNatProvisioningSummaryView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListVpnConnectionProfileView getListVpnConnectionProfileView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainVpnConnectionProfileView getMaintainVpnConnectionProfileView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public StaticNatProvisioningStatusView getStaticNatProvisioningStatusView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainVpnConnectionProfileAssignmentView getMaintainVpnConnectionProfileAssignmentView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ListVpnConnectionProvisioningView getListVpnConnectionProvisioningView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public VpncpStatusView getVpncpStatusView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public MaintainVpnConnectionProvisioningView getMaintainVpnConnectionProvisioningView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public ServiceAssessmentReportView getServiceAssessmentReportView() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 }

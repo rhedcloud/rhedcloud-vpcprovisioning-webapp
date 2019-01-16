@@ -26,12 +26,12 @@ public class RoleAssignmentPojo extends SharedObject implements IsSerializable, 
 	String roleDN;
 
 	public RoleAssignmentPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(RoleAssignmentPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

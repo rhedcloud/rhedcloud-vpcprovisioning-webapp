@@ -8,7 +8,7 @@ public class VpnConnectionProfileAssignmentRequisitionPojo extends SharedObject 
 	String ownerId;		// vpc id
 	
 	public VpnConnectionProfileAssignmentRequisitionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getOwnerId() {

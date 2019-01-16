@@ -34,7 +34,7 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 	ServiceSecurityAssessmentPojo baseline;
 	
 	public ServiceSecurityAssessmentPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getServiceSecurityAssessmentId() {

@@ -13,7 +13,7 @@ public class VpnConnectionDeprovisioningQueryFilterPojo extends SharedObject imp
 	String searchString;
 
 	public VpnConnectionDeprovisioningQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getMaxRows() {

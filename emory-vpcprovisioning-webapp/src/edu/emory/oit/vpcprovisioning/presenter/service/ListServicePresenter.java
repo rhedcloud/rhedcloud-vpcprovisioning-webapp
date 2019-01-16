@@ -73,7 +73,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -180,13 +180,13 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -197,7 +197,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 
 	@Override
 	public void selectService(AWSServicePojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -319,7 +319,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 

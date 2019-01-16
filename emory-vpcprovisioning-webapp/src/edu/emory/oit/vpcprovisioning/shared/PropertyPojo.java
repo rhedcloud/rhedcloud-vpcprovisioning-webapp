@@ -9,7 +9,7 @@ public class PropertyPojo extends SharedObject implements IsSerializable {
 	String prettyName;
 
 	public PropertyPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getName() {

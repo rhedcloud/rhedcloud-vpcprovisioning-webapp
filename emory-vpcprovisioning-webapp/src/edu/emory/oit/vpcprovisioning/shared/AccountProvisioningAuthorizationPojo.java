@@ -16,7 +16,7 @@ public class AccountProvisioningAuthorizationPojo extends SharedObject implement
 	List<String> unauthorizedReasons = new java.util.ArrayList<String>();
 	
 	public AccountProvisioningAuthorizationPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getUserId() {

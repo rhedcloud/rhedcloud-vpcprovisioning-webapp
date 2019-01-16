@@ -10,7 +10,7 @@ public class AccountProvisioningAuthorizationQueryResultPojo extends SharedObjec
 	List<AccountProvisioningAuthorizationPojo> results = new java.util.ArrayList<AccountProvisioningAuthorizationPojo>();
 	
 	public AccountProvisioningAuthorizationQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public AccountProvisioningAuthorizationQueryFilterPojo getFilterUsed() {

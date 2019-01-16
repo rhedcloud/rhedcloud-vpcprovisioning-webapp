@@ -72,7 +72,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -199,7 +199,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -267,7 +267,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 

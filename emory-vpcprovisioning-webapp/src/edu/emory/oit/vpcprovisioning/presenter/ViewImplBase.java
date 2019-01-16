@@ -40,6 +40,22 @@ public abstract class ViewImplBase extends Composite {
 	  newWindow.print(); 
 	}-*/;
 
+	public void getFullNameForPublicId(final StringBuffer ppid) {
+		AsyncCallback<String> callback = new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Error dereferencing ppid: " + caught);
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				GWT.log("Full name for " + ppid.toString() + " is " + result);
+				ppid.append(" - " + result);
+//				ppid.replace(0, ppid.length() - 1, result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getFullNameForPublicId(ppid.toString(), callback);
+	}
 	public String formatMillisForDisplay(String millis) {
 		String formatted = "";
 		

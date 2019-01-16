@@ -114,7 +114,7 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -150,19 +150,19 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -207,13 +207,13 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public HasClickHandlers getCancelWidget() {
-		// TODO Auto-generated method stub
+		
 		return cancelButton;
 	}
 
@@ -224,37 +224,37 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -265,19 +265,19 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setIncidentIdViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setIncidentNameViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -319,7 +319,7 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -347,7 +347,7 @@ public class DesktopMaintainIncident extends ViewImplBase implements MaintainInc
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

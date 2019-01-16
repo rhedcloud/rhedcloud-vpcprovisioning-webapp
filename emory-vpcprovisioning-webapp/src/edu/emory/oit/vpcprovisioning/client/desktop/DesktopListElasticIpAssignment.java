@@ -378,13 +378,13 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -400,7 +400,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -462,7 +462,7 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

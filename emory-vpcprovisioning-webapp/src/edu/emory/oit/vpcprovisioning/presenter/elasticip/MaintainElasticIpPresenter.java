@@ -56,7 +56,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
@@ -131,7 +131,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -140,7 +140,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 	}
 	@Override
 	public void deleteElasticIp() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override

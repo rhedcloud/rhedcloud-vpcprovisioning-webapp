@@ -19,7 +19,7 @@ public class UserActionPojo extends SharedObject implements IsSerializable {
 	String detail;
 
 	public UserActionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getUserActionId() {

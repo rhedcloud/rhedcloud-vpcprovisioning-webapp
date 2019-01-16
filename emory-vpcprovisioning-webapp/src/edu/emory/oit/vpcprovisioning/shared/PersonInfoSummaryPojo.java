@@ -8,7 +8,7 @@ public class PersonInfoSummaryPojo extends SharedObject implements IsSerializabl
 	AccountProvisioningAuthorizationPojo accountProvisioningAuthorization;
 	
 	public PersonInfoSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public FullPersonPojo getFullPerson() {

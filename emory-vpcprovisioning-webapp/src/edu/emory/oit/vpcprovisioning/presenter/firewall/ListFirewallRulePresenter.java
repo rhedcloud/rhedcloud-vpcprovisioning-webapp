@@ -89,7 +89,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -251,7 +251,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -344,7 +344,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
@@ -359,7 +359,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 
 	@Override
 	public VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

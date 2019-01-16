@@ -120,13 +120,13 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -224,37 +224,37 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -265,13 +265,13 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setVpnConnectionProvisioningIdViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -324,7 +324,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

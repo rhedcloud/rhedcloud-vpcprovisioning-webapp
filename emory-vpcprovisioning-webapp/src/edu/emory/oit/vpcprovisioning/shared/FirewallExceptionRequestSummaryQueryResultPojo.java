@@ -11,7 +11,7 @@ public class FirewallExceptionRequestSummaryQueryResultPojo extends SharedObject
 	FirewallExceptionRemoveRequestQueryFilterPojo removeRequestFilterUsed;
 
 	public FirewallExceptionRequestSummaryQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<FirewallExceptionRequestSummaryPojo> getResults() {

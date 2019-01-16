@@ -10,7 +10,7 @@ public class SecurityAssessmentSummaryPojo extends SharedObject implements IsSer
 	ServiceSecurityAssessmentPojo assessment;
 	
 	public SecurityAssessmentSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

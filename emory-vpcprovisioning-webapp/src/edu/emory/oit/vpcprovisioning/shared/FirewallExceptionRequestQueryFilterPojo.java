@@ -44,7 +44,7 @@ public class FirewallExceptionRequestQueryFilterPojo extends SharedObject implem
 	 */
 
 	public FirewallExceptionRequestQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getTags() {

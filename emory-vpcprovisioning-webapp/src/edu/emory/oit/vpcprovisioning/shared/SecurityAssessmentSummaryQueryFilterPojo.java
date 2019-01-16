@@ -9,7 +9,7 @@ public class SecurityAssessmentSummaryQueryFilterPojo extends SharedObject imple
 	List<String> serviceIds = new java.util.ArrayList<String>();
 	
 	public SecurityAssessmentSummaryQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getServiceIds() {

@@ -18,7 +18,7 @@ public class StaticNatProvisioningPojo extends SharedObject implements IsSeriali
 	StaticNatProvisioningPojo baseline;
 	
 	public StaticNatProvisioningPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getTotalStepCount() {

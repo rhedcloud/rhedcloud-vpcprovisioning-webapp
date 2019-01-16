@@ -62,7 +62,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -210,13 +210,13 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -227,7 +227,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 
 	@Override
 	public void selectVpcp(VpcpPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

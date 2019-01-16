@@ -15,7 +15,7 @@ public class FullPersonPojo extends SharedObject implements IsSerializable {
 	List<SponsoredPersonPojo> sponsoredPersons = new ArrayList<SponsoredPersonPojo>();
 
 	public FullPersonPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getPublicId() {

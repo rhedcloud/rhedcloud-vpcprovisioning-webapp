@@ -69,7 +69,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -137,13 +137,13 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -154,7 +154,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 
 	@Override
 	public void selectServiceControl(ServiceControlPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

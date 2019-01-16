@@ -10,7 +10,7 @@ public class FirewallRuleQueryResultPojo extends SharedObject implements IsSeria
 	List<FirewallRulePojo> results;
 
 	public FirewallRuleQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public FirewallRuleQueryFilterPojo getFilterUsed() {

@@ -12,7 +12,7 @@ public class TermsOfUseSummaryPojo extends SharedObject implements IsSerializabl
 	boolean hasValidTermsOfUseAgreement;
 	
 	public TermsOfUseSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public UserAccountPojo getUser() {

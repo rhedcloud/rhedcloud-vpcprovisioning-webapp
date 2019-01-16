@@ -10,7 +10,7 @@ public class FallbackContactPojo extends SharedObject implements IsSerializable 
 	String emailAddress;
 
 	public FallbackContactPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Date getEstablishedDate() {

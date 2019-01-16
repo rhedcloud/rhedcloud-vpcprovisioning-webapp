@@ -74,7 +74,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -299,7 +299,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 
 	@Override
 	public boolean isValidIncidentNumber(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

@@ -14,7 +14,7 @@ public class TermsOfUseAgreementPojo extends SharedObject implements IsSerializa
 	Date agreedDate;
 	
 	public TermsOfUseAgreementPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getTermsOfUseAgreementId() {
@@ -67,7 +67,7 @@ public class TermsOfUseAgreementPojo extends SharedObject implements IsSerializa
 
 	@Override
 	public int compareTo(TermsOfUseAgreementPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

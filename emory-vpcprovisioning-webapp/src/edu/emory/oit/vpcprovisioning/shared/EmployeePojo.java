@@ -21,7 +21,7 @@ public class EmployeePojo extends SharedObject implements IsSerializable {
 	 */
 
 	public EmployeePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

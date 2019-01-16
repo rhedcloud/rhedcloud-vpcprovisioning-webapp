@@ -130,7 +130,7 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -151,7 +151,7 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public void setEditing(boolean isEditing) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -161,13 +161,13 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 
 	@Override
 	public void setNetworkViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setBitsViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -221,42 +221,42 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	}
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

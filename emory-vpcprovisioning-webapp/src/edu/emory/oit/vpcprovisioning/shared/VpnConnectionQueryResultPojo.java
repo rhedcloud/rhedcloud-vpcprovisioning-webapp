@@ -10,7 +10,7 @@ public class VpnConnectionQueryResultPojo extends SharedObject implements IsSeri
 	VpnConnectionQueryFilterPojo filterUsed;
 	
 	public VpnConnectionQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<VpnConnectionPojo> getResults() {

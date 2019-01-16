@@ -56,6 +56,7 @@ public interface VpcProvisioningService extends RemoteService {
 	
 	// Identity services
 	DirectoryMetaDataPojo getDirectoryMetaDataForPublicId(String netId) throws RpcException;
+	String getFullNameForPublicId(String ppid) throws RpcException;
 
 	// UserAccount services (user logged in)
 	UserAccountPojo getUserLoggedIn() throws RpcException;

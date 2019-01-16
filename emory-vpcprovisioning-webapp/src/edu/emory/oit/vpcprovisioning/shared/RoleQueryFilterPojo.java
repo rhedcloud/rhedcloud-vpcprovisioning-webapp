@@ -7,7 +7,7 @@ public class RoleQueryFilterPojo extends SharedObject implements IsSerializable,
 	String roleDN;
 
 	public RoleQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getRoleDN() {

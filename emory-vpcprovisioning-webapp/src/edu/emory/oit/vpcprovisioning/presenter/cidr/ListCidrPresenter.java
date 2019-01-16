@@ -74,7 +74,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -187,13 +187,13 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -204,7 +204,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 
 	@Override
 	public void selectCidr(CidrPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -324,7 +324,7 @@ public class ListCidrPresenter extends PresenterBase implements ListCidrView.Pre
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 

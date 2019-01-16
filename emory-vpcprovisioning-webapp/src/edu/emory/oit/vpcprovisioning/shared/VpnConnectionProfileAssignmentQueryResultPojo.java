@@ -10,7 +10,7 @@ public class VpnConnectionProfileAssignmentQueryResultPojo extends SharedObject 
 	VpnConnectionProfileAssignmentQueryFilterPojo filterUsed;
 	
 	public VpnConnectionProfileAssignmentQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<VpnConnectionProfileAssignmentPojo> getResults() {

@@ -11,7 +11,7 @@ public class AmazonS3AccessWrapperPojo implements IsSerializable {
 
 
 	public AmazonS3AccessWrapperPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 

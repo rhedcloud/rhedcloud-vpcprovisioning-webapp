@@ -11,7 +11,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 public class UserNotificationOverviewCell extends AbstractCell<UserNotification> {
 
 	public UserNotificationOverviewCell() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class UserNotificationOverviewCell extends AbstractCell<UserNotification>
 	
 	@Override
 	public void render(Context context, UserNotification value, SafeHtmlBuilder sb) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

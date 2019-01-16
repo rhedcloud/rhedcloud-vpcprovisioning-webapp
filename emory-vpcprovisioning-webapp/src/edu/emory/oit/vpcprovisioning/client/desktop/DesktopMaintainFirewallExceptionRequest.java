@@ -584,13 +584,13 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setFirewallExceptionRequestNameViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

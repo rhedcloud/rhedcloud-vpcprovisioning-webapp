@@ -10,7 +10,7 @@ public class VpnConnectionDeprovisioningQueryResultPojo extends SharedObject imp
 	VpnConnectionDeprovisioningQueryFilterPojo filterUsed;
 	
 	public VpnConnectionDeprovisioningQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<VpnConnectionDeprovisioningPojo> getResults() {

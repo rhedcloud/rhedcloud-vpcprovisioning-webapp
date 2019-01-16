@@ -66,7 +66,7 @@ public class FirewallExceptionAddRequestQueryFilterPojo extends SharedObject imp
 	String accessAwsVPC;
 
 	public FirewallExceptionAddRequestQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getTags() {

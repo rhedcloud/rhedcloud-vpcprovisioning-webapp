@@ -17,7 +17,7 @@ public class VpnConnectionProfileAssignmentPojo extends SharedObject implements 
 	VpnConnectionProfileAssignmentPojo baseline;
 	
 	public VpnConnectionProfileAssignmentPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getVpnConnectionProfileId() {
@@ -78,7 +78,7 @@ public class VpnConnectionProfileAssignmentPojo extends SharedObject implements 
 
 	@Override
 	public int compareTo(VpnConnectionProfileAssignmentPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

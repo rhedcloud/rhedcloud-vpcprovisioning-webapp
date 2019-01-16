@@ -8,7 +8,7 @@ public class AssignedToPojo extends SharedObject implements IsSerializable {
 	PersonalNamePojo personalName;
 	
 	public AssignedToPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getPublicId() {

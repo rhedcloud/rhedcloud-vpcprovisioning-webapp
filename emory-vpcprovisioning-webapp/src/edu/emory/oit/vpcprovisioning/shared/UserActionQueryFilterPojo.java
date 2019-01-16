@@ -16,7 +16,7 @@ public class UserActionQueryFilterPojo extends SharedObject implements IsSeriali
 	String action;
 	
 	public UserActionQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getUserId() {

@@ -34,7 +34,7 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 	String searchString;
 	
 	public UserNotificationQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getUserNotificationId() {

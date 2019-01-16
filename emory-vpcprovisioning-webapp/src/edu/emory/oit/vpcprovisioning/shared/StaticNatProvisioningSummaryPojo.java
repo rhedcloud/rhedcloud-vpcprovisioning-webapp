@@ -11,7 +11,7 @@ public class StaticNatProvisioningSummaryPojo extends SharedObject implements Is
 	StaticNatDeprovisioningPojo deProvisioned;
 
 	public StaticNatProvisioningSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static final ProvidesKey<StaticNatProvisioningSummaryPojo> KEY_PROVIDER = new ProvidesKey<StaticNatProvisioningSummaryPojo>() {

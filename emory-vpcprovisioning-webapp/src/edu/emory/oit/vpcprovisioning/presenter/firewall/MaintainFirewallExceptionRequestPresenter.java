@@ -85,7 +85,7 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -325,13 +325,13 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 
 	@Override
 	public boolean isValidFirewallExceptionRequestName(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

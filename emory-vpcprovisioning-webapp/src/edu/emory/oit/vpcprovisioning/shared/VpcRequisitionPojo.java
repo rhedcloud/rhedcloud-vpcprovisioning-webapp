@@ -21,7 +21,7 @@ public class VpcRequisitionPojo extends SharedObject implements IsSerializable {
 	List<String> sensitiveDataList = new java.util.ArrayList<String>();
 	
 	public VpcRequisitionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getTicketId() {

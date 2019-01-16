@@ -11,7 +11,7 @@ public class SupportGroupPojo extends SharedObject implements IsSerializable {
 	String name;
 	
 	public SupportGroupPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getName() {

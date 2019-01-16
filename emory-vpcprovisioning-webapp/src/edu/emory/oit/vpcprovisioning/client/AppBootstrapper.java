@@ -308,8 +308,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_ELASTIC_IP, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
-				// TODO via dialog box (only for LITS admins)
 				GWT.log("Bootstrapper, GO_HOME_ELASTIC_IP.onAction");
 				placeController.goTo(new ListElasticIpPlace(false));
 			}
@@ -317,7 +315,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_CIDR, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_CIDR.onAction");
 				placeController.goTo(new ListCidrPlace(false));
 			}
@@ -325,20 +322,17 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_CIDR_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_FIREWALL_RULE.onAction");
 				final ListCidrAssignmentPresenter presenter = new ListCidrAssignmentPresenter(clientFactory, new ListCidrAssignmentPlace(false));
 				presenter.setVpc(event.getVpc());
 				presenter.start(eventBus);
 				MaintainVpcView parent = clientFactory.getMaintainVpcView();
 				parent.setWidget(presenter);
-//				placeController.goTo(new ListCidrAssignmentPlace(false));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_ACCOUNT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_ACCOUNT.onAction");
 				placeController.goTo(new ListAccountPlace(false));
 			}
@@ -346,7 +340,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_CENTRAL_ADMIN.onAction");
 				placeController.goTo(new ListCentralAdminPlace(false));
 			}
@@ -354,7 +347,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_FIREWALL_RULE, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_FIREWALL_RULE.onAction");
 				final ListFirewallRulePresenter presenter = new ListFirewallRulePresenter(clientFactory, new ListFirewallRulePlace(false));
 				presenter.setVpc(event.getVpc());
@@ -366,7 +358,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPC, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_VPC.onAction");
 				placeController.goTo(new ListVpcPlace(false));
 			}
@@ -374,7 +365,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPCP, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_VPCP.onAction");
 				placeController.goTo(new ListVpcpPlace(false));
 			}
@@ -382,7 +372,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_SERVICE, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_SERVICE.onAction");
 				placeController.goTo(new ListServicePlace(false));
 			}
@@ -390,7 +379,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_NOTIFICATION, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_NOTIFICATION.onAction");
 				placeController.goTo(new ListNotificationPlace(false, event.getFilter()));
 			}
@@ -437,7 +425,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-//				shell.showMessageToUser("Maintain VPN Connecton Profile...coming soon...");
 				final DialogBox db = new DialogBox();
 				db.setText("View/Maintain VPN Connection Profile");
 				db.setGlassEnabled(true);
@@ -465,12 +452,9 @@ public class AppBootstrapper {
 			}
 		});
 
-		// TODO: MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT
-		// not sure if we'll use a dialog box or not
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-//				shell.showMessageToUser("Maintain VPN Connecton Profile Assignment...coming soon...");
 				final DialogBox db = new DialogBox();
 				db.setText("View/Maintain VPN Connection Profile Assignment");
 				db.setGlassEnabled(true);
@@ -1724,7 +1708,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_VPNCP, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				// TODO need pass filter...
 				GWT.log("Bootstrapper, GO_HOME_VPNCP.onAction");
 				placeController.goTo(new ListVpnConnectionProvisioningPlace(false));
 			}

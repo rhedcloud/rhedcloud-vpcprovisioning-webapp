@@ -10,7 +10,7 @@ public class SpeedChartQueryResultPojo extends SharedObject implements IsSeriali
 	List<SpeedChartPojo> results;
 
 	public SpeedChartQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public SpeedChartQueryFilterPojo getFilterUsed() {

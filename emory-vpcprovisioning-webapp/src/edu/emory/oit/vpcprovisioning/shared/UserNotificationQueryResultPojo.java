@@ -10,7 +10,7 @@ public class UserNotificationQueryResultPojo extends SharedObject implements IsS
 	List<UserNotificationPojo> results;
 
 	public UserNotificationQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public UserNotificationQueryFilterPojo getFilterUsed() {

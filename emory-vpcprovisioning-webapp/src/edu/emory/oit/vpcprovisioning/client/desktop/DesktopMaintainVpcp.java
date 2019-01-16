@@ -317,7 +317,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -357,7 +357,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 
 	@Override
 	public void setVpcpIdViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -407,7 +407,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -579,37 +579,37 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override

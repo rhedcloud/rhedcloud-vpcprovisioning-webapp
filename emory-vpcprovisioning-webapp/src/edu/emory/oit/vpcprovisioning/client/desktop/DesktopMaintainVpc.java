@@ -521,7 +521,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -561,12 +561,12 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	}
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
 	public void setVpcIdViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -711,7 +711,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -744,43 +744,43 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -800,15 +800,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@Override
 	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
-		// TODO: if region type matches current VPC, select that item (when editing)
 		this.regionTypes = regionTypes;
-//		regionLB.clear();
-//		regionLB.addItem("-- Select --");
-//		if (regionTypes != null) {
-//			for (AWSRegionPojo region : regionTypes) {
-//				regionLB.addItem(region.getCode(), region.getValue());
-//			}
-//		}
 
 		if (editing) {
 			regionLB.clear();
@@ -855,7 +847,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void refreshVpnConnectionInfo(VpnConnectionPojo vpnConnection) {
 		if (vpnConnection != null) {
-			// TODO: update operational status info (images and summary)
+			// update operational status info (images and summary)
 			Tree vpnInfoTree = createVpnInfoTree(vpnConnection);
 			vpnInfoPanel.setWidget(vpnInfoTree);
 			operationalStatusGrid.setVisible(true);

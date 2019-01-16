@@ -70,7 +70,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -180,7 +180,7 @@ public class ListCidrAssignmentPresenter extends PresenterBase implements ListCi
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

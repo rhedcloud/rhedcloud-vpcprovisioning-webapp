@@ -8,7 +8,7 @@ public class SpeedChartCachedItem {
 	private String speedChartKey;
 
 	public SpeedChartCachedItem() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public Date getLastUpdated() {

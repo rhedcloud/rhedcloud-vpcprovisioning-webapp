@@ -67,7 +67,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -253,7 +253,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 					AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assessmentCB = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
 						@Override
 						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
+							
 							
 						}
 
@@ -378,7 +378,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 
 	@Override
 	public void deleteCounterMeasures(List<CounterMeasurePojo> selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -421,7 +421,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 					AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assmtnCB = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
 						@Override
 						public void onFailure(Throwable caught) {
-							// TODO Auto-generated method stub
+							
 							
 						}
 

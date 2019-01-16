@@ -25,7 +25,7 @@ public class ElasticIpAssignmentPojo extends SharedObject implements IsSerializa
 
 	@Override
 	public int compareTo(ElasticIpAssignmentPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

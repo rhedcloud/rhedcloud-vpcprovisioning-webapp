@@ -46,12 +46,12 @@ public class LineItemPojo extends SharedObject implements IsSerializable, Compar
 		}
 	};
 	public LineItemPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(LineItemPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

@@ -31,12 +31,12 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 		}
 	};
 	public VpcPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(VpcPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

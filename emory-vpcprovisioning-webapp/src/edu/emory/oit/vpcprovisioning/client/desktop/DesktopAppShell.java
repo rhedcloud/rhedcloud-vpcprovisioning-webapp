@@ -817,13 +817,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -1182,13 +1182,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				showPleaseWaitDialog("Retrieving assessment information...");
 				assessmentVp.clear();
 				
-				// TODO: add a link to the detailed assessment (Anchor)
+				// add a link to the detailed assessment (Anchor)
 				final Anchor assessmentAnchor = new Anchor((String)"Assessment of the " + svcAnchor.getText() + " service.");
 				assessmentAnchor.addStyleName("categoryAnchor");
 				assessmentAnchor.getElement().getStyle().setBackgroundColor("#232f3e");
 				assessmentAnchor.getElement().getStyle().setColor("#ddd");
 				assessmentAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
 				assessmentAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+				assessmentAnchor.setTitle("View the full assessment.");
 				assessmentVp.add(assessmentAnchor);
 
 //				HTML assessmentHeading = new HTML("Assessment of the " + svcAnchor.getText() + " service." );

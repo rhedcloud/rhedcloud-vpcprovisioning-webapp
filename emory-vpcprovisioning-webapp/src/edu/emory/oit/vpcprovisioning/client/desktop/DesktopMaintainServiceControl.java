@@ -125,7 +125,7 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -140,7 +140,7 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -226,25 +226,25 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -255,7 +255,7 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -274,7 +274,6 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
 			controlNameTB.setText(srp.getServiceControlName());
 			controlDescriptionTA.setText(srp.getDescription());
-			// TODO: this will have to be a lookup to get the name of the person
 			assessorLookupSB.setText(srp.getAssessorId());
 			verifierLookupSB.setText(srp.getVerifier());
 			verificationDB.setValue(srp.getVerificationDate());
@@ -292,22 +291,22 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

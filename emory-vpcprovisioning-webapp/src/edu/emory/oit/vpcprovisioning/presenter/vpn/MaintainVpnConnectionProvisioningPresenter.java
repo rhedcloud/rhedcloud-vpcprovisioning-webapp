@@ -114,7 +114,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -526,7 +526,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 
 	@Override
 	public boolean isValidVpnConnectionProvisioningId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

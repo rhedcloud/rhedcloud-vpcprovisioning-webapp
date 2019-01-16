@@ -109,13 +109,13 @@ public class RoleSelectionPopup extends PopupPanel {
 
 	@Override
 	public void hide() {
-		// TODO Auto-generated method stub
+		
 		super.hide();
 	}
 
 	@Override
 	public void show() {
-		// TODO Auto-generated method stub
+		
 		super.show();
 	}
 

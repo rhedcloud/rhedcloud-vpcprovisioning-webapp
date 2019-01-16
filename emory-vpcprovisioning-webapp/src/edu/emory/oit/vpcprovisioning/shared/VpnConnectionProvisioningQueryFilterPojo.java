@@ -16,7 +16,7 @@ public class VpnConnectionProvisioningQueryFilterPojo extends SharedObject imple
 	String searchString;
 
 	public VpnConnectionProvisioningQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getMaxRows() {

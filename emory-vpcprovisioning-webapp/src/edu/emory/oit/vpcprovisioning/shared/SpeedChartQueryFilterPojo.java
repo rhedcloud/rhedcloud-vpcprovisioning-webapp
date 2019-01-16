@@ -9,7 +9,7 @@ public class SpeedChartQueryFilterPojo extends SharedObject implements IsSeriali
 	List<String> speedChartKeys = new java.util.ArrayList<String>();
 
 	public SpeedChartQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getSpeedChartKeys() {

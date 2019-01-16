@@ -10,7 +10,7 @@ public class IncidentQueryResultPojo extends SharedObject implements IsSerializa
 	IncidentQueryFilterPojo filterUsed;
 	
 	public IncidentQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<IncidentPojo> getResults() {

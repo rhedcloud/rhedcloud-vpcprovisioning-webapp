@@ -53,7 +53,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -157,7 +157,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 
 	@Override
 	public boolean isValidVpcpId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

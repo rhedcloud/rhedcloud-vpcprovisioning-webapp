@@ -36,6 +36,7 @@ public interface VpcProvisioningServiceAsync {
 	
 	// Identity services
 	void getDirectoryMetaDataForPublicId(String netId, AsyncCallback<DirectoryMetaDataPojo> callback);
+	void getFullNameForPublicId(String ppid, AsyncCallback<String> callback);
 
 	// UserAccount services (user logged in)
 	void getUserLoggedIn(AsyncCallback<UserAccountPojo> callback);

@@ -75,7 +75,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -99,7 +99,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
@@ -342,7 +342,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 
 	@Override
 	public boolean isValidVpcpId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -523,7 +523,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 		AsyncCallback<FullPersonQueryResultPojo> callback = new AsyncCallback<FullPersonQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
 			}

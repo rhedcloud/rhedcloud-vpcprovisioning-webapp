@@ -90,27 +90,27 @@ public class VpcpAlert extends DialogBox {
 		VpcpAlert.alert(title, message, null);
 	}
 	public VpcpAlert() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpAlert(boolean autoHide) {
 		super(autoHide);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpAlert(Caption captionWidget) {
 		super(captionWidget);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpAlert(boolean autoHide, boolean modal) {
 		super(autoHide, modal);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpcpAlert(boolean autoHide, boolean modal, Caption captionWidget) {
 		super(autoHide, modal, captionWidget);
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

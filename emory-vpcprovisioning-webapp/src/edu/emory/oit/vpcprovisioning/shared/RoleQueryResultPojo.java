@@ -10,7 +10,7 @@ public class RoleQueryResultPojo extends SharedObject implements IsSerializable 
 	List<RolePojo> results = new java.util.ArrayList<RolePojo>();
 
 	public RoleQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RoleQueryFilterPojo getFilterUsed() {

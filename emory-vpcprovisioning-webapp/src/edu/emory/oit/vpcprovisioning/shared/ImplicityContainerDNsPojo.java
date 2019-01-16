@@ -9,7 +9,7 @@ public class ImplicityContainerDNsPojo extends SharedObject implements IsSeriali
 	List<String> distinguishedNames = new java.util.ArrayList<String>();
 
 	public ImplicityContainerDNsPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getDistinguishedNames() {

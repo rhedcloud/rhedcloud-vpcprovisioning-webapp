@@ -80,25 +80,25 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -109,25 +109,25 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public HasClickHandlers getCancelWidget() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public HasClickHandlers getOkayWidget() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -147,7 +147,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -201,7 +201,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -298,22 +298,22 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -344,7 +344,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	}
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

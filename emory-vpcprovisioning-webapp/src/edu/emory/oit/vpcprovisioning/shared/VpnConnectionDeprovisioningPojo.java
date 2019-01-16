@@ -65,7 +65,7 @@ public class VpnConnectionDeprovisioningPojo extends SharedObject implements IsS
 	}
 
 	public VpnConnectionDeprovisioningPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getProvisioningId() {

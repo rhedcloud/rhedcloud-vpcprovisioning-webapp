@@ -9,7 +9,7 @@ public class OwnerDNsPojo extends SharedObject implements IsSerializable {
 	List<String> distinguishedNames = new java.util.ArrayList<String>();
 
 	public OwnerDNsPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getDistinguishedNames() {

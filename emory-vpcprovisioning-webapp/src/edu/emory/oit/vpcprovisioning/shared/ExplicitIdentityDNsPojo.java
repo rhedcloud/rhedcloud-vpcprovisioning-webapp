@@ -9,7 +9,7 @@ public class ExplicitIdentityDNsPojo extends SharedObject implements IsSerializa
 	List<String> distinguishedNames = new java.util.ArrayList<String>();
 
 	public ExplicitIdentityDNsPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getDistinguishedNames() {

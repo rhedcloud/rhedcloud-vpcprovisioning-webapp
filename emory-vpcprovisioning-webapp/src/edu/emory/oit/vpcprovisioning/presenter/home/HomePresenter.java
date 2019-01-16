@@ -39,7 +39,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -126,13 +126,13 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 //				AsyncCallback<Void> log_cb = new AsyncCallback<Void>() {
 //					@Override
 //					public void onFailure(Throwable caught) {
-//						// TODO Auto-generated method stub
+//						
 //						
 //					}
 //
 //					@Override
 //					public void onSuccess(Void result) {
-//						// TODO Auto-generated method stub
+//						
 //					}
 //				};
 //				VpcProvisioningService.Util.getInstance().logMessage("starting DirectoryPerson cache", log_cb);

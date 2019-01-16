@@ -78,7 +78,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -371,13 +371,13 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 
 	@Override
 	public boolean isValidNotificationId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean isValidNotificationName(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

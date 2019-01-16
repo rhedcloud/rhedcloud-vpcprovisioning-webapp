@@ -9,7 +9,7 @@ public class NationalIdCardPojo extends SharedObject implements IsSerializable {
 	String imageUrl;
 
 	public NationalIdCardPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getValue() {

@@ -12,7 +12,7 @@ public class RoleAssignmentQueryFilterPojo extends SharedObject implements IsSer
 	UserAccountPojo userLoggedIn;
 
 	public RoleAssignmentQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getRoleDN() {

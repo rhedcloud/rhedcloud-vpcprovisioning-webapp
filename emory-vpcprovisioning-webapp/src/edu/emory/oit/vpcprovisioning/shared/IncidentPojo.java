@@ -32,7 +32,7 @@ public class IncidentPojo extends SharedObject implements IsSerializable, Compar
 	IncidentPojo baseline;
 	
 	public IncidentPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getNumber() {

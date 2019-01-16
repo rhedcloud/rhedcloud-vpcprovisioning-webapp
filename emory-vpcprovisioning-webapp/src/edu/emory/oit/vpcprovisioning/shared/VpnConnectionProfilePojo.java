@@ -14,7 +14,7 @@ public class VpnConnectionProfilePojo extends SharedObject implements IsSerializ
 	boolean assigned;
 	
 	public VpnConnectionProfilePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getVpnConnectionProfileId() {

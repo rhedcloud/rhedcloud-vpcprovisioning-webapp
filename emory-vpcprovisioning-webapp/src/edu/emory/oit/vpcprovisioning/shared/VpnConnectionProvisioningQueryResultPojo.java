@@ -11,7 +11,7 @@ public class VpnConnectionProvisioningQueryResultPojo extends SharedObject imple
 	VpnConnectionProvisioningQueryFilterPojo filterUsed;
 	
 	public VpnConnectionProvisioningQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<VpnConnectionProvisioningSummaryPojo> getResults() {

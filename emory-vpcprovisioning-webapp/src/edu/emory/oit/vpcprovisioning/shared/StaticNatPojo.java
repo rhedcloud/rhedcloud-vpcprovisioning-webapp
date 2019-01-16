@@ -8,7 +8,7 @@ public class StaticNatPojo extends SharedObject implements IsSerializable {
 	String privateIp;
 	
 	public StaticNatPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getPublicIp() {

@@ -567,19 +567,19 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setAccountIdViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setAccountNameViolation(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -692,7 +692,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -728,7 +728,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	@Override
@@ -865,7 +865,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void setRoleAssignmentSummaries(List<RoleAssignmentSummaryPojo> summaries) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -939,22 +939,22 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -1206,12 +1206,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -1224,7 +1224,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 }

@@ -10,7 +10,7 @@ public class ServiceSecurityAssessmentQueryResultPojo extends SharedObject imple
 	List<ServiceSecurityAssessmentPojo> results = new java.util.ArrayList<ServiceSecurityAssessmentPojo>();
 
 	public ServiceSecurityAssessmentQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ServiceSecurityAssessmentQueryFilterPojo getFilterUsed() {

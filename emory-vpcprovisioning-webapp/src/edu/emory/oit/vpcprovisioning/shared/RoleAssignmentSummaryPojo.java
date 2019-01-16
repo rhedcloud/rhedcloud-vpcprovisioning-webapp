@@ -16,7 +16,7 @@ public class RoleAssignmentSummaryPojo extends SharedObject implements IsSeriali
 	};
 
 	public RoleAssignmentSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public RoleAssignmentPojo getRoleAssignment() {

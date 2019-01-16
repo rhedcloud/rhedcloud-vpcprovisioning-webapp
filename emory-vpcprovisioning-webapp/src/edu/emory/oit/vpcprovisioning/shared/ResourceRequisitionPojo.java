@@ -10,7 +10,7 @@ public class ResourceRequisitionPojo extends SharedObject implements IsSerializa
 	EntitlementPojo entitlement;
 
 	public ResourceRequisitionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getResourceName() {

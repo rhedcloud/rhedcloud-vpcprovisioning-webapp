@@ -70,7 +70,7 @@ public class StaticNatProvisioningStatusPresenter extends PresenterBase implemen
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -299,13 +299,13 @@ public class StaticNatProvisioningStatusPresenter extends PresenterBase implemen
 
 	@Override
 	public void deleteStaticNatProvisioning() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void deleteStaticNatDeprovisioning() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

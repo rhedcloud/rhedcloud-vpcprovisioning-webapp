@@ -9,7 +9,7 @@ public class StaticNatProvisioningQueryFilterPojo extends SharedObject implement
 	String type;
 
 	public StaticNatProvisioningQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getProvisioningId() {

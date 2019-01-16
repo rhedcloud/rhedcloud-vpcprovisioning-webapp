@@ -58,7 +58,7 @@ public class MaintainVpnConnectionProfileAssignmentPresenter extends PresenterBa
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
@@ -136,7 +136,7 @@ public class MaintainVpnConnectionProfileAssignmentPresenter extends PresenterBa
 	
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
@@ -145,7 +145,7 @@ public class MaintainVpnConnectionProfileAssignmentPresenter extends PresenterBa
 	}
 	@Override
 	public void deleteVpnConnectionProfileAssignment() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override

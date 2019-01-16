@@ -10,7 +10,7 @@ public class ResourceQueryResultPojo extends SharedObject implements IsSerializa
 	List<ResourcePojo> results = new java.util.ArrayList<ResourcePojo>();
 
 	public ResourceQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ResourceQueryFilterPojo getFilterUsed() {

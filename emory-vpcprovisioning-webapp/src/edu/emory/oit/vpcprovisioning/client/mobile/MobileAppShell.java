@@ -190,139 +190,139 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void setReleaseInfo(ReleaseInfo releaseInfo) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setUserName(String userName) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showOtherFeaturesPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void hideOtherFeaturesPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showMainTabPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void hideMainTabPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showMessageToUser(String message) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showPleaseWaitDialog(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void hidePleaseWaitDialog() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void hidePleaseWaitPanel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void clearNotifications() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setUserProfile(UserProfilePojo profile) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public UserProfilePojo getUserProfile() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void startNotificationTimer() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void initializeAwsServiceMap() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void initializeUserProfile() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void validateTermsOfUse() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void lockView(String errorInformation) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public ReleaseInfo getReleaseInfo() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void showNetworkAdminTabs() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void showAuditorTabs() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

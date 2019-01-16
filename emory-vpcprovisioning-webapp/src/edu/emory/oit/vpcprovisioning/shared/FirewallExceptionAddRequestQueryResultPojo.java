@@ -10,7 +10,7 @@ public class FirewallExceptionAddRequestQueryResultPojo extends SharedObject imp
 	List<FirewallExceptionAddRequestPojo> results;
 
 	public FirewallExceptionAddRequestQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public FirewallExceptionAddRequestQueryFilterPojo getFilterUsed() {

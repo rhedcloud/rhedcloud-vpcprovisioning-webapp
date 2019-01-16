@@ -9,7 +9,7 @@ public class FirewallRuleQueryFilterPojo extends SharedObject implements IsSeria
 	List<String> tags = new java.util.ArrayList<String>();
 
 	public FirewallRuleQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getTags() {

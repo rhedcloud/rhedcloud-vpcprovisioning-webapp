@@ -10,7 +10,7 @@ public class TermsOfUseQueryResultPojo extends SharedObject implements IsSeriali
 	List<TermsOfUsePojo> results = new java.util.ArrayList<TermsOfUsePojo>();
 
 	public TermsOfUseQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TermsOfUseQueryFilterPojo getFilterUsed() {

@@ -12,7 +12,7 @@ public class RoleAssignmentRequisitionPojo extends SharedObject implements IsSer
 	RoleDNsPojo roleDNs; 
 
 	public RoleAssignmentRequisitionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getActionType() {

@@ -12,7 +12,7 @@ public class LocationPojo extends SharedObject implements IsSerializable {
 	 */
 
 	public LocationPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

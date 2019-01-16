@@ -37,7 +37,7 @@ public class SecurityRiskPojo extends SharedObject implements IsSerializable {
 	List<CounterMeasurePojo> couterMeasures = new java.util.ArrayList<CounterMeasurePojo>();
 	
 	public SecurityRiskPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getSecurityRiskId() {

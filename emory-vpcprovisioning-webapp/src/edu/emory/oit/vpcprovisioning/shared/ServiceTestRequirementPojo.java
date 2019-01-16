@@ -23,7 +23,7 @@ public class ServiceTestRequirementPojo extends SharedObject implements IsSerial
 		}
 	};
 	public ServiceTestRequirementPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getServiceTestRequirementId() {

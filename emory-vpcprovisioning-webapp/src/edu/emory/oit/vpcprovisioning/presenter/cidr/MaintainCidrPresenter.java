@@ -52,7 +52,7 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -77,7 +77,7 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
@@ -214,7 +214,7 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 
 			@Override
 			public void onSuccess(CidrPojo result) {
-				// TODO Auto-generated method stub
+				
 				
 				getView().hidePleaseWaitDialog();
 				ActionEvent.fire(eventBus, ActionNames.CIDR_SAVED, result);
@@ -237,13 +237,13 @@ public class MaintainCidrPresenter extends PresenterBase implements MaintainCidr
 
 	@Override
 	public boolean isValidNetwork(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean isValidBits(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

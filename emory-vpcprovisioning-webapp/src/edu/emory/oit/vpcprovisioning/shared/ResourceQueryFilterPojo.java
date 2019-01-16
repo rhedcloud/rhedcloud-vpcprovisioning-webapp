@@ -7,7 +7,7 @@ public class ResourceQueryFilterPojo extends SharedObject implements IsSerializa
 	String resourceDN;
 
 	public ResourceQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getResourceDN() {

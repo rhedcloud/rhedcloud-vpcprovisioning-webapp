@@ -23,7 +23,7 @@ public class VpnConnectionProvisioningSummaryPojo extends SharedObject implement
 	};
 
 	public VpnConnectionProvisioningSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override

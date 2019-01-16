@@ -17,7 +17,7 @@ public class UserAccountPojo implements IsSerializable {
 	String authUserIdForHALS;
 
 	public UserAccountPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getFullName() {

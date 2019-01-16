@@ -32,7 +32,7 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 
 	@Override
 	public int compareTo(AccountPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

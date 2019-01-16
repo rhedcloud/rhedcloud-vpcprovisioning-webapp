@@ -11,7 +11,7 @@ public class RoleLevelPojo extends SharedObject implements IsSerializable {
 	String container;
 
 	public RoleLevelPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getName() {

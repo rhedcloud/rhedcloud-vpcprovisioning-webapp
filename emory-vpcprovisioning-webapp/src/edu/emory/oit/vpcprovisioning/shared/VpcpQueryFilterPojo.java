@@ -17,7 +17,7 @@ public class VpcpQueryFilterPojo extends SharedObject implements IsSerializable,
 	String searchString;
 
 	public VpcpQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getProvisioningId() {

@@ -14,12 +14,12 @@ public class ServiceRequestPojo extends SharedObject implements IsSerializable, 
 		}
 	};
 	public ServiceRequestPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(ServiceRequestPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

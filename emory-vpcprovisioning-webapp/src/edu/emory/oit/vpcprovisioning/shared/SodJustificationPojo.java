@@ -9,7 +9,7 @@ public class SodJustificationPojo extends SharedObject implements IsSerializable
 	String sodDN;
 
 	public SodJustificationPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getJustification() {

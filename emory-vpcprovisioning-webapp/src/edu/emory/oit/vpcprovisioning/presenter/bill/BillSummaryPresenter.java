@@ -155,7 +155,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 
 	@Override
 	public void selectBill(BillPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -200,7 +200,7 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 
 	@Override
 	public BillQueryFilterPojo getFilter() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -211,13 +211,13 @@ public class BillSummaryPresenter extends PresenterBase implements BillSummaryVi
 
 	@Override
 	public BillPojo getBill() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void setBill(BillPojo bill) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

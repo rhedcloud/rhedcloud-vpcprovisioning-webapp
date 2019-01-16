@@ -15,7 +15,7 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable, 
 //	String lastUpdateUser;
 
 	public VpcQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getAccountId() {

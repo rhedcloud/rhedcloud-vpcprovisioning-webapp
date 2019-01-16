@@ -85,7 +85,7 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

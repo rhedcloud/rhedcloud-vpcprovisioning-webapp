@@ -7,7 +7,7 @@ public class ServiceRequestQueryFilterPojo extends SharedObject implements IsSer
 
 	public ServiceRequestQueryFilterPojo() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 }

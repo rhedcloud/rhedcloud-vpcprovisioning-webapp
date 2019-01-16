@@ -138,7 +138,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 					showMessageToUser("Please select an item from the list");
 					return;
 				}
-				// TODO: counter measure maintenance (see service test req, test, step
+				// counter measure maintenance (see service test req, test, step
 				presenter.maintainCounterMeasure(m);
 			}
 		});
@@ -180,7 +180,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@UiHandler ("createButton")
 	void createCounterMeasureClicked(ClickEvent e) {
-		// TODO: create a new coutermeasure
+		// create a new coutermeasure
 		populateRiskWithFormData();
 		presenter.createCounterMeasure();
 	}
@@ -211,7 +211,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 		presenter.getSecurityRisk().setSequenceNumber(Integer.parseInt(sequenceNumberTB.getText()));
 		presenter.getSecurityRisk().setAssessmentDate(assessmentDB.getValue());
 		
-		// TODO: countermeasures are added as they're filled out.
+		// countermeasures are added as they're filled out.
 	}
 
 	private void registerHandlers() {
@@ -233,7 +233,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@Override
 	public void showPleaseWaitPanel(String pleaseWaitHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -248,7 +248,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -295,7 +295,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@Override
 	public List<Widget> getMissingRequiredFields() {
-		// TODO Auto-generated method stub
+		
 		/*
 		ServiceId, 
 		SequenceNumber, 
@@ -343,25 +343,25 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -372,7 +372,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -390,7 +390,6 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
 			riskNameTB.setText(srp.getSecurityRiskName());
 			riskDescriptionTA.setText(srp.getDescription());
-			// TODO: this will have to be a lookup to get the name of the person
 			assessorLookupSB.setText(srp.getAssessorId());
 			assessmentDB.setValue(srp.getAssessmentDate());
 		}
@@ -403,7 +402,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -436,7 +435,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	@Override
 	public void setCounterMeasures(List<CounterMeasurePojo> counterMeasures) {
 		this.counterMeasureList = counterMeasures;
-		// TODO: initialize countermeasure table
+		// initialize countermeasure table
 		this.initializeListTable();
 		listPager.setDisplay(listTable);
 	}
@@ -447,7 +446,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	}
 
 	private Widget initializeListTable() {
-		GWT.log("initializing account notification list table...");
+		GWT.log("initializing counter measures table...");
 		listTable.setTableLayoutFixed(false);
 		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
@@ -483,7 +482,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 		return listTable;
 	}
 	private void initListTableColumns(ListHandler<CounterMeasurePojo> sortHandler) {
-		GWT.log("initializing counter measure list table columns...");
+		GWT.log("initializing counter measure columns...");
 
 		Column<CounterMeasurePojo, Boolean> checkColumn = new Column<CounterMeasurePojo, Boolean>(
 				new CheckboxCell(true, false)) {
@@ -596,18 +595,18 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	}
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -757,7 +756,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				if (!isEdit) {
 					presenter.getSecurityRisk().getCouterMeasures().add(selected);
 				}
-				// TODO: need to save the assessment and refresh the security risk maintenance page
+				// need to save the assessment and refresh the security risk maintenance page
 				// NOT go all the way back to the assessment maintenance page
 				presenter.saveAssessment(false);
 				

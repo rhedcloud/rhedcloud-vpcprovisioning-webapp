@@ -24,7 +24,7 @@ public class FirewallExceptionRemoveRequestQueryFilterPojo extends SharedObject 
 	List<String> tags = new java.util.ArrayList<String>();
 
 	public FirewallExceptionRemoveRequestQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getSystemId() {

@@ -68,7 +68,7 @@ public class CounterMeasurePojo extends SharedObject implements IsSerializable, 
 
 	@Override
 	public int compareTo(CounterMeasurePojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

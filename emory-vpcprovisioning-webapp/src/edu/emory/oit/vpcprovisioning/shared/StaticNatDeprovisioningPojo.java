@@ -18,7 +18,7 @@ public class StaticNatDeprovisioningPojo extends SharedObject implements IsSeria
 	StaticNatDeprovisioningPojo baseline;
 	
 	public StaticNatDeprovisioningPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public int getTotalStepCount() {

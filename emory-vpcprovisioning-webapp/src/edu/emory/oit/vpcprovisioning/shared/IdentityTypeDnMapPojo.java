@@ -11,7 +11,7 @@ public class IdentityTypeDnMapPojo extends SharedObject implements IsSerializabl
 	String identityType;
 
 	public IdentityTypeDnMapPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public List<String> getDistinguishedNames() {

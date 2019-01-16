@@ -38,7 +38,7 @@ public class IncidentQueryFilterPojo extends SharedObject implements IsSerializa
 	String incidentState;
 
 	public IncidentQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getNumber() {

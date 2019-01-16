@@ -67,7 +67,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -218,13 +218,13 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 
 	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -235,7 +235,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 
 	@Override
 	public void selectVpnConnectionProvisioning(VpnConnectionProvisioningPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

@@ -34,7 +34,7 @@ public class PersonPojo extends SharedObject implements IsSerializable {
 	boolean locationRestricted;
 
 	public PersonPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getPublicId() {

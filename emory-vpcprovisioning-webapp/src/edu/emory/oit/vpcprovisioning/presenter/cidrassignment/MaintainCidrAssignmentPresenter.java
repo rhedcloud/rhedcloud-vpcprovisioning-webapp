@@ -85,7 +85,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -283,7 +283,7 @@ public class MaintainCidrAssignmentPresenter extends PresenterBase implements Ma
 
 	@Override
 	public boolean isValidCidr(CidrPojo cidr) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

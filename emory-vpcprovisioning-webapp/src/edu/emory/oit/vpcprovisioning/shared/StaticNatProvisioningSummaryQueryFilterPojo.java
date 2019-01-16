@@ -9,7 +9,7 @@ public class StaticNatProvisioningSummaryQueryFilterPojo extends SharedObject im
 	StaticNatDeprovisioningQueryFilterPojo deProvisionedFilter;
 
 	public StaticNatProvisioningSummaryQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public StaticNatProvisioningQueryFilterPojo getProvisionedFilter() {

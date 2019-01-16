@@ -9,7 +9,7 @@ public class FirewallExceptionRequestSummaryPojo extends SharedObject implements
 	FirewallExceptionRemoveRequestPojo removeRequest;
 
 	public FirewallExceptionRequestSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static final ProvidesKey<FirewallExceptionRequestSummaryPojo> KEY_PROVIDER = new ProvidesKey<FirewallExceptionRequestSummaryPojo>() {

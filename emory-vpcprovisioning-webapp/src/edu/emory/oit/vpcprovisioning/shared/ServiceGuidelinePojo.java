@@ -25,7 +25,7 @@ ServiceId, SequenceNumber, ServiceGuidelineName, Description, AssessorId, Assess
 	Date assessmentDate;
 	
 	public ServiceGuidelinePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getServiceId() {

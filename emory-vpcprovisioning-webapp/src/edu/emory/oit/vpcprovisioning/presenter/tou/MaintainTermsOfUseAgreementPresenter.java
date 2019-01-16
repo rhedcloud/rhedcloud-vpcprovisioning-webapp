@@ -58,7 +58,7 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -251,13 +251,13 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 
 	@Override
 	public boolean isValidTermsOfUseAgreementId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean isValidTermsOfUseAgreementName(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

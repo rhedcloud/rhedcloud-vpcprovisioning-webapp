@@ -77,7 +77,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -343,13 +343,13 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public boolean isValidAccountId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
 	@Override
 	public boolean isValidAccountName(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 
@@ -652,13 +652,13 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 
 	@Override
 	public void saveNotification(AccountNotificationPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void deleteNotification(AccountNotificationPojo selected) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

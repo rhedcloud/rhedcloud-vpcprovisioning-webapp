@@ -9,7 +9,7 @@ public class VpnConnectionProfileAssignmentQueryFilterPojo extends SharedObject 
 	String ownerId;
 
 	public VpnConnectionProfileAssignmentQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getVpnConnectionProfileId() {

@@ -10,7 +10,7 @@ public class TermsOfUseAgreementQueryResultPojo extends SharedObject implements 
 	List<TermsOfUseAgreementPojo> results = new java.util.ArrayList<TermsOfUseAgreementPojo>();
 
 	public TermsOfUseAgreementQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public TermsOfUseAgreementQueryFilterPojo getFilterUsed() {

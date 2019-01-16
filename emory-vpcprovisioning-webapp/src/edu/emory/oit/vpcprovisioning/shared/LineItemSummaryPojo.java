@@ -13,7 +13,7 @@ public class LineItemSummaryPojo extends SharedObject implements IsSerializable 
 	List<LineItemPojo> lineItems = new java.util.ArrayList<LineItemPojo>();
 
 	public LineItemSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getProductCode() {

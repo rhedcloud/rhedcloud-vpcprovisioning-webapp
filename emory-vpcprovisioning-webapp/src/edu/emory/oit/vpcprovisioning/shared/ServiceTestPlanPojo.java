@@ -13,7 +13,7 @@ public class ServiceTestPlanPojo extends SharedObject implements IsSerializable 
 	List<ServiceTestRequirementPojo> serviceTestRequirements = new java.util.ArrayList<ServiceTestRequirementPojo>();
 
 	public ServiceTestPlanPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getServiceId() {

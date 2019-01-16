@@ -65,7 +65,7 @@ SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastU
 	}
 	@Override
 	public int compareTo(SecurityRiskDetectionPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

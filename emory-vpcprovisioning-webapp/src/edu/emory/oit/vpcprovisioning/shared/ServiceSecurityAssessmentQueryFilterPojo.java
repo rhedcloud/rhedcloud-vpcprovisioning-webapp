@@ -14,7 +14,7 @@ ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, Securi
 	String serviceId;
 	
 	public ServiceSecurityAssessmentQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 

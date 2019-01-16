@@ -10,7 +10,7 @@ public class FirewallExceptionRequestSummaryQueryFilterPojo extends SharedObject
 	String vpcId;
 
 	public FirewallExceptionRequestSummaryQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public FirewallExceptionAddRequestQueryFilterPojo getAddRequestFilter() {

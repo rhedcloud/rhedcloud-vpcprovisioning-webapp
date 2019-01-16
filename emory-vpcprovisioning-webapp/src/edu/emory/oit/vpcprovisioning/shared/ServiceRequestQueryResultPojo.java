@@ -10,7 +10,7 @@ public class ServiceRequestQueryResultPojo extends SharedObject implements IsSer
 	List<ServiceRequestPojo> results;
 
 	public ServiceRequestQueryResultPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ServiceRequestQueryFilterPojo getFilterUsed() {

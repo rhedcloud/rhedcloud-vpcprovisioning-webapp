@@ -11,7 +11,7 @@ public class AccountProvisioningAuthorizationQueryFilterPojo extends SharedObjec
 	String userId;		// ppid
 
 	public AccountProvisioningAuthorizationQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getUserId() {

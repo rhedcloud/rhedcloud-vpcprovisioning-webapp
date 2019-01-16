@@ -28,12 +28,12 @@ public class SpeedChartPojo extends SharedObject implements IsSerializable, Comp
 	String euPcActStatFin;
 	
 	public SpeedChartPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(SpeedChartPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

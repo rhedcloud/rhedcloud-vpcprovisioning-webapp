@@ -22,7 +22,7 @@ public class VpnConnectionProfileSummaryPojo extends SharedObject implements IsS
 	};
 
 	public VpnConnectionProfileSummaryPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public VpnConnectionProfilePojo getProfile() {

@@ -12,7 +12,7 @@ public class ServiceOwnerPojo extends SharedObject implements IsSerializable {
 	PersonalNamePojo personalName;
 	
 	public ServiceOwnerPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getPublicId() {

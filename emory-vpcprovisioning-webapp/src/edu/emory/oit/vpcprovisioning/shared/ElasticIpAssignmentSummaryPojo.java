@@ -21,7 +21,7 @@ public class ElasticIpAssignmentSummaryPojo extends SharedObject implements IsSe
 
 	@Override
 	public int compareTo(ElasticIpAssignmentSummaryPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

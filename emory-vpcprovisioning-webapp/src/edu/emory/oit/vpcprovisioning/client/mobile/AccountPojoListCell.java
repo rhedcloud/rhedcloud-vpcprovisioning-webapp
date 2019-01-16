@@ -9,7 +9,7 @@ public class AccountPojoListCell extends AbstractCell<AccountPojo> {
 
 	@Override
 	public void render(com.google.gwt.cell.client.Cell.Context context, AccountPojo value, SafeHtmlBuilder sb) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

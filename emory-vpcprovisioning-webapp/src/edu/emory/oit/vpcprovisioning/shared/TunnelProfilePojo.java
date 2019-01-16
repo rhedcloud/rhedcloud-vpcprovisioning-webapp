@@ -16,7 +16,7 @@ public class TunnelProfilePojo extends SharedObject implements IsSerializable {
 	String vpnInsideIpCidr2;
 	
 	public TunnelProfilePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public static final ProvidesKey<TunnelProfilePojo> KEY_PROVIDER = new ProvidesKey<TunnelProfilePojo>() {

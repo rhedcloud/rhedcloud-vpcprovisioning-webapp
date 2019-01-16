@@ -13,12 +13,12 @@ public class RolePojo extends SharedObject implements IsSerializable, Comparable
 	List<ResourcePojo> resources = new java.util.ArrayList<ResourcePojo>();
 
 	public RolePojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(RolePojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

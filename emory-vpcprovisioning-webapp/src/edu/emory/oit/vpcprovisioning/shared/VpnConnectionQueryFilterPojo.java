@@ -9,7 +9,7 @@ public class VpnConnectionQueryFilterPojo extends SharedObject implements IsSeri
 	String vpnId;
 
 	public VpnConnectionQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getVpcId() {

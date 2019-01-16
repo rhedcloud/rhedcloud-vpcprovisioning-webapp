@@ -18,12 +18,12 @@ public class FirewallExceptionRemoveRequestRequisitionPojo extends SharedObject 
 	FirewallExceptionRemoveRequestRequisitionPojo baseline;
 	
 	public FirewallExceptionRemoveRequestRequisitionPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(FirewallExceptionRemoveRequestRequisitionPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

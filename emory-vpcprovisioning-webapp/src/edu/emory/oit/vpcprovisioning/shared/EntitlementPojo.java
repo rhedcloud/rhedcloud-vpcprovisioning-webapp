@@ -9,12 +9,12 @@ public class EntitlementPojo extends SharedObject implements IsSerializable, Com
 	String entitlementApplication;
 
 	public EntitlementPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
 	public int compareTo(EntitlementPojo o) {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

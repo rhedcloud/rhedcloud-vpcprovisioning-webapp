@@ -29,7 +29,7 @@ public class NetworkIdentityPojo extends SharedObject implements IsSerializable 
 	boolean ancillary;
 	
 	public NetworkIdentityPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getValue() {

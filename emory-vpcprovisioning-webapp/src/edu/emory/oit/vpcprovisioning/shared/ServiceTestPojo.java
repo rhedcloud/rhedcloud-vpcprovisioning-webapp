@@ -24,7 +24,7 @@ public class ServiceTestPojo extends SharedObject implements IsSerializable {
 		}
 	};
 	public ServiceTestPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getServiceTestId() {

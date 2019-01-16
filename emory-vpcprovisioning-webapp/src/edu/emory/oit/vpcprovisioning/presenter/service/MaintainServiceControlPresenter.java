@@ -63,7 +63,7 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -249,7 +249,7 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 
 	@Override
 	public void setDirectoryMetaDataTitleOnWidget(String netId, Widget w) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 

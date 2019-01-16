@@ -66,7 +66,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 
 	@Override
 	public String mayStop() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -95,7 +95,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				// TODO Auto-generated method stub
+				
 				
 			}
 
@@ -270,7 +270,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 
 	@Override
 	public boolean isValidVpcId(String value) {
-		// TODO Auto-generated method stub
+		
 		return false;
 	}
 

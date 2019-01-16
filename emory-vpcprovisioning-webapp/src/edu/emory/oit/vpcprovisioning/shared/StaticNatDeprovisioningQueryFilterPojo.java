@@ -9,7 +9,7 @@ public class StaticNatDeprovisioningQueryFilterPojo extends SharedObject impleme
 	String type;
 
 	public StaticNatDeprovisioningQueryFilterPojo() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public String getProvisioningId() {
