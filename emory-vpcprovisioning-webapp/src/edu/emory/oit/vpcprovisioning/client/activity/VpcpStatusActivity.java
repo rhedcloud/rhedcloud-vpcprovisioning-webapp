@@ -1,14 +1,18 @@
 package edu.emory.oit.vpcprovisioning.client.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.ResettableEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.VpcpStatusEvent;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class VpcpStatusActivity extends AbstractActivity {
@@ -59,8 +63,30 @@ public class VpcpStatusActivity extends AbstractActivity {
 			}
 		});
 
-		presenter = startShowStatus(place.getVpcp());
-		container.setWidget(presenter);
+		if (place.getVpcp() == null) {
+			// go get it
+			AsyncCallback<VpcpQueryResultPojo> cb = new AsyncCallback<VpcpQueryResultPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onSuccess(VpcpQueryResultPojo result) {
+					VpcpPojo vpcp = result.getResults().get(0);
+					presenter = startShowStatus(vpcp);
+					container.setWidget(presenter);
+				}
+			};
+			VpcpQueryFilterPojo filter = new VpcpQueryFilterPojo();
+			filter.setProvisioningId(place.getProvisioningId());
+			VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, cb);
+		}
+		else {
+			presenter = startShowStatus(place.getVpcp());
+			container.setWidget(presenter);
+		}
 	}
 
 	private PresentsWidgets startShowStatus(VpcpPojo vpcp) {

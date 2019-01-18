@@ -174,18 +174,38 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 		else {
 			if (hash.trim().equals("#" + Constants.LIST_ACCOUNT + ":")) {
-				GWT.log("Need to go to Account Maintenance tab");
+				GWT.log("Need to go to Account Maintenance (list) tab");
+				mainTabPanel.selectTab(1);
+			}
+			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ACCOUNT + ":")) >= 0) {
+				GWT.log("Need to go to Account Maintenance (maintain) tab");
 				mainTabPanel.selectTab(1);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPC + ":")) {
 				GWT.log("Need to go to VPC Maintenance tab");
 				mainTabPanel.selectTab(2);
 			}
+			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPC + ":")) >= 0) {
+				GWT.log("Need to go to VPC Maintenance (maintain) tab");
+				mainTabPanel.selectTab(2);
+			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPCP + ":")) {
 				GWT.log("Need to go to VPCP Maintenance tab");
 				mainTabPanel.selectTab(3);
 			}
+			else if (hash.trim().indexOf(("#" + Constants.VPCP_STATUS + ":")) >= 0) {
+				GWT.log("Need to go to VPCP Maintenance tab");
+				mainTabPanel.selectTab(3);
+			}
 			else if (hash.trim().equals("#" + Constants.LIST_SERVICES + ":")) {
+				GWT.log("Need to go to Services tab");
+				mainTabPanel.selectTab(4);
+			}
+			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SERVICE + ":")) >= 0) {
+				GWT.log("Need to go to Services tab");
+				mainTabPanel.selectTab(4);
+			}
+			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SECURITY_ASSESSMENT + ":")) >= 0) {
 				GWT.log("Need to go to Services tab");
 				mainTabPanel.selectTab(4);
 			}
@@ -197,7 +217,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("Need to go to Elastic IP tab");
 				mainTabPanel.selectTab(6);
 			}
+			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ELASTIC_IP + ":")) >= 0) {
+				GWT.log("Need to go to Elastic IP tab");
+				mainTabPanel.selectTab(6);
+			}
 			else if (hash.trim().equals("#" + Constants.LIST_STATIC_NAT + ":")) {
+				GWT.log("Need to go to Static Nat tab");
+				mainTabPanel.selectTab(7);
+			}
+			// TODO: this one isn't really working yet...the activity isn't working
+			else if (hash.trim().indexOf(("#" + Constants.STATIC_NAT_STAUS + ":")) >= 0) {
 				GWT.log("Need to go to Static Nat tab");
 				mainTabPanel.selectTab(7);
 			}
@@ -205,7 +234,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("Need to go to VPN Connection tab");
 				mainTabPanel.selectTab(8);
 			}
+			else if (hash.trim().indexOf(("#" + Constants.VPNC_STATUS + ":")) >= 0) {
+				GWT.log("Need to go to VPN Connection tab");
+				mainTabPanel.selectTab(8);
+			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION_PROFILE + ":")) {
+				GWT.log("Need to go to VPN Profile tab");
+				mainTabPanel.selectTab(9);
+			}
+			// this one is irrelevant because it's maintained in a dialog box
+			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPN_CONNECTION_PROFILE + ":")) >= 0) {
 				GWT.log("Need to go to VPN Profile tab");
 				mainTabPanel.selectTab(9);
 			}

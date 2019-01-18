@@ -1,14 +1,18 @@
 package edu.emory.oit.vpcprovisioning.client.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.ResettableEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.EditVpcEvent;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class MaintainVpcActivity extends AbstractActivity {
@@ -61,10 +65,33 @@ public class MaintainVpcActivity extends AbstractActivity {
 
 		if (place.getVpcId() == null) {
 			presenter = startCreate();
+			container.setWidget(presenter);
 		} else {
-			presenter = startEdit(place.getVpc());
+			if (place.getVpc() == null) {
+				// TODO: go get it
+				AsyncCallback<VpcQueryResultPojo> cb = new AsyncCallback<VpcQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(VpcQueryResultPojo result) {
+						VpcPojo vpc = result.getResults().get(0);
+						presenter = startEdit(vpc);
+						container.setWidget(presenter);
+					}
+				};
+				VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
+				filter.setVpcId(place.getVpcId());
+				VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, cb);
+			}
+			else {
+				presenter = startEdit(place.getVpc());
+				container.setWidget(presenter);
+			}
 		}
-		container.setWidget(presenter);
 	}
 
 	private PresentsWidgets startCreate() {

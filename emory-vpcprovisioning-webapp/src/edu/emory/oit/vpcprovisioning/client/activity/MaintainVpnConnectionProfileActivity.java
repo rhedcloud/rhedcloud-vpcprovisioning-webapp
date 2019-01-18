@@ -1,14 +1,18 @@
 package edu.emory.oit.vpcprovisioning.client.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.ResettableEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.EditVpnConnectionProfileEvent;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class MaintainVpnConnectionProfileActivity extends AbstractActivity {
@@ -61,10 +65,33 @@ public class MaintainVpnConnectionProfileActivity extends AbstractActivity {
 
 		if (place.getVpnConnectionProfileId() == null) {
 			presenter = startCreate();
-		} else {
-			presenter = startEdit(place.getVpnConnectionProfile());
+			container.setWidget(presenter);
+		} 
+		else {
+			if (place.getVpnConnectionProfile() == null) {
+				// go get it
+				AsyncCallback<VpnConnectionProfileQueryResultPojo> cb = new AsyncCallback<VpnConnectionProfileQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(VpnConnectionProfileQueryResultPojo result) {
+						presenter = startEdit(result.getResults().get(0).getProfile());
+						container.setWidget(presenter);
+					}
+				};
+				VpnConnectionProfileQueryFilterPojo filter = new VpnConnectionProfileQueryFilterPojo();
+				filter.setVpnConnectionProfileId(place.getVpnConnectionProfileId());
+				VpcProvisioningService.Util.getInstance().getVpnConnectionProfilesForFilter(filter, cb);
+			}
+			else {
+				presenter = startEdit(place.getVpnConnectionProfile());
+				container.setWidget(presenter);
+			}
 		}
-		container.setWidget(presenter);
 	}
 
 	private PresentsWidgets startCreate() {

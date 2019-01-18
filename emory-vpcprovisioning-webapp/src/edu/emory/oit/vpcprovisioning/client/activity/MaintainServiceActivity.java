@@ -1,14 +1,18 @@
 package edu.emory.oit.vpcprovisioning.client.activity;
 
 import com.google.gwt.activity.shared.AbstractActivity;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.ResettableEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.EditServiceEvent;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class MaintainServiceActivity extends AbstractActivity {
@@ -61,10 +65,34 @@ public class MaintainServiceActivity extends AbstractActivity {
 
 		if (place.getServiceId() == null) {
 			presenter = startCreate();
-		} else {
-			presenter = startEdit(place.getService());
+			container.setWidget(presenter);
+		} 
+		else {
+			if (place.getService() == null) {
+				// go get it
+				AsyncCallback<AWSServiceQueryResultPojo> cb = new AsyncCallback<AWSServiceQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						// TODO Auto-generated method stub
+						
+					}
+
+					@Override
+					public void onSuccess(AWSServiceQueryResultPojo result) {
+						AWSServicePojo pojo = result.getResults().get(0);
+						presenter = startEdit(pojo);
+						container.setWidget(presenter);
+					}
+				};
+				AWSServiceQueryFilterPojo filter = new AWSServiceQueryFilterPojo();
+				filter.setServiceId(place.getServiceId());
+				VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, cb);
+			}
+			else {
+				presenter = startEdit(place.getService());
+				container.setWidget(presenter);
+			}
 		}
-		container.setWidget(presenter);
 	}
 
 	private PresentsWidgets startCreate() {

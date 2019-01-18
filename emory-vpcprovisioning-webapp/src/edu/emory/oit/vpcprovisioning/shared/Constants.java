@@ -198,4 +198,13 @@ public class Constants implements IsSerializable {
 	public static final String PROVISIONING_STEP_EXECUTION_METHOD_SIMULATED = "simulated";
 	public static final String FILTER_ACCT_ID = "Account Id";
 	public static final String FILTER_ACCT_NAME = "Account Name";
+	public static final String MAINTAIN_ACCOUNT = "maintainAccount";
+	public static final String MAINTAIN_VPC = "maintainVpc";
+	public static final String VPCP_STATUS = "vpcpStatus";
+	public static final String MAINTAIN_SERVICE = "maintainService";
+	public static final String MAINTAIN_SECURITY_ASSESSMENT = "maintainSecurityAssessment";
+	public static final String MAINTAIN_ELASTIC_IP = "maintainElasticIp";
+	public static final String STATIC_NAT_STAUS = "staticNatStatus";
+	public static final String VPNC_STATUS = "vpncpStatus";
+	public static final String MAINTAIN_VPN_CONNECTION_PROFILE = "maintainVpnConnectionProfile";
 }

@@ -423,7 +423,11 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				// if one exists...
 				String s_seq1 = extractNumberFromString(o1.getAccountName());
 				String s_seq2 = extractNumberFromString(o2.getAccountName());
-				if (s_seq1.length() == 0 || s_seq2.length() == 0) {
+				if (s_seq1 == null || 
+					s_seq1.length() == 0 || 
+					s_seq2 == null || 
+					s_seq2.length() == 0) {
+					
 					return o1.getAccountName().compareTo(o2.getAccountName());
 				}
 				else {
