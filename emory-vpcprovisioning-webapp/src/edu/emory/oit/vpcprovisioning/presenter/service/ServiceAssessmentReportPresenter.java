@@ -358,6 +358,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 					else {
 						sbView.append("<h4>No assessment performed yet</h4>");
 					}
+					sbView.append("<hr>");
 				}
 				getView().setAssessmentReportToView(sbView.toString());
 		        getView().hidePleaseWaitDialog();

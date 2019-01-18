@@ -117,7 +117,7 @@
 					</g:row>
 				</g:Grid>
 			</g:cell>
-			<g:VerticalPanel addStyleNames="{style.statusLabel}" width="100%">
+			<g:VerticalPanel addStyleNames="{style.statusPanel}" width="100%">
 				<g:HTML ui:field="counterMeasuresHeader" addStyleNames="{style.mediumLabel}">Counter Measures</g:HTML>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 					<g:Grid cellSpacing="12">
