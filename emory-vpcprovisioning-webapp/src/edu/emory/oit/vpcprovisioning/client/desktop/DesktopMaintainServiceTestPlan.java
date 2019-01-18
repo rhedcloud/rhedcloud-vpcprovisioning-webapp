@@ -530,10 +530,6 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			initRequirementListTableColumns(sortHandler);
 		}
 		
-		// default sort
-		reqmtListTable.getColumnSortList().push(reqmtListTable.getColumn(1));
-		reqmtListTable.getColumnSortList().push(reqmtListTable.getColumn(1));
-		ColumnSortEvent.fire(reqmtListTable, reqmtListTable.getColumnSortList());
 		return reqmtListTable;
 	}
 	
@@ -612,6 +608,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		GWT.log("[DesktopMaintainServiceTestPlanView.setSteps] there are " + tests.size() + " tests in the selected requirement.");
 		this.initializeTestListTable();
 		testListPager.setDisplay(testListTable);
+		// default sort
+		testListTable.getColumnSortList().push(testListTable.getColumn(1));
+		testListTable.getColumnSortList().push(testListTable.getColumn(1));
+		ColumnSortEvent.fire(testListTable, testListTable.getColumnSortList());
 		presenter.setSelectedTest(null);
 		presenter.refreshStepList(userLoggedIn);
 	}
@@ -653,11 +653,24 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		if (testListTable.getColumnCount() == 0) {
 			initTestListTableColumns(sortHandler);
 		}
+		else {
+			// just apply the sorting stuff to the sequence column
+			@SuppressWarnings("unchecked")
+			Column<ServiceTestPojo, String> seqCol = (Column<ServiceTestPojo, String>) testListTable.getColumn(1);
+			seqCol.setSortable(true);
+			sortHandler.setComparator(seqCol, new Comparator<ServiceTestPojo>() {
+				public int compare(ServiceTestPojo o1, ServiceTestPojo o2) {
+					if (o1.getSequenceNumber() == o2.getSequenceNumber()) {
+						return 0;
+					}
+					if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
+						return -1;
+					}
+					return 1;
+				}
+			});
+		}
 		
-		// default sort
-		testListTable.getColumnSortList().push(testListTable.getColumn(1));
-		testListTable.getColumnSortList().push(testListTable.getColumn(1));
-		ColumnSortEvent.fire(testListTable, testListTable.getColumnSortList());
 		return testListTable;
 	}
 
@@ -696,13 +709,6 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return 1;
 			}
 		});
-//		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
-//	    	@Override
-//	    	public void update(int index, ServiceTestPojo object, String value) {
-//	    		presenter.maintainTest(object);
-//	    	}
-//	    });
-//		sequenceColumn.setCellStyleNames("tableAnchor");
 		testListTable.addColumn(sequenceColumn, "Sequence Number");
 		
 		// description column
@@ -720,13 +726,6 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
-//		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestPojo, String>() {
-//	    	@Override
-//	    	public void update(int index, ServiceTestPojo object, String value) {
-//	    		presenter.maintainTest(object);
-//	    	}
-//	    });
-//		descColumn.setCellStyleNames("tableAnchor");
 		testListTable.addColumn(descColumn, "Description");
 
 		// expected result column
@@ -753,6 +752,10 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		GWT.log("[DesktopMaintainServiceTestPlanView.setSteps] there are " + steps.size() + " steps in the selected test.");
 		this.initializeTestStepListTable();
 		stepListPager.setDisplay(stepListTable);
+		// default sort
+		stepListTable.getColumnSortList().push(stepListTable.getColumn(1));
+		stepListTable.getColumnSortList().push(stepListTable.getColumn(1));
+		ColumnSortEvent.fire(stepListTable, stepListTable.getColumnSortList());
 		presenter.setSelectedTestStep(null);
 	}
 
@@ -792,11 +795,24 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		if (stepListTable.getColumnCount() == 0) {
 			initStepListTableColumns(sortHandler);
 		}
-		
-		// default sort
-		stepListTable.getColumnSortList().push(stepListTable.getColumn(1));
-		stepListTable.getColumnSortList().push(stepListTable.getColumn(1));
-		ColumnSortEvent.fire(stepListTable, stepListTable.getColumnSortList());
+		else {
+			// just apply the sorting stuff
+			@SuppressWarnings("unchecked")
+			Column<ServiceTestStepPojo, String> seqCol = (Column<ServiceTestStepPojo, String>) stepListTable.getColumn(1);
+			seqCol.setSortable(true);
+			sortHandler.setComparator(seqCol, new Comparator<ServiceTestStepPojo>() {
+				public int compare(ServiceTestStepPojo o1, ServiceTestStepPojo o2) {
+					if (o1.getSequenceNumber() == o2.getSequenceNumber()) {
+						return 0;
+					}
+					if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
+						return -1;
+					}
+					return 1;
+				}
+			});
+		}
+
 		return stepListTable;
 	}
 
@@ -835,13 +851,6 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return 1;
 			}
 		});
-//		sequenceColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
-//	    	@Override
-//	    	public void update(int index, ServiceTestStepPojo object, String value) {
-//	    		presenter.maintainStep(object);
-//	    	}
-//	    });
-//		sequenceColumn.setCellStyleNames("tableAnchor");
 		stepListTable.addColumn(sequenceColumn, "Sequence Number");
 		
 		// description column
@@ -859,13 +868,6 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				return o1.getDescription().compareTo(o2.getDescription());
 			}
 		});
-//		descColumn.setFieldUpdater(new FieldUpdater<ServiceTestStepPojo, String>() {
-//	    	@Override
-//	    	public void update(int index, ServiceTestStepPojo object, String value) {
-//	    		presenter.maintainStep(object);
-//	    	}
-//	    });
-//		descColumn.setCellStyleNames("tableAnchor");
 		stepListTable.addColumn(descColumn, "Description");
 	}
 

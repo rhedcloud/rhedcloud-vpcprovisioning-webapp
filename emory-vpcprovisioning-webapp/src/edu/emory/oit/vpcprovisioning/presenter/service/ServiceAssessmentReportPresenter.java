@@ -106,6 +106,8 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 				" services for user: " + 
 				personInfo + ".</h2>");
 		
+		// TODO: add some header content that describes what's in the report
+		
 		List<String> serviceIds = new java.util.ArrayList<String>();
 		for (final AWSServicePojo svc : serviceList) {
 			serviceIds.add(svc.getServiceId());
@@ -226,7 +228,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 										sbView.append("</td>");
 									}
 									else {
-										sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">No Counter Measures documented</td>");
+										sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">No Counter Measures documented.  NOTE:  These may be documented as Security Controls.</td>");
 									}
 									// end counter measures
 									
@@ -263,7 +265,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 							sbView.append("</table>");
 						}
 						else {
-							sbView.append("<h4>No Security Controls Documented</h4>");
+							sbView.append("<h4>No Security Controls Documented.  NOTE:  These may be documented as Security Risk Counter Measures.</h4>");
 						}
 						
 						// security guidelines
