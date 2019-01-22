@@ -102,11 +102,16 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 		
 		final StringBuffer sbView = new StringBuffer();
 		String personInfo = userLoggedIn.getFullName() + " (" + userLoggedIn.getPublicId() + ")";
-		sbView.append("<h2>Assessment report for " + serviceList.size() + 
-				" services for user: " + 
-				personInfo + ".</h2>");
+		sbView.append("<h2>AWS Service Inventory and Security Risk Assessment Report</h2>");
 		
-		// TODO: add some header content that describes what's in the report
+		// add some header content that describes what's in the report
+		sbView.append("<h3>The following report describes each AWS Service and provides security risk "
+				+ "assessment details.  The assessment may include:<ul><li>Security Risks and any counter "
+				+ "measures associated to that risk</li><li>Controls that have been put in place to "
+				+ "mitigate the risk</li><li>Guidelines that describe how the service should be used to avoid the "
+				+ "known risks</li><li>Test Plans that have been used to test any counter measures or "
+				+ "controls associated to the risks for a given service</li></ul>"
+				+ "The content in this report will change as more analysis and assessment data is entered.</h3>");
 		
 		List<String> serviceIds = new java.util.ArrayList<String>();
 		for (final AWSServicePojo svc : serviceList) {
