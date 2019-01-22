@@ -148,7 +148,10 @@ public class DirectoryPersonPojo extends SharedObject implements IsSerializable,
 
 	@Override
 	public int compareTo(DirectoryPersonPojo o) {
-		return o.getLastName().compareTo(this.getLastName());
+		if (o.getLastName() != null && this.getLastName() != null) {
+			return o.getLastName().compareTo(this.getLastName());
+		}
+		return 0;
 	}
 
 	@Override
