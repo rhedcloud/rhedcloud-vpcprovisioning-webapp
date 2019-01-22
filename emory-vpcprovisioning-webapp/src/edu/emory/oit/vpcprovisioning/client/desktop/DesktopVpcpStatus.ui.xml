@@ -120,11 +120,19 @@
 							<g:Label ui:field="vpcTypeLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">VPC Region:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="vpcRegionLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:Label ui:field="complianceClassLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
+					</g:row>
+					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
 				    	</g:customCell>

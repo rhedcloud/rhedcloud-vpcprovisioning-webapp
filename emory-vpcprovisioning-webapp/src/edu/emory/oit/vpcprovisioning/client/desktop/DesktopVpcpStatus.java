@@ -55,6 +55,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	@UiField Label ownerNetIdLabel;
 	@UiField Label speedTypeLabel;
 	@UiField Label vpcTypeLabel;
+	@UiField Label vpcRegionLabel;
 	@UiField Label complianceClassLabel;
 	@UiField Label notifyAdminsLabel;
 	@UiField Label purposeLabel;
@@ -220,6 +221,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		ownerNetIdLabel.setText(presenter.getVpcp().getVpcRequisition().getAccountOwnerUserId());
 		speedTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getSpeedType());
 		vpcTypeLabel.setText(presenter.getVpcp().getVpcRequisition().getType());
+		vpcRegionLabel.setText(presenter.getVpcp().getVpcRequisition().getRegion());
 		complianceClassLabel.setText(presenter.getVpcp().getVpcRequisition().getComplianceClass());
 		notifyAdminsLabel.setText(Boolean.toString(presenter.getVpcp().getVpcRequisition().isNotifyAdmins()));
 		purposeLabel.setText(presenter.getVpcp().getVpcRequisition().getPurpose());
