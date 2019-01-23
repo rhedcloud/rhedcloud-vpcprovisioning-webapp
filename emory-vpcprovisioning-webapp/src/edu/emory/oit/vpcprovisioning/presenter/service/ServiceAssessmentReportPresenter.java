@@ -179,7 +179,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 						imgString = "<img src=\"images/red-circle-white-x.png\" alt=\"Smiley face\" height=\"16\" width=\"16\">";
 					}
 					sbView.append("<tr><td>");
-					sbView.append("<b>Emory HIPPA Eligibility:</b>  " + svc.getSiteHipaaEligible());
+					sbView.append("<b>Emory HIPAA Eligibility:</b>  " + svc.getSiteHipaaEligible());
 					sbView.append("</td><td>" + imgString + "</td>");
 					sbView.append("</tr>");
 

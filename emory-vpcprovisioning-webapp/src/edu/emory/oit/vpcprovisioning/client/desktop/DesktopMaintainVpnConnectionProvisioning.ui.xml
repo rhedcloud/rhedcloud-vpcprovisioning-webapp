@@ -6,7 +6,7 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:VerticalPanel spacing="8" width="100%">
-		<g:Label addStyleNames="{style.mediumLabel}">Provision a new VPN Connection</g:Label>
+		<g:Label ui:field="headerLabel" addStyleNames="{style.mediumLabel}">Provision a new VPN Connection</g:Label>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="12">
 				<g:row>

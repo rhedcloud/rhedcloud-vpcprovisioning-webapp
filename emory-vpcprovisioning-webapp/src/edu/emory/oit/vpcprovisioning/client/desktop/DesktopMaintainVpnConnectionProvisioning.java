@@ -17,6 +17,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
@@ -72,6 +73,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
 	@UiField(provided=true) CellTable<TunnelProfilePojo> tunnelProfileTable = new CellTable<TunnelProfilePojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField Label headerLabel;
 	
 	@UiHandler ("vpcLB")
 	void vpcLbChanged(ChangeEvent e) {
@@ -527,5 +529,9 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	@Override
 	public void setReprovisioning(boolean isReprovision) {
 		this.reprovision = isReprovision;
+	}
+	@Override
+	public void setHeading(String heading) {
+		headerLabel.setText(heading);
 	}
 }

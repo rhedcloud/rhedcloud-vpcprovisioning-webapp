@@ -107,7 +107,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="awsHipaaEligibleCB" debugId="awsHippaEligibleCB" />
+								ui:field="awsHipaaEligibleCB" debugId="awsHipaaEligibleCB" />
 				    	</g:customCell>
 			    	</g:row>
 					<g:row>
@@ -116,7 +116,7 @@
 				    	</g:customCell>
 				    	<g:customCell>
 							<g:CheckBox addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="siteHipaaEligibleCB" debugId="siteHippaEligibleCB" />
+								ui:field="siteHipaaEligibleCB" debugId="siteHipaaEligibleCB" />
 				    	</g:customCell>
 			    	</g:row>
 				</g:Grid>

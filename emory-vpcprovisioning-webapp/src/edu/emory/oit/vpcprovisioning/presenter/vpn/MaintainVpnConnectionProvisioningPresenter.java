@@ -87,6 +87,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpcp) {
 		this.isEditing = true;
 		this.isRegen = false;
+		this.isDeprovision = false;
 		this.provisioningId = vpcp.getProvisioningId();
 		this.clientFactory = clientFactory;
 		this.vpncp = vpcp;
@@ -129,10 +130,13 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		
 		if (provisioningId == null) {
 			if (!isDeprovision) {
+				getView().setHeading("Provision a new VPN Connection");
 				clientFactory.getShell().setSubTitle("Generate VPNCP");
 				startCreate();
 			}
 			else {
+				// TODO: set the heading label
+				getView().setHeading("Deprovisiong a VPN Connection");
 				clientFactory.getShell().setSubTitle("Generate VPNCDP");
 				startCreate();
 			}
@@ -235,6 +239,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		}
 		else if (isRegen) {
 			GWT.log("[MaintainVpnConnectinProvisioningPresenter] it is a RE-PROVISION");
+			getView().setDeprovisioning(false);
 			getView().setReprovisioning(true);
 			vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
 			vpnConnectionRequisition.setProfile(this.getVpnConnectionProfile());

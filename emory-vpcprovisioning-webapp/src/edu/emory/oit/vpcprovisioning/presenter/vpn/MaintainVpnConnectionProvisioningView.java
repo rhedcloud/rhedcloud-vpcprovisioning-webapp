@@ -79,4 +79,5 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
 	void setVpcItems(List<VpcPojo> vpcs);
+	public void setHeading(String heading);
 }
