@@ -37,18 +37,18 @@ public class VpnConnectionDeprovisioningPojo extends SharedObject implements IsS
 		}
 		return cnt;
 	}
-//	public int getSuccessfullStepCount() {
-//		// if result is 'success' increment counter
-//		int successfulStepCount = 0;
-//		for (ProvisioningStepPojo step : provisioningSteps) {
-//			if (step.getStepResult() != null) {
-//				if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
-//					successfulStepCount++;
-//				}
-//			}
-//		}
-//		return successfulStepCount;
-//	}
+	public int getSuccessfullStepCount() {
+		// if result is 'success' increment counter
+		int successfulStepCount = 0;
+		for (ProvisioningStepPojo step : provisioningSteps) {
+			if (step.getStepResult() != null) {
+				if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+					successfulStepCount++;
+				}
+			}
+		}
+		return successfulStepCount;
+	}
 //	public int getCompletedStepCount() {
 //		// if status is 'complete' and stepResult is 'success' increment counter
 //		int completeStepCount = 0;

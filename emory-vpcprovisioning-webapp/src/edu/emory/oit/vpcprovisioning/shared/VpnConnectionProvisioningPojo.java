@@ -38,18 +38,18 @@ public class VpnConnectionProvisioningPojo extends SharedObject implements IsSer
 		}
 		return cnt;
 	}
-//	public int getSuccessfullStepCount() {
-//		// if result is 'success' increment counter
-//		int successfulStepCount = 0;
-//		for (ProvisioningStepPojo step : provisioningSteps) {
-//			if (step.getStepResult() != null) {
-//				if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
-//					successfulStepCount++;
-//				}
-//			}
-//		}
-//		return successfulStepCount;
-//	}
+	public int getSuccessfullStepCount() {
+		// if result is 'success' increment counter
+		int successfulStepCount = 0;
+		for (ProvisioningStepPojo step : provisioningSteps) {
+			if (step.getStepResult() != null) {
+				if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+					successfulStepCount++;
+				}
+			}
+		}
+		return successfulStepCount;
+	}
 //	public int getCompletedStepCount() {
 //		// if status is 'complete' increment counter
 //		int completeStepCount = 0;
