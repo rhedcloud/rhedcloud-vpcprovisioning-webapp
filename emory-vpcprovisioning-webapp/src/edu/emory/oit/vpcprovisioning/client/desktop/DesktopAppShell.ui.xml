@@ -50,6 +50,7 @@
 							<g:MenuBar vertical="true">
 								<g:MenuItem ui:field="emoryKbItem" debugId="emoryKbItem" title="Search Emory Research Service Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://emory.service-now.com/sp?id=kb_view2">Emory Knowledge Base</a></g:MenuItem>
 								<g:MenuItem ui:field="awsDocumentationItem" debugId="awsDocumentationItem" title="AWS Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/documentation/">AWS Documentation</a></g:MenuItem>
+								<g:MenuItem ui:field="demoItem" debugId="demoItem" title="View the AWS at Emory Demo" styleName="{style.linksMenuItem}"><a id="awsDocumentationAnchor" target="_blank" href="https://s3.amazonaws.com/aws-at-emory-demos/AwsAtEmory1.mp4">View the AWS at Emory Demo</a></g:MenuItem>
 							</g:MenuBar>
 						</g:MenuItem>
 					</g:MenuBar>

@@ -60,21 +60,21 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		this.eventBus = eventBus;
 		GWT.log("Desktop shell...need to get Account Maintenance Content");
 
-		ListAccountView listAccountView = clientFactory.getListAccountView();
-		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
-		accountContentContainer.add(listAccountView);
-		accountContentContainer.add(maintainAccountView);
-		accountContentContainer.setAnimationDuration(500);
+//		ListAccountView listAccountView = clientFactory.getListAccountView();
+//		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
+//		accountContentContainer.add(listAccountView);
+//		accountContentContainer.add(maintainAccountView);
+//		accountContentContainer.setAnimationDuration(500);
 
 	}
 
 	/*** FIELDS ***/
-	@UiField TabLayoutPanel mainTabPanel;
+//	@UiField TabLayoutPanel mainTabPanel;
     @UiField Element titleElem;
-	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
-	@UiField DeckLayoutPanel cidrContentContainer;
-	@UiField DeckLayoutPanel accountContentContainer;
-	@UiField DeckLayoutPanel vpcContentContainer;
+//	@UiField DeckLayoutPanel cidrAssignmentContentContainer;
+//	@UiField DeckLayoutPanel cidrContentContainer;
+//	@UiField DeckLayoutPanel accountContentContainer;
+//	@UiField DeckLayoutPanel vpcContentContainer;
 
     @UiField
     Element subTitleElem;
@@ -88,91 +88,91 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	private boolean firstVpcContentWidget = true;
 
 	/*** Handlers ***/
-	@UiHandler ("mainTabPanel") 
-	void tabSelected(SelectionEvent<Integer> e) {
-		switch (e.getSelectedItem()) {
-			case 0:
-				GWT.log("need to get Account Maintenance Content.");
-				firstAccountContentWidget = true;
-				accountContentContainer.clear();
-				ListAccountView listAccountView = clientFactory.getListAccountView();
-				MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
-				accountContentContainer.add(listAccountView);
-				accountContentContainer.add(maintainAccountView);
-				accountContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
-				break;
-			case 1:
-				GWT.log("need to get CIDR Maintentance Content.");
-				firstCidrContentWidget = true;
-				cidrContentContainer.clear();
-				ListCidrView listCidrView = clientFactory.getListCidrView();
-				MaintainCidrView maintainCidrView = clientFactory.getMaintainCidrView();
-				cidrContentContainer.add(listCidrView);
-				cidrContentContainer.add(maintainCidrView);
-				cidrContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
-				break;
-			case 2:
-				GWT.log("need to get CIDR Assignment Maintentance Content.");
-				firstCidrAssignmentContentWidget = true;
-				cidrAssignmentContentContainer.clear();
-				ListCidrAssignmentView listCidrAssignmentView = clientFactory.getListCidrAssignmentView();
-				cidrAssignmentContentContainer.add(listCidrAssignmentView);
-				cidrAssignmentContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR_ASSIGNMENT);
-				break;
-			case 3:
-				GWT.log("need to get VPC Maintentenance content.");
-				firstVpcContentWidget = true;
-				vpcContentContainer.clear();
-				ListVpcView listVpcView = clientFactory.getListVpcView();
-				MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
-				vpcContentContainer.add(listVpcView);
-				vpcContentContainer.add(maintainVpcView);
-				vpcContentContainer.setAnimationDuration(500);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
-				break;
-		}
-	}
+//	@UiHandler ("mainTabPanel") 
+//	void tabSelected(SelectionEvent<Integer> e) {
+//		switch (e.getSelectedItem()) {
+//			case 0:
+//				GWT.log("need to get Account Maintenance Content.");
+//				firstAccountContentWidget = true;
+//				accountContentContainer.clear();
+//				ListAccountView listAccountView = clientFactory.getListAccountView();
+//				MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
+//				accountContentContainer.add(listAccountView);
+//				accountContentContainer.add(maintainAccountView);
+//				accountContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
+//				break;
+//			case 1:
+//				GWT.log("need to get CIDR Maintentance Content.");
+//				firstCidrContentWidget = true;
+//				cidrContentContainer.clear();
+//				ListCidrView listCidrView = clientFactory.getListCidrView();
+//				MaintainCidrView maintainCidrView = clientFactory.getMaintainCidrView();
+//				cidrContentContainer.add(listCidrView);
+//				cidrContentContainer.add(maintainCidrView);
+//				cidrContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR);
+//				break;
+//			case 2:
+//				GWT.log("need to get CIDR Assignment Maintentance Content.");
+//				firstCidrAssignmentContentWidget = true;
+//				cidrAssignmentContentContainer.clear();
+//				ListCidrAssignmentView listCidrAssignmentView = clientFactory.getListCidrAssignmentView();
+//				cidrAssignmentContentContainer.add(listCidrAssignmentView);
+//				cidrAssignmentContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CIDR_ASSIGNMENT);
+//				break;
+//			case 3:
+//				GWT.log("need to get VPC Maintentenance content.");
+//				firstVpcContentWidget = true;
+//				vpcContentContainer.clear();
+//				ListVpcView listVpcView = clientFactory.getListVpcView();
+//				MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
+//				vpcContentContainer.add(listVpcView);
+//				vpcContentContainer.add(maintainVpcView);
+//				vpcContentContainer.setAnimationDuration(500);
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
+//				break;
+//		}
+//	}
 
 	@Override
 	public void setWidget(IsWidget w) {
 		// TODO may need to find a better way to do this...
 		if (w instanceof ListAccountPresenter || w instanceof MaintainAccountPresenter) {
-			accountContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstAccountContentWidget) {
-				firstAccountContentWidget = false;
-				accountContentContainer.animate(0);
-			}
+//			accountContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstAccountContentWidget) {
+//				firstAccountContentWidget = false;
+//				accountContentContainer.animate(0);
+//			}
 		}
 
 		if (w instanceof ListCidrPresenter || w instanceof MaintainCidrPresenter) {
-			cidrContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstCidrContentWidget) {
-				firstCidrContentWidget = false;
-				cidrContentContainer.animate(0);
-			}
+//			cidrContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstCidrContentWidget) {
+//				firstCidrContentWidget = false;
+//				cidrContentContainer.animate(0);
+//			}
 		}
 
 		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
-			cidrAssignmentContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstCidrAssignmentContentWidget) {
-				firstCidrAssignmentContentWidget = false;
-				cidrAssignmentContentContainer.animate(0);
-			}
+//			cidrAssignmentContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstCidrAssignmentContentWidget) {
+//				firstCidrAssignmentContentWidget = false;
+//				cidrAssignmentContentContainer.animate(0);
+//			}
 		}
 
 		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter) {
-			vpcContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstVpcContentWidget) {
-				firstVpcContentWidget = false;
-				vpcContentContainer.animate(0);
-			}
+//			vpcContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstVpcContentWidget) {
+//				firstVpcContentWidget = false;
+//				vpcContentContainer.animate(0);
+//			}
 		}
 	}
 

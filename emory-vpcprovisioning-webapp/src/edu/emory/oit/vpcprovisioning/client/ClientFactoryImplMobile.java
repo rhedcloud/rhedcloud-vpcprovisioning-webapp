@@ -10,6 +10,8 @@ import com.google.web.bindery.event.shared.SimpleEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.activity.AppActivityMapper;
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
+import edu.emory.oit.vpcprovisioning.client.mobile.MobileAppShell;
+import edu.emory.oit.vpcprovisioning.client.mobile.MobileHome;
 import edu.emory.oit.vpcprovisioning.client.mobile.MobileListAccount;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
@@ -129,26 +131,33 @@ public class ClientFactoryImplMobile implements ClientFactory {
 
 	@Override
 	public AppBootstrapper getApp() {
-		
-		return null;
+		return new AppBootstrapper(this, eventBus, getPlaceController(),
+				getActivityManager(), historyMapper, historyHandler, 
+				getShell());
 	}
 
 	@Override
 	public EventBus getEventBus() {
 		
-		return null;
+		return eventBus;
 	}
 
 	@Override
 	public PlaceController getPlaceController() {
 		
-		return null;
+		return placeController;
 	}
 
 	@Override
 	public AppShell getShell() {
-		
-		return null;
+		if (shell == null) {
+			shell = createShell();
+		}
+		return shell;
+	}
+
+	protected AppShell createShell() {
+		return new MobileAppShell(getEventBus(), this);
 	}
 
 	@Override
@@ -277,8 +286,13 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public HomeView getHomeView() {
-		
-		return null;
+		if (homeView == null) {
+			homeView = createHomeView();
+		}
+		return homeView;
+	}
+	protected HomeView createHomeView() {
+		return new MobileHome();
 	}
 	@Override
 	public ListCentralAdminView getListCentralAdminView() {
