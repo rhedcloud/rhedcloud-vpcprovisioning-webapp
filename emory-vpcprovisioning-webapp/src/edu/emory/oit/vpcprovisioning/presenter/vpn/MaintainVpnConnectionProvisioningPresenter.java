@@ -130,7 +130,12 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		
 		if (provisioningId == null) {
 			if (!isDeprovision) {
-				getView().setHeading("Provision a new VPN Connection");
+				if (isRegen) {
+					getView().setHeading("Re-Provision a VPN Connection");
+				}
+				else {
+					getView().setHeading("Provision a new VPN Connection");
+				}
 				clientFactory.getShell().setSubTitle("Generate VPNCP");
 				startCreate();
 			}

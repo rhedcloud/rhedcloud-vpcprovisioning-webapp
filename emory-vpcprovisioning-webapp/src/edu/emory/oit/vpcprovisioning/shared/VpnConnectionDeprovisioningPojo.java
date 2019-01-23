@@ -21,31 +21,47 @@ public class VpnConnectionDeprovisioningPojo extends SharedObject implements IsS
 		return provisioningSteps.size();
 	}
 	
-	public int getSuccessfullStepCount() {
-		// if result is 'success' increment counter
-		int successfulStepCount = 0;
-		for (ProvisioningStepPojo step : provisioningSteps) {
-			if (step.getStepResult() != null) {
-				if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
-					successfulStepCount++;
-				}
-			}
-		}
-		return successfulStepCount;
-	}
-	public int getCompletedStepCount() {
+	public int getCompletedSuccessfulCount() {
 		// if status is 'complete' and stepResult is 'success' increment counter
-		int completeStepCount = 0;
+		int cnt = 0;
 		for (ProvisioningStepPojo step : provisioningSteps) {
 			if (step.getStatus() != null) {
 				if (step.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
-					
-					completeStepCount++;
+					if (step.getStepResult() != null) {
+						if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+							cnt++;
+						}
+					}
 				}
 			}
 		}
-		return completeStepCount;
+		return cnt;
 	}
+//	public int getSuccessfullStepCount() {
+//		// if result is 'success' increment counter
+//		int successfulStepCount = 0;
+//		for (ProvisioningStepPojo step : provisioningSteps) {
+//			if (step.getStepResult() != null) {
+//				if (step.getStepResult().equalsIgnoreCase(Constants.VPCP_STEP_RESULT_SUCCESS)) {
+//					successfulStepCount++;
+//				}
+//			}
+//		}
+//		return successfulStepCount;
+//	}
+//	public int getCompletedStepCount() {
+//		// if status is 'complete' and stepResult is 'success' increment counter
+//		int completeStepCount = 0;
+//		for (ProvisioningStepPojo step : provisioningSteps) {
+//			if (step.getStatus() != null) {
+//				if (step.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
+//					
+//					completeStepCount++;
+//				}
+//			}
+//		}
+//		return completeStepCount;
+//	}
 	
 	public static final ProvidesKey<VpnConnectionDeprovisioningPojo> KEY_PROVIDER = new ProvidesKey<VpnConnectionDeprovisioningPojo>() {
 		@Override

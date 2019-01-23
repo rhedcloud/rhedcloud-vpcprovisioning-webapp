@@ -589,11 +589,11 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 			@Override
 			public SafeHtml getValue(VpnConnectionProvisioningSummaryPojo value) {
 				if (value.isProvision()) {
-					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getProvisioning().getTotalStepCount(), value.getProvisioning().getCompletedStepCount());
+					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getProvisioning().getTotalStepCount(), value.getProvisioning().getCompletedSuccessfulCount());
 					return sh;
 				}
 				else {
-					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getDeprovisioning().getTotalStepCount(), value.getDeprovisioning().getCompletedStepCount());
+					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getDeprovisioning().getTotalStepCount(), value.getDeprovisioning().getCompletedSuccessfulCount());
 					return sh;
 				}
 			}
