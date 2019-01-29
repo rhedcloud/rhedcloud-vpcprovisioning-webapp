@@ -3,12 +3,18 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.Comparator;
 import java.util.List;
 
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -19,7 +25,6 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -30,6 +35,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningView;
+import edu.emory.oit.vpcprovisioning.shared.RemoteVpnConnectionInfoPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -42,9 +48,10 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	boolean deprovision;
 	boolean reprovision;
 	UserAccountPojo userLoggedIn;
-//	private final VpcRpcSuggestOracle vpcSuggestions = new VpcRpcSuggestOracle(Constants.SUGGESTION_TYPE_VPC_ID);
-	private ListDataProvider<TunnelProfilePojo> dataProvider = new ListDataProvider<TunnelProfilePojo>();
-	private SingleSelectionModel<TunnelProfilePojo> selectionModel;
+	private ListDataProvider<TunnelProfilePojo> tunnelProfileDataProvider = new ListDataProvider<TunnelProfilePojo>();
+	private SingleSelectionModel<TunnelProfilePojo> tunnelProfileSelectionModel;
+	private ListDataProvider<RemoteVpnConnectionInfoPojo> remoteVpnConnectionDataProvider = new ListDataProvider<RemoteVpnConnectionInfoPojo>();
+	private SingleSelectionModel<RemoteVpnConnectionInfoPojo> remoteVpnConnectionSelectionModel;
 	List<VpcPojo> vpcItems = new java.util.ArrayList<VpcPojo>();
 
 	private static DesktopMaintainVpnConnectionProvisioningUiBinder uiBinder = GWT
@@ -65,15 +72,15 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	}
 
 	@UiField TextBox vpcTB;
-//	@UiField(provided=true) SuggestBox vpcIdSB = new SuggestBox(vpcSuggestions, new TextBox());
-//	@UiField TextBox ownerIdTB;
 	@UiField ListBox vpcLB;
-	@UiField TextBox remoteVpnIpAddressTB;
-	@UiField TextArea presharedKeyTA;
+//	@UiField TextBox remoteVpnIpAddressTB;
+//	@UiField TextArea presharedKeyTA;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
 	@UiField(provided=true) CellTable<TunnelProfilePojo> tunnelProfileTable = new CellTable<TunnelProfilePojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<RemoteVpnConnectionInfoPojo> remoteVpnConnectionTable = new CellTable<RemoteVpnConnectionInfoPojo>(5, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField Label headerLabel;
+//	@UiField TextBox remoteVpnConnectionIdTB;
 	
 	@UiHandler ("vpcLB")
 	void vpcLbChanged(ChangeEvent e) {
@@ -94,17 +101,17 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		else {
 			presenter.getVpnConnectionRequisition().setOwnerId(null);
 		}
-		presenter.getVpnConnectionRequisition().setRemoteVpnIpAddress(remoteVpnIpAddressTB.getText());
-		if (!this.isValidIp(presenter.getVpnConnectionRequisition().getRemoteVpnIpAddress())) {
-			showMessageToUser("Invalid Remote VPN IP address.  Please enter a valid IP address.");
-			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
-		        public void execute () {
-		        	remoteVpnIpAddressTB.setFocus(true);
-		        }
-		    });
-			return;
-		}
-		presenter.getVpnConnectionRequisition().setPresharedKey(presharedKeyTA.getText());
+//		presenter.getVpnConnectionRequisition().setRemoteVpnIpAddress(remoteVpnIpAddressTB.getText());
+//		if (!this.isValidIp(presenter.getVpnConnectionRequisition().getRemoteVpnIpAddress())) {
+//			showMessageToUser("Invalid Remote VPN IP address.  Please enter a valid IP address.");
+//			Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+//		        public void execute () {
+//		        	remoteVpnIpAddressTB.setFocus(true);
+//		        }
+//		    });
+//			return;
+//		}
+//		presenter.getVpnConnectionRequisition().setPresharedKey(presharedKeyTA.getText());
 		if (!this.deprovision) {
 			// provision generate/update (provsion or re-provision)
 			presenter.saveVpnConnectionProvisioning();
@@ -155,32 +162,32 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		else {
 			vpcLB.setEnabled(true);
 		}
-		remoteVpnIpAddressTB.setEnabled(true);
-		presharedKeyTA.setEnabled(true);
+//		remoteVpnIpAddressTB.setEnabled(true);
+//		presharedKeyTA.setEnabled(true);
 		okayButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
 		vpcLB.setEnabled(false);
-		remoteVpnIpAddressTB.setEnabled(false);
-		presharedKeyTA.setEnabled(false);
+//		remoteVpnIpAddressTB.setEnabled(false);
+//		presharedKeyTA.setEnabled(false);
 		okayButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
 		vpcLB.setEnabled(false);
-		remoteVpnIpAddressTB.setEnabled(false);
-		presharedKeyTA.setEnabled(false);
+//		remoteVpnIpAddressTB.setEnabled(false);
+//		presharedKeyTA.setEnabled(false);
 		okayButton.setEnabled(false);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
 		vpcLB.setEnabled(false);
-		remoteVpnIpAddressTB.setEnabled(false);
-		presharedKeyTA.setEnabled(false);
+//		remoteVpnIpAddressTB.setEnabled(false);
+//		presharedKeyTA.setEnabled(false);
 		okayButton.setEnabled(false);
 	}
 
@@ -196,12 +203,12 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		if (req.getOwnerId() == null || req.getOwnerId().length() == 0) {
 			fields.add(vpcLB);
 		}
-		if (req.getRemoteVpnIpAddress() == null || req.getRemoteVpnIpAddress().length() == 0) {
-			fields.add(remoteVpnIpAddressTB);
-		}
-		if (req.getPresharedKey() == null || req.getPresharedKey().length() == 0) {
-			fields.add(presharedKeyTA);
-		}
+//		if (req.getRemoteVpnIpAddress() == null || req.getRemoteVpnIpAddress().length() == 0) {
+//			fields.add(remoteVpnIpAddressTB);
+//		}
+//		if (req.getPresharedKey() == null || req.getPresharedKey().length() == 0) {
+//			fields.add(presharedKeyTA);
+//		}
 		return fields;
 	}
 
@@ -209,8 +216,8 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		fields.add(vpcLB);
-		fields.add(remoteVpnIpAddressTB);
-		fields.add(presharedKeyTA);
+//		fields.add(remoteVpnIpAddressTB);
+//		fields.add(presharedKeyTA);
 		this.resetFieldStyles(fields);
 	}
 
@@ -291,45 +298,239 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 			vpcTB.setText(presenter.getVpnConnectionRequisition().getProfile().getVpcNetwork());
 			this.initializeTunnelProfileListTable();
 		}
+		this.initializeRemoteVpnConnectionListTable();
 
-//		ownerLookupSB.setText("");
-//		ownerLookupSB.getElement().setPropertyString("placeholder", "enter name");
-		remoteVpnIpAddressTB.setText("");
-		presharedKeyTA.setText("");
-//		vpcIdSB.setText("");
-//		vpcIdSB.getElement().setPropertyString("placeholder", "enter VPC id");
+//		remoteVpnIpAddressTB.setText("");
+//		presharedKeyTA.setText("");
 	}
 
 	private void registerHandlers() {
-//		ownerLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
-//			@Override
-//			public void onSelection(SelectionEvent<Suggestion> event) {
-//				DirectoryPersonSuggestion dp_suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
-//				if (dp_suggestion.getDirectoryPerson() != null) {
-//					presenter.setOwnerDirectoryPerson(dp_suggestion.getDirectoryPerson());
-//					ownerLookupSB.setTitle(presenter.getOwnerDirectoryPerson().toString());
-//				}
-//			}
-//		});
-		
-//		vpcIdSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
-//			@Override
-//			public void onSelection(SelectionEvent<Suggestion> event) {
-//				VpcSuggestion suggestion = (VpcSuggestion)event.getSelectedItem();
-//				if (suggestion.getVpc() != null) {
-//					presenter.setSelectedVpc(suggestion.getVpc());
-//					vpcIdSB.setTitle(presenter.getSelectedVpc().toString());
-//				}
-//			}
-//		});
 	}
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		
-		
 	}
 
+	private Widget initializeRemoteVpnConnectionListTable() {
+		GWT.log("initializing Remote VPN Connection info list table...");
+		remoteVpnConnectionTable.setTableLayoutFixed(false);
+		remoteVpnConnectionTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+
+		// set range to display
+		remoteVpnConnectionTable.setVisibleRange(0, 15);
+
+		// create dataprovider
+		remoteVpnConnectionDataProvider = new ListDataProvider<RemoteVpnConnectionInfoPojo>();
+		remoteVpnConnectionDataProvider.addDataDisplay(remoteVpnConnectionTable);
+		remoteVpnConnectionDataProvider.getList().clear();
+		remoteVpnConnectionDataProvider.getList().addAll(presenter.getVpnConnectionRequisition().getRemoteVpnConnectionInfo());
+
+		remoteVpnConnectionSelectionModel = 
+				new SingleSelectionModel<RemoteVpnConnectionInfoPojo>(RemoteVpnConnectionInfoPojo.KEY_PROVIDER);
+		remoteVpnConnectionTable.setSelectionModel(remoteVpnConnectionSelectionModel);
+
+		remoteVpnConnectionSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+			@Override
+			public void onSelectionChange(SelectionChangeEvent event) {
+				RemoteVpnConnectionInfoPojo m = remoteVpnConnectionSelectionModel.getSelectedObject();
+			}
+		});
+
+		ListHandler<RemoteVpnConnectionInfoPojo> sortHandler = 
+				new ListHandler<RemoteVpnConnectionInfoPojo>(remoteVpnConnectionDataProvider.getList());
+		remoteVpnConnectionTable.addColumnSortHandler(sortHandler);
+
+		if (remoteVpnConnectionTable.getColumnCount() == 0) {
+			initRemoteVpnConnectionTableColumns(sortHandler);
+		}
+
+		return remoteVpnConnectionTable;
+	}
+
+	private void initRemoteVpnConnectionTableColumns(ListHandler<RemoteVpnConnectionInfoPojo> sortHandler) {
+		// vpn number
+		Column<RemoteVpnConnectionInfoPojo, String> vpnNumberColumn = 
+				new Column<RemoteVpnConnectionInfoPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(RemoteVpnConnectionInfoPojo object) {
+				return Integer.toString(object.getVpnConnectionNumber());
+			}
+		};
+		vpnNumberColumn.setSortable(true);
+		sortHandler.setComparator(vpnNumberColumn, new Comparator<RemoteVpnConnectionInfoPojo>() {
+			public int compare(RemoteVpnConnectionInfoPojo o1, RemoteVpnConnectionInfoPojo o2) {
+				if (o1.getVpnConnectionNumber() > o2.getVpnConnectionNumber()) {
+					return 1;
+				}
+				else if (o1.getVpnConnectionNumber() < o2.getVpnConnectionNumber()) {
+					return -1;
+				}
+				return 0;
+			}
+		});
+		remoteVpnConnectionTable.addColumn(vpnNumberColumn, "VPN Connection Number");
+		
+//		contactList.setColumnWidth(textInputColumn, 16.0, Unit.EM);
+		// connection id column
+		Column<RemoteVpnConnectionInfoPojo, String> vpnConnectionIdColumn = 
+				new Column<RemoteVpnConnectionInfoPojo, String> (new TextInputCell()) {
+
+			@Override
+			public String getValue(RemoteVpnConnectionInfoPojo object) {
+				return object.getRemoteVpnConnectionId();
+			}
+			@Override
+			public void render(Context context, RemoteVpnConnectionInfoPojo object, SafeHtmlBuilder sb) {
+				final SafeHtml INPUT_TEXT_DISABLED = 
+					SafeHtmlUtils.fromSafeConstant("<input type=\"text\" tabindex=\"-1\" "
+						+ "disabled=\"disabled\" value=\"" + object.getRemoteVpnConnectionId() + "\"/>");
+				sb.append(INPUT_TEXT_DISABLED);
+			}
+		};
+		vpnConnectionIdColumn.setFieldUpdater(new FieldUpdater<RemoteVpnConnectionInfoPojo, String>() {
+	    	@Override
+	    	public void update(int index, RemoteVpnConnectionInfoPojo object, String value) {
+	    		object.setRemoteVpnConnectionId(value);
+//				pendingChanges.add(new LastNameChange(object, value));
+	    	}
+	    });
+		vpnConnectionIdColumn.setSortable(true);
+		sortHandler.setComparator(vpnConnectionIdColumn, new Comparator<RemoteVpnConnectionInfoPojo>() {
+			public int compare(RemoteVpnConnectionInfoPojo o1, RemoteVpnConnectionInfoPojo o2) {
+				return o1.getRemoteVpnConnectionId().compareTo(o2.getRemoteVpnConnectionId());
+			}
+		});
+		remoteVpnConnectionTable.addColumn(vpnConnectionIdColumn, "Remote VPN Connection ID");
+
+		// tunnel id column
+		Column<RemoteVpnConnectionInfoPojo, String> tunnelIdColumn = 
+				new Column<RemoteVpnConnectionInfoPojo, String> (new TextInputCell()) {
+
+			@Override
+			public String getValue(RemoteVpnConnectionInfoPojo object) {
+				return object.getRemoteVpnTunnels().get(0).getLocalTunnelId();
+				// TODO: have to check the vpn connection number and get the associated tunnel
+//				if (object.getVpnConnectionNumber() == 1) {
+//					return object.getRemoteVpnTunnels().get(0).getLocalTunnelId();
+//				}
+//				else {
+//				}
+			}
+		};
+		tunnelIdColumn.setFieldUpdater(new FieldUpdater<RemoteVpnConnectionInfoPojo, String>() {
+	    	@Override
+	    	public void update(int index, RemoteVpnConnectionInfoPojo object, String value) {
+	    		object.getRemoteVpnTunnels().get(0).setLocalTunnelId(value);
+//				pendingChanges.add(new LastNameChange(object, value));
+	    	}
+	    });
+		tunnelIdColumn.setSortable(true);
+		sortHandler.setComparator(tunnelIdColumn, new Comparator<RemoteVpnConnectionInfoPojo>() {
+			public int compare(RemoteVpnConnectionInfoPojo o1, RemoteVpnConnectionInfoPojo o2) {
+				return o1.getRemoteVpnTunnels().get(0).getLocalTunnelId().compareTo(o2.getRemoteVpnTunnels().get(0).getLocalTunnelId());
+			}
+		});
+		remoteVpnConnectionTable.addColumn(tunnelIdColumn, "Local Tunnel ID");
+		
+		// remote vpn ip addres column
+		Column<RemoteVpnConnectionInfoPojo, String> remoteVpnIpAddressColumn = 
+				new Column<RemoteVpnConnectionInfoPojo, String> (new TextInputCell()) {
+
+			@Override
+			public String getValue(RemoteVpnConnectionInfoPojo object) {
+				return object.getRemoteVpnTunnels().get(0).getRemoteVpnIpAddress();
+				// TODO: have to check the vpn connection number and get the associated tunnel
+//				if (object.getVpnConnectionNumber() == 1) {
+//					return object.getRemoteVpnTunnels().get(0).getLocalTunnelId();
+//				}
+//				else {
+//				}
+			}
+		};
+		remoteVpnIpAddressColumn.setFieldUpdater(new FieldUpdater<RemoteVpnConnectionInfoPojo, String>() {
+	    	@Override
+	    	public void update(int index, RemoteVpnConnectionInfoPojo object, String value) {
+	    		object.getRemoteVpnTunnels().get(0).setRemoteVpnIpAddress(value);
+//				pendingChanges.add(new LastNameChange(object, value));
+	    	}
+	    });
+		remoteVpnIpAddressColumn.setSortable(true);
+		sortHandler.setComparator(remoteVpnIpAddressColumn, new Comparator<RemoteVpnConnectionInfoPojo>() {
+			public int compare(RemoteVpnConnectionInfoPojo o1, RemoteVpnConnectionInfoPojo o2) {
+				return o1.getRemoteVpnTunnels().get(0).getRemoteVpnIpAddress().compareTo(o2.getRemoteVpnTunnels().get(0).getRemoteVpnIpAddress());
+			}
+		});
+		remoteVpnConnectionTable.addColumn(remoteVpnIpAddressColumn, "Remote VPN IP Address");
+		
+		// preshared key column
+		Column<RemoteVpnConnectionInfoPojo, String> presharedKeyColumn = 
+				new Column<RemoteVpnConnectionInfoPojo, String> (new TextInputCell()) {
+
+			@Override
+			public String getValue(RemoteVpnConnectionInfoPojo object) {
+				return object.getRemoteVpnTunnels().get(0).getPresharedKey();
+				// TODO: have to check the vpn connection number and get the associated tunnel
+//				if (object.getVpnConnectionNumber() == 1) {
+//					return object.getRemoteVpnTunnels().get(0).getLocalTunnelId();
+//				}
+//				else {
+//				}
+			}
+		};
+		presharedKeyColumn.setFieldUpdater(new FieldUpdater<RemoteVpnConnectionInfoPojo, String>() {
+	    	@Override
+	    	public void update(int index, RemoteVpnConnectionInfoPojo object, String value) {
+	    		object.getRemoteVpnTunnels().get(0).setPresharedKey(value);
+//				pendingChanges.add(new LastNameChange(object, value));
+	    	}
+	    });
+		presharedKeyColumn.setSortable(true);
+		sortHandler.setComparator(presharedKeyColumn, new Comparator<RemoteVpnConnectionInfoPojo>() {
+			public int compare(RemoteVpnConnectionInfoPojo o1, RemoteVpnConnectionInfoPojo o2) {
+				return o1.getRemoteVpnTunnels().get(0).getPresharedKey().compareTo(o2.getRemoteVpnTunnels().get(0).getPresharedKey());
+			}
+		});
+		remoteVpnConnectionTable.addColumn(presharedKeyColumn, "Pre-Shared Key");
+		
+		// VPN Inside IP CIDR key column
+		Column<RemoteVpnConnectionInfoPojo, String> vpnInsideIpCidrColumn = 
+				new Column<RemoteVpnConnectionInfoPojo, String> (new TextInputCell()) {
+
+			@Override
+			public String getValue(RemoteVpnConnectionInfoPojo object) {
+				return object.getRemoteVpnTunnels().get(0).getVpnInsideCidr();
+				// TODO: have to check the vpn connection number and get the associated tunnel
+//				if (object.getVpnConnectionNumber() == 1) {
+//					return object.getRemoteVpnTunnels().get(0).getLocalTunnelId();
+//				}
+//				else {
+//				}
+			}
+			@Override
+			public void render(Context context, RemoteVpnConnectionInfoPojo object, SafeHtmlBuilder sb) {
+				final SafeHtml INPUT_TEXT_DISABLED = 
+					SafeHtmlUtils.fromSafeConstant("<input type=\"text\" tabindex=\"-1\" "
+						+ "disabled=\"disabled\" value=\"" + object.getRemoteVpnTunnels().get(0).getVpnInsideCidr() + "\"/>");
+				sb.append(INPUT_TEXT_DISABLED);
+			}
+		};
+		vpnInsideIpCidrColumn.setFieldUpdater(new FieldUpdater<RemoteVpnConnectionInfoPojo, String>() {
+	    	@Override
+	    	public void update(int index, RemoteVpnConnectionInfoPojo object, String value) {
+	    		object.getRemoteVpnTunnels().get(0).setVpnInsideCidr(value);
+//				pendingChanges.add(new LastNameChange(object, value));
+	    	}
+	    });
+		vpnInsideIpCidrColumn.setSortable(true);
+		sortHandler.setComparator(vpnInsideIpCidrColumn, new Comparator<RemoteVpnConnectionInfoPojo>() {
+			public int compare(RemoteVpnConnectionInfoPojo o1, RemoteVpnConnectionInfoPojo o2) {
+				return o1.getRemoteVpnTunnels().get(0).getVpnInsideCidr().compareTo(o2.getRemoteVpnTunnels().get(0).getVpnInsideCidr());
+			}
+		});
+		remoteVpnConnectionTable.addColumn(vpnInsideIpCidrColumn, "VPN Inside IP CIDR");
+	}
+	
 	private Widget initializeTunnelProfileListTable() {
 		GWT.log("initializing Tunnel Profile list table...");
 		tunnelProfileTable.setTableLayoutFixed(false);
@@ -339,24 +540,24 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		tunnelProfileTable.setVisibleRange(0, 15);
 
 		// create dataprovider
-		dataProvider = new ListDataProvider<TunnelProfilePojo>();
-		dataProvider.addDataDisplay(tunnelProfileTable);
-		dataProvider.getList().clear();
-		dataProvider.getList().addAll(presenter.getVpnConnectionRequisition().getProfile().getTunnelProfiles());
+		tunnelProfileDataProvider = new ListDataProvider<TunnelProfilePojo>();
+		tunnelProfileDataProvider.addDataDisplay(tunnelProfileTable);
+		tunnelProfileDataProvider.getList().clear();
+		tunnelProfileDataProvider.getList().addAll(presenter.getVpnConnectionRequisition().getProfile().getTunnelProfiles());
 
-		selectionModel = 
+		tunnelProfileSelectionModel = 
 				new SingleSelectionModel<TunnelProfilePojo>(TunnelProfilePojo.KEY_PROVIDER);
-		tunnelProfileTable.setSelectionModel(selectionModel);
+		tunnelProfileTable.setSelectionModel(tunnelProfileSelectionModel);
 
-		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+		tunnelProfileSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				TunnelProfilePojo m = selectionModel.getSelectedObject();
+				TunnelProfilePojo m = tunnelProfileSelectionModel.getSelectedObject();
 			}
 		});
 
 		ListHandler<TunnelProfilePojo> sortHandler = 
-				new ListHandler<TunnelProfilePojo>(dataProvider.getList());
+				new ListHandler<TunnelProfilePojo>(tunnelProfileDataProvider.getList());
 		tunnelProfileTable.addColumnSortHandler(sortHandler);
 
 		if (tunnelProfileTable.getColumnCount() == 0) {

@@ -259,55 +259,121 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 		return clientFactory;
 	}
 
-	@Override
-	public void deprovisionVpnConnection(final VpnConnectionProvisioningPojo provisionedVpnConnection) {
-		selectedProvisioning = provisionedVpnConnection;
-		VpcpConfirm.confirm(
-			ListVpnConnectionProvisioningPresenter.this, 
-			"Confirm Deprovision VPN Connection", 
-			"Deprovisiong the VPN Connection " + selectedProvisioning.getRequisition().getProfile().getVpcNetwork() + "?");
-	}
+//	@Override
+//	public void deprovisionVpnConnection(final VpnConnectionProvisioningPojo provisionedVpnConnection) {
+//		selectedProvisioning = provisionedVpnConnection;
+//		VpcpConfirm.confirm(
+//			ListVpnConnectionProvisioningPresenter.this, 
+//			"Confirm Deprovision VPN Connection", 
+//			"Deprovisiong the VPN Connection " + selectedProvisioning.getRequisition().getProfile().getVpcNetwork() + "?");
+//	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				getView().hidePleaseWaitDialog();
-				GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
-				getView().showMessageToUser("There was an exception on the " +
-						"server generating the VpnConnectionDeprovisioning.  Message " +
-						"from server is: " + caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(VpnConnectionDeprovisioningPojo result) {
-				getView().hidePleaseWaitDialog();
-				// if it was a generate, we'll take them to the VPNCP status view
-				// So we won't go directly back
-				// to the list just yet but instead, we'll show them an immediate 
-				// status and give them the opportunity to watch it for a bit
-				// before they go back.  So, we'll only fire the VPCP_SAVED event 
-				// when/if it's an update and not on the generate.  As of right now
-				// we don't think there will be a VPCP update so the update handling 
-				// stuff is just here to maintain consistency and if we ever decide
-				// a VPCP can be updated, we'll already have the flow here.
-				// show VPNCP status page
-				final VpnConnectionDeprovisioningPojo vpncdp = result;
-				GWT.log("VPNCDP was generated on the server, showing status page.  "
-						+ "VPNCDP is: " + vpncdp);
-				VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
-				vpncpSummary.setDeprovisioning(vpncdp);
-				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
-			}
-		};
-		getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
-		VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(selectedProvisioning.getRequisition(), callback);
+//		AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				getView().hidePleaseWaitDialog();
+//				GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
+//				getView().showMessageToUser("There was an exception on the " +
+//						"server generating the VpnConnectionDeprovisioning.  Message " +
+//						"from server is: " + caught.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(VpnConnectionDeprovisioningPojo result) {
+//				getView().hidePleaseWaitDialog();
+//				// if it was a generate, we'll take them to the VPNCP status view
+//				// So we won't go directly back
+//				// to the list just yet but instead, we'll show them an immediate 
+//				// status and give them the opportunity to watch it for a bit
+//				// before they go back.  So, we'll only fire the VPCP_SAVED event 
+//				// when/if it's an update and not on the generate.  As of right now
+//				// we don't think there will be a VPCP update so the update handling 
+//				// stuff is just here to maintain consistency and if we ever decide
+//				// a VPCP can be updated, we'll already have the flow here.
+//				// show VPNCP status page
+//				final VpnConnectionDeprovisioningPojo vpncdp = result;
+//				GWT.log("VPNCDP was generated on the server, showing status page.  "
+//						+ "VPNCDP is: " + vpncdp);
+//				VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+//				vpncpSummary.setDeprovisioning(vpncdp);
+//				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
+//			}
+//		};
+//		getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
+//		VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(selectedProvisioning.getRequisition(), callback);
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
 		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN was NOT deprovisioned");
+	}
+
+	@Override
+	public void saveProvisioning(VpnConnectionProvisioningPojo pojo) {
+		// update the provisioning object 
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving VPN Connection Provisioning object...");
+		AsyncCallback<VpnConnectionProvisioningPojo> cb = new AsyncCallback<VpnConnectionProvisioningPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server updating the VPN Connection Provisioning object.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(VpnConnectionProvisioningPojo result) {
+		        getView().hidePleaseWaitDialog();
+				// Request the Vpc list now.
+				if (getView().viewAllVpnConnectionProvisionings()) {
+					// show all of them
+					refreshListWithAllVpnConnectionProvisionings(userLoggedIn);
+				}
+				else {
+					// only show the default maximum
+					refreshListWithMaximumVpnConnectionProvisionings(userLoggedIn);
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().updateVpnConnectionProvisioning(pojo, cb);
+	}
+
+	@Override
+	public void saveDeprovisioning(VpnConnectionDeprovisioningPojo pojo) {
+		// update the deprovisioning object
+        getView().hidePleaseWaitDialog();
+		getView().showPleaseWaitDialog("Saving VPN Connection Deprovisioning object...");
+		AsyncCallback<VpnConnectionDeprovisioningPojo> cb = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+                getView().hidePleaseWaitPanel();
+                getView().hidePleaseWaitDialog();
+                getView().disableButtons();
+				getView().showMessageToUser("There was an exception on the " +
+						"server updating the VPN Connection Deprovisioning object.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(VpnConnectionDeprovisioningPojo result) {
+		        getView().hidePleaseWaitDialog();
+				// Request the Vpc list now.
+				if (getView().viewAllVpnConnectionProvisionings()) {
+					// show all of them
+					refreshListWithAllVpnConnectionProvisionings(userLoggedIn);
+				}
+				else {
+					// only show the default maximum
+					refreshListWithMaximumVpnConnectionProvisionings(userLoggedIn);
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().updateVpnConnectionDeprovisioning(pojo, cb);
 	}
 
 }

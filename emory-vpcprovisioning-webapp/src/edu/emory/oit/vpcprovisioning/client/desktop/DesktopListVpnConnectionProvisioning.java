@@ -149,7 +149,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(1, 1);
+		Grid grid = new Grid(3, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -172,6 +172,64 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 			}
 		});
 		grid.setWidget(0, 0, assignAnchor);
+
+		Anchor completeFailureAnchor = new Anchor("Set Status to 'completed' and Result to 'failure'");
+		completeFailureAnchor.addStyleName("productAnchor");
+		completeFailureAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		completeFailureAnchor.setTitle("Change this item's status to 'completed' and result to 'failure'");
+		completeFailureAnchor.ensureDebugId(completeFailureAnchor.getText());
+		completeFailureAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				VpnConnectionProvisioningSummaryPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (m.getProvisioning() != null) {
+						m.getProvisioning().setStatus(Constants.VPCP_STATUS_COMPLETED);
+						m.getProvisioning().setProvisioningResult(Constants.VPCP_RESULT_FAILURE);
+						presenter.saveProvisioning(m.getProvisioning());
+					}
+					else {
+						m.getDeprovisioning().setStatus(Constants.VPCP_STATUS_COMPLETED);
+						m.getDeprovisioning().setProvisioningResult(Constants.VPCP_RESULT_FAILURE);
+						presenter.saveDeprovisioning(m.getDeprovisioning());
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, completeFailureAnchor);
+
+		Anchor completeSuccessAnchor = new Anchor("Set Status to 'completed' and Result to 'success'");
+		completeSuccessAnchor.addStyleName("productAnchor");
+		completeSuccessAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		completeSuccessAnchor.setTitle("Change this item's status to 'completed' and result to 'success'");
+		completeSuccessAnchor.ensureDebugId(completeSuccessAnchor.getText());
+		completeSuccessAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				VpnConnectionProvisioningSummaryPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (m.getProvisioning() != null) {
+						m.getProvisioning().setStatus(Constants.VPCP_STATUS_COMPLETED);
+						m.getProvisioning().setProvisioningResult(Constants.VPCP_RESULT_SUCCESS);
+						presenter.saveProvisioning(m.getProvisioning());
+					}
+					else {
+						m.getDeprovisioning().setStatus(Constants.VPCP_STATUS_COMPLETED);
+						m.getDeprovisioning().setProvisioningResult(Constants.VPCP_RESULT_SUCCESS);
+						presenter.saveDeprovisioning(m.getDeprovisioning());
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, completeSuccessAnchor);
 
 //		Anchor deprovisionAnchor = new Anchor("De-Provisiong VPN Connection");
 //		deprovisionAnchor.addStyleName("productAnchor");
@@ -201,6 +259,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 //			}
 //		});
 //		grid.setWidget(1, 0, deprovisionAnchor);
+		
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 

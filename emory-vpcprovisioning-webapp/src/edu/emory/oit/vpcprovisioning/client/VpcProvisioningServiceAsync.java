@@ -244,7 +244,10 @@ public interface VpcProvisioningServiceAsync {
 	// vpncp
 	void getVpncpSummariesForFilter(VpnConnectionProvisioningQueryFilterPojo filter, AsyncCallback<VpnConnectionProvisioningQueryResultPojo> callback);
 	void generateVpncp(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionProvisioningPojo> callback);
-	void generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
+	void updateVpnConnectionProvisioning(VpnConnectionProvisioningPojo pojo, AsyncCallback<VpnConnectionProvisioningPojo> callback);
+//	void generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
+	void generateVpnConnectionDeprovisioning(VpnConnectionPojo vpnConnection, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
+	void updateVpnConnectionDeprovisioning(VpnConnectionDeprovisioningPojo pojo, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
 	void generateVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentRequisitionPojo requisition, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 	void createVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentPojo profileAssignment, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 	void deleteVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);

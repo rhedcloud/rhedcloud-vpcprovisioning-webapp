@@ -309,26 +309,16 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 									+ "assigned to a VPC and try again.");
 								return;
 							}
-//							else {
-//								String remoteVpnIp = Window.prompt("Remote VPN IP Address", "");
-//								String presharedKey = Window.prompt("Preshared Key", "");
-//								showMessageToUser("This feature is not fully implemented yet.  "
-//									+ "Remote VPN IP: " + remoteVpnIp + "  Preshared Key: " + presharedKey);
-//								return;
-//							}
-							VpnConnectionRequisitionPojo vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
-							vpnConnectionRequisition.setProfile(m.getProfile());
-							vpnConnectionRequisition.setOwnerId(m.getAssignment().getOwnerId());
 
-							// TODO: maybe we just need to go to the VPNCP maintenance page and collect 
-							// the vpnipaddress and shared key, passing the requisition
-							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_DEPROVISIONING, vpnConnectionRequisition, m.getAssignment());
-
-							// OR, we just have to collect the necessary data...
-//							// TODO: need to get this data somehow
-////							vpnConnectionRequisition.setRemoteVpnIpAddress(remoteVpnIpAddress);
-////							vpnConnectionRequisition.setPresharedKey(presharedKey);
-//							presenter.deprovisionVpnConnection(vpnConnectionRequisition);
+//							VpnConnectionRequisitionPojo vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
+//							vpnConnectionRequisition.setProfile(m.getProfile());
+//							vpnConnectionRequisition.setOwnerId(m.getAssignment().getOwnerId());
+//
+//							// maybe we just need to go to the VPNCP maintenance page and collect 
+//							// the vpnipaddress and shared key, passing the requisition
+//							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_DEPROVISIONING, vpnConnectionRequisition, m.getAssignment());
+							
+							presenter.deprovisionVpnConnectionForVpcId(m.getAssignment().getOwnerId());
 						}
 						else {
 							showMessageToUser("You are not authorized to perform this action.");

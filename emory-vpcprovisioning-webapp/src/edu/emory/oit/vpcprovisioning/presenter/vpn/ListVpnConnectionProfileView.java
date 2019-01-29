@@ -41,7 +41,8 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 		void filterByVpcAddress(String vpcAddress);
 		void filterByVpnConnectionProfileId(String profileId);
 		void clearFilter();
-		void deprovisionVpnConnection(VpnConnectionRequisitionPojo vpnConnectionRequisition);
+//		void deprovisionVpnConnection(VpnConnectionRequisitionPojo vpnConnectionRequisition);
+		void deprovisionVpnConnectionForVpcId(String vpcId);
 	}
 
 	/**

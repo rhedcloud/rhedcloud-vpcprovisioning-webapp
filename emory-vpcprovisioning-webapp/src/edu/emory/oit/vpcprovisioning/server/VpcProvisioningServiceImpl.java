@@ -153,6 +153,8 @@ import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfileAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProvisioning;
 import edu.emory.moa.objects.resources.v1_0.AssociatedCidr;
+import edu.emory.moa.objects.resources.v1_0.BgpPrefixes;
+import edu.emory.moa.objects.resources.v1_0.BgpState;
 import edu.emory.moa.objects.resources.v1_0.CidrAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CidrQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.CryptoIpsecProfile;
@@ -168,6 +170,8 @@ import edu.emory.moa.objects.resources.v1_0.ExplicitIdentityDNs;
 import edu.emory.moa.objects.resources.v1_0.LocalAddress;
 import edu.emory.moa.objects.resources.v1_0.MatchIdentity;
 import edu.emory.moa.objects.resources.v1_0.Property;
+import edu.emory.moa.objects.resources.v1_0.RemoteVpnConnectionInfo;
+import edu.emory.moa.objects.resources.v1_0.RemoteVpnTunnel;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
@@ -9353,7 +9357,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				pojos.add(pojo);
 			}
 			
-			// TODO: now get the VPNCDPs (deprovisioning objects)
+			// now get the VPNCDPs (deprovisioning objects)
 			VpnConnectionDeprovisioningQuerySpecification deprov_queryObject = (VpnConnectionDeprovisioningQuerySpecification) getObject(Constants.MOA_VPNC_DEPROVISIONING_QUERY_SPEC);
 			VpnConnectionDeprovisioning deprov_actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
 
@@ -9421,15 +9425,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public VpnConnectionDeprovisioningPojo generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition)
+	public VpnConnectionDeprovisioningPojo generateVpnConnectionDeprovisioning(VpnConnectionPojo vpnConnection)
 			throws RpcException {
-		
+
 		try {
 			info("generating VpnConnectionDeprovisioning on the server...");
 			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
-			VpnConnectionRequisition seed = (VpnConnectionRequisition) getObject(Constants.MOA_VPN_CONNECTION_REQUISITION);
+			VpnConnection seed = (VpnConnection) getObject(Constants.MOA_VPN_CONNECTION);
 			info("populating moa");
-			this.populateVpncpRequisitionMoa(requisition, seed);
+			this.populateVpnConnectionMoa(vpnConnection, seed);
 
 			
 			info("doing the VpnConnectionDeprovisioning.generate...");
@@ -9438,7 +9442,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("VpnConnectionDeprovisioning.generate seed data is: " + seed.toXmlString());
 			@SuppressWarnings("unchecked")
 			List<VpnConnectionDeprovisioning> result = actionable.generate(seed, this.getNetworkOpsRequestService());
-			// TODO if more than one returned, it's an error...
 			VpnConnectionDeprovisioningPojo pojo = new VpnConnectionDeprovisioningPojo();
 			for (VpnConnectionDeprovisioning moa : result) {
 				info("generated VpnConnectionDeprovisioning is: " + moa.toXmlString());
@@ -9476,19 +9479,77 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (InvocationTargetException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (NoSuchMethodException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		}
 	}
+
+//	@Override
+//	public VpnConnectionDeprovisioningPojo generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition)
+//			throws RpcException {
+//		
+//		try {
+//			info("generating VpnConnectionDeprovisioning on the server...");
+//			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
+//			VpnConnectionRequisition seed = (VpnConnectionRequisition) getObject(Constants.MOA_VPN_CONNECTION_REQUISITION);
+//			info("populating moa");
+//			this.populateVpncpRequisitionMoa(requisition, seed);
+//
+//			
+//			info("doing the VpnConnectionDeprovisioning.generate...");
+//			String authUserId = this.getAuthUserIdForHALS();
+//			actionable.getAuthentication().setAuthUserId(authUserId);
+//			info("VpnConnectionDeprovisioning.generate seed data is: " + seed.toXmlString());
+//			@SuppressWarnings("unchecked")
+//			List<VpnConnectionDeprovisioning> result = actionable.generate(seed, this.getNetworkOpsRequestService());
+//			// TODO if more than one returned, it's an error...
+//			VpnConnectionDeprovisioningPojo pojo = new VpnConnectionDeprovisioningPojo();
+//			for (VpnConnectionDeprovisioning moa : result) {
+//				info("generated VpnConnectionDeprovisioning is: " + moa.toXmlString());
+//				this.populateVpnDeprovisioningPojo(moa, pojo);
+//			}
+//			info("VpnConnectionDeprovisioning.generate is complete...");
+//
+//			return pojo;
+//		} 
+//		catch (EnterpriseConfigurationObjectException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (IllegalArgumentException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (SecurityException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (JMSException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (EnterpriseObjectGenerateException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (XmlEnterpriseObjectException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (EnterpriseFieldException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (IllegalAccessException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (InvocationTargetException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (NoSuchMethodException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		}
+//	}
 
 	@SuppressWarnings("unchecked")
 	private void populateVpnDeprovisioningPojo(VpnConnectionDeprovisioning moa, VpnConnectionDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
@@ -9497,11 +9558,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setProvisioningResult(moa.getProvisioningResult());
 		pojo.setActualTime(moa.getActualTime());
 		pojo.setAnticipatedTime(moa.getAnticipatedTime());
-		if (moa.getVpnConnectionRequisition() != null) {
-			VpnConnectionRequisitionPojo vpcr = new VpnConnectionRequisitionPojo();
-			this.populateVpncpRequisitionPojo(moa.getVpnConnectionRequisition(), vpcr);
-			pojo.setRequisition(vpcr);
+		if (moa.getVpnConnection() != null) {
+			VpnConnectionPojo vpc = new VpnConnectionPojo();
+			this.populateVpnConnectionPojo(moa.getVpnConnection(), vpc);
+			pojo.setVpnConnection(vpc);
 		}
+//		if (moa.getVpnConnectionRequisition() != null) {
+//			VpnConnectionRequisitionPojo vpcr = new VpnConnectionRequisitionPojo();
+//			this.populateVpncpRequisitionPojo(moa.getVpnConnectionRequisition(), vpcr);
+//			pojo.setRequisition(vpcr);
+//		}
 
 		// provisioningsteps
 		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
@@ -9515,6 +9581,58 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	private void populateVpnDeprovisioningMoa(VpnConnectionDeprovisioningPojo pojo,
+			VpnConnectionDeprovisioning moa) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, EnterpriseFieldException, XmlEnterpriseObjectException {
+		
+		moa.setProvisioningId(pojo.getProvisioningId());
+		moa.setStatus(pojo.getStatus());
+		moa.setProvisioningResult(pojo.getProvisioningResult());
+		moa.setActualTime(pojo.getActualTime());
+		moa.setAnticipatedTime(pojo.getAnticipatedTime());
+		if (pojo.getVpnConnection() != null) {
+			VpnConnection vc = moa.newVpnConnection();
+			this.populateVpnConnectionMoa(pojo.getVpnConnection(), vc);
+			moa.setVpnConnection(vc);
+		}
+//		if (pojo.getRequisition() != null) {
+//			VpnConnectionRequisition vpcr = moa.newVpnConnectionRequisition();
+//			this.populateVpncpRequisitionMoa(pojo.getRequisition(), vpcr);
+//			moa.setVpnConnectionRequisition(vpcr);
+//		}
+
+		// provisioningsteps
+		for (ProvisioningStepPojo ps : pojo.getProvisioningSteps()) {
+			edu.emory.moa.objects.resources.v1_0.ProvisioningStep psp = moa.newProvisioningStep();
+			this.populateProvisioningStepMoaFromEmoryPojo(ps, psp);
+			moa.addProvisioningStep(psp);
+		}
+		
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	private void populateProvisioningStepMoaFromEmoryPojo(ProvisioningStepPojo pojo,
+			edu.emory.moa.objects.resources.v1_0.ProvisioningStep moa) throws EnterpriseFieldException {
+		
+		moa.setProvisioningId(pojo.getProvisioningId());
+		moa.setProvisioningStepId(pojo.getProvisioningStepId());
+		moa.setStepId(pojo.getStepId());
+		moa.setType(pojo.getType());
+		moa.setDescription(pojo.getDescription());
+		moa.setStatus(pojo.getStatus());
+		moa.setStepResult(pojo.getStepResult());
+		moa.setActualTime(pojo.getActualTime());
+		moa.setAnticipatedTime(pojo.getAnticipatedTime());
+		Iterator<String> keys = pojo.getProperties().keySet().iterator();
+		while (keys.hasNext()) {
+			String key = keys.next();
+			edu.emory.moa.objects.resources.v1_0.Property prop = moa.newProperty();
+			prop.setPropertyName(key);
+			prop.setPropertyValue(pojo.getProperties().get(key));
+			moa.addProperty(prop);
+		}
 	}
 
 	@Override
@@ -9706,10 +9824,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("VpnConnectionProvisioning.generate seed data is: " + seed.toXmlString());
+			
+			VpnConnectionProvisioningPojo pojo = new VpnConnectionProvisioningPojo();
 			@SuppressWarnings("unchecked")
 			List<VpnConnectionProvisioning> result = actionable.generate(seed, this.getNetworkOpsRequestService());
 			// TODO if more than one returned, it's an error...
-			VpnConnectionProvisioningPojo pojo = new VpnConnectionProvisioningPojo();
 			for (VpnConnectionProvisioning moa : result) {
 				info("generated VpnConnectionProvisioning is: " + moa.toXmlString());
 				this.populateVpncpPojo(moa, pojo);
@@ -9786,13 +9905,51 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
+	private void populateVpncpMoa(VpnConnectionProvisioningPojo pojo, VpnConnectionProvisioning moa) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException, EnterpriseFieldException, XmlEnterpriseObjectException {
+		
+		moa.setProvisioningId(pojo.getProvisioningId());
+		moa.setStatus(pojo.getStatus());
+		moa.setProvisioningResult(pojo.getProvisioningResult());
+		moa.setActualTime(pojo.getActualTime());
+		moa.setAnticipatedTime(pojo.getAnticipatedTime());
+		if (pojo.getRequisition() != null) {
+			VpnConnectionRequisition vpcr = moa.newVpnConnectionRequisition();
+			this.populateVpncpRequisitionMoa(pojo.getRequisition(), vpcr);
+			moa.setVpnConnectionRequisition(vpcr);
+		}
+
+		// provisioningsteps
+		for (ProvisioningStepPojo ps : pojo.getProvisioningSteps()) {
+			edu.emory.moa.objects.resources.v1_0.ProvisioningStep psp = moa.newProvisioningStep();
+			this.populateProvisioningStepMoaFromEmoryPojo(ps, psp);
+			moa.addProvisioningStep(psp);
+		}
+
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
 
 	private void populateVpncpRequisitionPojo(VpnConnectionRequisition moa,
 			VpnConnectionRequisitionPojo pojo) throws XmlEnterpriseObjectException {
 
 		pojo.setOwnerId(moa.getOwnerId());
-		pojo.setRemoteVpnIpAddress(moa.getRemoteVpnIpAddress());
-		pojo.setPresharedKey(moa.getPresharedKey());
+//		pojo.setRemoteVpnIpAddress(moa.getRemoteVpnIpAddress());
+//		pojo.setPresharedKey(moa.getPresharedKey());
+		for (RemoteVpnConnectionInfo rvci : (List<RemoteVpnConnectionInfo>) moa.getRemoteVpnConnectionInfo()) {
+			RemoteVpnConnectionInfoPojo p_rvci = new RemoteVpnConnectionInfoPojo();
+			p_rvci.setRemoteVpnConnectionId(rvci.getRemoteVpnConnectionId());
+			for (RemoteVpnTunnel rvt : (List<RemoteVpnTunnel>) rvci.getRemoteVpnTunnel()) {
+				RemoteVpnTunnelPojo p_rvt = new RemoteVpnTunnelPojo();
+				p_rvt.setLocalTunnelId(rvt.getLocalTunnelId());
+				p_rvt.setRemoteVpnIpAddress(rvt.getRemoteVpnIpAddress());
+				p_rvt.setPresharedKey(rvt.getPresharedKey());
+				p_rvt.setVpnInsideCidr(rvt.getVpnInsideIpCidr());
+				p_rvci.getRemoteVpnTunnels().add(p_rvt);
+			}
+			pojo.getRemoteVpnConnectionInfo().add(p_rvci);
+		}
+
 		if (moa.getVpnConnectionProfile() != null) {
 			VpnConnectionProfilePojo vcp = new VpnConnectionProfilePojo();
 			this.populateVpnConnectionProfilePojo(moa.getVpnConnectionProfile(), vcp);
@@ -9804,8 +9961,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			VpnConnectionRequisition moa) throws XmlEnterpriseObjectException, EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 
 		moa.setOwnerId(pojo.getOwnerId());
-		moa.setRemoteVpnIpAddress(pojo.getRemoteVpnIpAddress());
-		moa.setPresharedKey(pojo.getPresharedKey());
+//		moa.setRemoteVpnIpAddress(pojo.getRemoteVpnIpAddress());
+//		moa.setPresharedKey(pojo.getPresharedKey());
+		for (RemoteVpnConnectionInfoPojo rvci : pojo.getRemoteVpnConnectionInfo()) {
+			RemoteVpnConnectionInfo m_rvci = moa.newRemoteVpnConnectionInfo();
+			m_rvci.setRemoteVpnConnectionId(rvci.getRemoteVpnConnectionId());
+			for (RemoteVpnTunnelPojo rvt : rvci.getRemoteVpnTunnels()) {
+				RemoteVpnTunnel m_rvt = m_rvci.newRemoteVpnTunnel();
+				m_rvt.setLocalTunnelId(rvt.getLocalTunnelId());
+				m_rvt.setRemoteVpnIpAddress(rvt.getRemoteVpnIpAddress());
+				m_rvt.setPresharedKey(rvt.getPresharedKey());
+				m_rvt.setVpnInsideIpCidr(rvt.getVpnInsideCidr());
+				m_rvci.addRemoteVpnTunnel(m_rvt);
+			}
+			moa.addRemoteVpnConnectionInfo(m_rvci);
+		}
 		if (pojo.getProfile() != null) {
 			VpnConnectionProfile vcp = moa.newVpnConnectionProfile();
 			this.populateVpnConnectionProfileMoa(pojo.getProfile(), vcp);
@@ -10624,6 +10794,74 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setTunnelInterfaces(tiList);
 	}
 	
+	private void populateVpnConnectionMoa(VpnConnectionPojo pojo, VpnConnection moa) throws EnterpriseFieldException {
+		moa.setVpnId(moa.getVpnId());
+		moa.setVpcId(moa.getVpcId());
+		if (pojo.getCryptoKeyring() != null) {
+			CryptoKeyring ck = moa.newCryptoKeyring();
+			populateCryptoKeyringMoa(pojo.getCryptoKeyring(), ck);
+			moa.setCryptoKeyring(ck);
+		}
+
+		if (pojo.getCryptoIsakmpProfile() != null) {
+			CryptoIsakmpProfile cip = moa.newCryptoIsakmpProfile();
+			populateCryptoIsakmpProfileMoa(pojo.getCryptoIsakmpProfile(), cip);
+			moa.setCryptoIsakmpProfile(cip);
+		}
+		
+		if (pojo.getCryptoIpsedTransformSet() != null) {
+			CryptoIpsecTransformSet cit = moa.newCryptoIpsecTransformSet();
+			populateCryptoIpsecTransformSetMoa(pojo.getCryptoIpsedTransformSet(), cit);
+			moa.setCryptoIpsecTransformSet(cit);
+		}
+		
+		if (pojo.getCryptoIpsecProfile() != null) {
+			CryptoIpsecProfile cipsec = moa.newCryptoIpsecProfile();
+			poplateCryptoIpsecProfileMoa(pojo.getCryptoIpsecProfile(), cipsec);
+			moa.setCryptoIpsecProfile(cipsec);
+		}
+
+		// tunnel interfaces
+		for (TunnelInterfacePojo ti_pojo : pojo.getTunnelInterfaces()) {
+			TunnelInterface ti_moa = moa.newTunnelInterface();
+			this.populateTunnelInterfaceMoa(ti_pojo, ti_moa);
+			moa.addTunnelInterface(ti_moa);
+		}
+	}
+
+	private void populateTunnelInterfaceMoa(TunnelInterfacePojo pojo, TunnelInterface moa) throws EnterpriseFieldException {
+		moa.setAdministrativeState(moa.getAdministrativeState());
+		
+		if (pojo.getBgpPrefixes() != null) {
+			BgpPrefixes bgpp = moa.newBgpPrefixes();
+			bgpp.setSent(pojo.getBgpPrefixes().getSent());
+			bgpp.setReceived(pojo.getBgpPrefixes().getReceived());
+			moa.setBgpPrefixes(bgpp);
+		}
+
+		if (pojo.getBgpState() != null) {
+			BgpState bgpState = moa.newBgpState();
+			bgpState.setNeighborId(pojo.getBgpState().getNeighborId());
+			bgpState.setStatus(pojo.getBgpState().getStatus());
+			bgpState.setUptime(pojo.getBgpState().getUptime());
+			moa.setBgpState(bgpState);
+		}
+		
+		CryptoIpsecProfile cipsec = moa.newCryptoIpsecProfile();
+		poplateCryptoIpsecProfileMoa(pojo.getCryptoIpsecProfile(), cipsec);
+		moa.setCryptoIpsecProfile(cipsec);
+		
+		moa.setDescription(pojo.getDescription());
+		moa.setIpAddress(pojo.getIpAddress());
+		moa.setName(pojo.getName());
+		moa.setOperationalStatus(pojo.getOperationalStatus());
+		moa.setTcpMaximumSegmentSize(pojo.getTcpMaximumSegmentSize());
+		moa.setTunnelDestination(pojo.getTunnelDestination());
+		moa.setTunnelMode(pojo.getTunnelMode());
+		moa.setTunnelSource(pojo.getTunnelSource());
+		moa.setVirtualRouteForwarding(pojo.getVirtualRouteForwarding());
+	}
+
 	private void populateTunnelInterfacePojo(TunnelInterface moa, TunnelInterfacePojo pojo) {
 		pojo.setAdministrativeState(moa.getAdministrativeState());
 		
@@ -10671,6 +10909,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setPerfectForwardSecrecy(moa.getPerfectForwardSecrecy());
 	}
 	
+	private void poplateCryptoIpsecProfileMoa(CryptoIpsecProfilePojo pojo, CryptoIpsecProfile moa) throws EnterpriseFieldException {
+		if (pojo == null) {
+			return;
+		}
+		CryptoIpsecTransformSet cit = moa.newCryptoIpsecTransformSet();
+		populateCryptoIpsecTransformSetMoa(pojo.getCryptoIpsecTransformSet(), cit);
+		moa.setCryptoIpsecTransformSet(cit);
+		
+		moa.setDescription(pojo.getDescription());
+		moa.setName(pojo.getName());
+		moa.setPerfectForwardSecrecy(pojo.getPerfectForwardSecrecy());
+	}
+
 	private void populateCryptoIpsecTransformSetPojo(CryptoIpsecTransformSet moa, CryptoIpsecTransformSetPojo pojo) {
 		if (moa == null) {
 			return;
@@ -10681,6 +10932,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setName(moa.getName());
 	}
 	
+	private void populateCryptoIpsecTransformSetMoa(CryptoIpsecTransformSetPojo pojo,
+			CryptoIpsecTransformSet moa) throws EnterpriseFieldException {
+
+		if (pojo == null) {
+			return;
+		}
+		moa.setBits(pojo.getBits());
+		moa.setCipher(pojo.getCipher());
+		moa.setMode(pojo.getMode());
+		moa.setName(pojo.getName());
+	}
+
 	private void populateCryptoIsakmpProfilePojo(CryptoIsakmpProfile moa, CryptoIsakmpProfilePojo pojo) {
 		if (moa == null) {
 			return;
@@ -10703,6 +10966,34 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setVirtualRouteForwarding(moa.getVirtualRouteForwarding());
 	}
 	
+	private void populateCryptoIsakmpProfileMoa(CryptoIsakmpProfilePojo pojo, CryptoIsakmpProfile moa) throws EnterpriseFieldException {
+		if (pojo == null) {
+			return;
+		}
+		CryptoKeyring ck = moa.newCryptoKeyring();
+		populateCryptoKeyringMoa(pojo.getCryptoKeyring(), ck);
+		moa.setCryptoKeyring(ck);
+		moa.setDescription(pojo.getDescription());
+		if (pojo.getLocalAddress() != null) {
+			LocalAddress la = moa.newLocalAddress();
+			populateLocalAddressMoa(pojo.getLocalAddress(), la);
+			moa.setLocalAddress(la);
+		}
+		if (pojo.getMatchIdentity() != null) {
+			MatchIdentity mi = moa.newMatchIdentity();
+			populateMatchIdentityMoa(pojo.getMatchIdentity(), mi);
+			moa.setMatchIdentity(mi);
+		}
+		moa.setName(pojo.getName());
+		moa.setVirtualRouteForwarding(pojo.getVirtualRouteForwarding());
+	}
+
+	private void populateMatchIdentityMoa(MatchIdentityPojo pojo, MatchIdentity moa) throws EnterpriseFieldException {
+		moa.setIpAddress(pojo.getIpAddress());
+		moa.setNetmask(pojo.getNetMask());
+		moa.setVirtualRouteForwarding(pojo.getVirtualRouteForwarding());
+	}
+
 	private void populateMatchIdentityPojo(MatchIdentity moa, MatchIdentityPojo pojo) {
 		pojo.setIpAddress(moa.getIpAddress());
 		pojo.setNetMask(moa.getNetmask());
@@ -10723,6 +11014,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setPresharedKey(moa.getPresharedKey());
 	}
 	
+	private void populateCryptoKeyringMoa(CryptoKeyringPojo pojo, CryptoKeyring moa) throws EnterpriseFieldException {
+		if (pojo == null) {
+			return;
+		}
+		moa.setDescription(pojo.getDescription());
+		if (pojo.getLocalAddress() != null) {
+			LocalAddress la = moa.newLocalAddress();
+			populateLocalAddressMoa(pojo.getLocalAddress(), la);
+			moa.setLocalAddress(la);
+		}
+		moa.setName(pojo.getName());
+		moa.setPresharedKey(pojo.getPresharedKey());
+	}
+
+	private void populateLocalAddressMoa(LocalAddressPojo pojo, LocalAddress moa) throws EnterpriseFieldException {
+		moa.setIpAddress(pojo.getIpAddress());
+		moa.setVirtualRouteForwarding(pojo.getVirualRouteForwarding());
+	}
+
 	private void populateLocalAddressPojo(LocalAddress moa, LocalAddressPojo pojo) {
 		pojo.setIpAddress(moa.getIpAddress());
 		pojo.setVirualRouteForwarding(moa.getVirtualRouteForwarding());
@@ -10851,5 +11161,57 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public VpnConnectionProvisioningPojo updateVpnConnectionProvisioning(VpnConnectionProvisioningPojo pojo)
+			throws RpcException {
+
+        try {
+            info("updating VpnConnectionProvisioningPojo on the server...");
+            VpnConnectionProvisioning newData = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
+            VpnConnectionProvisioning baselineData = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
+
+            info("populating newData...");
+            populateVpncpMoa(pojo, newData);
+
+            info("populating baselineData...");
+            populateVpncpMoa(pojo.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getNetworkOpsRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return pojo;
+	}
+
+	@Override
+	public VpnConnectionDeprovisioningPojo updateVpnConnectionDeprovisioning(VpnConnectionDeprovisioningPojo pojo)
+			throws RpcException {
+
+        try {
+            info("updating VpnConnectionProvisioningPojo on the server...");
+            VpnConnectionDeprovisioning newData = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
+            VpnConnectionDeprovisioning baselineData = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
+
+            info("populating newData...");
+            populateVpnDeprovisioningMoa(pojo, newData);
+
+            info("populating baselineData...");
+            populateVpnDeprovisioningMoa(pojo.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getNetworkOpsRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return pojo;
 	}
 }

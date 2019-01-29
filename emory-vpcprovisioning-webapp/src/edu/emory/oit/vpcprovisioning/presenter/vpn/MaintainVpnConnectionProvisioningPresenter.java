@@ -15,6 +15,8 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.RemoteVpnConnectionInfoPojo;
+import edu.emory.oit.vpcprovisioning.shared.RemoteVpnTunnelPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -155,6 +157,8 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 			@Override
 			public void onFailure(Throwable caught) {
 				GWT.log("problem getting vpcs..." + caught.getMessage());
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 			}
 
 			@Override
@@ -164,6 +168,8 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 				if (isDeprovision || isRegen) {
 					selectedVpc = result.getResults().get(0);
 				}
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
 			}
 		};
 		
@@ -230,8 +236,8 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 					+ "appear to be associated to any valid roles for this page.");
 			getView().applyAWSAccountAuditorMask();
 		}
-		getView().hidePleaseWaitDialog();
-		getView().hidePleaseWaitPanel();
+//		getView().hidePleaseWaitDialog();
+//		getView().hidePleaseWaitPanel();
 	}
 
 	private void startCreate() {
@@ -248,12 +254,38 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 			getView().setReprovisioning(true);
 			vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
 			vpnConnectionRequisition.setProfile(this.getVpnConnectionProfile());
+			// TODO: need to add RemoteVpnConnectionInfo values to the requisition
+			int vpnCntr=1;
+			for (TunnelProfilePojo tunnel : vpnConnectionProfile.getTunnelProfiles()) {
+				RemoteVpnConnectionInfoPojo rvci = new RemoteVpnConnectionInfoPojo();
+				rvci.setRemoteVpnConnectionId("Not Used Yet");
+				rvci.setVpnConnectionNumber(vpnCntr);
+				vpnCntr++;
+				RemoteVpnTunnelPojo rvt = new RemoteVpnTunnelPojo();
+				rvt.setVpnInsideCidr("Not Used Yet");
+				rvt.setLocalTunnelId(tunnel.getTunnelId());
+				rvci.getRemoteVpnTunnels().add(rvt);
+				vpnConnectionRequisition.getRemoteVpnConnectionInfo().add(rvci);
+			}
 		}
 		else {
 			GWT.log("[MaintainVpnConnectinProvisioningPresenter] it is a PROVISION");
 			getView().setDeprovisioning(false);
 			vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
 			vpnConnectionRequisition.setProfile(vpnConnectionProfile);
+			// TODO: need to add RemoteVpnConnectionInfo values to the requisition
+			int vpnCntr=1;
+			for (TunnelProfilePojo tunnel : vpnConnectionProfile.getTunnelProfiles()) {
+				RemoteVpnConnectionInfoPojo rvci = new RemoteVpnConnectionInfoPojo();
+				rvci.setRemoteVpnConnectionId("Not Used Yet");
+				rvci.setVpnConnectionNumber(vpnCntr);
+				vpnCntr++;
+				RemoteVpnTunnelPojo rvt = new RemoteVpnTunnelPojo();
+				rvt.setVpnInsideCidr("Not Used Yet");
+				rvt.setLocalTunnelId(tunnel.getTunnelId());
+				rvci.getRemoteVpnTunnels().add(rvt);
+				vpnConnectionRequisition.getRemoteVpnConnectionInfo().add(rvci);
+			}
 		}
 	}
 
@@ -606,39 +638,39 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 
 	@Override
 	public void vpcpConfirmOkay() {
-		AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				getView().hidePleaseWaitDialog();
-				GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
-				getView().showMessageToUser("There was an exception on the " +
-						"server generating the VpnConnectionDeprovisioning.  Message " +
-						"from server is: " + caught.getMessage());
-			}
-
-			@Override
-			public void onSuccess(VpnConnectionDeprovisioningPojo result) {
-				getView().hidePleaseWaitDialog();
-				// if it was a generate, we'll take them to the VPNCP status view
-				// So we won't go directly back
-				// to the list just yet but instead, we'll show them an immediate 
-				// status and give them the opportunity to watch it for a bit
-				// before they go back.  So, we'll only fire the VPCP_SAVED event 
-				// when/if it's an update and not on the generate.  As of right now
-				// we don't think there will be a VPCP update so the update handling 
-				// stuff is just here to maintain consistency and if we ever decide
-				// a VPCP can be updated, we'll already have the flow here.
-				// show VPNCP status page
-				final VpnConnectionDeprovisioningPojo vpncdp = result;
-				GWT.log("VPNCDP was generated on the server, showing status page.  "
-						+ "VPNCDP is: " + vpncdp);
-				VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
-				vpncpSummary.setDeprovisioning(vpncdp);
-				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
-			}
-		};
-		getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
-		VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(vpnConnectionRequisition, callback);
+//		AsyncCallback<VpnConnectionDeprovisioningPojo> callback = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				getView().hidePleaseWaitDialog();
+//				GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
+//				getView().showMessageToUser("There was an exception on the " +
+//						"server generating the VpnConnectionDeprovisioning.  Message " +
+//						"from server is: " + caught.getMessage());
+//			}
+//
+//			@Override
+//			public void onSuccess(VpnConnectionDeprovisioningPojo result) {
+//				getView().hidePleaseWaitDialog();
+//				// if it was a generate, we'll take them to the VPNCP status view
+//				// So we won't go directly back
+//				// to the list just yet but instead, we'll show them an immediate 
+//				// status and give them the opportunity to watch it for a bit
+//				// before they go back.  So, we'll only fire the VPCP_SAVED event 
+//				// when/if it's an update and not on the generate.  As of right now
+//				// we don't think there will be a VPCP update so the update handling 
+//				// stuff is just here to maintain consistency and if we ever decide
+//				// a VPCP can be updated, we'll already have the flow here.
+//				// show VPNCP status page
+//				final VpnConnectionDeprovisioningPojo vpncdp = result;
+//				GWT.log("VPNCDP was generated on the server, showing status page.  "
+//						+ "VPNCDP is: " + vpncdp);
+//				VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+//				vpncpSummary.setDeprovisioning(vpncdp);
+//				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
+//			}
+//		};
+//		getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
+//		VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(vpnConnectionRequisition, callback);
 	}
 
 	@Override

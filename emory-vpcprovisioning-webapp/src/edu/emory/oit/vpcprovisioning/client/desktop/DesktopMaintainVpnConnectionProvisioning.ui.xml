@@ -21,15 +21,6 @@
 			</g:Grid>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
-			<g:ScrollPanel width="96%">
-				<g:VerticalPanel spacing="8" ui:field="tunnelsVP" height="100%">
-					<g:Label addStyleNames="{style.mediumLabel}">Tunnel Profiles:</g:Label>
-					<c:CellTable width="100%" ui:field="tunnelProfileTable"  title="Existing Tunnels"/>
-				</g:VerticalPanel>
-			</g:ScrollPanel>
-		</g:cell>
-		<!-- <!ELEMENT VpnConnectionRequisition (VpnConnectionProfile, OwnerId, RemoteVpnIpAddress, PresharedKey)> -->
-		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
 			<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="12">
 				<g:row>
 					<g:customCell>
@@ -46,25 +37,41 @@
 							ui:field="vpcLB" debugId="vpcLB" />
 			    	</g:customCell>
 				</g:row>
+				<!-- 
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Remote VPN IP Address:</g:Label>
+						<g:Label addStyleNames="{style.label}">Remote VPN Connection ID:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="remoteVpnIpAddressTB" debugId="remoteVpnIpAddressTB" title="For TESTING use:  72.21.209.225"/>
+							ui:field="remoteVpnConnectionIdTB" debugId="remoteVpnConnectionIdTB" />
 			    	</g:customCell>
 				</g:row>
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Pre-shared Key:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextArea addStyleNames="{style.longField} {style.glowing-border}"
-							ui:field="presharedKeyTA" debugId="presharedKeyTA" title="For TESTING use 'testnnn' where 'nnn' is the profile id preceded by an appropriate number of zeros.  For example for profile 1, the value would be 'test001'.  For profile 15, the value would be 'test015'.  For profile 150, the value would be 'test150' etc."/>
-			    	</g:customCell>
-				</g:row>
+				 -->
 			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+			<g:ScrollPanel width="96%">
+				<g:VerticalPanel spacing="8" ui:field="tunnelsVP" height="100%">
+					<g:Label addStyleNames="{style.mediumLabel}">Tunnel Profiles:</g:Label>
+					<c:CellTable width="100%" ui:field="tunnelProfileTable"  title="Existing Tunnels"/>
+				</g:VerticalPanel>
+			</g:ScrollPanel>
+		</g:cell>
+		<!-- 
+		<!ELEMENT VpnConnectionRequisition (VpnConnectionProfile, OwnerId, RemoteVpnConnectionInfo+)>
+		<!ELEMENT RemoteVpnConnectionInfo (RemoteVpnConnectionId, RemoteVpnTunnel+)>
+		<!ELEMENT RemoteVpnTunnel (LocalTunnelId, RemoteVpnIpAddress, PresharedKey, VpnInsideIpCidr)>
+		 -->
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+			<g:ScrollPanel width="96%">
+				<g:VerticalPanel spacing="8" ui:field="remoteVpnConnectionInfoVP" height="100%">
+					<g:Label addStyleNames="{style.mediumLabel}">Remote VPN Connections:</g:Label>
+					<g:Label addStyleNames="{style.labelLeft}">NOTE:  Remote VPN Connection ID and VPN 
+					Inside IP CIDR are not currently used so the data for those fields doesn't matter.</g:Label>
+					<c:CellTable width="100%" ui:field="remoteVpnConnectionTable"  title="Remote VPN Tunnels"/>
+				</g:VerticalPanel>
+			</g:ScrollPanel>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">

@@ -8,8 +8,24 @@ import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
 public class VpnConnectionDeprovisioningPojo extends SharedObject implements IsSerializable, Comparable<VpnConnectionDeprovisioningPojo> {
+	
+	/*
+	<!ELEMENT VpnConnectionDeprovisioning (
+		ProvisioningId, 
+		VpnConnection, 
+		Status, 
+		ProvisioningResult?, 
+		ActualTime?, 
+		AnticipatedTime?, 
+		ProvisioningStep*, 
+		CreateUser, 
+		CreateDatetime, 
+		LastUpdateUser?, 
+		LastUpdateDatetime?)>
+	 */
 	String provisioningId;
-	VpnConnectionRequisitionPojo requisition;
+//	VpnConnectionRequisitionPojo requisition;
+	VpnConnectionPojo vpnConnection;
 	String status;
 	String provisioningResult;
 	String actualTime;
@@ -140,12 +156,20 @@ public class VpnConnectionDeprovisioningPojo extends SharedObject implements IsS
 		this.baseline = baseline;
 	}
 
-	public VpnConnectionRequisitionPojo getRequisition() {
-		return requisition;
+//	public VpnConnectionRequisitionPojo getRequisition() {
+//		return requisition;
+//	}
+//
+//	public void setRequisition(VpnConnectionRequisitionPojo requisition) {
+//		this.requisition = requisition;
+//	}
+
+	public VpnConnectionPojo getVpnConnection() {
+		return vpnConnection;
 	}
 
-	public void setRequisition(VpnConnectionRequisitionPojo requisition) {
-		this.requisition = requisition;
+	public void setVpnConnection(VpnConnectionPojo vpnConnection) {
+		this.vpnConnection = vpnConnection;
 	}
 
 }

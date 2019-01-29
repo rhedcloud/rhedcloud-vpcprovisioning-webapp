@@ -8,6 +8,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProvisioningSummaryPojo;
@@ -36,7 +37,9 @@ public interface ListVpnConnectionProvisioningView extends IsWidget, View {
 		void refreshListWithMaximumVpnConnectionProvisionings(UserAccountPojo user);
 		void refreshListWithAllVpnConnectionProvisionings(UserAccountPojo user);
 		void filterByProvisioningId(boolean includeAllVpnConnectionProvisionings, String provisioningId);
-		void deprovisionVpnConnection(VpnConnectionProvisioningPojo provisionedVpnConnection);
+//		void deprovisionVpnConnection(VpnConnectionProvisioningPojo provisionedVpnConnection);
+		void saveProvisioning(VpnConnectionProvisioningPojo pojo);
+		void saveDeprovisioning(VpnConnectionDeprovisioningPojo pojo);
 	}
 
 	/**
