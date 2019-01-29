@@ -443,11 +443,11 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 
 	private void setProvisioningProgress() {
 		if (presenter.getVpncpSummary().isProvision()) {
-	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncp().getTotalStepCount(), presenter.getVpncp().getSuccessfullStepCount());
+	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncp().getTotalStepCount(), presenter.getVpncp().getCompletedSuccessfulCount());
 	        progressHTML.setHTML(sh);
 		}
 		else {
-	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncdp().getTotalStepCount(), presenter.getVpncdp().getSuccessfullStepCount());
+	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getVpncdp().getTotalStepCount(), presenter.getVpncdp().getCompletedSuccessfulCount());
 	        progressHTML.setHTML(sh);
 		}
 	}
