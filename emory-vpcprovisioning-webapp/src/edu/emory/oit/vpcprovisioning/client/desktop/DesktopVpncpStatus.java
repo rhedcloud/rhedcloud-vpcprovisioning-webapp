@@ -451,4 +451,16 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 	        progressHTML.setHTML(sh);
 		}
 	}
+
+	@Override
+	public void clearProvisioningStatus() {
+		provisioningIdLabel.setText("");
+		provisioningTypeLabel.setText("");
+		statusLabel.setText("");
+		provisioningResultLabel.setText("");
+		anticipatedTimeLabel.setText("");
+		actualTimeLabel.setText("");
+		stepsPanel.clear();
+		setProvisioningProgress();
+	}
 }

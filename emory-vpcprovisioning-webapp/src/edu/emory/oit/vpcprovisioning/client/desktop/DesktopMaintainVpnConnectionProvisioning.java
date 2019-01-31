@@ -45,7 +45,7 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 	Presenter presenter;
 	boolean editing;
 	boolean locked;
-	boolean deprovision;
+//	boolean deprovision;
 	boolean reprovision;
 	UserAccountPojo userLoggedIn;
 	private ListDataProvider<TunnelProfilePojo> tunnelProfileDataProvider = new ListDataProvider<TunnelProfilePojo>();
@@ -112,14 +112,14 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 //			return;
 //		}
 //		presenter.getVpnConnectionRequisition().setPresharedKey(presharedKeyTA.getText());
-		if (!this.deprovision) {
+//		if (!this.deprovision) {
 			// provision generate/update (provsion or re-provision)
 			presenter.saveVpnConnectionProvisioning();
-		}
-		else {
-			// do a de-provision generate
-			presenter.saveVpnConnectionDeprovisioning();
-		}
+//		}
+//		else {
+//			// do a de-provision generate
+//			presenter.saveVpnConnectionDeprovisioning();
+//		}
 	}
 	
 	@UiHandler ("cancelButton")
@@ -155,7 +155,8 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 
 	@Override
 	public void applyNetworkAdminMask() {
-		if (deprovision || reprovision) {
+//		if (deprovision || reprovision) {
+		if (reprovision) {
 			// if this is a de-provision or a re-provision, the VPC id can't be changed
 			vpcLB.setEnabled(false);
 		}
@@ -704,7 +705,8 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 		this.vpcItems = vpcs;
 		
 		vpcLB.clear();
-		if (deprovision || reprovision) {
+//		if (deprovision || reprovision) {
+		if (reprovision) {
 			// de-provision OR re-provision
 			if (vpcItems != null) {
 				for (VpcPojo vpc : vpcItems) {
@@ -723,10 +725,10 @@ public class DesktopMaintainVpnConnectionProvisioning extends ViewImplBase imple
 			}
 		}
 	}
-	@Override
-	public void setDeprovisioning(boolean isDeprovision) {
-		this.deprovision = isDeprovision;
-	}
+//	@Override
+//	public void setDeprovisioning(boolean isDeprovision) {
+//		this.deprovision = isDeprovision;
+//	}
 	@Override
 	public void setReprovisioning(boolean isReprovision) {
 		this.reprovision = isReprovision;

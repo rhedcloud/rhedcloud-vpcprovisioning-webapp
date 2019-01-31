@@ -246,7 +246,8 @@ public interface VpcProvisioningServiceAsync {
 	void generateVpncp(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionProvisioningPojo> callback);
 	void updateVpnConnectionProvisioning(VpnConnectionProvisioningPojo pojo, AsyncCallback<VpnConnectionProvisioningPojo> callback);
 //	void generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
-	void generateVpnConnectionDeprovisioning(VpnConnectionPojo vpnConnection, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
+//	void generateVpnConnectionDeprovisioning(VpnConnectionPojo vpnConnection, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
+	void generateVpnConnectionDeprovisioning(VpnConnectionProfileAssignmentPojo assignment, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
 	void updateVpnConnectionDeprovisioning(VpnConnectionDeprovisioningPojo pojo, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
 	void generateVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentRequisitionPojo requisition, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 	void createVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentPojo profileAssignment, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);

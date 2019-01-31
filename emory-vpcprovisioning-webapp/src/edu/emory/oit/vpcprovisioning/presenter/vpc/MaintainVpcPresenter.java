@@ -431,6 +431,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 			}
 		};
 		getView().showVpnConnectionPleaseWaitDialog("Refreshing VPN Connection info...");
+		getView().setVpnRefreshing();
 		VpnConnectionQueryFilterPojo vpnFilter = new VpnConnectionQueryFilterPojo();
 		vpnFilter.setVpcId(getVpcId());
 		VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(vpnFilter, vpnConnectionCB);

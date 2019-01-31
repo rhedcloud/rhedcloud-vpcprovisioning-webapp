@@ -19,7 +19,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryResultPojo;
@@ -48,6 +48,9 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 	VpnConnectionProfileQueryFilterPojo filter;
 	VpcPojo vpc;
 	VpnConnectionProfileSummaryPojo selectedSummary;
+	VpnConnectionProfileAssignmentPojo selectedAssignment;
+	boolean isAssignmentDelete;
+	int selectedRowNumber;
 	List<VpnConnectionProfileSummaryPojo> selectedSummaries;
 	VpnConnectionRequisitionPojo selectedVpnConnectionRequisition;
 	String selectedVpcId;
@@ -322,55 +325,152 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 //			VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(selectedVpnConnectionRequisition, callback);
 		}
 		else if (selectedVpcId != null) {
-			getView().showPleaseWaitDialog("Deprovisioning VPN Connection for VPC " + selectedVpcId);
-			// VPN deprovision for a given vpcid
-			// do a VpnConnection.Query for the given vpc
-			// do a VpnConnectionDeprovisioning.Generate passing the VpnConnection that was returned.
+			// NOTE:  this isn't used any more and we shouldn't get here
+//			getView().showPleaseWaitDialog("Deprovisioning VPN Connection for VPC " + selectedVpcId);
+//			// VPN deprovision for a given vpcid
+//			// do a VpnConnection.Query for the given vpc
+//			// do a VpnConnectionDeprovisioning.Generate passing the VpnConnection that was returned.
+//			
+//			AsyncCallback<VpnConnectionQueryResultPojo> cb = new AsyncCallback<VpnConnectionQueryResultPojo>() {
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					getView().hidePleaseWaitDialog();
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server retrieving the VPN Connection for VPC ID " + 
+//							selectedVpcId + ".  Message " +
+//							"from server is: " + caught.getMessage());
+//				}
+//
+//				@Override
+//				public void onSuccess(VpnConnectionQueryResultPojo result) {
+//					if (result.getResults().size() == 0) {
+//						getView().hidePleaseWaitDialog();
+//						getView().showMessageToUser("Could not find a VPN Connection for the VPC "
+//								+ "id " + selectedVpcId + ".  Processing cannot continue.");
+//						return;
+//					}
+//					VpnConnectionPojo vpn = result.getResults().get(0);
+//					AsyncCallback<VpnConnectionDeprovisioningPojo> de_cb = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							getView().hidePleaseWaitDialog();
+//							GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
+//							getView().showMessageToUser("There was an exception on the " +
+//									"server generating the VpnConnectionDeprovisioning.  Message " +
+//									"from server is: " + caught.getMessage());
+//						}
+//
+//						@Override
+//						public void onSuccess(VpnConnectionDeprovisioningPojo result) {
+//							// go to the status page
+//							getView().hidePleaseWaitDialog();
+//							VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+//							vpncpSummary.setDeprovisioning(result);
+//							ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
+//						}
+//					};
+//					VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(vpn, de_cb);
+//				}
+//			};
+//			VpnConnectionQueryFilterPojo filter = new VpnConnectionQueryFilterPojo();
+//			filter.setVpcId(selectedVpcId);
+//			VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(filter, cb);
+		}
+		else if (selectedAssignment != null) {
+			// generate VPN COnnection Deprovisioning passing a VpnConnectionProfileAssignment
+			getView().showPleaseWaitDialog("Deprovisioning VPN Connection for VPC " + selectedAssignment.getOwnerId());
+			AsyncCallback<VpnConnectionDeprovisioningPojo> de_cb = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					getView().hidePleaseWaitDialog();
+					GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
+					getView().showMessageToUser("There was an exception on the " +
+							"server generating the VpnConnectionDeprovisioning.  Message " +
+							"from server is: " + caught.getMessage());
+				}
+
+				@Override
+				public void onSuccess(VpnConnectionDeprovisioningPojo result) {
+					// go to the status page
+					getView().hidePleaseWaitDialog();
+					VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
+					vpncpSummary.setDeprovisioning(result);
+					ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
+				}
+			};
+			VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(selectedAssignment, de_cb);
+		}
+		else if (selectedSummary != null && isAssignmentDelete) {
+			// TODO: query for a VpnConnection by assignment.ownerId
+			// if a VpnConnection does not exist, delete the assignment
+			// else show a message to the user
 			
-			AsyncCallback<VpnConnectionQueryResultPojo> cb = new AsyncCallback<VpnConnectionQueryResultPojo>() {
+			AsyncCallback<VpnConnectionQueryResultPojo> vpn_cb = new AsyncCallback<VpnConnectionQueryResultPojo>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					getView().hidePleaseWaitDialog();
 					getView().showMessageToUser("There was an exception on the " +
-							"server retrieving the VPN Connection for VPC ID " + 
-							selectedVpcId + ".  Message " +
+							"server checking for a VpnConnection.  Message " +
 							"from server is: " + caught.getMessage());
 				}
 
 				@Override
 				public void onSuccess(VpnConnectionQueryResultPojo result) {
 					if (result.getResults().size() == 0) {
-						getView().hidePleaseWaitDialog();
-						getView().showMessageToUser("Could not find a VPN Connection for the VPC "
-								+ "id " + selectedVpcId + ".  Processing cannot continue.");
-						return;
-					}
-					VpnConnectionPojo vpn = result.getResults().get(0);
-					AsyncCallback<VpnConnectionDeprovisioningPojo> de_cb = new AsyncCallback<VpnConnectionDeprovisioningPojo>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							getView().hidePleaseWaitDialog();
-							GWT.log("Exception generating the VpnConnectionDeprovisioning", caught);
-							getView().showMessageToUser("There was an exception on the " +
-									"server generating the VpnConnectionDeprovisioning.  Message " +
-									"from server is: " + caught.getMessage());
-						}
+						// delete it
+						AsyncCallback<VpnConnectionProfileAssignmentPojo> cb = new AsyncCallback<VpnConnectionProfileAssignmentPojo>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								getView().hidePleaseWaitDialog();
+								getView().showMessageToUser("There was an exception on the " +
+										"server deleting the VpnConnectionProfileAssignment.  Message " +
+										"from server is: " + caught.getMessage());
+							}
 
-						@Override
-						public void onSuccess(VpnConnectionDeprovisioningPojo result) {
-							// go to the status page
-							getView().hidePleaseWaitDialog();
-							VpnConnectionProvisioningSummaryPojo vpncpSummary = new VpnConnectionProvisioningSummaryPojo();
-							vpncpSummary.setDeprovisioning(result);
-							ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
-						}
-					};
-					VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(vpn, de_cb);
+							@Override
+							public void onSuccess(VpnConnectionProfileAssignmentPojo result) {
+								// TODO now get the summary for this profile again
+								AsyncCallback<VpnConnectionProfileQueryResultPojo> vcp_cb = new AsyncCallback<VpnConnectionProfileQueryResultPojo>() {
+									@Override
+									public void onFailure(Throwable caught) {
+						                getView().hidePleaseWaitDialog();
+						                getView().hidePleaseWaitPanel();
+										getView().showMessageToUser("There was an exception on the " +
+												"server retrieving the VPN Connection Profile.  " +
+												"<p>Message from server is: " + caught.getMessage() + "</p>");
+									}
+
+									@Override
+									public void onSuccess(VpnConnectionProfileQueryResultPojo result) {
+						        		getView().refreshTableRow(selectedRowNumber, result.getResults().get(0));
+						                getView().hidePleaseWaitDialog();
+						                getView().hidePleaseWaitPanel();
+									}
+								};
+
+								VpnConnectionProfileQueryFilterPojo vcp_filter = new VpnConnectionProfileQueryFilterPojo();
+								vcp_filter.setVpnConnectionProfileId(selectedSummary.getProfile().getVpnConnectionProfileId());
+				                getView().hidePleaseWaitDialog();
+								getView().showPleaseWaitDialog("Retrieving the VPN Connection Profile: " + vcp_filter.getVpnConnectionProfileId());
+								VpcProvisioningService.Util.getInstance().getVpnConnectionProfilesForFilter(vcp_filter, vcp_cb);
+							}
+						};
+		                getView().hidePleaseWaitDialog();
+						getView().showPleaseWaitDialog("Deleting the VPN Connection Profile Assignment for VPC " + selectedSummary.getAssignment().getOwnerId());
+						VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfileAssignment(selectedSummary.getAssignment(), cb);
+					}
+					else {
+						// show message to user
+						getView().showMessageToUser("This profile appears to have a VPN Connection associated "
+							+ "to it.  Therefore, the assignment cannot be deleted until that connection "
+							+ "has been de-provisioned.");
+					}
 				}
 			};
-			VpnConnectionQueryFilterPojo filter = new VpnConnectionQueryFilterPojo();
-			filter.setVpcId(selectedVpcId);
-			VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(filter, cb);
+			getView().showPleaseWaitDialog("Checking for a VpnConnection associated to VPC " + selectedSummary.getAssignment().getOwnerId());
+			VpnConnectionQueryFilterPojo vpn_filter = new VpnConnectionQueryFilterPojo();
+			vpn_filter.setVpcId(selectedSummary.getAssignment().getOwnerId());
+			VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(vpn_filter, vpn_cb);
 		}
 	}
 
@@ -380,6 +480,10 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection Profile was NOT deleted");
 		}
 		else if (selectedVpcId != null){
+			// is a de-provision
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection was NOT de-provisioned");
+		}
+		else if (selectedAssignment != null) {
 			// is a de-provision
 			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection was NOT de-provisioned");
 		}
@@ -468,16 +572,53 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 //
 //	}
 
+//	@Override
+//	public void deprovisionVpnConnectionForVpcId(String vpcId) {
+//		selectedSummary = null;
+//		selectedSummaries = null;
+//		selectedVpnConnectionRequisition = null;
+//		selectedVpcId = vpcId;
+//		selectedAssignment = null;
+//
+//		VpcpConfirm.confirm(
+//				ListVpnConnectionProfilePresenter.this, 
+//				"Confirm Deprovision VPN Connection", 
+//				"Deprovisiong the VPN Connection for VPC " + selectedVpcId + "?");
+//	}
+
 	@Override
-	public void deprovisionVpnConnectionForVpcId(String vpcId) {
+	public void setSelectedAssignment(VpnConnectionProfileAssignmentPojo assignment) {
+		this.selectedAssignment = assignment;
+	}
+
+	@Override
+	public void deprovisionVpnConnectionForAssignment(VpnConnectionProfileAssignmentPojo assignment) {
 		selectedSummary = null;
 		selectedSummaries = null;
 		selectedVpnConnectionRequisition = null;
-		selectedVpcId = vpcId;
+		selectedVpcId = null;
+		selectedAssignment = assignment;
+		isAssignmentDelete = false;
 
 		VpcpConfirm.confirm(
 				ListVpnConnectionProfilePresenter.this, 
 				"Confirm Deprovision VPN Connection", 
-				"Deprovisiong the VPN Connection for VPC " + selectedVpcId + "?");
+				"Deprovisiong the VPN Connection for VPC " + selectedAssignment.getOwnerId() + "?");
+	}
+
+	@Override
+	public void deleteVpnConnectionProfileAssignment(final int rowNumber, final VpnConnectionProfileSummaryPojo summary) {
+		selectedSummary = summary;
+		selectedSummaries = null;
+		selectedVpnConnectionRequisition = null;
+		selectedVpcId = null;
+		selectedAssignment = null;
+		isAssignmentDelete = true;
+		selectedRowNumber = rowNumber;
+
+		VpcpConfirm.confirm(
+				ListVpnConnectionProfilePresenter.this, 
+				"Confirm Delete VPN Connection Profile Assignment", 
+				"Delete the Profile Assignment from Profile ID " + summary.getProfile().getVpnConnectionProfileId() + "?");
 	}
 }

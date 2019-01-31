@@ -60,6 +60,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 	@Override
 	public void start(EventBus eventBus) {
 		this.eventBus = eventBus;
+		getView().clearProvisioningStatus();
 		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();

@@ -9,10 +9,10 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpnConnectionRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsConfirmation;
 
 public interface ListVpnConnectionProfileView extends IsWidget, View {
@@ -42,7 +42,10 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 		void filterByVpnConnectionProfileId(String profileId);
 		void clearFilter();
 //		void deprovisionVpnConnection(VpnConnectionRequisitionPojo vpnConnectionRequisition);
-		void deprovisionVpnConnectionForVpcId(String vpcId);
+//		void deprovisionVpnConnectionForVpcId(String vpcId);
+		void deprovisionVpnConnectionForAssignment(VpnConnectionProfileAssignmentPojo assignment);
+		void setSelectedAssignment(VpnConnectionProfileAssignmentPojo assignment);
+		void deleteVpnConnectionProfileAssignment(int rowNumber, VpnConnectionProfileSummaryPojo summary);
 	}
 
 	/**
@@ -68,4 +71,5 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 	void showFilteredStatus();
 	void hideFilteredStatus();
 	void initPage();
+	void refreshTableRow(int rowNumber, VpnConnectionProfileSummaryPojo summary);
 }

@@ -25,7 +25,8 @@ public class VpnConnectionDeprovisioningPojo extends SharedObject implements IsS
 	 */
 	String provisioningId;
 //	VpnConnectionRequisitionPojo requisition;
-	VpnConnectionPojo vpnConnection;
+//	VpnConnectionPojo vpnConnection;
+	VpnConnectionProfileAssignmentPojo assignment;
 	String status;
 	String provisioningResult;
 	String actualTime;
@@ -164,12 +165,20 @@ public class VpnConnectionDeprovisioningPojo extends SharedObject implements IsS
 //		this.requisition = requisition;
 //	}
 
-	public VpnConnectionPojo getVpnConnection() {
-		return vpnConnection;
+//	public VpnConnectionPojo getVpnConnection() {
+//		return vpnConnection;
+//	}
+//
+//	public void setVpnConnection(VpnConnectionPojo vpnConnection) {
+//		this.vpnConnection = vpnConnection;
+//	}
+
+	public VpnConnectionProfileAssignmentPojo getAssignment() {
+		return assignment;
 	}
 
-	public void setVpnConnection(VpnConnectionPojo vpnConnection) {
-		this.vpnConnection = vpnConnection;
+	public void setAssignment(VpnConnectionProfileAssignmentPojo assignment) {
+		this.assignment = assignment;
 	}
 
 }

@@ -8,12 +8,31 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @SuppressWarnings("serial")
 public class TunnelInterfacePojo extends SharedObject implements IsSerializable {
 
+	/*
+<!ELEMENT TunnelInterface (
+	Name, 
+	Description, 
+	VirtualRouteForwarding, 
+	IpAddress, 
+	Netmask, 
+	TcpMaximumSegmentSize, 
+	AdministrativeState, 
+	TunnelSource, 
+	TunnelMode, 
+	TunnelDestination, 
+	CryptoIpsecProfile, 
+	IpVirtualReassembly, 
+	OperationalStatus, 
+	BgpState, 
+	BgpPrefixes)>
+	 */
 	public TunnelInterfacePojo() {
 	}
 	String name;
 	String description;
 	String virtualRouteForwarding;
 	String ipAddress;
+	String netMask;
 	String tcpMaximumSegmentSize;
 	String administrativeState;
 	String tunnelSource;
@@ -225,5 +244,11 @@ public class TunnelInterfacePojo extends SharedObject implements IsSerializable 
 	}
 	public void setBgpPrefixes(BgpPrefixesPojo bgpPrefixes) {
 		this.bgpPrefixes = bgpPrefixes;
+	}
+	public String getNetMask() {
+		return netMask;
+	}
+	public void setNetMask(String netMask) {
+		this.netMask = netMask;
 	}
 }

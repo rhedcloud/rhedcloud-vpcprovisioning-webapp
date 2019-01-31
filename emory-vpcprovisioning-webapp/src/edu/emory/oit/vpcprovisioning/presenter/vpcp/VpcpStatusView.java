@@ -76,4 +76,5 @@ public interface VpcpStatusView extends Editor<VpcpPojo>, IsWidget, View {
 	void stopTimer();
 	void setReleaseInfo(String releaseInfoHTML);
 	void refreshVpcpStatusInformation();
+	void clearProvisioningStatus();
 }

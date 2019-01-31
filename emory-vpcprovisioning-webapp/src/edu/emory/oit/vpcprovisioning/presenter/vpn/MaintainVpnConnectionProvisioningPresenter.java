@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RemoteVpnConnectionInfoPojo;
 import edu.emory.oit.vpcprovisioning.shared.RemoteVpnTunnelPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.UUID;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
@@ -50,7 +51,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	 */
 	private boolean isEditing;
 	private boolean isRegen;
-	private boolean isDeprovision;
+//	private boolean isDeprovision;
 
 	/**
 	 * For creating a new VpnConnectionProvisioning with a new profile assignemtn.
@@ -58,7 +59,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProfilePojo profile) {
 		this.isEditing = false;
 		this.isRegen = false;
-		this.isDeprovision = false;
+//		this.isDeprovision = false;
 		this.vpncp = null;
 		this.vpnConnectionRequisition = null;
 		this.provisioningId = null;
@@ -73,7 +74,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProfilePojo profile, VpnConnectionProfileAssignmentPojo profileAssignment) {
 		this.isEditing = false;
 		this.isRegen = true;
-		this.isDeprovision = false;
+//		this.isDeprovision = false;
 		this.vpncp = null;
 		this.vpnConnectionRequisition = null;
 		this.provisioningId = null;
@@ -89,7 +90,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 	public MaintainVpnConnectionProvisioningPresenter(ClientFactory clientFactory, VpnConnectionProvisioningPojo vpcp) {
 		this.isEditing = true;
 		this.isRegen = false;
-		this.isDeprovision = false;
+//		this.isDeprovision = false;
 		this.provisioningId = vpcp.getProvisioningId();
 		this.clientFactory = clientFactory;
 		this.vpncp = vpcp;
@@ -105,7 +106,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 
 		this.isEditing = false;
 		this.isRegen = false;
-		this.isDeprovision = true;
+//		this.isDeprovision = true;
 		this.vpncp = null;
 		this.vpnConnectionRequisition = vpncRequisition;
 		this.provisioningId = null;
@@ -131,7 +132,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		setReleaseInfo(clientFactory);
 		
 		if (provisioningId == null) {
-			if (!isDeprovision) {
+//			if (!isDeprovision) {
 				if (isRegen) {
 					getView().setHeading("Re-Provision a VPN Connection");
 				}
@@ -140,13 +141,13 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 				}
 				clientFactory.getShell().setSubTitle("Generate VPNCP");
 				startCreate();
-			}
-			else {
-				// TODO: set the heading label
-				getView().setHeading("Deprovisiong a VPN Connection");
-				clientFactory.getShell().setSubTitle("Generate VPNCDP");
-				startCreate();
-			}
+//			}
+//			else {
+//				// set the heading label
+//				getView().setHeading("Deprovisiong a VPN Connection");
+//				clientFactory.getShell().setSubTitle("Generate VPNCDP");
+//				startCreate();
+//			}
 		} 
 		else {
 			clientFactory.getShell().setSubTitle("Edit VPNCP");
@@ -165,8 +166,19 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 			public void onSuccess(VpcQueryResultPojo result) {
 				GWT.log("got " + result.getResults().size() + " vpcs back.");
 				getView().setVpcItems(result.getResults());
-				if (isDeprovision || isRegen) {
-					selectedVpc = result.getResults().get(0);
+//				if (isDeprovision || isRegen) {
+				if (isRegen) {
+					if (result.getResults().size() > 0) {
+						selectedVpc = result.getResults().get(0);
+					}
+					else {
+						// have to account for assignments that aren't tracked by AWS Account.
+						// so, if a VPC isn't returned, we'll need to create one and use the ownwer id 
+						// from the assignment as the VPC id for that object I think.
+						selectedVpc = new VpcPojo();
+						selectedVpc.setVpcId(vpnConnectionProfileAssignment.getOwnerId());
+						selectedVpc.setAccountName("Not Tracked");
+					}
 				}
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
@@ -176,14 +188,15 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		// just get all VPCs.
 		// get all UNASSIGNED VPCs.  That is, all VPCs that have NOT been assigned
 		// to a VpnConnectionProfile.  So, a new service method will be needed.
-		if (isDeprovision) {
-			// DE-PROVISION just set the vpc listbox to have one item that cannot be changed
-			// need to get this specific VPC
-			VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
-			filter.setVpcId(vpnConnectionRequisition.getOwnerId());
-			VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
-		}
-		else if (isRegen) {
+//		if (isDeprovision) {
+//			// DE-PROVISION just set the vpc listbox to have one item that cannot be changed
+//			// need to get this specific VPC
+//			VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
+//			filter.setVpcId(vpnConnectionRequisition.getOwnerId());
+//			VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
+//		}
+//		else if (isRegen) {
+		if (isRegen) {
 			VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
 			filter.setVpcId(vpnConnectionProfileAssignment.getOwnerId());
 			VpcProvisioningService.Util.getInstance().getVpcsForFilter(filter, vpc_callback);
@@ -244,25 +257,26 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		GWT.log("Maintain vpcp: create/generate");
 		isEditing = false;
 		getView().setEditing(false);
-		if (isDeprovision) {
-			GWT.log("[MaintainVpnConnectinProvisioningPresenter] it is a DE-PROVISION");
-			getView().setDeprovisioning(true);
-		}
-		else if (isRegen) {
+//		if (isDeprovision) {
+//			GWT.log("[MaintainVpnConnectinProvisioningPresenter] it is a DE-PROVISION");
+//			getView().setDeprovisioning(true);
+//		}
+//		else if (isRegen) {
+		if (isRegen) {
 			GWT.log("[MaintainVpnConnectinProvisioningPresenter] it is a RE-PROVISION");
-			getView().setDeprovisioning(false);
+//			getView().setDeprovisioning(false);
 			getView().setReprovisioning(true);
 			vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
 			vpnConnectionRequisition.setProfile(this.getVpnConnectionProfile());
-			// TODO: need to add RemoteVpnConnectionInfo values to the requisition
+			// need to add RemoteVpnConnectionInfo values to the requisition
 			int vpnCntr=1;
 			for (TunnelProfilePojo tunnel : vpnConnectionProfile.getTunnelProfiles()) {
 				RemoteVpnConnectionInfoPojo rvci = new RemoteVpnConnectionInfoPojo();
-				rvci.setRemoteVpnConnectionId("Not Used Yet");
+				rvci.setRemoteVpnConnectionId(UUID.uuid());
 				rvci.setVpnConnectionNumber(vpnCntr);
 				vpnCntr++;
 				RemoteVpnTunnelPojo rvt = new RemoteVpnTunnelPojo();
-				rvt.setVpnInsideCidr("Not Used Yet");
+				rvt.setVpnInsideCidr("Not Used Yet-" + vpnCntr);
 				rvt.setLocalTunnelId(tunnel.getTunnelId());
 				rvci.getRemoteVpnTunnels().add(rvt);
 				vpnConnectionRequisition.getRemoteVpnConnectionInfo().add(rvci);
@@ -270,18 +284,19 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		}
 		else {
 			GWT.log("[MaintainVpnConnectinProvisioningPresenter] it is a PROVISION");
-			getView().setDeprovisioning(false);
+//			getView().setDeprovisioning(false);
+			getView().setReprovisioning(false);
 			vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
 			vpnConnectionRequisition.setProfile(vpnConnectionProfile);
-			// TODO: need to add RemoteVpnConnectionInfo values to the requisition
+			// need to add RemoteVpnConnectionInfo values to the requisition
 			int vpnCntr=1;
 			for (TunnelProfilePojo tunnel : vpnConnectionProfile.getTunnelProfiles()) {
 				RemoteVpnConnectionInfoPojo rvci = new RemoteVpnConnectionInfoPojo();
-				rvci.setRemoteVpnConnectionId("Not Used Yet");
+				rvci.setRemoteVpnConnectionId(UUID.uuid());
 				rvci.setVpnConnectionNumber(vpnCntr);
 				vpnCntr++;
 				RemoteVpnTunnelPojo rvt = new RemoteVpnTunnelPojo();
-				rvt.setVpnInsideCidr("Not Used Yet");
+				rvt.setVpnInsideCidr("Not Used Yet-" + vpnCntr);
 				rvt.setLocalTunnelId(tunnel.getTunnelId());
 				rvci.getRemoteVpnTunnels().add(rvt);
 				vpnConnectionRequisition.getRemoteVpnConnectionInfo().add(rvci);
@@ -337,7 +352,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 			return;
 		}
 
-		// TODO Delete the vpcp on server then fire onVpnConnectionProvisioningDeleted();
+		// Delete the vpcp on server then fire onVpnConnectionProvisioningDeleted();
 	}
 
 	@Override
@@ -543,23 +558,23 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 		}
 	}
 
-	@Override
-	public void saveVpnConnectionDeprovisioning() {
-		List<Widget> fields = getView().getMissingRequiredFields();
-		if (fields != null && fields.size() > 0) {
-			getView().applyStyleToMissingFields(fields);
-			getView().hidePleaseWaitDialog();
-			getView().showMessageToUser("Please provide data for the required fields.");
-			return;
-		}
-		else {
-			getView().resetFieldStyles();
-		}
-		VpcpConfirm.confirm(
-			MaintainVpnConnectionProvisioningPresenter.this, 
-			"Confirm Deprovision VPN Connection", 
-			"Deprovisiong the VPN Connection " + vpnConnectionRequisition.getProfile().getVpcNetwork() + "?");
-	}
+//	@Override
+//	public void saveVpnConnectionDeprovisioning() {
+//		List<Widget> fields = getView().getMissingRequiredFields();
+//		if (fields != null && fields.size() > 0) {
+//			getView().applyStyleToMissingFields(fields);
+//			getView().hidePleaseWaitDialog();
+//			getView().showMessageToUser("Please provide data for the required fields.");
+//			return;
+//		}
+//		else {
+//			getView().resetFieldStyles();
+//		}
+//		VpcpConfirm.confirm(
+//			MaintainVpnConnectionProvisioningPresenter.this, 
+//			"Confirm Deprovision VPN Connection", 
+//			"Deprovisiong the VPN Connection " + vpnConnectionRequisition.getProfile().getVpcNetwork() + "?");
+//	}
 
 	@Override
 	public VpnConnectionProvisioningPojo getVpnConnectionProvisioning() {

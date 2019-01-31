@@ -106,4 +106,5 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 	void setTunnel1StatusBad(String reason);
 
 	void setTunnel1StatusGood();
+	void setVpnRefreshing();
 }

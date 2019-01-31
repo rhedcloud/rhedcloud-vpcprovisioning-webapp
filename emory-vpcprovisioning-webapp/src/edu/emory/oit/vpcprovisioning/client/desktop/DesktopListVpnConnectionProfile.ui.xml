@@ -71,6 +71,11 @@
 			<g:Grid cellSpacing="12">
 				<g:row>
 					<g:customCell>
+						<c:SimplePager ui:field="topListPager" debugId="topListPager"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
 						<c:CellTable width="100%" ui:field="listTable"  title="Existing VPN Connection Profiles"/>
 					</g:customCell>
 				</g:row>

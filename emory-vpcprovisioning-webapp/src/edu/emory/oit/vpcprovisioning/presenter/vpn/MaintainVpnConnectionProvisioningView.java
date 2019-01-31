@@ -30,7 +30,7 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 		 * inputs.
 		 */
 		void saveVpnConnectionProvisioning();
-		void saveVpnConnectionDeprovisioning();
+//		void saveVpnConnectionDeprovisioning();
 		VpnConnectionProvisioningPojo getVpnConnectionProvisioning();
 		VpnConnectionRequisitionPojo getVpnConnectionRequisition();
 		VpnConnectionProfilePojo getVpnConnectionProfile();
@@ -52,7 +52,7 @@ public interface MaintainVpnConnectionProvisioningView extends Editor<VpnConnect
 	 * @param isEditing true if editing, false if creating
 	 */
 	void setEditing(boolean isEditing);
-	void setDeprovisioning(boolean isDeprovision);
+//	void setDeprovisioning(boolean isDeprovision);
 	void setReprovisioning(boolean isReprovision);
 
 	/**

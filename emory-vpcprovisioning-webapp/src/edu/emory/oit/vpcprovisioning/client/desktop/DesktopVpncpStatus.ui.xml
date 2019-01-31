@@ -29,9 +29,9 @@
 							status of the object (until the Overall Status is "completed").  
 							Alternatively, you may click on the "Refresh" button 
 							to manually refresh the status.  You can click the 
-							"Done" button to leave the page and return to the list of VPCP 
-							objects and you can return to this page at any time to check 
-							the status of this particular provisioning object.</g:HTML>
+							"Done" button to leave the page and return to the list of 
+							VPN Connection Profiles and you can return to this page at 
+							any time to check the status of this particular provisioning object.</g:HTML>
 				    	</g:customCell>
 				    </g:row>
 				</g:Grid>

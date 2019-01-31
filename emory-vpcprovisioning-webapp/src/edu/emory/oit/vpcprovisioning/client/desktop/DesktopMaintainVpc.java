@@ -325,7 +325,6 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
-		vpnInfoPanel.setWidget(new HTML("<b>Refreshing...</b>"));
 		presenter.refreshVpnConnectionInfo();
 	}
 
@@ -459,8 +458,6 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		this.setFieldViolations(false);
 		if (editing) {
 			GWT.log("maintain VPC view initPage.  editing");
-			vpnInfoPanel.setWidget(new HTML("<b>Refreshing...</b>"));
-			operationalStatusGrid.setVisible(false);
 			
 			// clear the page
 			accountIdTB.setText("");
@@ -1014,5 +1011,11 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	public void setTunnel1StatusGood() {
 		tunnel1StatusImage.setUrl("images/green_circle_icon.png");
 		tunnel1StatusImage.setTitle("Tunnel is good");
+	}
+
+	@Override
+	public void setVpnRefreshing() {
+		vpnInfoPanel.setWidget(new HTML("<b>Refreshing...</b>"));
+		operationalStatusGrid.setVisible(false);
 	}
 }

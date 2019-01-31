@@ -70,4 +70,5 @@ public interface VpncpStatusView extends Editor<VpnConnectionProvisioningPojo>, 
 	void stopTimer();
 	void setReleaseInfo(String releaseInfoHTML);
 	void refreshProvisioningStatusInformation();
+	void clearProvisioningStatus();
 }

@@ -478,4 +478,24 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		
 		
 	}
+
+	@Override
+	public void clearProvisioningStatus() {
+		provisioningIdLabel.setText("");
+		vpcpStatusLabel.setText("");
+		provisioningResultLabel.setText("");
+		anticipatedTimeLabel.setText("");
+		actualTimeLabel.setText("");
+		requestorNetIdLabel.setText("");
+		ownerNetIdLabel.setText("");
+		speedTypeLabel.setText("");
+		vpcTypeLabel.setText("");
+		vpcRegionLabel.setText("");
+		complianceClassLabel.setText("");
+		notifyAdminsLabel.setText("");
+		purposeLabel.setText("");
+		vpcpStepsPanel.clear();
+		setVpcpProgress();
+		netIdTable.removeAllRows();
+	}
 }
