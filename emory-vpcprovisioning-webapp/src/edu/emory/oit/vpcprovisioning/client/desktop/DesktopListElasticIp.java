@@ -56,6 +56,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 
 	/*** FIELDS ***/
 	@UiField(provided=true) SimplePager elasticIpListPager = new SimplePager(TextLocation.RIGHT, false, true);
+	@UiField(provided=true) SimplePager topListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button createElasticIpButton;
 	@UiField Button actionsButton;
 	@UiField(provided=true) CellTable<ElasticIpSummaryPojo> elasticIpListTable = new CellTable<ElasticIpSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
@@ -192,6 +193,7 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 		this.elasticIpList = elasticIps;
 		this.initializeElasticIpListTable();
 	    elasticIpListPager.setDisplay(elasticIpListTable);
+	    topListPager.setDisplay(elasticIpListTable);
 	}
 	private Widget initializeElasticIpListTable() {
 		GWT.log("initializing ElasticIP list table...");

@@ -50,6 +50,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
     PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
+	@UiField(provided=true) SimplePager topListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) SimplePager vpcListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button registerVpcButton;
 	@UiField Button actionsButton;
@@ -167,6 +168,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		this.vpcList = vpcs;
 		this.initializeVpcListTable();
 	    vpcListPager.setDisplay(vpcListTable);
+	    topListPager.setDisplay(vpcListTable);
 	}
 	private Widget initializeVpcListTable() {
 		GWT.log("initializing VPC list table...");

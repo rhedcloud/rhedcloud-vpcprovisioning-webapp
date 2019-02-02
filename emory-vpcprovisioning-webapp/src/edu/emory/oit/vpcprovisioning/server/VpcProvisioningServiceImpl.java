@@ -7447,6 +7447,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 
 				if (filter.isEffectiveTerms()) {
+					info("[getTermsOfUseForFilter] using the inEffectTermsOfUse query.");
 					// get the terms of use that are currently in effect
 					QueryLanguage ql = queryObject.newQueryLanguage();
 					ql.setName("inEffectTermsOfUse");
@@ -7454,7 +7455,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 					Parameter p_currentDate = ql.newParameter();
 					SimpleDateFormat l_dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-					p_currentDate.setValue(l_dateFormatter.format(new Date()));
+					String s_date = l_dateFormatter.format(new Date());
+					info("[getTermsOfUseForFilter] current date is: " + s_date);
+					p_currentDate.setValue(s_date);
 					p_currentDate.setName("currentDate");
 					ql.addParameter(p_currentDate);
 					queryObject.setQueryLanguage(ql);
@@ -7469,7 +7472,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				authUserId = this.getAuthUserIdForHALS();
 			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getTermsOfUseForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
 			@SuppressWarnings("unchecked")
 			List<TermsOfUse> moas = actionable.query(queryObject,
@@ -7547,7 +7549,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				authUserId = this.getAuthUserIdForHALS();
 			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getTermsOfUseAgreementForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
 			@SuppressWarnings("unchecked")
 			List<TermsOfUseAgreement> moas = actionable.query(queryObject,
@@ -8259,6 +8260,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		if (tou_result.getResults().size() == 1) {
 			summary.setLatestTerms(tou_result.getResults().get(0));
+			info("[getTermsOfUseSummaryForUser] got one effective terms of use.  "
+					+ "TermsOfUseId is: " + summary.getLatestTerms().getTermsOfUseId() 
+					+ "  Revision is: " + summary.getLatestTerms().getRevision());  
 			for (TermsOfUseAgreementPojo toua : toua_result.getResults()) {
 				summary.getTermsOfUseAgreements().add(toua);
 				if (toua.getTermsOfUseId().equals(summary.getLatestTerms().getTermsOfUseId())) {
@@ -8267,7 +8271,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 		else {
-			// TODO: error, unexpected number of effective TermsOfUse objects.
+			// error, unexpected number of effective TermsOfUse objects.
+			info("[getTermsOfUseSummaryForUser] we got " + tou_result.getResults().size() 
+				+ " effective terms of use from the server.  This is a problem.");
 		}
 		return summary;
 	}

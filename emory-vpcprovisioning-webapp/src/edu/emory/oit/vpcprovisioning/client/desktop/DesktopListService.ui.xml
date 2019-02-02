@@ -68,6 +68,11 @@
 			<g:Grid>
 				<g:row>
 					<g:customCell>
+						<c:SimplePager ui:field="topListPager" debugId="topListPager"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
 						<c:CellTable width="100%" ui:field="serviceListTable" debugId="serviceListTable" title="Existing Services"/>
 					</g:customCell>
 				</g:row>

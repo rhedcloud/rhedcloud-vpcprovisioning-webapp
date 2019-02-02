@@ -56,6 +56,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
+	@UiField(provided=true) SimplePager topListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) SimplePager vpcpListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button generateVpcButton;
 	@UiField Button actionsButton;
@@ -214,6 +215,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		this.vpcpList = vpcps;
 		this.initializeVpcpListTable();
 		vpcpListPager.setDisplay(vpcpListTable);
+		topListPager.setDisplay(vpcpListTable);
 	}
 
 	private Widget initializeVpcpListTable() {

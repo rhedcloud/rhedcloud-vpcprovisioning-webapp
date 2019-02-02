@@ -355,15 +355,15 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				VpnConnectionProfileSummaryPojo m = nIter.next();
 				if (m != null) {
 					if (m.getAssignment() != null) {
-//						int i=0;
-//						summaryLoop: for (VpnConnectionProfileSummaryPojo summary : profileList) {
-//							if (summary.equals(m)) {
-//								break summaryLoop;
-//							}
-//							i++;
-//						}
-//						presenter.deleteVpnConnectionProfileAssignment(i, m);
-						showMessageToUser("This feature is coming soon.");
+						int i=0;
+						summaryLoop: for (VpnConnectionProfileSummaryPojo summary : profileList) {
+							if (summary.equals(m)) {
+								break summaryLoop;
+							}
+							i++;
+						}
+						presenter.deleteVpnConnectionProfileAssignment(i, m);
+//						showMessageToUser("This feature is coming soon.");
 					}
 					else {
 						showMessageToUser("The selected profile does not appear to be assigned.  "
@@ -875,6 +875,10 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 
 	@Override
 	public void refreshTableRow(int rowNumber, VpnConnectionProfileSummaryPojo summary) {
+		boolean nullAssignment = (summary.getAssignment() == null ? true : false);
+		boolean nullProfile = (summary.getProfile() == null ? true : false);
+		GWT.log("Refreshing row number " + rowNumber + " with new summary.  "
+				+ "nullProfile=" + nullProfile + " nullAssignment=" + nullAssignment);
 		profileList.set(rowNumber, summary);
 		listTable.redrawRow(rowNumber);
 	}

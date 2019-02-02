@@ -162,7 +162,7 @@ public class AppBootstrapper {
 		vp.add(loader);
 		
 		HTML message = new HTML();
-		message.setHTML("<p><b>Loading the VPCP Web Application.  Please wait...</b></p>");
+		message.setHTML("<p><b>Loading the VPCP Console.  Please wait...</b></p>");
 		vp.add(message);
 
 		vp.setCellHorizontalAlignment(loader, HasHorizontalAlignment.ALIGN_CENTER);
@@ -197,8 +197,6 @@ public class AppBootstrapper {
 						+ "<p><b>We're looking into it and apologize for any inconvenience.</b></p>");
 				siteDownVP.add(siteDownMessage);
 
-//				vp.setCellHorizontalAlignment(loader, HasHorizontalAlignment.ALIGN_CENTER);
-//				vp.setCellVerticalAlignment(loader, HasVerticalAlignment.ALIGN_MIDDLE);
 				siteDownVP.setCellHorizontalAlignment(siteDownMessage, HasHorizontalAlignment.ALIGN_CENTER);
 				siteDownVP.setCellVerticalAlignment(siteDownMessage, HasVerticalAlignment.ALIGN_MIDDLE);
 				

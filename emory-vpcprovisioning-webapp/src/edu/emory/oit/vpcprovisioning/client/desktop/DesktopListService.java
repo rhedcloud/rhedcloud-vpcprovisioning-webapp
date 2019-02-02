@@ -75,6 +75,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	     public CellTable.Style cellTableStyle();
 	}
 	/*** FIELDS ***/
+	@UiField(provided=true) SimplePager topListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) SimplePager serviceListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) CellTable<AWSServicePojo> serviceListTable = new CellTable<AWSServicePojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -348,6 +349,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 		this.serviceList = services;
 		this.initializeServiceListTable();
 		serviceListPager.setDisplay(serviceListTable);
+		topListPager.setDisplay(serviceListTable);
 	}
 
 	@Override

@@ -58,6 +58,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 	PopupPanel actionsPopup = new PopupPanel(true);
 
 	/*** FIELDS ***/
+	@UiField(provided=true) SimplePager topListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) SimplePager listPager = new SimplePager(TextLocation.RIGHT, false, true);
 //	@UiField Button generateButton;
 	@UiField Button actionsButton;
@@ -306,6 +307,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 		this.List = s;
 		this.initializeVpnConnectionProvisioninglistTable();
 		listPager.setDisplay(listTable);
+		topListPager.setDisplay(listTable);
 	}
 
 	private Widget initializeVpnConnectionProvisioninglistTable() {

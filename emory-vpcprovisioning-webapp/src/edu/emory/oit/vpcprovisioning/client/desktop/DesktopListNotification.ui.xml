@@ -63,6 +63,11 @@
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:VerticalPanel ui:field="notificationListPanel" width="100%">
 				<g:Grid cellSpacing="12">
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="topListPager" debugId="topListPager"/>
+					</g:customCell>
+				</g:row>
 					<g:row>
 						<g:customCell>
 							<c:CellTable width="100%" ui:field="listTable"  title="Existing Notifications"/>

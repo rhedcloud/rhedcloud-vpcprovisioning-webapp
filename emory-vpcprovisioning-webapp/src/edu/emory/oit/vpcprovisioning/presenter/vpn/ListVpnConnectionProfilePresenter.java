@@ -442,6 +442,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 									@Override
 									public void onSuccess(VpnConnectionProfileQueryResultPojo result) {
+										GWT.log("[vpcpConfirmOkay] telling view to refresh rowNumber: " + selectedRowNumber);
 						        		getView().refreshTableRow(selectedRowNumber, result.getResults().get(0));
 						                getView().hidePleaseWaitDialog();
 						                getView().hidePleaseWaitPanel();
@@ -461,9 +462,11 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 					}
 					else {
 						// show message to user
+		                getView().hidePleaseWaitDialog();
 						getView().showMessageToUser("This profile appears to have a VPN Connection associated "
 							+ "to it.  Therefore, the assignment cannot be deleted until that connection "
-							+ "has been de-provisioned.");
+							+ "has been de-provisioned.  If you still want to remove this assignment, please "
+							+ "deprovision the VPN connection first.");
 					}
 				}
 			};
@@ -615,7 +618,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 		selectedAssignment = null;
 		isAssignmentDelete = true;
 		selectedRowNumber = rowNumber;
-
+		GWT.log("[deleteVpnConnectionProfileAssignment] selectedRowNumber is: " + rowNumber);
 		VpcpConfirm.confirm(
 				ListVpnConnectionProfilePresenter.this, 
 				"Confirm Delete VPN Connection Profile Assignment", 

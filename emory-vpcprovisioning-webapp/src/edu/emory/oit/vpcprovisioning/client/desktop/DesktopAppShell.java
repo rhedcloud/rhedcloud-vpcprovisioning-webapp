@@ -166,7 +166,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 
-		// TODO: find a better way to handle history and browser refreshes
 		if (hash == null || hash.trim().length() == 0) {
 			GWT.log("null hash: home tab");
 			homeView = clientFactory.getHomeView();
@@ -1559,11 +1558,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			AsyncCallback<TermsOfUseSummaryPojo> cb = new AsyncCallback<TermsOfUseSummaryPojo>() {
 				@Override
 				public void onFailure(Throwable caught) {
-//					showMessageToUser("There was an exception on the " +
-//							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
-//							+ "continue.  "
-//							+ "<p>Message from server is: " + caught.getMessage() + "</p>");
-					
 					// just a modal dialog that prevents them from doing anything...
 					lockView("There was an exception on the " +
 							"server determining your Rules of Behavior Agreement status.  Processing CANNOT "
@@ -1579,13 +1573,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					}
 					else {
 						// user has a valid TermsOfUseAgreement in place
+						GWT.log("User already has a TermsOfUseAgreement in place for revision " + result.getLatestTerms().getRevision());
 					}
 				}
 			};
 			VpcProvisioningService.Util.getInstance().getTermsOfUseSummaryForUser(userLoggedIn, cb);
 		}
 		else {
-//			showMessageToUser("There doesn't appear to be a user logged in at this time.  Processing cannot continue");
 			lockView("There doesn't appear to be a user logged in at this time.  Processing cannot continue");
 		}
 	}
