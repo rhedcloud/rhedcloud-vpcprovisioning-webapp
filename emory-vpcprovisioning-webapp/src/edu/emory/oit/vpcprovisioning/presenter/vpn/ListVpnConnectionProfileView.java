@@ -46,6 +46,7 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 		void deprovisionVpnConnectionForAssignment(VpnConnectionProfileAssignmentPojo assignment);
 		void setSelectedAssignment(VpnConnectionProfileAssignmentPojo assignment);
 		void deleteVpnConnectionProfileAssignment(int rowNumber, VpnConnectionProfileSummaryPojo summary);
+		void getVpnStatusForVpc(String vpcId);
 	}
 
 	/**

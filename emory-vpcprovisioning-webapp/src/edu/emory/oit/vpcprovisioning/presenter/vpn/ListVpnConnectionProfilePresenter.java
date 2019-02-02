@@ -19,6 +19,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileQueryFilterPojo;
@@ -623,5 +624,80 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 				ListVpnConnectionProfilePresenter.this, 
 				"Confirm Delete VPN Connection Profile Assignment", 
 				"Delete the Profile Assignment from Profile ID " + summary.getProfile().getVpnConnectionProfileId() + "?");
+	}
+
+	@Override
+	public void getVpnStatusForVpc(String vpcId) {
+		AsyncCallback<VpnConnectionQueryResultPojo> vpn_cb = new AsyncCallback<VpnConnectionQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().showMessageToUser("There was an exception on the " +
+						"server checking for a VpnConnection.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(VpnConnectionQueryResultPojo result) {
+                getView().hidePleaseWaitDialog();
+				if (result.getResults().size() == 0) {
+					getView().showMessageToUser("A VPN Connection DOES NOT exist for the selected profile/assignment");
+				}
+				else {
+					// show message to user
+					VpnConnectionPojo vpn = result.getResults().get(0);
+					boolean tunnel1Good = vpn.getTunnelInterfaces().get(0).isOperational();
+					boolean tunnel2Good = vpn.getTunnelInterfaces().get(1).isOperational();
+					String tunnel1Html;
+					if (tunnel1Good) {
+						tunnel1Html = 
+								"<table cellspacing=\"8\"><tr><td>"
+								+ "Tunnel 1 is: Operational"
+								+ "</td><td>"
+								+ "<img src=\"images/green_circle_icon.png\" width=\"16\" height=\"16\"/>"
+								+ "</td></tr></table";
+					}
+					else {
+						tunnel1Html = 
+								"<table cellspacing=\"8\"><tr><td>"
+								+ "Tunnel 1 is: Not Operational"
+								+ "</td><td>"
+								+ "<img src=\"images/red_circle_icon.jpg\" width=\"16\" height=\"16\"/>"
+								+ "</td></tr></table";
+					}
+							 
+					String tunnel2Html;
+					if (tunnel2Good) {
+						tunnel2Html =
+								"<table cellspacing=\"8\"><tr><td>"
+								+ "Tunnel 2 is: Operational"
+								+ "</td><td>"
+								+ "<img src=\"images/green_circle_icon.png\" width=\"16\" height=\"16\"/>"
+								+ "</td></tr></table";
+					}
+					else {
+						tunnel2Html = 
+								"<table cellspacing=\"8\"><tr><td>"
+								+ "Tunnel 2 is: Not Operational"
+								+ "</td><td>"
+								+ "<img src=\"images/red_circle_icon.jpg\" width=\"16\" height=\"16\"/>"
+								+ "</td></tr></table";
+					}
+					
+					getView().showMessageToUser(
+							"A VPN Connection DOES exist for the selected profile/assignment.  "
+							+ "<p>"
+							+ tunnel1Html
+							+ tunnel2Html
+							+ "</p>"
+							+ "<p>For more information, please visit the VPC Details page for the VPC "
+							+ "associated to this profile</p>");
+				}
+			}
+		};
+		getView().showPleaseWaitDialog("Checking for a VpnConnection associated to VPC " + vpcId);
+		VpnConnectionQueryFilterPojo vpn_filter = new VpnConnectionQueryFilterPojo();
+		vpn_filter.setVpcId(vpcId);
+		VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(vpn_filter, vpn_cb);
 	}
 }

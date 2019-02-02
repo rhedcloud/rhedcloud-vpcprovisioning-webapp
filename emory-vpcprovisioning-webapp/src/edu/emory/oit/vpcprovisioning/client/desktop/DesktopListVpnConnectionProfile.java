@@ -154,7 +154,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(5, 1);
+		Grid grid = new Grid(6, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -376,6 +376,50 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 			}
 		});
 		grid.setWidget(4, 0, deleteAssignmentAnchor);
+		
+		Anchor vpnStatusAnchor = new Anchor("Show VPN Connection Status");
+		vpnStatusAnchor.addStyleName("productAnchor");
+		vpnStatusAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		vpnStatusAnchor.setTitle("Show VPN Connection Status");
+		vpnStatusAnchor.ensureDebugId(vpnStatusAnchor.getText());
+		vpnStatusAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				if (selectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select an item from the list");
+					return;
+				}
+				if (selectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select one Profile");
+					return;
+				}
+				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+				
+				VpnConnectionProfileSummaryPojo m = nIter.next();
+				if (m != null) {
+					if (m.getAssignment() != null) {
+						int i=0;
+						summaryLoop: for (VpnConnectionProfileSummaryPojo summary : profileList) {
+							if (summary.equals(m)) {
+								break summaryLoop;
+							}
+							i++;
+						}
+						presenter.getVpnStatusForVpc(m.getAssignment().getOwnerId());
+					}
+					else {
+						showMessageToUser("The selected profile does not appear to be assigned.  "
+							+ "Please select a profile that has is assigned to a VPC.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(5, 0, vpnStatusAnchor);
+
 		actionsPopup.showRelativeTo(actionsButton);
 	}
 
