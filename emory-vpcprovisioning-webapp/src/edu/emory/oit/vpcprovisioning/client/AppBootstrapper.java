@@ -145,8 +145,6 @@ public class AppBootstrapper {
 	 * @param parentView where to show the app's widget
 	 */
 	public void run(final HasWidgets.ForIsWidget parentView) {
-		shell.initializeAwsServiceMap();
-
 		final HorizontalPanel pleaseWaitPanel = new HorizontalPanel();
 		pleaseWaitPanel.setWidth("100%");
 		pleaseWaitPanel.setHeight("100%");
@@ -171,6 +169,8 @@ public class AppBootstrapper {
 		vp.setCellVerticalAlignment(message, HasVerticalAlignment.ALIGN_MIDDLE);
 		
 		parentView.add(pleaseWaitPanel);
+
+		shell.initializeAwsServiceMap();
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
