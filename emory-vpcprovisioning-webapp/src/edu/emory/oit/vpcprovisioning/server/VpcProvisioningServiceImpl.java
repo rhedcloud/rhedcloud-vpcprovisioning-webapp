@@ -467,7 +467,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	private UserAccountPojo getUserLoggedIn(boolean refreshRoles) {
+	@Override
+	public UserAccountPojo getUserLoggedIn(boolean refreshRoles) throws RpcException {
 		// if the user account has been cached, we'll use it
 		info("checking cache for existing user...");
 		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(

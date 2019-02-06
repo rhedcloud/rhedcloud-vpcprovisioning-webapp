@@ -60,6 +60,7 @@ public interface VpcProvisioningService extends RemoteService {
 
 	// UserAccount services (user logged in)
 	UserAccountPojo getUserLoggedIn() throws RpcException;
+	UserAccountPojo getUserLoggedIn(boolean refreshRoles) throws RpcException;
 	void invalidateSessionForUser(String userId);
 	boolean isSessionValidForUser(UserAccountPojo user) throws RpcException;
 	String getClientInfoForUser(UserAccountPojo user);

@@ -81,7 +81,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 
 	@Override
 	public void start(EventBus eventBus) {
-		getView().showPleaseWaitDialog("Retrieving VPCP support data...");
+		getView().showPleaseWaitDialog("Retrieving account list...");
 		this.eventBus = eventBus;
 		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
@@ -97,20 +97,27 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 			startEdit();
 		}
 		
-		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
+		AsyncCallback<AccountQueryResultPojo> acct_cb = new AsyncCallback<AccountQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				
-				
+                getView().hidePleaseWaitDialog();
+				GWT.log("Exception retrieving AWS accounts", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving a list of AWS Accounts.  Message " +
+						"from server is: " + caught.getMessage());
 			}
 
 			@Override
-			public void onSuccess(List<AWSRegionPojo> result) {
-				getView().setAwsRegionItems(result);
+			public void onSuccess(final AccountQueryResultPojo accountItems) {
+				GWT.log("got " + accountItems.getResults().size() + " accounts.");
+				getView().setAccountItems(accountItems.getResults());
+                getView().hidePleaseWaitDialog();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getAwsRegionItems(regionCB);
+		GWT.log("getting accounts");
+		VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, acct_cb);
 
+		getView().showPleaseWaitDialog("Retrieving user info and VPCP support data...");
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
 			@Override
@@ -128,95 +135,85 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 				getView().enableButtons();
 				getView().setUserLoggedIn(user);
 				userLoggedIn = user;
-				AsyncCallback<List<String>> vpcType_cb = new AsyncCallback<List<String>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						GWT.log("Exception retrieving VPC types", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving VPC types.  Message " +
-								"from server is: " + caught.getMessage());
+				getView().initPage();
+				getView().setInitialFocus();
+				// apply authorization mask
+				if (user.isCentralAdmin()) {
+					getView().applyCentralAdminMask();
+				}
+				else if (vpcp != null) {
+					if (vpcp.getVpcRequisition() != null) {
+						if (user.isAdminForAccount(vpcp.getVpcRequisition().getAccountId())) {
+							getView().applyAWSAccountAdminMask();
+						}
+						else if (user.isAuditorForAccount(vpcp.getVpcRequisition().getAccountId())) {
+							getView().applyAWSAccountAuditorMask();
+						}
+						else {
+							getView().showMessageToUser("An error has occurred.  The user logged in does not "
+									+ "appear to be associated to any valid roles for this page.");
+							getView().applyAWSAccountAuditorMask();
+						}
 					}
-
-					@Override
-					public void onSuccess(final List<String> vpcItems) {
-						GWT.log("got vpc type items: " + vpcItems.size());
-						AsyncCallback<AccountQueryResultPojo> acct_cb = new AsyncCallback<AccountQueryResultPojo>() {
-							@Override
-							public void onFailure(Throwable caught) {
-								getView().hidePleaseWaitDialog();
-								getView().hidePleaseWaitPanel();
-								GWT.log("Exception retrieving AWS accounts", caught);
-								getView().showMessageToUser("There was an exception on the " +
-										"server retrieving a list of AWS Accounts.  Message " +
-										"from server is: " + caught.getMessage());
-							}
-
-							@Override
-							public void onSuccess(final AccountQueryResultPojo accountItems) {
-								GWT.log("got " + accountItems.getResults().size() + " accounts.");
-								AsyncCallback<List<String>> complianceType_cb = new AsyncCallback<List<String>>() {
-									@Override
-									public void onFailure(Throwable caught) {
-										getView().hidePleaseWaitDialog();
-										getView().hidePleaseWaitPanel();
-										GWT.log("Exception retrieving Compliance Class types", caught);
-										getView().showMessageToUser("There was an exception on the " +
-												"server retrieving a list of Compliance Class types.  Message " +
-												"from server is: " + caught.getMessage());
-									}
-
-									@Override
-									public void onSuccess(List<String> complianceClassTypes) {
-										getView().setComplianceClassItems(complianceClassTypes);
-										getView().setVpcTypeItems(vpcItems);
-										getView().setAccountItems(accountItems.getResults());
-										getView().initPage();
-										getView().setInitialFocus();
-										// apply authorization mask
-										if (user.isCentralAdmin()) {
-											getView().applyCentralAdminMask();
-										}
-										else if (vpcp != null) {
-											if (vpcp.getVpcRequisition() != null) {
-												if (user.isAdminForAccount(vpcp.getVpcRequisition().getAccountId())) {
-													getView().applyAWSAccountAdminMask();
-												}
-												else if (user.isAuditorForAccount(vpcp.getVpcRequisition().getAccountId())) {
-													getView().applyAWSAccountAuditorMask();
-												}
-												else {
-													getView().showMessageToUser("An error has occurred.  The user logged in does not "
-															+ "appear to be associated to any valid roles for this page.");
-													getView().applyAWSAccountAuditorMask();
-												}
-											}
-										}
-										else if (user.isAuditor()) {
-											getView().applyAWSAccountAuditorMask();
-										}
-										else {
-											getView().showMessageToUser("An error has occurred.  The user logged in does not "
-													+ "appear to be associated to any valid roles for this page.");
-											getView().applyAWSAccountAuditorMask();
-										}
-										getView().hidePleaseWaitDialog();
-										getView().hidePleaseWaitPanel();
-									}
-								};
-								GWT.log("getting comliance class types");
-								VpcProvisioningService.Util.getInstance().getComplianceClassItems(complianceType_cb);
-							}
-						};
-						GWT.log("getting accounts");
-						VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, acct_cb);
-					}
-				};
-				GWT.log("getting vpc type items");
-				VpcProvisioningService.Util.getInstance().getVpcTypeItems(vpcType_cb);
+				}
+				else if (user.isAuditor()) {
+					getView().applyAWSAccountAuditorMask();
+				}
+				else {
+					getView().showMessageToUser("An error has occurred.  The user logged in does not "
+							+ "appear to be associated to any valid roles for this page.");
+					getView().applyAWSAccountAuditorMask();
+				}
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
+
+		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(List<AWSRegionPojo> result) {
+				getView().setAwsRegionItems(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAwsRegionItems(regionCB);
+		
+		AsyncCallback<List<String>> vpcType_cb = new AsyncCallback<List<String>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception retrieving VPC types", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving VPC types.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(final List<String> vpcItems) {
+				GWT.log("got vpc type items: " + vpcItems.size());
+				getView().setVpcTypeItems(vpcItems);
+			}
+		};
+		GWT.log("getting vpc type items");
+		VpcProvisioningService.Util.getInstance().getVpcTypeItems(vpcType_cb);
+
+		AsyncCallback<List<String>> complianceType_cb = new AsyncCallback<List<String>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception retrieving Compliance Class types", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving a list of Compliance Class types.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<String> complianceClassTypes) {
+				getView().setComplianceClassItems(complianceClassTypes);
+			}
+		};
+		GWT.log("getting comliance class types");
+		VpcProvisioningService.Util.getInstance().getComplianceClassItems(complianceType_cb);
 	}
 
 	private void startCreate() {

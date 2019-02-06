@@ -40,6 +40,7 @@ public interface VpcProvisioningServiceAsync {
 
 	// UserAccount services (user logged in)
 	void getUserLoggedIn(AsyncCallback<UserAccountPojo> callback);
+	void getUserLoggedIn(boolean refreshRoles, AsyncCallback<UserAccountPojo> callback);
 	void invalidateSessionForUser(String userId, AsyncCallback<Void> callback);
 	void isSessionValidForUser(UserAccountPojo user, AsyncCallback<Boolean> callback);
 	void getClientInfoForUser(UserAccountPojo user, AsyncCallback<String> callback);
