@@ -85,10 +85,12 @@
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
 							ui:field="accountLB" debugId="accountLB" />
 			    	</g:customCell>
+			    	<!-- 
 			    	<g:customCell>
 			    		<g:CaptionPanel ui:field="accountCP" debugId="accountCP" captionHTML="Account Info">
 			    		</g:CaptionPanel>
 			    	</g:customCell>
+			    	 -->
 			    </g:row>
 			</g:Grid>
 			<g:Grid cellSpacing="12">

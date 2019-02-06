@@ -93,7 +93,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 //	@UiField CheckBox pciCB;
 	@UiField CheckBox vpcpReqNotifyAdminsCB;
 	@UiField ListBox accountLB;
-	@UiField CaptionPanel accountCP;
+//	@UiField CaptionPanel accountCP;
 	@UiField HTML speedTypeHTML;
 	@UiField TextArea vpcpReqPurposeTA;
 
@@ -190,19 +190,19 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			}
 		}, ClickEvent.getType());
 		
-		accountLB.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				int index = accountLB.getSelectedIndex() - 1;
-				accountCP.clear();
-				if (index >= 0) {
-					AccountPojo acct = accounts.get(index);
-					presenter.setSelectedAccount(acct);
-					GWT.log("selected account is: " + acct.getAccountName());
-					accountCP.add(new HTML("Account Name: " + acct.getAccountName()));
-				}
-			}
-		});
+//		accountLB.addChangeHandler(new ChangeHandler() {
+//			@Override
+//			public void onChange(ChangeEvent event) {
+//				int index = accountLB.getSelectedIndex() - 1;
+//				accountCP.clear();
+//				if (index >= 0) {
+//					AccountPojo acct = accounts.get(index);
+//					presenter.setSelectedAccount(acct);
+//					GWT.log("selected account is: " + acct.getAccountName());
+//					accountCP.add(new HTML("Account Name: " + acct.getAccountName()));
+//				}
+//			}
+//		});
 	}
 
 	private void registerHandlers() {
@@ -400,7 +400,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			accountLB.setSelectedIndex(0);
 			vpcpReqComplianceClassLB.setSelectedIndex(0);
 			vpcpReqNotifyAdminsCB.setValue(false);
-			accountCP.clear();
+//			accountCP.clear();
 		}
 		presenter.setSpeedChartStatusForKey(presenter.getVpcRequisition().getSpeedType(), speedTypeHTML, false);
 	}
@@ -474,7 +474,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		accountLB.addItem("-- Select --", "");
 		if (accounts != null) {
 			for (AccountPojo account : accounts) {
-				accountLB.addItem(account.getAccountId(), account.getAccountId());
+				accountLB.addItem(account.getAccountId() + "-" + account.getAccountName(), account.getAccountId());
 			}
 		}
 	}
@@ -512,8 +512,11 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			fields.add(vpcpReqSpeedTypeTB);
 		}
 		if (vpcr.getCustomerAdminUserIdList() == null || vpcr.getCustomerAdminUserIdList().size() == 0) {
-			this.setFieldViolations(true);
-			fields.add(adminLookupSB);
+			// no customer admins were added so we'll just put the owner id in the list as the on
+			// customer admin
+			vpcr.getCustomerAdminUserIdList().add(vpcr.getAccountOwnerUserId());
+//			this.setFieldViolations(true);
+//			fields.add(adminLookupSB);
 		}
 		if (vpcr.getType() == null || vpcr.getType().length() == 0) {
 			this.setFieldViolations(true);

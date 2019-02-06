@@ -402,11 +402,18 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 			VpcProvisioningService.Util.getInstance().generateVpnConnectionDeprovisioning(selectedAssignment, de_cb);
 		}
 		else if (selectedSummary != null && isAssignmentDelete) {
-			// TODO: query for a VpnConnection by assignment.ownerId
+			// query for a VpnConnection by assignment.ownerId
 			// if a VpnConnection does not exist, delete the assignment
 			// else show a message to the user
-			
-			AsyncCallback<VpnConnectionQueryResultPojo> vpn_cb = new AsyncCallback<VpnConnectionQueryResultPojo>() {
+
+			// uncomment this just to test the row refresh
+//			getView().showPleaseWaitDialog("Retrieving the VPN Connection Profile: " + selectedSummary.getProfile().getVpnConnectionProfileId());
+//			GWT.log("[vpcpConfirmOkay] telling view to refresh rowNumber: " + selectedRowNumber);
+//			selectedSummary.setAssignment(null);
+//    		getView().refreshTableRow(selectedRowNumber, selectedSummary);
+//          getView().hidePleaseWaitDialog();
+
+            AsyncCallback<VpnConnectionQueryResultPojo> vpn_cb = new AsyncCallback<VpnConnectionQueryResultPojo>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					getView().hidePleaseWaitDialog();
@@ -418,8 +425,8 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 				@Override
 				public void onSuccess(VpnConnectionQueryResultPojo result) {
 					if (result.getResults().size() == 0) {
-						// delete it
-						AsyncCallback<VpnConnectionProfileAssignmentPojo> cb = new AsyncCallback<VpnConnectionProfileAssignmentPojo>() {
+						// it is safe to delete the assignment
+						AsyncCallback<VpnConnectionProfileAssignmentPojo> delete_assignment_cb = new AsyncCallback<VpnConnectionProfileAssignmentPojo>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								getView().hidePleaseWaitDialog();
@@ -430,8 +437,8 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 							@Override
 							public void onSuccess(VpnConnectionProfileAssignmentPojo result) {
-								// TODO now get the summary for this profile again
-								AsyncCallback<VpnConnectionProfileQueryResultPojo> vcp_cb = new AsyncCallback<VpnConnectionProfileQueryResultPojo>() {
+								// now get the summary for this profile again
+								AsyncCallback<VpnConnectionProfileQueryResultPojo> vpn_summary_cb = new AsyncCallback<VpnConnectionProfileQueryResultPojo>() {
 									@Override
 									public void onFailure(Throwable caught) {
 						                getView().hidePleaseWaitDialog();
@@ -443,10 +450,14 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 
 									@Override
 									public void onSuccess(VpnConnectionProfileQueryResultPojo result) {
-										GWT.log("[vpcpConfirmOkay] telling view to refresh rowNumber: " + selectedRowNumber);
-						        		getView().refreshTableRow(selectedRowNumber, result.getResults().get(0));
+										VpnConnectionProfileSummaryPojo summary = result.getResults().get(0);
+										GWT.log("[vpcpConfirmOkay] telling view to refresh rowNumber: " 
+											+ selectedRowNumber 
+											+ " for profile id: " 
+											+ summary.getProfile().getVpnConnectionProfileId());
 						                getView().hidePleaseWaitDialog();
 						                getView().hidePleaseWaitPanel();
+						        		getView().refreshTableRow(selectedRowNumber, summary);
 									}
 								};
 
@@ -454,12 +465,12 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 								vcp_filter.setVpnConnectionProfileId(selectedSummary.getProfile().getVpnConnectionProfileId());
 				                getView().hidePleaseWaitDialog();
 								getView().showPleaseWaitDialog("Retrieving the VPN Connection Profile: " + vcp_filter.getVpnConnectionProfileId());
-								VpcProvisioningService.Util.getInstance().getVpnConnectionProfilesForFilter(vcp_filter, vcp_cb);
+								VpcProvisioningService.Util.getInstance().getVpnConnectionProfilesForFilter(vcp_filter, vpn_summary_cb);
 							}
 						};
 		                getView().hidePleaseWaitDialog();
 						getView().showPleaseWaitDialog("Deleting the VPN Connection Profile Assignment for VPC " + selectedSummary.getAssignment().getOwnerId());
-						VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfileAssignment(selectedSummary.getAssignment(), cb);
+						VpcProvisioningService.Util.getInstance().deleteVpnConnectionProfileAssignment(selectedSummary.getAssignment(), delete_assignment_cb);
 					}
 					else {
 						// show message to user

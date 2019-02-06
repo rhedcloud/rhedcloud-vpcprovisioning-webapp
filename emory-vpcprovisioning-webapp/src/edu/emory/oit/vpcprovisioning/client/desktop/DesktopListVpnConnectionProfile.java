@@ -922,6 +922,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		boolean nullAssignment = (summary.getAssignment() == null ? true : false);
 		boolean nullProfile = (summary.getProfile() == null ? true : false);
 		GWT.log("Refreshing row number " + rowNumber + " with new summary.  "
+				+ "Profile id is: " + summary.getProfile().getVpnConnectionProfileId() + "  "
 				+ "nullProfile=" + nullProfile + " nullAssignment=" + nullAssignment);
 		profileList.set(rowNumber, summary);
 		listTable.redrawRow(rowNumber);

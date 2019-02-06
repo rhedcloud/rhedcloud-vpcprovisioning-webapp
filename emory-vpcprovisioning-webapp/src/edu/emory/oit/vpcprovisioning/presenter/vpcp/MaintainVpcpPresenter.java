@@ -81,6 +81,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 
 	@Override
 	public void start(EventBus eventBus) {
+		getView().showPleaseWaitDialog("Retrieving VPCP support data...");
 		this.eventBus = eventBus;
 		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
@@ -127,7 +128,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 				getView().enableButtons();
 				getView().setUserLoggedIn(user);
 				userLoggedIn = user;
-				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
+				AsyncCallback<List<String>> vpcType_cb = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
 						getView().hidePleaseWaitDialog();
@@ -140,7 +141,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 					@Override
 					public void onSuccess(final List<String> vpcItems) {
 						GWT.log("got vpc type items: " + vpcItems.size());
-						AsyncCallback<AccountQueryResultPojo> callback = new AsyncCallback<AccountQueryResultPojo>() {
+						AsyncCallback<AccountQueryResultPojo> acct_cb = new AsyncCallback<AccountQueryResultPojo>() {
 							@Override
 							public void onFailure(Throwable caught) {
 								getView().hidePleaseWaitDialog();
@@ -154,7 +155,7 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 							@Override
 							public void onSuccess(final AccountQueryResultPojo accountItems) {
 								GWT.log("got " + accountItems.getResults().size() + " accounts.");
-								AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
+								AsyncCallback<List<String>> complianceType_cb = new AsyncCallback<List<String>>() {
 									@Override
 									public void onFailure(Throwable caught) {
 										getView().hidePleaseWaitDialog();
@@ -204,15 +205,15 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 									}
 								};
 								GWT.log("getting comliance class types");
-								VpcProvisioningService.Util.getInstance().getComplianceClassItems(callback);
+								VpcProvisioningService.Util.getInstance().getComplianceClassItems(complianceType_cb);
 							}
 						};
 						GWT.log("getting accounts");
-						VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, callback);
+						VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, acct_cb);
 					}
 				};
 				GWT.log("getting vpc type items");
-				VpcProvisioningService.Util.getInstance().getVpcTypeItems(callback);
+				VpcProvisioningService.Util.getInstance().getVpcTypeItems(vpcType_cb);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
