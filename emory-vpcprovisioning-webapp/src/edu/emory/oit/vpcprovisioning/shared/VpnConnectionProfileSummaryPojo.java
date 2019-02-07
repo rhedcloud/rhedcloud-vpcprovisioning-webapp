@@ -43,40 +43,15 @@ public class VpnConnectionProfileSummaryPojo extends SharedObject implements IsS
 
 	@Override
 	public int compareTo(VpnConnectionProfileSummaryPojo o) {
-		// TODO: change this appropriately
-//		if (this.isProvision() && o.isProvision()) {
-//			Date c1 = o.getProvisioning().getCreateTime();
-//			Date c2 = this.getProvisioning().getCreateTime();
-//			if (c1 == null || c2 == null) {
-//				return 0;
-//			}
-//			return c1.compareTo(c2);
-//		}
-//		else if (!this.isProvision() && !o.isProvision()) {
-//			Date c1 = o.getDeprovisioning().getCreateTime();
-//			Date c2 = this.getDeprovisioning().getCreateTime();
-//			if (c1 == null || c2 == null) {
-//				return 0;
-//			}
-//			return c1.compareTo(c2);
-//		}
-//		else if (this.isProvision() && !o.isProvision()) {
-//			Date c1 = o.getDeprovisioning().getCreateTime();
-//			Date c2 = this.getProvisioning().getCreateTime();
-//			if (c1 == null || c2 == null) {
-//				return 0;
-//			}
-//			return c1.compareTo(c2);
-//		}
-//		else if (!this.isProvision() && o.isProvision()) {
-//			Date c1 = o.getProvisioning().getCreateTime();
-//			Date c2 = this.getDeprovisioning().getCreateTime();
-//			if (c1 == null || c2 == null) {
-//				return 0;
-//			}
-//			return c1.compareTo(c2);
-//		}
-		return 0;
+		int id1 = Integer.parseInt(this.getProfile().getVpnConnectionProfileId());
+		int id2 = Integer.parseInt(o.getProfile().getVpnConnectionProfileId());
+		if (id1 == id2) {
+			return 0;
+		}
+		if (id1 < id2) {
+			return -1;
+		}
+		return 1;
 	}
 
 	public boolean isFromProfilePage() {

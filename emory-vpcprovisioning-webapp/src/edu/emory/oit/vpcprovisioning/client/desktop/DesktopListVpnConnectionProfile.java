@@ -620,7 +620,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		listTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
 		listTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
-		// Account id column
+		// profile id column
 		Column<VpnConnectionProfileSummaryPojo, String> elasticIpColumn = new Column<VpnConnectionProfileSummaryPojo, String>(
 				new TextCell()) {
 
@@ -632,8 +632,15 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		elasticIpColumn.setSortable(true);
 		sortHandler.setComparator(elasticIpColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
 			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
-				return o1.getProfile().getVpnConnectionProfileId()
-						.compareTo(o2.getProfile().getVpnConnectionProfileId());
+				int id1 = Integer.parseInt(o1.getProfile().getVpnConnectionProfileId());
+				int id2 = Integer.parseInt(o2.getProfile().getVpnConnectionProfileId());
+				if (id1 == id2) {
+					return 0;
+				}
+				if (id1 < id2) {
+					return -1;
+				}
+				return 1;
 			}
 		});
 		listTable.addColumn(elasticIpColumn, "Profile ID");
