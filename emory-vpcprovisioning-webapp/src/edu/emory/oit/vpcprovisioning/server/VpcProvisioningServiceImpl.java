@@ -888,7 +888,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 				String roleDn = roleAssignment.getRoleDN();
-//				info("[getRolesForUser] checking roldDN: " + roleDn);
 				if (roleDn != null) {
 					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
 						AccountRolePojo arp = new AccountRolePojo();

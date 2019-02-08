@@ -221,8 +221,7 @@ public class DesktopMaintainElasticIp extends ViewImplBase implements MaintainEl
 	}
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		okayButton.setEnabled(true);
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
