@@ -733,7 +733,16 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		assignmentStatusColumn.setSortable(true);
 		sortHandler.setComparator(assignmentStatusColumn, new Comparator<VpnConnectionProfileSummaryPojo>() {
 			public int compare(VpnConnectionProfileSummaryPojo o1, VpnConnectionProfileSummaryPojo o2) {
-				return o1.getProfile() == null ? 0 : 1;
+				if (o1.getAssignment() == null && o2.getAssignment() == null) {
+					return 0;
+				}
+				if (o1.getAssignment() != null && o2.getAssignment() != null) {
+					return 0;
+				}
+				if (o1.getAssignment() != null && o2.getAssignment() == null) {
+					return 1;
+				}
+				return -1;
 			}
 		});
 		assignmentStatusColumn.setFieldUpdater(new FieldUpdater<VpnConnectionProfileSummaryPojo, String>() {
