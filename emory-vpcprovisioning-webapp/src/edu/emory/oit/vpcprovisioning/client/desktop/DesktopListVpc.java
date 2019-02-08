@@ -249,7 +249,28 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		acctNqmeColumn.setSortable(true);
 		sortHandler.setComparator(acctNqmeColumn, new Comparator<VpcPojo>() {
 			public int compare(VpcPojo o1, VpcPojo o2) {
-				return o1.getAccountName().compareTo(o2.getAccountName());
+				// we really want to sort by the "sequence" part of the name,
+				// if one exists...
+				String s_seq1 = extractNumberFromString(o1.getAccountName());
+				String s_seq2 = extractNumberFromString(o2.getAccountName());
+				if (s_seq1 == null || 
+					s_seq1.length() == 0 || 
+					s_seq2 == null || 
+					s_seq2.length() == 0) {
+					
+					return o1.getAccountName().compareTo(o2.getAccountName());
+				}
+				else {
+					int seq1 = Integer.parseInt(s_seq1);
+					int seq2 = Integer.parseInt(s_seq2);
+					if (seq1 == seq2) {
+						return 0;
+					}
+					if (seq1 > seq2) {
+						return -1;
+					}
+					return 1;
+				}
 			}
 		});
 		vpcListTable.addColumn(acctNqmeColumn, "Account Name");
