@@ -231,7 +231,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				VpcProvisioningService.Util.getInstance().getEmailTypeItems(callback);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {
