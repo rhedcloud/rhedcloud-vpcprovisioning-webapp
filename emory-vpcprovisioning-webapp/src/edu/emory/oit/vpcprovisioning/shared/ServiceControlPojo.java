@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
-public class ServiceControlPojo extends SharedObject implements IsSerializable {
+public class ServiceControlPojo extends SharedObject implements IsSerializable, Comparable<ServiceControlPojo> {
 	/*
 ServiceId, ServiceControlId, SequenceNumber, ServiceControlName, Description, AssessorId, AssessmentDatetime, Verifier?, VerificationDatetime?
 	 */
@@ -101,6 +101,17 @@ ServiceId, ServiceControlId, SequenceNumber, ServiceControlName, Description, As
 
 	public void setVerificationDate(Date verificationDate) {
 		this.verificationDate = verificationDate;
+	}
+
+	@Override
+	public int compareTo(ServiceControlPojo o) {
+		if (o.getSequenceNumber() == sequenceNumber) {
+			return 0;
+		}
+		else if (sequenceNumber > o.getSequenceNumber()) {
+			return 1;
+		}
+		return -1;
 	}
 
 }

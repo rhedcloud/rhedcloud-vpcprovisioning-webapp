@@ -93,7 +93,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 				getView().setInitialFocus();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void refreshReport(final UserAccountPojo user) {

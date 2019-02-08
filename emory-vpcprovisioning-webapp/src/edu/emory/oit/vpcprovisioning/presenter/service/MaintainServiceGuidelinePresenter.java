@@ -132,7 +132,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 				getView().hidePleaseWaitPanel();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

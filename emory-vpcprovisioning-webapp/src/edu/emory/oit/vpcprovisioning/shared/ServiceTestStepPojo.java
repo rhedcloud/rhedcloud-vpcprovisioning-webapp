@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
 @SuppressWarnings("serial")
-public class ServiceTestStepPojo extends SharedObject implements IsSerializable {
+public class ServiceTestStepPojo extends SharedObject implements IsSerializable, Comparable<ServiceTestStepPojo> {
 	/*
 <!ELEMENT ServiceTestStep (ServiceTestStepId?, ServiceTestId, SequenceNumber, Description)>
 	 */
@@ -59,5 +59,16 @@ public class ServiceTestStepPojo extends SharedObject implements IsSerializable 
 	@Override
 	public String toString() {
 		return "Step: " + Integer.toString(sequenceNumber) + "-" + description;
+	}
+
+	@Override
+	public int compareTo(ServiceTestStepPojo o) {
+		if (o.getSequenceNumber() == sequenceNumber) {
+			return 0;
+		}
+		else if (sequenceNumber > o.getSequenceNumber()) {
+			return 1;
+		}
+		return -1;
 	}
 }

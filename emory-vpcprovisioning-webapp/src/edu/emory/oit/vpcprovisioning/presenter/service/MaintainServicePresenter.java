@@ -143,7 +143,7 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 				getView().setInitialFocus();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void refreshList(final UserAccountPojo user) {

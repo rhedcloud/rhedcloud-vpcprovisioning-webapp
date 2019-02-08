@@ -139,7 +139,7 @@ public class MaintainSecurityAssessmentPresenter extends PresenterBase implement
 				}
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 	
 	void completeViewInitialization() {

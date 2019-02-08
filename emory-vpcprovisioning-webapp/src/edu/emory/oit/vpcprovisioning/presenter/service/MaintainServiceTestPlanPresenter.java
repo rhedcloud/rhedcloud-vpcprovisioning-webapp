@@ -152,7 +152,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 				getView().hidePleaseWaitPanel();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

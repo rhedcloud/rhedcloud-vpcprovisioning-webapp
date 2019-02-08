@@ -121,7 +121,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 			}
 		};
 		GWT.log("getting user logged in from server...");
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	/**

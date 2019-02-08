@@ -161,7 +161,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 				VpcProvisioningService.Util.getInstance().getCounterMeasureStatusTypeItems(cm_status_callback);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

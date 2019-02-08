@@ -118,7 +118,7 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 				getView().hidePleaseWaitPanel();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

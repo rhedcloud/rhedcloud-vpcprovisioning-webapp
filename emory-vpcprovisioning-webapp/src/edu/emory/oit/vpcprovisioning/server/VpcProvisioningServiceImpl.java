@@ -7670,8 +7670,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (ServiceSecurityAssessment moa : moas) {
 				ServiceSecurityAssessmentPojo pojo = new ServiceSecurityAssessmentPojo();
-				ServiceSecurityAssessmentPojo baseline = new ServiceSecurityAssessmentPojo();
 				this.populateSecurityAssessmentPojo(moa, pojo);
+				
+				// sort the child lists in the assessment (new data only):
+				// 	risks
+				Collections.sort(pojo.getSecurityRisks());
+				//	controls
+				Collections.sort(pojo.getServiceControls());
+				//	guidelines
+				Collections.sort(pojo.getServiceGuidelines());
+				//	testplan.requirements
+				if (pojo.getServiceTestPlan() != null) {
+					Collections.sort(pojo.getServiceTestPlan().getServiceTestRequirements());
+					//	testplan.requirements.tests
+					for (ServiceTestRequirementPojo str : pojo.getServiceTestPlan().getServiceTestRequirements()) {
+						Collections.sort(str.getServiceTests());
+						// 	testplan.requirements.tests.teststeps
+						for (ServiceTestPojo st : str.getServiceTests()) {
+							Collections.sort(st.getServiceTestSteps());
+						}
+					}
+				}
+
+				ServiceSecurityAssessmentPojo baseline = new ServiceSecurityAssessmentPojo();
 				this.populateSecurityAssessmentPojo(moa, baseline);
 				pojo.setBaseline(baseline);
 				pojos.add(pojo);

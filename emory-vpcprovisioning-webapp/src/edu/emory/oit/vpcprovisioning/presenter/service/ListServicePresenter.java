@@ -329,7 +329,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				refreshList(result);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override
