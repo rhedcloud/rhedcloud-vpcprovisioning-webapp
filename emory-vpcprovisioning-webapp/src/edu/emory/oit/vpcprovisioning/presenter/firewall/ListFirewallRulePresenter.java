@@ -132,7 +132,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 			}
 		};
 		GWT.log("getting user logged in from server...");
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	/**
@@ -354,7 +354,7 @@ public class ListFirewallRulePresenter extends PresenterBase implements ListFire
 				refreshList(result);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override

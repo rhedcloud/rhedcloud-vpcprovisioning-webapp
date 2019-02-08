@@ -100,7 +100,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 				getView().startTimer(5000);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override

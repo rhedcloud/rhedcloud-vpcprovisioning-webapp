@@ -121,7 +121,7 @@ public class StaticNatProvisioningStatusPresenter extends PresenterBase implemen
 				getView().startTimer(5000);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override

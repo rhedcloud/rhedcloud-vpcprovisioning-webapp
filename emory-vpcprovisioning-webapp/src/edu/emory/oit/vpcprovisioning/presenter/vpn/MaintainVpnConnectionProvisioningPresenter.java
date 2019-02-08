@@ -228,7 +228,7 @@ public class MaintainVpnConnectionProvisioningPresenter extends PresenterBase im
 				initializeView();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 	
 	private void initializeView() {

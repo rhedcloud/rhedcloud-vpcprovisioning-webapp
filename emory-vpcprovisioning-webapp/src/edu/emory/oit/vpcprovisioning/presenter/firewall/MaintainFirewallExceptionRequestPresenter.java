@@ -163,7 +163,7 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 				getView().setInitialFocus();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

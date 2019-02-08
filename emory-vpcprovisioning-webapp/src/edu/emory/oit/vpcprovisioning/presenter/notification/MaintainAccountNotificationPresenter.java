@@ -173,7 +173,7 @@ public class MaintainAccountNotificationPresenter extends PresenterBase  impleme
 				}
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

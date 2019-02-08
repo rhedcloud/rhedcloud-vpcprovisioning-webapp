@@ -139,7 +139,7 @@ public class MaintainElasticIpAssignmentPresenter extends PresenterBase implemen
 				VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, callback);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

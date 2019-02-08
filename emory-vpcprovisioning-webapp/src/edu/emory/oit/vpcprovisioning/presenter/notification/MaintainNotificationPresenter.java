@@ -121,7 +121,7 @@ public class MaintainNotificationPresenter extends PresenterBase implements Main
 				}
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

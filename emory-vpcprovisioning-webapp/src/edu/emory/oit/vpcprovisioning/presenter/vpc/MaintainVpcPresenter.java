@@ -162,7 +162,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 				VpcProvisioningService.Util.getInstance().getVpcTypeItems(callback);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

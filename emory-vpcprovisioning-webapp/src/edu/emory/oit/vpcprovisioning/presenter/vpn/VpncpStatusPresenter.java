@@ -132,7 +132,7 @@ public class VpncpStatusPresenter extends PresenterBase implements VpncpStatusVi
 				getView().startTimer(5000);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override

@@ -112,7 +112,7 @@ public class MaintainVpnConnectionProfileAssignmentPresenter extends PresenterBa
                 getView().hidePleaseWaitDialog();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 	
 	private void startCreate() {

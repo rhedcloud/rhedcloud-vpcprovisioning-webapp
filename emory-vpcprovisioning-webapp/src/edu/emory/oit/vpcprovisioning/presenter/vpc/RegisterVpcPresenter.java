@@ -175,7 +175,7 @@ public class RegisterVpcPresenter extends PresenterBase implements RegisterVpcVi
 				VpcProvisioningService.Util.getInstance().getVpcTypeItems(vpctype_cb);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startCreate() {

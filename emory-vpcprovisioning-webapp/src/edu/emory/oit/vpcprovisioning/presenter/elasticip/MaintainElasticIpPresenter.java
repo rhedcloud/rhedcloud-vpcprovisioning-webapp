@@ -107,7 +107,7 @@ public class MaintainElasticIpPresenter extends PresenterBase implements Maintai
 				}
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 	
 	private void startCreate() {

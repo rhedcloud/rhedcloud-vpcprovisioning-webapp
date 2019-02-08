@@ -105,7 +105,7 @@ public class MaintainTermsOfUseAgreementPresenter extends PresenterBase implemen
 				}
 			};
 			GWT.log("[TermsOfUsePresenter] must get user logged in.");
-			VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+			VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 		}
 	}
 	

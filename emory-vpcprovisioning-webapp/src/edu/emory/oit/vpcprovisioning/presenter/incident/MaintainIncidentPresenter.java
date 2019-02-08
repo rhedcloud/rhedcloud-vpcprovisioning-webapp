@@ -123,7 +123,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 				}
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	private void startGenerate() {
