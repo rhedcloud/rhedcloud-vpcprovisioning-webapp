@@ -13,7 +13,6 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
-import edu.emory.oit.vpcprovisioning.client.event.ServiceListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceTestListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceTestRequirementListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceTestStepListUpdateEvent;
@@ -35,7 +34,6 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	private UserAccountPojo userLoggedIn;
 	private AWSServicePojo service;
 	private ServiceTestPlanPojo serviceTestPlan;
-	private MaintainServiceTestPlanView view;
 	private ServiceTestRequirementPojo selectedRequirement;
 	private ServiceTestPojo selectedTest;
 	private ServiceTestStepPojo selectedStep;
@@ -202,7 +200,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	}
 
 	@Override
-	public void saveAssessment() {
+	public void saveAssessment(final boolean addAnother) {
 		getView().showPleaseWaitDialog("Saving assessment...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
@@ -247,17 +245,57 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 					@Override
 					public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
 						GWT.log("Got " + result.getResults().size() + " Security Assessments for " + result.getFilterUsed());
-						for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
+						assessmentLoop: for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
 							if (ssa.getServiceSecurityAssessmentId().equals(assessment.getServiceSecurityAssessmentId())) {
+								GWT.log("Re-hydrating assessment and test plan...");
 								assessment = ssa;
-								break;
+								serviceTestPlan = assessment.getServiceTestPlan();
+								break assessmentLoop;
 							}
 						}
-//						getView().hidePleaseWaitDialog();
-//						getView().hidePleaseWaitPanel();
-//						getView().refreshDataProvider();
-//						getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
-						ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+						if (addAnother) {
+							// if boolean passed in is true, don't fire the MAINTAIN_SECURITY_ASSESSMENT event, 
+							// instead, just re-hydrate the selected requirement, test, step from the fresh assessment 
+							// and re-show the appropriate requirement, test, step dialog
+							if (selectedRequirement != null) {
+								// find the matching requirement in the fresh assessment and set selectedRequirement to that
+								reqmtLoop: for (ServiceTestRequirementPojo reqmt : assessment.getServiceTestPlan().getServiceTestRequirements()) {
+									if (reqmt.getServiceTestRequirementId().equals(selectedRequirement.getServiceTestRequirementId())) {
+										GWT.log("Re-hydrating selected requirement and creating a new test...");
+										selectedRequirement = reqmt;
+										break reqmtLoop;
+									}
+								}
+								if (selectedTest != null) {
+									// find the matching test in the selectedRequirement and set selectedTest to that
+									// adding another test step
+									testLoop: for (ServiceTestPojo test : selectedRequirement.getServiceTests()) {
+										if (test.getServiceTestId().equals(selectedTest.getServiceTestId())) {
+											GWT.log("Re-hydrating selected test and creating a new step...");
+											selectedTest = test;
+											break testLoop;
+										}
+									}
+									getView().hidePleaseWaitDialog();
+									createStep();
+								}
+								else {
+									// adding another test
+									GWT.log("Creating a new test...");
+					                getView().hidePleaseWaitDialog();
+									createTest();
+								}
+							}
+							else {
+								// adding another requirement
+								GWT.log("Creating a new requirement...");
+				                getView().hidePleaseWaitDialog();
+								createRequirement();
+							}
+						}
+						else {
+							ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+						}
 					}
 				};
 
@@ -276,10 +314,6 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 		}
 		// it's always an update
 		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
-		// TODO: tempoarary until i get the update logic working correctly
-//		getView().refreshDataProvider();
-//		getView().showStatus(getView().getStatusMessageSource(), "Test Plan was saved.");
-//		getView().hidePleaseWaitDialog();
 	}
 
 	@Override
@@ -288,12 +322,6 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	}
 
 	public MaintainServiceTestPlanView getView() {
-//		if (view == null) {
-//			view = clientFactory.getMaintainServiceTestPlanView();
-//			view.setPresenter(this);
-//		}
-//		return view;
-		
 		MaintainServiceTestPlanView v = clientFactory.getMaintainServiceTestPlanView();
 		v.setPresenter(this);
 		return v;
@@ -474,7 +502,7 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 		}
 		// save the assessment
 		getAssessment().setServiceTestPlan(getServiceTestPlan());
-		saveAssessment();
+		saveAssessment(false);
 	}
 
 	@Override

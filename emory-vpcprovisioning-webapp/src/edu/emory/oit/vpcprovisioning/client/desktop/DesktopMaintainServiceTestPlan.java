@@ -921,7 +921,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		grid.setWidget(1, 1, ta_desc);
 		
 		Grid buttonGrid;
-		buttonGrid = new Grid(1,2);
+		buttonGrid = new Grid(1,3);
 		buttonGrid.setCellSpacing(12);
 		vp.add(buttonGrid);
 		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
@@ -957,7 +957,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				if (!isEdit) {
 					presenter.getSecurityAssessment().getServiceTestPlan().getServiceTestRequirements().add(selected);
 				}
-				presenter.saveAssessment();
+				presenter.saveAssessment(false);
 				reqmtPopup.hide();
 			}
 		});
@@ -974,6 +974,45 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			}
 		});
 		
+		Button addAnotherButton = new Button("Add Another");
+		addAnotherButton.addStyleName("normalButton");
+		addAnotherButton.addStyleName("glowing-border");
+		addAnotherButton.setWidth("105px");
+		buttonGrid.setWidget(0, 2, addAnotherButton);
+		addAnotherButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				// do everything that's done in the okayButton handler above except, 
+				// re-retrieve it and pre-populate this dialog again with a new requirement
+				// all handled in the presenter
+				selected.setSequenceNumber(Integer.parseInt(tb_seq.getText()));
+				selected.setDescription(ta_desc.getText());
+
+				// required fields.
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				if (selected.getSequenceNumber() == 0) {
+					fields.add(tb_seq);
+				}
+				if (selected.getDescription() == null || selected.getDescription().length() == 0) {
+					fields.add(ta_desc);
+				}
+				if (fields != null && fields.size() > 0) {
+					setFieldViolations(true);
+					applyStyleToMissingFields(fields);
+					showMessageToUser("Please provide data for the required fields.");
+					return;
+				}
+
+				// if create, add requirement to current test plan and save assessment
+				// otherwise just save the assessment?
+				if (!isEdit) {
+					presenter.getSecurityAssessment().getServiceTestPlan().getServiceTestRequirements().add(selected);
+				}
+				presenter.saveAssessment(true);
+				reqmtPopup.hide();
+			}
+		});
+		
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
 	        	ta_desc.setFocus(true);
@@ -983,7 +1022,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		reqmtPopup.show();
 		reqmtPopup.center();
 	}
-
+	
 	@Override
 	public void showTestMaintenanceDialog(final boolean isEdit, final ServiceTestPojo selected) {
 		testPopup.clear();
@@ -1064,7 +1103,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		}
 
 		Grid buttonGrid;
-		buttonGrid = new Grid(1,2);
+		buttonGrid = new Grid(1,3);
 		buttonGrid.setCellSpacing(12);
 		vp.add(buttonGrid);
 		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
@@ -1104,8 +1143,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				if (!isEdit) {
 					presenter.getSelectedTestRequirement().getServiceTests().add(selected);
 				}
-				presenter.saveAssessment();
-
+				presenter.saveAssessment(false);
 				testPopup.hide();
 			}
 		});
@@ -1118,6 +1156,49 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				testPopup.hide();
+			}
+		});
+		
+		Button addAnotherButton = new Button("Add Another");
+		addAnotherButton.addStyleName("normalButton");
+		addAnotherButton.addStyleName("glowing-border");
+		addAnotherButton.setWidth("105px");
+		buttonGrid.setWidget(0, 2, addAnotherButton);
+		addAnotherButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				// do everything that's done in the okayButton handler above except, 
+				// re-retrieve it and pre-populate this dialog again with a new requirement
+				// all handled in the presenter
+				selected.setSequenceNumber(Integer.parseInt(tb_seq.getText()));
+				selected.setDescription(ta_desc.getText());
+				selected.setServiceTestExpectedResult(lb_expectedResult.getSelectedValue());
+				
+				// required fields.
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				if (selected.getSequenceNumber() == 0) {
+					fields.add(tb_seq);
+				}
+				if (selected.getDescription() == null || selected.getDescription().length() == 0) {
+					fields.add(ta_desc);
+				}
+				if (selected.getServiceTestExpectedResult() == null || selected.getServiceTestExpectedResult().length() == 0) {
+					fields.add(lb_expectedResult);
+				}
+				if (fields != null && fields.size() > 0) {
+					setFieldViolations(true);
+					applyStyleToMissingFields(fields);
+					showMessageToUser("Please provide data for the required fields.");
+					return;
+				}
+
+				// if create, add test to selected requirement and save assessment
+				// otherwise just save the assessment?
+				if (!isEdit) {
+					presenter.getSelectedTestRequirement().getServiceTests().add(selected);
+				}
+				presenter.saveAssessment(true);
 				testPopup.hide();
 			}
 		});
@@ -1179,7 +1260,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		grid.setWidget(1, 1, ta_desc);
 		
 		Grid buttonGrid;
-		buttonGrid = new Grid(1,2);
+		buttonGrid = new Grid(1,3);
 		buttonGrid.setCellSpacing(12);
 		vp.add(buttonGrid);
 		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
@@ -1216,8 +1297,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 				if (!isEdit) {
 					presenter.getSelectedTest().getServiceTestSteps().add(selected);
 				}
-				presenter.saveAssessment();
-				
+				presenter.saveAssessment(false);
 				stepPopup.hide();
 			}
 		});
@@ -1230,6 +1310,46 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				stepPopup.hide();
+			}
+		});
+		
+		Button addAnotherButton = new Button("Add Another");
+		addAnotherButton.addStyleName("normalButton");
+		addAnotherButton.addStyleName("glowing-border");
+		addAnotherButton.setWidth("105px");
+		buttonGrid.setWidget(0, 2, addAnotherButton);
+		addAnotherButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				// do everything that's done in the okayButton handler above except, 
+				// re-retrieve it and pre-populate this dialog again with a new requirement
+				// all handled in the presenter
+				selected.setServiceTestId(presenter.getSelectedTest().getServiceTestId());
+				selected.setSequenceNumber(Integer.parseInt(tb_seq.getText()));
+				selected.setDescription(ta_desc.getText());
+				
+				// required fields.
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				if (selected.getSequenceNumber() == 0) {
+					fields.add(tb_seq);
+				}
+				if (selected.getDescription() == null || selected.getDescription().length() == 0) {
+					fields.add(ta_desc);
+				}
+				if (fields != null && fields.size() > 0) {
+					setFieldViolations(true);
+					applyStyleToMissingFields(fields);
+					showMessageToUser("Please provide data for the required fields.");
+					return;
+				}
+
+				// if create, add step to selected test and save assessment
+				// otherwise just save the assessment?
+				if (!isEdit) {
+					presenter.getSelectedTest().getServiceTestSteps().add(selected);
+				}
+				presenter.saveAssessment(true);
 				stepPopup.hide();
 			}
 		});

@@ -28,7 +28,7 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 		public void setDirectoryMetaDataTitleOnWidget(String userId, Widget w);
 		public void logMessageOnServer(final String message);
 		
-		void saveAssessment();
+		void saveAssessment(boolean addAnother);
 		void setSecurityAssessment(ServiceSecurityAssessmentPojo assessment);
 		ServiceSecurityAssessmentPojo getSecurityAssessment();
 
