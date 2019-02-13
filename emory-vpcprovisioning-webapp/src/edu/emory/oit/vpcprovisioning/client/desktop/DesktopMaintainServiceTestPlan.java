@@ -975,6 +975,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		});
 		
 		Button addAnotherButton = new Button("Add Another");
+		addAnotherButton.setTitle("Click to save this requirement and add another requirement to the current test plan.");
 		addAnotherButton.addStyleName("normalButton");
 		addAnotherButton.addStyleName("glowing-border");
 		addAnotherButton.setWidth("105px");
@@ -1161,6 +1162,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		});
 		
 		Button addAnotherButton = new Button("Add Another");
+		addAnotherButton.setTitle("Click to save this test and add another test to the current requirement.");
 		addAnotherButton.addStyleName("normalButton");
 		addAnotherButton.addStyleName("glowing-border");
 		addAnotherButton.setWidth("105px");
@@ -1315,6 +1317,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		});
 		
 		Button addAnotherButton = new Button("Add Another");
+		addAnotherButton.setTitle("Click to save this step and add another step to the current test.");
 		addAnotherButton.addStyleName("normalButton");
 		addAnotherButton.addStyleName("glowing-border");
 		addAnotherButton.setWidth("105px");

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -107,4 +108,5 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 
 	void setTunnel1StatusGood();
 	void setVpnRefreshing();
+	void setVpnInfo(String vpnInfoHtml);
 }

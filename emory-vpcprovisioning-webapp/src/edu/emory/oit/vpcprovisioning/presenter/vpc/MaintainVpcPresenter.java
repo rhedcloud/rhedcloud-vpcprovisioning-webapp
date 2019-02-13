@@ -372,6 +372,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 			@Override
 			public void onFailure(Throwable caught) {
 				getView().hideVpnConnectionPleaseWaitDialog();
+				getView().setVpnInfo("<b>An Error Occurred Retrieving VPN Connection Information</b>");
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the VPN Connection information for this VPC.  " +
 						"<p>Message from server is: " + caught.getMessage() + "</p>");

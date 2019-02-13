@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -24,6 +26,8 @@ import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.TunnelInterfacePojo;
+import edu.emory.oit.vpcprovisioning.shared.VpnConnectionPojo;
 
 public abstract class ViewImplBase extends Composite {
 	protected final DateTimeFormat dateFormat = DateTimeFormat.getFormat("MM-dd-yyyy HH:mm:ss:SSS zzz");
@@ -314,5 +318,104 @@ public abstract class ViewImplBase extends Composite {
 		else {
 			showStatus(null, "No Directory information found.");
 		}
+	}
+
+	public Tree createVpnInfoTree(VpnConnectionPojo vc) {
+		Tree vpn_tree = new Tree();
+		
+		// Crypto Keyring
+		TreeItem ti_cryptoKeyring = vpn_tree.addTextItem("Crypto Keyring");
+		ti_cryptoKeyring.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoKeyring().getName()));
+		ti_cryptoKeyring.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoKeyring().getDescription()));
+		
+		TreeItem ti_cryptoKeyringLocalAddress = ti_cryptoKeyring.addTextItem("Local Address");
+		ti_cryptoKeyringLocalAddress.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoKeyring().getLocalAddress().getIpAddress()));
+		ti_cryptoKeyringLocalAddress.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoKeyring().getLocalAddress().getVirualRouteForwarding()));
+		ti_cryptoKeyring.addItem(new HTML("<b>Preshared key:  </b>" + "***********"));
+		ti_cryptoKeyring.addTextItem("");
+		
+		// Crypto ISAKMP Profile
+		TreeItem ti_cryptoIsakmpProfile = vpn_tree.addTextItem("Crypto ISAKMP Profile");
+		ti_cryptoIsakmpProfile.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIsakmpProfile().getName()));
+		ti_cryptoIsakmpProfile.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoIsakmpProfile().getDescription()));
+		ti_cryptoIsakmpProfile.addItem(new HTML("<b>Virtual Route Forwarding:  </b>" + vc.getCryptoIsakmpProfile().getVirtualRouteForwarding()));
+		
+		TreeItem ti_cryptoIsakmpProfileCryptoKeyring = ti_cryptoIsakmpProfile.addTextItem("Crypto Keyring");
+		ti_cryptoIsakmpProfileCryptoKeyring.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getName()));
+		ti_cryptoIsakmpProfileCryptoKeyring.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getDescription()));
+		
+		TreeItem ti_cryptoIsakmpProfileCryptoKeyringLocalAddress = ti_cryptoIsakmpProfileCryptoKeyring.addTextItem("Local Address");
+		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getLocalAddress().getIpAddress()));
+		ti_cryptoIsakmpProfileCryptoKeyringLocalAddress.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoIsakmpProfile().getCryptoKeyring().getLocalAddress().getVirualRouteForwarding()));
+		ti_cryptoIsakmpProfileCryptoKeyring.addItem(new HTML("<b>Preshared key:  </b>" + "***********"));
+
+		TreeItem ti_cryptoIsakmpProfileMatchIdentity = ti_cryptoIsakmpProfile.addTextItem("Match Identity");
+		ti_cryptoIsakmpProfileMatchIdentity.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoIsakmpProfile().getMatchIdentity().getIpAddress()));
+		ti_cryptoIsakmpProfileMatchIdentity.addItem(new HTML("<b>Net Mask:  </b>" + vc.getCryptoIsakmpProfile().getMatchIdentity().getNetMask()));
+		ti_cryptoIsakmpProfileMatchIdentity.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoIsakmpProfile().getMatchIdentity().getVirtualRouteForwarding()));
+
+		TreeItem ti_cryptoIsakmpProfileLocalAddress = ti_cryptoIsakmpProfile.addTextItem("Local Address");
+		ti_cryptoIsakmpProfileLocalAddress.addItem(new HTML("<b>IP Address:  </b>" + vc.getCryptoIsakmpProfile().getLocalAddress().getIpAddress()));
+		ti_cryptoIsakmpProfileLocalAddress.addItem(new HTML("<b>Virtual Route forwarding:  </b>" + vc.getCryptoIsakmpProfile().getLocalAddress().getVirualRouteForwarding()));
+
+		ti_cryptoIsakmpProfile.addTextItem("");
+
+		// IPSEC transform set
+		TreeItem ti_cryptoIpsecTransformSet = vpn_tree.addTextItem("Crypto IPSEC Transform Set");
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIpsedTransformSet().getName()));
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Cipher:  </b>" + vc.getCryptoIpsedTransformSet().getCipher()));
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Bits:  </b>" + vc.getCryptoIpsedTransformSet().getBits()));
+		ti_cryptoIpsecTransformSet.addItem(new HTML("<b>Mode:  </b>" + vc.getCryptoIpsedTransformSet().getMode()));
+		ti_cryptoIpsecTransformSet.addTextItem("");
+
+		// IPSEC profile
+		TreeItem ti_cryptoIpsecProfile = vpn_tree.addTextItem("Crypto IPSEC Profile");
+		ti_cryptoIpsecProfile.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIpsecProfile().getName()));
+		ti_cryptoIpsecProfile.addItem(new HTML("<b>Description:  </b>" + vc.getCryptoIpsecProfile().getDescription()));
+
+		TreeItem ti_cryptoIpsecProfileCryptoIpsecTransformSet = ti_cryptoIpsecProfile.addTextItem("Crypto IPSEC Transform Set");
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Name:  </b>" + vc.getCryptoIpsedTransformSet().getName()));
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Cipher:  </b>" + vc.getCryptoIpsedTransformSet().getCipher()));
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Bits:  </b>" + vc.getCryptoIpsedTransformSet().getBits()));
+		ti_cryptoIpsecProfileCryptoIpsecTransformSet.addItem(new HTML("<b>Mode:  </b>" + vc.getCryptoIpsedTransformSet().getMode()));
+		ti_cryptoIpsecProfile.addItem(new HTML("<b>PerfectForwardSecrecy:  </b>" + vc.getCryptoIpsecProfile().getPerfectForwardSecrecy()));
+		ti_cryptoIpsecProfile.addTextItem("");
+		
+		// Tunnel Interfaces
+		TreeItem ti_tunnels = vpn_tree.addTextItem("Tunnel Interfaces");
+		for (TunnelInterfacePojo ti : vc.getTunnelInterfaces()) {
+			TreeItem ti_tunnel = ti_tunnels.addTextItem("Tunnel Interface " + ti.getName());
+			ti_tunnel.addItem(new HTML("<b>Description:  </b>" + ti.getDescription()));
+			ti_tunnel.addItem(new HTML("<b>VirtualRouteForwarding:  </b>" + ti.getVirtualRouteForwarding()));
+			ti_tunnel.addItem(new HTML("<b>IpAddress:  </b>" + ti.getIpAddress()));
+			ti_tunnel.addItem(new HTML("<b>Netmask:  </b>" + ti.getNetMask()));
+			ti_tunnel.addItem(new HTML("<b>TcpMaximumSegmentSize:  </b>" + ti.getTcpMaximumSegmentSize()));
+			ti_tunnel.addItem(new HTML("<b>AdministrativeState:  </b>" + ti.getAdministrativeState()));
+			ti_tunnel.addItem(new HTML("<b>TunnelSource:  </b>" + ti.getTunnelSource()));
+			ti_tunnel.addItem(new HTML("<b>TunnelMode:  </b>" + ti.getTunnelMode()));
+			ti_tunnel.addItem(new HTML("<b>TunnelDestination:  </b>" + ti.getTunnelDestination()));
+			TreeItem ti_tunnelIpsecProfile = ti_tunnel.addTextItem("CryptoIpsecProfile");
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>Name:  </b>" + ti.getCryptoIpsecProfile().getName()));
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>Description:  </b>" + ti.getCryptoIpsecProfile().getDescription()));
+			TreeItem ti_tunnelIpsecProfileTransformSet = ti_tunnelIpsecProfile.addTextItem("Transform set");
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Name:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getName()));
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Cipher:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getCipher()));
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Bits:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getBits()));
+			ti_tunnelIpsecProfileTransformSet.addItem(new HTML("<b>Mode:  </b>" + ti.getCryptoIpsecProfile().getCryptoIpsecTransformSet().getMode()));
+			ti_tunnelIpsecProfile.addItem(new HTML("<b>PerfectForwardSecrecy:  </b>" + ti.getCryptoIpsecProfile().getPerfectForwardSecrecy()));
+			ti_tunnel.addItem(new HTML("<b>IpVirtualReassembly:  </b>" + ti.getIpVirtualReassembly()));
+			ti_tunnel.addItem(new HTML("<b>OperationalStatus:  </b>" + ti.getOperationalStatus()));
+			TreeItem ti_bgpState = ti_tunnel.addTextItem("BgpState");
+			ti_bgpState.addItem(new HTML("<b>Status: </b>" + ti.getBgpState().getStatus()));
+			ti_bgpState.addItem(new HTML("<b>Uptime: </b>" + ti.getBgpState().getUptime()));
+			ti_bgpState.addItem(new HTML("<b>NeighborId: </b>" + ti.getBgpState().getNeighborId()));
+			TreeItem ti_bgpPrefixes = ti_tunnel.addTextItem("BgpPrefixes");
+			ti_bgpPrefixes.addItem(new HTML("<b>Sent: </b>" + ti.getBgpPrefixes().getSent()));
+			ti_bgpPrefixes.addItem(new HTML("<b>Received: </b>" + ti.getBgpPrefixes().getReceived()));
+			ti_tunnel.addTextItem("");
+		}
+		ti_tunnels.addTextItem("");
+
+		return vpn_tree;
 	}
 }
