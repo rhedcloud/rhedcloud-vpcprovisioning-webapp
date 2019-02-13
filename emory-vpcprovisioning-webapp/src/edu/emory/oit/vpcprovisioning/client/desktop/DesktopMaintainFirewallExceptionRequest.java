@@ -1135,6 +1135,9 @@ public class DesktopMaintainFirewallExceptionRequest extends ViewImplBase implem
 		isTraverseVpnCB.setEnabled(true);
 		vpnNameTB.setEnabled(true);
 		isAccessVPCCB.setEnabled(true);
+		
+		// remove request fields
+		requestDetailsTA.setEnabled(true);
 	}
 
 	@Override
