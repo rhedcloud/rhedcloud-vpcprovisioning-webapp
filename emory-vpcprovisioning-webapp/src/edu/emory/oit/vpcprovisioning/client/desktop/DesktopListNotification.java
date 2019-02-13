@@ -621,8 +621,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		actionsButton.setEnabled(true);
 	}
 
 	@Override

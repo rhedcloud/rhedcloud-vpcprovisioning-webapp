@@ -334,8 +334,13 @@ public class DesktopMaintainCidrAssignment extends ViewImplBase implements Maint
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		okayButton.setEnabled(true);
+		accountLB.setEnabled(true);
+		vpcLB.setEnabled(true);
+		cidrLB.setEnabled(true);
+		descriptionTB.setEnabled(true);
+		purposeTB.setEnabled(true);
+		ownerIdTB.setEnabled(true);
 	}
 
 	@Override

@@ -1346,8 +1346,9 @@ public class DesktopListFirewallRule extends ViewImplBase implements ListFirewal
 	}
 	@Override
 	public void applyCentralAdminMask() {
-		
-
+		firewallExceptionRequestButton.setEnabled(true);
+		firewallExceptionRequestActionsButton.setEnabled(true);
+		firewallRuleActionsButton.setEnabled(true);
 	}
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {

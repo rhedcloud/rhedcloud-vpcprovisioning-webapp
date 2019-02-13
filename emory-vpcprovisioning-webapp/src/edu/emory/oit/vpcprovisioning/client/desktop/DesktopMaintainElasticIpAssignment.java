@@ -181,8 +181,13 @@ public class DesktopMaintainElasticIpAssignment extends ViewImplBase implements 
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		okayButton.setEnabled(true);
+		accountLB.setEnabled(true);
+		vpcLB.setEnabled(true);
+		elasticIpLB.setEnabled(true);
+		descriptionTB.setEnabled(true);
+		purposeTB.setEnabled(true);
+		ownerIdTB.setEnabled(true);
 	}
 
 	@Override

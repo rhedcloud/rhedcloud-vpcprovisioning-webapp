@@ -386,8 +386,16 @@ public class DesktopMaintainCidr extends ViewImplBase implements MaintainCidrVie
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		okayButton.setEnabled(true);
+		networkTB.setEnabled(true);
+		bitsTB.setEnabled(true);
+		addCidrTypeLB.setEnabled(true);
+		associatedNetworkTF.setEnabled(true);
+		associatedBitsTF.setEnabled(true);
+		addAssociatedCidrButton.setEnabled(true);
+		propertyNameTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
+		addPropertyButton.setEnabled(true);
 	}
 
 	@Override

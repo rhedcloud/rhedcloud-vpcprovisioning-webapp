@@ -400,8 +400,8 @@ public class DesktopListElasticIpAssignment extends ViewImplBase implements List
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		allocateAddressButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 
 	@Override

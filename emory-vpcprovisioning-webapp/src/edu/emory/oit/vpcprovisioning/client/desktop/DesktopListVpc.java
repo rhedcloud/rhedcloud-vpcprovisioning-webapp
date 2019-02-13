@@ -603,8 +603,8 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		registerVpcButton.setEnabled(true);
+		actionsButton.setEnabled(true);
 	}
 
 	@Override
