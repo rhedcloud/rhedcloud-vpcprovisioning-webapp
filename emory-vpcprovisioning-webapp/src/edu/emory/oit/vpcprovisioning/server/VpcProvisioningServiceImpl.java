@@ -834,7 +834,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// get the roleassignments for the user.publicId
 		// for each roleassignment:
 		//	- get the aws account id
-		//  - TODO: verify the account exists in this series (environment)
+		//  - verify the account exists in this series (environment)
 		//	- get the role name associated to that account for this user
 		//	- create a new AccountRolePojo, populate it with account id and role name
 		//	- add the AccountRolePojo to the user passed in
@@ -944,81 +944,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 	
-//	@SuppressWarnings("unchecked")
-//	protected void getPermissionsForUser(UserAccountPojo user) throws RpcException {
-//		info("getting permissions for " + user.getEppn());
-//		user.getPermissions().clear();
-//		try {
-//			// preferred approach (1 query)...
-//			AuthorizationQuerySpecification queryObject = (AuthorizationQuerySpecification) getAppConfig().getObject(Constants.MOA_AUTHORIZATION_QUERY_SPEC);
-//			Authorization actionable = (Authorization) getAppConfig().getObject(Constants.MOA_AUTHORIZATION);
-//			queryObject.setPrincipal(user.getEppn());
-//			
-//			for (String permission : Constants.PERMISSIONS) {
-//				info("adding permission " + permission + " to the query spec");
-//				queryObject.addPermission(permission);
-//			}
-//			
-//			info("queryObject.toXmlString: " + queryObject.toXmlString());
-//			List<Authorization> list = actionable.query(queryObject, getAuthzRequestService());
-//			info("there were " + list.size() + " Authorization objects returned.");
-//
-//			if (list.size() > 0) {
-//				for (Authorization authorization : (List<Authorization>) list) {
-//					info("authorization has " + authorization.getPermissionLength() + " permissions in it.");
-//					info("isAuthorized = " + authorization.getIsAuthorized());
-//					info("Authorization.toXmlString: " + authorization.toXmlString());
-//					if (authorization.getIsAuthorized().equals("true")) {
-//						for (String perm : (List<String>)authorization.getPermission()) {
-//							info("adding permission " + perm + " to UserAccountPojo...");
-//							user.getPermissions().add(perm);
-//						}
-//					}
-//					else {
-//						for (String perm : (List<String>)authorization.getPermission()) {
-//							info(user.getEppn() + " is NOT authorized for permission " + perm);
-//						}
-//					}
-//				}
-//			}
-
-//			// work around (multiple queries, one for each permission)...
-//			for (String permission : Constants.PERMISSIONS) {
-//				AuthorizationQuerySpecification queryObject = (AuthorizationQuerySpecification) getAppConfig().getObject(Constants.MOA_AUTHORIZATION_QUERY_SPEC);
-//				Authorization actionable = (Authorization) getAppConfig().getObject(Constants.MOA_AUTHORIZATION);
-//				queryObject.setPrincipal(user.getEppn());
-//				queryObject.addPermission(permission);
-//				
-////				info("queryObject.toXmlString: " + queryObject.toXmlString());
-//				List<Authorization> list = actionable.query(queryObject, getAuthzRequestService());
-////				info("there were " + list.size() + " Authorization objects returned.");
-//
-//				if (list.size() > 0) {
-//					for (Authorization authorization : (List<Authorization>) list) {
-////						info("authorization has " + authorization.getPermissionLength() + " permissions in it.");
-////						info("isAuthorized = " + authorization.getIsAuthorized());
-////						info("Authorization.toXmlString: " + authorization.toXmlString());
-//						if (authorization.getIsAuthorized().equals("true")) {
-//							for (String perm : (List<String>)authorization.getPermission()) {
-//								info("adding permission " + perm + " to UserAccountPojo...");
-//								user.getPermissions().add(perm);
-//							}
-//						}
-//						else {
-//							for (String perm : (List<String>)authorization.getPermission()) {
-//								info(user.getEppn() + " is NOT authorized for permission " + perm);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		} 
-//		catch (Throwable t) {
-//			t.printStackTrace();
-//			throw new RpcException(t);
-//		}
-//	}
-
 	@SuppressWarnings("unused")
 	private void populateBillMoa(BillPojo pojo, Bill moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 		/*

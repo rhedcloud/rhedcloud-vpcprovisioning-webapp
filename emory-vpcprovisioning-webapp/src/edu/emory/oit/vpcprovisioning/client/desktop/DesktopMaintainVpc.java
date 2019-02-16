@@ -14,6 +14,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -853,6 +854,18 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			operationalStatusGrid.setVisible(false);
 			setVpnInfo("<b>No VPN Information available</b>");
 		}
+		// start timer to disable the refreshButton and re-enable it 
+		// after 1 minute or so
+		refreshButton.setEnabled(false);
+		refreshButton.setTitle("Waiting to allow a refresh...");
+		final Timer refreshTimer = new Timer() {
+			@Override
+			public void run() {
+				refreshButton.setEnabled(true);
+				refreshButton.setTitle("Refresh VPN Connection Info");
+			}
+		};
+		refreshTimer.schedule(45000);
 	}
 
 	@Override
