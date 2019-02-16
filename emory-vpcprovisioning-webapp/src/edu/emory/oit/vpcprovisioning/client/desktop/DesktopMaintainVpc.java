@@ -865,7 +865,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 				refreshButton.setTitle("Refresh VPN Connection Info");
 			}
 		};
-		refreshTimer.schedule(45000);
+		refreshTimer.schedule(60000);
 	}
 
 	@Override
