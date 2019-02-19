@@ -953,7 +953,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 	public UserAccountPojo getUserLoggedIn() {
-		return userLoggedIn;
+		return this.userLoggedIn;
 	}
 
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {

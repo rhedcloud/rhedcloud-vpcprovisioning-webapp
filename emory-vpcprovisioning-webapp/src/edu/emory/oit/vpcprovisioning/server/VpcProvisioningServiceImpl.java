@@ -474,7 +474,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
 				Constants.USER_ACCOUNT + getCurrentSessionId());
 		
+		HttpServletRequest request = this.getThreadLocalRequest();
+        String referrer = request.getHeader("Referer");
+        boolean isGenerateVpcp=false;
+        if (referrer.indexOf("?generateVpcp=true") >= 0) {
+        	info("[getUserLoggedIn] it's a generateVpcp request from potentially un-authorized user.");
+        	isGenerateVpcp=true;
+        }
+
 		if (user != null) {
+			if (isGenerateVpcp) {
+				user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
+			}
 			if (this.isSessionValidForUser(user)) { 
 				info("[found user in cache] user logged in is: " + user.getEppn());
 				if (useAuthzService) {
@@ -489,13 +500,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							this.getRolesForUser(user);
 						}
 						if (user.getAccountRoles().size() == 0) {
-							// ERROR, user does not have any required permissions to use
-							// this app
-							info("user " + user.getEppn() + " is not authorized to use this application.");
-							throw new RpcException("The user id being used to log " +
-								"in is not authorized to use this application.  " +
-								"Please contact your support representative to " +
-								"gain access to this application.");
+							if (user.isGenerateVpcFromUnauthorizedUser()) {
+								// user doesn't have any role assignments but 
+								// they've been dumped into the app to provision a VPC
+								info("[cached] user " + user.getEppn() + " is not authorized to use this application "
+									+ "BUT they're being dumped into the app to provision a VPC.  "
+									+ "Processing will continue.");
+							}
+							else {
+								// ERROR, user does not have any required permissions to use
+								// this app
+								info("user " + user.getEppn() + " is not authorized to use this application.");
+								throw new RpcException("[cached] The user id being used to log " +
+									"in is not authorized to use this application.  " +
+									"Please contact your support representative to " +
+									"gain access to this application.");
+							}
 						}
 					}
 				}
@@ -537,16 +557,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		else {
 			info("no user currently logged in, checking for Shibboleth information");
-			HttpServletRequest request = this.getThreadLocalRequest();
-
-//			Enumeration<String> attrEnum = request.getAttributeNames();
-//			while(attrEnum.hasMoreElements()) {
-//				info("HTTP Attribute: " + request.getAttribute(attrEnum.nextElement()));
-//			}
-//			Enumeration<String> headerEnum = request.getHeaderNames();
-//			while(headerEnum.hasMoreElements()) {
-//				info("HTTP Header: " + request.getHeader(headerEnum.nextElement()));
-//			}
 			String eppn = (String) request.getHeader("eduPersonPrincipalName");
 			if (eppn == null) {
 				eppn = (String) request.getAttribute("eduPersonPrincipalName");
@@ -564,6 +574,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						"If this issue persists, please contact your application support team.");
 				}
 				user = new UserAccountPojo();
+				if (isGenerateVpcp) {
+					user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
+				}
 				user.setEppn(eppn);
 				// 9/19/2018 - create session immediately even before we get their roles
 //				Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
@@ -581,13 +594,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							this.getRolesForUser(user);
 						}
 						if (user.getAccountRoles().size() == 0) {
-							// ERROR, user does not have any required permissions to use
-							// this app
-							info("user " + user.getEppn() + " is not authorized to use this application.");
-							throw new RpcException("The user id being used to log " +
-								"in is not authorized to use this application.  " +
-								"Please contact your support representative to " +
-								"gain access to this application.");
+							if (user.isGenerateVpcFromUnauthorizedUser()) {
+								// user doesn't have any role assignments but 
+								// they've been dumped into the app to provision a VPC
+								info("[shib] user " + user.getEppn() + " is not authorized to use this application "
+									+ "BUT they're being dumped into the app to provision a VPC.  "
+									+ "Processing will continue.");
+							}
+							else {
+								// ERROR, user does not have any required permissions to use
+								// this app
+								info("user " + user.getEppn() + " is not authorized to use this application.");
+								throw new RpcException("[shib] The user id being used to log " +
+									"in is not authorized to use this application.  " +
+									"Please contact your support representative to " +
+									"gain access to this application.");
+							}
 						}
 					}
 				}
@@ -665,6 +687,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					info("application is NOT configured to use Shibboleth.  " +
 						"Using testUserEppn for development purposes");
 					user = new UserAccountPojo();
+					if (isGenerateVpcp) {
+						user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
+					}
 					user.setEppn(testUserEppn);
 					user.setPublicId(testUserPpid);
 					PersonalNamePojo pnp = new PersonalNamePojo();
@@ -695,13 +720,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 					else {
 						if (user.getAccountRoles().size() == 0) {
-							// ERROR, user does not have any required permissions to use
-							// this app
-							info("user " + user.getEppn() + " is not authorized to use this application.");
-							throw new RpcException("The user id being used to log " +
-								"in is not authorized to use this application.  " +
-								"Please contact your support representative to " +
-								"gain access to this application.");
+							if (user.isGenerateVpcFromUnauthorizedUser()) {
+								// user doesn't have any role assignments but 
+								// they've been dumped into the app to provision a VPC
+								info("[local] user " + user.getEppn() + " is not authorized to use this application "
+									+ "BUT they're being dumped into the app to provision a VPC.  "
+									+ "Processing will continue.");
+							}
+							else {
+								// ERROR, user does not have any required permissions to use
+								// this app
+								info("user " + user.getEppn() + " is not authorized to use this application.");
+								throw new RpcException("[local] The user id being used to log " +
+									"in is not authorized to use this application.  " +
+									"Please contact your support representative to " +
+									"gain access to this application.");
+							}
 						}
 					}
 					
@@ -937,8 +971,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 			}
 			
-			info("[getRoleForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
-		} catch (EnterpriseConfigurationObjectException e) {
+			info("[getRolesForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -4965,7 +5000,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 			}
 
-			String authUserId = this.getAuthUserIdForHALS();
+			String authUserId;
+			if (filter != null && filter.getUserLoggedIn() != null) {
+				authUserId = this.getAuthUserIdForHALS(filter.getUserLoggedIn());
+			}
+			else {
+				authUserId = this.getAuthUserIdForHALS();	
+			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 
 			RequestService reqSvc = this.getAWSRequestService();
@@ -7988,6 +8029,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		filter.setRead(false);
 		filter.setUseQueryLanguage(true);
 		filter.setMaxRows(5);
+		filter.setUserLoggedIn(user);
 		UserNotificationQueryResultPojo result = this.getUserNotificationsForFilter(filter);
 		if (result.getResults().size() > 0) {
 			info("User " + user.getPublicId() + " has " + 
@@ -10685,6 +10727,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			info("[getVpnConnectionsForFilter] got " + moas.size() + " VPN Connection objects back from the server.");
 			for (VpnConnection moa : moas) {
+				info("[getVpnConnectionsForFilter] VpnConnection:  " + moa.toXmlString());
 				VpnConnectionPojo pojo = new VpnConnectionPojo();
 				this.populateVpnConnectionPojo(moa, pojo);
 				pojos.add(pojo);

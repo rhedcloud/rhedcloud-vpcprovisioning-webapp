@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,7 +42,7 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 		public void setSpeedChartStatusForKey(String key, Label label);
 		public void logMessageOnServer(final String message);
 		
-		public VpnConnectionPojo getVpnConnection();
+//		public VpnConnectionPojo getVpnConnection();
 		public void refreshVpnConnectionInfo();
 		
 		public void setSelectedProperty(PropertyPojo prop);

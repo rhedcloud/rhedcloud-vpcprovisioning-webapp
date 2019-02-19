@@ -145,6 +145,9 @@ public class AppBootstrapper {
 	 * @param parentView where to show the app's widget
 	 */
 	public void run(final HasWidgets.ForIsWidget parentView) {
+        final String s_generateVpcp = com.google.gwt.user.client.Window.Location.getParameter(Constants.URL_PARAM_GENERATE_VPCP);
+        GWT.log("[AppBootstrapper] generateVpcp param is: " + s_generateVpcp);
+
 		final HorizontalPanel pleaseWaitPanel = new HorizontalPanel();
 		pleaseWaitPanel.setWidth("100%");
 		pleaseWaitPanel.setHeight("100%");
@@ -216,10 +219,16 @@ public class AppBootstrapper {
 				shell.setUserLoggedIn(userLoggedIn);
 				if (userLoggedIn.isCentralAdmin() || userLoggedIn.isNetworkAdmin()) {
 					shell.showNetworkAdminTabs();
-//					shell.showAuditorTabs();
 				}
 				else {
-					shell.showAuditorTabs();
+					if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
+						// TODO: show vpc provisioning tab only
+						// fire maintain vpcp event
+						shell.showVpcpTab();
+					}
+					else {
+						shell.showAuditorTabs();
+					}
 				}
 				AsyncCallback<ReleaseInfo> riCallback = new AsyncCallback<ReleaseInfo>() {
 					@Override
@@ -243,12 +252,36 @@ public class AppBootstrapper {
 
 				parentView.add(shell);
 				registerHandlers();
+				if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
+					removeGenerateVpcpFromURL();
+					shell.selectVpcpTab();
+				}
 			}
 		};
 		GWT.log("[AppBootstrapper] getting user logged in...");
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
 	}
 	
+	void removeGenerateVpcpFromURL() {
+		String protocol = com.google.gwt.user.client.Window.Location.getProtocol();
+		String hostAndPort = com.google.gwt.user.client.Window.Location.getHost();
+		String path = com.google.gwt.user.client.Window.Location.getPath();
+		String hash = com.google.gwt.user.client.Window.Location.getHash();
+		String queryString = com.google.gwt.user.client.Window.Location.getQueryString();
+		String keyFromUrl = com.google.gwt.user.client.Window.Location.getParameter(Constants.URL_PARAM_GENERATE_VPCP);
+		String newQueryString = null;
+		if (keyFromUrl != null && (queryString != null && queryString.indexOf(Constants.URL_PARAM_GENERATE_VPCP + "=") != -1)) {
+			newQueryString = queryString.substring(0, queryString.indexOf(Constants.URL_PARAM_GENERATE_VPCP) - 1);
+			String newUrl = protocol + "//" + hostAndPort + path + newQueryString + hash;
+			setToken(newUrl);
+			com.google.gwt.user.client.Window.Location.assign(newUrl);
+		}
+	}
+	
+	protected native void setToken(String token) /*-{
+		$wnd.history.pushState({}, '', token);
+	}-*/;
+
 	private void registerHandlers() {
 		// handling events here so this logic can be shared among different view
 		// implementations.  if we don't use the same flow for desktop views

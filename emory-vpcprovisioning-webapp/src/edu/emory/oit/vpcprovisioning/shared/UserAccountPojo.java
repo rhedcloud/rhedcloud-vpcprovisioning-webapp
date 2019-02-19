@@ -15,6 +15,7 @@ public class UserAccountPojo implements IsSerializable {
 	boolean superUser=false;
 	boolean hasValidTermsOfUseAgreement;
 	String authUserIdForHALS;
+	boolean generateVpcFromUnauthorizedUser=false;
 
 	public UserAccountPojo() {
 		
@@ -214,5 +215,13 @@ public class UserAccountPojo implements IsSerializable {
 
 	public void setAuthUserIdForHALS(String authUserIdForHALS) {
 		this.authUserIdForHALS = authUserIdForHALS;
+	}
+
+	public boolean isGenerateVpcFromUnauthorizedUser() {
+		return generateVpcFromUnauthorizedUser;
+	}
+
+	public void setGenerateVpcFromUnauthorizedUser(boolean generateVpcFromUnauthorizedUser) {
+		this.generateVpcFromUnauthorizedUser = generateVpcFromUnauthorizedUser;
 	}
 }

@@ -160,9 +160,14 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 					getView().applyAWSAccountAuditorMask();
 				}
 				else {
-					getView().showMessageToUser("An error has occurred.  The user logged in does not "
-							+ "appear to be associated to any valid roles for this page.");
-					getView().applyAWSAccountAuditorMask();
+					if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
+						getView().applyCentralAdminMask();
+					}
+					else {
+						getView().showMessageToUser("An error has occurred.  The user logged in does not "
+								+ "appear to be associated to any valid roles for this page.");
+						getView().applyAWSAccountAuditorMask();
+					}
 				}
 			}
 		};

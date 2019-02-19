@@ -37,4 +37,6 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void lockView(String errorInformation);
 	void showNetworkAdminTabs();
 	void showAuditorTabs();
+	void showVpcpTab();
+	void selectVpcpTab();
 }

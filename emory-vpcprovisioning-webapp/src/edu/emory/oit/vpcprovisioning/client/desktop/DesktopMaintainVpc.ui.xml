@@ -179,7 +179,7 @@
 						<g:Grid ui:field="vpnInfoGrid" cellSpacing="8">
 							<g:row>
 						    	<g:customCell>
-									<g:Label addStyleNames="{style.labelLeft}">VPN Details:</g:Label>
+									<g:Label addStyleNames="{style.labelLeft}">VPN 1 Details:</g:Label>
 						    	</g:customCell>
 						    </g:row>
 							<g:row>

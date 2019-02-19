@@ -358,13 +358,13 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 		setSpeedChartStatusForKeyOnWidget(key, getView().getSpeedTypeWidget());
 	}
 
-	public VpnConnectionPojo getVpnConnection() {
-		return vpnConnection;
-	}
-
-	public void setVpnConnection(VpnConnectionPojo vpnConnection) {
-		this.vpnConnection = vpnConnection;
-	}
+//	public VpnConnectionPojo getVpnConnection() {
+//		return vpnConnection;
+//	}
+//
+//	public void setVpnConnection(VpnConnectionPojo vpnConnection) {
+//		this.vpnConnection = vpnConnection;
+//	}
 
 	@Override
 	public void refreshVpnConnectionInfo() {
@@ -381,12 +381,30 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 			@Override
 			public void onSuccess(VpnConnectionQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " VPN Connections back.");
-				if (result.getResults().size() > 0) {
-					vpnConnection = result.getResults().get(0);
+				// iterate over the VPN connection objects
+				// passed back.  It looks like it will now be 0 or 2 VpnConnections
+				// and each VpnConnection will have one tunnel interface in it.
+				
+				vpnConnection = null;
+				VpnConnectionPojo vpn1=null;
+				VpnConnectionPojo vpn2=null;
+				if (result.getResults().size() == 2) {
+					vpn1 = result.getResults().get(0);
+					vpn2 = result.getResults().get(1);
 				}
-				else {
-					vpnConnection = null;
+				else if (result.getResults().size() == 1) {
+					vpn1 = result.getResults().get(0);
 				}
+				 
+				if (vpn1 != null) {
+					vpnConnection = vpn1;
+				}
+				if (vpn2 != null) {
+					if (vpn2.getTunnelInterfaces().size() > 0) {
+						vpnConnection.getTunnelInterfaces().add(vpn2.getTunnelInterfaces().get(0));
+					}
+				}
+				
 				if (vpnConnection != null) {
 					if (vpnConnection.getTunnelInterfaces().size() == 2) {
 						TunnelInterfacePojo t1 = vpnConnection.getTunnelInterfaces().get(0);
@@ -424,7 +442,32 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 						}
 					}
 					else {
-						// TODO: something goofy with the tunnel interfaces
+						// something goofy with the tunnel interfaces
+						if (vpnConnection.getTunnelInterfaces().size() == 1) {
+							// only one tunnel, is this possible?
+							TunnelInterfacePojo t1 = vpnConnection.getTunnelInterfaces().get(0);
+							getView().setTunnel2StatusBad("No tunnel 2 found.");
+							if (t1.isOperational()) {
+								getView().setTunnel1StatusGood();
+								getView().setOperationalStatusSummary("Tunnel 1 is operational so this VPN "
+										+ "Connection should be in working order.  However, there does not "
+										+ "appear to be a second tunnel associated to the VPN Connection "
+										+ "so this could be an issue.");
+							}
+							else {
+								getView().setTunnel1StatusBad(t1.getBadStateReasons().toString());
+								getView().setOperationalStatusSummary("Tunnel 1 is NOT operational and "
+										+ "there does not appear to be a second tunnel associated to "
+										+ "the VPN Connection so this could be an issue.");
+							}
+						}
+						else {
+							// no tunnels, is this possible?
+							getView().setOperationalStatusSummary("The VPN Connection returned contains "
+								+ "ZERO tunnels.  This is an issue and would make the VPN Connection inoperable.");
+							getView().setTunnel1StatusBad("No tunnel 1 found.");
+							getView().setTunnel2StatusBad("No tunnel 2 found.");
+						}
 					}
 				}
 				getView().refreshVpnConnectionInfo(vpnConnection);

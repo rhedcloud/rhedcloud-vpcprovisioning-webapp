@@ -32,6 +32,7 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 	boolean useQueryLanguage;
 	int maxRows;
 	String searchString;
+	UserAccountPojo userLoggedIn;
 	
 	public UserNotificationQueryFilterPojo() {
 		
@@ -145,6 +146,14 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 
 	public void setSearchString(String searchString) {
 		this.searchString = searchString;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 
 }

@@ -254,7 +254,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		mainTabPanel.addStyleName("tab-style-content");
-
 		registerEvents();
 	}
 
@@ -535,7 +534,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			vpcpContentContainer.add(maintainVpcpView);
 			vpcpContentContainer.add(vpcpStatusView);
 			vpcpContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
+			if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
+				ActionEvent.fire(eventBus, ActionNames.GENERATE_VPCP);
+			}
+			else {
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
+			}
 			break;
 		case 4:
 			GWT.log("need to get Services content.");
@@ -1490,6 +1494,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 							UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
 							up_filter.setUserId(userLoggedIn.getPublicId());
+							up_filter.setUserAccount(userLoggedIn);
 							VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback2);
 						}
 					};
@@ -1611,6 +1616,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showNetworkAdminTabs() {
+		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
 		mainTabPanel.getTabWidget(6).getParent().setVisible(true);
 		mainTabPanel.getTabWidget(7).getParent().setVisible(true);
 		mainTabPanel.getTabWidget(8).getParent().setVisible(true);
@@ -1619,9 +1630,34 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showAuditorTabs() {
+		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
 		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
 		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
 		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
 		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+	}
+
+	@Override
+	public void showVpcpTab() {
+		mainTabPanel.getTabWidget(0).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(1).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(2).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+	}
+
+	@Override
+	public void selectVpcpTab() {
+		mainTabPanel.selectTab(3);
 	}
 }

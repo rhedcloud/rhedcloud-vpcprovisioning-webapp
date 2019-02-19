@@ -4,37 +4,24 @@ import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.ResizeComposite;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopAppShell;
-import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
-import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidr.MaintainCidrView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
@@ -323,6 +310,18 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void showAuditorTabs() {
 		
+		
+	}
+
+	@Override
+	public void showVpcpTab() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void selectVpcpTab() {
+		// TODO Auto-generated method stub
 		
 	}
 

@@ -656,9 +656,30 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 				}
 				else {
 					// show message to user
-					VpnConnectionPojo vpn = result.getResults().get(0);
-					boolean tunnel1Good = vpn.getTunnelInterfaces().get(0).isOperational();
-					boolean tunnel2Good = vpn.getTunnelInterfaces().get(1).isOperational();
+					VpnConnectionPojo vpn1=null;
+					VpnConnectionPojo vpn2=null;
+					if (result.getResults().size() == 2) {
+						vpn1 = result.getResults().get(0);
+						vpn2 = result.getResults().get(1);
+					}
+					else if (result.getResults().size() == 1) {
+						vpn1 = result.getResults().get(0);
+					}
+					
+					// get the tunnel status from the not null vpn1 and/or vpn2 objects
+					boolean tunnel1Good=false;
+					boolean tunnel2Good=false;
+					if (vpn1 != null) {
+						if (vpn1.getTunnelInterfaces().size() > 0) {
+							tunnel1Good = vpn1.getTunnelInterfaces().get(0).isOperational();
+						}
+					}
+					if (vpn2 != null) {
+						if (vpn2.getTunnelInterfaces().size() > 0) {
+							tunnel2Good = vpn2.getTunnelInterfaces().get(0).isOperational();
+						}
+					}
+					
 					String tunnel1Html;
 					if (tunnel1Good) {
 						tunnel1Html = 

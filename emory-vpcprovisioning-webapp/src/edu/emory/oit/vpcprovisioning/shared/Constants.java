@@ -207,4 +207,5 @@ public class Constants implements IsSerializable {
 	public static final String STATIC_NAT_STAUS = "staticNatStatus";
 	public static final String VPNC_STATUS = "vpncpStatus";
 	public static final String MAINTAIN_VPN_CONNECTION_PROFILE = "maintainVpnConnectionProfile";
+	public static final String URL_PARAM_GENERATE_VPCP = "generateVpcp";
 }
