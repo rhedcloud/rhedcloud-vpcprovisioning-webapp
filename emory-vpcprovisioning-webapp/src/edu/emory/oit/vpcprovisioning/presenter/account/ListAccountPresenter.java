@@ -283,7 +283,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				refreshList(result);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override

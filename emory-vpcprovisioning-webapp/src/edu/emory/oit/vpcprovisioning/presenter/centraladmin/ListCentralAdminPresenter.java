@@ -245,6 +245,6 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 				refreshList(result);
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 }

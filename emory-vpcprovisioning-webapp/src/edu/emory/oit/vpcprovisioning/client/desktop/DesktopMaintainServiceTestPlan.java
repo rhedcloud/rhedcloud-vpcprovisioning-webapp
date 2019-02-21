@@ -970,6 +970,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				presenter.cancelMaintenance();
 				reqmtPopup.hide();
 			}
 		});
@@ -1157,6 +1158,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				presenter.cancelMaintenance();
 				testPopup.hide();
 			}
 		});
@@ -1312,6 +1314,7 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+				presenter.cancelMaintenance();
 				stepPopup.hide();
 			}
 		});

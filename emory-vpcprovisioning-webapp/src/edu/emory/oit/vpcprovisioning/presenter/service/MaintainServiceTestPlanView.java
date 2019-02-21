@@ -66,6 +66,7 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 		void maintainTest(ServiceTestPojo selected);
 		void createStep();
 		void maintainStep(ServiceTestStepPojo selected);
+		void cancelMaintenance();
 	}
 
 	/**

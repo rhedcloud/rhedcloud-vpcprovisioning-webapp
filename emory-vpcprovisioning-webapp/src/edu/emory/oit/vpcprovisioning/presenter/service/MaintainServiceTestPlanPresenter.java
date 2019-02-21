@@ -610,4 +610,11 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 		getView().showStepMaintenanceDialog(true, selected);
 	}
 
+	@Override
+	public void cancelMaintenance() {
+		// just so we refresh the test plan.  this is important when/if user selects
+		// cancel but were in the middle of an "add another" workflow but changed their minds
+		ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+	}
+
 }
