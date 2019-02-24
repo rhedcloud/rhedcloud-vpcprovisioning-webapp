@@ -126,6 +126,7 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 		isEditing = false;
 		getView().setEditing(false);
 		serviceControl = new ServiceControlPojo();
+		serviceControl.setSequenceNumber(assessment.getServiceControls().size() + 1);
 	}
 
 	private void startEdit() {

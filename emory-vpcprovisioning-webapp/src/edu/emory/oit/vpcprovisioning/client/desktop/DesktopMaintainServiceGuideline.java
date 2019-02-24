@@ -112,7 +112,7 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	sequenceNumberTB.setFocus(true);
+	        	guidelineNameTB.setFocus(true);
 	        }
 	    });
 	}
@@ -251,6 +251,8 @@ public class DesktopMaintainServiceGuideline extends ViewImplBase implements Mai
 			assessmentDB.setValue(srp.getAssessmentDate());
 		}
 		else {
+			ServiceGuidelinePojo srp = presenter.getServiceGuideline();
+			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
 			assessorLookupSB.setText("");
 			assessorLookupSB.getElement().setPropertyString("placeholder", "enter name");
 		}

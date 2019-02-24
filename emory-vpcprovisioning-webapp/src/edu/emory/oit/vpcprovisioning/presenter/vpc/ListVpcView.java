@@ -32,6 +32,11 @@ public interface ListVpcView extends IsWidget, View {
 		void deleteVpc(VpcPojo Vpc);
 		public void logMessageOnServer(final String message);
 		void refreshList(final UserAccountPojo user);
+		
+		void filterByAccountName(String acctName);
+		void filterByVpcId(String vpcId);
+		void filterByAccountId(String acctId);
+		void clearFilter();
 	}
 
 	/**
@@ -54,4 +59,5 @@ public interface ListVpcView extends IsWidget, View {
 	
 	void setReleaseInfo(String releaseInfoHTML);
 	void removeVpcFromView(VpcPojo Vpc);
+	void setFilterTypeItems(List<String> filterTypes);
 }

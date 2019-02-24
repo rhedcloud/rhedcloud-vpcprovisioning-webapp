@@ -133,7 +133,7 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	sequenceNumberTB.setFocus(true);
+	        	controlNameTB.setFocus(true);
 	        }
 	    });
 	}
@@ -280,6 +280,8 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 			assessmentDB.setValue(srp.getAssessmentDate());
 		}
 		else {
+			ServiceControlPojo srp = presenter.getServiceControl();
+			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
 			assessorLookupSB.setText("");
 			assessorLookupSB.getElement().setPropertyString("placeholder", "enter name");
 			verifierLookupSB.setText("");

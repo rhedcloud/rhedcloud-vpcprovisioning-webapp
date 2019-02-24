@@ -27,8 +27,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -38,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -48,6 +51,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	List<VpcPojo> vpcList = new java.util.ArrayList<VpcPojo>();
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
+	List<String> filterTypeItems;
 
 	/*** FIELDS ***/
 	@UiField(provided=true) SimplePager topListPager = new SimplePager(TextLocation.RIGHT, false, true);
@@ -57,7 +61,40 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	@UiField(provided=true) CellTable<VpcPojo> vpcListTable = new CellTable<VpcPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField PushButton refreshButton;
+	@UiField Button filterButton;
+	@UiField Button clearFilterButton;
+	@UiField TextBox filterTB;
+	@UiField ListBox filterTypesLB;
 
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		filterTB.setText("");
+		presenter.clearFilter();
+	}
+	@UiHandler("filterButton") 
+	void filterButtonClicked(ClickEvent e) {
+		String filterType = filterTypesLB.getSelectedValue();
+		String filterValue = filterTB.getText();
+		
+		if ((filterType != null && filterType.length() > 0) &&
+			 (filterValue != null && filterValue.length() > 0)) {
+			if (filterType.equalsIgnoreCase(Constants.VPC_FILTER_ACCOUNT_NAME)) {
+				presenter.filterByAccountName(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.VPC_FILTER_ACCOUNT_ID)) {
+				presenter.filterByAccountId(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.VPC_FILTER_VPC_ID)) {
+				presenter.filterByVpcId(filterValue);
+			}
+			else {
+				// invalid filter type...but how?
+			}
+		}
+		else {
+			this.showMessageToUser("Please enter a Filter Value AND select a Filter Type");
+		}
+	}
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
 		presenter.refreshList(userLoggedIn);
@@ -647,5 +684,21 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	public void applyNetworkAdminMask() {
 		
 		
+	}
+
+	@Override
+	public void setFilterTypeItems(List<String> filterTypes) {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter filter value");
+
+		this.filterTypeItems = filterTypes;
+		filterTypesLB.clear();
+		
+		filterTypesLB.addItem("-- Select Filter Type --", "");
+		if (filterTypeItems != null) {
+			for (String filterType : filterTypeItems) {
+				filterTypesLB.addItem(filterType, filterType);
+			}
+		}
 	}
 }

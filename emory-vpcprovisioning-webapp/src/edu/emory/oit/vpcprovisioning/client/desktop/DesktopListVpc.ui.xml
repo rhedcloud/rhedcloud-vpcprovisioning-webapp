@@ -35,6 +35,20 @@
 					<g:customCell>
 						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
 					</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="filterTB" debugId="filterTB"/>
+			    	</g:customCell>
+					<g:customCell>
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+							ui:field="filterTypesLB" debugId="filterTypesLB" />
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+					</g:customCell>
 					<g:customCell>
 						<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
 							addStyleNames="{style.refreshButton}"

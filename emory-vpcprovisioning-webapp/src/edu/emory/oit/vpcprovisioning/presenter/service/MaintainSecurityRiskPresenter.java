@@ -169,6 +169,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		isEditing = false;
 		getView().setEditing(false);
 		securityRisk = new SecurityRiskPojo();
+		securityRisk.setSequenceNumber(assessment.getSecurityRisks().size() + 1);
 	}
 
 	private void startEdit() {

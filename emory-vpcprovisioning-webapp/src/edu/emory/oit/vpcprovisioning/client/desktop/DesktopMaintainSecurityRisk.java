@@ -241,7 +241,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-	        	sequenceNumberTB.setFocus(true);
+	        	riskNameTB.setFocus(true);
 	        }
 	    });
 	}
@@ -394,6 +394,8 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 			assessmentDB.setValue(srp.getAssessmentDate());
 		}
 		else {
+			SecurityRiskPojo srp = presenter.getSecurityRisk();
+			sequenceNumberTB.setText(Integer.toString(srp.getSequenceNumber()));
 			assessorLookupSB.setText("");
 			assessorLookupSB.getElement().setPropertyString("placeholder", "enter name");
 		}

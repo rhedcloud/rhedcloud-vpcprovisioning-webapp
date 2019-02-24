@@ -140,6 +140,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 		isEditing = false;
 		getView().setEditing(false);
 		serviceGuideline = new ServiceGuidelinePojo();
+		serviceGuideline.setSequenceNumber(assessment.getServiceGuidelines().size() + 1);
 	}
 
 	private void startEdit() {

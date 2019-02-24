@@ -14,6 +14,8 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.VpcListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcQueryFilterPojo;
@@ -108,6 +110,12 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 				}
 
 				getView().setUserLoggedIn(userLoggedIn);
+
+				List<String> filterTypeItems = new java.util.ArrayList<String>();
+				filterTypeItems.add(Constants.VPC_FILTER_ACCOUNT_ID);
+				filterTypeItems.add(Constants.VPC_FILTER_ACCOUNT_NAME);
+				filterTypeItems.add(Constants.VPC_FILTER_VPC_ID);
+				getView().setFilterTypeItems(filterTypeItems);
 
 				// Request the Vpc list now.
 				refreshList(userLoggedIn);
@@ -270,5 +278,56 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	public void vpcpConfirmCancel() {
 		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPC " + 
 			selectedVpc.getVpcId() + " was not deleted.");
+	}
+
+	@Override
+	public void filterByAccountName(String acctName) {
+		getView().showPleaseWaitDialog("Filtering VPCs by account name...");
+		filter = new VpcQueryFilterPojo();
+		filter.setAccountName(acctName);
+		filter.setFuzzyFilter(true);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByVpcId(String vpcId) {
+		getView().showPleaseWaitDialog("Filtering VPCs by VPC ID...");
+		filter = new VpcQueryFilterPojo();
+		filter.setVpcId(vpcId);
+		filter.setFuzzyFilter(true);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByAccountId(String acctId) {
+		getView().showPleaseWaitDialog("Filtering VPCs by Account ID...");
+		filter = new VpcQueryFilterPojo();
+		filter.setAccountId(acctId);
+		filter.setFuzzyFilter(true);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void clearFilter() {
+		getView().showPleaseWaitDialog("Clearing filter...");
+		filter = null;
+		this.getUserAndRefreshList();
+	}
+
+	private void getUserAndRefreshList() {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				refreshList(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 }

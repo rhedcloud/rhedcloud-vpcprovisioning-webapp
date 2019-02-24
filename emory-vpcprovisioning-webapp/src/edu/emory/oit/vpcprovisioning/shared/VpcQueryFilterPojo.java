@@ -13,6 +13,8 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable, 
 	boolean excludeVpcsAssignedToVpnConnectionProfiles;
 //	String createUser;
 //	String lastUpdateUser;
+	String accountName;
+	boolean fuzzyFilter;
 
 	public VpcQueryFilterPojo() {
 		
@@ -64,6 +66,22 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable, 
 
 	public void setExcludeVpcsAssignedToVpnConnectionProfiles(boolean excludeVpcsAssignedToVpnConnectionProfiles) {
 		this.excludeVpcsAssignedToVpnConnectionProfiles = excludeVpcsAssignedToVpnConnectionProfiles;
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public boolean isFuzzyFilter() {
+		return fuzzyFilter;
+	}
+
+	public void setFuzzyFilter(boolean fuzzyFilter) {
+		this.fuzzyFilter = fuzzyFilter;
 	}
 
 }

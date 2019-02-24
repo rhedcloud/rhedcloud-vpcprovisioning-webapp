@@ -659,20 +659,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			} 
 			else {
 				info("no eppn found in Shibboleth attributes");
+				Properties props=null;
 				try {
 					// do this here so config doc property changes are
 					// reflected automatically
-					generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
+					props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 				} catch (EnterpriseConfigurationObjectException e) {
 					e.printStackTrace();
 				}
-				String shib = generalProps.getProperty("useShibboleth", "true");
+				String shib = props.getProperty("useShibboleth", "true");
 				info("useShibboleth from config doc: " + shib);
 				useShibboleth = Boolean.parseBoolean(shib);
-				String testUserEppn = generalProps.getProperty("testUserEppn", "jtjacks@emory.edu");
-				String testUserPpid = generalProps.getProperty("testUserPpid", "P7247525");
-				String testUserFirstName = generalProps.getProperty("testUserFirstName", "Tod");
-				String testUserLastName = generalProps.getProperty("testUserLastName", "Jackson");
+				String testUserEppn = props.getProperty("testUserEppn", "jtjacks@emory.edu");
+				String testUserPpid = props.getProperty("testUserPpid", "P7247525");
+				String testUserFirstName = props.getProperty("testUserFirstName", "Tod");
+				String testUserLastName = props.getProperty("testUserLastName", "Jackson");
 
 				if (useShibboleth) {
 					// error condition, somehow they've got to the app
@@ -2952,27 +2953,74 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<VirtualPrivateCloud> moas = actionable.query(queryObject,
 					this.getAWSRequestService());
 			for (VirtualPrivateCloud moa : moas) {
-				VpcPojo pojo = new VpcPojo();
-				VpcPojo baseline = new VpcPojo();
-				this.populateVpcPojo(moa, pojo);
-				this.populateVpcPojo(moa, baseline);
-				pojo.setBaseline(baseline);
+				// fuzzy filter match
+				// doing this here so the VPC (pojo) will have the account name in it fuzzy
+				// matching on account name (it's not a part of the moa)
+				if (filter != null && filter.isFuzzyFilter()) {
+					VpcPojo pojo = new VpcPojo();
+					this.populateVpcPojo(moa, pojo);
+					
+					boolean includeInList=false;
+					if (filter.getAccountId() != null && filter.getAccountId().length() > 0) {
+						if (pojo.getAccountId().toLowerCase().indexOf(filter.getAccountId().toLowerCase()) >= 0) {
+							includeInList = true;
+						}
+					}
+					else if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
+						if (pojo.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
+							includeInList = true;
+						}
+					}
+					else if (filter.getVpcId() != null && filter.getVpcId().length() > 0) {
+						if (pojo.getVpcId().toLowerCase().indexOf(filter.getVpcId().toLowerCase()) >= 0) {
+							includeInList = true;
+						}
+					}
+					if (includeInList) {
+						boolean isAssigned = false;
+						if (eia_result.getResults().size() > 0) {
+							// weed out any VPCs that have already been used in a profile assignment
+							assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+								if (assignment.getOwnerId().equalsIgnoreCase(pojo.getVpcId())) {
+									isAssigned = true;
+									break assignmentLoop;
+								}
+							}
+						}
 
-				boolean isAssigned = false;
-				if (eia_result.getResults().size() > 0) {
-					// weed out any VPCs that have already been used in a profile assignment
-					assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
-						if (assignment.getOwnerId().equalsIgnoreCase(pojo.getVpcId())) {
-							isAssigned = true;
-							break assignmentLoop;
+						// only add the VPC to the list IF that VPC has not already been
+						// used in a VpnConnectionprofileAssignment
+						if (!isAssigned) {
+							VpcPojo baseline = new VpcPojo();
+							this.populateVpcPojo(moa, baseline);
+							pojo.setBaseline(baseline);
+							pojos.add(pojo);
 						}
 					}
 				}
+				else {
+					VpcPojo pojo = new VpcPojo();
+					this.populateVpcPojo(moa, pojo);
 
-				// only add the VPC to the list IF that VPC has not already been
-				// used in a VpnConnectionprofileAssignment
-				if (!isAssigned) {
-					pojos.add(pojo);
+					boolean isAssigned = false;
+					if (eia_result.getResults().size() > 0) {
+						// weed out any VPCs that have already been used in a profile assignment
+						assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+							if (assignment.getOwnerId().equalsIgnoreCase(pojo.getVpcId())) {
+								isAssigned = true;
+								break assignmentLoop;
+							}
+						}
+					}
+
+					// only add the VPC to the list IF that VPC has not already been
+					// used in a VpnConnectionprofileAssignment
+					if (!isAssigned) {
+						VpcPojo baseline = new VpcPojo();
+						this.populateVpcPojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}
 				}
 			}
 
@@ -3564,8 +3612,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpcpsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String s_interval = generalProps.getProperty("vpcpListTimeoutMillis", "30000");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("vpcpListTimeoutMillis", "30000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getAWSRequestService();
@@ -4424,8 +4472,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
             populateElasticIpAssignmentMoa(elasticIpAssignment.getBaseline(), baselineData);
             newData.setBaseline(baselineData);
 
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String s_interval = generalProps.getProperty("vpcpListTimeoutMillis", "30000");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("vpcpListTimeoutMillis", "30000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getElasticIpRequestService();
@@ -6957,8 +7005,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public String getEsbServiceStatusURL() throws RpcException {
 		try {
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String esbServiceStatusURL = generalProps.getProperty("esbServiceStatusURL", null);
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String esbServiceStatusURL = props.getProperty("esbServiceStatusURL", null);
 			if (esbServiceStatusURL == null) {
 				throw new RpcException("Null 'esbServiceStatusURL' property.  This application is not configured correctly.");
 			}
@@ -6972,8 +7020,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public String getAccountSeriesText() throws RpcException {
 		try {
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String l_awsConsoleInfoText = generalProps.getProperty("awsConsoleInfoText", "Unknown");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String l_awsConsoleInfoText = props.getProperty("awsConsoleInfoText", "Unknown");
 			return l_awsConsoleInfoText;
 		} catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
@@ -6984,8 +7032,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public String getMyNetIdURL() throws RpcException {
 		try {
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String myNetIdURL = generalProps.getProperty("myNetIdURL", "https://dev.mynetid.emory.edu/");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String myNetIdURL = props.getProperty("myNetIdURL", "https://dev.mynetid.emory.edu/");
 			return myNetIdURL;
 		} catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
@@ -8042,8 +8090,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public int getNotificationCheckIntervalMillis() throws RpcException {
 		try {
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String s_interval = generalProps.getProperty("notificationCheckIntervalMillis", "10000");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("notificationCheckIntervalMillis", "10000");
 			int interval = Integer.parseInt(s_interval);
 			return interval;
 		} catch (EnterpriseConfigurationObjectException e) {
@@ -8691,8 +8739,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getStaticNatProvisioningsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String s_interval = generalProps.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
@@ -8811,8 +8859,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getStaticNatDeprovisioningsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String s_interval = generalProps.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
@@ -9326,8 +9374,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpncpSummariesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String s_interval = generalProps.getProperty("vpcpListTimeoutMillis", "30000");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("vpcpListTimeoutMillis", "30000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
@@ -10712,8 +10760,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpnConnectionsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			String s_interval = generalProps.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
