@@ -253,14 +253,16 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		
-		
+		propertyKeyTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
+		addPropertyButton.setEnabled(true);
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		
-		
+		propertyKeyTF.setEnabled(false);
+		propertyValueTF.setEnabled(false);
+		addPropertyButton.setEnabled(false);
 	}
 
 	@Override
@@ -395,8 +397,9 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public void applyCentralAdminMask() {
-		
-		
+		propertyKeyTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
+		addPropertyButton.setEnabled(true);
 	}
 
 	@Override

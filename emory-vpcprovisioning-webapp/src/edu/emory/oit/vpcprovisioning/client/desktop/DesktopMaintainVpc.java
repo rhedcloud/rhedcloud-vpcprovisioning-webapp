@@ -621,6 +621,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		vpcReqSpeedTypeTB.setEnabled(false);
 		vpcReqTypeLB.setEnabled(false);
 		vpcReqCidrTB.setEnabled(false);
+		propertyKeyTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
+		addPropertyButton.setEnabled(true);
 	}
 
 	@Override
@@ -639,6 +642,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		vpcReqSpeedTypeTB.setEnabled(false);
 		vpcReqTypeLB.setEnabled(false);
 		vpcReqCidrTB.setEnabled(false);
+		propertyKeyTF.setEnabled(false);
+		propertyValueTF.setEnabled(false);
+		addPropertyButton.setEnabled(false);
 	}
 
 	@Override
@@ -737,6 +743,10 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		vpcReqSpeedTypeTB.setEnabled(true);
 		vpcReqTypeLB.setEnabled(true);
 		vpcReqCidrTB.setEnabled(true);
+
+		propertyKeyTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
+		addPropertyButton.setEnabled(true);
 	}
 
 	@Override

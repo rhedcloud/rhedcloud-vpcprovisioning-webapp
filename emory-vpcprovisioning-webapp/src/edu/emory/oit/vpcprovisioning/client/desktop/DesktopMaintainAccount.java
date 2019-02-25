@@ -768,6 +768,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(false);
 		billSummaryButton.setVisible(false);
+		propertyKeyTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
 		addPropertyButton.setEnabled(true);
 	}
 	@Override
@@ -786,6 +788,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(false);
 		complianceClassLB.setEnabled(false);
 		billSummaryButton.setVisible(false);
+		propertyKeyTF.setEnabled(false);
+		propertyValueTF.setEnabled(false);
 		addPropertyButton.setEnabled(false);
 	}
 	@Override
@@ -935,6 +939,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(true);
 		billSummaryButton.setVisible(true);
+		propertyKeyTF.setEnabled(true);
+		propertyValueTF.setEnabled(true);
 		addPropertyButton.setEnabled(true);
 	}
 	@Override
