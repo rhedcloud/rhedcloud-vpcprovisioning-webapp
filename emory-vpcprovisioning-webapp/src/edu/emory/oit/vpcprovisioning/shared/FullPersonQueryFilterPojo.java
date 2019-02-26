@@ -63,4 +63,10 @@ public class FullPersonQueryFilterPojo extends SharedObject implements IsSeriali
 		this.userLoggedIn = userLoggedIn;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

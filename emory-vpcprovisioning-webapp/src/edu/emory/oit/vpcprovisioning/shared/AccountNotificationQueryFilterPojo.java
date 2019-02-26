@@ -101,4 +101,10 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 		this.searchString = searchString;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

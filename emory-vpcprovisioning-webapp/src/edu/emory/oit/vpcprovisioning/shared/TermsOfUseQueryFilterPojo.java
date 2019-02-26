@@ -74,4 +74,10 @@ public class TermsOfUseQueryFilterPojo extends SharedObject implements IsSeriali
 		this.userAccount = userAccount;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

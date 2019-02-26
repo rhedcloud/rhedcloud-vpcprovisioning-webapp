@@ -42,4 +42,10 @@ public class UserProfileQueryFilterPojo extends SharedObject implements IsSerial
 		this.userAccount = userAccount;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

@@ -39,4 +39,11 @@ ServiceSecurityAssessmentQuerySpecification (Comparison*, QueryLanguage?, Securi
 		return "Assessment Id: " + assessmentId + ", Service ID: " + serviceId;
 	}
 
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

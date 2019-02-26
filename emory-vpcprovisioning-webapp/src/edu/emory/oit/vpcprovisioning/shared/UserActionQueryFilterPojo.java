@@ -35,4 +35,10 @@ public class UserActionQueryFilterPojo extends SharedObject implements IsSeriali
 		this.action = action;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

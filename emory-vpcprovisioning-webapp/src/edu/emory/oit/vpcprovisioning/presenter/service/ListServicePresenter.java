@@ -123,6 +123,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 				getView().setFilterTypeItems(filterTypeItems);
 
 				// Request the service list now.
+				filter = null;
 				refreshList(userLoggedIn);
 			}
 		};

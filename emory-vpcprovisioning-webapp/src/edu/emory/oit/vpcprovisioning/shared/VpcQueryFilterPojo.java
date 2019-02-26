@@ -84,4 +84,10 @@ public class VpcQueryFilterPojo extends SharedObject implements IsSerializable, 
 		this.fuzzyFilter = fuzzyFilter;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

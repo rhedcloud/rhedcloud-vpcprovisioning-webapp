@@ -35,4 +35,10 @@ public class DirectoryPersonQueryFilterPojo extends SharedObject implements IsSe
 		this.testRequest = testRequest;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

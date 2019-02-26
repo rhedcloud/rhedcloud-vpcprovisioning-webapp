@@ -45,4 +45,10 @@ public class TermsOfUseAgreementQueryFilterPojo extends SharedObject implements 
 		this.userAccount = userAccount;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

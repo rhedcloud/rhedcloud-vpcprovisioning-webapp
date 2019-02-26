@@ -201,8 +201,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
 	private static final String PEOPLE_SOFT_SERVICE_NAME = "PeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
-//	private static final String CIDR_SERVICE_NAME = "CidrRequestService";
-//	private static final String AUTHZ_SERVICE_NAME = "AuthorizationRequestService";
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
 	private static final String SRD_SERVICE_NAME = "SrdRequestService";
 	private static final String NETWORK_OPS_SERVICE_NAME = "NetworkOpsRequestService";
@@ -220,7 +218,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private boolean useShibboleth = true;
 	private boolean useAuthzService = true;
 	private static AppConfig appConfig = null;
-	Properties roleAssignmentProps = null;
 	Properties generalProps = null;
 	private String configDocPath = null;
 	private String appId = null;
@@ -230,7 +227,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool awsProducerPool = null;
 	private ProducerPool peopleSoftProducerPool = null;
 	private ProducerPool cidrProducerPool = null;
-//	private ProducerPool authzProducerPool = null;
 	private ProducerPool firewallProducerPool = null;
 	private ProducerPool serviceNowProducerPool = null;
 	private ProducerPool elasticIpProducerPool = null;
@@ -245,7 +241,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private int sessionTimeoutIntervalSeconds = 28800;
 	private int userCnt=0;
 	private boolean manageSessionLocally=false;
-//	private String baseLoginURL = null;
 	private String applicationEnvironment=null;
 	
 	boolean fakeVpcpGen = false;
@@ -254,7 +249,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private List<BillPojo> masterBills = new java.util.ArrayList<BillPojo>();
 	// Key is account id, List is a list of Bills for that account id
 	private HashMap<String, List<BillPojo>> billsByAccount = new HashMap<String, List<BillPojo>>();
-	AWSServiceSummaryPojo serviceSummary;
 	HashMap<String, String> ppidToNameMap = new HashMap<String, String>();
 
 	// temporary
@@ -351,7 +345,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			networkOpsProducerPool = (ProducerPool) getAppConfig().getObject(
 					NETWORK_OPS_SERVICE_NAME);
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+//			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
 			try {
 				this.getAWSServiceMap();
@@ -899,7 +893,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		
 		try {
-			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 			
 			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
@@ -1015,7 +1009,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		
 		try {
-			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 			
 			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
@@ -3100,17 +3094,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (filter != null) {
 			if (filter.getUserLoggedIn() != null) {
 				if (!filter.getUserLoggedIn().isCentralAdmin()) {
+					// if the user isn't a central admin
 					// iterate over all filter.AccountRoles and do a query for each account 
-					// in the list.  Then, need to add each account to the result 
+					// in the list.  Then, need to add each vpc to the result 
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
 						List<VpcPojo> vpcs = this.getVpcsForAccountId(arp.getAccountId());
 						if (vpcs != null) {
-							info("[getVpcsForFilter] adding account " + arp.getAccountId() + 
-								" to list of accounts for the user logged in" );
+							info("[getVpcsForFilter] adding " + vpcs.size() + " VPCs for account " + arp.getAccountId() + 
+								" to list of VPCs for the user logged in" );
 							pojos.addAll(vpcs);
 						}
 						else {
-							String errorMsg = "[getAccountsForFilter] null result from getAccountById, this is an issue.";
+							String errorMsg = "[getVpcsForFilter] null result from getVpcsForAccountId, this is an issue.";
 							info(errorMsg);
 							throw new RpcException(errorMsg);
 						}
@@ -3118,7 +3113,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					Collections.sort(pojos);
 					result.setResults(pojos);
 					result.setFilterUsed(filter);
-					info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
+					info("[getVpcsForFilter] returning " + pojos.size() + " VPCs for the user logged in" );
 					return result;
 				}
 			}
@@ -4763,12 +4758,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AWSServiceSummaryPojo getAWSServiceMap() throws RpcException {
-		info("checking cache for existing service summary...");
-		serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
+		info("[getAWSServiceMap] checking cache for existing service summary...");
+		AWSServiceSummaryPojo serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
 				Constants.SERVICE_SUMMARY + getCurrentSessionId());
 
 		if (serviceSummary == null) {
-			info("no service summary found in cache, building service summary.");
+			info("[getAWSServiceMap] no service summary found in cache, building service summary.");
 		    serviceSummary = new AWSServiceSummaryPojo();
 		}
 		else {
@@ -4778,13 +4773,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				long millisSinceUpdated = currentTime.getTime() - serviceSummary.getUpdateTime().getTime();
 				// if it's less than one minute, don't refresh
 				if (millisSinceUpdated <= 60000) {
-					info("service summary found in cache and it's NOT stale, returning cached service summary");
+					info("[getAWSServiceMap] service summary found in cache and it's NOT stale, returning cached service summary");
 				    info("[getAWSServiceMap] there are " + serviceSummary.getServiceStatistics().size() + " service stats in the cached summary.");
 					return serviceSummary;
 				}
-				info("service summary was found in cached but it's stale, refreshing service summary");
+				info("[getAWSServiceMap] service summary was found in cached but it's stale, refreshing service summary");
 			}
-			info("service summary was found in cache but it has no last updated time, refreshing service summary");
+			info("[getAWSServiceMap] service summary was found in cache but it has no last updated time, refreshing service summary");
 		}
 
 		int svcCnt = 0;
@@ -4809,7 +4804,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			else if (service.getAwsCategories() != null && 
 					service.getAwsCategories().size() > 0) {
 				
-				// TODO: have to check all the categories they're in...not just the fist one
+				// have to check all the categories they're in...not just the fist one
 				for (String l_category : service.getAwsCategories()) {
 					this.addServiceToCategory(l_category, service, awsServicesMap);
 				}
@@ -4938,6 +4933,34 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException {
+		AWSServiceSummaryPojo serviceSummary = null;
+		if (filter == null || filter.isEmpty()) {
+			info("[getServicesForFilter] checking cache for existing service summary...");
+			serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
+					Constants.SERVICE_SUMMARY + getCurrentSessionId());
+
+			if (serviceSummary == null) {
+				info("[getServicesForFilter] no service summary found in cache, building fresh service list.");
+			}
+			else {
+				// check how long it's been there and refresh if it's "stale"
+				java.util.Date currentTime = new java.util.Date();
+				if (serviceSummary.getUpdateTime() != null) {
+					long millisSinceUpdated = currentTime.getTime() - serviceSummary.getUpdateTime().getTime();
+					// if it's less than one minute, don't refresh
+					if (millisSinceUpdated <= 60000) {
+						info("[getServicesForFilter] service summary found in cache and it's NOT stale, returning cached service list");
+						AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
+						result.setFilterUsed(filter);
+						result.setResults(serviceSummary.getServiceList());
+						return result;
+					}
+					info("[getServicesForFilter] service summary was found in cached but it's stale, returning fresh service list");
+				}
+				info("[getServicesForFilter] service summary was found in cache but it has no last updated time, returning fresh service list");
+			}
+		}
+
 		AWSServiceQueryResultPojo result = new AWSServiceQueryResultPojo();
 		result.setFilterUsed(filter);
 		List<AWSServicePojo> pojos = new java.util.ArrayList<AWSServicePojo>();
@@ -5035,6 +5058,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 
 		info("returning " + result.getResults().size() + " services.");
+		if (serviceSummary != null) {
+			serviceSummary.setServiceList(result.getResults());
+		    serviceSummary.setUpdateTime(new java.util.Date());
+			Cache.getCache().put(Constants.SERVICE_SUMMARY + getCurrentSessionId(), serviceSummary);
+		}
 		return result;
 	}
 
@@ -6322,14 +6350,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ParseException {
 	}
 
-	public Properties getRoleAssignmentProps() {
-		return roleAssignmentProps;
-	}
-
-	public void setRoleAssignmentProps(Properties roleAssignmentProps) {
-		this.roleAssignmentProps = roleAssignmentProps;
-	}
-
 	@Override
 	public RoleAssignmentPojo createRoleAssignmentForPersonInAccount(String publicId, 
 			String accountId, String roleName) throws RpcException {
@@ -6339,7 +6359,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		} 
 		else {
 			try {
-				roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+				Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 				RoleAssignmentRequisition requisition = (RoleAssignmentRequisition) getObject(Constants.MOA_ROLE_ASSIGNMENT_REQUISITION);
 				requisition.setRoleAssignmentActionType("grant");
 				requisition.setRoleAssignmentType("USER_TO_ROLE");
@@ -6494,7 +6514,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<RoleAssignmentPojo> pojos = new java.util.ArrayList<RoleAssignmentPojo>();
 
 		try {
-			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 			roleDN = roleDN.replaceAll("RGR_AWS", "");
 			roleDN = roleDN.replaceAll("-" + Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, "");
@@ -6529,7 +6549,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (roleDn != null) {
 						if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
 							
-							info("[getCentralAdmins] RoleAssignment.toXmlString: " + moa.toXmlString());
 							RoleAssignmentPojo pojo = new RoleAssignmentPojo();
 							this.populateRoleAssignmentPojo(moa, pojo);
 							pojos.add(pojo);
@@ -6570,13 +6589,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				for (RoleAssignmentPojo ra : ra_result.getResults()) {
 					if (ra.getExplicityIdentitiyDNs() != null) {
 						for (String dn : ra.getExplicityIdentitiyDNs().getDistinguishedNames()) {
-							info("[getCentralAdmins] dn: " + dn);
 							String[] cns = dn.split(",");
-							info("[getCentralAdmins] cns: " + cns);
 							String publicIdCn = cns[0];
-							info("[getCentralAdmins] publicIdCn: " + publicIdCn);
 							String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
-							info("[getCentralAdmins] publicId: " + publicId);
 							
 							// get directoryperson for publicid
 							// check cache to see if the DirectoryPerson is already in the cache
@@ -6588,11 +6603,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 								dp_filter.setKey(publicId);
 								try {
 									DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-									info("[getCentralAdmins] got " + dp_result.getResults().size() + 
-											" DirectoryPerson objects back for key=" + publicId);
 									if (dp_result.getResults().size() > 0) {
 										cached_dp = dp_result.getResults().get(0);
-										info("[getCentralAdmins] " + cached_dp.getFullName() + " IS a Central Admin");
 										// add to cache
 										Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
 									}
@@ -6606,15 +6618,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 									cached_dp.setKey(publicId);
 								}
 							}
-							else {
-								info("[getCentralAdmins] " + cached_dp.getFullName() + " IS a Central Admin");
-							}
 							
 							// create RoleAssignmentSummaryPojo and add it to the results
 							RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
 							ra_summary.setDirectoryPerson(cached_dp);
 							ra_summary.setRoleAssignment(ra);
-							info("[getCentralAdmins] adding RoleAssignmentSummary: " + ra_summary.toString());
 							results.add(ra_summary);
 						}
 					}
@@ -6633,6 +6641,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return results;
 	}
 
+
+	@Override
+	public List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccounts(List<String> accountIds) throws RpcException {
+		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
+		if (accountIds == null || accountIds.size() == 0) {
+			return results;
+		}
+		for (String accountId : accountIds) {
+			List<RoleAssignmentSummaryPojo> r = this.getRoleAssignmentsForAccount(accountId);
+			results.addAll(r);
+		}
+		return results;
+	}
+
 	@Override
 	public List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccount(String accountId) throws RpcException {
 
@@ -6648,7 +6670,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			return results;
 		}
 		try {
-			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			for (String roleName : Constants.ACCOUNT_ROLE_NAMES) {
 				String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 				roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
@@ -11378,7 +11400,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public SecurityAssessmentSummaryQueryResultPojo getSecurityAssessmentSummariesForFilter(
 			SecurityAssessmentSummaryQueryFilterPojo filter) throws RpcException {
 
-		serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
+		AWSServiceSummaryPojo serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
 				Constants.SERVICE_SUMMARY + getCurrentSessionId());
 		
 		SecurityAssessmentSummaryQueryResultPojo result = new SecurityAssessmentSummaryQueryResultPojo();

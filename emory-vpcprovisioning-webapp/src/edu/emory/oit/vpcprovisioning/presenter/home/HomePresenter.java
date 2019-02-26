@@ -110,48 +110,28 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 			@Override
 			public void onFailure(Throwable caught) {
 				GWT.log("Exception retrieving RoleAssignments", caught);
+				getView().hideBackgroundWorkNotice();
 			}
 
 			@Override
 			public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
-				if (finishedDirectoryPersonCache) {
-					getView().hideBackgroundWorkNotice();
-				}
+				GWT.log("DONE caching DirectoryPerson list for all user's role assignments...");
+				getView().hideBackgroundWorkNotice();
 			}
 		};
 		GWT.log("caching DirectoryPerson list for all user's role assignments...");
+		List<String> accountIds = new java.util.ArrayList<String>();
 		for (int i=0; i<userLoggedIn.getAccountRoles().size(); i++) {
 			AccountRolePojo arp = userLoggedIn.getAccountRoles().get(i);
-			if (i == userLoggedIn.getAccountRoles().size() - 1) {
-				GWT.log("last RoleAssignment query...i=" + i);
-				finishedDirectoryPersonCache = true;
-			}
 			if (arp.getAccountId() == null) {
 				continue;
 			}
-			VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
+			else {
+				accountIds.add(arp.getAccountId());
+			}
 		}
-//		for (AccountRolePojo arp : user.getAccountRoles()) {
-//			if (arp.getAccountId() == null) {
-//				continue;
-//			}
-//			VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
-//		}
+		VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccounts(accountIds, callback);
 		
-//		AsyncCallback<Void> log_cb = new AsyncCallback<Void>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				
-//				
-//			}
-//
-//			@Override
-//			public void onSuccess(Void result) {
-//				
-//			}
-//		};
-//		VpcProvisioningService.Util.getInstance().logMessage("starting DirectoryPerson cache", log_cb);
-
 		getView().initPage();
 		String linkText = userLoggedIn.getPersonalName().toString() + " (" + userLoggedIn.getPublicId() + ")";
 		clientFactory.getShell().setUserName(linkText);

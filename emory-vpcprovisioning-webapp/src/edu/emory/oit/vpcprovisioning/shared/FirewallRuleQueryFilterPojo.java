@@ -20,4 +20,10 @@ public class FirewallRuleQueryFilterPojo extends SharedObject implements IsSeria
 		this.tags = tags;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

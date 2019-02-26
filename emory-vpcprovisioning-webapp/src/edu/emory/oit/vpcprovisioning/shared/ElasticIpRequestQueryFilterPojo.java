@@ -104,4 +104,10 @@ public class ElasticIpRequestQueryFilterPojo extends SharedObject implements IsS
 	public void setRequestItemState(String requestItemState) {
 		this.requestItemState = requestItemState;
 	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

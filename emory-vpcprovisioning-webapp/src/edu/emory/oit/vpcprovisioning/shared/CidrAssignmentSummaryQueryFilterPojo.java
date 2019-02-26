@@ -43,4 +43,10 @@ public class CidrAssignmentSummaryQueryFilterPojo extends SharedObject implement
 	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
 		this.userLoggedIn = userLoggedIn;
 	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

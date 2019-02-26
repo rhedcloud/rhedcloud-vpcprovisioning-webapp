@@ -76,4 +76,10 @@ public class VpcpQueryFilterPojo extends SharedObject implements IsSerializable,
 		this.allVpcps = allVpcps;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

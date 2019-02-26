@@ -46,4 +46,10 @@ public class ElasticIpAssignmentQueryFilterPojo extends SharedObject implements 
 		this.elasticIpAddress = elasticIpAddress;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

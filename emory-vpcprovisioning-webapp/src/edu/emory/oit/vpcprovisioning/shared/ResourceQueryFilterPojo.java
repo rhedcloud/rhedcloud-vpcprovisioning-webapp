@@ -18,4 +18,10 @@ public class ResourceQueryFilterPojo extends SharedObject implements IsSerializa
 		this.resourceDN = resourceDN;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

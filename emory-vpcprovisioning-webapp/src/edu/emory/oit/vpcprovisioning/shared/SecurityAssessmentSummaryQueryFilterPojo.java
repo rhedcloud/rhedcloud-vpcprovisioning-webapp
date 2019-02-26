@@ -19,4 +19,10 @@ public class SecurityAssessmentSummaryQueryFilterPojo extends SharedObject imple
 	public void setServiceIds(List<String> serviceIds) {
 		this.serviceIds = serviceIds;
 	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

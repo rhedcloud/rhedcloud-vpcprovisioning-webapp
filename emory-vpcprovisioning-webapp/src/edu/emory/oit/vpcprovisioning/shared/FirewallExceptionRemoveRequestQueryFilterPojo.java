@@ -82,4 +82,10 @@ public class FirewallExceptionRemoveRequestQueryFilterPojo extends SharedObject 
 	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

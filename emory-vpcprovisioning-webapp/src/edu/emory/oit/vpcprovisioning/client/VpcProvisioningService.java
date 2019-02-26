@@ -208,6 +208,7 @@ public interface VpcProvisioningService extends RemoteService {
 	// RoleAssignments
 	RoleAssignmentQueryResultPojo getRoleAssignmentsForFilter(RoleAssignmentQueryFilterPojo filter) throws RpcException;
 	RoleAssignmentPojo createRoleAssignmentForPersonInAccount(String publicId, String accountId, String roleName) throws RpcException;
+	List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccounts(List<String> accountIds) throws RpcException;
 	List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccount(String accountId) throws RpcException;
 	void removeRoleAssignmentFromAccount(String accountId, RoleAssignmentPojo roleAssignment) throws RpcException;
 	List<RoleAssignmentSummaryPojo> getCentralAdmins() throws RpcException;

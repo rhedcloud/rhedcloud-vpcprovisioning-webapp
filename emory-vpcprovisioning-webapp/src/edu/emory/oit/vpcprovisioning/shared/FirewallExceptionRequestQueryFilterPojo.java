@@ -255,6 +255,12 @@ public class FirewallExceptionRequestQueryFilterPojo extends SharedObject implem
 		this.technicalContact = technicalContact;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 	
 	

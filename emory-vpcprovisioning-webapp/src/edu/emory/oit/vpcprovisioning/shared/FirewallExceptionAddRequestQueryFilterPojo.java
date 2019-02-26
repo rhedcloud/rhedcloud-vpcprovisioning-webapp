@@ -284,4 +284,10 @@ public class FirewallExceptionAddRequestQueryFilterPojo extends SharedObject imp
 	public void setAccessAwsVPC(String accessAwsVPC) {
 		this.accessAwsVPC = accessAwsVPC;
 	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

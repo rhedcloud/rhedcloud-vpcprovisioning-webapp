@@ -90,4 +90,10 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 		this.fuzzyFilter = fuzzyFilter;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

@@ -25,4 +25,10 @@ public class ElasticIpAssignmentSummaryQueryFilterPojo extends SharedObject impl
 	public void setOwnerId(String ownerId) {
 		this.ownerId = ownerId;
 	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

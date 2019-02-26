@@ -146,4 +146,39 @@ public class AWSServiceQueryFilterPojo extends SharedObject implements IsSeriali
 		this.fuzzyFilter = fuzzyFilter;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		if (serviceId != null && serviceId.length() > 0) {
+			return false;
+		}
+		if (awsServiceCode != null && awsServiceCode.length() > 0) {
+			return false;
+		}
+		if (awsServiceName != null && awsServiceName.length() > 0) {
+			return false;
+		}
+		if (awsStatus != null && awsStatus.length() > 0) {
+			return false;
+		}
+		if (siteStatus != null && siteStatus.length() > 0) {
+			return false;
+		}
+		if (categories != null && categories.size() > 0) {
+			return false;
+		}
+		if (consoleCategories != null && consoleCategories.size() > 0) {
+			return false;
+		}
+		if (awsHipaaEligible != null && awsHipaaEligible.length() > 0) {
+			return false;
+		}
+		if (siteHipaaEligible != null && siteHipaaEligible.length() > 0) {
+			return false;
+		}
+		if (tags != null && tags.size() > 0) {
+			return false;
+		}
+		return true;
+	}
+
 }

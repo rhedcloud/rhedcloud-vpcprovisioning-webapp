@@ -18,4 +18,10 @@ public class RoleQueryFilterPojo extends SharedObject implements IsSerializable,
 		this.roleDN = roleDN;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

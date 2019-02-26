@@ -10,4 +10,10 @@ public class ServiceRequestQueryFilterPojo extends SharedObject implements IsSer
 		
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

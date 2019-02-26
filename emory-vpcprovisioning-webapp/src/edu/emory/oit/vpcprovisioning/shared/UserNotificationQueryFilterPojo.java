@@ -156,4 +156,10 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 		this.userLoggedIn = userLoggedIn;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

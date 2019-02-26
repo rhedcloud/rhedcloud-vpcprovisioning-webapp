@@ -22,4 +22,10 @@ public class AccountProvisioningAuthorizationQueryFilterPojo extends SharedObjec
 		this.userId = userId;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

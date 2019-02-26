@@ -20,4 +20,10 @@ public class SpeedChartQueryFilterPojo extends SharedObject implements IsSeriali
 		this.speedChartKeys = speedChartKeys;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

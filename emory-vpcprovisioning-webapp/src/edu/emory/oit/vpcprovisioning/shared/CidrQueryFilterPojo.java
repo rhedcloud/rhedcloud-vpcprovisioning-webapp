@@ -62,4 +62,10 @@ public class CidrQueryFilterPojo extends SharedObject implements IsSerializable,
 		this.userLoggedIn = userLoggedIn;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
