@@ -87,7 +87,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving Elastic IPs from the Elastic IP service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -180,6 +180,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 	 */
 	private void refreshList(final UserAccountPojo user) {
 		// use RPC to get all Vpcs for the current filter being used
+		getView().showPleaseWaitDialog("Retrieving Elastic IPs from the Elastic IP service...");
 		AsyncCallback<ElasticIpQueryResultPojo> callback = new AsyncCallback<ElasticIpQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {

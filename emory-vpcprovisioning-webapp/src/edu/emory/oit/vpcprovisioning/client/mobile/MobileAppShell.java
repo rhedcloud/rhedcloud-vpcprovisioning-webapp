@@ -325,4 +325,10 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		
 	}
 
+	@Override
+	public void initPage() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

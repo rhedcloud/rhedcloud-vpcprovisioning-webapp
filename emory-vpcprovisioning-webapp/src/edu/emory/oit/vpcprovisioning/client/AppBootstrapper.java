@@ -6,8 +6,6 @@ import java.util.logging.Logger;
 import com.google.gwt.activity.shared.ActivityManager;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.Place;
@@ -67,7 +65,6 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceGuidelineP
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPlace;
-import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
@@ -120,6 +117,8 @@ public class AppBootstrapper {
 	private final PlaceHistoryHandler historyHandler;
 	
 	private final ClientFactory clientFactory;
+	
+	UserAccountPojo userLoggedIn;
 
 	public AppBootstrapper( 
 			ClientFactory clientFactory,
@@ -214,22 +213,11 @@ public class AppBootstrapper {
 			}
 
 			@Override
-			public void onSuccess(final UserAccountPojo userLoggedIn) {
+			public void onSuccess(final UserAccountPojo user) {
+				userLoggedIn = user;
 				parentView.remove(pleaseWaitPanel);
-				shell.setUserLoggedIn(userLoggedIn);
-				if (userLoggedIn.isCentralAdmin() || userLoggedIn.isNetworkAdmin()) {
-					shell.showNetworkAdminTabs();
-				}
-				else {
-					if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
-						// TODO: show vpc provisioning tab only
-						// fire maintain vpcp event
-						shell.showVpcpTab();
-					}
-					else {
-						shell.showAuditorTabs();
-					}
-				}
+				shell.setUserLoggedIn(user);
+
 				AsyncCallback<ReleaseInfo> riCallback = new AsyncCallback<ReleaseInfo>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -252,7 +240,22 @@ public class AppBootstrapper {
 
 				parentView.add(shell);
 				registerHandlers();
-				if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
+
+				shell.initPage();
+				if (user.isCentralAdmin() || user.isNetworkAdmin()) {
+					shell.showNetworkAdminTabs();
+				}
+				else {
+					if (user.isGenerateVpcFromUnauthorizedUser()) {
+						// show vpc provisioning tab only
+						// fire maintain vpcp event
+						shell.showVpcpTab();
+					}
+					else {
+						shell.showAuditorTabs();
+					}
+				}
+				if (user.isGenerateVpcFromUnauthorizedUser()) {
 					removeGenerateVpcpFromURL();
 					shell.selectVpcpTab();
 				}
@@ -291,7 +294,8 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				GWT.log("Bootstrapper, GO_HOME.onAction");
-				placeController.goTo(new HomePlace());
+				event.getUserLoggedIn();
+				placeController.goTo(new HomePlace(event.getUserLoggedIn()));
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_SERVICE_GUIDELINE, new ActionEvent.Handler() {
@@ -1839,7 +1843,7 @@ public class AppBootstrapper {
 			}
 		});
 
-		initBrowserHistory(historyMapper, historyHandler, new HomePlace());
+		initBrowserHistory(historyMapper, historyHandler, new HomePlace(userLoggedIn));
 	}
 
 	/**

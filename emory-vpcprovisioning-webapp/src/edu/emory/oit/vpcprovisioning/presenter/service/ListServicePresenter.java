@@ -87,7 +87,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override

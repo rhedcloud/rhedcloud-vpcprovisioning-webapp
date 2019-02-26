@@ -153,7 +153,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
+		this.clientFactory = clientFactory;
+		this.eventBus = eventBus;
+	}
+
+	@Override
+	public void initPage() {
 //		startServiceRefreshTimer();
 //		this.refreshServiceMap(false);
 		showAuditorTabs();
@@ -163,13 +169,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		hash = com.google.gwt.user.client.Window.Location.getHash();
 		GWT.log("DesktopAppShell:  hash: " + hash);
 
-		this.clientFactory = clientFactory;
-		this.eventBus = eventBus;
-
+		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
 		if (hash == null || hash.trim().length() == 0) {
 			GWT.log("null hash: home tab");
 			homeView = clientFactory.getHomeView();
 			homeContentContainer.add(homeView);
+			ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 		}
 		else {
 			if (hash.trim().equals("#" + Constants.LIST_ACCOUNT + ":")) {
@@ -249,7 +254,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			else {
 				GWT.log("[default] home tab");
 				mainTabPanel.selectTab(0);
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 			}
 		}
 
@@ -787,7 +792,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			super.setTitle(releaseInfo.toString());
 			GWT.log("setting release info to " + releaseInfo);
 			releaseInfoElem.setInnerHTML(releaseInfo.toString());
-			GWT.log("set release info to " + releaseInfo.toString());
 		}
 	}
 

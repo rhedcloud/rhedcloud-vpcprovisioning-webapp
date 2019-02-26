@@ -98,8 +98,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 		this.eventBus = eventBus;
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel("Retrieving VPN Connection Profiles...please wait (potentially long running task)");
-		getView().showPleaseWaitDialog("Retrieving VPN Connection Profiles from the Network OPS service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -192,7 +191,6 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 	 * Refresh the CIDR list.
 	 */
 	public void refreshList(final UserAccountPojo user) {
-		getView().hidePleaseWaitDialog();
 		getView().showPleaseWaitDialog("Retrieving VPN Connection Profiles from the Network OPS service...");
 		// use RPC to get all Vpcs for the current filter being used
 		AsyncCallback<VpnConnectionProfileQueryResultPojo> callback = new AsyncCallback<VpnConnectionProfileQueryResultPojo>() {

@@ -81,7 +81,7 @@ public class ListCentralAdminPresenter extends PresenterBase implements ListCent
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving Central Administrators from the IDM Service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<String> myNetIdCallback = new AsyncCallback<String>() {
 			@Override

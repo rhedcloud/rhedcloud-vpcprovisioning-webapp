@@ -7,6 +7,7 @@ import com.google.web.bindery.event.shared.ResettableEventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePresenter;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class HomeActivity extends AbstractActivity {
@@ -45,12 +46,12 @@ public class HomeActivity extends AbstractActivity {
 
 	public void start(final AcceptsOneWidget container, com.google.gwt.event.shared.EventBus eventBus) {
 		this.childEventBus = new ResettableEventBus(eventBus);
-		presenter = startCreate();
+		presenter = startCreate(place.getUserLoggedIn());
 		container.setWidget(presenter);
 	}
 
-	private PresentsWidgets startCreate() {
-		PresentsWidgets rtn = new HomePresenter(clientFactory);
+	private PresentsWidgets startCreate(UserAccountPojo user) {
+		PresentsWidgets rtn = new HomePresenter(clientFactory, user);
 		rtn.start(childEventBus);
 		return rtn;
 	}

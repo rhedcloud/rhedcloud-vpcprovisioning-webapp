@@ -863,7 +863,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		getThreadLocalRequest().getSession().invalidate();
 	}
 
-	protected void getRolesForUser(UserAccountPojo user) throws RpcException {
+	protected void getRolesForUser_orig(UserAccountPojo user) throws RpcException {
 		// get the fullperson object for the user.principal
 		// set the user's publicId
 		// get the roleassignments for the user.publicId
@@ -874,6 +874,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		//	- create a new AccountRolePojo, populate it with account id and role name
 		//	- add the AccountRolePojo to the user passed in
 		
+		java.util.Date startTime = new java.util.Date();
 		if (user.getPublicId() == null) {
 			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
 			fp_filter.setNetId(user.getPrincipal());
@@ -910,15 +911,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-			if (ra_result != null) {
-//				info("[getRolesForUser] got " + ra_result.getResults().size() + 
-//					" RoleAssignment objects back for userDN: " + ra_filter.getUserDN());
-			}
-			else {
-				// error
-				info("[getRolesForUser] null RoleAssignmentQueryResultPojo.  This is bad.");
-				return;
-			}
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
@@ -973,6 +965,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			
 			info("[getRolesForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
+			java.util.Date endTime = new java.util.Date();
+			long elapsedTime = endTime.getTime() - startTime.getTime();
+			info("[getRolesForUser] elaspsed time: " + formatMillisForDisplay(elapsedTime));
 		} 
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
@@ -980,6 +975,165 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 	
+	protected void getRolesForUser(UserAccountPojo user) throws RpcException {
+		// get the fullperson object for the user.principal
+		// set the user's publicId
+		// get the roleassignments for the user.publicId
+		// for each roleassignment:
+		//	- get the aws account id
+		//  - verify the account exists in this series (environment)
+		//	- get the role name associated to that account for this user
+		//	- create a new AccountRolePojo, populate it with account id and role name
+		//	- add the AccountRolePojo to the user passed in
+		
+		java.util.Date startTime = new java.util.Date();
+		info("[getRolesForUser] getting accounts...");
+		List<AccountPojo> accounts = this.getAllAccounts().getResults();
+		info("[getRolesForUser] got " + accounts.size() + " accounts from getAllAccounts");
+		
+		if (user.getPublicId() == null) {
+			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
+			fp_filter.setNetId(user.getPrincipal());
+			fp_filter.setUserLoggedIn(user);
+			FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
+			if (fp_result != null) {
+				info("[getRolesForUser] got " + fp_result.getResults().size() + 
+					" FullPerson objects back for net id: " + fp_filter.getNetId());
+			}
+			else {
+				// error
+				info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
+				throw new RpcException("Null FullPerson returned from ESB for NetId: " + user.getPrincipal());
+			}
+			FullPersonPojo fullPerson = fp_result.getResults().get(0);
+			user.setPublicId(fullPerson.getPublicId());
+			user.setPersonalName(fullPerson.getPerson().getPersonalName());
+			info("[getRolesForUser] User public id is: " + user.getPublicId());
+		}
+		else {
+			info("[getRolesForUser] no need to get full person object.");
+		}
+		
+		try {
+			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
+			
+			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
+			idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, user.getPublicId());
+			ra_filter.setUserDN(idDn);
+			ra_filter.setIdentityType("USER");
+			ra_filter.setDirectAssignOnly(true);
+			ra_filter.setUserLoggedIn(user);
+
+			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
+			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+
+			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				String roleDn = roleAssignment.getRoleDN();
+				if (roleDn != null) {
+					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
+						AccountRolePojo arp = new AccountRolePojo();
+						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
+						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						user.addAccountRole(arp);
+						continue;
+					}
+					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
+						AccountRolePojo arp = new AccountRolePojo();
+						arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
+						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						user.addAccountRole(arp);
+						continue;
+					}
+					if (roleDn.indexOf("RGR_AWS") >= 0) {
+						String[] cns = roleDn.split(",");
+						String acctCn = cns[0];
+						String[] idRoles = acctCn.split("-");
+						if (idRoles.length != 3) {
+							continue;
+						}
+						String acctId = idRoles[1];
+						String roleName = idRoles[2];
+						
+						AccountPojo verifiedAcct = this.getAccountByIdFromList(acctId, accounts);
+						
+						if (acctId != null && verifiedAcct != null) {
+							AccountRolePojo arp = new AccountRolePojo();
+							arp.setAccountId(acctId);
+							arp.setAccountName(verifiedAcct.getAccountName());
+							arp.setRoleName(roleName);
+							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+							user.addAccountRole(arp);
+						}
+						else if (acctId == null && 
+								(roleName.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 || 
+								 roleName.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN) >= 0)) {
+							
+							AccountRolePojo arp = new AccountRolePojo();
+							arp.setRoleName(roleName);
+							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+							user.addAccountRole(arp);
+						}
+						else {
+							continue;
+						}
+					}
+				}
+			}
+			
+			info("[getRolesForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
+			java.util.Date endTime = new java.util.Date();
+			long elapsedTime = endTime.getTime() - startTime.getTime();
+			info("[getRolesForUser] elaspsed time: " + formatMillisForDisplay(elapsedTime));
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+	
+	private AccountPojo getAccountByIdFromList(String acctId, List<AccountPojo> accounts) {
+		if (acctId == null) {
+			info("[getAccountByIdFromList] null account id passed in");
+			return null;
+		}
+		for (AccountPojo acct : accounts) {
+			if (acct.getAccountId().equalsIgnoreCase(acctId)) {
+				return acct;
+			}
+		}
+		info("[getAccountByIdFromList] could not find an account for id: " + acctId);
+		return null;
+	}
+
+	private String formatMillisForDisplay(long millis) {
+		String formatted = "";
+		
+		if (millis < Constants.MILLIS_PER_SECOND) {
+			return "<1s";
+		}
+		if (millis < Constants.MILLIS_PER_MINUTE) {
+			// less than a minute
+			int seconds = (int) (millis / 1000) % 60 ;
+			formatted = seconds + "s";
+		}
+		else if (millis >= Constants.MILLIS_PER_MINUTE && millis < Constants.MILLIS_PER_HR) {
+			// mm ss
+			int seconds = (int) (millis / 1000) % 60 ;
+			int minutes = (int) ((millis / (1000*60)) % 60);
+			return minutes + "m, " + seconds + "s";
+		}
+		else {
+			// h mm ss
+			int seconds = (int) (millis / 1000) % 60 ;
+			int minutes = (int) ((millis / (1000*60)) % 60);
+			int hours   = (int) ((millis / (1000*60*60)) % 24);
+			return hours + "h, " + minutes + "m, " + seconds + "s";
+		}
+		return formatted;
+	}
+
 	@SuppressWarnings("unused")
 	private void populateBillMoa(BillPojo pojo, Bill moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 		/*
@@ -2452,6 +2606,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AccountPojo getAccountById(String accountId) throws RpcException {
 		
+		if (accountId == null) {
+			info("[getAccountById] null account Id passed in...");
+			return null;
+		}
 		try {
 			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
@@ -2471,7 +2629,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						+ " expected exactly 1.  This MAY an issue."; 
 				info(errorMsg);
 				return null;
-//				throw new RpcException(errorMsg);
 			}
 			else {
 				for (Account moa : moas) {
@@ -2508,6 +2665,49 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		}
 		return null;
+	}
+	
+	private AccountQueryResultPojo getAllAccounts() {
+		AccountQueryResultPojo result = new AccountQueryResultPojo();
+		List<AccountPojo> pojos = new java.util.ArrayList<AccountPojo>();
+		
+		try {
+			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
+			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
+			
+			@SuppressWarnings("unchecked")
+			List<Account> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getAllAccounts] got " + moas.size() + " accounts from ESB service");
+			for (Account moa : moas) {
+				AccountPojo pojo = new AccountPojo();
+				this.populateAccountPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (ParseException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 	@Override
 	public AccountQueryResultPojo getAccountsForFilter(AccountQueryFilterPojo filter) throws RpcException {

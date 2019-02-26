@@ -39,4 +39,6 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void showAuditorTabs();
 	void showVpcpTab();
 	void selectVpcpTab();
+	
+	void initPage();
 }

@@ -32,7 +32,8 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 	private boolean finishedDirectoryPersonCache=false;
 	private DirectoryPersonPojo directoryPerson;
 
-	public HomePresenter(ClientFactory clientFactory) {
+	public HomePresenter(ClientFactory clientFactory, UserAccountPojo user) {
+		this.userLoggedIn = user;
 		this.clientFactory = clientFactory;
 		clientFactory.getHomeView().setPresenter(this);
 	}
@@ -53,161 +54,172 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 		setReleaseInfo(clientFactory);
 		
-		getView().showPleaseWaitDialog("Retrieving account metadata from the AWS Account Service...");
-		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+		if (this.userLoggedIn == null) {
+			getView().showPleaseWaitDialog("Retrieving User Logged In...");
+			AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
+				@Override
+				public void onFailure(Throwable caught) {
+					getView().hidePleaseWaitDialog();
+					getView().hidePleaseWaitPanel();
+					getView().disableButtons();
+					getView().showMessageToUser("There was an exception on the " +
+							"server retrieving your user information.  " +
+							"<p>Message from server is: " + caught.getMessage() + "</p>");
+				}
+
+				@Override
+				public void onSuccess(final UserAccountPojo user) {
+					userLoggedIn = user;
+					setupView();
+					
+				}
+			};
+			VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		}
+		else {
+			setupView();
+		}
+	}
+	
+	private void setupView() {
+		getView().setUserLoggedIn(userLoggedIn);
+		getView().enableButtons();
+		getView().showPleaseWaitDialog("Retrieving account metadata from the AWS Account Service...");
+		
+		// cache accounts
+//		AsyncCallback<AccountQueryResultPojo> acct_callback = new AsyncCallback<AccountQueryResultPojo>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				GWT.log("Exception Retrieving Accounts", caught);
+//			}
+//
+//			@Override
+//			public void onSuccess(AccountQueryResultPojo result) {
+//			}
+//		};
+//		GWT.log("caching Account list...");
+//		AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
+//		filter.setUserLoggedIn(user);
+//		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
+		
+		// just to prime the pump for directory person results so the first page load
+		// on the account details page won't take so long.  this could be done in a number
+		// of places but since we have the account ids, we'll do it here (asynchronously)
+		AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				getView().hidePleaseWaitDialog();
-				getView().hidePleaseWaitPanel();
-				getView().disableButtons();
-				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your user information.  " +
-						"<p>Message from server is: " + caught.getMessage() + "</p>");
+				GWT.log("Exception retrieving RoleAssignments", caught);
 			}
 
 			@Override
-			public void onSuccess(final UserAccountPojo user) {
-				getView().enableButtons();
-				userLoggedIn = user;
-				getView().setUserLoggedIn(user);
-				
-				// cache accounts
-//				AsyncCallback<AccountQueryResultPojo> acct_callback = new AsyncCallback<AccountQueryResultPojo>() {
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						GWT.log("Exception Retrieving Accounts", caught);
-//					}
-//
-//					@Override
-//					public void onSuccess(AccountQueryResultPojo result) {
-//					}
-//				};
-//				GWT.log("caching Account list...");
-//				AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
-//				filter.setUserLoggedIn(user);
-//				VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
-				
-				// just to prime the pump for directory person results so the first page load
-				// on the account details page won't take so long.  this could be done in a number
-				// of places but since we have the account ids, we'll do it here (asynchronously)
-				AsyncCallback<List<RoleAssignmentSummaryPojo>> callback = new AsyncCallback<List<RoleAssignmentSummaryPojo>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log("Exception retrieving RoleAssignments", caught);
-					}
-
-					@Override
-					public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
-						if (finishedDirectoryPersonCache) {
-							getView().hideBackgroundWorkNotice();
-						}
-					}
-				};
-				GWT.log("caching DirectoryPerson list for all user's role assignments...");
-				for (int i=0; i<user.getAccountRoles().size(); i++) {
-					AccountRolePojo arp = user.getAccountRoles().get(i);
-					if (i == user.getAccountRoles().size() - 1) {
-						GWT.log("last RoleAssignment query...i=" + i);
-						finishedDirectoryPersonCache = true;
-					}
-					if (arp.getAccountId() == null) {
-						continue;
-					}
-					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
+			public void onSuccess(List<RoleAssignmentSummaryPojo> result) {
+				if (finishedDirectoryPersonCache) {
+					getView().hideBackgroundWorkNotice();
 				}
-//				for (AccountRolePojo arp : user.getAccountRoles()) {
-//					if (arp.getAccountId() == null) {
-//						continue;
-//					}
-//					VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
-//				}
-				
-//				AsyncCallback<Void> log_cb = new AsyncCallback<Void>() {
-//					@Override
-//					public void onFailure(Throwable caught) {
-//						
-//						
-//					}
-//
-//					@Override
-//					public void onSuccess(Void result) {
-//						
-//					}
-//				};
-//				VpcProvisioningService.Util.getInstance().logMessage("starting DirectoryPerson cache", log_cb);
-
-				getView().initPage();
-				String linkText = userLoggedIn.getPersonalName().toString() + " (" + userLoggedIn.getPublicId() + ")";
-				clientFactory.getShell().setUserName(linkText);
-				
-				AsyncCallback<String> asCallback = new AsyncCallback<String>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log("Error getting account series info", caught);
-						getView().setAccountSeriesInfo("Error");
-					}
-
-					@Override
-					public void onSuccess(String result) {
-						getView().setAccountSeriesInfo(result);
-					}
-				};
-				VpcProvisioningService.Util.getInstance().getAccountSeriesText(asCallback);
-
-				getView().setAccountRoleList(user.getAccountRoles());
-				// account affiliation count needs to be calculated because the accountRoles in the user 
-				// could have multilple roles for the same account.  so, i need to go through and get a 
-				// distinct account count.
-				HashMap<String, Integer> accountMap = new HashMap<String, Integer>();
-				int totalAccountCount = 0;
-				for (AccountRolePojo arp : user.getAccountRoles()) {
-					if (arp.getAccountId() != null) {
-						Integer acctCount = accountMap.get(arp.getAccountId());
-						if (acctCount != null) {
-							acctCount++;
-						}
-						else {
-							acctCount = 1;
-							accountMap.put(arp.getAccountId(), acctCount);
-						}
-					}
-				}
-				Iterator<String> acctIter = accountMap.keySet().iterator();
-				while (acctIter.hasNext()) {
-					totalAccountCount += accountMap.get(acctIter.next());
-				}
-				StringBuffer roleInfoHTML = new StringBuffer("You are affiliated to " + totalAccountCount + " distinct account(s).<br/>");
-				roleInfoHTML.append("You are assigned to " + user.getAccountRoles().size() + " total roles.<br/>");
-				int centralAdminCnt = 0;
-				int adminCnt = 0;
-				int auditorCnt = 0;
-				for (AccountRolePojo arp : user.getAccountRoles()) {
-					if (user.isAdminForAccount(arp.getAccountId())) {
-						adminCnt++;
-					}
-					else if (user.isAuditorForAccount(arp.getAccountId())) {
-						auditorCnt++;
-					}
-					else if (user.isCentralAdminForAccount(arp.getAccountId())) {
-						centralAdminCnt++;
-					}
-				}
-				roleInfoHTML.append("<p>");
-				roleInfoHTML.append("You " + (user.isCentralAdmin() ? "are" : "are not") + " a central administrator.</br>"
-						+ "You " + (user.isNetworkAdmin() ? "are" : "are not") + " a network administrator.</br>"
-						+ "You are the administrator of " + adminCnt + " account(s).</br>"
-						+ "You are the auditor of " + auditorCnt + " account(s).");
-				roleInfoHTML.append("</p>");
-				getView().setRoleInfoHTML(roleInfoHTML.toString());
-				
-				getView().hidePleaseWaitDialog();
-				getView().hidePleaseWaitPanel();
-				getView().setFieldViolations(false);
-				getView().setInitialFocus();
 			}
 		};
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		GWT.log("caching DirectoryPerson list for all user's role assignments...");
+		for (int i=0; i<userLoggedIn.getAccountRoles().size(); i++) {
+			AccountRolePojo arp = userLoggedIn.getAccountRoles().get(i);
+			if (i == userLoggedIn.getAccountRoles().size() - 1) {
+				GWT.log("last RoleAssignment query...i=" + i);
+				finishedDirectoryPersonCache = true;
+			}
+			if (arp.getAccountId() == null) {
+				continue;
+			}
+			VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
+		}
+//		for (AccountRolePojo arp : user.getAccountRoles()) {
+//			if (arp.getAccountId() == null) {
+//				continue;
+//			}
+//			VpcProvisioningService.Util.getInstance().getRoleAssignmentsForAccount(arp.getAccountId(), callback);
+//		}
+		
+//		AsyncCallback<Void> log_cb = new AsyncCallback<Void>() {
+//			@Override
+//			public void onFailure(Throwable caught) {
+//				
+//				
+//			}
+//
+//			@Override
+//			public void onSuccess(Void result) {
+//				
+//			}
+//		};
+//		VpcProvisioningService.Util.getInstance().logMessage("starting DirectoryPerson cache", log_cb);
+
+		getView().initPage();
+		String linkText = userLoggedIn.getPersonalName().toString() + " (" + userLoggedIn.getPublicId() + ")";
+		clientFactory.getShell().setUserName(linkText);
+		
+		AsyncCallback<String> asCallback = new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Error getting account series info", caught);
+				getView().setAccountSeriesInfo("Error");
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				getView().setAccountSeriesInfo(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAccountSeriesText(asCallback);
+
+		getView().setAccountRoleList(userLoggedIn.getAccountRoles());
+		// account affiliation count needs to be calculated because the accountRoles in the user 
+		// could have multilple roles for the same account.  so, i need to go through and get a 
+		// distinct account count.
+		HashMap<String, Integer> accountMap = new HashMap<String, Integer>();
+		int totalAccountCount = 0;
+		for (AccountRolePojo arp : userLoggedIn.getAccountRoles()) {
+			if (arp.getAccountId() != null) {
+				Integer acctCount = accountMap.get(arp.getAccountId());
+				if (acctCount != null) {
+					acctCount++;
+				}
+				else {
+					acctCount = 1;
+					accountMap.put(arp.getAccountId(), acctCount);
+				}
+			}
+		}
+		Iterator<String> acctIter = accountMap.keySet().iterator();
+		while (acctIter.hasNext()) {
+			totalAccountCount += accountMap.get(acctIter.next());
+		}
+		StringBuffer roleInfoHTML = new StringBuffer("You are affiliated to " + totalAccountCount + " distinct account(s).<br/>");
+		roleInfoHTML.append("You are assigned to " + userLoggedIn.getAccountRoles().size() + " total roles.<br/>");
+		int centralAdminCnt = 0;
+		int adminCnt = 0;
+		int auditorCnt = 0;
+		for (AccountRolePojo arp : userLoggedIn.getAccountRoles()) {
+			if (userLoggedIn.isAdminForAccount(arp.getAccountId())) {
+				adminCnt++;
+			}
+			else if (userLoggedIn.isAuditorForAccount(arp.getAccountId())) {
+				auditorCnt++;
+			}
+			else if (userLoggedIn.isCentralAdminForAccount(arp.getAccountId())) {
+				centralAdminCnt++;
+			}
+		}
+		roleInfoHTML.append("<p>");
+		roleInfoHTML.append("You " + (userLoggedIn.isCentralAdmin() ? "are" : "are not") + " a central administrator.</br>"
+				+ "You " + (userLoggedIn.isNetworkAdmin() ? "are" : "are not") + " a network administrator.</br>"
+				+ "You are the administrator of " + adminCnt + " account(s).</br>"
+				+ "You are the auditor of " + auditorCnt + " account(s).");
+		roleInfoHTML.append("</p>");
+		getView().setRoleInfoHTML(roleInfoHTML.toString());
+		
+		getView().hidePleaseWaitDialog();
+		getView().hidePleaseWaitPanel();
+		getView().setFieldViolations(false);
+		getView().setInitialFocus();
 	}
 
 	@Override

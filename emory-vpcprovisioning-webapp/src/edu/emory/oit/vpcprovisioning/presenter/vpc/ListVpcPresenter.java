@@ -85,7 +85,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving VPCs from the AWS Account Service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override

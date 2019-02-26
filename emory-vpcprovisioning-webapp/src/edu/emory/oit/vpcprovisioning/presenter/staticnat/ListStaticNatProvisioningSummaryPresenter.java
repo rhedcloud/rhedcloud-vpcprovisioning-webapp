@@ -77,8 +77,7 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitPanel("Retrieving Static NAT Provisioning items...please wait (this operation could take a while)");
-		getView().showPleaseWaitDialog("Retrieving Static NAT Provisioning items from the Network Ops Service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -116,6 +115,7 @@ public class ListStaticNatProvisioningSummaryPresenter extends PresenterBase imp
 	 * Refresh the CIDR list.
 	 */
 	public void refreshList(final UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Retrieving Static NAT Provisioning items from the Network Ops Service...");
 		// use RPC to get all Vpcs for the current filter being used
 		AsyncCallback<StaticNatProvisioningSummaryQueryResultPojo> callback = new AsyncCallback<StaticNatProvisioningSummaryQueryResultPojo>() {
 			@Override

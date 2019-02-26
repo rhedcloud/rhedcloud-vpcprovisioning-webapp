@@ -4,7 +4,10 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+
 public class HomePlace extends Place {
+	UserAccountPojo userLoggedIn;
 	/**
 	 * The tokenizer for this place.
 	 */
@@ -15,7 +18,7 @@ public class HomePlace extends Place {
 
 		public HomePlace getPlace(String token) {
 			if (token != null) {
-				return new HomePlace();
+				return new HomePlace(null);
 			}
 			else {
 				// If the ID cannot be parsed, assume we are creating a caseRecord.
@@ -28,7 +31,8 @@ public class HomePlace extends Place {
 		}
 	}
 
-	public HomePlace() {
+	public HomePlace(UserAccountPojo user) {
+		this.userLoggedIn = user;
 	}
 	
 	/**
@@ -45,7 +49,7 @@ public class HomePlace extends Place {
 	 * @return the place
 	 */
 	public static HomePlace createHomePlace() {
-		return new HomePlace();
+		return new HomePlace(null);
 	}
 
 	/**
@@ -56,8 +60,16 @@ public class HomePlace extends Place {
 	 */
 	public static HomePlace getHomePlace() {
 		if (singleton == null) {
-			singleton = new HomePlace();
+			singleton = new HomePlace(null);
 		}
 		return singleton;
+	}
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
 	}
 }

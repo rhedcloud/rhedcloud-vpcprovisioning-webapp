@@ -84,7 +84,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		getView().resetFieldStyles();
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
-		getView().showPleaseWaitDialog("Retrieving accounts from the AWS Account Service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
