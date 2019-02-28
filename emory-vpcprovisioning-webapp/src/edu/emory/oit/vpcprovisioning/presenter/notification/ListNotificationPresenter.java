@@ -90,7 +90,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
-		getView().showPleaseWaitDialog("Retrieving Notifications from the AWS Account service...");
+		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override

@@ -88,6 +88,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 				presenter.getVpc().setCidr(cidrTB.getText());
 				presenter.getVpc().setVpnConnectionProfileId(vpnProfileIdTB.getText());
 				presenter.getVpc().setPurpose(purposeTA.getText());
+				presenter.getVpc().setRegion(regionLB.getSelectedValue());
 				presenter.registerVpc();
 			}
 		}, ClickEvent.getType());
@@ -339,7 +340,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		if (accounts != null) {
 			int i=1;
 			for (AccountPojo account : accounts) {
-				accountLB.addItem(account.getAccountId(), account.getAccountId());
+				accountLB.addItem(account.getAccountId() + "-" + account.getAccountName(), account.getAccountId());
 				i++;
 			}
 		}

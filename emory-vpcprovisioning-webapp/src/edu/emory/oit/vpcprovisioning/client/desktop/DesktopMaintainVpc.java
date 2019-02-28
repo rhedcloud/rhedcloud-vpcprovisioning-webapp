@@ -370,23 +370,10 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			firstFirewallWidget = true;
 			firewallContainer.clear();
 			ListFirewallRuleView listFwView = presenter.getClientFactory().getListFirewallRuleView();
-//			MaintainFirewallView maintainFwView = clientFactory.getMaintainFirewallView();
 			firewallContainer.add(listFwView);
-//			firewallContentContainer.add(maintainFwView);
 			firewallContainer.setAnimationDuration(500);
 			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_FIREWALL_RULE, presenter.getVpc());
 			break;
-//		case 1:
-//			GWT.log("need to get CIDR Assignment Maintentenance content.");
-//			firstCidrWidget = true;
-//			cidrAssignmentContainer.clear();
-//			ListCidrAssignmentView listCidrView = presenter.getClientFactory().getListCidrAssignmentView();
-//			MaintainCidrAssignmentView maintainCidrView = presenter.getClientFactory().getMaintainCidrAssignmentView();
-//			cidrAssignmentContainer.add(listCidrView);
-//			cidrAssignmentContainer.add(maintainCidrView);
-//			cidrAssignmentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_CIDR_ASSIGNMENT, presenter.getVpc());
-//			break;
 		case 1:
 			GWT.log("need to get Elastic IP Maintentenance content.");
 			firstElasticIpWidget = true;
@@ -404,18 +391,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void setWidget(IsWidget w) {
 		GWT.log("Maintain VPC, setWidget");
-//		if (w instanceof ListCidrAssignmentPresenter || w instanceof MaintainCidrAssignmentPresenter) {
-//			GWT.log("Maintain VPC, setWidget: cidr assignment");
-//			cidrAssignmentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstCidrWidget) {
-//				firstCidrWidget = false;
-//				cidrAssignmentContainer.animate(0);
-//			}
-//			return;
-//		}
-
-		if (w instanceof ListElasticIpAssignmentPresenter || w instanceof MaintainElasticIpAssignmentPresenter) {
+		if (w instanceof ListElasticIpAssignmentPresenter || 
+			w instanceof MaintainElasticIpAssignmentPresenter) {
+			
 			GWT.log("Maintain VPC, setWidget: elastic IP");
 			elasticIpAssignmentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -434,7 +412,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 				firstFirewallWidget = false;
 				firewallContainer.animate(0);
 			}
-				return;
+			return;
 		}
 	}
 
@@ -624,6 +602,8 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		propertyKeyTF.setEnabled(true);
 		propertyValueTF.setEnabled(true);
 		addPropertyButton.setEnabled(true);
+		regionLB.setEnabled(false);
+		reqRegionLB.setEnabled(false);
 	}
 
 	@Override
@@ -645,6 +625,8 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		propertyKeyTF.setEnabled(false);
 		propertyValueTF.setEnabled(false);
 		addPropertyButton.setEnabled(false);
+		regionLB.setEnabled(false);
+		reqRegionLB.setEnabled(false);
 	}
 
 	@Override
@@ -747,6 +729,9 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		propertyKeyTF.setEnabled(true);
 		propertyValueTF.setEnabled(true);
 		addPropertyButton.setEnabled(true);
+		
+		regionLB.setEnabled(true);
+		reqRegionLB.setEnabled(true);
 	}
 
 	@Override
