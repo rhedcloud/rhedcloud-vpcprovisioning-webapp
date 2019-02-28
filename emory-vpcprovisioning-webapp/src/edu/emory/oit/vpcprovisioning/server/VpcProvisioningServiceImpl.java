@@ -3097,12 +3097,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					// if the user isn't a central admin
 					// iterate over all filter.AccountRoles and do a query for each account 
 					// in the list.  Then, need to add each vpc to the result 
+					// fuzzy filter
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
 						List<VpcPojo> vpcs = this.getVpcsForAccountId(arp.getAccountId());
 						if (vpcs != null) {
-							info("[getVpcsForFilter] adding " + vpcs.size() + " VPCs for account " + arp.getAccountId() + 
-								" to list of VPCs for the user logged in" );
-							pojos.addAll(vpcs);
+							for (VpcPojo pojo : vpcs) {
+								if (filter.isFuzzyFilter()) {
+									if (vpcHasFuzzyMatch(pojo, filter)) {
+										pojos.add(pojo);
+									}
+								}
+								else {
+									pojos.add(pojo);
+								}
+							}
 						}
 						else {
 							String errorMsg = "[getVpcsForFilter] null result from getVpcsForAccountId, this is an issue.";
@@ -3155,23 +3163,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					VpcPojo pojo = new VpcPojo();
 					this.populateVpcPojo(moa, pojo);
 					
-					boolean includeInList=false;
-					if (filter.getAccountId() != null && filter.getAccountId().length() > 0) {
-						if (pojo.getAccountId().toLowerCase().indexOf(filter.getAccountId().toLowerCase()) >= 0) {
-							includeInList = true;
-						}
-					}
-					else if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
-						if (pojo.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
-							includeInList = true;
-						}
-					}
-					else if (filter.getVpcId() != null && filter.getVpcId().length() > 0) {
-						if (pojo.getVpcId().toLowerCase().indexOf(filter.getVpcId().toLowerCase()) >= 0) {
-							includeInList = true;
-						}
-					}
-					if (includeInList) {
+					if (vpcHasFuzzyMatch(pojo, filter)) {
 						boolean isAssigned = false;
 						if (eia_result.getResults().size() > 0) {
 							// weed out any VPCs that have already been used in a profile assignment
@@ -3250,6 +3242,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
+	private boolean vpcHasFuzzyMatch(VpcPojo pojo, VpcQueryFilterPojo filter) {
+		if (filter.getAccountId() != null && filter.getAccountId().length() > 0) {
+			if (pojo.getAccountId().toLowerCase().indexOf(filter.getAccountId().toLowerCase()) >= 0) {
+				return true;
+			}
+		}
+		else if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
+			if (pojo.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
+				return true;
+			}
+		}
+		else if (filter.getVpcId() != null && filter.getVpcId().length() > 0) {
+			if (pojo.getVpcId().toLowerCase().indexOf(filter.getVpcId().toLowerCase()) >= 0) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+	
 	@Override
 	public VpcPojo registerVpc(VpcPojo vpc) throws RpcException {
 		vpc.setCreateInfo(this.getUserLoggedIn(false).getEppn(),
