@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -154,6 +155,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public DesktopAppShell(final EventBus eventBus, ClientFactory clientFactory) {
 		initWidget(uiBinder.createAndBindUi(this));
 
+//		accountContentContainer.getElement().getStyle().setOverflow(Overflow.AUTO);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
 	}
@@ -183,7 +185,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ACCOUNT + ":")) >= 0) {
 				GWT.log("Need to go to Account Maintenance (maintain) tab");
-				mainTabPanel.selectTab(1);
+				mainTabPanel.selectTab(1, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPC + ":")) {
 				GWT.log("Need to go to VPC Maintenance tab");
@@ -191,27 +193,27 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPC + ":")) >= 0) {
 				GWT.log("Need to go to VPC Maintenance (maintain) tab");
-				mainTabPanel.selectTab(2);
+				mainTabPanel.selectTab(2, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPCP + ":")) {
 				GWT.log("Need to go to VPCP Maintenance tab");
 				mainTabPanel.selectTab(3);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.VPCP_STATUS + ":")) >= 0) {
-				GWT.log("Need to go to VPCP Maintenance tab");
-				mainTabPanel.selectTab(3);
+				GWT.log("Need to go to VPCP Maintenance tab (status)");
+				mainTabPanel.selectTab(3, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_SERVICES + ":")) {
 				GWT.log("Need to go to Services tab");
 				mainTabPanel.selectTab(4);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SERVICE + ":")) >= 0) {
-				GWT.log("Need to go to Services tab");
-				mainTabPanel.selectTab(4);
+				GWT.log("Need to go to Services tab (maintain)");
+				mainTabPanel.selectTab(4, false);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SECURITY_ASSESSMENT + ":")) >= 0) {
-				GWT.log("Need to go to Services tab");
-				mainTabPanel.selectTab(4);
+				GWT.log("Need to go to Services tab (maintain assessment)");
+				mainTabPanel.selectTab(4, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_CENTRAL_ADMIN + ":")) {
 				GWT.log("Need to go to Cetnral Admin tab");
@@ -222,8 +224,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				mainTabPanel.selectTab(6);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ELASTIC_IP + ":")) >= 0) {
-				GWT.log("Need to go to Elastic IP tab");
-				mainTabPanel.selectTab(6);
+				GWT.log("Need to go to Elastic IP tab (maintain)");
+				mainTabPanel.selectTab(6, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_STATIC_NAT + ":")) {
 				GWT.log("Need to go to Static Nat tab");
@@ -231,16 +233,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			// TODO: this one isn't really working yet...the activity isn't working
 			else if (hash.trim().indexOf(("#" + Constants.STATIC_NAT_STAUS + ":")) >= 0) {
-				GWT.log("Need to go to Static Nat tab");
-				mainTabPanel.selectTab(7);
+				GWT.log("Need to go to Static Nat tab (status)");
+				mainTabPanel.selectTab(7, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION + ":")) {
-				GWT.log("Need to go to VPN Connection tab");
+				GWT.log("Need to go to VPN Connection Provisioning tab");
 				mainTabPanel.selectTab(8);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.VPNC_STATUS + ":")) >= 0) {
-				GWT.log("Need to go to VPN Connection tab");
-				mainTabPanel.selectTab(8);
+				GWT.log("Need to go to VPN Connection Provisioning tab (status)");
+				mainTabPanel.selectTab(8, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION_PROFILE + ":")) {
 				GWT.log("Need to go to VPN Profile tab");
@@ -248,8 +250,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			// this one is irrelevant because it's maintained in a dialog box
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPN_CONNECTION_PROFILE + ":")) >= 0) {
-				GWT.log("Need to go to VPN Profile tab");
-				mainTabPanel.selectTab(9);
+				GWT.log("Need to go to VPN Profile tab (maintain)");
+				mainTabPanel.selectTab(9, false);
 			}
 			else {
 				GWT.log("[default] home tab");
@@ -266,12 +268,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField VerticalPanel appShellPanel;
 	@UiField VerticalPanel otherFeaturesPanel;
 	@UiField TabLayoutPanel mainTabPanel;
-	//	@UiField DeckLayoutPanel cidrContentContainer;
 	@UiField DeckLayoutPanel accountContentContainer;
 	@UiField DeckLayoutPanel vpcContentContainer;
 	@UiField DeckLayoutPanel vpcpContentContainer;
-	//	@UiField DeckLayoutPanel elasticIpContentContainer;
-	//	@UiField DeckLayoutPanel firewallContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
 	@UiField DeckLayoutPanel servicesContentContainer;
 	@UiField DeckLayoutPanel centralAdminContentContainer;
@@ -632,6 +631,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		if (w instanceof ListAccountPresenter || 
 				w instanceof MaintainAccountPresenter ||
 				w instanceof BillSummaryPresenter) {
+			
 			accountContentContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
 			if (firstAccountContentWidget) {

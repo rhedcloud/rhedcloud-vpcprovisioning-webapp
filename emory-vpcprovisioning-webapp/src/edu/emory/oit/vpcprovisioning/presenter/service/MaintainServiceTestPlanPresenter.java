@@ -37,6 +37,9 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	private ServiceTestRequirementPojo selectedRequirement;
 	private ServiceTestPojo selectedTest;
 	private ServiceTestStepPojo selectedStep;
+	private List<ServiceTestRequirementPojo> selectedTestRequirements = new java.util.ArrayList<ServiceTestRequirementPojo>();
+	private List<ServiceTestPojo> selectedTests = new java.util.ArrayList<ServiceTestPojo>();
+	private List<ServiceTestStepPojo> selectedTestSteps = new java.util.ArrayList<ServiceTestStepPojo>();
 	boolean isDeletingRequirement=false;
 	boolean isDeletingTest=false;
 	boolean isDeletingStep=false;
@@ -425,20 +428,20 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 		return this.selectedStep;
 	}
 
-	@Override
-	public void requirementSelected() {
-		getView().requirementSelected();
-	}
-
-	@Override
-	public void testSelected() {
-		getView().testSelected();
-	}
-
-	@Override
-	public void stepSelected() {
-		getView().stepSelected();
-	}
+//	@Override
+//	public void requirementSelected() {
+//		getView().requirementSelected();
+//	}
+//
+//	@Override
+//	public void testSelected() {
+//		getView().testSelected();
+//	}
+//
+//	@Override
+//	public void stepSelected() {
+//		getView().stepSelected();
+//	}
 
 	@Override
 	public void refreshRequirementList(UserAccountPojo user) {
@@ -489,15 +492,18 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	@Override
 	public void vpcpConfirmOkay() {
 		if (isDeletingRequirement) {
-			serviceTestPlan.getServiceTestRequirements().remove(selectedRequirement);
+//			serviceTestPlan.getServiceTestRequirements().remove(selectedRequirement);
+			serviceTestPlan.getServiceTestRequirements().removeAll(selectedTestRequirements);
 			refreshRequirementList(userLoggedIn);
 		}
 		else if (isDeletingTest) {
-			selectedRequirement.getServiceTests().remove(selectedTest);
+//			selectedRequirement.getServiceTests().remove(selectedTest);
+			selectedRequirement.getServiceTests().removeAll(selectedTests);
 			refreshTestList(userLoggedIn);
 		}
 		else {
-			selectedTest.getServiceTestSteps().remove(selectedStep);
+//			selectedTest.getServiceTestSteps().remove(selectedStep);
+			selectedTest.getServiceTestSteps().removeAll(selectedTestSteps);
 			refreshStepList(userLoggedIn);
 		}
 		// save the assessment
@@ -508,60 +514,54 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	@Override
 	public void vpcpConfirmCancel() {
 		if (isDeletingRequirement) {
-			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Requirement " + 
-					selectedRequirement.getDescription() + 
-					" (Sequence: " + selectedRequirement.getSequenceNumber() + ") was not deleted.");
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Requirement was not deleted.");
 		}
 		else if (isDeletingTest) {
-			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Test " + 
-					selectedTest.getDescription() + 
-					" (Sequence: " + selectedTest.getSequenceNumber() + ") was not deleted.");
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Test was not deleted.");
 		}
 		else {
-			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Step " + 
-					selectedStep.getDescription() + 
-					" (Sequence: " + selectedStep.getSequenceNumber() + ") was not deleted.");
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Step was not deleted.");
 		}
 	}
 
-	@Override
-	public void deleteRequirement(ServiceTestRequirementPojo selected) {
-		isDeletingRequirement=true;
-		isDeletingTest=false;
-		isDeletingStep=false;
-		selectedRequirement = selected;
-		VpcpConfirm.confirm(
-				MaintainServiceTestPlanPresenter.this, 
-			"Confirm Delete Service Test Requirement", 
-			"Delete the Service Test Requirement " + selectedRequirement.getDescription() + 
-				" (Sequence: " + selectedRequirement.getSequenceNumber() + ")" + "?");
-	}
-
-	@Override
-	public void deleteTest(ServiceTestPojo selected) {
-		isDeletingRequirement=false;
-		isDeletingTest=true;
-		isDeletingStep=false;
-		selectedTest = selected;
-		VpcpConfirm.confirm(
-				MaintainServiceTestPlanPresenter.this, 
-			"Confirm Delete Service Test", 
-			"Delete the Service Test " + selectedTest.getDescription() + 
-				" (Sequence: " + selectedTest.getSequenceNumber() + ")" + "?");
-	}
-
-	@Override
-	public void deleteStep(ServiceTestStepPojo selected) {
-		isDeletingRequirement=false;
-		isDeletingTest=false;
-		isDeletingStep=true;
-		selectedStep = selected;
-		VpcpConfirm.confirm(
-				MaintainServiceTestPlanPresenter.this, 
-			"Confirm Delete Service Test Step", 
-			"Delete the Service Test Step " + selectedStep.getDescription() + 
-				" (Sequence: " + selectedStep.getSequenceNumber() + ")" + "?");
-	}
+//	@Override
+//	public void deleteRequirement(ServiceTestRequirementPojo selected) {
+//		isDeletingRequirement=true;
+//		isDeletingTest=false;
+//		isDeletingStep=false;
+//		selectedRequirement = selected;
+//		VpcpConfirm.confirm(
+//				MaintainServiceTestPlanPresenter.this, 
+//			"Confirm Delete Service Test Requirement", 
+//			"Delete the Service Test Requirement " + selectedRequirement.getDescription() + 
+//				" (Sequence: " + selectedRequirement.getSequenceNumber() + ")" + "?");
+//	}
+//
+//	@Override
+//	public void deleteTest(ServiceTestPojo selected) {
+//		isDeletingRequirement=false;
+//		isDeletingTest=true;
+//		isDeletingStep=false;
+//		selectedTest = selected;
+//		VpcpConfirm.confirm(
+//				MaintainServiceTestPlanPresenter.this, 
+//			"Confirm Delete Service Test", 
+//			"Delete the Service Test " + selectedTest.getDescription() + 
+//				" (Sequence: " + selectedTest.getSequenceNumber() + ")" + "?");
+//	}
+//
+//	@Override
+//	public void deleteStep(ServiceTestStepPojo selected) {
+//		isDeletingRequirement=false;
+//		isDeletingTest=false;
+//		isDeletingStep=true;
+//		selectedStep = selected;
+//		VpcpConfirm.confirm(
+//				MaintainServiceTestPlanPresenter.this, 
+//			"Confirm Delete Service Test Step", 
+//			"Delete the Service Test Step " + selectedStep.getDescription() + 
+//				" (Sequence: " + selectedStep.getSequenceNumber() + ")" + "?");
+//	}
 
 	@Override
 	public void createRequirement() {
@@ -615,6 +615,55 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 		// just so we refresh the test plan.  this is important when/if user selects
 		// cancel but were in the middle of an "add another" workflow but changed their minds
 		ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+	}
+
+
+	@Override
+	public void deleteRequirements(List<ServiceTestRequirementPojo> selected) {
+		isDeletingRequirement=true;
+		isDeletingTest=false;
+		isDeletingStep=false;
+		selectedTestRequirements = selected;
+		VpcpConfirm.confirm(
+				MaintainServiceTestPlanPresenter.this, 
+			"Confirm Delete Service Test Requirement", 
+			"Delete the " + selected.size() + " selected Service Test Requirement?");
+	}
+
+	@Override
+	public void deleteTests(List<ServiceTestPojo> selected) {
+		isDeletingRequirement=false;
+		isDeletingTest=true;
+		isDeletingStep=false;
+		selectedTests = selected;
+		VpcpConfirm.confirm(
+				MaintainServiceTestPlanPresenter.this, 
+			"Confirm Delete Service Test", 
+			"Delete the " + selected.size() + " selected Service Tests?");
+	}
+
+	@Override
+	public void deleteSteps(List<ServiceTestStepPojo> selected) {
+		isDeletingRequirement=false;
+		isDeletingTest=false;
+		isDeletingStep=true;
+		selectedTestSteps = selected;
+		VpcpConfirm.confirm(
+				MaintainServiceTestPlanPresenter.this, 
+			"Confirm Delete Service Test Step", 
+			"Delete the " + selected.size() + " selected Service Test Steps?");
+	}
+
+	public void setSelectedTestRequirements(List<ServiceTestRequirementPojo> selectedTestRequirements) {
+		this.selectedTestRequirements = selectedTestRequirements;
+	}
+
+	public void setSelectedTests(List<ServiceTestPojo> selectedTests) {
+		this.selectedTests = selectedTests;
+	}
+
+	public void setSelectedTestSteps(List<ServiceTestStepPojo> selectedTestSteps) {
+		this.selectedTestSteps = selectedTestSteps;
 	}
 
 }

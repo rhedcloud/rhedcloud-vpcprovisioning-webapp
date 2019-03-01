@@ -5,7 +5,7 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<g:ScrollPanel debugId="servicesScrollPanel" width="100%" height="96%">	
+	<g:ScrollPanel debugId="servicesScrollPanel" width="99%" height="96%">	
 		<g:VerticalPanel spacing="12" width="100%" height="100%">
 			<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_TOP" width="100%">
 				<g:Grid cellSpacing="12">

@@ -5,7 +5,7 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<g:ScrollPanel debugId="servicesScrollPanel" width="100%" height="96%">	
+	<g:ScrollPanel debugId="servicesScrollPanel" width="99%" height="96%">	
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:HTML addStyleNames="{style.mediumLabel}">Maintain Service</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">

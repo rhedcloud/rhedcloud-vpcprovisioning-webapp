@@ -2,11 +2,11 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -39,15 +39,19 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceTestPlanView;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
 public class DesktopMaintainServiceTestPlan extends ViewImplBase implements MaintainServiceTestPlanView {
 	Presenter presenter;
@@ -73,15 +77,14 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 	ListDataProvider<ServiceTestStepPojo> stepDataProvider = 
 			new ListDataProvider<ServiceTestStepPojo>(new ArrayList<ServiceTestStepPojo>());
 	
-	SingleSelectionModel<ServiceTestRequirementPojo> reqmtSelectionModel = 
-			new SingleSelectionModel<ServiceTestRequirementPojo>(ServiceTestRequirementPojo.KEY_PROVIDER);
-	SingleSelectionModel<ServiceTestPojo> testSelectionModel = 
-			new SingleSelectionModel<ServiceTestPojo>(ServiceTestPojo.KEY_PROVIDER);
-	SingleSelectionModel<ServiceTestStepPojo> stepSelectionModel = 
-			new SingleSelectionModel<ServiceTestStepPojo>(ServiceTestStepPojo.KEY_PROVIDER);
+	// TODO: change to multi-select selection model
+	MultiSelectionModel<ServiceTestRequirementPojo> reqmtSelectionModel = 
+			new MultiSelectionModel<ServiceTestRequirementPojo>(ServiceTestRequirementPojo.KEY_PROVIDER);
+	MultiSelectionModel<ServiceTestPojo> testSelectionModel = 
+			new MultiSelectionModel<ServiceTestPojo>(ServiceTestPojo.KEY_PROVIDER);
+	MultiSelectionModel<ServiceTestStepPojo> stepSelectionModel = 
+			new MultiSelectionModel<ServiceTestStepPojo>(ServiceTestStepPojo.KEY_PROVIDER);
 
-//	@UiField Button okayButton;
-//	@UiField Button cancelButton;
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField(provided=true) SimplePager reqmtListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) SimplePager testListPager = new SimplePager(TextLocation.RIGHT, false, true);
@@ -134,13 +137,33 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			@Override
 			public void onClick(ClickEvent event) {
 				reqmtActionsPopup.hide();
-				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
-				if (m == null) {
+				
+				if (reqmtSelectionModel.getSelectedSet().size() == 0) {
 					showMessageToUser("Please select an item from the list");
 					return;
 				}
-				// view/maintain requirement (via requirement popup)
-				presenter.maintainRequirement(m);
+				if (reqmtSelectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select only one Requirement");
+					return;
+				}
+				Iterator<ServiceTestRequirementPojo> nIter = reqmtSelectionModel.getSelectedSet().iterator();
+				
+				ServiceTestRequirementPojo m = nIter.next();
+				if (m != null) {
+					// view/maintain requirement (via requirement popup)
+					presenter.maintainRequirement(m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+
+//				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
+//				if (m == null) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				// view/maintain requirement (via requirement popup)
+//				presenter.maintainRequirement(m);
 			}
 		});
 		grid.setWidget(0, 0, editAnchor);
@@ -154,13 +177,27 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			@Override
 			public void onClick(ClickEvent event) {
 				reqmtActionsPopup.hide();
-				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
-				if (m == null) {
-					showMessageToUser("Please select an item from the list");
+				
+				if (reqmtSelectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one or more items from the list");
 					return;
 				}
-				// delete requirement and refresh list (via presenter)
-				presenter.deleteRequirement(m);
+				Iterator<ServiceTestRequirementPojo> nIter = reqmtSelectionModel.getSelectedSet().iterator();
+				List<ServiceTestRequirementPojo> pojos = new java.util.ArrayList<ServiceTestRequirementPojo>();
+				while (nIter.hasNext()) {
+					ServiceTestRequirementPojo m = nIter.next();
+					pojos.add(m);
+				}
+				// delete requirements and refresh list (via presenter)
+				presenter.deleteRequirements(pojos);
+
+//				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
+//				if (m == null) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				// delete requirement and refresh list (via presenter)
+//				presenter.deleteRequirement(m);
 			}
 		});
 		grid.setWidget(1, 0, deleteAnchor);
@@ -195,13 +232,33 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			@Override
 			public void onClick(ClickEvent event) {
 				testActionsPopup.hide();
-				ServiceTestPojo m = testSelectionModel.getSelectedObject();
-				if (m == null) {
+				
+				if (testSelectionModel.getSelectedSet().size() == 0) {
 					showMessageToUser("Please select an item from the list");
 					return;
 				}
-				// view/maintain requirement (via requirement popup)
-				presenter.maintainTest(m);
+				if (testSelectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select only one Test");
+					return;
+				}
+				Iterator<ServiceTestPojo> nIter = testSelectionModel.getSelectedSet().iterator();
+				
+				ServiceTestPojo m = nIter.next();
+				if (m != null) {
+					// view/maintain requirement (via requirement popup)
+					presenter.maintainTest(m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+
+//				ServiceTestPojo m = testSelectionModel.getSelectedObject();
+//				if (m == null) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				// view/maintain requirement (via requirement popup)
+//				presenter.maintainTest(m);
 			}
 		});
 		grid.setWidget(0, 0, editAnchor);
@@ -215,13 +272,27 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			@Override
 			public void onClick(ClickEvent event) {
 				testActionsPopup.hide();
-				ServiceTestPojo m = testSelectionModel.getSelectedObject();
-				if (m == null) {
-					showMessageToUser("Please select an item from the list");
+				
+				if (testSelectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one or more items from the list");
 					return;
 				}
-				// delete test and refresh list (via presenter)
-				presenter.deleteTest(m);
+				Iterator<ServiceTestPojo> nIter = testSelectionModel.getSelectedSet().iterator();
+				List<ServiceTestPojo> pojos = new java.util.ArrayList<ServiceTestPojo>();
+				while (nIter.hasNext()) {
+					ServiceTestPojo m = nIter.next();
+					pojos.add(m);
+				}
+				// delete requirements and refresh list (via presenter)
+				presenter.deleteTests(pojos);
+
+//				ServiceTestPojo m = testSelectionModel.getSelectedObject();
+//				if (m == null) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				// delete test and refresh list (via presenter)
+//				presenter.deleteTest(m);
 			}
 		});
 		grid.setWidget(1, 0, deleteAnchor);
@@ -256,13 +327,33 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			@Override
 			public void onClick(ClickEvent event) {
 				stepActionsPopup.hide();
-				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
-				if (m == null) {
+				
+				if (stepSelectionModel.getSelectedSet().size() == 0) {
 					showMessageToUser("Please select an item from the list");
 					return;
 				}
-				// view/maintain step (via step popup)
-				presenter.maintainStep(m);
+				if (stepSelectionModel.getSelectedSet().size() > 1) {
+					showMessageToUser("Please select only one Step");
+					return;
+				}
+				Iterator<ServiceTestStepPojo> nIter = stepSelectionModel.getSelectedSet().iterator();
+				
+				ServiceTestStepPojo m = nIter.next();
+				if (m != null) {
+					// view/maintain step (via step popup)
+					presenter.maintainStep(m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+
+//				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
+//				if (m == null) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				// view/maintain step (via step popup)
+//				presenter.maintainStep(m);
 			}
 		});
 		grid.setWidget(0, 0, editAnchor);
@@ -276,13 +367,27 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 			@Override
 			public void onClick(ClickEvent event) {
 				stepActionsPopup.hide();
-				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
-				if (m == null) {
-					showMessageToUser("Please select an item from the list");
+				
+				if (stepSelectionModel.getSelectedSet().size() == 0) {
+					showMessageToUser("Please select one or more items from the list");
 					return;
 				}
+				Iterator<ServiceTestStepPojo> nIter = stepSelectionModel.getSelectedSet().iterator();
+				List<ServiceTestStepPojo> pojos = new java.util.ArrayList<ServiceTestStepPojo>();
+				while (nIter.hasNext()) {
+					ServiceTestStepPojo m = nIter.next();
+					pojos.add(m);
+				}
 				// delete step and refresh list (via presenter)
-				presenter.deleteStep(m);
+				presenter.deleteSteps(pojos);
+
+//				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
+//				if (m == null) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				// delete step and refresh list (via presenter)
+//				presenter.deleteStep(m);
 			}
 		});
 		grid.setWidget(1, 0, deleteAnchor);
@@ -463,26 +568,26 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		
 	}
 
-	@Override
-	public void requirementSelected() {
-		ServiceTestRequirementPojo selected = reqmtSelectionModel.getSelectedObject();
-		GWT.log("[REQ:onSelectionChange] requirment selected: " + selected);
-		presenter.setSelectedTestRequirement(selected);
-	}
-
-	@Override
-	public void testSelected() {
-		ServiceTestPojo selected = testSelectionModel.getSelectedObject();
-		GWT.log("[TEST:onSelectionChange] test selected: " + selected);
-		presenter.setSelectedTest(selected);
-	}
-
-	@Override
-	public void stepSelected() {
-		ServiceTestStepPojo selected = stepSelectionModel.getSelectedObject();
-		GWT.log("[STEP: onSelectionChange] step selected: " + selected);
-		presenter.setSelectedTestStep(selected);
-	}
+//	@Override
+//	public void requirementSelected() {
+//		ServiceTestRequirementPojo selected = reqmtSelectionModel.getSelectedObject();
+//		GWT.log("[REQ:onSelectionChange] requirment selected: " + selected);
+//		presenter.setSelectedTestRequirement(selected);
+//	}
+//
+//	@Override
+//	public void testSelected() {
+//		ServiceTestPojo selected = testSelectionModel.getSelectedObject();
+//		GWT.log("[TEST:onSelectionChange] test selected: " + selected);
+//		presenter.setSelectedTest(selected);
+//	}
+//
+//	@Override
+//	public void stepSelected() {
+//		ServiceTestStepPojo selected = stepSelectionModel.getSelectedObject();
+//		GWT.log("[STEP: onSelectionChange] step selected: " + selected);
+//		presenter.setSelectedTestStep(selected);
+//	}
 
 	@Override
 	public void setRequirements(List<ServiceTestRequirementPojo> requirements) {
@@ -509,17 +614,29 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		requirementDataProvider.getList().addAll(this.requirementList);
 
 		reqmtSelectionModel = 
-				new SingleSelectionModel<ServiceTestRequirementPojo>(ServiceTestRequirementPojo.KEY_PROVIDER);
+				new MultiSelectionModel<ServiceTestRequirementPojo>(ServiceTestRequirementPojo.KEY_PROVIDER);
 
 		reqmtSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
-				// refresh tests table
-				presenter.setSelectedTestRequirement(m);
-				presenter.setSelectedTest(null);
-				presenter.refreshTestList(userLoggedIn);
-				presenter.refreshStepList(userLoggedIn);
+				GWT.log("requirements selection changed...");
+//				ServiceTestRequirementPojo m = reqmtSelectionModel.getSelectedObject();
+				Iterator<ServiceTestRequirementPojo> nIter = reqmtSelectionModel.getSelectedSet().iterator();
+				if (nIter.hasNext()) {
+					ServiceTestRequirementPojo m = nIter.next();
+					
+					// refresh tests table
+					presenter.setSelectedTestRequirement(m);
+					presenter.setSelectedTest(null);
+					presenter.refreshTestList(userLoggedIn);
+					presenter.refreshStepList(userLoggedIn);
+				}
+				else {
+					presenter.setSelectedTestRequirement(null);
+					presenter.setSelectedTest(null);
+					presenter.refreshTestList(userLoggedIn);
+					presenter.refreshStepList(userLoggedIn);
+				}
 			}
 		});
 		reqmtListTable.setSelectionModel(reqmtSelectionModel);
@@ -635,16 +752,26 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		}
 
 		testSelectionModel = 
-				new SingleSelectionModel<ServiceTestPojo>(ServiceTestPojo.KEY_PROVIDER);
+				new MultiSelectionModel<ServiceTestPojo>(ServiceTestPojo.KEY_PROVIDER);
 
 		testSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				ServiceTestPojo m = testSelectionModel.getSelectedObject();
-				// refresh steps table
-				presenter.setSelectedTest(m);
-				presenter.setSelectedTestStep(null);
-				presenter.refreshStepList(userLoggedIn);
+				GWT.log("tests selection changed...");
+//				ServiceTestPojo m = testSelectionModel.getSelectedObject();
+				Iterator<ServiceTestPojo> nIter = testSelectionModel.getSelectedSet().iterator();
+				if (nIter.hasNext()) {
+					ServiceTestPojo m = nIter.next();
+					// refresh steps table
+					presenter.setSelectedTest(m);
+					presenter.setSelectedTestStep(null);
+					presenter.refreshStepList(userLoggedIn);
+				}
+				else {
+					presenter.setSelectedTest(null);
+					presenter.setSelectedTestStep(null);
+					presenter.refreshStepList(userLoggedIn);
+				}
 			}
 		});
 		testListTable.setSelectionModel(testSelectionModel);
@@ -656,23 +783,6 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		if (testListTable.getColumnCount() == 0) {
 			initTestListTableColumns(sortHandler);
 		}
-//		else {
-//			// just apply the sorting stuff to the sequence column
-//			@SuppressWarnings("unchecked")
-//			Column<ServiceTestPojo, String> seqCol = (Column<ServiceTestPojo, String>) testListTable.getColumn(1);
-//			seqCol.setSortable(true);
-//			sortHandler.setComparator(seqCol, new Comparator<ServiceTestPojo>() {
-//				public int compare(ServiceTestPojo o1, ServiceTestPojo o2) {
-//					if (o1.getSequenceNumber() == o2.getSequenceNumber()) {
-//						return 0;
-//					}
-//					if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
-//						return -1;
-//					}
-//					return 1;
-//				}
-//			});
-//		}
 		
 		return testListTable;
 	}
@@ -779,14 +889,22 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		}
 
 		stepSelectionModel = 
-				new SingleSelectionModel<ServiceTestStepPojo>(ServiceTestStepPojo.KEY_PROVIDER);
+				new MultiSelectionModel<ServiceTestStepPojo>(ServiceTestStepPojo.KEY_PROVIDER);
 
 		stepSelectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
-				// refresh tests table
-				presenter.setSelectedTestStep(m);
+				GWT.log("steps selection changed...");
+//				ServiceTestStepPojo m = stepSelectionModel.getSelectedObject();
+				Iterator<ServiceTestStepPojo> nIter = stepSelectionModel.getSelectedSet().iterator();
+				if (nIter.hasNext()) {
+					ServiceTestStepPojo m = nIter.next();
+					// refresh tests table
+					presenter.setSelectedTestStep(m);
+				}
+				else {
+					presenter.setSelectedTestStep(null);
+				}
 			}
 		});
 		stepListTable.setSelectionModel(stepSelectionModel);
@@ -798,23 +916,6 @@ public class DesktopMaintainServiceTestPlan extends ViewImplBase implements Main
 		if (stepListTable.getColumnCount() == 0) {
 			initStepListTableColumns(sortHandler);
 		}
-//		else {
-//			// just apply the sorting stuff
-//			@SuppressWarnings("unchecked")
-//			Column<ServiceTestStepPojo, String> seqCol = (Column<ServiceTestStepPojo, String>) stepListTable.getColumn(1);
-//			seqCol.setSortable(true);
-//			sortHandler.setComparator(seqCol, new Comparator<ServiceTestStepPojo>() {
-//				public int compare(ServiceTestStepPojo o1, ServiceTestStepPojo o2) {
-//					if (o1.getSequenceNumber() == o2.getSequenceNumber()) {
-//						return 0;
-//					}
-//					if (o1.getSequenceNumber() > o2.getSequenceNumber()) {
-//						return -1;
-//					}
-//					return 1;
-//				}
-//			});
-//		}
 
 		return stepListTable;
 	}

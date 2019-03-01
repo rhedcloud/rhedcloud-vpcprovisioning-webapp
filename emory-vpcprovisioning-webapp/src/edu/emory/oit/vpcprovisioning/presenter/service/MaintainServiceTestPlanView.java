@@ -42,24 +42,32 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 //		public void setVerifierDirectoryPerson(DirectoryPersonPojo pojo);
 //		public DirectoryPersonPojo getVerifierDirectoryPerson();
 		
+		public void setSelectedTestRequirements(List<ServiceTestRequirementPojo> selected);
 		public void setSelectedTestRequirement(ServiceTestRequirementPojo selected);
 		public ServiceTestRequirementPojo getSelectedTestRequirement();
-		public void requirementSelected();
+//		public void requirementSelected();
 		
+		public void setSelectedTests(List<ServiceTestPojo> selected);
 		public void setSelectedTest(ServiceTestPojo selected);
 		public ServiceTestPojo getSelectedTest();
-		public void testSelected();
+//		public void testSelected();
 		
+		public void setSelectedTestSteps(List<ServiceTestStepPojo> selected);
 		public void setSelectedTestStep(ServiceTestStepPojo selected);
 		public ServiceTestStepPojo getSelectedTestStep();
-		public void stepSelected();
+//		public void stepSelected();
 		
 		void refreshRequirementList(final UserAccountPojo user);
 		void refreshTestList(final UserAccountPojo user);
 		void refreshStepList(final UserAccountPojo user);
-		void deleteRequirement(ServiceTestRequirementPojo selected);
-		void deleteTest(ServiceTestPojo selected);
-		void deleteStep(ServiceTestStepPojo selected);
+		
+		void deleteRequirements(List<ServiceTestRequirementPojo> selected);
+//		void deleteRequirement(ServiceTestRequirementPojo selected);
+		void deleteTests(List<ServiceTestPojo> selected);
+//		void deleteTest(ServiceTestPojo selected);
+		void deleteSteps(List<ServiceTestStepPojo> selected);
+//		void deleteStep(ServiceTestStepPojo selected);
+		
 		void createRequirement();
 		void maintainRequirement(ServiceTestRequirementPojo selected);
 		void createTest();
@@ -96,9 +104,9 @@ public interface MaintainServiceTestPlanView extends Editor<ServiceTestPlanPojo>
 	void setReleaseInfo(String releaseInfoHTML);
 	void setTestExpectedResultItems(List<String> items);
 	void refreshDataProvider();
-	public void requirementSelected();
-	public void testSelected();
-	public void stepSelected();
+//	public void requirementSelected();
+//	public void testSelected();
+//	public void stepSelected();
 	
 	public void setRequirements(List<ServiceTestRequirementPojo> requirements);
 	public void setTests(List<ServiceTestPojo> tests);

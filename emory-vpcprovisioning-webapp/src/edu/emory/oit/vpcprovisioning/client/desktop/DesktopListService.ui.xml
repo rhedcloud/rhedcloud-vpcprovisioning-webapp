@@ -5,12 +5,7 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<!-- TODO: figure out why the horizontal scroll bar doesn't show.  
-		it's there, just not showing up.  it's barely showing at the 
-		bottom and for some reason the same approach used for other 
-		list views is not working with this one.
-		Very strange... -->
-	<g:ScrollPanel debugId="servicesScrollPanel" width="100%" height="96%">	
+	<g:ScrollPanel width="99%" height="99%" debugId="servicesScrollPanel">	
 	<g:VerticalPanel width="100%" spacing="20">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
