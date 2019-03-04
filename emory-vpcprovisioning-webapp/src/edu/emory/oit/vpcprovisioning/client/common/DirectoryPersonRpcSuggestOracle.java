@@ -32,6 +32,9 @@ public class DirectoryPersonRpcSuggestOracle extends SuggestOracle {
 				if (caught.getMessage().toLowerCase().indexOf("more than 100 matches found") >= 0) {
 					descList.add(new MultiWordRpcSuggestion("Too many matches, keep typing...", "", null));
 				}
+				else if (caught.getMessage().toLowerCase().indexOf("no matches were found") >= 0) {
+					descList.add(new MultiWordRpcSuggestion("No matches found.  Try another search string...", "", null));
+				}
 				else {
 					descList.add(new MultiWordRpcSuggestion("An Error Occurred: " + caught.getMessage(), "", null));
 				}
