@@ -492,18 +492,33 @@ public class MaintainServiceTestPlanPresenter extends PresenterBase implements M
 	@Override
 	public void vpcpConfirmOkay() {
 		if (isDeletingRequirement) {
-//			serviceTestPlan.getServiceTestRequirements().remove(selectedRequirement);
 			serviceTestPlan.getServiceTestRequirements().removeAll(selectedTestRequirements);
+			// re-sequence requirements
+			int i=1;
+			for (ServiceTestRequirementPojo pojo : serviceTestPlan.getServiceTestRequirements()) {
+				pojo.setSequenceNumber(i);
+				i++;
+			}
 			refreshRequirementList(userLoggedIn);
 		}
 		else if (isDeletingTest) {
-//			selectedRequirement.getServiceTests().remove(selectedTest);
 			selectedRequirement.getServiceTests().removeAll(selectedTests);
+			// re-sequence tests
+			int i=1;
+			for (ServiceTestPojo pojo : selectedRequirement.getServiceTests()) {
+				pojo.setSequenceNumber(i);
+				i++;
+			}
 			refreshTestList(userLoggedIn);
 		}
 		else {
-//			selectedTest.getServiceTestSteps().remove(selectedStep);
 			selectedTest.getServiceTestSteps().removeAll(selectedTestSteps);
+			// re-sequence steps
+			int i=1;
+			for (ServiceTestStepPojo pojo : selectedTest.getServiceTestSteps()) {
+				pojo.setSequenceNumber(i);
+				i++;
+			}
 			refreshStepList(userLoggedIn);
 		}
 		// save the assessment

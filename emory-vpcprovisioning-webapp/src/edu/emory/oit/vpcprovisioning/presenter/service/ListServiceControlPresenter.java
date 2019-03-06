@@ -16,6 +16,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ServiceControlListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -211,6 +212,13 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	public void vpcpConfirmOkay() {
 		getView().showPleaseWaitDialog("Deleting service control " + selectedServiceControl.getServiceControlName() + "...");
 		assessment.getServiceControls().remove(selectedServiceControl);
+		// re-sequence controls
+		int i=1;
+		for (ServiceControlPojo pojo : assessment.getServiceControls()) {
+			pojo.setSequenceNumber(i);
+			i++;
+		}
+
 		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
 
 			@Override

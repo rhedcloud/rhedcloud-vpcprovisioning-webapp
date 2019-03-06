@@ -10,7 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -1116,7 +1115,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		Arrays.sort(keys);
 		int categoryRowCnt = 0;
 		for (final Object catName : keys) {
-			GWT.log("Category is: " + catName);
 			Anchor categoryAnchor = new Anchor((String)catName);
 			categoryAnchor.addStyleName("categoryAnchor");
 			categoryAnchor.getElement().getStyle().setBackgroundColor("#232f3e");

@@ -183,8 +183,8 @@ public class Constants implements IsSerializable {
 	
 	public static final String SVC_FILTER_CONSOLE_CATEGORY = "Console Category";
 	public static final String SVC_FILTER_AWS_NAME = "AWS Service Name";
-	public static final String SVC_FILTER_AWS_STATUS = "AWS Service Status";
-	public static final String SVC_FILTER_SITE_STATUS = "Emory Status";
+	public static final String SVC_FILTER_AWS_STATUS = "AWS Service Status (case sensitive)";
+	public static final String SVC_FILTER_SITE_STATUS = "Emory Status (case sensitive)";
 	public static final String SVC_FILTER_AWS_HIPAA_STATUS = "AWS HIPAA Eligibility";
 	public static final String SVC_FILTER_SITE_HIPAA_STATUS = "Emory HIPAA Eligibility";
 	public static final String VPN_CONNECTION_PROFILES = "vpnConnectionProfiles";

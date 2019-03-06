@@ -12,55 +12,72 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 
 public class AwsServiceRpcSuggestOracle extends SuggestOracle {
 	String type=null;
+	List<AWSServicePojo> services = new java.util.ArrayList<AWSServicePojo>();
 
 	public AwsServiceRpcSuggestOracle(String type) {
 		this.type = type;
-	}
 
-	@Override
-	public void requestSuggestions(final Request request, final Callback callback) {
 		AsyncCallback<AWSServiceQueryResultPojo> svcCallback = new AsyncCallback<AWSServiceQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				GWT.log("problem getting services..." + caught.getMessage());
-				List<MultiWordRpcSuggestion> descList = new java.util.ArrayList<MultiWordRpcSuggestion>();
-				descList.add(new MultiWordRpcSuggestion("An Error Occurred: " + caught.getMessage(), "", null));
-				Response resp =
-			            new Response(descList);
-				callback.onSuggestionsReady(request, resp);
+				GWT.log("[AwsServiceRpcSuggestOracle.constructor] problem getting services..." + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(AWSServiceQueryResultPojo result) {
-				GWT.log("got " + result.getResults().size() + " services back.");
-				List<String> svcCodes = new java.util.ArrayList<String>();
-				List<MultiWordRpcSuggestion> descList = new java.util.ArrayList<MultiWordRpcSuggestion>();
-				if (result.getResults().size() == 0) {
-					descList.add(new MultiWordRpcSuggestion("No matches yet...", "", null));
-				}
-				for (AWSServicePojo pojo : result.getResults()) {
-					if (!svcCodes.contains(pojo.getAwsServiceCode())) {
-						svcCodes.add(pojo.getAwsServiceName());
-						descList.add(new MultiWordRpcSuggestion(pojo.getAwsServiceCode(), pojo.getAwsServiceName(), pojo));
-					}
-				}
-				Response resp =
-		            new Response(descList);
-				callback.onSuggestionsReady(request, resp);
+				GWT.log("[AwsServiceRpcSuggestOracle.constructor] got " + result.getResults().size() + " services back.");
+				services = result.getResults();
 			}
 		};
+		GWT.log("[AwsServiceRpcSuggestOracle.constructor] getting services");
 		AWSServiceQueryFilterPojo filter = new AWSServiceQueryFilterPojo();
 		VpcProvisioningService.Util.getInstance().getServicesForFilter(filter, svcCallback);
-		
-//		if (type.equals(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME)) {
-//			DirectoryPersonQueryFilterPojo filter = new DirectoryPersonQueryFilterPojo();
-//			filter.setSearchString(request.getQuery());
-//			VpcProvisioningService.Util.getInstance().getDirectoryPersonsForFilter(filter, srvrCallback);
-//		}
-//		else {
-//			// invalid type...
-//			log.info("Invalid suggestion type");
-//		}
+	}
+
+	@Override
+	public void requestSuggestions(final Request request, final Callback callback) {
+		List<MultiWordRpcSuggestion> descList = new java.util.ArrayList<MultiWordRpcSuggestion>();
+		if (services.size() == 0) {
+			descList.add(new MultiWordRpcSuggestion("Service Data isn't loaded yet.  Please wait.", "", null));
+		}
+		else {
+			for (AWSServicePojo pojo : services) {
+				boolean addIt=false;
+				if (pojo.getAwsServiceCode() != null && 
+					pojo.getAwsServiceCode().toLowerCase().
+					indexOf(request.getQuery().toLowerCase()) >= 0) {
+					addIt=true;
+				}
+				else if (pojo.getAwsServiceCode() != null && 
+						pojo.getAwsServiceCode().toLowerCase().
+						indexOf(request.getQuery().toLowerCase()) >= 0) {
+					addIt=true;
+				}
+				else if (pojo.getCombinedServiceName() != null && 
+						pojo.getCombinedServiceName().toLowerCase().
+						indexOf(request.getQuery().toLowerCase()) >= 0) {
+					addIt=true;
+				}
+				else if (pojo.getAlternateServiceName() != null && 
+						pojo.getAlternateServiceName().toLowerCase().
+						indexOf(request.getQuery().toLowerCase()) >= 0) {
+					addIt=true;
+				}
+				else if (pojo.getDescription() != null && 
+						pojo.getDescription().toLowerCase().
+						indexOf(request.getQuery().toLowerCase()) >= 0) {
+					addIt=true;
+				}
+				if (addIt) {
+					descList.add(new MultiWordRpcSuggestion(pojo.getAwsServiceCode(), 
+							pojo.getAwsServiceName(), 
+							pojo));
+				}
+			}
+		}
+		Response resp =
+            new Response(descList);
+		callback.onSuggestionsReady(request, resp);
 	}
 
 	private class MultiWordRpcSuggestion implements AwsServiceSuggestion {

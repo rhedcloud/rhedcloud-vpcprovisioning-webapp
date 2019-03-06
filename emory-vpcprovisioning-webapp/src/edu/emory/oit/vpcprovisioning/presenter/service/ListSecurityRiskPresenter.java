@@ -19,6 +19,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListSecurityRiskPresenter extends PresenterBase implements ListSecurityRiskView.Presenter {
@@ -218,6 +219,13 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	public void vpcpConfirmOkay() {
 		getView().showPleaseWaitDialog("Deleting security risk...");
 		assessment.getSecurityRisks().remove(selectedSecurityRisk);
+		// re-sequence risks
+		int i=1;
+		for (SecurityRiskPojo pojo : assessment.getSecurityRisks()) {
+			pojo.setSequenceNumber(i);
+			i++;
+		}
+
 		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
 
 			@Override

@@ -16,6 +16,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ServiceGuidelineListUpdateEven
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -211,6 +212,12 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 	public void vpcpConfirmOkay() {
 		getView().showPleaseWaitDialog("Deleting service guideline " + selectedServiceGuideline.getServiceGuidelineName() + "...");
 		assessment.getServiceGuidelines().remove(selectedServiceGuideline);
+		// re-sequence guidelines
+		int i=1;
+		for (ServiceGuidelinePojo pojo : assessment.getServiceGuidelines()) {
+			pojo.setSequenceNumber(i);
+			i++;
+		}
 		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
 
 			@Override

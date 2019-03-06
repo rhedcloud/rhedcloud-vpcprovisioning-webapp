@@ -30,7 +30,6 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 	public void initializeStatistics() {
 		serviceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
 		
-//		Object[] keys = serviceMap.keySet().toArray();
 		int blockedPendingReviewCount = 0;
 		int availableCount = 0;
 		int availableWithCounterMeasuresCount = 0;
@@ -47,22 +46,18 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 		Date today = new java.util.Date();
 		Date ninetyDaysAgo = new Date(today.getTime() - (Constants.MILLIS_PER_DAY * 90));
 		Date oneHundredEightyDaysAgo = new Date(today.getTime() - (Constants.MILLIS_PER_DAY * 180));
-		Date threeHundredSixtyDaysAgo = new Date(today.getTime() - (Constants.MILLIS_PER_DAY * 360));
+//		Date threeHundredSixtyDaysAgo = new Date(today.getTime() - (Constants.MILLIS_PER_DAY * 360));
 
 		for (AWSServicePojo svc : serviceList) {
-			/*
-				the value 0 if the argument Date is equal to this Date; 
-				a value less than 0 if this Date is before the Date argument; 
-				and a value greater than 0 if this Date is after the Date argument.			 
-			*/
-			if (threeHundredSixtyDaysAgo.compareTo(svc.getCreateTime()) >= 0) {
-				threeSixtyDayCount++;
+			long createTime = svc.getCreateTime().getTime();
+			if (createTime >= ninetyDaysAgo.getTime()) {
+				ninetyDayCount++;
 			}
-			else if (oneHundredEightyDaysAgo.compareTo(svc.getCreateTime()) >= 0) {
+			else if (createTime >= oneHundredEightyDaysAgo.getTime()) {
 				oneEightyDayCount++;
 			}
 			else {
-				ninetyDayCount++;
+				threeSixtyDayCount++;
 			}
 			
 			if (svc.getSiteStatus().equalsIgnoreCase("blocked pending review")) {

@@ -11,6 +11,8 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceStatisticPojo;
+import edu.emory.oit.vpcprovisioning.shared.AWSServiceSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryQueryFilterPojo;
@@ -66,7 +68,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 		this.eventBus = eventBus;
 		getView().applyAWSAccountAuditorMask();
 		getView().clear();
-		getView().showPleaseWaitDialog("Generating Service Assessment Report, please wait...(potential long running task)");
+		getView().showPleaseWaitDialog("Generating Service Assessment Report, please wait (potential long running task)...");
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
 
@@ -131,6 +133,34 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 
 			@Override
 			public void onSuccess(SecurityAssessmentSummaryQueryResultPojo result) {
+				sbView.append("<h3>AWS at Emory Service at a Glance</h3>");
+				sbView.append("<table>");
+				sbView.append("<tr>");
+				sbView.append("<td valign=\"top\">");
+				sbView.append("<ul>");
+				int statCounter = 0;
+				AWSServiceSummaryPojo serviceSummary = result.getServiceSummary();
+				for (AWSServiceStatisticPojo stat : serviceSummary.getServiceStatistics()) {
+					if (statCounter >= 6) {
+						sbView.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
+						sbView.append("</ul>");
+						sbView.append("</td>");
+						sbView.append("<td valign=\"top\">");
+						sbView.append("<ul>");
+						statCounter = 0;
+					}
+					else {
+						sbView.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
+						statCounter++;
+					}
+				}
+
+				sbView.append("</ul>");
+				sbView.append("</td>");
+				sbView.append("</tr>");
+				sbView.append("</table>");
+				sbView.append("<hr>");
+
 				for (SecurityAssessmentSummaryPojo sas : result.getResults()) {
 					AWSServicePojo svc = sas.getService();
 					ServiceSecurityAssessmentPojo assessment = sas.getAssessment();

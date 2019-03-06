@@ -8291,6 +8291,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		types.add("Complete");
 		types.add("In Progress");
 		types.add("Not Started");
+		types.add("Needs Review");
 		return types;
 	}
 
@@ -11412,12 +11413,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public SecurityAssessmentSummaryQueryResultPojo getSecurityAssessmentSummariesForFilter(
 			SecurityAssessmentSummaryQueryFilterPojo filter) throws RpcException {
 
-		AWSServiceSummaryPojo serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
-				Constants.SERVICE_SUMMARY + getCurrentSessionId());
+//		AWSServiceSummaryPojo serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
+//				Constants.SERVICE_SUMMARY + getCurrentSessionId());
+		AWSServiceSummaryPojo serviceSummary = this.getAWSServiceMap();
 		
 		SecurityAssessmentSummaryQueryResultPojo result = new SecurityAssessmentSummaryQueryResultPojo();
+		result.setServiceSummary(serviceSummary);
+		
 		if (serviceSummary != null && filter.getServiceIds().size() == serviceSummary.getServiceList().size()) {
-			info("[getSecurityAssessmentSummariesForFilter] Using cached serviceSummary...");
 			for (AWSServicePojo svc : serviceSummary.getServiceList()) {
 				SecurityAssessmentSummaryPojo sas = new SecurityAssessmentSummaryPojo();
 				sas.setService(svc);
