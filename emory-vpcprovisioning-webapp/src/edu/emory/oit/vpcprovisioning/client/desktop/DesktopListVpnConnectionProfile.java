@@ -74,7 +74,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	@UiField TextBox filterTB;
 	@UiField PushButton refreshButton;
 	@UiField HTML filteredHTML;
-
+	@UiField HTML profileSummaryHTML;
 
 	public interface MyCellTableResources extends CellTable.Resources {
 
@@ -942,6 +942,11 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				+ "nullProfile=" + nullProfile + " nullAssignment=" + nullAssignment);
 		profileList.set(rowNumber, summary);
 		listTable.redrawRow(rowNumber);
+	}
+
+	@Override
+	public void setProfileSummaryHTML(String summaryHTML) {
+		profileSummaryHTML.setHTML(summaryHTML);
 	}
 
 }

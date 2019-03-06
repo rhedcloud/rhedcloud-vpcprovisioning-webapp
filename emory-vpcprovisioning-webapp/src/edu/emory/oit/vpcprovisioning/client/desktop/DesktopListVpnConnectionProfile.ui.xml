@@ -6,7 +6,7 @@
 	<ui:style field="otherStyles">
 	</ui:style>
 	<g:ScrollPanel width="99%" height="99%">	
-	<g:VerticalPanel width="100%" spacing="20">
+	<g:VerticalPanel width="100%" spacing="10">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:VerticalPanel spacing="8">
@@ -66,6 +66,9 @@
 					</g:customCell>
 				</g:row>
 			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:HTML ui:field="profileSummaryHTML" addStyleNames="{style.body}"/>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">

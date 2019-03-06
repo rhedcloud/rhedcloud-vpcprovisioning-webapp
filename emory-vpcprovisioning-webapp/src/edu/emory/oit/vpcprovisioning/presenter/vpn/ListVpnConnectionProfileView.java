@@ -73,4 +73,5 @@ public interface ListVpnConnectionProfileView extends IsWidget, View {
 	void hideFilteredStatus();
 	void initPage();
 	void refreshTableRow(int rowNumber, VpnConnectionProfileSummaryPojo summary);
+	void setProfileSummaryHTML(String summaryHTML);
 }

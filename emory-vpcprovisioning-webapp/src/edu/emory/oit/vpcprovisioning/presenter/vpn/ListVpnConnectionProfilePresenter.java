@@ -207,6 +207,24 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 			public void onSuccess(VpnConnectionProfileQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " VPN Connection Profiles for " + result.getFilterUsed());
 				setVpnConnectionProfileSummaryList(result.getResults());
+				
+				int totalProfiles = result.getResults().size();
+				int assignedProfiles = 0;
+				int unassignedProfiles = 0;
+				for (VpnConnectionProfileSummaryPojo summary : result.getResults()) {
+					if (summary.getAssignment() != null) {
+						assignedProfiles++;
+					}
+					else {
+						unassignedProfiles++;
+					}
+				}
+				StringBuffer sbuf = new StringBuffer();
+				sbuf.append("There are " + totalProfiles + " total VPN Connection Profiles listed below.</br>");
+				sbuf.append(assignedProfiles + " profiles are already assigned.</br>");
+				sbuf.append(unassignedProfiles + " profiles are unassigned.");
+				getView().setProfileSummaryHTML(sbuf.toString());
+				
 				// apply authorization mask
 				if (user.isNetworkAdmin()) {
 					getView().applyNetworkAdminMask();
