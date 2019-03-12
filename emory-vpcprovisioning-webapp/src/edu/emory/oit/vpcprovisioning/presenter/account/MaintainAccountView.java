@@ -11,6 +11,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
@@ -58,8 +59,12 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		void deleteNotification(AccountNotificationPojo selected);
 		void showSrdForAccountNotification(AccountNotificationPojo selected);
 		void refreshAccountNotificationList(final UserAccountPojo user);
-		void filterBySearchString(String searchString);
-		
+//		void filterBySearchString(String searchString);
+		void filterBySubject(String subject);
+		void filterByReferenceId(String referencId);
+		void setAccountNotificationFilter(AccountNotificationQueryFilterPojo filter);
+		AccountNotificationQueryFilterPojo getAccountNotificationFilter();
+
 		public void setSelectedProperty(PropertyPojo prop);
 		public PropertyPojo getSelectedProperty();
 		public void updateProperty(PropertyPojo prop);
@@ -127,4 +132,5 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void removeAccountNotificationFromView(AccountNotificationPojo pojo);
 	void showFilteredStatus();
 	void hideFilteredStatus();
+	void setFilterTypeItems(List<String> filterTypes);
 }

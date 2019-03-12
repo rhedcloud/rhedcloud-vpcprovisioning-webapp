@@ -80,6 +80,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	private final DirectoryPersonRpcSuggestOracle ownerIdSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	PopupPanel adminPleaseWaitDialog;
 	PopupPanel waitForNotificationsDialog;
+	List<String> filterTypeItems;
     
 	private ListDataProvider<AccountNotificationPojo> dataProvider = new ListDataProvider<AccountNotificationPojo>();
 	private MultiSelectionModel<AccountNotificationPojo> selectionModel;
@@ -127,6 +128,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox filterTB;
+	@UiField ListBox filterTypesLB;
 	@UiField HTML filteredHTML;
 
 	// AWS Account associated properties
@@ -268,11 +270,30 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	@UiHandler("filterButton")
 	void filterButtonClicked(ClickEvent e) {
-		presenter.filterBySearchString(filterTB.getText());
+		String filterType = filterTypesLB.getSelectedValue();
+		String filterValue = filterTB.getText();
+		
+		if ((filterType != null && filterType.length() > 0) &&
+			 (filterValue != null && filterValue.length() > 0)) {
+			
+			if (filterType.equalsIgnoreCase(Constants.USR_NOT_FILTER_SUBJECT)) {
+				presenter.filterBySubject(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.USR_NOT_FILTER_REF_ID)) {
+				presenter.filterByReferenceId(filterValue);
+			}
+			else {
+				// invalid filter type...but how?
+			}
+		}
+		else {
+			this.showMessageToUser("Please enter a Filter Value AND select a Filter Type");
+		}
 	}
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
 		filterTB.setText("");
+		presenter.setAccountNotificationFilter(null);
 		presenter.refreshAccountNotificationList(userLoggedIn);
 		this.hideFilteredStatus();
 	}
@@ -1232,5 +1253,21 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public void applyNetworkAdminMask() {
 		
 		
+	}
+
+	@Override
+	public void setFilterTypeItems(List<String> filterTypes) {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter filter value");
+
+		this.filterTypeItems = filterTypes;
+		filterTypesLB.clear();
+		
+		filterTypesLB.addItem("-- Select Filter Type --", "");
+		if (filterTypeItems != null) {
+			for (String filterType : filterTypeItems) {
+				filterTypesLB.addItem(filterType, filterType);
+			}
+		}
 	}
 }

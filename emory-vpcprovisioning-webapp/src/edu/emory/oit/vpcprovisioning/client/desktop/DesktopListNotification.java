@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.TextBox;
@@ -45,6 +46,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 
@@ -56,6 +58,7 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	UserAccountPojo userLoggedIn;
     PopupPanel actionsPopup = new PopupPanel(true);
     boolean longRunningProcess;
+	List<String> filterTypeItems;
 
 	@UiField(provided=true) CellTable<UserNotificationPojo> listTable = new CellTable<UserNotificationPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	public interface MyCellTableResources extends CellTable.Resources {
@@ -84,17 +87,64 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
 	@UiField TextBox filterTB;
+	@UiField ListBox filterTypesLB;
 	@UiField PushButton refreshButton;
 	@UiField HTML filteredHTML;
 
 	@UiHandler("filterButton")
 	void filterButtonClicked(ClickEvent e) {
-		if (viewUnReadCB.getValue()) {
-			presenter.filterBySearchString(false, filterTB.getText());
+		String filterType = filterTypesLB.getSelectedValue();
+		String filterValue = filterTB.getText();
+		
+		if ((filterType != null && filterType.length() > 0) &&
+			 (filterValue != null && filterValue.length() > 0)) {
+			
+			if (filterType.equalsIgnoreCase(Constants.USR_NOT_FILTER_NOTIFICATION_ID)) {
+				if (viewUnReadCB.getValue()) {
+					presenter.filterByNotificationId(false, filterValue);
+				}
+				else {
+					presenter.filterByNotificationId(true, filterValue);
+				}
+			}
+			else if (filterType.equalsIgnoreCase(Constants.USR_NOT_FILTER_SUBJECT)) {
+				if (viewUnReadCB.getValue()) {
+					presenter.filterBySubject(false, filterValue);
+				}
+				else {
+					presenter.filterBySubject(true, filterValue);
+				}
+			}
+			else if (filterType.equalsIgnoreCase(Constants.USR_NOT_FILTER_TEXT)) {
+				if (viewUnReadCB.getValue()) {
+					presenter.filterByText(false, filterValue);
+				}
+				else {
+					presenter.filterByText(true, filterValue);
+				}
+			}
+			else if (filterType.equalsIgnoreCase(Constants.USR_NOT_FILTER_REF_ID)) {
+				if (viewUnReadCB.getValue()) {
+					presenter.filterByReferenceId(false, filterValue);
+				}
+				else {
+					presenter.filterByReferenceId(true, filterValue);
+				}
+			}
+			else {
+				// invalid filter type...but how?
+			}
 		}
 		else {
-			presenter.filterBySearchString(true, filterTB.getText());
+			this.showMessageToUser("Please enter a Filter Value AND select a Filter Type");
 		}
+
+//		if (viewUnReadCB.getValue()) {
+//			presenter.filterBySearchString(false, filterTB.getText());
+//		}
+//		else {
+//			presenter.filterBySearchString(true, filterTB.getText());
+//		}
 	}
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
@@ -694,5 +744,20 @@ public class DesktopListNotification extends ViewImplBase implements ListNotific
 	public void applyNetworkAdminMask() {
 		
 		
+	}
+	@Override
+	public void setFilterTypeItems(List<String> filterTypes) {
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter filter value");
+
+		this.filterTypeItems = filterTypes;
+		filterTypesLB.clear();
+		
+		filterTypesLB.addItem("-- Select Filter Type --", "");
+		if (filterTypeItems != null) {
+			for (String filterType : filterTypeItems) {
+				filterTypesLB.addItem(filterType, filterType);
+			}
+		}
 	}
 }

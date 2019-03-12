@@ -211,4 +211,8 @@ public class Constants implements IsSerializable {
 	public static final String VPC_FILTER_ACCOUNT_ID = "Account ID";
 	public static final String VPC_FILTER_ACCOUNT_NAME = "Account Name";
 	public static final String VPC_FILTER_VPC_ID = "VPC ID";
+	public static final String USR_NOT_FILTER_NOTIFICATION_ID = "Notification Id";
+	public static final String USR_NOT_FILTER_SUBJECT = "Subject";
+	public static final String USR_NOT_FILTER_TEXT = "Text";
+	public static final String USR_NOT_FILTER_REF_ID = "Reference Id";
 }

@@ -86,6 +86,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
+		getView().hideFilteredStatus();
 		this.eventBus = eventBus;
 		setReleaseInfo(clientFactory);
 		getView().showPleaseWaitPanel("Retrieving Account details, please wait...");
@@ -172,6 +173,11 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				else {
 					getView().setAccountNotifications(Collections.<AccountNotificationPojo> emptyList());
 				}
+				List<String> filterTypeItems = new java.util.ArrayList<String>();
+				filterTypeItems.add(Constants.USR_NOT_FILTER_SUBJECT);
+				filterTypeItems.add(Constants.USR_NOT_FILTER_REF_ID);
+				getView().setFilterTypeItems(filterTypeItems);
+
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override
 					public void onFailure(Throwable caught) {
@@ -729,24 +735,24 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
 	}
 
-	@Override
-	public void filterBySearchString(String searchString) {
-		getView().showPleaseWaitDialog("Filtering notifications...");
-		
-		if (searchString == null || searchString.length() == 0) {
-			getView().hidePleaseWaitDialog();
-			getView().showMessageToUser("Please enter a search string");
-			return;
-		}
-
-		getView().showFilteredStatus();
-		filter = new AccountNotificationQueryFilterPojo();
-		filter.setAccountId(accountId);
-		filter.setUseQueryLanguage(true);
-		filter.setMaxRows(200);
-		filter.setSearchString(searchString);
-		refreshAccountNotificationList(userLoggedIn);
-	}
+//	@Override
+//	public void filterBySearchString(String searchString) {
+//		getView().showPleaseWaitDialog("Filtering notifications...");
+//		
+//		if (searchString == null || searchString.length() == 0) {
+//			getView().hidePleaseWaitDialog();
+//			getView().showMessageToUser("Please enter a search string");
+//			return;
+//		}
+//
+//		getView().showFilteredStatus();
+//		filter = new AccountNotificationQueryFilterPojo();
+//		filter.setAccountId(accountId);
+//		filter.setUseQueryLanguage(true);
+//		filter.setMaxRows(200);
+//		filter.setSearchString(searchString);
+//		refreshAccountNotificationList(userLoggedIn);
+//	}
 
 	@Override
 	public void setSelectedProperty(PropertyPojo prop) {
@@ -776,5 +782,39 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		else {
 			GWT.log("Counldn't find a property to update...problem");
 		}
+	}
+
+	@Override
+	public void filterBySubject(String subject) {
+		getView().showFilteredStatus();
+		filter = new AccountNotificationQueryFilterPojo();
+		filter.setAccountId(accountId);
+		filter.setFuzzyFilter(true);
+		filter.setSubject(subject);
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(200);
+		this.refreshAccountNotificationList(userLoggedIn);
+	}
+
+	@Override
+	public void filterByReferenceId(String referencId) {
+		getView().showFilteredStatus();
+		filter = new AccountNotificationQueryFilterPojo();
+		filter.setAccountId(accountId);
+		filter.setFuzzyFilter(true);
+		filter.setReferenceId(referencId);
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(200);
+		this.refreshAccountNotificationList(userLoggedIn);
+	}
+
+	@Override
+	public void setAccountNotificationFilter(AccountNotificationQueryFilterPojo filter) {
+		this.filter = filter;
+	}
+
+	@Override
+	public AccountNotificationQueryFilterPojo getAccountNotificationFilter() {
+		return this.filter;
 	}
 }

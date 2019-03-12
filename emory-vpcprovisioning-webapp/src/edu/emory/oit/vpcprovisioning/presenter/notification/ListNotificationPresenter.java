@@ -16,6 +16,8 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.NotificationListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
@@ -89,6 +91,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		setReleaseInfo(clientFactory);
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
+		getView().hideFilteredStatus();
 
 		getView().showPleaseWaitDialog("Retrieving User Logged In...");
 		
@@ -117,7 +120,13 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 
 				getView().setUserLoggedIn(user);
 				userLoggedIn = user;
-//				setNotificationList(Collections.<UserNotificationPojo> emptyList());
+
+				List<String> filterTypeItems = new java.util.ArrayList<String>();
+				filterTypeItems.add(Constants.USR_NOT_FILTER_NOTIFICATION_ID);
+				filterTypeItems.add(Constants.USR_NOT_FILTER_SUBJECT);
+				filterTypeItems.add(Constants.USR_NOT_FILTER_TEXT);
+				filterTypeItems.add(Constants.USR_NOT_FILTER_REF_ID);
+				getView().setFilterTypeItems(filterTypeItems);
 
 				// Request the Vpc list now.
 				if (getView().viewAllNotifications()) {
@@ -212,36 +221,36 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		}
 	}
 
-	@Override
-	public void filterBySearchString(boolean includeAllNotifications, String searchString) {
-		getView().showPleaseWaitDialog("Filtering notifications...");
-		
-		if (searchString == null || searchString.length() == 0) {
-			getView().hidePleaseWaitDialog();
-			getView().showMessageToUser("Please enter a search string");
-			return;
-		}
-
-		getView().showFilteredStatus();
-		if (includeAllNotifications) {
-			filter = new UserNotificationQueryFilterPojo();
-			filter.setUserId(userLoggedIn.getPublicId());
-			filter.setReadStr(null);
-			filter.setUseQueryLanguage(true);
-			filter.setMaxRows(200);
-			filter.setSearchString(searchString);
-		}
-		else {
-			filter = new UserNotificationQueryFilterPojo();
-			filter.setUserId(userLoggedIn.getPublicId());
-			filter.setReadStr("false");
-			filter.setRead(false);
-			filter.setUseQueryLanguage(true);
-			filter.setMaxRows(200);
-			filter.setSearchString(searchString);
-		}
-		refreshList(userLoggedIn);
-	}
+//	@Override
+//	public void filterBySearchString(boolean includeAllNotifications, String searchString) {
+//		getView().showPleaseWaitDialog("Filtering notifications...");
+//		
+//		if (searchString == null || searchString.length() == 0) {
+//			getView().hidePleaseWaitDialog();
+//			getView().showMessageToUser("Please enter a search string");
+//			return;
+//		}
+//
+//		getView().showFilteredStatus();
+//		if (includeAllNotifications) {
+//			filter = new UserNotificationQueryFilterPojo();
+//			filter.setUserId(userLoggedIn.getPublicId());
+//			filter.setReadStr(null);
+//			filter.setUseQueryLanguage(true);
+//			filter.setMaxRows(200);
+//			filter.setSearchString(searchString);
+//		}
+//		else {
+//			filter = new UserNotificationQueryFilterPojo();
+//			filter.setUserId(userLoggedIn.getPublicId());
+//			filter.setReadStr("false");
+//			filter.setRead(false);
+//			filter.setUseQueryLanguage(true);
+//			filter.setMaxRows(200);
+//			filter.setSearchString(searchString);
+//		}
+//		refreshList(userLoggedIn);
+//	}
 
 	@Override
 	public void stop() {
@@ -417,6 +426,86 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		SecurityRiskDetectionQueryFilterPojo filter = new SecurityRiskDetectionQueryFilterPojo();
 		filter.setSecurityRiskDetectionId(userNotification.getReferenceId());
 		VpcProvisioningService.Util.getInstance().getSecurityRiskDetectionsForFilter(filter, cb);
+	}
+
+	@Override
+	public void filterByNotificationId(boolean includeAllNotifications, String notificationId) {
+		getView().showPleaseWaitDialog("Filtering notifications by Notification Id");
+		getView().showFilteredStatus();
+		filter = new UserNotificationQueryFilterPojo();
+		filter.setUserId(userLoggedIn.getPublicId());
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(200);
+		filter.setFuzzyFilter(true);
+		filter.setUserNotificationId(notificationId);
+		if (includeAllNotifications) {
+			filter.setReadStr(null);
+		}
+		else {
+			filter.setReadStr("false");
+			filter.setRead(false);
+		}
+		this.refreshList(userLoggedIn);
+	}
+
+	@Override
+	public void filterBySubject(boolean includeAllNotifications, String subject) {
+		getView().showPleaseWaitDialog("Filtering notifications by Subject");
+		getView().showFilteredStatus();
+		filter = new UserNotificationQueryFilterPojo();
+		filter.setUserId(userLoggedIn.getPublicId());
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(200);
+		filter.setFuzzyFilter(true);
+		filter.setSubject(subject);
+		if (includeAllNotifications) {
+			filter.setReadStr(null);
+		}
+		else {
+			filter.setReadStr("false");
+			filter.setRead(false);
+		}
+		this.refreshList(userLoggedIn);
+	}
+
+	@Override
+	public void filterByText(boolean includeAllNotifications, String text) {
+		getView().showPleaseWaitDialog("Filtering notifications by Text");
+		getView().showFilteredStatus();
+		filter = new UserNotificationQueryFilterPojo();
+		filter.setUserId(userLoggedIn.getPublicId());
+		filter.setFuzzyFilter(true);
+		filter.setText(text);
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(200);
+		if (includeAllNotifications) {
+			filter.setReadStr(null);
+		}
+		else {
+			filter.setReadStr("false");
+			filter.setRead(false);
+		}
+		this.refreshList(userLoggedIn);
+	}
+
+	@Override
+	public void filterByReferenceId(boolean includeAllNotifications, String referencId) {
+		getView().showPleaseWaitDialog("Filtering notifications by Reference Id");
+		getView().showFilteredStatus();
+		filter = new UserNotificationQueryFilterPojo();
+		filter.setUserId(userLoggedIn.getPublicId());
+		filter.setFuzzyFilter(true);
+		filter.setReferenceId(referencId);
+		filter.setUseQueryLanguage(true);
+		filter.setMaxRows(200);
+		if (includeAllNotifications) {
+			filter.setReadStr(null);
+		}
+		else {
+			filter.setReadStr("false");
+			filter.setRead(false);
+		}
+		this.refreshList(userLoggedIn);
 	}
 
 }

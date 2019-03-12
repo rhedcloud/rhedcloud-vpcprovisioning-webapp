@@ -25,6 +25,9 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 	boolean useQueryLanguage;
 	int maxRows;
 	String searchString;
+	boolean fuzzyFilter=false;
+	String referenceId;
+	String subject;
 
 	public AccountNotificationQueryFilterPojo() {
 	}
@@ -105,6 +108,30 @@ public class AccountNotificationQueryFilterPojo extends SharedObject implements 
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public boolean isFuzzyFilter() {
+		return fuzzyFilter;
+	}
+
+	public void setFuzzyFilter(boolean fuzzyFilter) {
+		this.fuzzyFilter = fuzzyFilter;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 
 }

@@ -33,7 +33,11 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 	int maxRows;
 	String searchString;
 	UserAccountPojo userLoggedIn;
-	
+	boolean fuzzyFilter=false;
+	String subject;
+	String text;
+	String referenceId;
+
 	public UserNotificationQueryFilterPojo() {
 		
 	}
@@ -160,6 +164,38 @@ public class UserNotificationQueryFilterPojo extends SharedObject implements IsS
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public boolean isFuzzyFilter() {
+		return fuzzyFilter;
+	}
+
+	public void setFuzzyFilter(boolean fuzzyFilter) {
+		this.fuzzyFilter = fuzzyFilter;
+	}
+
+	public String getSubject() {
+		return subject;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
 	}
 
 }

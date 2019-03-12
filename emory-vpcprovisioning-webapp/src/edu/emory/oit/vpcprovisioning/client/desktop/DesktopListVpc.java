@@ -43,6 +43,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
 public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	Presenter presenter;
@@ -130,7 +131,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
-	    Grid grid = new Grid(2, 1);
+	    Grid grid = new Grid(3, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
@@ -172,7 +173,6 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				actionsPopup.hide();
 				VpcPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-//					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
 					if (userLoggedIn.isCentralAdmin()) {
 						presenter.deleteVpc(m);
 					}
@@ -186,6 +186,32 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 			}
 		});
 		grid.setWidget(1, 0, deleteAnchor);
+
+		Anchor deprovisionAnchor = new Anchor("Deprovision VPC");
+		deprovisionAnchor.addStyleName("productAnchor");
+		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deprovisionAnchor.setTitle("Deprovision the selected VPC");
+		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
+		deprovisionAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				VpcPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (userLoggedIn.isCentralAdmin()) {
+						showMessageToUser("This functionality is comming soon.");
+						// TODO: presenter.deprovisionVpc(m);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this action for this vpc.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(2, 0, deprovisionAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}

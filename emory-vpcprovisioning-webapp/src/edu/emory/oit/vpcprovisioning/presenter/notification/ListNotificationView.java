@@ -36,7 +36,11 @@ public interface ListNotificationView extends IsWidget, View {
 		void refreshListWithAllNotificationsForUser(UserAccountPojo user);
 		void markAllUnreadNotificationsForUserAsRead(UserAccountPojo user);
 		void showSrdForUserNotification(UserNotificationPojo userNotification);
-		void filterBySearchString(boolean includeAllNotifications, String searchString);
+//		void filterBySearchString(boolean includeAllNotifications, String searchString);
+		void filterByNotificationId(boolean includeAllNotifications, String notificationId);
+		void filterBySubject(boolean includeAllNotifications, String subject);
+		void filterByText(boolean includeAllNotifications, String text);
+		void filterByReferenceId(boolean includeAllNotifications, String referencId);
 	}
 
 	/**
@@ -66,4 +70,5 @@ public interface ListNotificationView extends IsWidget, View {
 	void initPage();
 	void showFilteredStatus();
 	void hideFilteredStatus();
+	void setFilterTypeItems(List<String> filterTypes);
 }

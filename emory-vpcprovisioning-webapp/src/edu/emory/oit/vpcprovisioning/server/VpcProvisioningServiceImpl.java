@@ -5314,15 +5314,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				UserNotificationPojo pojo = new UserNotificationPojo();
 				UserNotificationPojo baseline = new UserNotificationPojo();
 
-				if (filter.getSearchString() != null && filter.getSearchString().length() > 0) {
-					// only add notifications that contain the search string
-					if (moa.getSubject().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+				if (filter.getUserNotificationId() != null && filter.getUserNotificationId().length() > 0) {
+					if (moa.getUserNotificationId() != null && 
+						moa.getUserNotificationId().toLowerCase().indexOf(filter.getUserNotificationId().toLowerCase()) >= 0) {
 						this.populateUserNotificationPojo(moa, pojo);
 						this.populateUserNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
 						pojos.add(pojo);
 					}
-					else if (moa.getText().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+				}
+				else if (filter.getSubject() != null && filter.getSubject().length() > 0) {
+					if (moa.getSubject() != null && 
+						moa.getSubject().toLowerCase().indexOf(filter.getSubject().toLowerCase()) >= 0) {
+						this.populateUserNotificationPojo(moa, pojo);
+						this.populateUserNotificationPojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}
+				}
+				else if (filter.getText() != null && filter.getText().length() > 0) {
+					if (moa.getText() != null && 
+						moa.getText().toLowerCase().indexOf(filter.getText().toLowerCase()) >= 0) {
+						this.populateUserNotificationPojo(moa, pojo);
+						this.populateUserNotificationPojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}				
+				}
+				else if (filter.getReferenceId() != null && filter.getReferenceId().length() > 0) {
+					if (moa.getReferenceId() != null && 
+						moa.getReferenceId().toLowerCase().indexOf(filter.getReferenceId().toLowerCase()) >= 0) {
 						this.populateUserNotificationPojo(moa, pojo);
 						this.populateUserNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
@@ -5330,7 +5351,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 				}
 				else {
-					// add them all
+					// all
 					this.populateUserNotificationPojo(moa, pojo);
 					this.populateUserNotificationPojo(moa, baseline);
 					pojo.setBaseline(baseline);
@@ -7324,15 +7345,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			for (AccountNotification moa : moas) {
 				AccountNotificationPojo pojo = new AccountNotificationPojo();
 				AccountNotificationPojo baseline = new AccountNotificationPojo();
-				if (filter.getSearchString() != null && filter.getSearchString().length() > 0) {
-					// only add notifications that contain the search string
-					if (moa.getSubject().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+				
+				if (filter.getSubject() != null && filter.getSubject().length() > 0) {
+					if (moa.getSubject() != null && 
+						moa.getSubject().toLowerCase().indexOf(filter.getSubject().toLowerCase()) >= 0) {
 						this.populateAccountNotificationPojo(moa, pojo);
 						this.populateAccountNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
 						pojos.add(pojo);
 					}
-					else if (moa.getText().toLowerCase().indexOf(filter.getSearchString().toLowerCase()) >= 0) {
+				}
+				else if (filter.getReferenceId() != null && filter.getReferenceId().length() > 0) {
+					if (moa.getReferenceId() != null && 
+						moa.getReferenceId().toLowerCase().indexOf(filter.getReferenceId().toLowerCase()) >= 0) {
 						this.populateAccountNotificationPojo(moa, pojo);
 						this.populateAccountNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
@@ -7340,7 +7365,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 				}
 				else {
-					// add them all
+					// all
 					this.populateAccountNotificationPojo(moa, pojo);
 					this.populateAccountNotificationPojo(moa, baseline);
 					pojo.setBaseline(baseline);
