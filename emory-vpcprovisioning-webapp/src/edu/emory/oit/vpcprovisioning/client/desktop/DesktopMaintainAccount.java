@@ -178,8 +178,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		editImage.setWidth("30px");
 		editImage.setHeight("30px");
 		editButton.getUpFace().setImage(editImage);
-		if (this.userLoggedIn.isCentralAdmin() || 
-			this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId())) {
+		if (this.userLoggedIn.isCentralAdmin()) {
 			editButton.setEnabled(true);
 		}
 		else {
@@ -208,9 +207,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		removeImage.setWidth("30px");
 		removeImage.setHeight("30px");
 		removeButton.getUpFace().setImage(removeImage);
-		// disable buttons if userLoggedIn is NOT a network admin
-		if (this.userLoggedIn.isCentralAdmin()  || 
-			this.userLoggedIn.isAdminForAccount(presenter.getAccount().getAccountId())) {
+		// disable buttons if userLoggedIn is NOT a central admin
+		if (this.userLoggedIn.isCentralAdmin()) {
 			removeButton.setEnabled(true);
 		}
 		else {
@@ -789,9 +787,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		addAdminButton.setEnabled(true);
 		complianceClassLB.setEnabled(false);
 		billSummaryButton.setVisible(false);
-		propertyKeyTF.setEnabled(true);
-		propertyValueTF.setEnabled(true);
-		addPropertyButton.setEnabled(true);
+		propertyKeyTF.setEnabled(false);
+		propertyValueTF.setEnabled(false);
+		addPropertyButton.setEnabled(false);
 	}
 	@Override
 	public void applyAWSAccountAuditorMask() {
