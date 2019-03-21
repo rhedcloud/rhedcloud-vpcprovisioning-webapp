@@ -283,11 +283,6 @@ public class DesktopListServiceGuideline extends ViewImplBase implements ListSer
 		    initListTableColumns(sortHandler);
 	    }
 		
-		// default sort
-		listTable.getColumnSortList().push(listTable.getColumn(1));
-		listTable.getColumnSortList().push(listTable.getColumn(1));
-		ColumnSortEvent.fire(listTable, listTable.getColumnSortList());
-
 		return listTable;
 	}
 

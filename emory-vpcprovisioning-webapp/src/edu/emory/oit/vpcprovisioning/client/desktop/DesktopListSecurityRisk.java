@@ -250,6 +250,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 	}
 	private Widget initializeTable() {
 		GWT.log("initializing security risk list table...");
+		GWT.log("there are " + pojoList.size() + " risks for the table");
 		listTable.setTableLayoutFixed(false);
 		listTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
 		
@@ -259,8 +260,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		// create dataprovider
 		dataProvider = new ListDataProvider<SecurityRiskPojo>();
 		dataProvider.addDataDisplay(listTable);
-		dataProvider.getList().clear();
-		dataProvider.getList().addAll(this.pojoList);
+		dataProvider.setList(pojoList);
 		
 		selectionModel = 
 	    	new SingleSelectionModel<SecurityRiskPojo>(SecurityRiskPojo.KEY_PROVIDER);
@@ -282,11 +282,6 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 		    initListTableColumns(sortHandler);
 	    }
 		
-		// default sort
-		listTable.getColumnSortList().push(listTable.getColumn(1));
-		listTable.getColumnSortList().push(listTable.getColumn(1));
-		ColumnSortEvent.fire(listTable, listTable.getColumnSortList());
-
 		return listTable;
 	}
 
