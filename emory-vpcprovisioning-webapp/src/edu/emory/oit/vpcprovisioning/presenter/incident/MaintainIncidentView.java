@@ -46,6 +46,7 @@ public interface MaintainIncidentView extends Editor<IncidentPojo>, IsWidget, Vi
 		public void setCmdbCi(String cmdbCi);
 		public void setAssignmentGroup(String assignmentGroup);
 		public void setShortDescription(String shortDescription);
+		public void initializeIncidentProperties(String incidentType);
 		
 		public void setAccount(AccountPojo account);
 		public AccountPojo getAccount();

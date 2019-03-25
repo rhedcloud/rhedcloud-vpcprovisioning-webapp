@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertiesPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainIncidentPresenter extends PresenterBase implements MaintainIncidentView.Presenter {
@@ -392,6 +393,62 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 	@Override
 	public DialogBox getIncidentDialog() {
 		return this.incidentDialog;
+	}
+
+	@Override
+	public void initializeIncidentProperties(final String incidentType) {
+		AsyncCallback<PropertiesPojo> callback = new AsyncCallback<PropertiesPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(PropertiesPojo result) {
+				if (incidentType.equalsIgnoreCase(Constants.INCIDENT_TYPE_TERMINATE_ACCOUNT)) {
+//					setUrgency("3");
+//					setImpact("3");
+//					setBusinessService("Application Management");
+//					setCategory("Access");
+//					setSubCategory("Remove");
+//					setRecordType("Service Request");
+//					setContactType("Integration");
+//					setCmdbCi("Emory AWS Service");
+//					setAssignmentGroup("LITS: Systems Support - Tier 3");
+					setUrgency(result.getProperty("Urgency", "3"));
+					setImpact(result.getProperty("Impact", "3"));
+					setBusinessService(result.getProperty("BusinessService", "Application Management"));
+					setCategory(result.getProperty("Category", "Access"));
+					setSubCategory(result.getProperty("SubCategory", "Remove"));
+					setRecordType(result.getProperty("RecordType", "Service Request"));
+					setContactType(result.getProperty("ContactType", "Integration"));
+					setCmdbCi(result.getProperty("CmdbCi", "Emory AWS Service"));
+					setAssignmentGroup(result.getProperty("AssignmentGroup", "LITS: Systems Support - Tier 3"));
+				}
+				else if (incidentType.equalsIgnoreCase(Constants.INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT)) {
+//					setUrgency("3");
+//					setImpact("3");
+//					setBusinessService("Application Management");
+//					setCategory("Access");
+//					setSubCategory("Add");
+//					setRecordType("Service Request");
+//					setContactType("Integration");
+//					setCmdbCi("Emory AWS Service");
+//					setAssignmentGroup("LITS: Systems Support - Tier 3");
+					setUrgency(result.getProperty("Urgency", "3"));
+					setImpact(result.getProperty("Impact", "3"));
+					setBusinessService(result.getProperty("BusinessService", "Application Management"));
+					setCategory(result.getProperty("Category", "Access"));
+					setSubCategory(result.getProperty("SubCategory", "Add"));
+					setRecordType(result.getProperty("RecordType", "Service Request"));
+					setContactType(result.getProperty("ContactType", "Integration"));
+					setCmdbCi(result.getProperty("CmdbCi", "Emory AWS Service"));
+					setAssignmentGroup(result.getProperty("AssignmentGroup", "LITS: Systems Support - Tier 3"));
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getPropertiesForIncidentOfType(incidentType, callback);
 	}
 
 }

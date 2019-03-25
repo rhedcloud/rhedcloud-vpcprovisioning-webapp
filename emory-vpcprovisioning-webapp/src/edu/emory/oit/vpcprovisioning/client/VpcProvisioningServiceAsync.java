@@ -30,6 +30,7 @@ public interface VpcProvisioningServiceAsync {
 	void getEsbServiceStatusURL(AsyncCallback<String> callback);
 	void getAccountSeriesText(AsyncCallback<String> callback) throws RpcException;
 	void getMyNetIdURL(AsyncCallback<String> callback) throws RpcException;
+	void getPropertiesForIncidentOfType(String incidentType, AsyncCallback<PropertiesPojo> callback) throws RpcException;
 	
 	// ReleaseInfo
 	void getReleaseInfo(AsyncCallback<ReleaseInfo> callback);

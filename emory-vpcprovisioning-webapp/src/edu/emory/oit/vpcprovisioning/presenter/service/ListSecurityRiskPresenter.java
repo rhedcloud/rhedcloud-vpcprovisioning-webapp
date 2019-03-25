@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -19,7 +20,6 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
-import edu.emory.oit.vpcprovisioning.shared.ServiceTestRequirementPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class ListSecurityRiskPresenter extends PresenterBase implements ListSecurityRiskView.Presenter {
@@ -58,7 +58,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 		this.clearList = clearList;
 		this.service = service;
 		this.assessment = assessment;
-		clientFactory.getListSecurityRiskView().setPresenter(this);
+		getView().setPresenter(this);
 	}
 
 	/**
@@ -137,6 +137,7 @@ public class ListSecurityRiskPresenter extends PresenterBase implements ListSecu
 	 * Set the list of Vpcs.
 	 */
 	private void setSecurityRiskList(List<SecurityRiskPojo> securityRisks) {
+		GWT.log("[ListSecurityRiskPresenter] assessment has " + securityRisks.size() + " security risks associated to it");
 		getView().setSecurityRisks(securityRisks);
 		if (eventBus != null) {
 			eventBus.fireEventFromSource(new SecurityRiskListUpdateEvent(securityRisks), this);

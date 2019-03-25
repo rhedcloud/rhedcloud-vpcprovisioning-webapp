@@ -211,8 +211,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String AWS_SERVICE_STATUS_PROPERTIES = "AwsServiceStatusProperties";
 	private static final String SITE_SERVICE_STATUS_PROPERTIES = "SiteServiceStatusProperties";
 	private static final String USER_PROFILE_PROPERTIES = "UserProfileProperties";
-//	private static String LOGTAG = "[" + VpcProvisioningServiceImpl.class.getSimpleName()
-//			+ "]";
+	private static final String INCIDENT_TERMINATE_ACCOUNT_PROPERTIES = "IncidentProperties-TerminateAccount";
+	private static final String INCIDENT_CREATE_SERVICE_ACCOUNT_PROPERTIES = "IncidentProperties-CreateServiceAccount";
 	private Logger log = Logger.getLogger(getClass().getName());
 	private boolean useEsbService = true;
 	private boolean useShibboleth = true;
@@ -10140,8 +10140,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("VpnConnectionProvisioning.generate seed data is: " + seed.toXmlString());
 			
 			VpnConnectionProvisioningPojo pojo = new VpnConnectionProvisioningPojo();
+			
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("vpnpGenerateTimeoutMillis", "1000000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getNetworkOpsRequestService();
+			info("setting NetworOps RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
 			@SuppressWarnings("unchecked")
-			List<VpnConnectionProvisioning> result = actionable.generate(seed, this.getNetworkOpsRequestService());
+			List<VpnConnectionProvisioning> result = actionable.generate(seed, reqSvc);
 			// TODO if more than one returned, it's an error...
 			for (VpnConnectionProvisioning moa : result) {
 				info("generated VpnConnectionProvisioning is: " + moa.toXmlString());
@@ -11551,8 +11561,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("VpnConnectionDeprovisioning.generate seed data is: " + seed.toXmlString());
+
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("vpndpGenerateTimeoutMillis", "1000000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getNetworkOpsRequestService();
+			info("setting NetworOps RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
 			@SuppressWarnings("unchecked")
-			List<VpnConnectionDeprovisioning> result = actionable.generate(seed, this.getNetworkOpsRequestService());
+			List<VpnConnectionDeprovisioning> result = actionable.generate(seed, reqSvc);
 			VpnConnectionDeprovisioningPojo pojo = new VpnConnectionDeprovisioningPojo();
 			for (VpnConnectionDeprovisioning moa : result) {
 				info("generated VpnConnectionDeprovisioning is: " + moa.toXmlString());
@@ -11599,5 +11619,44 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 
+	}
+
+	@Override
+	public PropertiesPojo getPropertiesForIncidentOfType(String incidentType) throws RpcException {
+		if (incidentType.equalsIgnoreCase(Constants.INCIDENT_TYPE_TERMINATE_ACCOUNT)) {
+			Properties props;
+			try {
+				props = getAppConfig().getProperties(INCIDENT_TERMINATE_ACCOUNT_PROPERTIES);
+				PropertiesPojo pp = new PropertiesPojo();
+				Iterator<Object> keys = props.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					pp.setProperty(key, props.getProperty(key));
+				}
+				return pp;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
+		else if (incidentType.equalsIgnoreCase(Constants.INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT)) {
+			Properties props;
+			try {
+				props = getAppConfig().getProperties(INCIDENT_CREATE_SERVICE_ACCOUNT_PROPERTIES);
+				PropertiesPojo pp = new PropertiesPojo();
+				Iterator<Object> keys = props.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					pp.setProperty(key, props.getProperty(key));
+				}
+				return pp;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		} 
+		return null;
 	}
 }
