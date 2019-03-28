@@ -614,7 +614,7 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	public void showCounterMeasureMaintenanceDialog(final boolean isEdit, final CounterMeasurePojo selected) {
 		counterMeasurePopup.clear();
 		if (isEdit) {
-			counterMeasurePopup.setText("View/Maintain Step");
+			counterMeasurePopup.setText("View/Maintain Control");
 		}
 		else {
 			counterMeasurePopup.setText("Create Step");
@@ -756,6 +756,11 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 				if (!isEdit) {
 					presenter.getSecurityRisk().getCouterMeasures().add(selected);
 				}
+				
+				// need to update risk with data from the security risk part of the form
+				// as well in case they changed data in that object as part of this.
+				populateRiskWithFormData();
+
 				// need to save the assessment and refresh the security risk maintenance page
 				// NOT go all the way back to the assessment maintenance page
 				presenter.saveAssessment(false);

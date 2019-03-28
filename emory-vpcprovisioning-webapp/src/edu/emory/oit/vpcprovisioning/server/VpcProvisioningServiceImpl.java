@@ -5003,9 +5003,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 			}
 
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("serviceListTimeoutMillis", "1000000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getAWSRequestService();
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
 			info("[getServicesForFilter] query object is: " + queryObject.toXmlString());
 			List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+					reqSvc);
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
 
 			for (com.amazon.aws.moa.jmsobjects.services.v1_0.Service service : moas) {

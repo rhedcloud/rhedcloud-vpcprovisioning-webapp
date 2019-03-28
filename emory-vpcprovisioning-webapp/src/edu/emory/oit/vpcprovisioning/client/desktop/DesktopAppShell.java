@@ -1032,6 +1032,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 		else {
 			svcStatsVp.add(new HTML("Service Statistics not available yet.  Try again in a bit."));
+			return;
 		}
 		
 		// add a search panel to the mainPanel above the catSvcAssessmentHP
@@ -1374,12 +1375,19 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 	
 			this.showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
-			if (serviceSummary.getServiceMap() == null || serviceSummary.getServiceMap().size() == 0) {
-				this.refreshServiceMap(true);
+			if (serviceSummary != null) {
+				if (serviceSummary.getServiceMap() == null || serviceSummary.getServiceMap().size() == 0) {
+					this.refreshServiceMap(true);
+				}
+				else {
+					this.showProductsPopup();
+					hidePleaseWaitDialog();
+				}
 			}
 			else {
-				this.showProductsPopup();
-				hidePleaseWaitDialog();
+				this.hidePleaseWaitDialog();
+				showMessageToUser("Product information has not been retrieved in the normal amount of time.  Please try "
+						+ "refreshing your browser and if the problem continues, contact the help desk.");
 			}
 		}
 		else {

@@ -59,6 +59,26 @@
 								ui:field="controlNameTB" debugId="controlNameTB" />
 						</g:customCell>
 					</g:row>
+					<!-- 
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Control Type:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+								ui:field="controlTypeLB" debugId="controlTypeLB" />
+				    	</g:customCell>
+			    	</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Implementation Type:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+								ui:field="implementationTypeLB" debugId="implementationTypeLB" />
+				    	</g:customCell>
+			    	</g:row>
+					 -->
 					<g:row>
 						<g:customCell>
 							<g:Label addStyleNames="{style.label}">Description:</g:Label>
