@@ -140,7 +140,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 		isEditing = false;
 		getView().setEditing(false);
 		serviceGuideline = new ServiceGuidelinePojo();
-		serviceGuideline.setSequenceNumber(assessment.getServiceGuidelines().size() + 1);
+//		serviceGuideline.setSequenceNumber(assessment.getServiceGuidelines().size() + 1);
 	}
 
 	private void startEdit() {
@@ -206,7 +206,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the Security Assessment.  Message " +
 						"from server is: " + caught.getMessage());
-				assessment.getServiceGuidelines().remove(getServiceGuideline());
+//				assessment.getServiceGuidelines().remove(getServiceGuideline());
 				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
 			}
 
@@ -219,7 +219,7 @@ public class MaintainServiceGuidelinePresenter extends PresenterBase implements 
 		};
 		if (!isEditing) {
 			getServiceGuideline().setServiceId(service.getServiceId());
-			this.assessment.getServiceGuidelines().add(getServiceGuideline());
+//			this.assessment.getServiceGuidelines().add(getServiceGuideline());
 		}
 		else {
 			// TODO: have to find the service guideline, remove it and then re-add this one to the list

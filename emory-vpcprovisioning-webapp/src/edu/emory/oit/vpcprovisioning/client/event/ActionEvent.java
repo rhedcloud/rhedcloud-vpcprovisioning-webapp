@@ -124,7 +124,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private Place nextPlace;
 	private boolean firewallExceptionAddRequest;
 	private List<AWSServicePojo> servicesToAssess = new java.util.ArrayList<AWSServicePojo>();
-
+	private boolean newSecurityRiskWindow=false;
 
 	public CidrPojo getCidr() {
 		return cidr;
@@ -347,11 +347,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment2), sourceName);
 	}
 
-	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+	public static void fire(EventBus eventBus, String sourceName, boolean newWindow, AWSServicePojo service,
 			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo m) {
 		
 		if (eventBus == null) return;
-		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
+		eventBus.fireEventFromSource(new ActionEvent(newWindow, service, assessment, m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
@@ -359,6 +359,13 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, assessment, m), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, boolean newWindow, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk, ServiceControlPojo m) {
+		
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(newWindow, service, assessment, risk, m), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
@@ -610,10 +617,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.securityAssessment = securityAssessment2;
 	}
 
-	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo m) {
+	public ActionEvent(boolean newWindow, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo m) {
 		this.awsService = service;
 		this.securityAssessment = assessment;
 		this.securityRisk = m;
+		this.newSecurityRiskWindow = newWindow;
 	}
 
 	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceControlPojo m) {
@@ -732,6 +740,16 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public ActionEvent(List<AWSServicePojo> serviceList, ServiceSecurityAssessmentPojo assessment) {
 		servicesToAssess = serviceList;
 		securityAssessment = assessment;
+	}
+
+	public ActionEvent(boolean newWindow, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk,
+			ServiceControlPojo m) {
+		
+		this.awsService = service;
+		this.securityAssessment = assessment;
+		this.securityRisk = risk;
+		this.serviceControl = m;
+		this.newSecurityRiskWindow = newWindow;
 	}
 
 	@Override
@@ -1062,6 +1080,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setServicesToAssess(List<AWSServicePojo> servicesToAssess) {
 		this.servicesToAssess = servicesToAssess;
+	}
+
+	public boolean isNewSecurityRiskWindow() {
+		return newSecurityRiskWindow;
+	}
+
+	public void setNewSecurityRiskWindow(boolean newSecurityRiskWindow) {
+		this.newSecurityRiskWindow = newSecurityRiskWindow;
 	}
 
 }

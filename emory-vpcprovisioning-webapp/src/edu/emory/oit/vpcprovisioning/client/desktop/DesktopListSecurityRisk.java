@@ -35,6 +35,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -98,7 +99,7 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 				actionsPopup.hide();
 				SecurityRiskPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK, presenter.getService(), presenter.getAssessment(), m);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK, true, presenter.getService(), presenter.getAssessment(), m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -391,6 +392,26 @@ public class DesktopListSecurityRisk extends ViewImplBase implements ListSecurit
 			}
 		});
 		listTable.addColumn(riskLevelColumn, "Risk Level");
+
+		Column<SecurityRiskPojo, String> serviceControlColumn = 
+				new Column<SecurityRiskPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(SecurityRiskPojo object) {
+				if (object.getServiceControls().size() > 0) {
+					return Constants.YES;
+				}
+				return Constants.NO;
+			}
+		};
+		serviceControlColumn.setSortable(true);
+		serviceControlColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(serviceControlColumn, new Comparator<SecurityRiskPojo>() {
+			public int compare(SecurityRiskPojo o1, SecurityRiskPojo o2) {
+				return o1.getRiskLevel().compareTo(o2.getRiskLevel());
+			}
+		});
+		listTable.addColumn(serviceControlColumn, "Service Controls");
 	}
 
 	@Override

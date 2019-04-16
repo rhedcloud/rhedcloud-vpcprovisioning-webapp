@@ -122,7 +122,7 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 	 * Refresh the CIDR list.
 	 */
 	private void refreshList(final UserAccountPojo user) {
-		setServiceGuidelineList(assessment.getServiceGuidelines());
+//		setServiceGuidelineList(assessment.getServiceGuidelines());
         getView().hidePleaseWaitDialog();
 	}
 
@@ -211,13 +211,13 @@ public class ListServiceGuidelinePresenter extends PresenterBase implements List
 	@Override
 	public void vpcpConfirmOkay() {
 		getView().showPleaseWaitDialog("Deleting service guideline " + selectedServiceGuideline.getServiceGuidelineName() + "...");
-		assessment.getServiceGuidelines().remove(selectedServiceGuideline);
+//		assessment.getServiceGuidelines().remove(selectedServiceGuideline);
 		// re-sequence guidelines
-		int i=1;
-		for (ServiceGuidelinePojo pojo : assessment.getServiceGuidelines()) {
-			pojo.setSequenceNumber(i);
-			i++;
-		}
+//		int i=1;
+//		for (ServiceGuidelinePojo pojo : assessment.getServiceGuidelines()) {
+//			pojo.setSequenceNumber(i);
+//			i++;
+//		}
 		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
 
 			@Override

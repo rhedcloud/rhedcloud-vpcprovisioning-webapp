@@ -8,6 +8,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -28,6 +29,10 @@ public interface ListServiceControlView extends IsWidget, View {
 		public void setUserLoggedIn(UserAccountPojo user);
 		public UserAccountPojo getUserLoggedIn();
 		public AWSServicePojo getService();
+		public void setRisk(SecurityRiskPojo risk);
+		public SecurityRiskPojo getRisk();
+		public void setParentPresenter(edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView.Presenter parent);
+		public edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView.Presenter getParentPresenter();
 	}
 
 	/**

@@ -9,13 +9,12 @@ import com.google.gwt.view.client.ProvidesKey;
 @SuppressWarnings("serial")
 public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSerializable, Comparable<ServiceSecurityAssessmentPojo> {
 	/*
+	<!ELEMENT ServiceSecurityAssessment (
 		ServiceSecurityAssessmentId?, 
 		ServiceId+, 
 		Status, 
 		SecurityRisk*, 
-		ServiceControl*, 
-		ServiceGuideline*, 
-		ServiceTestPlan?
+		ServiceTestPlan?)>
 	 */
 
 	public static final ProvidesKey<ServiceSecurityAssessmentPojo> KEY_PROVIDER = new ProvidesKey<ServiceSecurityAssessmentPojo>() {
@@ -28,8 +27,8 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 	List<String> serviceIds = new java.util.ArrayList<String>();
 	String status;
 	List<SecurityRiskPojo> securityRisks = new java.util.ArrayList<SecurityRiskPojo>();
-	List<ServiceControlPojo> serviceControls = new java.util.ArrayList<ServiceControlPojo>();
-	List<ServiceGuidelinePojo> serviceGuidelines = new java.util.ArrayList<ServiceGuidelinePojo>();
+//	List<ServiceControlPojo> serviceControls = new java.util.ArrayList<ServiceControlPojo>();
+//	List<ServiceGuidelinePojo> serviceGuidelines = new java.util.ArrayList<ServiceGuidelinePojo>();
 	ServiceTestPlanPojo serviceTestPlan;
 	ServiceSecurityAssessmentPojo baseline;
 	
@@ -69,21 +68,21 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 		this.securityRisks = securityRisks;
 	}
 
-	public List<ServiceControlPojo> getServiceControls() {
-		return serviceControls;
-	}
-
-	public void setServiceControls(List<ServiceControlPojo> serviceControls) {
-		this.serviceControls = serviceControls;
-	}
-
-	public List<ServiceGuidelinePojo> getServiceGuidelines() {
-		return serviceGuidelines;
-	}
-
-	public void setServiceGuidelines(List<ServiceGuidelinePojo> serviceGuidelines) {
-		this.serviceGuidelines = serviceGuidelines;
-	}
+//	public List<ServiceControlPojo> getServiceControls() {
+//		return serviceControls;
+//	}
+//
+//	public void setServiceControls(List<ServiceControlPojo> serviceControls) {
+//		this.serviceControls = serviceControls;
+//	}
+//
+//	public List<ServiceGuidelinePojo> getServiceGuidelines() {
+//		return serviceGuidelines;
+//	}
+//
+//	public void setServiceGuidelines(List<ServiceGuidelinePojo> serviceGuidelines) {
+//		this.serviceGuidelines = serviceGuidelines;
+//	}
 
 	public ServiceTestPlanPojo getServiceTestPlan() {
 		return serviceTestPlan;

@@ -94,6 +94,7 @@
 					<g:DeckLayoutPanel ui:field="securityRisksContainer"
 						debugId="securityRisksContainer" width="100%" height="100%" />
 				</g:tab>
+				<!-- 
 				<g:tab>
 					<g:header>Service Controls</g:header>
 					<g:DeckLayoutPanel
@@ -105,6 +106,7 @@
 					<g:DeckLayoutPanel ui:field="serviceGuidelinesContainer"
 						debugId="serviceGuidelinesContainer" width="100%" height="100%" />
 				</g:tab>
+				-->
 				<g:tab>
 					<g:header>Test Plan</g:header>
 					<g:DeckLayoutPanel ui:field="testPlanContainer"

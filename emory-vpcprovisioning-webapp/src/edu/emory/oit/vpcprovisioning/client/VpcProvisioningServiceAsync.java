@@ -221,6 +221,8 @@ public interface VpcProvisioningServiceAsync {
 	void getCounterMeasureStatusTypeItems(AsyncCallback<List<String>> callback);
 	void getSecurityRiskDetectionsForFilter(SecurityRiskDetectionQueryFilterPojo filter, AsyncCallback<SecurityRiskDetectionQueryResultPojo> callback);
 	void getSecurityAssessmentSummariesForFilter(SecurityAssessmentSummaryQueryFilterPojo filter, AsyncCallback<SecurityAssessmentSummaryQueryResultPojo> callback);
+	void getServiceControlTypeItems(AsyncCallback<List<String>> callback);
+	void getServiceControlImplementationTypeItems(AsyncCallback<List<String>> callback);
 
 	void getAccountProvisioningAuthorizationsForFilter(AccountProvisioningAuthorizationQueryFilterPojo filter, AsyncCallback<AccountProvisioningAuthorizationQueryResultPojo> callback);
 	void getPersonInfoSummaryForPublicId(String publicId, AsyncCallback<PersonInfoSummaryPojo> callback);

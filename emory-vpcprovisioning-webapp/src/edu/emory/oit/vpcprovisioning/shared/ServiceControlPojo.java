@@ -1,6 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
 import java.util.Date;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
@@ -8,7 +9,19 @@ import com.google.gwt.view.client.ProvidesKey;
 @SuppressWarnings("serial")
 public class ServiceControlPojo extends SharedObject implements IsSerializable, Comparable<ServiceControlPojo> {
 	/*
-ServiceId, ServiceControlId, SequenceNumber, ServiceControlName, Description, AssessorId, AssessmentDatetime, Verifier?, VerificationDatetime?
+	<!ELEMENT ServiceControl (
+		ServiceControlId?, 
+		ServiceId?, 
+		SequenceNumber, 
+		ServiceControlName, 
+		ControlType, 
+		ImplementationType, 
+		DocumentationUrl*, 
+		Description, 
+		AssessorId, 
+		AssessmentDatetime, 
+		Verifier?, 
+		VerificationDatetime?)>
 	 */
 
 	public static final ProvidesKey<ServiceControlPojo> KEY_PROVIDER = new ProvidesKey<ServiceControlPojo>() {
@@ -26,6 +39,9 @@ ServiceId, ServiceControlId, SequenceNumber, ServiceControlName, Description, As
 	Date assessmentDate;
 	String verifier;
 	Date verificationDate;
+	String controlType;
+	String implementationType;
+	List<String> documentationUrls = new java.util.ArrayList<String>();
 	
 	public ServiceControlPojo() {
 		
@@ -112,6 +128,30 @@ ServiceId, ServiceControlId, SequenceNumber, ServiceControlName, Description, As
 			return 1;
 		}
 		return -1;
+	}
+
+	public String getControlType() {
+		return controlType;
+	}
+
+	public void setControlType(String controlType) {
+		this.controlType = controlType;
+	}
+
+	public String getImplementationType() {
+		return implementationType;
+	}
+
+	public void setImplementationType(String implementationType) {
+		this.implementationType = implementationType;
+	}
+
+	public List<String> getDocumentationUrls() {
+		return documentationUrls;
+	}
+
+	public void setDocumentationUrls(List<String> documentationUrls) {
+		this.documentationUrls = documentationUrls;
 	}
 
 }

@@ -98,7 +98,9 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 				actionsPopup.hide();
 				ServiceControlPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment(), m);
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment(), m);
+					presenter.getParentPresenter().getView().populateRiskWithFormData();
+					presenter.getParentPresenter().saveAssessmentAndMaintainControl(m);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -136,10 +138,20 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 	void createServiceControlClicked(ClickEvent e) {
 		if (presenter.getAssessment() == null || presenter.getAssessment().getStatus() == null) {
 			this.showMessageToUser("Please select an Assessment Status from the list above and "
-					+ "save the Assessment before adding a Servic Control");
+					+ "save the Assessment before adding a Service Control");
 			return;
 		}
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_CONTROL, presenter.getService(), presenter.getAssessment());
+		
+		// TODO: there may be a timing issue here...
+		presenter.getParentPresenter().getView().populateRiskWithFormData();
+		presenter.getParentPresenter().saveAssessmentAndMaintainControl(null);
+		
+		if (presenter.getRisk() == null) {
+			this.showMessageToUser("Please save the security risk before creating a service control.");
+			return;
+		}
+		// TODO: move this to saveAssessmentAndMaintainControl in the parent presenter (MaintainSecurityRiskPresenter)
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE_CONTROL, true, presenter.getService(), presenter.getAssessment(), presenter.getRisk());
 	}
 	
 	@Override
@@ -245,6 +257,7 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 	public void setServiceControls(List<ServiceControlPojo> serviceControls) {
 		GWT.log("view Setting service controls.");
 		this.pojoList = serviceControls;
+		GWT.log("ListServiceControls: there are " + this.pojoList.size() + " service controls in the list");
 		this.initializeTable();
 	    listPager.setDisplay(listTable);
 	}
@@ -357,6 +370,40 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 			}
 		});
 		listTable.addColumn(descColumn, "Description");
+		
+		Column<ServiceControlPojo, String> controlTypeColumn = 
+				new Column<ServiceControlPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceControlPojo object) {
+				return object.getControlType();
+			}
+		};
+		controlTypeColumn.setSortable(true);
+		controlTypeColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(controlTypeColumn, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				return o1.getControlType().compareTo(o2.getControlType());
+			}
+		});
+		listTable.addColumn(controlTypeColumn, "Control Type");
+		
+		Column<ServiceControlPojo, String> implTypeColumn = 
+				new Column<ServiceControlPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(ServiceControlPojo object) {
+				return object.getImplementationType();
+			}
+		};
+		implTypeColumn.setSortable(true);
+		implTypeColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(implTypeColumn, new Comparator<ServiceControlPojo>() {
+			public int compare(ServiceControlPojo o1, ServiceControlPojo o2) {
+				return o1.getImplementationType().compareTo(o2.getImplementationType());
+			}
+		});
+		listTable.addColumn(implTypeColumn, "Implemenation Type");
 		
 		Column<ServiceControlPojo, String> assessorId = 
 				new Column<ServiceControlPojo, String> (new TextCell()) {

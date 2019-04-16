@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.presenter.service;
 import java.util.List;
 
 import com.google.gwt.editor.client.Editor;
+import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.EventBus;
@@ -10,14 +11,13 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
-import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
-import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsConfirmation;
 
-public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWidget, View {
+public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, AcceptsOneWidget, IsWidget, View {
 	/**
 	 * The presenter for this view.
 	 */
@@ -35,15 +35,18 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 		void setService(AWSServicePojo service);
 
 		void deleteSecurityRisk(SecurityRiskPojo selected);
-		void deleteCounterMeasure(CounterMeasurePojo selected);
-		void deleteCounterMeasures(List<CounterMeasurePojo> selected);
+//		void deleteServiceControl(ServiceControlPojo selected);
+//		void deleteServiceControls(List<ServiceControlPojo> selected);
 		SecurityRiskPojo getSecurityRisk();
 		public void setDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getDirectoryPerson();
 		
-		void createCounterMeasure();
-		void maintainCounterMeasure(CounterMeasurePojo selected);
-		void refreshCounterMeasureList(final UserAccountPojo user);
+		public MaintainSecurityRiskView getView();
+		void saveAssessmentAndMaintainControl(ServiceControlPojo control);
+		
+//		void createServiceControl();
+//		void maintainServiceControl(ServiceControlPojo selected);
+//		void refreshServiceControlList(final UserAccountPojo user);
 	}
 
 	/**
@@ -73,8 +76,10 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, IsWi
 	void setReleaseInfo(String releaseInfoHTML);
 	
 	void setRiskLevelItems(List<String> riskLevels);
-	void setCounterMeasureStatusItems(List<String> statuses);
-	void setCounterMeasures(List<CounterMeasurePojo> counterMeasures);
-	void removeCounterMeasureFromView(CounterMeasurePojo pojo);
-	public void showCounterMeasureMaintenanceDialog(final boolean isEdit, final CounterMeasurePojo selected);
+	void populateRiskWithFormData();
+
+//	void setServiceControlStatusItems(List<String> statuses);
+//	void setServiceControls(List<ServiceControlPojo> serviceControls);
+//	void removeServiceControlFromView(ServiceControlPojo pojo);
+//	public void showServiceControlMaintenanceDialog(final boolean isEdit, final ServiceControlPojo selected);
 }

@@ -19,7 +19,7 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.mediumLabel}">Service Controls</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of existing Service Controls associated to this Service/Assessment.</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing Service Controls associated to this Service/Assessment/Risk.</g:HTML>
 
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="12">

@@ -9,6 +9,7 @@ import edu.emory.oit.vpcprovisioning.client.event.EditServiceControlEvent;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -19,6 +20,7 @@ public class MaintainServiceControlActivity extends AbstractActivity {
 	private final MaintainServiceControlPlace place;
 	private AWSServicePojo service;
 	private ServiceSecurityAssessmentPojo assessment;
+	private SecurityRiskPojo risk;
 	private ServiceControlPojo serviceControl;
 
 	private final ClientFactory clientFactory;
@@ -35,6 +37,7 @@ public class MaintainServiceControlActivity extends AbstractActivity {
 		this.place = place;
 		this.service = place.getService();
 		this.assessment = place.getAssessment();
+		this.risk = place.getRisk();
 		this.serviceControl = place.getServiceControl();
 		this.clientFactory = clientFactory;
 	}
@@ -61,27 +64,27 @@ public class MaintainServiceControlActivity extends AbstractActivity {
 			@Override
 			public void onServiceControlEdit(EditServiceControlEvent event) {
 				onStop();
-				presenter = startEdit(service, assessment, event.getServiceControl());
+				presenter = startEdit(service, assessment, risk, event.getServiceControl());
 				container.setWidget(presenter);
 			}
 		});
 
 		if (place.getServiceControlId() == null) {
-			presenter = startCreate(service, assessment);
+			presenter = startCreate(service, assessment, risk);
 		} else {
-			presenter = startEdit(place.getService(), place.getAssessment(), place.getServiceControl());
+			presenter = startEdit(place.getService(), place.getAssessment(), place.getRisk(), place.getServiceControl());
 		}
 		container.setWidget(presenter);
 	}
 
-	private PresentsWidgets startCreate(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
-		PresentsWidgets rtn = new MaintainServiceControlPresenter(clientFactory, service, assessment);
+	private PresentsWidgets startCreate(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk) {
+		PresentsWidgets rtn = new MaintainServiceControlPresenter(clientFactory, service, assessment, risk);
 		rtn.start(childEventBus);
 		return rtn;
 	}
 
-	private PresentsWidgets startEdit(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceControlPojo serviceControl) {
-		PresentsWidgets rtn = new MaintainServiceControlPresenter(clientFactory, service, assessment, serviceControl);
+	private PresentsWidgets startEdit(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk, ServiceControlPojo serviceControl) {
+		PresentsWidgets rtn = new MaintainServiceControlPresenter(clientFactory, service, assessment, risk, serviceControl);
 		rtn.start(childEventBus);
 		return rtn;
 	}

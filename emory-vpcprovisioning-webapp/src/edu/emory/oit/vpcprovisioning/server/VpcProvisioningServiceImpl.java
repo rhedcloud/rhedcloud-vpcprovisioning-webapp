@@ -76,7 +76,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizatio
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
-import com.amazon.aws.moa.objects.resources.v1_0.Countermeasure;
 import com.amazon.aws.moa.objects.resources.v1_0.DetectedSecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
@@ -85,7 +84,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.RemediationResult;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceControl;
-import com.amazon.aws.moa.objects.resources.v1_0.ServiceGuideline;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceSecurityAssessmentQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceTest;
@@ -7316,19 +7314,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			if (filter != null) {
 				if (filter.isUseQueryLanguage()) {
-					QueryLanguage ql = queryObject.newQueryLanguage();
-					ql.setName("byAccountId");
-					ql.setType("hql");
-					info("setting QueryLanguage max rows to: " + filter.getMaxRows());
-					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					if (filter.isFuzzyFilter()) {
+						// get all notifications
+						QueryLanguage ql = queryObject.newQueryLanguage();
+						ql.setName("allByAccountId");
+						ql.setType("hql");
+						info("[getAccountNotificationForFilter] getting ALL account notifications for account " + filter.getAccountId());
 
-					Parameter accountId = ql.newParameter();
-					accountId.setValue(filter.getAccountId());
-					accountId.setName("AccountId");
-					ql.addParameter(accountId);
-					queryObject.setQueryLanguage(ql);
+						Parameter accountId = ql.newParameter();
+						accountId.setValue(filter.getAccountId());
+						accountId.setName("AccountId");
+						ql.addParameter(accountId);
+						queryObject.setQueryLanguage(ql);
+					}
+					else {
+						// only get 200 notifications
+						QueryLanguage ql = queryObject.newQueryLanguage();
+						ql.setName("maxByAccountId");
+						ql.setType("hql");
+						info("[getAccountNotificationForFilter] getting max (200) account notifications for account " + filter.getAccountId());
+						ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+
+						Parameter accountId = ql.newParameter();
+						accountId.setValue(filter.getAccountId());
+						accountId.setName("AccountId");
+						ql.addParameter(accountId);
+						queryObject.setQueryLanguage(ql);
+					}
 				}
 				else {
+					info("[getAccountNotificationForFilter] NOT using QueryLanguage.");
 					queryObject.setAccountId(filter.getAccountId());
 					queryObject.setAccountNotificationId(filter.getAccountNotificationId());
 				}
@@ -7339,16 +7354,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getAccountNotificationForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
 			RequestService reqSvc = this.getAWSRequestService();
-			// TODO: if they're asking for ALL notifications, we'll have to bump 
+			// if they're asking for ALL notifications, we'll have to bump 
 			// the timeout interval WAY up
-//			((PointToPointProducer) reqSvc)
-//			.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 2);
+			if (filter != null && filter.isFuzzyFilter()) {
+				Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+				String s_interval = props.getProperty("accountNotificationTimeoutMillis", "1000000");
+				int interval = Integer.parseInt(s_interval);
+				((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+			}
 
 			@SuppressWarnings("unchecked")
 			List<AccountNotification> moas = actionable.query(queryObject,
 					reqSvc);
 			info("[getAccountNotificationsForFilter] got " + moas.size() + 
-					" UserNotifications from ESB service" + 
+					" AccountNotifications from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (AccountNotification moa : moas) {
 				AccountNotificationPojo pojo = new AccountNotificationPojo();
@@ -7957,9 +7977,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// 	risks
 				Collections.sort(pojo.getSecurityRisks());
 				//	controls
-				Collections.sort(pojo.getServiceControls());
+//				Collections.sort(pojo.getServiceControls());
 				//	guidelines
-				Collections.sort(pojo.getServiceGuidelines());
+//				Collections.sort(pojo.getServiceGuidelines());
 				//	testplan.requirements
 				if (pojo.getServiceTestPlan() != null) {
 					Collections.sort(pojo.getServiceTestPlan().getServiceTestRequirements());
@@ -8026,49 +8046,63 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				rp.setDescription(risk.getDescription());
 				rp.setAssessorId(risk.getAssessorId());
 				rp.setAssessmentDate(this.toDateFromDatetime(risk.getAssessmentDatetime()));
-				if (risk.getCountermeasure() != null) {
-					for (Countermeasure cm : (List<Countermeasure>)risk.getCountermeasure()) {
-						CounterMeasurePojo cmp = new CounterMeasurePojo();
-						cmp.setSecurityRiskId(cm.getSecurityRiskId());
-						cmp.setStatus(cm.getStatus());
-						cmp.setDescription(cm.getDescription());
-						cmp.setVerifier(cm.getVerifier());
-						cmp.setVerificationDate(this.toDateFromDatetime(cm.getVerificationDatetime()));
-						rp.getCouterMeasures().add(cmp);
+				if (risk.getServiceControl() != null) {
+					for (ServiceControl sc : (List<ServiceControl>)risk.getServiceControl()) {
+						ServiceControlPojo scp = new ServiceControlPojo();
+						scp.setServiceId(sc.getServiceId());
+						scp.setServiceControlId(sc.getServiceControlId());
+						scp.setSequenceNumber(this.toIntFromString(sc.getSequenceNumber()));
+						scp.setServiceControlName(sc.getServiceControlName());
+						scp.setDescription(sc.getDescription());
+						scp.setAssessorId(sc.getAssessorId());
+						scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
+						scp.setVerifier(sc.getVerifier());
+						scp.setImplementationType(sc.getImplementationType());
+						scp.setControlType(sc.getControlType());
+						if (sc.getDocumentationUrl() != null) {
+							for (String docUrl : (List<String>)sc.getDocumentationUrl()) {
+								scp.getDocumentationUrls().add(docUrl);
+							}
+						}
+						if (sc.getVerificationDatetime() != null) {
+							scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
+						}
+						rp.getServiceControls().add(scp);
 					}
+					Collections.sort(rp.getServiceControls());
 				}
 				pojo.getSecurityRisks().add(rp);
 			}
 		}
-		if (moa.getServiceControl() != null) {
-			for (ServiceControl sc : (List<ServiceControl>)moa.getServiceControl()) {
-				ServiceControlPojo scp = new ServiceControlPojo();
-				scp.setServiceId(sc.getServiceId());
-				scp.setServiceControlId(sc.getServiceControlId());
-				scp.setSequenceNumber(this.toIntFromString(sc.getSequenceNumber()));
-				scp.setServiceControlName(sc.getServiceControlName());
-				scp.setDescription(sc.getDescription());
-				scp.setAssessorId(sc.getAssessorId());
-				scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
-				scp.setVerifier(sc.getVerifier());
-				if (sc.getVerificationDatetime() != null) {
-					scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
-				}
-				pojo.getServiceControls().add(scp);
-			}
-		}
-		if (moa.getServiceGuideline() != null) {
-			for (ServiceGuideline sg : (List<ServiceGuideline>)moa.getServiceGuideline()) {
-				ServiceGuidelinePojo sgp = new ServiceGuidelinePojo();
-				sgp.setServiceId(sg.getServiceId());
-				sgp.setSequenceNumber(this.toIntFromString(sg.getSequenceNumber()));
-				sgp.setServiceGuidelineName(sg.getServiceGuidelineName());
-				sgp.setDescription(sg.getDescription());
-				sgp.setAssessorId(sg.getAssessorId());
-				sgp.setAssessmentDate(this.toDateFromDatetime(sg.getAssessmentDatetime()));
-				pojo.getServiceGuidelines().add(sgp);
-			}
-		}
+//		if (moa.getServiceControl() != null) {
+//			for (ServiceControl sc : (List<ServiceControl>)moa.getServiceControl()) {
+//				ServiceControlPojo scp = new ServiceControlPojo();
+//				scp.setServiceId(sc.getServiceId());
+//				scp.setServiceControlId(sc.getServiceControlId());
+//				scp.setSequenceNumber(this.toIntFromString(sc.getSequenceNumber()));
+//				scp.setServiceControlName(sc.getServiceControlName());
+//				scp.setDescription(sc.getDescription());
+//				scp.setAssessorId(sc.getAssessorId());
+//				scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
+//				scp.setVerifier(sc.getVerifier());
+//				if (sc.getVerificationDatetime() != null) {
+//					scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
+//				}
+//				pojo.getServiceControls().add(scp);
+//			}
+//		}
+//		if (moa.getServiceGuideline() != null) {
+//			for (ServiceGuideline sg : (List<ServiceGuideline>)moa.getServiceGuideline()) {
+//				ServiceGuidelinePojo sgp = new ServiceGuidelinePojo();
+//				sgp.setServiceId(sg.getServiceId());
+//				sgp.setSequenceNumber(this.toIntFromString(sg.getSequenceNumber()));
+//				sgp.setServiceGuidelineName(sg.getServiceGuidelineName());
+//				sgp.setDescription(sg.getDescription());
+//				sgp.setAssessorId(sg.getAssessorId());
+//				sgp.setAssessmentDate(this.toDateFromDatetime(sg.getAssessmentDatetime()));
+//				pojo.getServiceGuidelines().add(sgp);
+//			}
+//		}
 		if (moa.getServiceTestPlan() != null) {
 			ServiceTestPlan stpm = moa.getServiceTestPlan();
 			ServiceTestPlanPojo stpp = new ServiceTestPlanPojo();
@@ -8090,7 +8124,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							if (stm.getServiceTestStep() != null) {
 								for (ServiceTestStep stsm : (List<ServiceTestStep>)stm.getServiceTestStep()) {
 									ServiceTestStepPojo stsp = new ServiceTestStepPojo();
-									stsp.setServiceTestId(stsm.getServiceTestId());
 									stsp.setServiceTestStepId(stsm.getServiceTestStepId());
 									stsp.setSequenceNumber(this.toIntFromString(stsm.getSequenceNumber()));
 									stsp.setDescription(stsm.getDescription());
@@ -8129,60 +8162,89 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			this.populateDatetime(assessDT, risk.getAssessmentDate());
 			moa_risk.setAssessmentDatetime(assessDT);
 			
-			for (CounterMeasurePojo cm : risk.getCouterMeasures()) {
-				Countermeasure moa_cm = moa_risk.newCountermeasure();
-				moa_cm.setSecurityRiskId(cm.getSecurityRiskId());
-				moa_cm.setStatus(cm.getStatus());
-				moa_cm.setDescription(cm.getDescription());
-				moa_cm.setVerifier(cm.getVerifier());
+//			for (CounterMeasurePojo cm : risk.getServiceControls()) {
+//				Countermeasure moa_cm = moa_risk.newCountermeasure();
+//				moa_cm.setSecurityRiskId(cm.getSecurityRiskId());
+//				moa_cm.setStatus(cm.getStatus());
+//				moa_cm.setDescription(cm.getDescription());
+//				moa_cm.setVerifier(cm.getVerifier());
+//				
+//				org.openeai.moa.objects.resources.Datetime verifyDT = moa_cm.newVerificationDatetime();
+//				this.populateDatetime(verifyDT, cm.getVerificationDate());
+//				moa_cm.setVerificationDatetime(verifyDT);
+//				
+//				moa_risk.addCountermeasure(moa_cm);
+//			}
+			
+			for (ServiceControlPojo sc : risk.getServiceControls()) {
+				ServiceControl moa_scp = moa_risk.newServiceControl();
+				moa_scp.setServiceId(sc.getServiceId());
+				moa_scp.setServiceControlId(sc.getServiceControlId());
+				moa_scp.setSequenceNumber(this.toStringFromInt(sc.getSequenceNumber()));
+				moa_scp.setServiceControlName(sc.getServiceControlName());
+				moa_scp.setDescription(sc.getDescription());
+				moa_scp.setAssessorId(sc.getAssessorId());
 				
-				org.openeai.moa.objects.resources.Datetime verifyDT = moa_cm.newVerificationDatetime();
-				this.populateDatetime(verifyDT, cm.getVerificationDate());
-				moa_cm.setVerificationDatetime(verifyDT);
+				org.openeai.moa.objects.resources.Datetime sc_assessDT = moa_scp.newAssessmentDatetime();
+				this.populateDatetime(sc_assessDT, sc.getAssessmentDate());
+				moa_scp.setAssessmentDatetime(sc_assessDT);
 				
-				moa_risk.addCountermeasure(moa_cm);
+				moa_scp.setVerifier(sc.getVerifier());
+				
+				if (sc.getVerificationDate() != null) {
+					org.openeai.moa.objects.resources.Datetime verifyDT = moa_scp.newVerificationDatetime();
+					this.populateDatetime(verifyDT, sc.getVerificationDate());
+					moa_scp.setVerificationDatetime(verifyDT);
+				}
+				
+				moa_scp.setControlType(sc.getControlType());
+				moa_scp.setImplementationType(sc.getImplementationType());
+				for (String url : sc.getDocumentationUrls()) {
+					moa_scp.addDocumentationUrl(url);
+				}
+				moa_risk.addServiceControl(moa_scp);
 			}
 			moa.addSecurityRisk(moa_risk);
 		}
 		
-		for (ServiceControlPojo sc : pojo.getServiceControls()) {
-			ServiceControl moa_scp = moa.newServiceControl();
-			moa_scp.setServiceId(sc.getServiceId());
-			moa_scp.setServiceControlId(sc.getServiceControlId());
-			moa_scp.setSequenceNumber(this.toStringFromInt(sc.getSequenceNumber()));
-			moa_scp.setServiceControlName(sc.getServiceControlName());
-			moa_scp.setDescription(sc.getDescription());
-			moa_scp.setAssessorId(sc.getAssessorId());
-			
-			org.openeai.moa.objects.resources.Datetime assessDT = moa_scp.newAssessmentDatetime();
-			this.populateDatetime(assessDT, sc.getAssessmentDate());
-			moa_scp.setAssessmentDatetime(assessDT);
-			
-			moa_scp.setVerifier(sc.getVerifier());
-			
-			if (sc.getVerificationDate() != null) {
-				org.openeai.moa.objects.resources.Datetime verifyDT = moa_scp.newVerificationDatetime();
-				this.populateDatetime(verifyDT, sc.getVerificationDate());
-				moa_scp.setVerificationDatetime(verifyDT);
-			}
-			
-			moa.addServiceControl(moa_scp);
-		}
-
-		for (ServiceGuidelinePojo sg : pojo.getServiceGuidelines()) {
-			ServiceGuideline moa_sg = moa.newServiceGuideline();
-			moa_sg.setServiceId(sg.getServiceId());
-			moa_sg.setSequenceNumber(this.toStringFromInt(sg.getSequenceNumber()));
-			moa_sg.setServiceGuidelineName(sg.getServiceGuidelineName());
-			moa_sg.setDescription(sg.getDescription());
-			moa_sg.setAssessorId(sg.getAssessorId());
-			
-			org.openeai.moa.objects.resources.Datetime assessDT = moa_sg.newAssessmentDatetime();
-			this.populateDatetime(assessDT, sg.getAssessmentDate());
-			moa_sg.setAssessmentDatetime(assessDT);
-
-			moa.addServiceGuideline(moa_sg);
-		}
+//		for (ServiceControlPojo sc : pojo.getServiceControls()) {
+//			ServiceControl moa_scp = moa.newServiceControl();
+//			moa_scp.setServiceId(sc.getServiceId());
+//			moa_scp.setServiceControlId(sc.getServiceControlId());
+//			moa_scp.setSequenceNumber(this.toStringFromInt(sc.getSequenceNumber()));
+//			moa_scp.setServiceControlName(sc.getServiceControlName());
+//			moa_scp.setDescription(sc.getDescription());
+//			moa_scp.setAssessorId(sc.getAssessorId());
+//			
+//			org.openeai.moa.objects.resources.Datetime assessDT = moa_scp.newAssessmentDatetime();
+//			this.populateDatetime(assessDT, sc.getAssessmentDate());
+//			moa_scp.setAssessmentDatetime(assessDT);
+//			
+//			moa_scp.setVerifier(sc.getVerifier());
+//			
+//			if (sc.getVerificationDate() != null) {
+//				org.openeai.moa.objects.resources.Datetime verifyDT = moa_scp.newVerificationDatetime();
+//				this.populateDatetime(verifyDT, sc.getVerificationDate());
+//				moa_scp.setVerificationDatetime(verifyDT);
+//			}
+//			
+//			moa.addServiceControl(moa_scp);
+//		}
+//
+//		for (ServiceGuidelinePojo sg : pojo.getServiceGuidelines()) {
+//			ServiceGuideline moa_sg = moa.newServiceGuideline();
+//			moa_sg.setServiceId(sg.getServiceId());
+//			moa_sg.setSequenceNumber(this.toStringFromInt(sg.getSequenceNumber()));
+//			moa_sg.setServiceGuidelineName(sg.getServiceGuidelineName());
+//			moa_sg.setDescription(sg.getDescription());
+//			moa_sg.setAssessorId(sg.getAssessorId());
+//			
+//			org.openeai.moa.objects.resources.Datetime assessDT = moa_sg.newAssessmentDatetime();
+//			this.populateDatetime(assessDT, sg.getAssessmentDate());
+//			moa_sg.setAssessmentDatetime(assessDT);
+//
+//			moa.addServiceGuideline(moa_sg);
+//		}
 			
 		if (pojo.getServiceTestPlan() != null) {
 			ServiceTestPlanPojo stpp = pojo.getServiceTestPlan();
@@ -8202,7 +8264,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					stm.setServiceTestExpectedResult(stp.getServiceTestExpectedResult());
 					for (ServiceTestStepPojo stsp : stp.getServiceTestSteps()) {
 						ServiceTestStep stsm = stm.newServiceTestStep();
-						stsm.setServiceTestId(stsp.getServiceTestId());
 						stsm.setServiceTestStepId(stsp.getServiceTestStepId());
 						stsm.setSequenceNumber(this.toStringFromInt(stsp.getSequenceNumber()));
 						stsm.setDescription(stsp.getDescription());
@@ -11408,48 +11469,66 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for risk assessor " + risk.getAssessorId());
 			}
 			// - risk.countermeasure.verifierid
-			for (CounterMeasurePojo cm : risk.getCouterMeasures()) {
-				String verifierName = this.getFullNameForPublicId(cm.getVerifier());
-				if (verifierName != null) {
-					cm.setVerifier(verifierName);
+//			for (CounterMeasurePojo cm : risk.getServiceControls()) {
+//				String verifierName = this.getFullNameForPublicId(cm.getVerifier());
+//				if (verifierName != null) {
+//					cm.setVerifier(verifierName);
+//				}
+//				else {
+//					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for counter measure verifier " + risk.getAssessorId());
+//				}
+//			}
+			// - risk.servicecontrol.verifierid
+			for (ServiceControlPojo control : risk.getServiceControls()) {
+				String sc_assessorName = this.getFullNameForPublicId(control.getAssessorId());
+				if (sc_assessorName != null) {
+					control.setAssessorId(sc_assessorName);
 				}
 				else {
-					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for counter measure verifier " + risk.getAssessorId());
+					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
+				}
+
+				String verifierName = this.getFullNameForPublicId(control.getVerifier());
+				if (verifierName != null) {
+					control.setVerifier(verifierName);
+				}
+				else {
+					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
 				}
 			}
 		}
 		
 		// - servicecontrol.assessorid
 		// - servicecontrol.verifierid
-		for (ServiceControlPojo control : assessment.getServiceControls()) {
-			String assessorName = this.getFullNameForPublicId(control.getAssessorId());
-			if (assessorName != null) {
-				control.setAssessorId(assessorName);
-			}
-			else {
-				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
-			}
-
-			String verifierName = this.getFullNameForPublicId(control.getVerifier());
-			if (verifierName != null) {
-				control.setVerifier(verifierName);
-			}
-			else {
-				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
-			}
-		}
+//		for (ServiceControlPojo control : assessment.getServiceControls()) {
+//			String assessorName = this.getFullNameForPublicId(control.getAssessorId());
+//			if (assessorName != null) {
+//				control.setAssessorId(assessorName);
+//			}
+//			else {
+//				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
+//			}
+//
+//			String verifierName = this.getFullNameForPublicId(control.getVerifier());
+//			if (verifierName != null) {
+//				control.setVerifier(verifierName);
+//			}
+//			else {
+//				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
+//			}
+//		}
 		
 		
 		// - serviceguideline.assessorid
-		for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
-			String assessorName = this.getFullNameForPublicId(guideline.getAssessorId());
-			if (assessorName != null) {
-				guideline.setAssessorId(assessorName);
-			}
-			else {
-				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for guideline assessor " + guideline.getAssessorId());
-			}
-		}
+//		for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
+//			String assessorName = this.getFullNameForPublicId(guideline.getAssessorId());
+//			if (assessorName != null) {
+//				guideline.setAssessorId(assessorName);
+//			}
+//			else {
+//				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for guideline assessor " + guideline.getAssessorId());
+//			}
+//		}
 	}
 	
 	@Override
@@ -11666,5 +11745,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		} 
 		return null;
+	}
+
+	@Override
+	public List<String> getServiceControlTypeItems() {
+		List<String> l = new java.util.ArrayList<String>();
+		l.add("Administrative Control");
+		l.add("Technical Control");
+		l.add("No Control (Risk Acceptance)");
+		return l;
+	}
+
+	@Override
+	public List<String> getServiceControlImplementationTypeItems() {
+		List<String> l = new java.util.ArrayList<String>();
+		l.add("IAM");
+		l.add("Service Control Policy (SCP)");
+		l.add("SRD/SRR");
+		l.add("Service Level Guidance");
+		l.add("Institutional Policy (Rules of Behavior)");
+		l.add("Training");
+		return l;
 	}
 }

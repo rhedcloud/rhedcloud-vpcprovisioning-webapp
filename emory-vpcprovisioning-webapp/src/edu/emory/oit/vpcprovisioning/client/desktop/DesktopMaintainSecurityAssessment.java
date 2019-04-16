@@ -76,13 +76,13 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	// firewall rules and elasticip tabs
 	@UiField TabLayoutPanel assessmentTabPanel;
 	@UiField DeckLayoutPanel securityRisksContainer;
-	@UiField DeckLayoutPanel serviceControlsContainer;
-	@UiField DeckLayoutPanel serviceGuidelinesContainer;
+//	@UiField DeckLayoutPanel serviceControlsContainer;
+//	@UiField DeckLayoutPanel serviceGuidelinesContainer;
 	@UiField DeckLayoutPanel testPlanContainer;
 
 	private boolean firstSecurityRiskWidget = true;
-	private boolean firstServiceControlWidget = true;
-	private boolean firstServiceGuidelineWidget = true;
+//	private boolean firstServiceControlWidget = true;
+//	private boolean firstServiceGuidelineWidget = true;
 	private boolean firstTestPlanWidget = true;
 
 	@UiHandler("assessmentReportButton")
@@ -117,29 +117,29 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			securityRisksContainer.setAnimationDuration(500);
 			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SECURITY_RISK, presenter.getService(), presenter.getSecurityAssessment());
 			break;
+//		case 1:
+//			GWT.log("need to get Service Control content.");
+//			firstServiceControlWidget = true;
+//			serviceControlsContainer.clear();
+//			ListServiceControlView listView2 = presenter.getClientFactory().getListServiceControlView();
+//			MaintainServiceControlView maintainView2 = presenter.getClientFactory().getMaintainServiceControlView();
+//			serviceControlsContainer.add(listView2);
+//			serviceControlsContainer.add(maintainView2);
+//			serviceControlsContainer.setAnimationDuration(500);
+//			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE_CONTROL, presenter.getService(), presenter.getSecurityAssessment());
+//			break;
+//		case 2:
+//			GWT.log("need to get Service Guideline content.");
+//			firstServiceGuidelineWidget = true;
+//			serviceGuidelinesContainer.clear();
+//			ListServiceGuidelineView listView3 = presenter.getClientFactory().getListServiceGuidelineView();
+//			MaintainServiceGuidelineView maintainView3 = presenter.getClientFactory().getMaintainServiceGuidelineView();
+//			serviceGuidelinesContainer.add(listView3);
+//			serviceGuidelinesContainer.add(maintainView3);
+//			serviceGuidelinesContainer.setAnimationDuration(500);
+//			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE_GUIDELINE, presenter.getService(), presenter.getSecurityAssessment());
+//			break;
 		case 1:
-			GWT.log("need to get Service Control content.");
-			firstServiceControlWidget = true;
-			serviceControlsContainer.clear();
-			ListServiceControlView listView2 = presenter.getClientFactory().getListServiceControlView();
-			MaintainServiceControlView maintainView2 = presenter.getClientFactory().getMaintainServiceControlView();
-			serviceControlsContainer.add(listView2);
-			serviceControlsContainer.add(maintainView2);
-			serviceControlsContainer.setAnimationDuration(500);
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE_CONTROL, presenter.getService(), presenter.getSecurityAssessment());
-			break;
-		case 2:
-			GWT.log("need to get Service Guideline content.");
-			firstServiceGuidelineWidget = true;
-			serviceGuidelinesContainer.clear();
-			ListServiceGuidelineView listView3 = presenter.getClientFactory().getListServiceGuidelineView();
-			MaintainServiceGuidelineView maintainView3 = presenter.getClientFactory().getMaintainServiceGuidelineView();
-			serviceGuidelinesContainer.add(listView3);
-			serviceGuidelinesContainer.add(maintainView3);
-			serviceGuidelinesContainer.setAnimationDuration(500);
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_SERVICE_GUIDELINE, presenter.getService(), presenter.getSecurityAssessment());
-			break;
-		case 3:
 			GWT.log("need to get Service Test Plan content.");
 			firstTestPlanWidget = true;
 			testPlanContainer.clear();
@@ -429,7 +429,8 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 	}
 	@Override
 	public void setWidget(IsWidget w) {
-		if (w instanceof ListSecurityRiskPresenter || w instanceof MaintainSecurityRiskPresenter) {
+		if (w instanceof ListSecurityRiskPresenter || 
+			w instanceof MaintainSecurityRiskPresenter) {
 			GWT.log("Maintain Security Assessment, setWidget: Security Risk");
 			securityRisksContainer.setWidget(w);
 			// Do not animate the first time we show a widget.
@@ -440,27 +441,27 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			return;
 		}
 
-		if (w instanceof ListServiceControlPresenter || w instanceof MaintainServiceControlPresenter) {
-			GWT.log("Maintain Security Assessment, setWidget: Service Control");
-			serviceControlsContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstServiceControlWidget) {
-				firstServiceControlWidget = false;
-				serviceControlsContainer.animate(0);
-			}
-			return;
-		}
+//		if (w instanceof ListServiceControlPresenter || w instanceof MaintainServiceControlPresenter) {
+//			GWT.log("Maintain Security Assessment, setWidget: Service Control");
+//			serviceControlsContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstServiceControlWidget) {
+//				firstServiceControlWidget = false;
+//				serviceControlsContainer.animate(0);
+//			}
+//			return;
+//		}
 		
-		if (w instanceof ListServiceGuidelinePresenter || w instanceof MaintainServiceGuidelinePresenter) {
-			GWT.log("Maintain Security Assessment, setWidget: Service Guideline");
-			serviceGuidelinesContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstServiceGuidelineWidget) {
-				firstServiceGuidelineWidget = false;
-				serviceGuidelinesContainer.animate(0);
-			}
-			return;
-		}
+//		if (w instanceof ListServiceGuidelinePresenter || w instanceof MaintainServiceGuidelinePresenter) {
+//			GWT.log("Maintain Security Assessment, setWidget: Service Guideline");
+//			serviceGuidelinesContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstServiceGuidelineWidget) {
+//				firstServiceGuidelineWidget = false;
+//				serviceGuidelinesContainer.animate(0);
+//			}
+//			return;
+//		}
 		
 		if (w instanceof MaintainServiceTestPlanPresenter) {
 			GWT.log("Maintain Security Assessment, setWidget: Test Plan");

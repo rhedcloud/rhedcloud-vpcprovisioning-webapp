@@ -13,13 +13,11 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceStatisticPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityAssessmentSummaryQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
-import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPojo;
@@ -230,7 +228,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Risk Level</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
 									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Countermeasures</th>"
+									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Service Controls</th>"
 									+ "</tr>");
 							for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
 								sbView.append("<tr>" + 
@@ -240,7 +238,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getAssessorId() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(risk.getAssessmentDate()) + "</td>");
 								
-									if (risk.getCouterMeasures().size() > 0) {
+									if (risk.getServiceControls().size() > 0) {
 										// counter measures go here (nested table)
 										sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">"); 
 										sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
@@ -251,9 +249,9 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th>"
 												+ "</tr>");
 									
-										for (CounterMeasurePojo cm : risk.getCouterMeasures()) {
+										for (ServiceControlPojo cm : risk.getServiceControls()) {
 											sbView.append("<tr>" + 
-													"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getStatus() + "</td>" + 
+													"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getServiceControlName() + "</td>" + 
 													"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getDescription() + "</td>" + 
 													"<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getVerifier() + "</td>" +  
 													"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(cm.getVerificationDate()) + "</td>" +
@@ -263,7 +261,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 										sbView.append("</td>");
 									}
 									else {
-										sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">No Countermeasures documented.  NOTE:  These may be documented as Security Controls.</td>");
+										sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">No Service Controls documented.</td>");
 									}
 									// end counter measures
 									
@@ -276,56 +274,56 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 						}
 						
 						// security controls
-						sbView.append("<li><h3>Security Controls: " + assessment.getServiceControls().size() + "</h3></li>");
-						if (assessment.getServiceControls().size() > 0) {
-							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
-							sbView.append("<tr>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verifier</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th>"
-									+ "</tr>");
-							for (ServiceControlPojo control : assessment.getServiceControls()) {
-								sbView.append("<tr>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getServiceControlName() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getDescription() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getAssessorId() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(control.getAssessmentDate()) + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getVerifier() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(control.getVerificationDate()) + "</td>" + 
-									"</tr>");
-							}
-							sbView.append("</table>");
-						}
-						else {
-							sbView.append("<h4>No Security Controls Documented.  NOTE:  These may be documented as Security Risk Countermeasures.</h4>");
-						}
+//						sbView.append("<li><h3>Security Controls: " + assessment.getServiceControls().size() + "</h3></li>");
+//						if (assessment.getServiceControls().size() > 0) {
+//							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
+//							sbView.append("<tr>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verifier</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th>"
+//									+ "</tr>");
+//							for (ServiceControlPojo control : assessment.getServiceControls()) {
+//								sbView.append("<tr>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getServiceControlName() + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getDescription() + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getAssessorId() + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(control.getAssessmentDate()) + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + control.getVerifier() + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(control.getVerificationDate()) + "</td>" + 
+//									"</tr>");
+//							}
+//							sbView.append("</table>");
+//						}
+//						else {
+//							sbView.append("<h4>No Security Controls Documented.  NOTE:  These may be documented as Security Risk measures.</h4>");
+//						}
 						
 						// security guidelines
-						sbView.append("<li><h3>Service Guidelines: " + assessment.getServiceGuidelines().size() + "</h3></li>");
-						if (assessment.getServiceGuidelines().size() > 0) {
-							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
-							sbView.append("<tr>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
-									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
-									+ "</tr>");
-							for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
-								sbView.append("<tr>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getServiceGuidelineName() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getDescription() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getAssessorId() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(guideline.getAssessmentDate()) + "</td>" + 
-									"</tr>");
-							}
-							sbView.append("</table>");
-						}
-						else {
-							sbView.append("<h4>No Service Guidelines Documented</h4>");
-						}
+//						sbView.append("<li><h3>Service Guidelines: " + assessment.getServiceGuidelines().size() + "</h3></li>");
+//						if (assessment.getServiceGuidelines().size() > 0) {
+//							sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
+//							sbView.append("<tr>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Name</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessor</th>"
+//									+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Assessment Date</th>"
+//									+ "</tr>");
+//							for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
+//								sbView.append("<tr>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getServiceGuidelineName() + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getDescription() + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + guideline.getAssessorId() + "</td>" + 
+//									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(guideline.getAssessmentDate()) + "</td>" + 
+//									"</tr>");
+//							}
+//							sbView.append("</table>");
+//						}
+//						else {
+//							sbView.append("<h4>No Service Guidelines Documented</h4>");
+//						}
 
 						// test plan
 						sbView.append("<li><h3>Test Plan: " + ((assessment.getServiceTestPlan() != null) ? "Yes" : "No") + "</h3></li>");

@@ -59,7 +59,6 @@
 								ui:field="controlNameTB" debugId="controlNameTB" />
 						</g:customCell>
 					</g:row>
-					<!-- 
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">Control Type:</g:Label>
@@ -78,7 +77,29 @@
 								ui:field="implementationTypeLB" debugId="implementationTypeLB" />
 				    	</g:customCell>
 			    	</g:row>
-					 -->
+				    <g:row>
+				    	<g:customCell>
+							<g:Label/>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="urlsVP" height="100%">
+								<g:Label addStyleNames="{style.mediumLabel}">Add/Update/Remove Documentation URLs:</g:Label>
+								<g:HorizontalPanel ui:field="addUrlHP" spacing="16">
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:TextBox ui:field="urlTF" debugId="urlTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+									</g:cell>
+									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+										<g:Button ui:field="addUrlButton" debugId="addUrlButton"
+											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+									</g:cell>
+								</g:HorizontalPanel>
+								<g:VerticalPanel spacing="8">
+									<g:Label addStyleNames="{style.mediumLabel}">Existing Documentation URLs:</g:Label>
+									<g:FlexTable ui:field="urlTable" debugId="urlTable" cellSpacing="3" cellPadding="3"/>
+								</g:VerticalPanel>
+							</g:VerticalPanel>
+				    	</g:customCell>
+				    </g:row>
 					<g:row>
 						<g:customCell>
 							<g:Label addStyleNames="{style.label}">Description:</g:Label>

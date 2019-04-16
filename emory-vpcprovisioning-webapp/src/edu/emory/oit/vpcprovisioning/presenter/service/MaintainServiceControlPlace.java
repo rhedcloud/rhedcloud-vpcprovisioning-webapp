@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 
@@ -19,11 +20,11 @@ public class MaintainServiceControlPlace extends Place {
 
 		public MaintainServiceControlPlace getPlace(String token) {
 			if (token != null) {
-				return new MaintainServiceControlPlace(token, null, null, null);
+				return new MaintainServiceControlPlace(token, null, null, null, null);
 			}
 			else {
 				// If the ID cannot be parsed, assume we are creating a caseRecord.
-				return MaintainServiceControlPlace.getMaintainServiceControlPlace(null, null);
+				return MaintainServiceControlPlace.getMaintainServiceControlPlace(null, null, null);
 			}
 		}
 
@@ -46,8 +47,8 @@ public class MaintainServiceControlPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static MaintainServiceControlPlace createMaintainServiceControlPlace(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceControlPojo serviceControl) {
-		return new MaintainServiceControlPlace(serviceControl.getServiceControlId(), service, assessment, serviceControl);
+	public static MaintainServiceControlPlace createMaintainServiceControlPlace(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk, ServiceControlPojo serviceControl) {
+		return new MaintainServiceControlPlace(serviceControl.getServiceControlId(), service, assessment, risk, serviceControl);
 	}
 
 	/**
@@ -56,13 +57,14 @@ public class MaintainServiceControlPlace extends Place {
 	 * 
 	 * @return the place
 	 */
-	public static MaintainServiceControlPlace getMaintainServiceControlPlace(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
+	public static MaintainServiceControlPlace getMaintainServiceControlPlace(AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk) {
 		if (singleton == null) {
-			singleton = new MaintainServiceControlPlace(null, service, assessment, null);
+			singleton = new MaintainServiceControlPlace(null, service, assessment, risk, null);
 		}
 		return singleton;
 	}
 
+	private final SecurityRiskPojo risk;
 	private final ServiceSecurityAssessmentPojo assessment;
 	public ServiceSecurityAssessmentPojo getAssessment() {
 		return assessment;
@@ -83,11 +85,12 @@ public class MaintainServiceControlPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private MaintainServiceControlPlace(String serviceControlId, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceControlPojo serviceControl) {
+	private MaintainServiceControlPlace(String serviceControlId, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk, ServiceControlPojo serviceControl) {
 		this.serviceControlId = serviceControlId;
 		this.serviceControl = serviceControl;
 		this.service = service;
 		this.assessment = assessment;
+		this.risk = risk;
 	}
 
 	/**
@@ -97,5 +100,9 @@ public class MaintainServiceControlPlace extends Place {
 	 */
 	public ServiceControlPojo getServiceControl() {
 		return serviceControl;
+	}
+
+	public SecurityRiskPojo getRisk() {
+		return risk;
 	}
 }

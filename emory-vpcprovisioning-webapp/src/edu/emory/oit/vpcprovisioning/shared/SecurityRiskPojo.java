@@ -9,15 +9,16 @@ import com.google.gwt.view.client.ProvidesKey;
 @SuppressWarnings("serial")
 public class SecurityRiskPojo extends SharedObject implements IsSerializable, Comparable<SecurityRiskPojo> {
 	/*
-		SecurityRiskId, 
-		ServiceId, 
-		SequenceNumber, 
-		ServiceRiskName, 
-		RiskLevel, 
-		Description, 
-		AssessorId, 
-		AssessmentDatetime, 
-		Countermeasure*
+		<!ELEMENT SecurityRisk (
+			SecurityRiskId?, 
+			ServiceId, 
+			SequenceNumber, 
+			ServiceRiskName, 
+			RiskLevel, 
+			Description, 
+			AssessorId, 
+			AssessmentDatetime, 
+			ServiceControl*)>
 	 */
 
 	public static final ProvidesKey<SecurityRiskPojo> KEY_PROVIDER = new ProvidesKey<SecurityRiskPojo>() {
@@ -34,7 +35,7 @@ public class SecurityRiskPojo extends SharedObject implements IsSerializable, Co
 	String description;
 	String assessorId;
 	Date assessmentDate;
-	List<CounterMeasurePojo> couterMeasures = new java.util.ArrayList<CounterMeasurePojo>();
+	List<ServiceControlPojo> serviceControls = new java.util.ArrayList<ServiceControlPojo>();
 	
 	public SecurityRiskPojo() {
 		
@@ -104,12 +105,12 @@ public class SecurityRiskPojo extends SharedObject implements IsSerializable, Co
 		this.assessmentDate = assessmentDate;
 	}
 
-	public List<CounterMeasurePojo> getCouterMeasures() {
-		return couterMeasures;
+	public List<ServiceControlPojo> getServiceControls() {
+		return serviceControls;
 	}
 
-	public void setCouterMeasures(List<CounterMeasurePojo> couterMeasures) {
-		this.couterMeasures = couterMeasures;
+	public void setServiceControls(List<ServiceControlPojo> serviceControls) {
+		this.serviceControls = serviceControls;
 	}
 
 	@Override

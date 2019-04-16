@@ -34,10 +34,8 @@ import org.openeai.utils.config.AppConfigFactoryException;
 import org.openeai.utils.config.SimpleAppConfigFactory;
 
 import com.amazon.aws.moa.jmsobjects.services.v1_0.ServiceSecurityAssessment;
-import com.amazon.aws.moa.objects.resources.v1_0.Countermeasure;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceControl;
-import com.amazon.aws.moa.objects.resources.v1_0.ServiceGuideline;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceSecurityAssessmentQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceTest;
@@ -50,12 +48,10 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSTagPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.RpcException;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
-import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
@@ -478,49 +474,62 @@ public class SecurityAssessmentServlet extends HttpServlet {
 				rp.setDescription(risk.getDescription());
 				rp.setAssessorId(risk.getAssessorId());
 				rp.setAssessmentDate(this.toDateFromDatetime(risk.getAssessmentDatetime()));
-				if (risk.getCountermeasure() != null) {
-					for (Countermeasure cm : (List<Countermeasure>)risk.getCountermeasure()) {
-						CounterMeasurePojo cmp = new CounterMeasurePojo();
-						cmp.setSecurityRiskId(cm.getSecurityRiskId());
-						cmp.setStatus(cm.getStatus());
-						cmp.setDescription(cm.getDescription());
-						cmp.setVerifier(cm.getVerifier());
-						cmp.setVerificationDate(this.toDateFromDatetime(cm.getVerificationDatetime()));
-						risk.getCountermeasure().add(cmp);
+				if (risk.getServiceControl() != null) {
+					for (ServiceControl sc : (List<ServiceControl>)risk.getServiceControl()) {
+						ServiceControlPojo scp = new ServiceControlPojo();
+						scp.setServiceId(sc.getServiceId());
+						scp.setServiceControlId(sc.getServiceControlId());
+						scp.setSequenceNumber(this.toIntFromString(sc.getSequenceNumber()));
+						scp.setServiceControlName(sc.getServiceControlName());
+						scp.setDescription(sc.getDescription());
+						scp.setAssessorId(sc.getAssessorId());
+						scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
+						scp.setVerifier(sc.getVerifier());
+						scp.setImplementationType(sc.getImplementationType());
+						scp.setControlType(sc.getControlType());
+						if (sc.getDocumentationUrl() != null) {
+							for (String docUrl : (List<String>)sc.getDocumentationUrl()) {
+								scp.getDocumentationUrls().add(docUrl);
+							}
+						}
+						if (sc.getVerificationDatetime() != null) {
+							scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
+						}
+						rp.getServiceControls().add(scp);
 					}
 				}
 				pojo.getSecurityRisks().add(rp);
 			}
 		}
-		if (moa.getServiceControl() != null) {
-			for (ServiceControl sc : (List<ServiceControl>)moa.getServiceControl()) {
-				ServiceControlPojo scp = new ServiceControlPojo();
-				scp.setServiceId(sc.getServiceId());
-				scp.setServiceControlId(sc.getServiceControlId());
-				scp.setSequenceNumber(this.toIntFromString(sc.getSequenceNumber()));
-				scp.setServiceControlName(sc.getServiceControlName());
-				scp.setDescription(sc.getDescription());
-				scp.setAssessorId(sc.getAssessorId());
-				scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
-				scp.setVerifier(sc.getVerifier());
-				if (sc.getVerificationDatetime() != null) {
-					scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
-				}
-				pojo.getServiceControls().add(scp);
-			}
-		}
-		if (moa.getServiceGuideline() != null) {
-			for (ServiceGuideline sg : (List<ServiceGuideline>)moa.getServiceGuideline()) {
-				ServiceGuidelinePojo sgp = new ServiceGuidelinePojo();
-				sgp.setServiceId(sg.getServiceId());
-				sgp.setSequenceNumber(this.toIntFromString(sg.getSequenceNumber()));
-				sgp.setServiceGuidelineName(sg.getServiceGuidelineName());
-				sgp.setDescription(sg.getDescription());
-				sgp.setAssessorId(sg.getAssessorId());
-				sgp.setAssessmentDate(this.toDateFromDatetime(sg.getAssessmentDatetime()));
-				pojo.getServiceGuidelines().add(sgp);
-			}
-		}
+//		if (moa.getServiceControl() != null) {
+//			for (ServiceControl sc : (List<ServiceControl>)moa.getServiceControl()) {
+//				ServiceControlPojo scp = new ServiceControlPojo();
+//				scp.setServiceId(sc.getServiceId());
+//				scp.setServiceControlId(sc.getServiceControlId());
+//				scp.setSequenceNumber(this.toIntFromString(sc.getSequenceNumber()));
+//				scp.setServiceControlName(sc.getServiceControlName());
+//				scp.setDescription(sc.getDescription());
+//				scp.setAssessorId(sc.getAssessorId());
+//				scp.setAssessmentDate(this.toDateFromDatetime(sc.getAssessmentDatetime()));
+//				scp.setVerifier(sc.getVerifier());
+//				if (sc.getVerificationDatetime() != null) {
+//					scp.setVerificationDate(this.toDateFromDatetime(sc.getVerificationDatetime()));
+//				}
+//				pojo.getServiceControls().add(scp);
+//			}
+//		}
+//		if (moa.getServiceGuideline() != null) {
+//			for (ServiceGuideline sg : (List<ServiceGuideline>)moa.getServiceGuideline()) {
+//				ServiceGuidelinePojo sgp = new ServiceGuidelinePojo();
+//				sgp.setServiceId(sg.getServiceId());
+//				sgp.setSequenceNumber(this.toIntFromString(sg.getSequenceNumber()));
+//				sgp.setServiceGuidelineName(sg.getServiceGuidelineName());
+//				sgp.setDescription(sg.getDescription());
+//				sgp.setAssessorId(sg.getAssessorId());
+//				sgp.setAssessmentDate(this.toDateFromDatetime(sg.getAssessmentDatetime()));
+//				pojo.getServiceGuidelines().add(sgp);
+//			}
+//		}
 		if (moa.getServiceTestPlan() != null) {
 			ServiceTestPlan stpm = moa.getServiceTestPlan();
 			ServiceTestPlanPojo stpp = new ServiceTestPlanPojo();
@@ -543,7 +552,6 @@ public class SecurityAssessmentServlet extends HttpServlet {
 							if (stm.getServiceTestStep() != null) {
 								for (ServiceTestStep stsm : (List<ServiceTestStep>)stm.getServiceTestStep()) {
 									ServiceTestStepPojo stsp = new ServiceTestStepPojo();
-									stsp.setServiceTestId(stsm.getServiceTestId());
 									stsp.setServiceTestStepId(stsm.getServiceTestStepId());
 									stsp.setSequenceNumber(this.toIntFromString(stsm.getSequenceNumber()));
 									stsp.setDescription(stsm.getDescription());

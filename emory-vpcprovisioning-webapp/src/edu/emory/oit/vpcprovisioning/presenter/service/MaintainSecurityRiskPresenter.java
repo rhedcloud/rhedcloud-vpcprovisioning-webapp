@@ -12,12 +12,13 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
-import edu.emory.oit.vpcprovisioning.client.event.CounterMeasureListUpdateEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ServiceControlListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
+import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
@@ -33,7 +34,8 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 	private String securityRiskId;
 	private DirectoryPersonPojo directoryPerson;
 	private MaintainSecurityRiskView view;
-	private CounterMeasurePojo selectedCounterMeasure;
+//	private CounterMeasurePojo selectedCounterMeasure;
+	private ServiceControlPojo selectedServiceControl;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -107,7 +109,7 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
-				getView().setCounterMeasures(securityRisk.getCouterMeasures());
+//				getView().setServiceControls(securityRisk.getServiceControls());
 				
 				AsyncCallback<List<String>> rl_callback = new AsyncCallback<List<String>>() {
 					@Override
@@ -121,44 +123,76 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 					}
 
 					@Override
-					public void onSuccess(List<String> result) {
-						getView().setRiskLevelItems(result);
-						getView().initPage();
-						getView().setFieldViolations(false);
-						getView().setInitialFocus();
+					public void onSuccess(final List<String> riskLevelItems) {
 						
-						// apply authorization mask
-						if (user.isCentralAdmin()) {
-							getView().applyCentralAdminMask();
-						}
-						else {
-							getView().applyAWSAccountAuditorMask();
-						}
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
+						AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assessmentCB = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+							@Override
+							public void onFailure(Throwable caught) {
+							}
+
+							@Override
+							public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+								assessmentLoop: for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
+									if (ssa.getServiceSecurityAssessmentId().equalsIgnoreCase(assessment.getServiceSecurityAssessmentId()) ) {
+										assessment = ssa;
+										break assessmentLoop;
+									}
+								}
+								riskLoop: for (SecurityRiskPojo sr : assessment.getSecurityRisks()) {
+									if (sr.getSequenceNumber() == securityRisk.getSequenceNumber()) {
+										securityRisk = sr;
+										securityRiskId = sr.getSecurityRiskId();
+										break riskLoop;
+									}
+								}
+								isEditing = true;
+								getView().setRiskLevelItems(riskLevelItems);
+								if (securityRisk != null) {
+									GWT.log("[MaintainSecurityRiskPresenter] there are " + 
+											securityRisk.getServiceControls().size() + 
+											" service controls associate to the risk.");
+								}
+								getView().initPage();
+								getView().setFieldViolations(false);
+								getView().setInitialFocus();
+								
+								// apply authorization mask
+								if (user.isCentralAdmin()) {
+									getView().applyCentralAdminMask();
+								}
+								else {
+									getView().applyAWSAccountAuditorMask();
+								}
+								getView().hidePleaseWaitDialog();
+								getView().hidePleaseWaitPanel();
+							}
+						};
+						ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+						filter.setAssessmentId(assessment.getServiceSecurityAssessmentId());
+						VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, assessmentCB);
 					}
 				};
 				// risk level types
 				VpcProvisioningService.Util.getInstance().getRiskLevelTypeItems(rl_callback);
 
-				AsyncCallback<List<String>> cm_status_callback = new AsyncCallback<List<String>>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-						GWT.log("Exception retrieving counter measure statuses", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving counter measure statuses.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(List<String> result) {
-						getView().setCounterMeasureStatusItems(result);
-					}
-				};
-				// counter measure status types
-				VpcProvisioningService.Util.getInstance().getCounterMeasureStatusTypeItems(cm_status_callback);
+//				AsyncCallback<List<String>> cm_status_callback = new AsyncCallback<List<String>>() {
+//					@Override
+//					public void onFailure(Throwable caught) {
+//						getView().hidePleaseWaitDialog();
+//						getView().hidePleaseWaitPanel();
+//						GWT.log("Exception retrieving counter measure statuses", caught);
+//						getView().showMessageToUser("There was an exception on the " +
+//								"server retrieving counter measure statuses.  Message " +
+//								"from server is: " + caught.getMessage());
+//					}
+//
+//					@Override
+//					public void onSuccess(List<String> result) {
+//						getView().setServiceControlStatusItems(result);
+//					}
+//				};
+//				// counter measure status types
+//				VpcProvisioningService.Util.getInstance().getCounterMeasureStatusTypeItems(cm_status_callback);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
@@ -368,106 +402,106 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 		return directoryPerson;
 	}
 
-	@Override
-	public void deleteCounterMeasure(CounterMeasurePojo selected) {
-		selectedCounterMeasure = selected;
-		VpcpConfirm.confirm(
-				MaintainSecurityRiskPresenter.this, 
-			"Confirm Delete Counter Measure", 
-			"Delete the Counter Measure " + selectedCounterMeasure.getDescription() + "?");
-	}
+//	@Override
+//	public void deleteServiceControl(ServiceControlPojo selected) {
+//		selectedServiceControl = selected;
+//		VpcpConfirm.confirm(
+//				MaintainSecurityRiskPresenter.this, 
+//			"Confirm Delete Service Control", 
+//			"Delete the Service Control " + selectedServiceControl.getDescription() + "?");
+//	}
+//
+//	@Override
+//	public void deleteServiceControls(List<ServiceControlPojo> selected) {
+//		
+//		
+//	}
+//
+//	@Override
+//	public void createServiceControl() {
+//		if (getSecurityRiskId() == null) {
+//			// need to save the assessment first
+//			// then need to re-query for the assessment i think
+//			getSecurityAssessment().getSecurityRisks().add(getSecurityRisk());
+//			getView().showPleaseWaitDialog("Saving assessment...");
+//			List<Widget> fields = getView().getMissingRequiredFields();
+//			if (fields != null && fields.size() > 0) {
+//				getView().setFieldViolations(true);
+//				getView().applyStyleToMissingFields(fields);
+//				getView().hidePleaseWaitDialog();
+//				getView().hidePleaseWaitPanel();
+//				getView().showMessageToUser("Please provide data for the required fields.");
+//				return;
+//			}
+//			else {
+//				getView().setFieldViolations(false);
+//				getView().resetFieldStyles();
+//			}
+//			AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					getView().hidePleaseWaitDialog();
+//					getView().hidePleaseWaitPanel();
+//					GWT.log("Exception saving the Security Assessment", caught);
+//					getView().showMessageToUser("There was an exception on the " +
+//							"server saving the Security Assessment.  Message " +
+//							"from server is: " + caught.getMessage());
+//					assessment.getSecurityRisks().remove(getSecurityRisk());
+//				}
+//
+//				@Override
+//				public void onSuccess(ServiceSecurityAssessmentPojo result) {
+//					// now, re-query for the assessment
+//					// but how will we know which security risk to use once we get it back, sequence?
+//					AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assmtnCB = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+//						@Override
+//						public void onFailure(Throwable caught) {
+//							
+//							
+//						}
+//
+//						@Override
+//						public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+//							setSecurityAssessment(result.getResults().get(0));
+//							srpLoop: for (SecurityRiskPojo srp : getSecurityAssessment().getSecurityRisks()) {
+//								if (getSecurityRisk().getSequenceNumber() == srp.getSequenceNumber()) {
+//									setSecurityRisk(srp);
+//									setSecurityRiskId(srp.getSecurityRiskId());
+//									break srpLoop;
+//								}
+//							}
+//							getView().hidePleaseWaitDialog();
+//							getView().hidePleaseWaitPanel();
+//							CounterMeasurePojo req = new CounterMeasurePojo();
+//							req.setSecurityRiskId(getSecurityRiskId());
+////							getView().showCounterMeasureMaintenanceDialog(false, req);
+//						}
+//					};
+//					ServiceSecurityAssessmentQueryFilterPojo assmtnFilter = new ServiceSecurityAssessmentQueryFilterPojo();
+//					assmtnFilter.setAssessmentId(getSecurityAssessment().getServiceSecurityAssessmentId());
+//					VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(assmtnFilter, assmtnCB);
+//				}
+//			};
+//			// it's always an update
+//			VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
+//		}
+//		else {
+//			CounterMeasurePojo req = new CounterMeasurePojo();
+//			req.setSecurityRiskId(getSecurityRiskId());
+////			getView().showCounterMeasureMaintenanceDialog(false, req);
+//		}
+//	}
 
-	@Override
-	public void deleteCounterMeasures(List<CounterMeasurePojo> selected) {
-		
-		
-	}
-
-	@Override
-	public void createCounterMeasure() {
-		if (getSecurityRiskId() == null) {
-			// need to save the assessment first
-			// then need to re-query for the assessment i think
-			getSecurityAssessment().getSecurityRisks().add(getSecurityRisk());
-			getView().showPleaseWaitDialog("Saving assessment...");
-			List<Widget> fields = getView().getMissingRequiredFields();
-			if (fields != null && fields.size() > 0) {
-				getView().setFieldViolations(true);
-				getView().applyStyleToMissingFields(fields);
-				getView().hidePleaseWaitDialog();
-				getView().hidePleaseWaitPanel();
-				getView().showMessageToUser("Please provide data for the required fields.");
-				return;
-			}
-			else {
-				getView().setFieldViolations(false);
-				getView().resetFieldStyles();
-			}
-			AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
-				@Override
-				public void onFailure(Throwable caught) {
-					getView().hidePleaseWaitDialog();
-					getView().hidePleaseWaitPanel();
-					GWT.log("Exception saving the Security Assessment", caught);
-					getView().showMessageToUser("There was an exception on the " +
-							"server saving the Security Assessment.  Message " +
-							"from server is: " + caught.getMessage());
-					assessment.getSecurityRisks().remove(getSecurityRisk());
-				}
-
-				@Override
-				public void onSuccess(ServiceSecurityAssessmentPojo result) {
-					// now, re-query for the assessment
-					// but how will we know which security risk to use once we get it back, sequence?
-					AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assmtnCB = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
-						@Override
-						public void onFailure(Throwable caught) {
-							
-							
-						}
-
-						@Override
-						public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
-							setSecurityAssessment(result.getResults().get(0));
-							srpLoop: for (SecurityRiskPojo srp : getSecurityAssessment().getSecurityRisks()) {
-								if (getSecurityRisk().getSequenceNumber() == srp.getSequenceNumber()) {
-									setSecurityRisk(srp);
-									setSecurityRiskId(srp.getSecurityRiskId());
-									break srpLoop;
-								}
-							}
-							getView().hidePleaseWaitDialog();
-							getView().hidePleaseWaitPanel();
-							CounterMeasurePojo req = new CounterMeasurePojo();
-							req.setSecurityRiskId(getSecurityRiskId());
-							getView().showCounterMeasureMaintenanceDialog(false, req);
-						}
-					};
-					ServiceSecurityAssessmentQueryFilterPojo assmtnFilter = new ServiceSecurityAssessmentQueryFilterPojo();
-					assmtnFilter.setAssessmentId(getSecurityAssessment().getServiceSecurityAssessmentId());
-					VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(assmtnFilter, assmtnCB);
-				}
-			};
-			// it's always an update
-			VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
-		}
-		else {
-			CounterMeasurePojo req = new CounterMeasurePojo();
-			req.setSecurityRiskId(getSecurityRiskId());
-			getView().showCounterMeasureMaintenanceDialog(false, req);
-		}
-	}
-
-	@Override
-	public void maintainCounterMeasure(CounterMeasurePojo selected) {
-		selectedCounterMeasure = selected;
-		getView().showCounterMeasureMaintenanceDialog(true, selected);
-	}
+//	@Override
+//	public void maintainServiceControl(ServiceControlPojo selected) {
+//		selectedServiceControl = selected;
+//		getView().showCounterMeasureMaintenanceDialog(true, selected);
+//	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		securityRisk.getCouterMeasures().remove(selectedCounterMeasure);
-		refreshCounterMeasureList(userLoggedIn);
+		securityRisk.getServiceControls().remove(selectedServiceControl);
+//		refreshServiceControlList(userLoggedIn);
 		// save the assessment
 		// TODO: need to see if the risk is already in the list and if so, update it (remove/add)
 		// otherwise, just add it
@@ -488,24 +522,105 @@ public class MaintainSecurityRiskPresenter extends PresenterBase implements Main
 
 	@Override
 	public void vpcpConfirmCancel() {
-		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Counter Measure " + 
-				selectedCounterMeasure.getDescription() + " was not deleted.");
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Service Control " + 
+				selectedServiceControl.getDescription() + " was not deleted.");
 	}
 
-	@Override
-	public void refreshCounterMeasureList(UserAccountPojo user) {
-		if (securityRisk != null) {
-			setCounterMeasureList(this.securityRisk.getCouterMeasures());
-		}
-	}
-	private void setCounterMeasureList(List<CounterMeasurePojo> counterMeasures) {
-		getView().setCounterMeasures(counterMeasures);
-		if (eventBus != null) {
-			eventBus.fireEventFromSource(new CounterMeasureListUpdateEvent(counterMeasures), this);
-		}
-	}
+//	@Override
+//	public void refreshServiceControlList(UserAccountPojo user) {
+//		if (securityRisk != null) {
+//			setServiceControlList(this.securityRisk.getServiceControls());
+//		}
+//	}
+//	private void setServiceControlList(List<ServiceControlPojo> serviceControls) {
+//		getView().setServiceControls(serviceControls);
+//		if (eventBus != null) {
+//			eventBus.fireEventFromSource(new ServiceControlListUpdateEvent(serviceControls), this);
+//		}
+//	}
 
 	public void setSecurityRisk(SecurityRiskPojo securityRisk) {
 		this.securityRisk = securityRisk;
+	}
+
+	@Override
+	public void saveAssessmentAndMaintainControl(final ServiceControlPojo control) {
+		getView().showPleaseWaitDialog("Saving assessment...");
+		List<Widget> fields = getView().getMissingRequiredFields();
+		if (fields != null && fields.size() > 0) {
+			getView().setFieldViolations(true);
+			getView().applyStyleToMissingFields(fields);
+			getView().hidePleaseWaitDialog();
+			getView().hidePleaseWaitPanel();
+			getView().showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			getView().setFieldViolations(false);
+			getView().resetFieldStyles();
+		}
+		AsyncCallback<ServiceSecurityAssessmentPojo> callback = new AsyncCallback<ServiceSecurityAssessmentPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				GWT.log("Exception saving the Security Assessment", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the Security Assessment.  Message " +
+						"from server is: " + caught.getMessage());
+				assessment.getSecurityRisks().remove(getSecurityRisk());
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+			}
+
+			@Override
+			public void onSuccess(ServiceSecurityAssessmentPojo result) {
+				AsyncCallback<ServiceSecurityAssessmentQueryResultPojo> assessmentCB = new AsyncCallback<ServiceSecurityAssessmentQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						getView().hidePleaseWaitDialog();
+					}
+
+					@Override
+					public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
+						assessmentLoop: for (ServiceSecurityAssessmentPojo ssa : result.getResults()) {
+							if (ssa.getServiceSecurityAssessmentId().equalsIgnoreCase(assessment.getServiceSecurityAssessmentId()) ) {
+								assessment = ssa;
+								break assessmentLoop;
+							}
+						}
+						riskLoop: for (SecurityRiskPojo sr : assessment.getSecurityRisks()) {
+							if (sr.getSequenceNumber() == securityRisk.getSequenceNumber()) {
+								securityRisk = sr;
+								securityRiskId = sr.getSecurityRiskId();
+								break riskLoop;
+							}
+						}
+						getView().hidePleaseWaitDialog();
+						if (control == null) {
+							// create control
+							ActionEvent.fire(getEventBus(), ActionNames.CREATE_SERVICE_CONTROL, true, getService(), getSecurityAssessment(), getSecurityRisk());
+						}
+						else {
+							// update control
+							ActionEvent.fire(getEventBus(), ActionNames.MAINTAIN_SERVICE_CONTROL, true, getService(), getSecurityAssessment(), getSecurityRisk(), control);
+						}
+					}
+				};
+				getView().hidePleaseWaitDialog();
+				getView().showPleaseWaitDialog("Retrieving Risk details...");
+				ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
+				filter.setAssessmentId(assessment.getServiceSecurityAssessmentId());
+				VpcProvisioningService.Util.getInstance().getSecurityAssessmentsForFilter(filter, assessmentCB);
+			}
+		};
+		if (!isEditing) {
+			getSecurityRisk().setServiceId(service.getServiceId());
+			this.assessment.getSecurityRisks().add(getSecurityRisk());
+		}
+		else {
+			// TODO: have to find the security risk, remove it and then re-add this one to the list
+		}
+		// it's always an update
+		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
 	}
 }

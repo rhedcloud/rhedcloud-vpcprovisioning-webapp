@@ -724,7 +724,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				getView().hidWaitForNotificationsDialog();
 			}
 		};
-		getView().showWaitForNotificationsDialog("Retreiving Account Notifications...");
+		getView().showWaitForNotificationsDialog("Retreiving Account Notifications (potential long running task)...");
 		// get account notifications for this account
 		if (filter == null) {
 			filter = new AccountNotificationQueryFilterPojo();
@@ -792,7 +792,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		filter.setFuzzyFilter(true);
 		filter.setSubject(subject);
 		filter.setUseQueryLanguage(true);
-		filter.setMaxRows(200);
 		this.refreshAccountNotificationList(userLoggedIn);
 	}
 
@@ -804,7 +803,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		filter.setFuzzyFilter(true);
 		filter.setReferenceId(referencId);
 		filter.setUseQueryLanguage(true);
-		filter.setMaxRows(200);
 		this.refreshAccountNotificationList(userLoggedIn);
 	}
 

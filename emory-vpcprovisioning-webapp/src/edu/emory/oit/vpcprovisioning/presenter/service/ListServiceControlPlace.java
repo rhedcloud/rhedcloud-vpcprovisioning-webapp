@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 
 public class ListServiceControlPlace extends Place {
@@ -26,6 +27,7 @@ public class ListServiceControlPlace extends Place {
 
 	private final boolean listStale;
 	ServiceSecurityAssessmentPojo assessment;
+	SecurityRiskPojo risk;
 	AWSServicePojo service;
 
 	/**
@@ -60,5 +62,13 @@ public class ListServiceControlPlace extends Place {
 
 	public void setService(AWSServicePojo service) {
 		this.service = service;
+	}
+
+	public SecurityRiskPojo getRisk() {
+		return risk;
+	}
+
+	public void setRisk(SecurityRiskPojo risk) {
+		this.risk = risk;
 	}
 }

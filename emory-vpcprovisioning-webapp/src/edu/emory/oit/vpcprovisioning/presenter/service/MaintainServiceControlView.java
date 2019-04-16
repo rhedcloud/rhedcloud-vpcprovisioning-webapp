@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.presenter.service;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -9,6 +11,7 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -36,6 +39,9 @@ public interface MaintainServiceControlView extends Editor<ServiceControlPojo>, 
 		public DirectoryPersonPojo getAssessorDirectoryPerson();
 		public void setVerifierDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getVerifierDirectoryPerson();
+		public void setRisk(SecurityRiskPojo risk);
+		public SecurityRiskPojo getRisk();
+		public void setSelectedUrl(String url);
 	}
 
 	/**
@@ -63,4 +69,6 @@ public interface MaintainServiceControlView extends Editor<ServiceControlPojo>, 
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
+	void setServiceControlTypeItems(List<String> riskLevels);
+	void setServiceControlImplementationTypeItems(List<String> riskLevels);
 }

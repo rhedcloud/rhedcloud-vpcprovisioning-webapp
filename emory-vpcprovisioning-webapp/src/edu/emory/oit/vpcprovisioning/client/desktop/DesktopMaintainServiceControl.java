@@ -5,19 +5,27 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -38,7 +46,8 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 	PopupPanel actionsPopup = new PopupPanel(true);
 	private final DirectoryPersonRpcSuggestOracle assessorSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	private final DirectoryPersonRpcSuggestOracle verifierSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
-
+	List<String> controlTypeItems;
+	List<String> implementationTypeItems;
 
 	private static DesktopMaintainServiceControlUiBinder uiBinder = GWT
 			.create(DesktopMaintainServiceControlUiBinder.class);
@@ -61,6 +70,130 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 	@UiField DateBox assessmentDB;
 	@UiField(provided=true) SuggestBox verifierLookupSB = new SuggestBox(verifierSuggestions, new TextBox());
 	@UiField DateBox verificationDB;
+	@UiField ListBox controlTypeLB;
+	@UiField ListBox implementationTypeLB;
+
+	// Documenation URLs associated to this service control
+	@UiField VerticalPanel urlsVP;
+	@UiField TextBox urlTF;
+	@UiField Button addUrlButton;
+	@UiField FlexTable urlTable;
+
+	@UiHandler ("addUrlButton")
+	void addElasticIpButtonClick(ClickEvent e) {
+		urlTF.setEnabled(true);
+		if (addUrlButton.getText().equalsIgnoreCase("Add")) {
+			addUrl(urlTF.getText());
+		}
+		else {
+			// update existing url
+//			PropertyPojo property = createPropertyFromFormData();
+//			presenter.updateProperty(property);
+//			initializeAccountPropertiesPanel();
+		}
+		urlTF.setText("");
+	}
+	
+	private void initializeDocumentationUrlPanel() {
+		addUrlButton.setText("Add");
+		urlTF.setEnabled(true);
+		urlTable.removeAllRows();
+		for (String url : presenter.getServiceControl().getDocumentationUrls()) {
+			this.addUrlToPanel(url);
+		}
+	}
+
+	private void addUrlToPanel(final String url) {
+		final int numRows = urlTable.getRowCount();
+		
+		final Anchor docUrlAnchor = new Anchor(url);
+		docUrlAnchor.addStyleName("emailLabel");
+		docUrlAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.open(url, "_blank", "");
+			}
+		});
+
+//		final PushButton editButton = new PushButton();
+//		editButton.setTitle("Edit this URL.");
+//		Image editImage = new Image("images/edit_icon.png");
+//		editImage.setWidth("30px");
+//		editImage.setHeight("30px");
+//		editButton.getUpFace().setImage(editImage);
+//		if (this.userLoggedIn.isCentralAdmin()) {
+//			editButton.setEnabled(true);
+//		}
+//		else {
+//			editButton.setEnabled(false);
+//		}
+//		editButton.addStyleName("glowing-border");
+//		editButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				presenter.setSelectedUrl(url);
+//				urlTF.setText(url);
+//				urlTF.setEnabled(false);
+//				addUrlButton.setText("Update");
+//				Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+//			        public void execute () {
+//			        	urlTF.setFocus(true);
+//			        }
+//			    });
+//			}
+//		});
+		
+		final PushButton removeButton = new PushButton();
+		removeButton.setTitle("Remove this URL.");
+		Image removeImage = new Image("images/delete_icon.png");
+		removeImage.setWidth("30px");
+		removeImage.setHeight("30px");
+		removeButton.getUpFace().setImage(removeImage);
+		// disable buttons if userLoggedIn is NOT a central admin
+		if (this.userLoggedIn.isCentralAdmin()) {
+			removeButton.setEnabled(true);
+		}
+		else {
+			removeButton.setEnabled(false);
+		}
+		removeButton.addStyleName("glowing-border");
+		removeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				presenter.getServiceControl().getDocumentationUrls().remove(url);
+				initPage();
+			}
+		});
+		
+		urlTable.setWidget(numRows, 0, docUrlAnchor);
+//		urlTable.setWidget(numRows, 1, editButton);
+		urlTable.setWidget(numRows, 1, removeButton);
+	}
+
+	private void addUrl(String url) {
+		List<Widget> fields = getMissingUrlFields();
+		if (fields != null && fields.size() > 0) {
+			setFieldViolations(true);
+			applyStyleToMissingFields(fields);
+			showMessageToUser("Please provide data for the required fields.");
+			return;
+		}
+		else {
+			setFieldViolations(false);
+			resetFieldStyles();
+		}
+		presenter.getServiceControl().getDocumentationUrls().add(url);
+		addUrlToPanel(url);
+		this.resetFieldStyles();
+	}
+
+	private List<Widget> getMissingUrlFields() {
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		if (urlTF.getText() == null || urlTF.getText().length() == 0) {
+			fields.add(urlTF);
+		}
+		return fields;
+	}
 
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
@@ -69,12 +202,18 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 			presenter.saveAssessment();
 		}
 		else {
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
+			// TODO: need to go to back to the maintain security risk view and refresh the service
+			// control list.
+			// so, close this window and tell the security risk view to refresh that list
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK, false, presenter.getService(), presenter.getSecurityAssessment(), presenter.getRisk());
 		}
 	}
 	@UiHandler ("cancelButton")
 	void cancelButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), presenter.getSecurityAssessment());
+		// TODO: need to go to back to the maintain security risk view and refresh the service
+		// control list.
+		// so, close this window and tell the security risk view to refresh that list
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK, false, presenter.getService(), presenter.getSecurityAssessment(), presenter.getRisk());
 	}
 	private void populateServiceControlWithFormData() {
 		// populate/save service
@@ -93,6 +232,8 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		if (verificationDB.getValue() != null) {
 			presenter.getServiceControl().setVerificationDate(verificationDB.getValue());
 		}
+		presenter.getServiceControl().setControlType(controlTypeLB.getSelectedValue());
+		presenter.getServiceControl().setImplementationType(implementationTypeLB.getSelectedValue());
 	}
 
 	private void registerHandlers() {
@@ -154,6 +295,10 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		assessmentDB.setEnabled(true);
 		verifierLookupSB.setEnabled(true);
 		verificationDB.setEnabled(true);
+		implementationTypeLB.setEnabled(true);
+		controlTypeLB.setEnabled(true);
+		urlTF.setEnabled(true);
+		addUrlButton.setEnabled(true);
 	}
 
 	@Override
@@ -166,6 +311,10 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		assessmentDB.setEnabled(false);
 		verifierLookupSB.setEnabled(false);
 		verificationDB.setEnabled(false);
+		implementationTypeLB.setEnabled(false);
+		controlTypeLB.setEnabled(false);
+		urlTF.setEnabled(false);
+		addUrlButton.setEnabled(false);
 	}
 
 	@Override
@@ -178,6 +327,10 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		assessmentDB.setEnabled(false);
 		verifierLookupSB.setEnabled(false);
 		verificationDB.setEnabled(false);
+		implementationTypeLB.setEnabled(false);
+		controlTypeLB.setEnabled(false);
+		urlTF.setEnabled(false);
+		addUrlButton.setEnabled(false);
 	}
 
 	@Override
@@ -201,6 +354,12 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		if (control.getAssessmentDate() == null) {
 			fields.add(assessmentDB);
 		}
+		if (control.getControlType() == null || control.getControlType().length() == 0) {
+			fields.add(controlTypeLB);
+		}
+		if (control.getImplementationType() == null || control.getImplementationType().length() == 0) {
+			fields.add(implementationTypeLB);
+		}
 		return fields;
 	}
 
@@ -211,6 +370,8 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		fields.add(controlDescriptionTA);
 		fields.add(assessorLookupSB);
 		fields.add(assessmentDB);
+		fields.add(controlTypeLB);
+		fields.add(implementationTypeLB);
 		this.resetFieldStyles(fields);
 	}
 
@@ -289,6 +450,8 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 		}
 		GWT.log("service name from presenter is: " + presenter.getService().getAwsServiceName());
 		serviceNameTB.setText(presenter.getService().getAwsServiceName());
+		// populate documenation url panel
+		initializeDocumentationUrlPanel();
 	}
 
 	@Override
@@ -310,6 +473,46 @@ public class DesktopMaintainServiceControl extends ViewImplBase implements Maint
 	public void applyNetworkAdminMask() {
 		
 		
+	}
+	@Override
+	public void setServiceControlTypeItems(List<String> controlTypes) {
+		this.controlTypeItems = controlTypes;
+		controlTypeLB.clear();
+		controlTypeLB.addItem("-- Select --", "");
+		if (controlTypeItems != null) {
+			int i=1;
+			for (String type : controlTypeItems) {
+				controlTypeLB.addItem(type, type);
+				if (presenter.getServiceControl() != null) {
+					if (presenter.getServiceControl().getControlType() != null) {
+						if (presenter.getServiceControl().getControlType().equals(type)) {
+							controlTypeLB.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
+		}
+	}
+	@Override
+	public void setServiceControlImplementationTypeItems(List<String> implTypes) {
+		this.implementationTypeItems = implTypes;
+		implementationTypeLB.clear();
+		implementationTypeLB.addItem("-- Select --", "");
+		if (implementationTypeItems != null) {
+			int i=1;
+			for (String type : implementationTypeItems) {
+				implementationTypeLB.addItem(type, type);
+				if (presenter.getServiceControl() != null) {
+					if (presenter.getServiceControl().getImplementationType() != null) {
+						if (presenter.getServiceControl().getImplementationType().equals(type)) {
+							implementationTypeLB.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
+		}
 	}
 
 

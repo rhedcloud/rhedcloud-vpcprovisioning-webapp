@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.ServiceControlListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView.Presenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
@@ -35,6 +36,8 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	private AWSServicePojo service;
 	private UserAccountPojo userLoggedIn;
 	private ServiceControlPojo selectedServiceControl;
+	private SecurityRiskPojo risk;
+	private edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView.Presenter parentPresenter;
 	
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -46,11 +49,12 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	 */
 	//	  private Timer sessionTimer;
 
-	public ListServiceControlPresenter(ClientFactory clientFactory, boolean clearList, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
+	public ListServiceControlPresenter(ClientFactory clientFactory, boolean clearList, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
 		this.service = service;
 		this.assessment = assessment;
+		this.risk = risk;
 		getView().setPresenter(this);
 	}
 
@@ -61,7 +65,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	 * @param place configuration for this activity
 	 */
 	public ListServiceControlPresenter(ClientFactory clientFactory, ListServiceControlPlace place) {
-		this(clientFactory, place.isListStale(), place.getService(), place.getAssessment());
+		this(clientFactory, place.isListStale(), place.getService(), place.getAssessment(), place.getRisk());
 	}
 
 	private ListServiceControlView getView() {
@@ -122,7 +126,7 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	 * Refresh the CIDR list.
 	 */
 	private void refreshList(final UserAccountPojo user) {
-		setServiceControlList(assessment.getServiceControls());
+		setServiceControlList(risk.getServiceControls());
         getView().hidePleaseWaitDialog();
 	}
 
@@ -211,10 +215,10 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 	@Override
 	public void vpcpConfirmOkay() {
 		getView().showPleaseWaitDialog("Deleting service control " + selectedServiceControl.getServiceControlName() + "...");
-		assessment.getServiceControls().remove(selectedServiceControl);
+		risk.getServiceControls().remove(selectedServiceControl);
 		// re-sequence controls
 		int i=1;
-		for (ServiceControlPojo pojo : assessment.getServiceControls()) {
+		for (ServiceControlPojo pojo : risk.getServiceControls()) {
 			pojo.setSequenceNumber(i);
 			i++;
 		}
@@ -248,4 +252,23 @@ public class ListServiceControlPresenter extends PresenterBase implements ListSe
 		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Service Control " + 
 				selectedServiceControl.getServiceControlName() + " was not deleted.");
 	}
+
+	public SecurityRiskPojo getRisk() {
+		return risk;
+	}
+
+	public void setRisk(SecurityRiskPojo risk) {
+		this.risk = risk;
+	}
+
+	@Override
+	public void setParentPresenter(Presenter parent) {
+		this.parentPresenter = parent;
+	}
+
+	@Override
+	public Presenter getParentPresenter() {
+		return this.parentPresenter;
+	}
+
 }

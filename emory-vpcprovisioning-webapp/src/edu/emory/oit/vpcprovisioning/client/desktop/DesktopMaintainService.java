@@ -879,19 +879,24 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 
 			@Override
 			public String getValue(ServiceSecurityAssessmentPojo object) {
-				StringBuffer controls = new StringBuffer();
-				int cntr = 1;
-				if (object.getServiceControls().size() > 0) {
-					for (ServiceControlPojo scp : object.getServiceControls()) {
-						if (cntr == object.getServiceControls().size()) {
-							controls.append(scp.getServiceControlName());
-						}
-						else {
-							cntr++;
-							controls.append(scp.getServiceControlName() + "\n");
-						}
+//				StringBuffer controls = new StringBuffer();
+//				int cntr = 1;
+//				if (object.getServiceControls().size() > 0) {
+//					for (ServiceControlPojo scp : object.getServiceControls()) {
+//						if (cntr == object.getServiceControls().size()) {
+//							controls.append(scp.getServiceControlName());
+//						}
+//						else {
+//							cntr++;
+//							controls.append(scp.getServiceControlName() + "\n");
+//						}
+//					}
+//					return controls.toString();
+//				}
+				for (SecurityRiskPojo risk : object.getSecurityRisks()) {
+					if (risk.getServiceControls().size() > 0) {
+						return "Service Controls are in place";
 					}
-					return controls.toString();
 				}
 				return "No Controls Defined";
 			}
@@ -900,30 +905,30 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		assessmentListTable.addColumn(controlsColumns, "Security Controls");
 		
 		// summary about guidelines
-		Column<ServiceSecurityAssessmentPojo, String> guidelineColumn = 
-				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
-
-			@Override
-			public String getValue(ServiceSecurityAssessmentPojo object) {
-				StringBuffer guidelines= new StringBuffer();
-				int cntr = 1;
-				if (object.getServiceGuidelines().size() > 0) {
-					for (ServiceGuidelinePojo sgp : object.getServiceGuidelines()) {
-						if (cntr == object.getServiceGuidelines().size()) {
-							guidelines.append(sgp.getServiceGuidelineName());
-						}
-						else {
-							cntr++;
-							guidelines.append(sgp.getServiceGuidelineName() + "\n");
-						}
-					}
-					return guidelines.toString();
-				}
-				return "No Guidelines Defined";
-			}
-		};
-		guidelineColumn.setSortable(false);
-		assessmentListTable.addColumn(guidelineColumn, "Service Guidelines");
+//		Column<ServiceSecurityAssessmentPojo, String> guidelineColumn = 
+//				new Column<ServiceSecurityAssessmentPojo, String> (new TextCell()) {
+//
+//			@Override
+//			public String getValue(ServiceSecurityAssessmentPojo object) {
+//				StringBuffer guidelines= new StringBuffer();
+//				int cntr = 1;
+//				if (object.getServiceGuidelines().size() > 0) {
+//					for (ServiceGuidelinePojo sgp : object.getServiceGuidelines()) {
+//						if (cntr == object.getServiceGuidelines().size()) {
+//							guidelines.append(sgp.getServiceGuidelineName());
+//						}
+//						else {
+//							cntr++;
+//							guidelines.append(sgp.getServiceGuidelineName() + "\n");
+//						}
+//					}
+//					return guidelines.toString();
+//				}
+//				return "No Guidelines Defined";
+//			}
+//		};
+//		guidelineColumn.setSortable(false);
+//		assessmentListTable.addColumn(guidelineColumn, "Service Guidelines");
 		
 		// summary about test plans
 		linkableColumn = false;

@@ -14,6 +14,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.UUID;
@@ -30,6 +31,8 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 	private DirectoryPersonPojo assessorDirectoryPerson;
 	private DirectoryPersonPojo verifierDirectoryPerson;
 	private MaintainServiceControlView view;
+	private SecurityRiskPojo risk;
+	private String selectedUrl;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -40,11 +43,12 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 	/**
 	 * For creating a new service control.
 	 */
-	public MaintainServiceControlPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment) {
+	public MaintainServiceControlPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk) {
 		this.isEditing = false;
 		this.assessment = assessment;
 		this.clientFactory = clientFactory;
 		this.service = service;
+		this.risk = risk;
 		this.serviceControl = null;
 		this.serviceControlId = null;
 	}
@@ -52,11 +56,12 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 	/**
 	 * For editing an existing ACCOUNT.
 	 */
-	public MaintainServiceControlPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, ServiceControlPojo control) {
+	public MaintainServiceControlPresenter(ClientFactory clientFactory, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo risk, ServiceControlPojo control) {
 		this.isEditing = true;
 		this.clientFactory = clientFactory;
 		this.assessment = assessment;
 		this.service = service;
+		this.risk = risk;
 		this.serviceControl = control;
 		this.serviceControlId = serviceControl.getServiceControlId();
 	}
@@ -87,6 +92,32 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 			clientFactory.getShell().setSubTitle("Edit Service Control");
 			startEdit();
 		}
+		
+		AsyncCallback<List<String>> controlTypeCB = new AsyncCallback<List<String>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(List<String> result) {
+				getView().setServiceControlTypeItems(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getServiceControlTypeItems(controlTypeCB);
+
+		AsyncCallback<List<String>> implTypeCB = new AsyncCallback<List<String>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(List<String> result) {
+				getView().setServiceControlImplementationTypeItems(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getServiceControlImplementationTypeItems(implTypeCB);
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -126,7 +157,7 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 		isEditing = false;
 		getView().setEditing(false);
 		serviceControl = new ServiceControlPojo();
-		serviceControl.setSequenceNumber(assessment.getServiceControls().size() + 1);
+		serviceControl.setSequenceNumber(risk.getServiceControls().size() + 1);
 	}
 
 	private void startEdit() {
@@ -192,24 +223,40 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 				getView().showMessageToUser("There was an exception on the " +
 						"server saving the Security Assessment.  Message " +
 						"from server is: " + caught.getMessage());
-				assessment.getServiceControls().remove(getServiceControl());
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+				risk.getServiceControls().remove(getServiceControl());
+//				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_RISK, false, service, assessment, risk);
 			}
 
 			@Override
 			public void onSuccess(ServiceSecurityAssessmentPojo result) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+//				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, service, assessment);
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_RISK, false, service, assessment, risk);
 			}
 		};
 		if (!isEditing) {
-			getServiceControl().setServiceControlId(UUID.uuid());
 			getServiceControl().setServiceId(service.getServiceId());
-			this.assessment.getServiceControls().add(getServiceControl());
+			this.risk.getServiceControls().add(getServiceControl());
 		}
 		else {
-			// TODO: have to find the service control, remove it and then re-add this one to the list
+			// have to find the service control, remove it and then re-add 
+			// this one to the list
+			int indexToRemove=0;
+			boolean foundControl=false;
+			controlLoop: for (int i=0; i<risk.getServiceControls().size(); i++) {
+				ServiceControlPojo control = risk.getServiceControls().get(i);
+				if (control.getServiceControlId().equalsIgnoreCase(getServiceControl().getServiceControlId())) {
+					indexToRemove = i;
+					foundControl = true;
+					break controlLoop;
+				}
+			}
+			if (foundControl) {
+				risk.getServiceControls().remove(indexToRemove);
+				risk.getServiceControls().add(getServiceControl());
+			}
 		}
 		// it's always an update
 		VpcProvisioningService.Util.getInstance().updateSecurityAssessment(assessment, callback);
@@ -318,5 +365,18 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 
 	public void setServiceControl(ServiceControlPojo serviceControl) {
 		this.serviceControl = serviceControl;
+	}
+
+	public SecurityRiskPojo getRisk() {
+		return risk;
+	}
+
+	public void setRisk(SecurityRiskPojo risk) {
+		this.risk = risk;
+	}
+
+	@Override
+	public void setSelectedUrl(String url) {
+		this.selectedUrl = url;
 	}
 }
