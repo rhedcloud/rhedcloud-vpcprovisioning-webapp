@@ -250,6 +250,9 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 										sbView.append("<table style=\"font-family: arial, sans-serif;border-collapse: collapse;width: 100%;\">");
 										sbView.append("<tr>"
 												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Status</th>"
+												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Control Type</th>"
+												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Implentation Type</th>"
+												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Links</th>"
 												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Description</th>"
 												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verifier</th>"
 												+ "<th style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">Verification Date</th>"
@@ -258,7 +261,29 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 										for (ServiceControlPojo cm : risk.getServiceControls()) {
 											sbView.append("<tr>" + 
 													"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getServiceControlName() + "</td>" + 
-													"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getDescription() + "</td>");
+													"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getControlType() + "</td>" + 
+													"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getImplementationType() + "</td>");
+											
+											if (cm.getDocumentationUrls().size() > 0) {
+												sbView.append("<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">");
+												if (cm.getDocumentationUrls().size() > 1) {
+													sbView.append("<ul>");
+													for (String link : cm.getDocumentationUrls()) {
+														sbView.append("<li type=\"square\"><a href=\"" + link + "\">" + link + "</a></li>");
+													}
+													sbView.append("</ul>");
+												}
+												else {
+													String link = cm.getDocumentationUrls().get(0);
+													sbView.append("<a href=\"" + link + "\">" + link + "</a>");
+												}
+											}
+											else {
+												sbView.append("<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + "None" + "</td>"); 
+											}
+											sbView.append("<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getDescription() + "</td>"); 
+											sbView.append("</td>");
+
 											if (cm.getVerifier() != null) {
 												sbView.append("<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getVerifier() + "</td>");
 											}
