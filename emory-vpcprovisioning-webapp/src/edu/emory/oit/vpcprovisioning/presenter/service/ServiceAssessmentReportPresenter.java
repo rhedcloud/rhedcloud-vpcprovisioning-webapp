@@ -235,8 +235,14 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getSecurityRiskName() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getDescription() + "</td>" + 
 									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getRiskLevel() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getAssessorId() + "</td>" + 
-									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(risk.getAssessmentDate()) + "</td>");
+									"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + risk.getAssessorId() + "</td>");
+								if (risk.getAssessmentDate() != null) {
+									sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(risk.getAssessmentDate()) + "</td>");
+								}
+								else {
+									sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + "" + "</td>");
+								}
+									
 								
 									if (risk.getServiceControls().size() > 0) {
 										// counter measures go here (nested table)
@@ -252,10 +258,22 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 										for (ServiceControlPojo cm : risk.getServiceControls()) {
 											sbView.append("<tr>" + 
 													"<td width=\"5%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getServiceControlName() + "</td>" + 
-													"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getDescription() + "</td>" + 
-													"<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getVerifier() + "</td>" +  
-													"<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(cm.getVerificationDate()) + "</td>" +
-													"</tr>");
+													"<td width=\"30%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getDescription() + "</td>");
+											if (cm.getVerifier() != null) {
+												sbView.append("<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + cm.getVerifier() + "</td>");
+											}
+											else {
+												sbView.append("<td width=\"10%\" style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + "Not Verified" + "</td>");
+											}
+													
+											if (cm.getVerificationDate() != null) {
+												sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + dateFormat_short.format(cm.getVerificationDate()) + "</td>");
+											}
+											else {
+												sbView.append("<td style=\"border: 1px solid #dddddd;text-align: left;padding: 8px;\">" + "" + "</td>");
+											}
+													
+											sbView.append("</tr>");
 										}
 										sbView.append("</table>");
 										sbView.append("</td>");

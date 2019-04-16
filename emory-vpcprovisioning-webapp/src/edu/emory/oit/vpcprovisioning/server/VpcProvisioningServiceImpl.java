@@ -11459,76 +11459,41 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		// store ppid/name map local to this method so we don't have to go get it
 		// from the service each time.
 		
-		// - risk.assessorid
 		for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
-			String assessorName = this.getFullNameForPublicId(risk.getAssessorId());
-			if (assessorName != null) {
-				risk.setAssessorId(assessorName);
+			// - risk.assessorid
+			if (risk.getAssessorId() != null) {
+				String assessorName = this.getFullNameForPublicId(risk.getAssessorId());
+				if (assessorName != null) {
+					risk.setAssessorId(assessorName);
+				}
+				else {
+					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for risk assessor " + risk.getAssessorId());
+				}
 			}
-			else {
-				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for risk assessor " + risk.getAssessorId());
-			}
-			// - risk.countermeasure.verifierid
-//			for (CounterMeasurePojo cm : risk.getServiceControls()) {
-//				String verifierName = this.getFullNameForPublicId(cm.getVerifier());
-//				if (verifierName != null) {
-//					cm.setVerifier(verifierName);
-//				}
-//				else {
-//					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for counter measure verifier " + risk.getAssessorId());
-//				}
-//			}
+			
 			// - risk.servicecontrol.verifierid
 			for (ServiceControlPojo control : risk.getServiceControls()) {
-				String sc_assessorName = this.getFullNameForPublicId(control.getAssessorId());
-				if (sc_assessorName != null) {
-					control.setAssessorId(sc_assessorName);
-				}
-				else {
-					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
+				if (control.getAssessorId() != null) {
+					String sc_assessorName = this.getFullNameForPublicId(control.getAssessorId());
+					if (sc_assessorName != null) {
+						control.setAssessorId(sc_assessorName);
+					}
+					else {
+						info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
+					}
 				}
 
-				String verifierName = this.getFullNameForPublicId(control.getVerifier());
-				if (verifierName != null) {
-					control.setVerifier(verifierName);
-				}
-				else {
-					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
+				if (control.getVerifier() != null) {
+					String verifierName = this.getFullNameForPublicId(control.getVerifier());
+					if (verifierName != null) {
+						control.setVerifier(verifierName);
+					}
+					else {
+						info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
+					}
 				}
 			}
 		}
-		
-		// - servicecontrol.assessorid
-		// - servicecontrol.verifierid
-//		for (ServiceControlPojo control : assessment.getServiceControls()) {
-//			String assessorName = this.getFullNameForPublicId(control.getAssessorId());
-//			if (assessorName != null) {
-//				control.setAssessorId(assessorName);
-//			}
-//			else {
-//				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
-//			}
-//
-//			String verifierName = this.getFullNameForPublicId(control.getVerifier());
-//			if (verifierName != null) {
-//				control.setVerifier(verifierName);
-//			}
-//			else {
-//				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
-//			}
-//		}
-		
-		
-		// - serviceguideline.assessorid
-//		for (ServiceGuidelinePojo guideline : assessment.getServiceGuidelines()) {
-//			String assessorName = this.getFullNameForPublicId(guideline.getAssessorId());
-//			if (assessorName != null) {
-//				guideline.setAssessorId(assessorName);
-//			}
-//			else {
-//				info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for guideline assessor " + guideline.getAssessorId());
-//			}
-//		}
 	}
 	
 	@Override
