@@ -18,11 +18,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortEvent;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -33,8 +32,6 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
-import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
-import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
@@ -142,7 +139,7 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 			return;
 		}
 		
-		// TODO: there may be a timing issue here...
+		// populate and save the security risk first
 		presenter.getParentPresenter().getView().populateRiskWithFormData();
 		presenter.getParentPresenter().saveAssessmentAndMaintainControl(null);
 		
@@ -513,7 +510,7 @@ public class DesktopListServiceControl extends ViewImplBase implements ListServi
 
 	@Override
 	public void applyNetworkAdminMask() {
-		
-		
+		createButton.setEnabled(false);
+		actionsButton.setEnabled(false);
 	}
 }

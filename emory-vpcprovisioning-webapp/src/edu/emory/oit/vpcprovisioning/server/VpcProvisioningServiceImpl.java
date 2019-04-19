@@ -8305,21 +8305,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 		assessment.setUpdateInfo(this.getCachedUser().getPublicId());
         try {
-            info("updating UserNotification on the server...");
+            info("[updateSecurityAssessment] updating ServiceSecurityAssessment on the server...");
             ServiceSecurityAssessment newData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
             ServiceSecurityAssessment baselineData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
 
-            info("populating newData...");
+            info("[updateSecurityAssessment] populating newData...");
             populateSecurityAssessmentMoa(assessment, newData);
 
-            info("populating baselineData...");
+            info("[updateSecurityAssessment] populating baselineData...");
             populateSecurityAssessmentMoa(assessment.getBaseline(), baselineData);
             newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            info("[update] assessment as xml: " + newData.toXmlString());
+            info("[updateSecurityAssessment] doing the update...");
+            info("[updateSecurityAssessment] assessment as xml: " + newData.toXmlString());
             doUpdate(newData, getAWSRequestService());
-            info("update is complete...");
+            info("[updateSecurityAssessment] update is complete...");
         } catch (Throwable t) {
             t.printStackTrace();
             throw new RpcException(t);

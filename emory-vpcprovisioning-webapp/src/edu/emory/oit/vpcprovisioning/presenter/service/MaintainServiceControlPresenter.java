@@ -17,7 +17,6 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
-import edu.emory.oit.vpcprovisioning.shared.UUID;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MaintainServiceControlPresenter extends PresenterBase implements MaintainServiceControlView.Presenter {
@@ -255,6 +254,9 @@ public class MaintainServiceControlPresenter extends PresenterBase implements Ma
 			}
 			if (foundControl) {
 				risk.getServiceControls().remove(indexToRemove);
+				risk.getServiceControls().add(getServiceControl());
+			}
+			else {
 				risk.getServiceControls().add(getServiceControl());
 			}
 		}
