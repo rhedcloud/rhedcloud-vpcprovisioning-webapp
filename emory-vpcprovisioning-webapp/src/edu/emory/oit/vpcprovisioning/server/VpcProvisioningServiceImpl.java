@@ -211,6 +211,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String USER_PROFILE_PROPERTIES = "UserProfileProperties";
 	private static final String INCIDENT_TERMINATE_ACCOUNT_PROPERTIES = "IncidentProperties-TerminateAccount";
 	private static final String INCIDENT_CREATE_SERVICE_ACCOUNT_PROPERTIES = "IncidentProperties-CreateServiceAccount";
+	private static final String SERVICE_CONTROL_TYPE_PROPERTIES = "ServiceControlTypeProperties";
+	private static final String SERVICE_CONTROL_IMPLEMENTATION_TYPE_PROPERTIES = "ServiceControlImplementationTypeProperties";
 	private Logger log = Logger.getLogger(getClass().getName());
 	private boolean useEsbService = true;
 	private boolean useShibboleth = true;
@@ -5231,12 +5233,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
-
-//		statusItems.add("Available");
-//		statusItems.add("Available with Countermeasures");
-//		statusItems.add("Blocked");
-//		statusItems.add("Blocked Pending Review");
-//		statusItems.add("Fully Available");
 		return statusItems;
 	}
 
@@ -11715,21 +11711,39 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public List<String> getServiceControlTypeItems() {
 		List<String> l = new java.util.ArrayList<String>();
-		l.add("Administrative Control");
-		l.add("Technical Control");
-		l.add("No Control (Risk Acceptance)");
+
+		try {
+			Properties props = 	getAppConfig().getProperties(SERVICE_CONTROL_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 		return l;
 	}
 
 	@Override
 	public List<String> getServiceControlImplementationTypeItems() {
 		List<String> l = new java.util.ArrayList<String>();
-		l.add("IAM");
-		l.add("Service Control Policy (SCP)");
-		l.add("SRD/SRR");
-		l.add("Service Level Guidance");
-		l.add("Institutional Policy (Rules of Behavior)");
-		l.add("Training");
+		try {
+			Properties props = 	getAppConfig().getProperties(SERVICE_CONTROL_IMPLEMENTATION_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 		return l;
 	}
 }
