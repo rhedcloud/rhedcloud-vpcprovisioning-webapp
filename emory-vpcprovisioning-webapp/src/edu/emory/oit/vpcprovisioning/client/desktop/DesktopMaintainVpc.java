@@ -555,6 +555,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 					vpcTypeLB.addItem("Type: " + type, type);
 					if (presenter.getVpc() != null) {
 						if (presenter.getVpc().getType() != null) {
+							GWT.log("comparing vpc type: '" + presenter.getVpc().getType() + "' to: '" + type + "'");
 							if (presenter.getVpc().getType().equals(type)) {
 								vpcTypeLB.setSelectedIndex(i);
 							}

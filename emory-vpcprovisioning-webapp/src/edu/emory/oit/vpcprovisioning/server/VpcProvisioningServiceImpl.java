@@ -213,6 +213,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String INCIDENT_CREATE_SERVICE_ACCOUNT_PROPERTIES = "IncidentProperties-CreateServiceAccount";
 	private static final String SERVICE_CONTROL_TYPE_PROPERTIES = "ServiceControlTypeProperties";
 	private static final String SERVICE_CONTROL_IMPLEMENTATION_TYPE_PROPERTIES = "ServiceControlImplementationTypeProperties";
+	private static final String EMAIL_TYPE_PROPERTIES = "EmailTypeProperties";
+	private static final String VPC_TYPE_PROPERTIES = "VpcTypeProperties";
+	private static final String COMPLIANCE_TYPE_PROPERTIES = "ComplianceTypeProperties";
+	private static final String ASSESSMENT_STATUS_TYPE_PROPERTIES = "AssessmentStatusTypeProperties";
+	private static final String RISK_LEVEL_TYPE_PROPERTIES = "RiskLevelTypeProperties";
 	private Logger log = Logger.getLogger(getClass().getName());
 	private boolean useEsbService = true;
 	private boolean useShibboleth = true;
@@ -3407,21 +3412,43 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<String> getEmailTypeItems() {
-		List<String> emailTypes = new java.util.ArrayList<String>();
 		//primary, billing, security or operations
-		emailTypes.add("billing");
-		emailTypes.add("operations");
-		emailTypes.add("primary");
-		emailTypes.add("security");
-		return emailTypes;
+		
+		List<String> l = new java.util.ArrayList<String>();
+		try {
+			Properties props = 	getAppConfig().getProperties(EMAIL_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		return l;
 	}
 
 	@Override
 	public List<String> getVpcTypeItems() throws RpcException {
-		List<String> vpcTypes = new java.util.ArrayList<String>();
-		vpcTypes.add("1");
-		vpcTypes.add("2");
-		return vpcTypes;
+		List<String> l = new java.util.ArrayList<String>();
+		try {
+			Properties props = 	getAppConfig().getProperties(VPC_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		Collections.sort(l);
+		return l;
 	}
 
 	@Override
@@ -4080,10 +4107,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<String> getComplianceClassItems() throws RpcException {
-		List<String> types = new java.util.ArrayList<String>();
-		types.add("Standard");
-		types.add("HIPAA");
-		return types;
+		List<String> l = new java.util.ArrayList<String>();
+		try {
+			Properties props = 	getAppConfig().getProperties(COMPLIANCE_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		return l;
 	}
 
 	@Override
@@ -5211,8 +5249,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		}
 
-//		statusItems.add("active");
-//		statusItems.add("deprecated");
 		return statusItems;
 	}
 
@@ -8377,12 +8413,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<String> getAssessmentStatusTypeItems() {
-		List<String> types = new java.util.ArrayList<String>();
-		types.add("Complete");
-		types.add("In Progress");
-		types.add("Not Started");
-		types.add("Needs Review");
-		return types;
+		List<String> l = new java.util.ArrayList<String>();
+
+		try {
+			Properties props = 	getAppConfig().getProperties(ASSESSMENT_STATUS_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		return l;
 	}
 
 	@Override
@@ -8429,16 +8475,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<String> getRiskLevelTypeItems() {
 		// TEMP
 		List<String> l = new java.util.ArrayList<String>();
-		l.add("Low");
-		l.add("Medium");
-		l.add("High");
-		l.add("Critical");
+
+		try {
+			Properties props = 	getAppConfig().getProperties(RISK_LEVEL_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 		return l;
 	}
 
 	@Override
 	public List<String> getCounterMeasureStatusTypeItems() {
-		// TEMP
+		// TEMP - N/A
 		List<String> l = new java.util.ArrayList<String>();
 		l.add("Unknown");
 		l.add("Pending");
