@@ -54,7 +54,7 @@
 		<artifactId>emory-moa</artifactId>
 		<version>1.2</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/emory-moa-1.0.0-103.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/emory-moa-1.0.0-109.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>com.service_now</groupId>
