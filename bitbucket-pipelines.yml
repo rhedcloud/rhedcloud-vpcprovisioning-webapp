@@ -19,7 +19,7 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - export BUILD_HOME=`pwd`
           - source $HOME/.profile
-          - cd $GWT_PROJECT_NAME
+#          - cd $GWT_PROJECT_NAME
           - sed -i 's/APPLICATION_ENVIRONMENT_BASE/'"$APPLICATION_ENVIRONMENT_BASE"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - sed -i 's/APPLICATION_NAME/'"$APPLICATION_NAME"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - sed -i 's/AWS_DEFAULT_REGION/'"$AWS_DEFAULT_REGION"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
@@ -33,10 +33,10 @@ pipelines:
           - mvn package
           - cd $BUILD_HOME
           - zip -r emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
-          - mv emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip $GWT_PROJECT_NAME/target
-          - cp $GWT_PROJECT_NAME/target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war $GWT_PROJECT_NAME/target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
-          - mkdir target      
-          - mv $GWT_PROJECT_NAME/target ./
+          - mv emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip target
+          - cp target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
+#          - mkdir target      
+#          - mv $GWT_PROJECT_NAME/target ./
           - ls -la target
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
           - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war
@@ -51,7 +51,7 @@ pipelines:
     - step:
         name: Deploy to dev
         script:
-          - mv target $GWT_PROJECT_NAME
+#          - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (DEV)
@@ -62,7 +62,7 @@ pipelines:
           - sed -i 's,APPLICATION_URL,https://dev.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://dev.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,dev.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (DEV)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
@@ -72,7 +72,7 @@ pipelines:
         deployment: test
         trigger: manual
         script:
-          - mv target $GWT_PROJECT_NAME
+#          - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (TEST)
@@ -82,7 +82,7 @@ pipelines:
           - sed -i 's,APPLICATION_URL,https://test.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (TEST)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
@@ -92,7 +92,7 @@ pipelines:
         deployment: staging
         trigger: manual
         script:
-          - mv target $GWT_PROJECT_NAME
+#          - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
           - export BUILD_HOME=`pwd`
           - source $HOME/.profile
@@ -103,7 +103,7 @@ pipelines:
           - sed -i 's,APPLICATION_URL,https://stage.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
-          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (stage)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
@@ -113,7 +113,7 @@ pipelines:
         deployment: production
         trigger: manual
         script:
-          - mv target $GWT_PROJECT_NAME
+#          - mv target $GWT_PROJECT_NAME
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (prod)
@@ -121,7 +121,7 @@ pipelines:
           - sed -i 's,APPLICATION_URL,https://vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
-          - cp ${GWT_PROJECT_NAME}/target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
+          - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (prod)
           - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
