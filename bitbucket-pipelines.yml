@@ -85,7 +85,7 @@ pipelines:
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (TEST)
-          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py TEST
+          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
 
     - step:
         name: Deploy to staging
