@@ -36,9 +36,9 @@ pipelines:
           - cp target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
           - ls -la target
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
-          - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war
-#          - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
-          - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
+          - rhedcloud-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war
+#          - rhedcloud-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
+          - rhedcloud-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
           - rm target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
           - rm target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
         artifacts:
@@ -51,8 +51,8 @@ pipelines:
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (DEV)
-          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-dev.vpcp.emory.edu .ebextensions/files/sp-cert.pem
-          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-dev.vpcp.emory.edu .ebextensions/files/sp-key.pem
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-dev.vpcp.emory.edu .ebextensions/files/sp-cert.pem
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-dev.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - ls -la .ebextensions/files
           - sed -i 's,IDP_URL,https://login.emory.edu:4444/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,https://dev.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
@@ -61,7 +61,7 @@ pipelines:
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (DEV)
-          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py DEV
+          - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py DEV
     
     - step:
         name: Deploy to test
@@ -71,8 +71,8 @@ pipelines:
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (TEST)
-          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-test.vpcp.emory.edu .ebextensions/files/sp-cert.pem
-          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-test.vpcp.emory.edu .ebextensions/files/sp-key.pem
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-test.vpcp.emory.edu .ebextensions/files/sp-cert.pem
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-test.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,https://test.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
@@ -80,7 +80,7 @@ pipelines:
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (TEST)
-          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
+          - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py PROD
 
     - step:
         name: Deploy to staging
@@ -91,8 +91,8 @@ pipelines:
           - export BUILD_HOME=`pwd`
           - source $HOME/.profile
           # begin for shibboleth (stage)
-          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-stage.vpcp.emory.edu .ebextensions/files/sp-cert.pem
-          - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-stage.vpcp.emory.edu .ebextensions/files/sp-key.pem
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-stage.vpcp.emory.edu .ebextensions/files/sp-cert.pem
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-stage.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,https://stage.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
@@ -100,7 +100,7 @@ pipelines:
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (stage)
-          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py STAGE
+          - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py STAGE
 
     - step:
         name: Deploy to production
@@ -117,4 +117,4 @@ pipelines:
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (prod)
-          - python3 emory-aws-pipeline-scripts/beanstalk_deploy.py PROD
+          - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py PROD
