@@ -111,9 +111,9 @@ pipelines:
           - source $HOME/.profile
           # begin for shibboleth (prod)
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
-          - sed -i 's,APPLICATION_URL,https://vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
-          - sed -i 's,SERVER_NAME,https://vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
-          - sed -i 's,SERVER_ALIAS,vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
+          - sed -i 's,APPLICATION_URL,https://prod.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,SERVER_NAME,https://prod.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
+          - sed -i 's,SERVER_ALIAS,prod.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (prod)
