@@ -35,7 +35,7 @@ pipelines:
           - mv emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip target
           - cp target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
           - ls -la target
-          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war
 #          - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
           - emory-aws-pipeline-scripts/upload_artifact.sh target/emory-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
@@ -48,7 +48,7 @@ pipelines:
     - step:
         name: Deploy to dev
         script:
-          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (DEV)
           - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-dev.vpcp.emory.edu .ebextensions/files/sp-cert.pem
@@ -68,7 +68,7 @@ pipelines:
         deployment: test
         trigger: manual
         script:
-          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (TEST)
           - python3 emory-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-test.vpcp.emory.edu .ebextensions/files/sp-cert.pem
@@ -87,7 +87,7 @@ pipelines:
         deployment: staging
         trigger: manual
         script:
-          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - export BUILD_HOME=`pwd`
           - source $HOME/.profile
           # begin for shibboleth (stage)
@@ -107,7 +107,7 @@ pipelines:
         deployment: production
         trigger: manual
         script:
-          - git clone https://${BB_AUTH_STRING}@bitbucket.org/itarch/emory-aws-pipeline-scripts.git
+          - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - source $HOME/.profile
           # begin for shibboleth (prod)
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
