@@ -108,8 +108,11 @@ pipelines:
         trigger: manual
         script:
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
+          - export BUILD_HOME=`pwd`
           - source $HOME/.profile
           # begin for shibboleth (prod)
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-prod.vpcp.emory.edu .ebextensions/files/sp-cert.pem
+          - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-prod.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,APPLICATION_URL,https://prod.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://prod.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeasnstalk/00_application.conf
