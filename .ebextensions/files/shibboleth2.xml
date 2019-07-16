@@ -20,7 +20,7 @@
     -->
 
     <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
-    <ApplicationDefaults entityID="APPLICATION_URL"
+    <ApplicationDefaults entityID="ENTITY_ID"
                          REMOTE_USER="remoteuser eduPersonPrincipalName"
                          attributePrefix="AJP_">
 
