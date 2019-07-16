@@ -55,7 +55,7 @@ pipelines:
           - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-dev.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - ls -la .ebextensions/files
           - sed -i 's,IDP_URL,https://login.emory.edu:4444/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
-          - sed -i 's,APPLICATION_URL,https://dev.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,ENTITY_ID,https://dev.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://dev.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,dev.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
@@ -74,7 +74,7 @@ pipelines:
           - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-test.vpcp.emory.edu .ebextensions/files/sp-cert.pem
           - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-test.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
-          - sed -i 's,APPLICATION_URL,https://test.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,ENTITY_ID,https://test.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
@@ -94,7 +94,7 @@ pipelines:
           - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-stage.vpcp.emory.edu .ebextensions/files/sp-cert.pem
           - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-stage.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
-          - sed -i 's,APPLICATION_URL,https://stage.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,ENTITY_ID,https://stage.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
@@ -114,7 +114,7 @@ pipelines:
           - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-cert-pem-prod.vpcp.emory.edu .ebextensions/files/sp-cert.pem
           - python3 rhedcloud-aws-pipeline-scripts/read_aws_secret_to_file.py sp-key-pem-prod.vpcp.emory.edu .ebextensions/files/sp-key.pem
           - sed -i 's,IDP_URL,https://login.emory.edu/idp/shibboleth,g' .ebextensions/files/shibboleth2.xml
-          - sed -i 's,APPLICATION_URL,https://prod.vpcp.emory.edu,g' .ebextensions/files/shibboleth2.xml
+          - sed -i 's,ENTITY_ID,https://vpcp.app.emory.edu/,g' .ebextensions/files/shibboleth2.xml
           - sed -i 's,SERVER_NAME,https://prod.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,prod.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - cp target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} /tmp/ROOT.war
