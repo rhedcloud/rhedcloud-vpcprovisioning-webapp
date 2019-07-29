@@ -17,6 +17,7 @@ SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastU
 	String securityRiskDetector;
 	String securityRiskRemediator;
 	List<DetectedSecurityRiskPojo> detectedSecurityRisks = new java.util.ArrayList<DetectedSecurityRiskPojo>();
+	DetectionResultPojo detectionResult;
 	SecurityRiskDetectionPojo baseline;
 
 	public static final ProvidesKey<SecurityRiskDetectionPojo> KEY_PROVIDER = new ProvidesKey<SecurityRiskDetectionPojo>() {
@@ -67,6 +68,12 @@ SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastU
 	public int compareTo(SecurityRiskDetectionPojo o) {
 		
 		return 0;
+	}
+	public DetectionResultPojo getDetectionResult() {
+		return detectionResult;
+	}
+	public void setDetectionResult(DetectionResultPojo detectionResult) {
+		this.detectionResult = detectionResult;
 	}
 
 }

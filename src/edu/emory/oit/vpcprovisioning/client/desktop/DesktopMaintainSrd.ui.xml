@@ -41,6 +41,41 @@
 		    	</g:row>
 			</g:Grid>
 		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid cellSpacing="8">
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Detection Result</g:Label>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Type:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="detectionTypeTB" debugId="detectionTypeTB"
+							enabled="false"/>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Status:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.longField} {style.glowing-border}"
+							ui:field="detectionStatusTB" debugId="detectionStatusTB"
+							enabled="false"/>
+			    	</g:customCell>
+		    	</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+   			<g:DecoratorPanel>
+   				<g:ScrollPanel ui:field="detectionResultErrorPanel">
+   				</g:ScrollPanel>
+   			</g:DecoratorPanel>
+		</g:cell>
     	<!-- TODO: DetectedSecurityRisk* -> RemediationResult? -> Errors* -->
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<g:Grid cellSpacing="8">

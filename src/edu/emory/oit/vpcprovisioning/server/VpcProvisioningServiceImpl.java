@@ -5043,6 +5043,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("serviceListTimeoutMillis", "1000000");
+			info("[getServicesForFilter] s_interval is: " + s_interval);
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getAWSRequestService();
@@ -5338,12 +5339,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			RequestService reqSvc = this.getAWSRequestService();
 			// if they're asking for ALL notifications, we'll have to bump 
 			// the timeout interval WAY up
-			if (increaseReqSvcTimeout) {
-				info("[getUserNotificationsForFilter] potentially big UserNotification.Query, "
-						+ "increasing RequestService timeout interval."); 
-				((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 10);
-			}
+//			if (increaseReqSvcTimeout) {
+//				info("[getUserNotificationsForFilter] potentially big UserNotification.Query, "
+//						+ "increasing RequestService timeout interval."); 
+//				((PointToPointProducer) reqSvc)
+//				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 10);
+//			}
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("userNotificationTimeoutMillis", "1000000");
+			int interval = Integer.parseInt(s_interval);
+			((PointToPointProducer) reqSvc)
+			.setRequestTimeoutInterval(interval);
 			
 			@SuppressWarnings("unchecked")
 			List<UserNotification> moas = actionable.query(queryObject,
@@ -7388,13 +7394,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			RequestService reqSvc = this.getAWSRequestService();
 			// if they're asking for ALL notifications, we'll have to bump 
 			// the timeout interval WAY up
-			if (filter != null && filter.isFuzzyFilter()) {
-				Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
-				String s_interval = props.getProperty("accountNotificationTimeoutMillis", "1000000");
-				int interval = Integer.parseInt(s_interval);
-				((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
-			}
+//			if (filter != null && filter.isFuzzyFilter()) {
+//				Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+//				String s_interval = props.getProperty("accountNotificationTimeoutMillis", "1000000");
+//				int interval = Integer.parseInt(s_interval);
+//				((PointToPointProducer) reqSvc)
+//				.setRequestTimeoutInterval(interval);
+//			}
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("accountNotificationTimeoutMillis", "1000000");
+			int interval = Integer.parseInt(s_interval);
+			((PointToPointProducer) reqSvc)
+			.setRequestTimeoutInterval(interval);
 
 			@SuppressWarnings("unchecked")
 			List<AccountNotification> moas = actionable.query(queryObject,
@@ -8584,6 +8595,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, 
 		LastUpdateUser?, LastUpdateDatetime?)>
 			 */
+		if (moa.getDetectionResult() != null) {
+			DetectionResultPojo drp = new DetectionResultPojo();
+			drp.setStatus(moa.getDetectionResult().getStatus());
+			drp.setType(moa.getDetectionResult().getType());
+			for (org.openeai.moa.objects.resources.Error error : (List<org.openeai.moa.objects.resources.Error>)moa.getDetectionResult().getError()) {
+				ErrorPojo ep = new ErrorPojo();
+				ep.setErrorNumber(error.getErrorNumber());
+				ep.setDescription(error.getErrorDescription());
+				ep.setType(error.getType());
+				drp.getErrors().add(ep);
+			}
+		}
 		pojo.setSecurityRiskDetectionId(moa.getSecurityRiskDetectionId());
 		pojo.setSecurityRiskDetector(moa.getSecurityRiskDetector());
 		pojo.setSecurityRiskRemediator(moa.getSecurityRiskRemediator());

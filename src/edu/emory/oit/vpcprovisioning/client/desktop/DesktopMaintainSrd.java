@@ -32,6 +32,7 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 	boolean editing;
 	UserAccountPojo userLoggedIn;
 	Tree cdr_tree;
+	Tree detectionResultErrors_tree;
 
 
 	private static DesktopMaintainSrdUiBinder uiBinder = GWT.create(DesktopMaintainSrdUiBinder.class);
@@ -61,6 +62,9 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 	@UiField ScrollPanel detectedRisksPanel;
 	@UiField Button expandButton;
 	@UiField Button collapseButton;
+	@UiField TextBox detectionTypeTB;
+	@UiField TextBox detectionStatusTB;
+	@UiField ScrollPanel detectionResultErrorPanel;
 
 	@UiHandler("expandButton")
 	void expandButtonClicked(ClickEvent e) {
@@ -230,6 +234,12 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 		accountIdTB.setText(presenter.getSrd().getAccountId());
 		detectorTB.setText(presenter.getSrd().getSecurityRiskDetector());
 		remediatorTB.setText(presenter.getSrd().getSecurityRiskRemediator());
+		if (presenter.getSrd().getDetectionResult() != null) {
+			detectionTypeTB.setText(presenter.getSrd().getDetectionResult().getType());
+			detectionStatusTB.setText(presenter.getSrd().getDetectionResult().getStatus());
+			Tree detectionResultErrorsTree = createDetectionResultErrorsTree();
+			detectionResultErrorPanel.setWidget(detectionResultErrorsTree);
+		}
 		
 		Tree detectedRisksTree = createDetectedRisksTree();
 		detectedRisksPanel.setWidget(detectedRisksTree);
@@ -245,6 +255,48 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 		updateInfoLabel.setText(updateInfo);;
 	}
 
+	private Tree createDetectionResultErrorsTree() {
+		detectionResultErrors_tree = new Tree();
+		
+		if (presenter.getSrd().getDetectionResult() == null || presenter.getSrd().getDetectionResult().getErrors().size() == 0) {
+			TreeItem dsrItem = detectionResultErrors_tree.addTextItem("No Errors Found");
+			dsrItem.setTitle(Integer.toString(0));
+			dsrItem.addTextItem("");
+			return detectionResultErrors_tree;
+		}
+		
+		int i=0;
+		for (ErrorPojo error : presenter.getSrd().getDetectionResult().getErrors()) {
+			TreeItem errorItem = detectionResultErrors_tree.addTextItem(error.getType() + ": " + error.getErrorNumber());
+			errorItem.setTitle(Integer.toString(i));
+
+//			boolean addedError = false;
+//			if (error.getDescription() != null && error.getDescription().length() > 0) {
+//				addedError=true;
+				TextArea ta = new TextArea();
+				ta.setEnabled(false);
+				ta.setText(error.getDescription());
+				ta.setWidth("500px");
+				ta.setHeight("100px");
+				errorItem.addItem(ta);
+//			}
+//			else {
+//				GWT.log("No Error Description");
+//			}
+//			if (addedError) {
+				errorItem.addTextItem("");
+//			}
+//			else {
+//				GWT.log("No Errors");
+//				errorItem.addTextItem("No Error Information Available");
+//				errorItem.addTextItem("");
+//			}
+			i++;
+//			dsrItem.addTextItem("");
+		}
+		
+		return detectionResultErrors_tree;
+	}
 	private Tree createDetectedRisksTree() {
 		cdr_tree = new Tree();
 		
@@ -268,40 +320,6 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 					final RemediationResultPojo rr = dsr.getRemediationResult();
 					
 					final TreeItem remediatorItem = dsrItem.addTextItem(rr.getStatus() + ": " + rr.getDescription());
-//					remediatorItem.setTitle("Click to see Error(s)");
-//					Event.sinkEvents(remediatorItem.getElement(), Event.ONCLICK);
-//					Event.setEventListener(remediatorItem.getElement(), new EventListener() {
-//						@Override
-//						public void onBrowserEvent(Event event) {
-//							if(Event.ONCLICK == event.getTypeInt()) {
-//								StringBuffer sbuf = new StringBuffer();
-//								int cntr = 1;
-//								for (ErrorPojo error : rr.getErrors()) {
-//									if (cntr == rr.getErrors().size()) {
-//										sbuf.append(error.getDescription());
-//									}
-//									else {
-//										cntr++;
-//										sbuf.append(error.getDescription() + "\n");
-//									}
-//								}
-//								VerticalPanel vp = new VerticalPanel();
-//								HTML l = new HTML("<b>Error Description</b>");
-//								vp.add(l);
-//								TextArea ta = new TextArea();
-//								vp.add(ta);
-//								ta.setText(sbuf.toString());
-//								ta.addStyleName("longField");
-//								ta.setWidth("500px");
-//								ta.setHeight("200px");
-//								ta.getElement().setPropertyString("font-family", "Helvetica,Arial,\"MS Trebuchet\",sans-serif");
-//								ta.getElement().setPropertyString("font-size", "12pt");
-//								PopupPanel pp = new PopupPanel(true, false);
-//								pp.setWidget(vp);
-//								pp.showRelativeTo(remediatorItem);
-//							}
-//						}
-//					});
 					
 					boolean addedError = false;
 					for (ErrorPojo error : rr.getErrors()) {
