@@ -8599,13 +8599,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			DetectionResultPojo drp = new DetectionResultPojo();
 			drp.setStatus(moa.getDetectionResult().getStatus());
 			drp.setType(moa.getDetectionResult().getType());
-			for (org.openeai.moa.objects.resources.Error error : (List<org.openeai.moa.objects.resources.Error>)moa.getDetectionResult().getError()) {
-				ErrorPojo ep = new ErrorPojo();
-				ep.setErrorNumber(error.getErrorNumber());
-				ep.setDescription(error.getErrorDescription());
-				ep.setType(error.getType());
-				drp.getErrors().add(ep);
+			for (String error : (List<String>)moa.getDetectionResult().getError()) {
+//				ErrorPojo ep = new ErrorPojo();
+//				ep.setErrorNumber(error.getErrorNumber());
+//				ep.setDescription(error.getErrorDescription());
+//				ep.setType(error.getType());
+				drp.getErrors().add(error);
 			}
+			pojo.setDetectionResult(drp);
 		}
 		pojo.setSecurityRiskDetectionId(moa.getSecurityRiskDetectionId());
 		pojo.setSecurityRiskDetector(moa.getSecurityRiskDetector());

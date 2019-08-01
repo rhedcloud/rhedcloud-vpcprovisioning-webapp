@@ -266,33 +266,17 @@ public class DesktopMaintainSrd extends ViewImplBase implements MaintainSrdView 
 		}
 		
 		int i=0;
-		for (ErrorPojo error : presenter.getSrd().getDetectionResult().getErrors()) {
-			TreeItem errorItem = detectionResultErrors_tree.addTextItem(error.getType() + ": " + error.getErrorNumber());
+		for (String error : presenter.getSrd().getDetectionResult().getErrors()) {
+			TreeItem errorItem = detectionResultErrors_tree.addTextItem("Error: " + i);
 			errorItem.setTitle(Integer.toString(i));
 
-//			boolean addedError = false;
-//			if (error.getDescription() != null && error.getDescription().length() > 0) {
-//				addedError=true;
 				TextArea ta = new TextArea();
 				ta.setEnabled(false);
-				ta.setText(error.getDescription());
+				ta.setText(error);
 				ta.setWidth("500px");
-				ta.setHeight("100px");
+				ta.setHeight("50px");
 				errorItem.addItem(ta);
-//			}
-//			else {
-//				GWT.log("No Error Description");
-//			}
-//			if (addedError) {
-				errorItem.addTextItem("");
-//			}
-//			else {
-//				GWT.log("No Errors");
-//				errorItem.addTextItem("No Error Information Available");
-//				errorItem.addTextItem("");
-//			}
 			i++;
-//			dsrItem.addTextItem("");
 		}
 		
 		return detectionResultErrors_tree;

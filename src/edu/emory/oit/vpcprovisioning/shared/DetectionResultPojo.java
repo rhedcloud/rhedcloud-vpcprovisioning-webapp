@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class DetectionResultPojo extends SharedObject implements IsSerializable {
 	String type;
 	String status;
-	List<ErrorPojo> errors = new java.util.ArrayList<ErrorPojo>();
+	List<String> errors = new java.util.ArrayList<String>();
 
 	public DetectionResultPojo() {
 		// TODO Auto-generated constructor stub
@@ -30,11 +30,11 @@ public class DetectionResultPojo extends SharedObject implements IsSerializable 
 		this.status = status;
 	}
 
-	public List<ErrorPojo> getErrors() {
+	public List<String> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<ErrorPojo> errors) {
+	public void setErrors(List<String> errors) {
 		this.errors = errors;
 	}
 
