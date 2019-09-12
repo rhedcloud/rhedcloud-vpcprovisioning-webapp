@@ -418,7 +418,6 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 			}
 		};
 		acctNameColumn.setSortable(true);
-		acctNameColumn.setCellStyleNames("tableBody");
 		sortHandler.setComparator(acctNameColumn, new Comparator<AccountPojo>() {
 			public int compare(AccountPojo o1, AccountPojo o2) {
 				// we really want to sort by the "sequence" part of the name,

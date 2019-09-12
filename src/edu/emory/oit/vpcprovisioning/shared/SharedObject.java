@@ -95,4 +95,25 @@ public class SharedObject implements Serializable {
 	protected boolean isEmpty(String s) {
 		return s == null || s.equals("");
 	}
+	
+	public String extractNumberFromString(final String str) {                
+
+	    if(str == null || str.isEmpty()) return "";
+
+	    StringBuilder sb = new StringBuilder();
+	    boolean found = false;
+	    for(char c : str.toCharArray()) {
+	        if(Character.isDigit(c)){
+	            sb.append(c);
+	            found = true;
+	        } 
+	        else if (found) {
+	            // If we already found a digit before and this 
+	        	// char is not a digit, stop looping
+	            break;                
+	        }
+	    }
+
+	    return sb.toString();
+	}
 }

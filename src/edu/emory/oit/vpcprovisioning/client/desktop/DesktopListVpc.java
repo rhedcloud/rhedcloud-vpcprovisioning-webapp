@@ -301,7 +301,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 		vpcListTable.addColumn(acctIdColumn, "Account ID");
 		
 		// account name column
-		Column<VpcPojo, String> acctNqmeColumn = 
+		Column<VpcPojo, String> acctNameColumn = 
 			new Column<VpcPojo, String> (new TextCell()) {
 			
 			@Override
@@ -309,8 +309,8 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				return object.getAccountName();
 			}
 		};
-		acctNqmeColumn.setSortable(true);
-		sortHandler.setComparator(acctNqmeColumn, new Comparator<VpcPojo>() {
+		acctNameColumn.setSortable(true);
+		sortHandler.setComparator(acctNameColumn, new Comparator<VpcPojo>() {
 			public int compare(VpcPojo o1, VpcPojo o2) {
 				// we really want to sort by the "sequence" part of the name,
 				// if one exists...
@@ -336,7 +336,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				}
 			}
 		});
-		vpcListTable.addColumn(acctNqmeColumn, "Account Name");
+		vpcListTable.addColumn(acctNameColumn, "Account Name");
 
 		// VPC id column
 		Column<VpcPojo, String> vpcIdColumn = 
