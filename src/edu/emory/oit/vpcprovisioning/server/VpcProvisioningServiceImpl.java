@@ -294,13 +294,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			useEsbService = Boolean.parseBoolean(s);
 
-			configDocPath = this.getServletConfig().getInitParameter(
-					"configDocPath");
+			configDocPath = System.getProperty("configDocPath");
+			if (configDocPath == null) {
+				configDocPath = System.getenv("configDocPath");
+			}
+			if (configDocPath == null) {
+				configDocPath = this.getServletConfig().getInitParameter(
+						"configDocPath");
+			}
 			if (configDocPath == null) {
 				configDocPath = "Unknown configDocPath";
 			}
 
-			appId = this.getServletConfig().getInitParameter("appId");
+			appId = System.getProperty("appId");
+			if (appId == null) {
+				appId = System.getenv("appId");
+			}
+			if (appId == null) {
+				appId = this.getServletConfig().getInitParameter("appId");
+			}
 			if (appId == null) {
 				appId = "Unknown appId";
 			}
