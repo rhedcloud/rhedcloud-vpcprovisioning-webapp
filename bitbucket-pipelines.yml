@@ -31,7 +31,7 @@ pipelines:
           - sed -i 's/S3_BUCKET/'"$S3_BUCKET"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - mvn package
           - cd $BUILD_HOME
-          - mv target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING}.war target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
+          - mv target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING} target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
           - zip -r rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
           - mv rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip target
 #          - cp target/rhedcloud-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
