@@ -51,7 +51,6 @@ pipelines:
           
     - step:
         name: Deploy to dev
-        deployment: dev
         trigger: manual
         script:
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
