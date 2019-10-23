@@ -31,16 +31,17 @@ pipelines:
           - sed -i 's/S3_BUCKET/'"$S3_BUCKET"'/g' src/edu/emory/oit/vpcprovisioning/shared/ReleaseInfo.java
           - mvn package
           - cd $BUILD_HOME
+          - mv target/${MVN_ARTIFACT_ID}-${MVN_VERSION}.${MVN_PACKAGING}.war target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
           - zip -r rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip .
           - mv rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip target
-          - cp target/rhedcloud-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
+#          - cp target/rhedcloud-vpcprovisioning-webapp-1.0-SNAPSHOT-TJ.war target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
           - ls -la target
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           # first, upload the build artifact to bitbucket downloads area
           - rhedcloud-aws-pipeline-scripts/upload_artifact.sh target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
-          # upload archive (zip and war) to our S3 bucket (download area)
+          # upload archive (zip only) to our S3 bucket (download area)
           - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip rhedcloud-bitbucket-downloads /rhedcloud-vpcprovisioning-webapp/
-          - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war rhedcloud-bitbucket-downloads /rhedcloud-vpcprovisioning-webapp/
+#          - rhedcloud-aws-pipeline-scripts/upload_artifact_s3.sh target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war rhedcloud-bitbucket-downloads /rhedcloud-vpcprovisioning-webapp/
           - rm target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.zip
           - rm target/rhedcloud-vpcprovisioning-webapp-1.0-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war
         artifacts:
@@ -49,6 +50,7 @@ pipelines:
           
     - step:
         name: Deploy to dev
+        trigger: manual
         script:
           - git clone https://${BB_AUTH_STRING}@bitbucket.org/rhedcloud/rhedcloud-aws-pipeline-scripts.git
           - source $HOME/.profile
