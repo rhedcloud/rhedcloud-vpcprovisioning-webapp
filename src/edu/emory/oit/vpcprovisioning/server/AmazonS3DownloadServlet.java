@@ -52,9 +52,9 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 	}
 	
 	private void initAppConfig() throws ServletException {
-		configDocPath = System.getProperty("configDocPath");
+		configDocPath = System.getProperty("downloadServletConfigDocPath");
 		if (configDocPath == null) {
-			configDocPath = System.getenv("configDocPath");
+			configDocPath = System.getenv("downloadServletConfigDocPath");
 		}
 		if (configDocPath == null) {
 			configDocPath = this.getServletConfig().getInitParameter(
