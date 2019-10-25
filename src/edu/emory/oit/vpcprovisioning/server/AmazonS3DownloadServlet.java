@@ -64,9 +64,9 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 			configDocPath = "Unknown configDocPath";
 		}
 
-		appId = System.getProperty("appId");
+		appId = System.getProperty("downloadServletAppId");
 		if (appId == null) {
-			appId = System.getenv("appId");
+			appId = System.getenv("downloadServletAppId");
 		}
 		if (appId == null) {
 			appId = this.getServletConfig().getInitParameter("appId");
