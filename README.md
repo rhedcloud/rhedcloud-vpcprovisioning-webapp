@@ -1,6 +1,14 @@
-# README #
+# RHEDcloud Console for AWS README #
 
 This README would normally document whatever steps are necessary to get your application up and running.
+
+##Copyright
+
+This software was created at Emory University. Please see NOTICE.txt for Emory's copyright and disclaimer notifications. This software was extended and modified by the RHEDcloud Foundation and is copyright 2019 by the RHEDcloud Foundation.
+
+##License
+
+This software is licensed under the Apache 2.0 license included in this distribution as LICENSE-2.0.txt
 
 ### What is this repository for? ###
 
