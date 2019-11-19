@@ -177,6 +177,24 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				filterTypeItems.add(Constants.USR_NOT_FILTER_SUBJECT);
 				filterTypeItems.add(Constants.USR_NOT_FILTER_REF_ID);
 				getView().setFilterTypeItems(filterTypeItems);
+				
+				AsyncCallback<List<String>> complianceType_cb = new AsyncCallback<List<String>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("Exception retrieving Compliance Class types", caught);
+						getView().showMessageToUser("There was an exception on the " +
+								"server retrieving a list of Compliance Class types.  Message " +
+								"from server is: " + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(List<String> complianceClassTypes) {
+						getView().setComplianceClassItems(complianceClassTypes);
+					}
+				};
+				GWT.log("getting comliance class types");
+				VpcProvisioningService.Util.getInstance().getComplianceClassItems(complianceType_cb);
+
 
 				AsyncCallback<List<String>> callback = new AsyncCallback<List<String>>() {
 					@Override
@@ -193,10 +211,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 					@Override
 					public void onSuccess(List<String> result) {
 						getView().setEmailTypeItems(result);
-						List<String> complianceClassTypes = new java.util.ArrayList<String>();
-						complianceClassTypes.add("Standard");
-						complianceClassTypes.add("HIPAA");
-						getView().setComplianceClassItems(complianceClassTypes);
 
 						getView().initPage();
 						getView().setFieldViolations(false);
