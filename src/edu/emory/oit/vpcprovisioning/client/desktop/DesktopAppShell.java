@@ -1670,4 +1670,32 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void selectVpcpTab() {
 		mainTabPanel.selectTab(3);
 	}
+
+	@Override
+	public void showCimpAuditorTabs() {
+		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+	}
+
+	@Override
+	public void showCimpAdminTabs() {
+		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+	}
 }

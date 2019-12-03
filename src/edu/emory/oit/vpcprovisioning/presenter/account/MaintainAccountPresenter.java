@@ -46,6 +46,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	private List<RoleAssignmentSummaryPojo> accountRoleAssignmentSummaries = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
 	private AccountNotificationQueryFilterPojo filter;
 	PropertyPojo selectedProperty;
+	private boolean isCimp=false;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -120,6 +121,36 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			};
 			VpcProvisioningService.Util.getInstance().getAccountById(accountId, acct_cb);
 		}
+
+		// indicate whether or not this is a CIMP instance of the Console
+		AsyncCallback<Boolean> cimp_cb = new AsyncCallback<Boolean>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(Boolean result) {
+				isCimp = result;
+				getView().setCimpInstance(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().isCimpInstance(cimp_cb);
+		
+		// set the financial account label if relevant
+		AsyncCallback<String> finLabel_cb = new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				if (result != null) {
+					getView().setFinancialAccountFieldLabel(result);
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getFinancialAccountFieldLabel(finLabel_cb);
 
 		// get awsAccountsURL and awsBillingManagementURL in parallel
 		AsyncCallback<String> accountsUrlCB = new AsyncCallback<String>() {

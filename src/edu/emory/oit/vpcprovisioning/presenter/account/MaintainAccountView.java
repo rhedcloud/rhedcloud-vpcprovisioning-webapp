@@ -133,4 +133,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 	void showFilteredStatus();
 	void hideFilteredStatus();
 	void setFilterTypeItems(List<String> filterTypes);
+
+	public void setCimpInstance(boolean isCimpInstance);
+	public void setFinancialAccountFieldLabel(String label);
 }

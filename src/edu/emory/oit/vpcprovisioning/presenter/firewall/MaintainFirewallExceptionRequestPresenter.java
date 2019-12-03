@@ -132,14 +132,18 @@ public class MaintainFirewallExceptionRequestPresenter extends PresenterBase imp
 
 				getView().setUserLoggedIn(user);
 				if (isAdd) {
-					List<String> complianceClassTypes = new java.util.ArrayList<String>();
-					complianceClassTypes.add("ePHI");
-					complianceClassTypes.add("FERPA");
-					complianceClassTypes.add("FISMA");
-					complianceClassTypes.add("HIPAA");
-					complianceClassTypes.add("PCI");
+					AsyncCallback<List<String>> comp_cb = new AsyncCallback<List<String>>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+						}
 
-					getView().setComplianceClassItems(complianceClassTypes);
+						@Override
+						public void onSuccess(List<String> result) {
+							getView().setComplianceClassItems(result);
+						}
+					};
+					VpcProvisioningService.Util.getInstance().getFirewallExceptionRequestComplianceClassItems(comp_cb);
 					
 					List<String> timeRules = new java.util.ArrayList<String>();
 					timeRules.add(Constants.TIME_RULE_INDEFINITELY);

@@ -75,7 +75,7 @@
 				    	</g:row>
 						<g:row>
 					    	<g:customCell>
-								<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
+								<g:Label ui:field="speedTypeLabel" addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
 					    	</g:customCell>
 					    	<g:customCell>
 								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"

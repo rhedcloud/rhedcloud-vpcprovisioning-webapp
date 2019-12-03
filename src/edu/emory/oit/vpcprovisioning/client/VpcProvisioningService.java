@@ -173,12 +173,6 @@ public interface VpcProvisioningService extends RemoteService {
 	FirewallRulePojo updateFirewallRule(FirewallRulePojo rule) throws RpcException;
 	void deleteFirewallRule(FirewallRulePojo rule) throws RpcException;
 	
-	// FirewallExceptionRequest
-//	FirewallExceptionRequestQueryResultPojo getFirewallExceptionRequestsForFilter(FirewallExceptionRequestQueryFilterPojo filter) throws RpcException;
-//	FirewallExceptionRequestPojo createFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException;
-//	FirewallExceptionRequestPojo updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException;
-//	void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException;
-
 	// FirewallExceptionAddRequest
 	FirewallExceptionAddRequestQueryResultPojo getFirewallExceptionAddRequestsForFilter(FirewallExceptionAddRequestQueryFilterPojo filter) throws RpcException;
 	FirewallExceptionAddRequestPojo generateFirewallExceptionAddRequest(FirewallExceptionAddRequestRequisitionPojo rule) throws RpcException;
@@ -191,7 +185,7 @@ public interface VpcProvisioningService extends RemoteService {
 	FirewallExceptionRemoveRequestPojo updateFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule) throws RpcException;
 	void deleteFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule) throws RpcException;
 
-
+	List<String> getFirewallExceptionRequestComplianceClassItems() throws RpcException;
 	FirewallExceptionRequestSummaryQueryResultPojo getFirewallExceptionRequestSummariesForFilter(FirewallExceptionRequestSummaryQueryFilterPojo filter) throws RpcException;
 
 	// caching methods
@@ -286,4 +280,8 @@ public interface VpcProvisioningService extends RemoteService {
 	List<AWSRegionPojo> getAwsRegionItems();
 	
 	long getCurrentSystemTime();
+	
+	// Emory CIMP Specific methods
+	boolean isCimpInstance() throws RpcException;
+	String getFinancialAccountFieldLabel() throws RpcException;
 }

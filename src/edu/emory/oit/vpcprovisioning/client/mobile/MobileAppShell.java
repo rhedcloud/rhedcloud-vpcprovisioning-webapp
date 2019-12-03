@@ -331,4 +331,16 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		
 	}
 
+	@Override
+	public void showCimpAuditorTabs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showCimpAdminTabs() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

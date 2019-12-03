@@ -161,12 +161,6 @@ public interface VpcProvisioningServiceAsync {
 	void updateFirewallRule(FirewallRulePojo rule, AsyncCallback<FirewallRulePojo> callback);
 	void deleteFirewallRule(FirewallRulePojo rule, AsyncCallback<Void> callback);
 	
-	// FirewallExceptionRequest
-//	void getFirewallExceptionRequestsForFilter(FirewallExceptionRequestQueryFilterPojo filter, AsyncCallback<FirewallExceptionRequestQueryResultPojo> callback);
-//	void createFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
-//	void updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<FirewallExceptionRequestPojo> callback);
-//	void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule, AsyncCallback<Void> callback);
-
 	// FirewallExceptionAddRequest
 	void getFirewallExceptionAddRequestsForFilter(FirewallExceptionAddRequestQueryFilterPojo filter, AsyncCallback<FirewallExceptionAddRequestQueryResultPojo> callback);
 	void generateFirewallExceptionAddRequest(FirewallExceptionAddRequestRequisitionPojo rule, AsyncCallback<FirewallExceptionAddRequestPojo> callback);
@@ -179,6 +173,7 @@ public interface VpcProvisioningServiceAsync {
 	void updateFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule, AsyncCallback<FirewallExceptionRemoveRequestPojo> callback);
 	void deleteFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule, AsyncCallback<Void> callback);
 
+	void getFirewallExceptionRequestComplianceClassItems(AsyncCallback<List<String>> callback);
 	void getFirewallExceptionRequestSummariesForFilter(FirewallExceptionRequestSummaryQueryFilterPojo filter, AsyncCallback<FirewallExceptionRequestSummaryQueryResultPojo> callback);
 
 	// DirectoryPerson
@@ -262,4 +257,9 @@ public interface VpcProvisioningServiceAsync {
 	void getAwsRegionItems(AsyncCallback<List<AWSRegionPojo>> callback);
 
 	void getCurrentSystemTime(AsyncCallback<Long> callback);
+	
+	// Emory CIMP Specific methods
+	void isCimpInstance(AsyncCallback<Boolean> callback);
+	void getFinancialAccountFieldLabel(AsyncCallback<String> callback);
+
 }

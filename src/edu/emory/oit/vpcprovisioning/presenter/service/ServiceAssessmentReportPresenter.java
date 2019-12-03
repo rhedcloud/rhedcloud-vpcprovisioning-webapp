@@ -163,17 +163,18 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 					AWSServicePojo svc = sas.getService();
 					ServiceSecurityAssessmentPojo assessment = sas.getAssessment();
 					String serviceName;
-					if (svc.getCombinedServiceName() != null && 
-							svc.getCombinedServiceName().length() > 0) {
-							serviceName = svc.getCombinedServiceName();
-						}
-						else if (svc.getAlternateServiceName() != null && 
-								svc.getAlternateServiceName().length() > 0 ) {
-							serviceName = svc.getAlternateServiceName();
-						}
-						else {
-							serviceName = svc.getAwsServiceName();
-						}
+					serviceName = svc.getAwsServiceName();
+//					if (svc.getCombinedServiceName() != null && 
+//							svc.getCombinedServiceName().length() > 0) {
+//							serviceName = svc.getCombinedServiceName();
+//					}
+//					else if (svc.getAlternateServiceName() != null && 
+//							svc.getAlternateServiceName().length() > 0 ) {
+//						serviceName = svc.getAlternateServiceName();
+//					}
+//					else {
+//						serviceName = svc.getAwsServiceName();
+//					}
 
 					sbView.append("<table>");
 					

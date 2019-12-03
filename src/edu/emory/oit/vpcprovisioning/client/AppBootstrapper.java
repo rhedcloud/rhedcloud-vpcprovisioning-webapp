@@ -244,23 +244,41 @@ public class AppBootstrapper {
 				registerHandlers();
 
 				shell.initPage();
-				if (user.isCentralAdmin() || user.isNetworkAdmin()) {
-					shell.showNetworkAdminTabs();
-				}
-				else {
-					if (user.isGenerateVpcFromUnauthorizedUser()) {
-						// show vpc provisioning tab only
-						// fire maintain vpcp event
-						shell.showVpcpTab();
+				
+				AsyncCallback<Boolean> cimp_cb = new AsyncCallback<Boolean>() {
+					@Override
+					public void onFailure(Throwable caught) {
+				        GWT.log("[AppBootstrapper] isCimpInstance (failure) ", caught);
 					}
-					else {
-						shell.showAuditorTabs();
+
+					@Override
+					public void onSuccess(Boolean result) {
+				        GWT.log("[AppBootstrapper] isCimpInstance (success) isCimp is: " + result);
+						if (result) {
+							shell.showCimpAdminTabs();
+						}
+						else {
+							if (user.isCentralAdmin() || user.isNetworkAdmin()) {
+								shell.showNetworkAdminTabs();
+							}
+							else {
+								if (user.isGenerateVpcFromUnauthorizedUser()) {
+									// show vpc provisioning tab only
+									// fire maintain vpcp event
+									shell.showVpcpTab();
+								}
+								else {
+									shell.showAuditorTabs();
+								}
+							}
+							if (user.isGenerateVpcFromUnauthorizedUser()) {
+								removeGenerateVpcpFromURL();
+								shell.selectVpcpTab();
+							}
+						}
 					}
-				}
-				if (user.isGenerateVpcFromUnauthorizedUser()) {
-					removeGenerateVpcpFromURL();
-					shell.selectVpcpTab();
-				}
+				};
+				VpcProvisioningService.Util.getInstance().isCimpInstance(cimp_cb);
 			}
 		};
 		GWT.log("[AppBootstrapper] getting user logged in...");

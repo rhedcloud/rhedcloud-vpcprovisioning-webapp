@@ -218,6 +218,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String COMPLIANCE_TYPE_PROPERTIES = "ComplianceTypeProperties";
 	private static final String ASSESSMENT_STATUS_TYPE_PROPERTIES = "AssessmentStatusTypeProperties";
 	private static final String RISK_LEVEL_TYPE_PROPERTIES = "RiskLevelTypeProperties";
+	private static final String EMORY_CIMP_PROPERTIES = "EmoryCimpProperties";
+	private static final String FIREWALL_EXCEPTION_REQUEST_COMPLIANCE_TYPE_PROPERTIES = "FirewallExceptionRequestComplianceTypeProperties";
 	private Logger log = Logger.getLogger(getClass().getName());
 	private boolean useEsbService = true;
 	private boolean useShibboleth = true;
@@ -11588,9 +11590,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public SecurityAssessmentSummaryQueryResultPojo getSecurityAssessmentSummariesForFilter(
 			SecurityAssessmentSummaryQueryFilterPojo filter) throws RpcException {
 
-//		AWSServiceSummaryPojo serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
-//				Constants.SERVICE_SUMMARY + getCurrentSessionId());
 		AWSServiceSummaryPojo serviceSummary = this.getAWSServiceMap();
+//		AWSServiceSummaryPojo serviceSummary = new AWSServiceSummaryPojo();
+//		AWSServiceQueryResultPojo servicesResult = this.getServicesForFilter(null);
+//		serviceSummary.setServiceList(servicesResult.getResults());
 		
 		SecurityAssessmentSummaryQueryResultPojo result = new SecurityAssessmentSummaryQueryResultPojo();
 		result.setServiceSummary(serviceSummary);
@@ -11835,6 +11838,81 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		} catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
+		}
+		return l;
+	}
+
+	/**
+	 * Emory CIMP Specific methods
+	 */
+	@Override
+	public boolean isCimpInstance() throws RpcException {
+		try {
+			Properties props = 	getAppConfig().getProperties(EMORY_CIMP_PROPERTIES);
+			if (props == null) {
+				return false;
+			}
+			String isCimp = props.getProperty("isCimp", "false");
+			return Boolean.parseBoolean(isCimp);
+
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			info("Error retrieving '" + EMORY_CIMP_PROPERTIES + "' to determine if we're running an "
+					+ "Emory CIMP instance of the console.  This could be okay but it could be a "
+					+ "configuration issue.  Returning false");
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public String getFinancialAccountFieldLabel() throws RpcException {
+		String defaultLabel = "10-Digit SpeedType"; 
+		try {
+			Properties props = 	getAppConfig().getProperties(EMORY_CIMP_PROPERTIES);
+			if (props == null) {
+				return defaultLabel;
+			}
+			String finAccountLabel = props.getProperty("FINANCIAL_ACCOUNT_FIELD_LABEL", defaultLabel);
+			return finAccountLabel;
+
+		} catch (EnterpriseConfigurationObjectException e) {
+			info("Error retrieving " + EMORY_CIMP_PROPERTIES + "' to determine the financial account "
+					+ "field label name.  This could be okay but it could be a "
+					+ "configuration issue.  Returning default label name (" + defaultLabel + ")");
+			e.printStackTrace();
+			return defaultLabel;
+		}
+	}
+	/**
+	 * End Emore CIMP Specific Methods
+	 */
+
+	@Override
+	public List<String> getFirewallExceptionRequestComplianceClassItems() throws RpcException {
+		List<String> l = new java.util.ArrayList<String>();
+		try {
+			Properties props = 	getAppConfig().getProperties(FIREWALL_EXCEPTION_REQUEST_COMPLIANCE_TYPE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = props.getProperty((String)key);
+				l.add(value);
+			}
+			
+		} catch (EnterpriseConfigurationObjectException e) {
+			List<String> complianceClassTypes = new java.util.ArrayList<String>();
+			complianceClassTypes.add("ePHI");
+			complianceClassTypes.add("FERPA");
+			complianceClassTypes.add("FISMA");
+			complianceClassTypes.add("HIPAA");
+			complianceClassTypes.add("PCI");
+			info("Error retrieving " + FIREWALL_EXCEPTION_REQUEST_COMPLIANCE_TYPE_PROPERTIES + "' to determine "
+					+ "compliance types.  This could be okay but it could be a "
+					+ "configuration issue.  Returning default list of compliance types for firewall rule "
+					+ "exception requests");
+			e.printStackTrace();
+			return complianceClassTypes;
 		}
 		return l;
 	}

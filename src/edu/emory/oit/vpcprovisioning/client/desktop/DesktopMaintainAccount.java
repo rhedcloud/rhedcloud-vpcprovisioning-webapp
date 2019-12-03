@@ -81,6 +81,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	PopupPanel adminPleaseWaitDialog;
 	PopupPanel waitForNotificationsDialog;
 	List<String> filterTypeItems;
+	boolean isCimpInstance=false;
     
 	private ListDataProvider<AccountNotificationPojo> dataProvider = new ListDataProvider<AccountNotificationPojo>();
 	private MultiSelectionModel<AccountNotificationPojo> selectionModel;
@@ -137,6 +138,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField TextBox propertyValueTF;
 	@UiField Button addPropertyButton;
 	@UiField FlexTable propertiesTable;
+	
+	@UiField Label speedTypeLabel;
 	
 	@UiHandler ("addPropertyButton")
 	void addElasticIpButtonClick(ClickEvent e) {
@@ -303,15 +306,27 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	@UiHandler ("speedTypeTB")
 	void speedTypeBlur(BlurEvent e) {
+		// check CIMP status.  If we are a CIMP instance, we don't need to confirm speed type
+		if (isCimpInstance) {
+			return;
+		}
 		presenter.setSpeedChartStatusForKey(speedTypeTB.getText(), speedTypeHTML, true);
 	}
 	@UiHandler ("speedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
+		// check CIMP status.  If we are a CIMP instance, we don't need to confirm speed type
+		if (isCimpInstance) {
+			return;
+		}
 		String acct = speedTypeTB.getText();
 		presenter.setSpeedChartStatusForKeyOnWidget(acct, speedTypeTB, false);
 	}
 	@UiHandler ("speedTypeTB")
 	void speedTypeKeyDown(KeyDownEvent e) {
+		// check CIMP status.  If we are a CIMP instance, we don't need to confirm speed type
+		if (isCimpInstance) {
+			return;
+		}
 		this.setSpeedTypeConfirmed(false);
 		int keyCode = e.getNativeKeyCode();
 		char ccode = (char)keyCode;
@@ -410,14 +425,18 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	}
 	@UiHandler ("okayButton")
 	void okayButtonClick(ClickEvent e) {
-//		if (this.hasFieldViolations() == false) {
-			presenter.getAccount().setAccountId(accountIdTB.getText());
-			presenter.getAccount().setAccountName(accountNameTB.getText());
-			presenter.getAccount().setComplianceClass(complianceClassLB.getSelectedValue());
-			presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
-			presenter.getAccount().setSpeedType(speedTypeTB.getText());
-			// emails are added as they're added in the interface
-			
+		presenter.getAccount().setAccountId(accountIdTB.getText());
+		presenter.getAccount().setAccountName(accountNameTB.getText());
+		presenter.getAccount().setComplianceClass(complianceClassLB.getSelectedValue());
+		presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
+		presenter.getAccount().setSpeedType(speedTypeTB.getText());
+		// emails are added as they're added in the interface
+		
+		// check CIMP status.  If we are a CIMP instance, we don't need to confirm speed type
+		if (isCimpInstance) {
+			presenter.saveAccount();
+		}
+		else {
 			if (this.isSpeedTypeConfirmed()) {
 				presenter.saveAccount();
 			}
@@ -431,10 +450,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 					GWT.log("SpeedType has not been confirmed. Can't save account until SpeedType is confirmed.");
 				}
 			}
-//		}
-//		else {
-//			showMessageToUser("Please correct any field violations.");
-//		}
+		}
 	}
 
 	private static DesktopMaintainAccountUiBinder uiBinder = GWT.create(DesktopMaintainAccountUiBinder.class);
@@ -657,7 +673,10 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			// TODO: add a static text object to show person's name from the meta data pojo
 			passwordLocationTB.setText(presenter.getAccount().getPasswordLocation());
 			speedTypeTB.setText(presenter.getAccount().getSpeedType());
-			presenter.setSpeedChartStatusForKey(presenter.getAccount().getSpeedType(), speedTypeHTML, false);
+			// check CIMP status.  If we are a CIMP instance, we don't need to confirm speed type
+			if (!isCimpInstance) {
+				presenter.setSpeedChartStatusForKey(presenter.getAccount().getSpeedType(), speedTypeHTML, false);
+			}
 		}
 		
 		registerHandlers();
@@ -670,7 +689,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		
 		// populate admin net id fields if appropriate
 		adminTable.clear();
-//		initializeNetIdPanel();
 	}
 	
 	private void registerHandlers() {
@@ -1267,5 +1285,15 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				filterTypesLB.addItem(filterType, filterType);
 			}
 		}
+	}
+
+	@Override
+	public void setCimpInstance(boolean isCimpInstance) {
+		this.isCimpInstance = isCimpInstance;
+	}
+
+	@Override
+	public void setFinancialAccountFieldLabel(String label) {
+		speedTypeLabel.setText(label);
 	}
 }
