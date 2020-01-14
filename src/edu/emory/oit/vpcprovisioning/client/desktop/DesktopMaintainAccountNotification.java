@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -321,16 +322,31 @@ public class DesktopMaintainAccountNotification extends ViewImplBase implements 
 		
 		
 	}
+	
+    // TODO: set a title on each item just in case it gets too long.
+    // horizontal scrollbars are apparently not supported
+    private static native void addItemWithTitle(Element element, String name, String value)/*-{
+          var opt = $doc.createElement("OPTION");
+          opt.title = name;
+          opt.text = name;
+          opt.value = value;
+          element.options.add(opt);
+    
+    }-*/;
+    
 	@Override
 	public void setAccountItems(List<AccountPojo> accounts) {
 		this.accounts = accounts;
 		accountLB.clear();
-//		accountLB.addItem("-- Select --", "");
 		if (accounts != null) {
 			int i=0;
 			for (AccountPojo account : accounts) {
-				accountLB.addItem(account.getAccountId() + " / " + account.getAccountName(), account.getAccountId());
-				i++;
+			    // TODO: set a title on each item just in case it gets too long.
+			    // horizontal scrollbars are apparently not supported
+			    String longString = account.getAccountId() + " / " + account.getAccountName();
+			    addItemWithTitle(accountLB.getElement(), longString, account.getAccountId());
+//			    accountLB.addItem(account.getAccountId() + " / " + account.getAccountName(), account.getAccountId());
+			    i++;
 			}
 		}
 	}

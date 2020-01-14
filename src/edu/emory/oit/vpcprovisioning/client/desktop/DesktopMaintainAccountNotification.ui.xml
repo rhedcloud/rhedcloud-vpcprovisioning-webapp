@@ -23,7 +23,7 @@
 						    </g:row>
 							<g:row>
 						    	<g:customCell>
-									<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+									<g:ListBox addStyleNames="{style.longField} {style.glowing-border}"
 										multipleSelect="true" visibleItemCount="10"
 										ui:field="accountLB" debugId="accountLB" />
 								</g:customCell>
