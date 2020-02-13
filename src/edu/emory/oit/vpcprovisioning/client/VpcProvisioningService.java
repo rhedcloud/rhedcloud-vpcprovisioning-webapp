@@ -278,7 +278,11 @@ public interface VpcProvisioningService extends RemoteService {
 	// TKI Client Download
 //	AmazonS3AccessWrapperPojo getTkiClientS3AccessWrapper() throws RpcException;
 	List<AWSRegionPojo> getAwsRegionItems();
-	
+
+	// console features
+	ConsoleFeatureQueryResultPojo getConsoleFeaturesForFilter(ConsoleFeatureQueryFilterPojo filter) throws RpcException;
+	ConsoleFeatureQueryResultPojo getCachedConsoleFeaturesForUserLoggedIn() throws RpcException;
+	void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user) throws RpcException;
 	long getCurrentSystemTime();
 	
 	// Emory CIMP Specific methods

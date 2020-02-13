@@ -5,6 +5,9 @@
 	</ui:style>
 	<g:ScrollPanel width="99%" height="99%">	
 	<g:VerticalPanel width="100%" spacing="20">
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Button ui:field="homeButton" debugId="homeButton" text="Home" addStyleNames="{style.glowing-border} {style.normalButton}" title="Return to the Home page"/>
+		</g:cell>
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:VerticalPanel spacing="8">

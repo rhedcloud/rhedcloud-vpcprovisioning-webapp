@@ -70,7 +70,12 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	@UiField TextBox filterTB;
 	@UiField ListBox filterTypesLB;
 	@UiField PushButton refreshButton;
-
+	
+	@UiField Button homeButton;
+	@UiHandler("homeButton")
+	void homeButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+	}
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
 		presenter.refreshList(userLoggedIn);

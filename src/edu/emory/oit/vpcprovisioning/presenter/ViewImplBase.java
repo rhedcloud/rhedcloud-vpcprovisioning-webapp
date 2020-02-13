@@ -144,6 +144,13 @@ public abstract class ViewImplBase extends Composite {
 		refreshButton.getUpFace().setImage(img);
 	}
 	
+	public void setHomeButtonImage(PushButton homeButton) {
+		Image img = new Image("images/house-clipart-48x45.png");
+		img.setWidth("38px");
+		img.setHeight("35px");
+		homeButton.getUpFace().setImage(img);
+	}
+
 	public void applyStyleToMissingFields(List<Widget> fields) {
 		for (Widget w : fields) {
 			w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);

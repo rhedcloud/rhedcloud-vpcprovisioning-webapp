@@ -158,6 +158,8 @@ public class Constants implements IsSerializable {
 	public static final String LIST_ELASTIC_IP = "listElasticIp";
 	public static final String LIST_VPN_CONNECTION = "listVpnConnection";
 	public static final String LIST_VPN_CONNECTION_PROFILE = "listVpnConnectionProfile";
+	public static final String LIST_TRANSIT_GATEWAY = "listTransitGateway";
+	public static final String LIST_TRANSIT_GATEWAY_PROFILE = "listTransitGatewayProfile";
 	public static final String MOA_VPN_CONNECTION_QUERY_SPEC = "VpnConnectionQuerySpecification.v1_0";
 	public static final String MOA_VPN_CONNECTION = "VpnConnection.v1_0";
 	public static final String MOA_VPN_CONNECTION_PROFILE_QUERY_SPEC = "VpnConnectionProfileQuerySpecification.v1_0";
@@ -215,4 +217,6 @@ public class Constants implements IsSerializable {
 	public static final String USR_NOT_FILTER_SUBJECT = "Subject";
 	public static final String USR_NOT_FILTER_TEXT = "Text";
 	public static final String USR_NOT_FILTER_REF_ID = "Reference Id";
+	public static final String SUGGESTION_TYPE_CONSOLE_FEATURE = "Console Feature";
+	public static final String FEATURE_CACHE = "FeatureCache";
 }

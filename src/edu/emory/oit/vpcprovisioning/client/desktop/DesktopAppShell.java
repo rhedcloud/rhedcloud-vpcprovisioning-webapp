@@ -61,53 +61,28 @@ import edu.emory.oit.vpcprovisioning.client.common.Notification;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
-import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
-import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
-import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
-import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
-import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
-import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
-import edu.emory.oit.vpcprovisioning.presenter.home.HomePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
-import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServicePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
-import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
-import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
-import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
-import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
-import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
-import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcPresenter;
-import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
-import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.MaintainVpcpView;
-import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusView;
-import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProfileView;
-import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.ListVpnConnectionProvisioningView;
-import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProfilePresenter;
-import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisioningView;
-import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
@@ -163,98 +138,178 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void initPage() {
 //		startServiceRefreshTimer();
 //		this.refreshServiceMap(false);
-		showAuditorTabs();
+//		showAuditorTabs();
 
 		GWT.log("DesktopAppShell:  constructor");
 		
 		hash = com.google.gwt.user.client.Window.Location.getHash();
 		GWT.log("DesktopAppShell:  hash: " + hash);
 
+		// TJ - 1/28/2020
+		firstHomeContentWidget = true;
+		homeContentContainer.clear();
+		HomeView view = clientFactory.getHomeView();
+		homeContentContainer.add(view);
+
+		ListAccountView listAccountView = clientFactory.getListAccountView();
+		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
+		BillSummaryView billSummaryView = clientFactory.getBillSummaryView();
+		homeContentContainer.add(listAccountView);
+		homeContentContainer.add(maintainAccountView);
+		homeContentContainer.add(billSummaryView);
+		homeContentContainer.setAnimationDuration(500);
+
+		ListVpcView listVpcView = clientFactory.getListVpcView();
+		MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
+		homeContentContainer.add(listVpcView);
+		homeContentContainer.add(maintainVpcView);
+		homeContentContainer.setAnimationDuration(500);
+		
+		ListVpcpView listVpcpView = clientFactory.getListVpcpView();
+		MaintainVpcpView maintainVpcpView = clientFactory.getMaintainVpcpView();
+		VpcpStatusView vpcpStatusView = clientFactory.getVpcpStatusView();
+		homeContentContainer.add(listVpcpView);
+		homeContentContainer.add(maintainVpcpView);
+		homeContentContainer.add(vpcpStatusView);
+		
+		ListServiceView listServiceView = clientFactory.getListServiceView();
+		MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
+		ServiceAssessmentReportView svcAssessmentReport = clientFactory.getServiceAssessmentReportView();
+		homeContentContainer.add(listServiceView);
+		homeContentContainer.add(maintainServiceView);
+		homeContentContainer.add(svcAssessmentReport);
+		
+		ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
+		homeContentContainer.add(listCentralAdminView);
+
+		ListElasticIpView listElasticIpView = clientFactory.getListElasticIpView();
+		MaintainElasticIpView maintainElasticIpView = clientFactory.getMaintainElasticIpView();
+		homeContentContainer.add(listElasticIpView);
+		homeContentContainer.add(maintainElasticIpView);
+
+		ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
+		StaticNatProvisioningStatusView snpStatusView = clientFactory.getStaticNatProvisioningStatusView();
+		homeContentContainer.add(listStaticNatView);
+		homeContentContainer.add(snpStatusView);
+
+		ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
+		VpncpStatusView vpncpStatusView = clientFactory.getVpncpStatusView();
+		homeContentContainer.add(listVpncpView);
+		homeContentContainer.add(vpncpStatusView);
+
+		ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
+		MaintainVpnConnectionProvisioningView maintainVpncpView = clientFactory.getMaintainVpnConnectionProvisioningView();
+		VpncpStatusView vpncpStatusView2 = clientFactory.getVpncpStatusView();
+		homeContentContainer.add(listVpnConnectionProfileView);
+		homeContentContainer.add(maintainVpncpView);
+		homeContentContainer.add(vpncpStatusView2);
+		// end 1/28/2020
+
 		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
 		if (hash == null || hash.trim().length() == 0) {
 			GWT.log("null hash: home tab");
-			homeView = clientFactory.getHomeView();
-			homeContentContainer.add(homeView);
+			GWT.log("need to get Home Content.");
+			firstHomeContentWidget = true;
+//			homeView = clientFactory.getHomeView();
+//			homeContentContainer.add(homeView);
+			
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 		}
 		else {
 			if (hash.trim().equals("#" + Constants.LIST_ACCOUNT + ":")) {
 				GWT.log("Need to go to Account Maintenance (list) tab");
-				mainTabPanel.selectTab(1);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
+//				mainTabPanel.selectTab(1);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ACCOUNT + ":")) >= 0) {
 				GWT.log("Need to go to Account Maintenance (maintain) tab");
-				mainTabPanel.selectTab(1, false);
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_ACCOUNT);
+//				mainTabPanel.selectTab(1, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPC + ":")) {
 				GWT.log("Need to go to VPC Maintenance tab");
-				mainTabPanel.selectTab(2);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
+//				mainTabPanel.selectTab(2);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPC + ":")) >= 0) {
 				GWT.log("Need to go to VPC Maintenance (maintain) tab");
-				mainTabPanel.selectTab(2, false);
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_VPC);
+//				mainTabPanel.selectTab(2, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPCP + ":")) {
 				GWT.log("Need to go to VPCP Maintenance tab");
-				mainTabPanel.selectTab(3);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
+//				mainTabPanel.selectTab(3);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.VPCP_STATUS + ":")) >= 0) {
 				GWT.log("Need to go to VPCP Maintenance tab (status)");
-				mainTabPanel.selectTab(3, false);
+				ActionEvent.fire(eventBus, ActionNames.SHOW_VPCP_STATUS);
+//				mainTabPanel.selectTab(3, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_SERVICES + ":")) {
 				GWT.log("Need to go to Services tab");
-				mainTabPanel.selectTab(4);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+//				mainTabPanel.selectTab(4);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SERVICE + ":")) >= 0) {
 				GWT.log("Need to go to Services tab (maintain)");
-				mainTabPanel.selectTab(4, false);
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SERVICE);
+//				mainTabPanel.selectTab(4, false);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SECURITY_ASSESSMENT + ":")) >= 0) {
 				GWT.log("Need to go to Services tab (maintain assessment)");
-				mainTabPanel.selectTab(4, false);
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT);
+//				mainTabPanel.selectTab(4, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_CENTRAL_ADMIN + ":")) {
 				GWT.log("Need to go to Cetnral Admin tab");
-				mainTabPanel.selectTab(5);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
+//				mainTabPanel.selectTab(5);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_ELASTIC_IP + ":")) {
 				GWT.log("Need to go to Elastic IP tab");
-				mainTabPanel.selectTab(6);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
+//				mainTabPanel.selectTab(6);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ELASTIC_IP + ":")) >= 0) {
 				GWT.log("Need to go to Elastic IP tab (maintain)");
-				mainTabPanel.selectTab(6, false);
+				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_ELASTIC_IP);
+//				mainTabPanel.selectTab(6, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_STATIC_NAT + ":")) {
 				GWT.log("Need to go to Static Nat tab");
-				mainTabPanel.selectTab(7);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY);
+//				mainTabPanel.selectTab(7);
 			}
 			// TODO: this one isn't really working yet...the activity isn't working
 			else if (hash.trim().indexOf(("#" + Constants.STATIC_NAT_STAUS + ":")) >= 0) {
 				GWT.log("Need to go to Static Nat tab (status)");
-				mainTabPanel.selectTab(7, false);
+				ActionEvent.fire(eventBus, ActionNames.SHOW_STATIC_NAT_STATUS);
+//				mainTabPanel.selectTab(7, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION + ":")) {
 				GWT.log("Need to go to VPN Connection Provisioning tab");
-				mainTabPanel.selectTab(8);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
+//				mainTabPanel.selectTab(8);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.VPNC_STATUS + ":")) >= 0) {
 				GWT.log("Need to go to VPN Connection Provisioning tab (status)");
-				mainTabPanel.selectTab(8, false);
+				ActionEvent.fire(eventBus, ActionNames.SHOW_VPNCP_STATUS);
+//				mainTabPanel.selectTab(8, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION_PROFILE + ":")) {
 				GWT.log("Need to go to VPN Profile tab");
-				mainTabPanel.selectTab(9);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
+//				mainTabPanel.selectTab(9);
 			}
 			// this one is irrelevant because it's maintained in a dialog box
-			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPN_CONNECTION_PROFILE + ":")) >= 0) {
-				GWT.log("Need to go to VPN Profile tab (maintain)");
-				mainTabPanel.selectTab(9, false);
-			}
+//			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPN_CONNECTION_PROFILE + ":")) >= 0) {
+//				GWT.log("Need to go to VPN Profile tab (maintain)");
+//				mainTabPanel.selectTab(9, false);
+//			}
 			else {
 				GWT.log("[default] home tab");
-				mainTabPanel.selectTab(0);
+//				mainTabPanel.selectTab(0);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 			}
 		}
@@ -267,17 +322,17 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField VerticalPanel appShellPanel;
 	@UiField VerticalPanel otherFeaturesPanel;
 	@UiField TabLayoutPanel mainTabPanel;
-	@UiField DeckLayoutPanel accountContentContainer;
-	@UiField DeckLayoutPanel vpcContentContainer;
-	@UiField DeckLayoutPanel vpcpContentContainer;
+//	@UiField DeckLayoutPanel accountContentContainer;
+//	@UiField DeckLayoutPanel vpcContentContainer;
+//	@UiField DeckLayoutPanel vpcpContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
-	@UiField DeckLayoutPanel servicesContentContainer;
-	@UiField DeckLayoutPanel centralAdminContentContainer;
-	
-	@UiField DeckLayoutPanel elasticIpContentContainer;
-	@UiField DeckLayoutPanel staticNatContentContainer;
-	@UiField DeckLayoutPanel vpnConnectionContentContainer;
-	@UiField DeckLayoutPanel vpnConnectionProfileContentContainer;
+//	@UiField DeckLayoutPanel servicesContentContainer;
+//	@UiField DeckLayoutPanel centralAdminContentContainer;
+//	
+//	@UiField DeckLayoutPanel elasticIpContentContainer;
+//	@UiField DeckLayoutPanel staticNatContentContainer;
+//	@UiField DeckLayoutPanel vpnConnectionContentContainer;
+//	@UiField DeckLayoutPanel vpnConnectionProfileContentContainer;
 
 	@UiField Element userNameElem;
 
@@ -293,20 +348,20 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //	@UiField Anchor esbServiceStatusAnchor;
 	@UiField MenuItem tkiClientItem;
 	@UiField MenuItem esbServiceStatusItem;
-
+	
 	/**
 	 * A boolean indicating that we have not yet seen the first content widget.
 	 */
-	private boolean firstAccountContentWidget = true;
-	private boolean firstVpcContentWidget = true;
-	private boolean firstVpcpContentWidget = true;
+//	private boolean firstAccountContentWidget = true;
+//	private boolean firstVpcContentWidget = true;
+//	private boolean firstVpcpContentWidget = true;
 	private boolean firstHomeContentWidget = true;
-	private boolean firstCentralAdminContentWidget = true;
-	private boolean firstServicesContentWidget = true;
-	private boolean firstElasticIpContentWidget = true;
-	private boolean firstStaticNatContentWidget = true;
-	private boolean firstVpnConnectionContentWidget = true;
-	private boolean firstVpnConnectionProfileContentWidget = true;
+//	private boolean firstCentralAdminContentWidget = true;
+//	private boolean firstServicesContentWidget = true;
+//	private boolean firstElasticIpContentWidget = true;
+//	private boolean firstStaticNatContentWidget = true;
+//	private boolean firstVpnConnectionContentWidget = true;
+//	private boolean firstVpnConnectionProfileContentWidget = true;
 
 	private void startServiceRefreshTimer() {
 		// Create a new timer that checks for notifications
@@ -357,7 +412,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					productsPopup.hide();
 					hideOtherFeaturesPanel();
 					showMainTabPanel();
-					mainTabPanel.selectTab(0);
+//					mainTabPanel.selectTab(0);
 					ActionEvent.fire(eventBus, ActionNames.GO_HOME);
 				}
 			}
@@ -495,185 +550,131 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		clientFactory.getStaticNatProvisioningStatusView().stopTimer();
 		switch (e.getSelectedItem()) {
 		case 0:
-			GWT.log("need to get Home Content.");
-			firstHomeContentWidget = true;
-			homeContentContainer.clear();
-			HomeView view = clientFactory.getHomeView();
-			homeContentContainer.setWidget(view);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME);
-			break;
+//			GWT.log("need to get Home Content.");
+//			firstHomeContentWidget = true;
+//			homeContentContainer.clear();
+//			HomeView view = clientFactory.getHomeView();
+//			homeContentContainer.setWidget(view);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME);
+//			break;
 		case 1:
-			GWT.log("need to get Account Maintenance Content.");
-			firstAccountContentWidget = true;
-			accountContentContainer.clear();
-			ListAccountView listAccountView = clientFactory.getListAccountView();
-			MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
-			BillSummaryView billSummaryView = clientFactory.getBillSummaryView();
-			accountContentContainer.add(listAccountView);
-			accountContentContainer.add(maintainAccountView);
-			accountContentContainer.add(billSummaryView);
-			accountContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
-			break;
+//			GWT.log("need to get Account Maintenance Content.");
+//			firstAccountContentWidget = true;
+//			accountContentContainer.clear();
+//			ListAccountView listAccountView = clientFactory.getListAccountView();
+//			MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
+//			BillSummaryView billSummaryView = clientFactory.getBillSummaryView();
+//			accountContentContainer.add(listAccountView);
+//			accountContentContainer.add(maintainAccountView);
+//			accountContentContainer.add(billSummaryView);
+//			accountContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
+//			break;
 		case 2:
-			GWT.log("need to get VPC Maintentenance content.");
-			firstVpcContentWidget = true;
-			vpcContentContainer.clear();
-			ListVpcView listVpcView = clientFactory.getListVpcView();
-			MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
-			vpcContentContainer.add(listVpcView);
-			vpcContentContainer.add(maintainVpcView);
-			vpcContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
-			break;
+//			GWT.log("need to get VPC Maintentenance content.");
+//			firstVpcContentWidget = true;
+//			vpcContentContainer.clear();
+//			ListVpcView listVpcView = clientFactory.getListVpcView();
+//			MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
+//			vpcContentContainer.add(listVpcView);
+//			vpcContentContainer.add(maintainVpcView);
+//			vpcContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
+//			break;
 		case 3:
-			GWT.log("need to get VPCP Maintentenance content.");
-			firstVpcpContentWidget = true;
-			vpcpContentContainer.clear();
-			ListVpcpView listVpcpView = clientFactory.getListVpcpView();
-			MaintainVpcpView maintainVpcpView = clientFactory.getMaintainVpcpView();
-			VpcpStatusView vpcpStatusView = clientFactory.getVpcpStatusView();
-			vpcpContentContainer.add(listVpcpView);
-			vpcpContentContainer.add(maintainVpcpView);
-			vpcpContentContainer.add(vpcpStatusView);
-			vpcpContentContainer.setAnimationDuration(500);
-			if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
-				ActionEvent.fire(eventBus, ActionNames.GENERATE_VPCP);
-			}
-			else {
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
-			}
-			break;
+//			GWT.log("need to get VPCP Maintentenance content.");
+//			firstVpcpContentWidget = true;
+//			vpcpContentContainer.clear();
+//			ListVpcpView listVpcpView = clientFactory.getListVpcpView();
+//			MaintainVpcpView maintainVpcpView = clientFactory.getMaintainVpcpView();
+//			VpcpStatusView vpcpStatusView = clientFactory.getVpcpStatusView();
+//			vpcpContentContainer.add(listVpcpView);
+//			vpcpContentContainer.add(maintainVpcpView);
+//			vpcpContentContainer.add(vpcpStatusView);
+//			vpcpContentContainer.setAnimationDuration(500);
+//			if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
+//				ActionEvent.fire(eventBus, ActionNames.GENERATE_VPCP);
+//			}
+//			else {
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
+//			}
+//			break;
 		case 4:
-			GWT.log("need to get Services content.");
-			firstServicesContentWidget = true;
-			servicesContentContainer.clear();
-			ListServiceView listServiceView = clientFactory.getListServiceView();
-			MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
-			ServiceAssessmentReportView svcAssessmentReport = clientFactory.getServiceAssessmentReportView();
-			vpcpContentContainer.add(listServiceView);
-			vpcpContentContainer.add(maintainServiceView);
-			vpcpContentContainer.add(svcAssessmentReport);
-			vpcpContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-			break;
+//			GWT.log("need to get Services content.");
+//			firstServicesContentWidget = true;
+//			servicesContentContainer.clear();
+//			ListServiceView listServiceView = clientFactory.getListServiceView();
+//			MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
+//			ServiceAssessmentReportView svcAssessmentReport = clientFactory.getServiceAssessmentReportView();
+//			vpcpContentContainer.add(listServiceView);
+//			vpcpContentContainer.add(maintainServiceView);
+//			vpcpContentContainer.add(svcAssessmentReport);
+//			vpcpContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
+//			break;
 		case 5:
-			GWT.log("need to get Central Admin Content.");
-			firstCentralAdminContentWidget = true;
-			centralAdminContentContainer.clear();
-			ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
-			centralAdminContentContainer.add(listCentralAdminView);
-			centralAdminContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
-			break;
+//			GWT.log("need to get Central Admin Content.");
+//			firstCentralAdminContentWidget = true;
+//			centralAdminContentContainer.clear();
+//			ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
+//			centralAdminContentContainer.add(listCentralAdminView);
+//			centralAdminContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
+//			break;
 		case 6:
-			GWT.log("need to get Elastic IP content.");
-			firstElasticIpContentWidget = true;
-			elasticIpContentContainer.clear();
-			ListElasticIpView listElasticIpView = clientFactory.getListElasticIpView();
-			MaintainElasticIpView maintainElasticIpView = clientFactory.getMaintainElasticIpView();
-			elasticIpContentContainer.add(listElasticIpView);
-			elasticIpContentContainer.add(maintainElasticIpView);
-			elasticIpContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
-			break;
+//			GWT.log("need to get Elastic IP content.");
+//			firstElasticIpContentWidget = true;
+//			elasticIpContentContainer.clear();
+//			ListElasticIpView listElasticIpView = clientFactory.getListElasticIpView();
+//			MaintainElasticIpView maintainElasticIpView = clientFactory.getMaintainElasticIpView();
+//			elasticIpContentContainer.add(listElasticIpView);
+//			elasticIpContentContainer.add(maintainElasticIpView);
+//			elasticIpContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
+//			break;
 		case 7:
-			GWT.log("need to get Static NAT content.");
-			firstStaticNatContentWidget = true;
-			staticNatContentContainer.clear();
-			ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
-			StaticNatProvisioningStatusView snpStatusView = clientFactory.getStaticNatProvisioningStatusView();
-			staticNatContentContainer.add(listStaticNatView);
-			staticNatContentContainer.add(snpStatusView);
-			staticNatContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY);
-			break;
+//			GWT.log("need to get Static NAT content.");
+//			firstStaticNatContentWidget = true;
+//			staticNatContentContainer.clear();
+//			ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
+//			StaticNatProvisioningStatusView snpStatusView = clientFactory.getStaticNatProvisioningStatusView();
+//			staticNatContentContainer.add(listStaticNatView);
+//			staticNatContentContainer.add(snpStatusView);
+//			staticNatContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY);
+//			break;
 		case 8:
-			GWT.log("need to get VPN Connection content.");
-			firstVpnConnectionContentWidget = true;
-			vpnConnectionContentContainer.clear();
-			ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
-			VpncpStatusView vpncpStatusView = clientFactory.getVpncpStatusView();
-			vpnConnectionContentContainer.add(listVpncpView);
-			vpnConnectionContentContainer.add(vpncpStatusView);
-			vpnConnectionContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
-			break;
+//			GWT.log("need to get VPN Connection content.");
+//			firstVpnConnectionContentWidget = true;
+//			vpnConnectionContentContainer.clear();
+//			ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
+//			VpncpStatusView vpncpStatusView = clientFactory.getVpncpStatusView();
+//			vpnConnectionContentContainer.add(listVpncpView);
+//			vpnConnectionContentContainer.add(vpncpStatusView);
+//			vpnConnectionContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
+//			break;
 		case 9:
-			GWT.log("need to get VPN Connection Profile content.");
-			firstVpnConnectionProfileContentWidget = true;
-			vpnConnectionProfileContentContainer.clear();
-			ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
-			MaintainVpnConnectionProvisioningView maintainVpncpView = clientFactory.getMaintainVpnConnectionProvisioningView();
-			VpncpStatusView vpncpStatusView2 = clientFactory.getVpncpStatusView();
-			vpnConnectionProfileContentContainer.add(listVpnConnectionProfileView);
-			vpnConnectionProfileContentContainer.add(maintainVpncpView);
-			vpnConnectionProfileContentContainer.add(vpncpStatusView2);
-			vpnConnectionProfileContentContainer.setAnimationDuration(500);
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
-			break;
+//			GWT.log("need to get VPN Connection Profile content.");
+//			firstVpnConnectionProfileContentWidget = true;
+//			vpnConnectionProfileContentContainer.clear();
+//			ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
+//			MaintainVpnConnectionProvisioningView maintainVpncpView = clientFactory.getMaintainVpnConnectionProvisioningView();
+//			VpncpStatusView vpncpStatusView2 = clientFactory.getVpncpStatusView();
+//			vpnConnectionProfileContentContainer.add(listVpnConnectionProfileView);
+//			vpnConnectionProfileContentContainer.add(maintainVpncpView);
+//			vpnConnectionProfileContentContainer.add(vpncpStatusView2);
+//			vpnConnectionProfileContentContainer.setAnimationDuration(500);
+//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
+//			break;
 		}
 	}
 
 	@Override
 	public void setWidget(IsWidget w) {
-		if (w instanceof HomePresenter) {
-			homeContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstHomeContentWidget) {
-				firstHomeContentWidget = false;
-				homeContentContainer.animate(0);
-			}
-			return;
-		}
-
-		if (w instanceof ListAccountPresenter || 
-				w instanceof MaintainAccountPresenter ||
-				w instanceof BillSummaryPresenter) {
-			
-			accountContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstAccountContentWidget) {
-				firstAccountContentWidget = false;
-				accountContentContainer.animate(0);
-			}
-			return;
-		}
-
-		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
-				|| w instanceof RegisterVpcPresenter
-				|| w instanceof MaintainCidrAssignmentPresenter) {
-			vpcContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstVpcContentWidget) {
-				firstVpcContentWidget = false;
-				vpcContentContainer.animate(0);
-			}
-			return;
-		}
-
-		if (w instanceof ListVpcpPresenter || 
-				w instanceof MaintainVpcpPresenter ||
-				w instanceof VpcpStatusPresenter) {
-			vpcpContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstVpcpContentWidget) {
-				firstVpcpContentWidget = false;
-				vpcpContentContainer.animate(0);
-			}
-			return;
-		}
-
-		if (w instanceof ListCentralAdminPresenter) {
-			centralAdminContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstCentralAdminContentWidget) {
-				firstCentralAdminContentWidget = false;
-				centralAdminContentContainer.animate(0);
-			}
-			return;
-		}
-
+		GWT.log("DesktopAppShell.setWidget");
+		
+		// TJ 1/28/2020
 		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
 			GWT.log("It's the notifications presenter...");
 			otherFeaturesPanel.clear();
@@ -681,94 +682,171 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			return;
 		}
 
-		if (w instanceof ListServicePresenter || 
-				w instanceof MaintainServicePresenter || 
-				w instanceof MaintainSecurityAssessmentPresenter || 
-				w instanceof ServiceAssessmentReportPresenter) {
-			servicesContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstServicesContentWidget) {
-				firstServicesContentWidget = false;
-				servicesContentContainer.animate(0);
-			}
-			return;
-		}
-
-		if (w instanceof ListElasticIpPresenter || 
-			w instanceof MaintainElasticIpPresenter) {
-			GWT.log("It's the elastic ip presenter...");
-			elasticIpContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstElasticIpContentWidget) {
-				firstElasticIpContentWidget = false;
-				elasticIpContentContainer.animate(0);
-			}
-			return;
-		}
-		
-		if (w instanceof ListStaticNatProvisioningSummaryPresenter || 
-			w instanceof StaticNatProvisioningStatusPresenter) {
-			staticNatContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstStaticNatContentWidget) {
-				firstStaticNatContentWidget = false;
-				staticNatContentContainer.animate(0);
-			}
-			return;
-		}
-
-		if (w instanceof ListVpnConnectionProfilePresenter || 
-			w instanceof MaintainVpnConnectionProfilePresenter || 
-			w instanceof MaintainVpnConnectionProvisioningPresenter) {
-			GWT.log("It's the vpn connection profile presenter...");
-			vpnConnectionProfileContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstVpnConnectionProfileContentWidget) {
-				firstVpnConnectionProfileContentWidget = false;
-				vpnConnectionProfileContentContainer.animate(0);
-			}
-			return;
-		}
-		if (mainTabPanel.getSelectedIndex() == 9 && 
-			(w instanceof VpncpStatusPresenter || 
-			 w instanceof ListVpnConnectionProfilePresenter)) {
-			vpnConnectionProfileContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstVpnConnectionProfileContentWidget) {
-				firstVpnConnectionProfileContentWidget = false;
-				vpnConnectionProfileContentContainer.animate(0);
-			}
-			return;
-		}
-		
-		if (w instanceof ListVpnConnectionProvisioningPresenter) {
-			GWT.log("It's the vpn connection provisioning presenter...");
-			vpnConnectionContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstVpnConnectionContentWidget) {
-				firstVpnConnectionContentWidget = false;
-				vpnConnectionContentContainer.animate(0);
-			}
-			return;
-		}
-		
-		if (mainTabPanel.getSelectedIndex() == 8 && w instanceof VpncpStatusPresenter) {
-			vpnConnectionContentContainer.setWidget(w);
-			// Do not animate the first time we show a widget.
-			if (firstVpnConnectionContentWidget) {
-				firstVpnConnectionContentWidget = false;
-				vpnConnectionContentContainer.animate(0);
-			}
-			return;
-		}
-
-		// if we get here, it's the home tab, just set the widget to what's passed in for now
 		homeContentContainer.setWidget(w);
 		// Do not animate the first time we show a widget.
 		if (firstHomeContentWidget) {
 			firstHomeContentWidget = false;
 			homeContentContainer.animate(0);
 		}
+		else {
+			homeContentContainer.animate(500);
+		}
+		return;
+		// end 1/28/2020
+		
+//		if (w instanceof HomePresenter) {
+//			GWT.log("DesktopAppShell homePresenter");
+//			homeContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstHomeContentWidget) {
+//				firstHomeContentWidget = false;
+//				homeContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//
+//		if (w instanceof ListAccountPresenter || 
+//				w instanceof MaintainAccountPresenter ||
+//				w instanceof BillSummaryPresenter) {
+//			
+//			accountContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstAccountContentWidget) {
+//				firstAccountContentWidget = false;
+//				accountContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//
+//		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
+//				|| w instanceof RegisterVpcPresenter
+//				|| w instanceof MaintainCidrAssignmentPresenter) {
+//			vpcContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstVpcContentWidget) {
+//				firstVpcContentWidget = false;
+//				vpcContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//
+//		if (w instanceof ListVpcpPresenter || 
+//				w instanceof MaintainVpcpPresenter ||
+//				w instanceof VpcpStatusPresenter) {
+//			vpcpContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstVpcpContentWidget) {
+//				firstVpcpContentWidget = false;
+//				vpcpContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//
+//		if (w instanceof ListCentralAdminPresenter) {
+//			centralAdminContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstCentralAdminContentWidget) {
+//				firstCentralAdminContentWidget = false;
+//				centralAdminContentContainer.animate(0);
+//			}
+//			return;
+//		}
+
+//		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
+//			GWT.log("It's the notifications presenter...");
+//			otherFeaturesPanel.clear();
+//			otherFeaturesPanel.add(w);
+//			return;
+//		}
+
+//		if (w instanceof ListServicePresenter || 
+//				w instanceof MaintainServicePresenter || 
+//				w instanceof MaintainSecurityAssessmentPresenter || 
+//				w instanceof ServiceAssessmentReportPresenter) {
+//			servicesContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstServicesContentWidget) {
+//				firstServicesContentWidget = false;
+//				servicesContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//
+//		if (w instanceof ListElasticIpPresenter || 
+//			w instanceof MaintainElasticIpPresenter) {
+//			GWT.log("It's the elastic ip presenter...");
+//			elasticIpContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstElasticIpContentWidget) {
+//				firstElasticIpContentWidget = false;
+//				elasticIpContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//		
+//		if (w instanceof ListStaticNatProvisioningSummaryPresenter || 
+//			w instanceof StaticNatProvisioningStatusPresenter) {
+//			staticNatContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstStaticNatContentWidget) {
+//				firstStaticNatContentWidget = false;
+//				staticNatContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//
+//		if (w instanceof ListVpnConnectionProfilePresenter || 
+//			w instanceof MaintainVpnConnectionProfilePresenter || 
+//			w instanceof MaintainVpnConnectionProvisioningPresenter) {
+//			GWT.log("It's the vpn connection profile presenter...");
+//			vpnConnectionProfileContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstVpnConnectionProfileContentWidget) {
+//				firstVpnConnectionProfileContentWidget = false;
+//				vpnConnectionProfileContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//		if (mainTabPanel.getSelectedIndex() == 9 && 
+//			(w instanceof VpncpStatusPresenter || 
+//			 w instanceof ListVpnConnectionProfilePresenter)) {
+//			vpnConnectionProfileContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstVpnConnectionProfileContentWidget) {
+//				firstVpnConnectionProfileContentWidget = false;
+//				vpnConnectionProfileContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//		
+//		if (w instanceof ListVpnConnectionProvisioningPresenter) {
+//			GWT.log("It's the vpn connection provisioning presenter...");
+//			vpnConnectionContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstVpnConnectionContentWidget) {
+//				firstVpnConnectionContentWidget = false;
+//				vpnConnectionContentContainer.animate(0);
+//			}
+//			return;
+//		}
+//		
+//		if (mainTabPanel.getSelectedIndex() == 8 && w instanceof VpncpStatusPresenter) {
+//			vpnConnectionContentContainer.setWidget(w);
+//			// Do not animate the first time we show a widget.
+//			if (firstVpnConnectionContentWidget) {
+//				firstVpnConnectionContentWidget = false;
+//				vpnConnectionContentContainer.animate(0);
+//			}
+//			return;
+//		}
+
+//		// if we get here, it's the home tab, just set the widget to what's passed in for now
+//		homeContentContainer.setWidget(w);
+//		// Do not animate the first time we show a widget.
+//		if (firstHomeContentWidget) {
+//			firstHomeContentWidget = false;
+//			homeContentContainer.animate(0);
+//		}
 
 	}
 
@@ -811,12 +889,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showMainTabPanel() {
-		mainTabPanel.setVisible(true);
+//		mainTabPanel.setVisible(true);
 	}
 
 	@Override
 	public void hideMainTabPanel() {
-		mainTabPanel.setVisible(false);
+//		mainTabPanel.setVisible(false);
 	}
 
 	@Override
@@ -976,7 +1054,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		mainPanel.setHeight("800px");
 		mainPanel.getElement().getStyle().setBackgroundColor("#232f3e");
 		sp.add(mainPanel);
-//		mainPanel.add(refreshButton);
+		mainPanel.add(refreshButton);
 
 		VerticalPanel svcStatsVp = new VerticalPanel();
 		mainPanel.add(svcStatsVp);
@@ -1626,44 +1704,48 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showNetworkAdminTabs() {
-		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(6).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(7).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(8).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(9).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(6).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(7).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(8).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(9).getParent().setVisible(true);
 	}
 
 	@Override
 	public void showAuditorTabs() {
-		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 
 	@Override
 	public void showVpcpTab() {
-		mainTabPanel.getTabWidget(0).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(1).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(2).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+		
+		// Need to link off to VPC Management area
+		ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
+		
+//		mainTabPanel.getTabWidget(0).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(1).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(2).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 
 	@Override
@@ -1673,29 +1755,29 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showCimpAuditorTabs() {
-		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 
 	@Override
 	public void showCimpAdminTabs() {
-		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
+//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
+//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 }

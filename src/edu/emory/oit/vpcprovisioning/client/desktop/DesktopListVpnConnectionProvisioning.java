@@ -70,6 +70,11 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 	@UiField PushButton refreshButton;
 	@UiField CheckBox viewAllCB;
 	@UiField HTML filteredHTML;
+	@UiField Button homeButton;
+	@UiHandler("homeButton")
+	void homeButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
 

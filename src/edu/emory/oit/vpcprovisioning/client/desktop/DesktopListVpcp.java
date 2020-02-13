@@ -69,6 +69,11 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@UiField CheckBox viewAllCB;
 	@UiField HTML filteredHTML;
 
+	@UiField Button homeButton;
+	@UiHandler("homeButton")
+	void homeButtonClicked(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+	}
 	public interface MyCellTableResources extends CellTable.Resources {
 
 		@Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })

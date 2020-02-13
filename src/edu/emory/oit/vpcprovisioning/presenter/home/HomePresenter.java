@@ -18,6 +18,9 @@ import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningAuthorizationPojo
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonQueryResultPojo;
@@ -195,6 +198,52 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 				+ "You are the auditor of " + auditorCnt + " account(s).");
 		roleInfoHTML.append("</p>");
 		getView().setRoleInfoHTML(roleInfoHTML.toString());
+		
+		// TJ 1/28/2020
+		// get all services
+		AsyncCallback<ConsoleFeatureQueryResultPojo> svcCallback = new AsyncCallback<ConsoleFeatureQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("[HomePresenter] problem getting console services..." + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(ConsoleFeatureQueryResultPojo result) {
+				GWT.log("[HomePresenter] got " + result.getResults().size() + " console services back.");
+				if (result != null) {
+					if (result.getResults() != null) {
+						// set the console services on the view
+						getView().setConsoleFeatures(result.getResults());
+					}
+				}
+			}
+		};
+		GWT.log("[AwsServiceRpcSuggestOracle.constructor] getting services");
+		ConsoleFeatureQueryFilterPojo filter = new ConsoleFeatureQueryFilterPojo();
+		VpcProvisioningService.Util.getInstance().getConsoleFeaturesForFilter(filter, svcCallback);
+
+		
+		// TJ 1/28/2020
+		// get recently visited services
+		AsyncCallback<ConsoleFeatureQueryResultPojo> recentSvcsCB = new AsyncCallback<ConsoleFeatureQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("[HomePresenter] problem getting recently used console services..." + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(ConsoleFeatureQueryResultPojo result) {
+				GWT.log("[HomePresenter] got " + result.getResults().size() + " recently used console services back.");
+				if (result != null) {
+					if (result.getResults() != null) {
+						// set the console services on the view
+						getView().setRecentlyUsedConsoleFeatures(result.getResults());
+					}
+				}
+			}
+		};
+		GWT.log("[AwsServiceRpcSuggestOracle.constructor] getting services");
+		VpcProvisioningService.Util.getInstance().getCachedConsoleFeaturesForUserLoggedIn(recentSvcsCB);
 		
 		getView().hidePleaseWaitDialog();
 		getView().hidePleaseWaitPanel();
@@ -476,6 +525,24 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 		getView().showPleaseWaitDialog("Looking up person meta data from the Identity Service...");
 		VpcProvisioningService.Util.getInstance().getPersonInfoSummaryForPublicId(directoryPerson.getKey(), srvrCallback);
 		return null;
+	}
+
+	@Override
+	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user) {
+		AsyncCallback<Void> cb = new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("error saving console service in the server's cache...", caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				GWT.log("saved console service in the server's cache...");
+			}
+			
+		};
+		VpcProvisioningService.Util.getInstance().saveConsoleFeatureInCacheForUser(service, user, cb);
 	}
 
 }

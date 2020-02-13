@@ -9,7 +9,9 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface HomeView extends Editor<Void>, IsWidget, View {
@@ -27,6 +29,7 @@ public interface HomeView extends Editor<Void>, IsWidget, View {
 		public String lookupPersonInfoHTML(DirectoryPersonPojo directoryPerson);
 		public void setDirectoryPerson(DirectoryPersonPojo pojo);
 		public DirectoryPersonPojo getDirectoryPerson();
+		public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user);
 	}
 
 	/**
@@ -48,4 +51,6 @@ public interface HomeView extends Editor<Void>, IsWidget, View {
 	void showPersonSummaryLookupPopup(String personInfoHTML);
 	void hideBackgroundWorkNotice();
 	void lockView();
+	void setConsoleFeatures(List<ConsoleFeaturePojo> services);
+	void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> services);
 }

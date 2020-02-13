@@ -294,16 +294,30 @@ a:visited {
 }
 
 .gwt-SuggestBoxPopup {
-	border: 2px solid #C3D9FF;
+	cursor: hand !important;
+    border: 1px solid;
+    border-color: #e47911;
+    box-shadow: 0 0 5px #e47911;
+    border-radius: 7px;
 }
 
 .gwt-SuggestBoxPopup .item {
-	padding: 2px;
+	padding: 4px;
+	cursor: hand !important;
+	font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	color: darkblue;
 }
 
 .gwt-SuggestBoxPopup .item-selected {
-	background-color: #C3D9FF;
+	cursor: hand !important;
+    outline: none;
+    border-color: #e47911;
+    box-shadow: 0 0 5px #e47911;
+	background: -moz-linear-gradient(top, #f6f6f6 0%, #e0e0e0);
+	/*
+	background-color: white;
 	padding: 2px;
+	*/
 }
 
 .gwt-DisclosurePanel {
@@ -311,13 +325,24 @@ a:visited {
     border-radius: 7px;
 }
 
+/*
 .gwt-DisclosurePanel .header {
-	background: -moz-linear-gradient(top, #f6f6f6 0%, #e0e0e0);
     color: black;
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
     font-size: 14px;
 	font-weight: bold;
 	cursor: hand;
+}
+*/
+.gwt-DisclosurePanel .header,
+.gwt-DisclosurePanel .header a,
+.gwt-DisclosurePanel .header td {
+	text-decoration: none;  /* Remove underline from header */
+	color: black;
+	cursor: hand;
+	font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
+	font-size: 14px;
+	font-weight: bold;
 }
 
 /** My Stuff **/

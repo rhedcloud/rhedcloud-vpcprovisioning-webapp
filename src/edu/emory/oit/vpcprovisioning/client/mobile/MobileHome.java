@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView.Presenter;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class MobileHome extends ViewImplBase implements HomeView {
@@ -213,6 +214,18 @@ public class MobileHome extends ViewImplBase implements HomeView {
 
 	@Override
 	public void lockView() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setConsoleFeatures(List<ConsoleFeaturePojo> services) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> services) {
 		// TODO Auto-generated method stub
 		
 	}

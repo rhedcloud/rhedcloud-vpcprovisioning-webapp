@@ -256,6 +256,11 @@ public interface VpcProvisioningServiceAsync {
 //	void getTkiClientS3AccessWrapper(AsyncCallback<AmazonS3AccessWrapperPojo> callback);
 	void getAwsRegionItems(AsyncCallback<List<AWSRegionPojo>> callback);
 
+	// console services
+	void getConsoleFeaturesForFilter(ConsoleFeatureQueryFilterPojo filter, AsyncCallback<ConsoleFeatureQueryResultPojo> callback);
+	void getCachedConsoleFeaturesForUserLoggedIn(AsyncCallback<ConsoleFeatureQueryResultPojo> callback);
+	void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user, AsyncCallback<Void> callback);
+	
 	void getCurrentSystemTime(AsyncCallback<Long> callback);
 	
 	// Emory CIMP Specific methods

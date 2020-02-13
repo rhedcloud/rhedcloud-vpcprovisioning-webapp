@@ -5,15 +5,20 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -24,11 +29,15 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.common.ConsoleFeatureRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.ConsoleFeatureSuggestion;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -37,6 +46,7 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	UserAccountPojo userLoggedIn;
 	List<AccountRolePojo> accountRoles;
 	private final DirectoryPersonRpcSuggestOracle personSuggestions = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
+	private ConsoleFeatureRpcSuggestOracle consoleFeatureSuggestions = new ConsoleFeatureRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField HTML introBodyHTML;
@@ -48,6 +58,11 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	@UiField Button personInfoButton;
 	@UiField Element accountSeriesElem;
 	@UiField HTML backgroundNoticeHTML;
+	
+	@UiField(provided=true) SuggestBox serviceSearchSB = new SuggestBox(consoleFeatureSuggestions, new TextBox());
+	@UiField VerticalPanel recentlyUsedConsoleFeaturesPanel;
+	@UiField VerticalPanel allConsoleFeaturesPanel;
+	@UiField DisclosurePanel allConsoleFeaturesDP;
 
 	@UiHandler ("roleInfoButton")
 	void roleInfoButtonClicked(ClickEvent e) {
@@ -143,6 +158,19 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 				getHTML().
 				replace("FIRST_NAME", userLoggedIn.getPersonalName().getFirstName());
 		introBodyHTML.setHTML(intro);
+		allConsoleFeaturesDP.setOpen(false);
+		serviceSearchSB.setText("");
+		serviceSearchSB.getElement().setPropertyString("placeholder", "Example: Accounts, VPC, VPN etc.");
+		serviceSearchSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				ConsoleFeatureSuggestion suggestion = (ConsoleFeatureSuggestion)event.getSelectedItem();
+				if (suggestion.getService() != null) {
+					presenter.saveConsoleFeatureInCacheForUser(suggestion.getService(), userLoggedIn);
+					ActionEvent.fire(presenter.getEventBus(), suggestion.getService().getActionName());
+				}
+			}
+		});
 	}
 
 	@Override
@@ -346,5 +374,82 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 	public void applyNetworkAdminMask() {
 		
 		
+	}
+	@Override
+	public void setConsoleFeatures(List<ConsoleFeaturePojo> features) {
+		// create a grid for all services and their descriptions
+		// Name (link)
+		// Description
+		
+		int numRows = (features.size() / 3) + 1;
+		Grid featuresGrid = new Grid(numRows, 3);
+		allConsoleFeaturesPanel.clear();
+		int rowCounter = 0;
+		int columnCounter = 0;
+		for (int i=0; i<features.size(); i++) {
+			final ConsoleFeaturePojo service = features.get(i);
+			Anchor serviceAnchor = new Anchor(service.getName());
+			serviceAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			serviceAnchor.setTitle(service.getDescription() + " action:" + service.getActionName() + " isPopular=" + service.isPopular());
+			serviceAnchor.ensureDebugId(service.getName() + "-allFeatures");
+			serviceAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					presenter.saveConsoleFeatureInCacheForUser(service, userLoggedIn);
+					ActionEvent.fire(presenter.getEventBus(), service.getActionName());
+				}
+			});
+			Grid g = new Grid(2,1);
+			g.setWidget(0, 0, serviceAnchor);
+			g.setWidget(1, 0, new HTML("<i>" + service.getDescription() + "</i>"));
+			featuresGrid.setWidget(rowCounter, columnCounter, g);
+			featuresGrid.getCellFormatter().setWidth(rowCounter, columnCounter, "350px");
+			if (columnCounter >= 2) {
+				columnCounter = 0;
+				rowCounter++;
+			}
+			else {
+				columnCounter++;
+			}
+		}
+		allConsoleFeaturesPanel.add(featuresGrid);
+	}
+	@Override
+	public void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> features) {
+		int numRows = (features.size() / 3) + 1;
+		Grid featuresGrid = new Grid(numRows, 3);
+		recentlyUsedConsoleFeaturesPanel.clear();
+		int rowCounter = 0;
+		int columnCounter = 0;
+		for (int i=0; i<features.size(); i++) {
+			final ConsoleFeaturePojo service = features.get(i);
+			Anchor serviceAnchor = new Anchor(service.getName());
+			serviceAnchor.setTitle(service.getDescription() + " action:" + service.getActionName() + " isPopular=" + service.isPopular());
+			serviceAnchor.ensureDebugId(service.getName() + "-recentFeatures");
+			serviceAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					presenter.saveConsoleFeatureInCacheForUser(service, userLoggedIn);
+					ActionEvent.fire(presenter.getEventBus(), service.getActionName());
+				}
+			});
+			Grid g = new Grid(1,1);
+			g.setWidget(0, 0, serviceAnchor);
+			featuresGrid.setWidget(rowCounter, columnCounter, g);
+			featuresGrid.getCellFormatter().setWidth(rowCounter, columnCounter, "250px");
+			if (columnCounter >= 2) {
+				columnCounter = 0;
+				rowCounter++;
+			}
+			else {
+				columnCounter++;
+			}
+		}
+		if (features.size() == 0) {
+			recentlyUsedConsoleFeaturesPanel.add(new HTML("No recently used features to diplay."));
+		}
+		else {
+			recentlyUsedConsoleFeaturesPanel.add(featuresGrid);
+		}
 	}
 }

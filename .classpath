@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="con" path="com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/any-openeai-enterprise-moa.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aspectjrt-1.8.2.jar"/>
@@ -56,7 +51,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/netty-resolver-4.1.17.Final.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/netty-transport-4.1.17.Final.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/openeai_utils.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/openeai.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/paloaltonetworks-moa-master-9.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/peoplesoft-moa.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/restygwt-2.2.0.jar"/>
@@ -67,5 +61,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-test-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aws-moa-master-117.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/openeai-core-5.0.13.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -220,6 +220,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String RISK_LEVEL_TYPE_PROPERTIES = "RiskLevelTypeProperties";
 	private static final String EMORY_CIMP_PROPERTIES = "EmoryCimpProperties";
 	private static final String FIREWALL_EXCEPTION_REQUEST_COMPLIANCE_TYPE_PROPERTIES = "FirewallExceptionRequestComplianceTypeProperties";
+	private static final String CONSOLE_FEATURES_PROPERTY_PREFIX = "ConsoleFeatures-";
 	private Logger log = Logger.getLogger(getClass().getName());
 	private boolean useEsbService = true;
 	private boolean useShibboleth = true;
@@ -3865,7 +3866,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getAWSRequestService();
-			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			info("[getVpcpsForFilter] setting RequestService's timeout to: " + interval + " milliseconds");
 			((PointToPointProducer) reqSvc)
 				.setRequestTimeoutInterval(interval);
 
@@ -11900,7 +11901,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				l.add(value);
 			}
 			
-		} catch (EnterpriseConfigurationObjectException e) {
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
 			List<String> complianceClassTypes = new java.util.ArrayList<String>();
 			complianceClassTypes.add("ePHI");
 			complianceClassTypes.add("FERPA");
@@ -11915,5 +11917,152 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			return complianceClassTypes;
 		}
 		return l;
+	}
+
+	@Override
+	public ConsoleFeatureQueryResultPojo getConsoleFeaturesForFilter(ConsoleFeatureQueryFilterPojo filter)
+			throws RpcException {
+		
+		ConsoleFeatureQueryResultPojo result = new ConsoleFeatureQueryResultPojo();
+		UserAccountPojo user = this.getUserLoggedIn(false);
+		Properties props = null;
+		if (user.isCentralAdmin()) {
+			try {
+				info("getConsoleFeaturesForFilter: central admin");
+				props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				
+			}
+		}
+		else if (user.isNetworkAdmin()) {
+			try {
+				info("getConsoleFeaturesForFilter: network admin");
+				props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				
+			}
+		}
+		// TODO: incident response
+		else {
+			// account admin and account auditor
+			try {
+				info("getConsoleFeaturesForFilter: account admin OR auditor");
+				props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				
+			}
+		}
+		Iterator<Object> keys = props.keySet().iterator();
+		List<String> featureNames = new java.util.ArrayList<String>();
+		while (keys.hasNext()) {
+			Object key = keys.next();
+			featureNames.add((String)key);
+		}
+		Collections.sort(featureNames);
+		for (String featureName : featureNames) {
+			ConsoleFeaturePojo csp = new ConsoleFeaturePojo();
+			String actionName=null;
+			String sPopular="false";
+			if (featureName.indexOf("popular:") >= 0) {
+				actionName = featureName.substring(featureName.indexOf("actionName:") + 11, featureName.indexOf("popular:")).trim();
+				sPopular = featureName.substring(featureName.indexOf("popular:") + 8).trim();
+				if (sPopular != null) {
+					boolean popular = Boolean.parseBoolean(sPopular);
+					csp.setPopular(popular);
+				}
+				else {
+					csp.setPopular(false);
+				}
+			}
+			else {
+				actionName = featureName.substring(featureName.indexOf("actionName:") + 11);
+			}
+			String description = props.getProperty((String)featureName);
+			featureName = featureName.substring(0, featureName.indexOf("actionName:")).trim();
+			csp.setName(featureName);
+			csp.setActionName(actionName);
+			csp.setDescription(description);
+			info("CSP: name=" + featureName + " actionName=" + actionName + " description=" + description + " popular=" + sPopular);
+			result.getResults().add(csp);
+		}
+		
+		return result;
+	}
+
+	private List<ConsoleFeaturePojo> getPopularConsoleFeatures() {
+		List<ConsoleFeaturePojo> popularFeatures = new java.util.ArrayList<ConsoleFeaturePojo>();
+		ConsoleFeatureQueryResultPojo allFeaturesResult = this.getConsoleFeaturesForFilter(null);
+		for (ConsoleFeaturePojo cfp : allFeaturesResult.getResults()) {
+			if (cfp.isPopular()) {
+				popularFeatures.add(cfp);
+			}
+		}
+		Collections.sort(popularFeatures);
+		info("getPopularConsoleFeatures: returning " + popularFeatures.size() + " popular features for the user logged in.");
+		return popularFeatures;
+	}
+
+	private boolean isFeatureInList(ConsoleFeaturePojo feature, List<ConsoleFeaturePojo> features) {
+		for (ConsoleFeaturePojo cfp : features) {
+			if (cfp.getName().equalsIgnoreCase(feature.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ConsoleFeatureQueryResultPojo getCachedConsoleFeaturesForUserLoggedIn() throws RpcException {
+		ConsoleFeatureQueryResultPojo result = new ConsoleFeatureQueryResultPojo();
+		UserAccountPojo user = this.getUserLoggedIn(false);
+		String key = user.getPublicId() + "-" + Constants.FEATURE_CACHE;
+		List<ConsoleFeaturePojo> l = (List<ConsoleFeaturePojo>)Cache.getCache().get(key);
+		List<ConsoleFeaturePojo> popularFeatures = getPopularConsoleFeatures();
+		if (l != null) {
+			info("getCachedConsoleFeaturesForUserLoggedIn: found " + l.size() + " recently used services in cache for user " + user.getPublicId());
+			// add any popular features that aren't already in the user's cache to the list
+			for (ConsoleFeaturePojo cfp : popularFeatures) {
+				if (!isFeatureInList(cfp, l)) {
+					l.add(cfp);
+				}
+			}
+			Collections.sort(l);
+			result.setResults(l);
+		}
+		else {
+			info("getCachedConsoleFeaturesForUserLoggedIn: cache for user " + user.getPublicId() + " is null.  Returning popular features");
+			l = new java.util.ArrayList<ConsoleFeaturePojo>();
+			l.addAll(popularFeatures);
+			result.setResults(l);
+		}
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user) throws RpcException {
+		String key = user.getPublicId() + "-" + Constants.FEATURE_CACHE;
+		List<ConsoleFeaturePojo> l = (List<ConsoleFeaturePojo>)Cache.getCache().get(key);
+		boolean foundIt = false;
+		if (l != null) {
+			serviceLoop:for (ConsoleFeaturePojo csp : l) {
+				if (csp.getName().equalsIgnoreCase(service.getName())) {
+					foundIt = true;
+					break serviceLoop;
+				}
+			}
+		}
+		else {
+			l = new java.util.ArrayList<ConsoleFeaturePojo>();
+		}
+		if (!foundIt) {
+			l.add(service);
+		}
+		info("saveConsoleFeatureInCacheForUser: saving " + l.size() + " services in recently used cache for user " + user.getPublicId());
+		Cache.getCache().put(key, l);
 	}
 }

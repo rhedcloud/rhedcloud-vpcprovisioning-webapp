@@ -125,33 +125,6 @@ public class TunnelInterfacePojo extends SharedObject implements IsSerializable 
 		return re.test(ipAddress);
 	}
 
-//	private boolean isValidIpAddress(String ipAddress) {
-//	    boolean valid = true;
-//
-//	    try {
-//	        Pattern p = Pattern.compile("(\\d+?)\\.(\\d+?)\\.(\\d+?)\\.(\\d+?)");
-//	        Matcher m = p.matcher(ipAddress.trim());
-//	        if (m.matches()) {
-//	            for (int n = 0; n < m.groupCount(); n++) {
-//	                int octet = Integer.parseInt(m.group(n + 1));
-//	                if (octet > 255) {
-////	                	badStateReason = "Invalid IP address: " + ipAddress;
-//	                    valid = false;
-//	                    break;
-//	                }
-//	            }
-//	        } else {
-////	        	badStateReason = "Invalid IP address: " + ipAddress;
-//	            valid = false;
-//	        }
-//	    } catch (Exception e) {
-////	        String errMsg = "Invalid IP address: " + ipAddress;
-//	        valid = false;
-//	    }
-//
-//	    return valid;
-//	}
-
 	private boolean isValidTimeValue(String timeValue) {
 		return (timeValue != null && timeValue.length() > 0);
 	}
