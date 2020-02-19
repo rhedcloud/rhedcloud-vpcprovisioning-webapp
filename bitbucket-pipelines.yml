@@ -66,7 +66,7 @@ pipelines:
           - sed -i 's/myapp/'"rc-vpcp-dev"'/g' .ebextensions/99datadog.config
           - cp target/rhedcloud-vpcprovisioning-webapp-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war /tmp/ROOT.war
           - zip -ur /tmp/ROOT.war .ebextensions
-          - zipinfo /temp/ROOT.war
+          - zipinfo /tmp/ROOT.war
           # end for shibboleth (DEV)
           - python3 rhedcloud-aws-pipeline-scripts/beanstalk_deploy.py DEV
     
