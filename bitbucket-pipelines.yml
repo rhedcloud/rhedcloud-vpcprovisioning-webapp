@@ -85,7 +85,7 @@ pipelines:
           - sed -i 's,SERVER_NAME,https://test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,test.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' .ebextensions/99datadog.config
-          - sed -i 's/myapp/'"rhedcloud-vpcprovisioning-test"'/g' .ebextensions/99datadog.config
+          - sed -i 's/myapp/'"rc-vpcprovisioning-test"'/g' .ebextensions/99datadog.config
           - cp target/rhedcloud-vpcprovisioning-webapp-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (TEST)
@@ -107,7 +107,7 @@ pipelines:
           - sed -i 's,SERVER_NAME,https://stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,stage.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' .ebextensions/99datadog.config
-          - sed -i 's/myapp/'"rhedcloud-vpcprovisioning-stage"'/g' .ebextensions/99datadog.config
+          - sed -i 's/myapp/'"rc-vpcprovisioning-stage"'/g' .ebextensions/99datadog.config
           - cp target/rhedcloud-vpcprovisioning-webapp-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (stage)
@@ -129,7 +129,7 @@ pipelines:
           - sed -i 's,SERVER_NAME,https://prod.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's,SERVER_ALIAS,prod.vpcp.emory.edu,g' .ebextensions/httpd/conf.d/elasticbeanstalk/00_application.conf
           - sed -i 's/DD_API_KEY_VALUE/'"$DD_API_KEY"'/g' .ebextensions/99datadog.config
-          - sed -i 's/myapp/'"rhedcloud-vpcprovisioning-prod"'/g' .ebextensions/99datadog.config
+          - sed -i 's/myapp/'"rc-vpcprovisioning-prod"'/g' .ebextensions/99datadog.config
           - cp target/rhedcloud-vpcprovisioning-webapp-${BITBUCKET_BRANCH}-${BITBUCKET_BUILD_NUMBER}.war /tmp/ROOT.war
           - jar -uf /tmp/ROOT.war .ebextensions
           # end for shibboleth (prod)
