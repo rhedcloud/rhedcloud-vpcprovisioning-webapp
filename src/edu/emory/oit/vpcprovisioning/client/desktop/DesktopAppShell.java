@@ -155,12 +155,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void initPage() {
-//		startServiceRefreshTimer();
-//		this.refreshServiceMap(false);
-//		showAuditorTabs();
-
 		GWT.log("DesktopAppShell:  constructor");
 		
+		consoleFeatureSuggestions = new ConsoleFeatureRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
+		mainTabPanel.addStyleName("tab-style-content");
+		registerEvents();
+
 		hash = com.google.gwt.user.client.Window.Location.getHash();
 		GWT.log("DesktopAppShell:  hash: " + hash);
 
@@ -314,9 +314,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 			}
 		}
-
-		mainTabPanel.addStyleName("tab-style-content");
-		registerEvents();
 	}
 
 	/*** FIELDS ***/
@@ -1963,9 +1960,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	DisclosurePanel recentlyUsedFeaturesDP = new DisclosurePanel();
     PopupPanel featuresPopup = new PopupPanel(true);
     @UiField HTMLPanel featuresTitleBar;
+	private ConsoleFeatureRpcSuggestOracle consoleFeatureSuggestions;
     
 	private void showFeatures() {
-		final ConsoleFeatureRpcSuggestOracle consoleFeatureSuggestions = new ConsoleFeatureRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
+//		final ConsoleFeatureRpcSuggestOracle consoleFeatureSuggestions = new ConsoleFeatureRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
 		final SuggestBox featureSearchSB = new SuggestBox(consoleFeatureSuggestions, new TextBox());
 		
 		AsyncCallback<ConsoleFeatureQueryResultPojo> svcCallback = new AsyncCallback<ConsoleFeatureQueryResultPojo>() {
