@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.client.mobile;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
@@ -22,6 +23,7 @@ import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.ListCidrAssignment
 import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
@@ -339,6 +341,36 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showCimpAdminTabs() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setConsoleFeatures(List<ConsoleFeaturePojo> services) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> services) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void showServiceListPanel() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void hideServiceListPanel() {
 		// TODO Auto-generated method stub
 		
 	}

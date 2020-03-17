@@ -58,6 +58,11 @@ import org.openeai.transport.RequestService;
 import org.openeai.utils.config.AppConfigFactory;
 import org.openeai.utils.config.AppConfigFactoryException;
 import org.openeai.utils.config.SimpleAppConfigFactory;
+import org.rhedcloud.moa.jmsobjects.tagging.v1_0.ResourceTaggingProfile;
+import org.rhedcloud.moa.objects.resources.v1_0.AccountMetadataFilter;
+import org.rhedcloud.moa.objects.resources.v1_0.ManagedTag;
+import org.rhedcloud.moa.objects.resources.v1_0.ResourceTaggingProfileQuerySpecification;
+import org.rhedcloud.moa.objects.resources.v1_0.ServiceFilter;
 
 import com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
@@ -135,6 +140,7 @@ import edu.emory.moa.jmsobjects.identity.v1_0.Role;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.jmsobjects.identity.v2_0.Employee;
 import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
+//import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
 import edu.emory.moa.jmsobjects.identity.v2_0.NetworkIdentity;
 import edu.emory.moa.jmsobjects.identity.v2_0.Person;
 import edu.emory.moa.jmsobjects.identity.v2_0.SponsoredPerson;
@@ -184,14 +190,17 @@ import edu.emory.moa.objects.resources.v1_0.VpnConnectionProfileQuerySpecificati
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionProvisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionRequisition;
-import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
+//import edu.emory.moa.objects.resources.v2_0.FullPersonQuerySpecification;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.shared.*;
 
 @Path("vpcpHealthCheck")
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
+	private static final String MENU_PROPERTIES = "MenuProperties";
+	private static final String RTP_SERVICE_NAME = "ResourceTaggingProfileRequestService";
 	private static final String ELASTIC_IP_SERVICE_NAME = "ElasticIpRequestService";
 	private static final String IDM_SERVICE_NAME = "IDMRequestService";
 	private static final String DIRECTORY_SERVICE_NAME = "DirectoryRequestService";
@@ -240,6 +249,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool elasticIpProducerPool = null;
 	private ProducerPool srdProducerPool = null;
 	private ProducerPool networkOpsProducerPool = null;
+	private ProducerPool rtpProducerPool = null;
 	private Object lock = new Object();
 	static SimpleDateFormat dateFormatter = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -364,6 +374,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					SRD_SERVICE_NAME);
 			networkOpsProducerPool = (ProducerPool) getAppConfig().getObject(
 					NETWORK_OPS_SERVICE_NAME);
+			if (this.isRtpManagementEnabled()) {
+				info("Resource Tagging Management IS enabled...");
+				rtpProducerPool = (ProducerPool) getAppConfig().getObject(
+						RTP_SERVICE_NAME);
+			}
+			else {
+				info("Resource Tagging Management IS NOT enabled...");
+			}
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 //			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			
@@ -401,6 +419,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("initAppConfig ended...");
 	}
 
+	private boolean isRtpManagementEnabled() {
+		try {
+			Properties props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				if (((String)key).indexOf(ActionNames.GO_HOME_RTP) >= 0) {
+					return true;
+				}
+			}
+		}
+		catch (EnterpriseConfigurationObjectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		return false;
+	}
+	
 	public int getDefaultRequestTimeoutInterval() {
 		return defaultRequestTimeoutInterval;
 	}
@@ -484,7 +521,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public UserAccountPojo getUserLoggedIn(boolean refreshRoles) throws RpcException {
 		// if the user account has been cached, we'll use it
-		info("checking cache for existing user...");
+		info("checking cache for existing user...refreshRoles=" + refreshRoles);
 		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
 				Constants.USER_ACCOUNT + getCurrentSessionId());
 		
@@ -706,17 +743,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
 					}
 					user.setEppn(testUserEppn);
-					user.setPublicId(testUserPpid);
-					PersonalNamePojo pnp = new PersonalNamePojo();
-					pnp.setFirstName(testUserFirstName);
-					pnp.setLastName(testUserLastName);
-					user.setPersonalName(pnp);
+//					user.setPublicId(testUserPpid);
+//					PersonalNamePojo pnp = new PersonalNamePojo();
+//					pnp.setFirstName(testUserFirstName);
+//					pnp.setLastName(testUserLastName);
+//					user.setPersonalName(pnp);
 
 					if (useAuthzService) {
 						// get permissions
 						user.setSuperUser(false);
 						if (refreshRoles) {
+							info("[local[ getting roles for user");
 							this.getRolesForUser(user);
+						}
+						else {
+							info("[local] refreshRoles is false.  not getting roles for user.");
 						}
 					}
 					else {
@@ -727,7 +768,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 					boolean forceError = false;
 					if (forceError) {
-						info("user " + user.getEppn() + " is not authorized to use this application.");
+						info("[forceError] user " + user.getEppn() + " is not authorized to use this application.");
 						throw new RpcException("The user id being used to log " +
 								"in is not authorized to use this application.  " +
 								"Please contact your support representative to " +
@@ -745,7 +786,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							else {
 								// ERROR, user does not have any required permissions to use
 								// this app
-								info("user " + user.getEppn() + " is not authorized to use this application.");
+								info("[local] user " + user.getEppn() + " is not authorized to use this application.");
 								throw new RpcException("[local] The user id being used to log " +
 									"in is not authorized to use this application.  " +
 									"Please contact your support representative to " +
@@ -877,117 +918,117 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		getThreadLocalRequest().getSession().invalidate();
 	}
 
-	protected void getRolesForUser_orig(UserAccountPojo user) throws RpcException {
-		// get the fullperson object for the user.principal
-		// set the user's publicId
-		// get the roleassignments for the user.publicId
-		// for each roleassignment:
-		//	- get the aws account id
-		//  - verify the account exists in this series (environment)
-		//	- get the role name associated to that account for this user
-		//	- create a new AccountRolePojo, populate it with account id and role name
-		//	- add the AccountRolePojo to the user passed in
-		
-		java.util.Date startTime = new java.util.Date();
-		if (user.getPublicId() == null) {
-			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
-			fp_filter.setNetId(user.getPrincipal());
-			fp_filter.setUserLoggedIn(user);
-			FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
-			if (fp_result != null) {
-				info("[getRolesForUser] got " + fp_result.getResults().size() + 
-					" FullPerson objects back for net id: " + fp_filter.getNetId());
-			}
-			else {
-				// error
-				info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
-				throw new RpcException("Null FullPerson returned from ESB for NetId: " + user.getPrincipal());
-			}
-			FullPersonPojo fullPerson = fp_result.getResults().get(0);
-			user.setPublicId(fullPerson.getPublicId());
-			user.setPersonalName(fullPerson.getPerson().getPersonalName());
-			info("[getRolesForUser] User public id is: " + user.getPublicId());
-		}
-		else {
-			info("[getRolesForUser] no need to get full person object.");
-		}
-		
-		try {
-			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
-			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
-			
-			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
-			idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, user.getPublicId());
-			ra_filter.setUserDN(idDn);
-			ra_filter.setIdentityType("USER");
-			ra_filter.setDirectAssignOnly(true);
-			ra_filter.setUserLoggedIn(user);
-
-			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
-			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
-
-			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
-				String roleDn = roleAssignment.getRoleDN();
-				if (roleDn != null) {
-					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
-						AccountRolePojo arp = new AccountRolePojo();
-						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-						user.addAccountRole(arp);
-						continue;
-					}
-					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
-						AccountRolePojo arp = new AccountRolePojo();
-						arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
-						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-						user.addAccountRole(arp);
-						continue;
-					}
-					if (roleDn.indexOf("RGR_AWS") >= 0) {
-						String[] cns = roleDn.split(",");
-						String acctCn = cns[0];
-						String[] idRoles = acctCn.split("-");
-						if (idRoles.length != 3) {
-							continue;
-						}
-						String acctId = idRoles[1];
-						String roleName = idRoles[2];
-						AccountPojo verifiedAcct = this.getAccountById(acctId); 
-						if (acctId != null && verifiedAcct != null) {
-							AccountRolePojo arp = new AccountRolePojo();
-							arp.setAccountId(acctId);
-							arp.setAccountName(verifiedAcct.getAccountName());
-							arp.setRoleName(roleName);
-							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-							user.addAccountRole(arp);
-						}
-						else if (acctId == null && 
-								(roleName.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 || 
-								 roleName.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN) >= 0)) {
-							
-							AccountRolePojo arp = new AccountRolePojo();
-							arp.setRoleName(roleName);
-							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-							user.addAccountRole(arp);
-						}
-						else {
-							continue;
-						}
-					}
-				}
-			}
-			
-			info("[getRolesForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
-			java.util.Date endTime = new java.util.Date();
-			long elapsedTime = endTime.getTime() - startTime.getTime();
-			info("[getRolesForUser] elaspsed time: " + formatMillisForDisplay(elapsedTime));
-		} 
-		catch (EnterpriseConfigurationObjectException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		}
-	}
+//	protected void getRolesForUser_orig(UserAccountPojo user) throws RpcException {
+//		// get the fullperson object for the user.principal
+//		// set the user's publicId
+//		// get the roleassignments for the user.publicId
+//		// for each roleassignment:
+//		//	- get the aws account id
+//		//  - verify the account exists in this series (environment)
+//		//	- get the role name associated to that account for this user
+//		//	- create a new AccountRolePojo, populate it with account id and role name
+//		//	- add the AccountRolePojo to the user passed in
+//		
+//		java.util.Date startTime = new java.util.Date();
+//		if (user.getPublicId() == null) {
+//			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
+//			fp_filter.setNetId(user.getPrincipal());
+//			fp_filter.setUserLoggedIn(user);
+//			FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
+//			if (fp_result != null) {
+//				info("[getRolesForUser] got " + fp_result.getResults().size() + 
+//					" FullPerson objects back for net id: " + fp_filter.getNetId());
+//			}
+//			else {
+//				// error
+//				info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
+//				throw new RpcException("Null FullPerson returned from ESB for NetId: " + user.getPrincipal());
+//			}
+//			FullPersonPojo fullPerson = fp_result.getResults().get(0);
+//			user.setPublicId(fullPerson.getPublicId());
+//			user.setPersonalName(fullPerson.getPerson().getPersonalName());
+//			info("[getRolesForUser] User public id is: " + user.getPublicId());
+//		}
+//		else {
+//			info("[getRolesForUser] no need to get full person object.");
+//		}
+//		
+//		try {
+//			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
+//			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
+//			
+//			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
+//			idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, user.getPublicId());
+//			ra_filter.setUserDN(idDn);
+//			ra_filter.setIdentityType("USER");
+//			ra_filter.setDirectAssignOnly(true);
+//			ra_filter.setUserLoggedIn(user);
+//
+//			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+//			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
+//			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+//
+//			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+//				String roleDn = roleAssignment.getRoleDN();
+//				if (roleDn != null) {
+//					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
+//						AccountRolePojo arp = new AccountRolePojo();
+//						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
+//						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+//						user.addAccountRole(arp);
+//						continue;
+//					}
+//					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
+//						AccountRolePojo arp = new AccountRolePojo();
+//						arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
+//						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+//						user.addAccountRole(arp);
+//						continue;
+//					}
+//					if (roleDn.indexOf("RGR_AWS") >= 0) {
+//						String[] cns = roleDn.split(",");
+//						String acctCn = cns[0];
+//						String[] idRoles = acctCn.split("-");
+//						if (idRoles.length != 3) {
+//							continue;
+//						}
+//						String acctId = idRoles[1];
+//						String roleName = idRoles[2];
+//						AccountPojo verifiedAcct = this.getAccountById(acctId); 
+//						if (acctId != null && verifiedAcct != null) {
+//							AccountRolePojo arp = new AccountRolePojo();
+//							arp.setAccountId(acctId);
+//							arp.setAccountName(verifiedAcct.getAccountName());
+//							arp.setRoleName(roleName);
+//							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+//							user.addAccountRole(arp);
+//						}
+//						else if (acctId == null && 
+//								(roleName.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 || 
+//								 roleName.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN) >= 0)) {
+//							
+//							AccountRolePojo arp = new AccountRolePojo();
+//							arp.setRoleName(roleName);
+//							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+//							user.addAccountRole(arp);
+//						}
+//						else {
+//							continue;
+//						}
+//					}
+//				}
+//			}
+//			
+//			info("[getRolesForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
+//			java.util.Date endTime = new java.util.Date();
+//			long elapsedTime = endTime.getTime() - startTime.getTime();
+//			info("[getRolesForUser] elaspsed time: " + formatMillisForDisplay(elapsedTime));
+//		} 
+//		catch (EnterpriseConfigurationObjectException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		}
+//	}
 	
 	protected void getRolesForUser(UserAccountPojo user) throws RpcException {
 		// get the fullperson object for the user.principal
@@ -1006,22 +1047,43 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("[getRolesForUser] got " + accounts.size() + " accounts from getAllAccounts");
 		
 		if (user.getPublicId() == null) {
-			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
-			fp_filter.setNetId(user.getPrincipal());
-			fp_filter.setUserLoggedIn(user);
-			FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
-			if (fp_result != null) {
-				info("[getRolesForUser] got " + fp_result.getResults().size() + 
-					" FullPerson objects back for net id: " + fp_filter.getNetId());
+//			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
+//			fp_filter.setNetId(user.getPrincipal());
+//			fp_filter.setUserLoggedIn(user);
+//			FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
+//			if (fp_result != null) {
+//				info("[getRolesForUser] got " + fp_result.getResults().size() + 
+//					" FullPerson objects back for net id: " + fp_filter.getNetId());
+//			}
+//			else {
+//				// error
+//				info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
+//				throw new RpcException("Null FullPerson returned from ESB for NetId: " + user.getPrincipal());
+//			}
+//			FullPersonPojo old_fullPerson = fp_result.getResults().get(0);
+//			user.setPublicId(old_fullPerson.getPublicId());
+//			user.setPersonalName(old_fullPerson.getPerson().getPersonalName());
+			
+			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+			dp_filter.setSearchString(user.getPrincipal());
+			dp_filter.setUserLoggedIn(user);
+			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+			if (dp_result != null) {
+				info("[getRolesForUser] got " + dp_result.getResults().size() + 
+					" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
 			}
 			else {
 				// error
-				info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
-				throw new RpcException("Null FullPerson returned from ESB for NetId: " + user.getPrincipal());
+				info("[getRolesForUser] null DirectoryPersonQueryResultPojo.  This is bad.");
+				throw new RpcException("Null DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
 			}
-			FullPersonPojo fullPerson = fp_result.getResults().get(0);
-			user.setPublicId(fullPerson.getPublicId());
-			user.setPersonalName(fullPerson.getPerson().getPersonalName());
+			DirectoryPersonPojo directoryPerson = dp_result.getResults().get(0);
+			user.setPublicId(directoryPerson.getKey());
+			PersonalNamePojo personalName = new PersonalNamePojo();
+			personalName.setFirstName(directoryPerson.getFirstMiddle());
+			personalName.setLastName(directoryPerson.getLastName());
+			user.setPersonalName(personalName);
+			
 			info("[getRolesForUser] User public id is: " + user.getPublicId());
 		}
 		else {
@@ -1298,12 +1360,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setVpcId(UUID.uuid());
 			pojo.setVpcId(moa.getVpcId());
 		}
-//		moa.setComplianceClass(pojo.getComplianceClass());
 		moa.setType(pojo.getType());
-		// owner net ids
-//        for (String p : pojo.getCustomerAdminNetIdList()) {
-//            moa.addCustomerAdminNetId(p);
-//        }
 
         for (PropertyPojo p : pojo.getProperties()) {
         	com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
@@ -1339,11 +1396,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setCidr(moa.getCidr());
 		pojo.setVpnConnectionProfileId(moa.getVpnConnectionProfileId());
 		pojo.setPurpose(moa.getPurpose());
-//		pojo.setComplianceClass(moa.getComplianceClass());
-
-//		for (String netId : (List<String>) moa.getCustomerAdminNetId()) {
-//			pojo.getCustomerAdminNetIdList().add(netId);
-//		}
 		
 		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
 			PropertyPojo p = new PropertyPojo();
@@ -1374,7 +1426,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
         for (String p : pojo.getCustomerAdminUserIdList()) {
             moa.addCustomerAdminUserId(p);
         }
-//        moa.setTicketId(pojo.getTicketId());
         moa.setAuthenticatedRequestorUserId(pojo.getAuthenticatedRequestorUserId());
         moa.setComplianceClass(pojo.getComplianceClass());
         moa.setNotifyAdmins(this.toStringFromBoolean(pojo.isNotifyAdmins()));
@@ -1399,7 +1450,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.getCustomerAdminUserIdList().add(netId);
 			}
 		}
-//		pojo.setTicketId(moa.getTicketId());
 		pojo.setAuthenticatedRequestorUserId(moa.getAuthenticatedRequestorUserId());
 		pojo.setComplianceClass(moa.getComplianceClass());
 		pojo.setNotifyAdmins(this.toBooleanFromString(moa.getNotifyAdmins()));
@@ -1409,9 +1459,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.getSensitiveDataList().add(sensitiveDataType);
 			}
 		}
-		
-//		this.setPojoCreateInfo(pojo, moa);
-//		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	private void populateAccountMoa(AccountPojo pojo,
@@ -1425,7 +1472,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setAccountName(pojo.getAccountName());
 		moa.setPasswordLocation(pojo.getPasswordLocation());
-//		moa.setAccountOwnerUserId(pojo.getAccountOwnerDirectoryMetaData().getPublicId());
+		// TODO: uncomment once moa is changed.
+//		moa.setAlternateName(pojo.getAlternateName());
 		moa.setAccountOwnerId(pojo.getAccountOwnerDirectoryMetaData().getPublicId());
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setComplianceClass(pojo.getComplianceClass());
@@ -1437,10 +1485,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
             moa.addEmailAddress(email);
         }
         
-//        for (String s : pojo.getSensitiveDataList()) {
-//        	moa.addSensitiveDataType(s);
-//        }
-
         for (PropertyPojo p : pojo.getProperties()) {
         	com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
         	mp.setKey(p.getName());
@@ -1458,6 +1502,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setAccountName(moa.getAccountName());
+		// TODO: uncomment after moa is changed
+//		pojo.setAlternateName(moa.getAlternateName());
+		
 		// need a clean meta data object because if we use the one from the cache
 		// we'll run into issues when we go to do an update later (baseline missmatch)
 		// so we'll use the data from the cache (if present) but just populate 
@@ -1482,12 +1529,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			pojo.getEmailList().add(emp);
 		}
 		
-//		if (moa.getSensitiveDataType() != null) {
-//			for (String sensitiveDataType : (List<String>) moa.getSensitiveDataType()) {
-//				pojo.getSensitiveDataList().add(sensitiveDataType);
-//			}
-//		}
-
 		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
 			PropertyPojo p = new PropertyPojo();
 			p.setName(mp.getKey());
@@ -1508,10 +1549,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (pojo.getElasticIpId() != null) {
 			moa.setElasticIpId(pojo.getElasticIpId());
 		}
-//		else {
-//			moa.setElasticIpId(UUID.uuid());
-//			pojo.setElasticIpId(moa.getElasticIpId());
-//		}
 		moa.setElasticIpAddress(pojo.getElasticIpAddress());
 		moa.setAssociatedIpAddress(pojo.getAssociatedIpAddress());
 
@@ -2239,6 +2276,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+	private RequestService getRtpRequestService() throws JMSException {
+		RequestService reqSvc = (RequestService) rtpProducerPool.getProducer();
+		((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		return reqSvc;
+	}
 
     private java.util.Date toDateFromDate(org.openeai.moa.objects.resources.Date moa) {
         if (moa == null) {
@@ -2866,6 +2909,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						if (acct.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
 							filteredPojos.add(acct);
 						}
+					}
+					if (filter.getAlternateAccountName() != null && filter.getAlternateAccountName().length() > 0) {
+						// TODO: uncomment once moa is changed
+//						if (acct.getAlternateAccountName().toLowerCase().indexOf(filter.getAlternateAccountName().toLowerCase()) >= 0) {
+//							filteredPojos.add(acct);
+//						}
 					}
 				}
 			}
@@ -3710,27 +3759,43 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			dmd = new DirectoryMetaDataPojo();
 			try {
-				FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
-				FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
-
-				queryObject.setPublicId(publicId);
-
-//				String authUserId = this.getAuthUserIdForHALS();
-//				actionable.getAuthentication().setAuthUserId(authUserId);
-//				info("[getDirectoryMetaDataForNetId] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+				// doing this here so it doesn't get into a loop with the hals auth user id that is
+				// set during getFullPersonsForFilter method
+				// TODO: use DirectoryPerson here instead of FullPerson if possible
 				
+//				FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
+//				FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
+//
+//				queryObject.setPublicId(publicId);
+
+//				@SuppressWarnings("unchecked")
+//				List<FullPerson> moas = actionable.query(queryObject,
+//						this.getIdentityServiceRequestService());
+//				
+//				// should only get one back
+//				info("[getDirectoryMetaDataForNetId] got " + moas.size() + " FullPerson moas back from ESB for PublicID '" + publicId + "'");
+//				FullPerson moa = moas.get(0);
+//				info("[getDirectoryMetaDataForNetId] FullPerson xml: " + moa.toXmlString());
+
+				
+				DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
+				DirectoryPerson actionable = (DirectoryPerson) getObject(Constants.MOA_DIRECTORY_PERSON);
+
+				queryObject.setKey(publicId);
+				info("[getDirectoryMetaDataForNetId] query spec: " + queryObject.toXmlString());
+
 				@SuppressWarnings("unchecked")
-				List<FullPerson> moas = actionable.query(queryObject,
-						this.getIdentityServiceRequestService());
+				List<DirectoryPerson>moas = actionable.query(queryObject, this.getDirectoryRequestService());
+				info("[getDirectoryMetaDataForNetId] got " + moas.size() + " DirectoryPerson moas back from ESB for PublicID '" + publicId + "'");
+				DirectoryPerson moa = moas.get(0);
+				for (DirectoryPerson lmoa : moas) {
+					info("[getDirectoryMetaDataForNetId] DirectoryPerson xml: " + lmoa.toXmlString());
+				}
+
 				
-				// should only get one back
-				info("[getDirectoryMetaDataForNetId] got " + moas.size() + " FullPerson moas back from ESB for PublicID '" + publicId + "'");
-				FullPerson moa = moas.get(0);
-//				for (FullPerson moa : moas) {
-					dmd.setFirstName(moa.getPerson().getPersonalName().getFirstName());
-					dmd.setLastName(moa.getPerson().getPersonalName().getLastName());
-					dmd.setPublicId(moa.getPublicId());
-//				}
+				dmd.setFirstName(moa.getFirstMiddle());
+				dmd.setLastName(moa.getLastName());
+				dmd.setPublicId(moa.getKey());
 
 				Cache.getCache().put(Constants.NET_ID + publicId, dmd);
 				return dmd;
@@ -3748,6 +3813,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				throw new RpcException(e);
 			} 
 			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			} 
@@ -6206,6 +6275,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		DirectoryPersonQueryResultPojo result = new DirectoryPersonQueryResultPojo();
 		List<DirectoryPersonPojo> pojos = new java.util.ArrayList<DirectoryPersonPojo>();
+		String authUserId = null;
 		try {
 			DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
 			DirectoryPerson actionable = (DirectoryPerson) getObject(Constants.MOA_DIRECTORY_PERSON);
@@ -6214,9 +6284,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				queryObject.setKey(filter.getKey());
 				queryObject.setSearchString(filter.getSearchString());
 				queryObject.setTestRequest(filter.getTestRequest());
+				if (filter.getUserLoggedIn() != null) {
+					authUserId = this.getAuthUserIdForHALS(filter.getUserLoggedIn());
+				}
+
 			}
 
-			String authUserId = this.getAuthUserIdForHALS();
+			if (authUserId == null) {
+				authUserId = this.getAuthUserIdForHALS();
+			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getDirectoryPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
@@ -6234,6 +6310,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				for (DirectoryPerson moa : moas) {
 					DirectoryPersonPojo pojo = new DirectoryPersonPojo();
 	//				DirectoryPersonPojo baseline = new DirectoryPersonPojo();
+					info("DirectoryPerson: " + moa.toXmlString());
 					this.populateDirectoryPersonPojo(moa, pojo);
 	//				this.populateDirectoryPersonPojo(moa, baseline);
 	//				pojo.setBaseline(baseline);
@@ -6272,68 +6349,87 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public FullPersonQueryResultPojo getFullPersonsForFilter(FullPersonQueryFilterPojo filter) throws RpcException {
 		FullPersonQueryResultPojo result = new FullPersonQueryResultPojo();
 		List<FullPersonPojo> pojos = new java.util.ArrayList<FullPersonPojo>();
-		try {
-			FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
-			FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
-			String authUserId = null;
+//		try {
+//			FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
+//			FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
+//			String authUserId = null;
+//			
+//			if (filter != null) {
+//				queryObject.setPublicId(filter.getPublicId());
+//				queryObject.setNetId(filter.getNetId());
+//				queryObject.setEmplId(filter.getEmplId());
+//				queryObject.setPrsni(filter.getPrsni());
+//				queryObject.setCode(filter.getCode());
+//				if (filter.getUserLoggedIn() != null) {
+//					authUserId = this.getAuthUserIdForHALS(filter.getUserLoggedIn());
+//				}
+//			}
+//
+//			if (authUserId == null) {
+//				authUserId = this.getAuthUserIdForHALS();
+//			}
+//			actionable.getAuthentication().setAuthUserId(authUserId);
+//			info("[getFullPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+//			
+//			@SuppressWarnings("unchecked")
+//			List<FullPerson> moas = actionable.query(queryObject,
+//					this.getIdentityServiceRequestService());
+//			if (moas != null) {
+//				info("[service layer] got " + moas.size() + " FullPerson objects back from ESB.");
+//			}
+//			for (FullPerson moa : moas) {
+//				FullPersonPojo pojo = new FullPersonPojo();
+//				info("FullPerson xml: " + moa.toXmlString());
+//				this.populateFullPersonPojo(moa, pojo);
+//				pojos.add(pojo);
+//			}
 			
+			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			if (filter != null) {
-				queryObject.setPublicId(filter.getPublicId());
-				queryObject.setNetId(filter.getNetId());
-				queryObject.setEmplId(filter.getEmplId());
-				queryObject.setPrsni(filter.getPrsni());
-				queryObject.setCode(filter.getCode());
-				if (filter.getUserLoggedIn() != null) {
-					authUserId = this.getAuthUserIdForHALS(filter.getUserLoggedIn());
-				}
+				dp_filter.setKey(filter.getPublicId());
+				dp_filter.setSearchString(filter.getNetId());
 			}
-
-			if (authUserId == null) {
-				authUserId = this.getAuthUserIdForHALS();
-			}
-			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getFullPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
-			@SuppressWarnings("unchecked")
-			List<FullPerson> moas = actionable.query(queryObject,
-					this.getIdentityServiceRequestService());
-			if (moas != null) {
-				info("[service layer] got " + moas.size() + " FullPerson objects back from ESB.");
-			}
-			for (FullPerson moa : moas) {
-				FullPersonPojo pojo = new FullPersonPojo();
-				this.populateFullPersonPojo(moa, pojo);
-				pojos.add(pojo);
+			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+			for (DirectoryPersonPojo dp : dp_result.getResults()) {
+				FullPersonPojo fp = new FullPersonPojo();
+				fp.setPublicId(dp.getKey());
+				PersonPojo person = new PersonPojo();
+				fp.setPerson(person);
+				PersonalNamePojo pnp = new PersonalNamePojo();
+				pnp.setFirstName(dp.getFirstMiddle());
+				pnp.setLastName(dp.getLastName());
+				fp.getPerson().setPersonalName(pnp);
+				pojos.add(fp);
 			}
 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
-		catch (EnterpriseConfigurationObjectException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (EnterpriseFieldException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (EnterpriseObjectQueryException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (JMSException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (XmlEnterpriseObjectException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (ParseException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		}
+//		} 
+//		catch (EnterpriseConfigurationObjectException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (EnterpriseFieldException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (EnterpriseObjectQueryException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (JMSException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (XmlEnterpriseObjectException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (ParseException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -11861,7 +11957,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("Error retrieving '" + EMORY_CIMP_PROPERTIES + "' to determine if we're running an "
 					+ "Emory CIMP instance of the console.  This could be okay but it could be a "
 					+ "configuration issue.  Returning false");
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -11881,7 +11976,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("Error retrieving " + EMORY_CIMP_PROPERTIES + "' to determine the financial account "
 					+ "field label name.  This could be okay but it could be a "
 					+ "configuration issue.  Returning default label name (" + defaultLabel + ")");
-			e.printStackTrace();
 			return defaultLabel;
 		}
 	}
@@ -12064,5 +12158,454 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		info("saveConsoleFeatureInCacheForUser: saving " + l.size() + " services in recently used cache for user " + user.getPublicId());
 		Cache.getCache().put(key, l);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ResourceTaggingProfileQueryResultPojo getResourceTaggingProfilesForFilter(
+			ResourceTaggingProfileQueryFilterPojo filter) throws RpcException {
+
+		ResourceTaggingProfileQueryResultPojo result = new ResourceTaggingProfileQueryResultPojo();		
+		List<ResourceTaggingProfilePojo> pojos = new java.util.ArrayList<ResourceTaggingProfilePojo>();
+		try {
+			ResourceTaggingProfileQuerySpecification queryObject = (ResourceTaggingProfileQuerySpecification) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE_QUERY_SPEC);
+			ResourceTaggingProfile actionable = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+
+			if (filter != null) {
+				if (!filter.isFuzzyFilter()) {
+					// if the filter is using a fuzzy filter, we'll just get them all and do the comparisons below
+					queryObject.setNamespace(filter.getNamespace());
+					queryObject.setRevision(filter.getRevision());
+					queryObject.setProfileName(filter.getProfileName());
+					queryObject.setProfileId(filter.getProfileId());
+					info("[getResourceTaggingProfilesForFilter] getting items for filter: " + queryObject.toXmlString());
+				}
+			}
+			else {
+				info("[getResourceTaggingProfilesForFilter] no filter passed in.  Getting all ResourceTaggingProfile objects");
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getResourceTaggingProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			RequestService reqSvc = this.getRtpRequestService();
+
+			List<ResourceTaggingProfile> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getResourceTaggingProfilesForFilter] got " + moas.size() + " Resource Tagging Profile objects back from the server.");
+			for (ResourceTaggingProfile moa : moas) {
+				String namespace = moa.getNamespace().toLowerCase();
+				String profileName = moa.getProfileName().toLowerCase();
+				if (filter != null && filter.isFuzzyFilter()) {
+					if (filter.getNamespace() != null && filter.getProfileName() != null) {
+						// namespace and profile name that match (fuzzy)
+						if ((namespace.indexOf(filter.getNamespace()) >= 0) &&
+							(profileName.indexOf(filter.getProfileName()) >= 0)) {
+							
+							ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+							this.populateResourceTaggingProfilePojo(moa, pojo);
+							pojos.add(pojo);
+						}
+					}
+					else if (filter.getNamespace() != null) {
+						// namespace only
+						if (namespace.indexOf(filter.getNamespace()) >= 0) {
+							ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+							this.populateResourceTaggingProfilePojo(moa, pojo);
+							pojos.add(pojo);
+						}
+					}
+					else if (filter.getProfileName() != null) {
+						// profile name only
+						if (profileName.indexOf(filter.getProfileName()) >= 0) {
+							ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+							this.populateResourceTaggingProfilePojo(moa, pojo);
+							pojos.add(pojo);
+						}
+					}
+					else if (filter.getManagedTagName() != null && filter.getManagedTagValue() != null) {
+						// managed tag name/value
+						for (ManagedTag tag : (List<ManagedTag>)moa.getManagedTag()) {
+							String tagName = tag.getTagName().toLowerCase();
+							String tagValue = tag.getTagValue().toLowerCase();
+							if ((tagName.indexOf(filter.getManagedTagName()) >= 0) &&
+								(tagValue.indexOf(filter.getManagedTagValue()) >= 0)) {
+								
+								ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+								this.populateResourceTaggingProfilePojo(moa, pojo);
+								pojos.add(pojo);
+							}
+						}
+					}
+					else if (filter.getManagedTagName() != null) {
+						// managed tag name only
+						for (ManagedTag tag : (List<ManagedTag>)moa.getManagedTag()) {
+							String tagName = tag.getTagName().toLowerCase();
+							if (tagName.indexOf(filter.getManagedTagName()) >= 0) {
+								ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+								this.populateResourceTaggingProfilePojo(moa, pojo);
+								pojos.add(pojo);
+							}
+						}
+					}
+					else if (filter.getManagedTagValue() != null) {
+						// manged tag value only
+						for (ManagedTag tag : (List<ManagedTag>)moa.getManagedTag()) {
+							String tagValue = tag.getTagValue().toLowerCase();
+							if (tagValue.indexOf(filter.getManagedTagValue()) >= 0) {
+								
+								ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+								this.populateResourceTaggingProfilePojo(moa, pojo);
+								pojos.add(pojo);
+							}
+						}
+					}
+					else {
+						// just add it
+						ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+						this.populateResourceTaggingProfilePojo(moa, pojo);
+						ResourceTaggingProfilePojo baseline = new ResourceTaggingProfilePojo();
+						this.populateResourceTaggingProfilePojo(moa, baseline);
+						pojo.setBaseline(baseline);
+						pojos.add(pojo);
+					}
+				}
+				else {
+					ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
+					this.populateResourceTaggingProfilePojo(moa, pojo);
+					ResourceTaggingProfilePojo baseline = new ResourceTaggingProfilePojo();
+					this.populateResourceTaggingProfilePojo(moa, baseline);
+					pojo.setBaseline(baseline);
+					pojos.add(pojo);
+				}
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateResourceTaggingProfilePojo(ResourceTaggingProfile moa, ResourceTaggingProfilePojo pojo) {
+		pojo.setProfileId(moa.getProfileId());
+		pojo.setNamespace(moa.getNamespace());
+		pojo.setProfileName(moa.getProfileName());
+		pojo.setRevision(moa.getRevision());
+		if (moa.getActive() != null) {
+			pojo.setActive(Boolean.parseBoolean(moa.getActive()));
+		}
+		else {
+			pojo.setActive(false);
+		}
+		for (ManagedTag tag : (List<ManagedTag>) moa.getManagedTag()) {
+			ManagedTagPojo ptag = new ManagedTagPojo();
+			ptag.setManagedTagId(tag.getManagedTagId());
+			ptag.setTagName(tag.getTagName());
+			ptag.setTagValue(tag.getTagValue());
+			ptag.setDescription(tag.getDescription());
+			if (tag.getServiceFilter() != null) {
+				ServiceFilterPojo sfp = new ServiceFilterPojo();
+				sfp.setServiceName(tag.getServiceFilter().getServiceName());
+				for (String resourceName : (List<String>) tag.getServiceFilter().getResourceName()) {
+					sfp.getResourceNames().add(resourceName);
+				}
+				ptag.setServiceFilter(sfp);
+			}
+
+			if (tag.getAccountMetadataFilter() != null) {
+				AccountMetadataFilterPojo amf = new AccountMetadataFilterPojo();
+				amf.setPropertyName(tag.getAccountMetadataFilter().getPropertyName());
+				for (String propertyValue : (List<String>) tag.getAccountMetadataFilter().getPropertyValue()) {
+					amf.getPropertyValues().add(propertyValue);
+				}
+				ptag.setAccountMetadataFilter(amf);
+			}
+			pojo.getManagedTags().add(ptag);
+		}
+	}
+	private void populateResourceTaggingProfileMoa(ResourceTaggingProfilePojo pojo,
+			ResourceTaggingProfile moa) throws EnterpriseFieldException,
+			IllegalArgumentException, SecurityException,
+			IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+		moa.setProfileId(pojo.getProfileId());
+		moa.setNamespace(pojo.getNamespace());
+		moa.setProfileName(pojo.getProfileName());
+		moa.setRevision(pojo.getRevision());
+		moa.setActive(Boolean.toString(pojo.isActive()));
+		for (ManagedTagPojo ptag : (List<ManagedTagPojo>) pojo.getManagedTags()) {
+			ManagedTag tag = moa.newManagedTag();
+			tag.setManagedTagId(ptag.getManagedTagId());
+			tag.setTagName(ptag.getTagName());
+			tag.setTagValue(ptag.getTagValue());
+			tag.setDescription(ptag.getDescription());
+			if (ptag.getServiceFilter() != null) {
+				ServiceFilter sf = tag.newServiceFilter();
+				sf.setServiceName(ptag.getServiceFilter().getServiceName());
+				for (String resourceName : (List<String>) ptag.getServiceFilter().getResourceNames()) {
+					sf.addResourceName(resourceName);
+				}
+				tag.setServiceFilter(sf);
+			}
+
+			if (ptag.getAccountMetadataFilter() != null) {
+				AccountMetadataFilter amf = tag.newAccountMetadataFilter();
+				amf.setPropertyName(ptag.getAccountMetadataFilter().getPropertyName());
+				for (String propertyValue : (List<String>) ptag.getAccountMetadataFilter().getPropertyValues()) {
+					amf.addPropertyValue(propertyValue);
+				}
+				tag.setAccountMetadataFilter(amf);
+			}
+			moa.addManagedTag(tag);
+		}
+	}
+
+	@Override
+	public ResourceTaggingProfilePojo createResourceTaggingProfile(ResourceTaggingProfilePojo pojo)
+			throws RpcException {
+
+		pojo.setCreateInfo(this.getCachedUser().getPublicId(),
+				new java.util.Date());
+		
+		// make sure profile id is blank otherwise the service will treat it like an update
+		// instead of a create.  There may be a profileId in the pojo passed in because 
+		// when a profile is updated, it's generally doing that from an existing profile 
+		// that has a profile id.
+		pojo.setProfileId(null);
+		for (ManagedTagPojo tag : pojo.getManagedTags()) {
+			tag.setManagedTagId(null);
+		}
+		
+		// if the profile coming in is active, we need to query for all other profiles 
+		// in this namespace and set and of them that are currently active to inactive
+		ResourceTaggingProfileQueryFilterPojo filter = new ResourceTaggingProfileQueryFilterPojo();
+		filter.setNamespace(pojo.getNamespace());
+		filter.setProfileName(pojo.getProfileName());
+		ResourceTaggingProfileQueryResultPojo result = this.getResourceTaggingProfilesForFilter(filter);
+		
+		pojo.setRevision(Integer.toString(result.getResults().size() + 1));
+		if (pojo.isActive()) {
+			for (ResourceTaggingProfilePojo profile : result.getResults()) {
+				if (profile.isActive()) {
+					info("[createResourceTaggingProfile] found an existing active profile, setting it to inactive.");
+					profile.setActive(false);
+					this.updateResourceTaggingProfile(profile);
+				}
+			}
+		}
+
+		if (!useEsbService) {
+			return null;
+		} 
+		else {
+			try {
+				info("creating ResourceTaggingProfile on the server...");
+				ResourceTaggingProfile moa = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+				info("populating moa");
+				this.populateResourceTaggingProfileMoa(pojo, moa);
+
+				
+				info("doing the ResourceTaggingProfile.create..." + moa.toXmlString());
+				this.doCreate(moa, this.getRtpRequestService());
+				info("ResourceTaggingProfile.create is complete...");
+
+				return pojo;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseObjectCreateException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+			catch (XmlEnterpriseObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
+	}
+
+	@Override
+	public ResourceTaggingProfilePojo updateResourceTaggingProfile(ResourceTaggingProfilePojo pojo)
+			throws RpcException {
+		
+		pojo.setUpdateInfo(this.getCachedUser().getPublicId());
+        try {
+            info("updating ResourceTaggingProfile on the server...");
+            ResourceTaggingProfile newData = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+            ResourceTaggingProfile baselineData = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+
+            info("populating newData...");
+            populateResourceTaggingProfileMoa(pojo, newData);
+
+            info("populating baselineData...");
+            populateResourceTaggingProfileMoa(pojo.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+            doUpdate(newData, getRtpRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return pojo;
+	}
+
+	@Override
+	public void deleteResourceTaggingProfile(boolean deleteAllMatchingProfiles, ResourceTaggingProfilePojo pojo) throws RpcException {
+		if (!useEsbService) {
+			return;
+		} 
+		else {
+			try {
+				if (deleteAllMatchingProfiles) {
+					ResourceTaggingProfileQueryFilterPojo filter = new ResourceTaggingProfileQueryFilterPojo();
+					filter.setNamespace(pojo.getNamespace());
+					filter.setProfileName(pojo.getProfileName());
+					ResourceTaggingProfileQueryResultPojo result = this.getResourceTaggingProfilesForFilter(filter);
+					info("deleting all ResourceTaggingProfiles for " + pojo.getNamespace() + "/" + pojo.getProfileName());
+					int deleteCnt=0;
+					for (ResourceTaggingProfilePojo profile : result.getResults()) {
+						ResourceTaggingProfile moa = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+						this.populateResourceTaggingProfileMoa(profile, moa);
+						
+						info("doing the ResourceTaggingProfile.delete...");
+						this.doDelete(moa, this.getRtpRequestService());
+						deleteCnt++;
+						info("ResourceTaggingProfile.delete is complete...");
+					}
+					info("Deleted " + deleteCnt + " profiles in the '" + pojo.getNamespace() + 
+						"' namespace with a profile name of '" + pojo.getProfileName() + "'");
+				}
+				else {
+					info("deleting ResourceTaggingProfile on the server...");
+					ResourceTaggingProfile moa = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+					this.populateResourceTaggingProfileMoa(pojo, moa);
+					
+					info("doing the ResourceTaggingProfile.delete...");
+					this.doDelete(moa, this.getRtpRequestService());
+					info("ResourceTaggingProfile.delete is complete...");
+				}
+
+				return;
+			} 
+			catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (EnterpriseFieldException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (SecurityException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (IllegalAccessException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			} 
+			catch (JMSException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+			catch (EnterpriseObjectDeleteException e) {
+				e.printStackTrace();
+				throw new RpcException(e);
+			}
+		}
+	}
+
+	@Override
+	public void updateResourceTaggingProfiles(List<ResourceTaggingProfilePojo> profiles) throws RpcException {
+		for (ResourceTaggingProfilePojo profile : profiles) {
+			this.updateResourceTaggingProfile(profile);
+		}
+		return;
+	}
+
+	@Override
+	public PropertiesPojo getPropertiesForMenu(String menuId) throws RpcException {
+		try {
+			Properties props = getAppConfig().getProperties(MENU_PROPERTIES + "-" + menuId);
+			PropertiesPojo p = new PropertiesPojo();
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				String value = props.getProperty(key);
+				p.setProperty(key, value);
+			}
+			return p;
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
 	}
 }

@@ -22,12 +22,12 @@ public class ConsoleFeatureRpcSuggestOracle extends SuggestOracle {
 		AsyncCallback<ConsoleFeatureQueryResultPojo> svcCallback = new AsyncCallback<ConsoleFeatureQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				GWT.log("[AwsServiceRpcSuggestOracle.constructor] problem getting services..." + caught.getMessage());
+				GWT.log("[ConsoleFeatureRpcSuggestOracle.constructor] problem getting features..." + caught.getMessage());
 			}
 
 			@Override
 			public void onSuccess(ConsoleFeatureQueryResultPojo result) {
-				GWT.log("[AwsServiceRpcSuggestOracle.constructor] got " + result.getResults().size() + " services back.");
+				GWT.log("[ConsoleFeatureRpcSuggestOracle.constructor] got " + result.getResults().size() + " features back.");
 				if (result != null) {
 					if (result.getResults() != null) {
 						services = result.getResults();
@@ -35,7 +35,7 @@ public class ConsoleFeatureRpcSuggestOracle extends SuggestOracle {
 				}
 			}
 		};
-		GWT.log("[AwsServiceRpcSuggestOracle.constructor] getting services");
+		GWT.log("[ConsoleFeatureRpcSuggestOracle.constructor] getting services");
 		ConsoleFeatureQueryFilterPojo filter = new ConsoleFeatureQueryFilterPojo();
 		VpcProvisioningService.Util.getInstance().getConsoleFeaturesForFilter(filter, svcCallback);
 	}

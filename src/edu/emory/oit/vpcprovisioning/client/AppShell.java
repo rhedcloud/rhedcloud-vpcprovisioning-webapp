@@ -1,8 +1,11 @@
 package edu.emory.oit.vpcprovisioning.client;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
@@ -41,6 +44,12 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void selectVpcpTab();
 	void showCimpAuditorTabs();
 	void showCimpAdminTabs();
+	void showServiceListPanel();
+	void hideServiceListPanel();
 	
 	void initPage();
+	
+	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user);
+	void setConsoleFeatures(List<ConsoleFeaturePojo> services);
+	void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> services);
 }

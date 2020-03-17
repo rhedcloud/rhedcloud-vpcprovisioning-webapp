@@ -21,6 +21,8 @@ import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePlace;
@@ -93,7 +95,9 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 				 ListVpnConnectionProvisioningPlace.Tokenizer.class,
 				 VpncpStatusPlace.Tokenizer.class, 
 				 MaintainVpnConnectionProvisioningPlace.Tokenizer.class,
-				 ServiceAssessmentReportPlace.Tokenizer.class})
+				 ServiceAssessmentReportPlace.Tokenizer.class,
+				 ListResourceTaggingProfilePlace.Tokenizer.class,
+				 MaintainResourceTaggingProfilePlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

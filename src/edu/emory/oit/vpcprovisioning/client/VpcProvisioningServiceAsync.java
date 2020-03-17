@@ -267,4 +267,12 @@ public interface VpcProvisioningServiceAsync {
 	void isCimpInstance(AsyncCallback<Boolean> callback);
 	void getFinancialAccountFieldLabel(AsyncCallback<String> callback);
 
+	// Resource Tagging Profile
+	void getResourceTaggingProfilesForFilter(ResourceTaggingProfileQueryFilterPojo filter, AsyncCallback<ResourceTaggingProfileQueryResultPojo> callback);
+	void createResourceTaggingProfile(ResourceTaggingProfilePojo pojo, AsyncCallback<ResourceTaggingProfilePojo> callback);
+	void updateResourceTaggingProfile(ResourceTaggingProfilePojo pojo, AsyncCallback<ResourceTaggingProfilePojo> callback);
+	void updateResourceTaggingProfiles(List<ResourceTaggingProfilePojo> profiles, AsyncCallback<Void> callback);
+	void deleteResourceTaggingProfile(boolean deleteAllMatchingProfiles, ResourceTaggingProfilePojo pojo, AsyncCallback<Void> callback);
+
+	void getPropertiesForMenu(String menuId, AsyncCallback<PropertiesPojo> callback);
 }

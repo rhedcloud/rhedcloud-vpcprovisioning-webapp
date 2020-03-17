@@ -60,11 +60,11 @@ public class DesktopListStaticNatProvisioningSummary extends ViewImplBase implem
 	@UiField HTML pleaseWaitHTML;
 	@UiField PushButton refreshButton;
 
-	@UiField Button homeButton;
-	@UiHandler("homeButton")
-	void homeButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-	}
+//	@UiField Button homeButton;
+//	@UiHandler("homeButton")
+//	void homeButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+//	}
 	public interface MyCellTableResources extends CellTable.Resources {
 		@Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
 		public CellTable.Style cellTableStyle();

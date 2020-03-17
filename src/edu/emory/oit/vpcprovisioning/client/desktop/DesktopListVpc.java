@@ -67,11 +67,11 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	@UiField TextBox filterTB;
 	@UiField ListBox filterTypesLB;
 
-	@UiField Button homeButton;
-	@UiHandler("homeButton")
-	void homeButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-	}
+//	@UiField Button homeButton;
+//	@UiHandler("homeButton")
+//	void homeButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+//	}
 
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {

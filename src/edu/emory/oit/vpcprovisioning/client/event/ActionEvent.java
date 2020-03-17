@@ -41,6 +41,7 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallExceptionRequestSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
+import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
@@ -125,6 +126,15 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private boolean firewallExceptionAddRequest;
 	private List<AWSServicePojo> servicesToAssess = new java.util.ArrayList<AWSServicePojo>();
 	private boolean newSecurityRiskWindow=false;
+	private ResourceTaggingProfilePojo resourceTaggingProfile;
+
+	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
+		return resourceTaggingProfile;
+	}
+
+	public void setResourceTaggingProfile(ResourceTaggingProfilePojo resourceTaggingProfile) {
+		this.resourceTaggingProfile = resourceTaggingProfile;
+	}
 
 	public CidrPojo getCidr() {
 		return cidr;
@@ -187,6 +197,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, CidrAssignmentPojo cidrAssignment) {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(cidrAssignment), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, ResourceTaggingProfilePojo rtp) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(rtp), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AccountPojo account) {
@@ -492,6 +507,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.vpc = vpc;
 	}
 	
+	public ActionEvent(ResourceTaggingProfilePojo rtp) {
+		this.resourceTaggingProfile = rtp;
+	}
+
 	public ActionEvent(AccountPojo account) {
 		this.account = account;
 	}
@@ -530,6 +549,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	
 	public ActionEvent(AccountPojo account, Place nextPlace) {
 		this.account = account;
+		this.setNextPlace(nextPlace);
+	}
+
+	public ActionEvent(ResourceTaggingProfilePojo rtp, Place nextPlace) {
+		this.resourceTaggingProfile = rtp;
 		this.setNextPlace(nextPlace);
 	}
 

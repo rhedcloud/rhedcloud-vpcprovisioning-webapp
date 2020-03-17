@@ -60,8 +60,9 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-core-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-test-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/validation-api-1.1.0.Final.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/aws-moa-master-117.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/openeai-core-5.0.13.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-moa-master-27.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-aws-moa-master-2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

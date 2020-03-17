@@ -103,6 +103,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField Button cancelButton;
 	@UiField TextBox accountIdTB;
 	@UiField TextBox accountNameTB;
+	@UiField TextBox alternateNameTB;
 	@UiField TextBox passwordLocationTB;
 	@UiField TextBox speedTypeTB;
 
@@ -427,6 +428,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	void okayButtonClick(ClickEvent e) {
 		presenter.getAccount().setAccountId(accountIdTB.getText());
 		presenter.getAccount().setAccountName(accountNameTB.getText());
+		presenter.getAccount().setAlternateName(alternateNameTB.getText());
 		presenter.getAccount().setComplianceClass(complianceClassLB.getSelectedValue());
 		presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
 		presenter.getAccount().setSpeedType(speedTypeTB.getText());
@@ -634,6 +636,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		removeButtonColumnNum = 1;
 		accountIdTB.setText("");
 		accountNameTB.setText("");
+		alternateNameTB.setText("");
 		ownerIdSB.setText("");
 		passwordLocationTB.setText("");
 		speedTypeTB.setText("");
@@ -661,6 +664,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			accountIdTB.setText(presenter.getAccount().getAccountId());
 			// account id can't be changed
 			accountNameTB.setText(presenter.getAccount().getAccountName());
+			alternateNameTB.setText(presenter.getAccount().getAlternateName());
 			if (presenter.getAccount().getAccountOwnerDirectoryMetaData() != null) {
 				ownerIdSB.setText(presenter.getAccount().getAccountOwnerDirectoryMetaData().getFirstName() + 
 						" " + presenter.getAccount().getAccountOwnerDirectoryMetaData().getLastName());
@@ -784,6 +788,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		okayButton.setEnabled(true);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
+		alternateNameTB.setEnabled(true);
 		ownerIdSB.setEnabled(false);
 		if (editing) {
 			if (presenter.getAccount() != null) {
@@ -815,6 +820,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		okayButton.setEnabled(false);
 		accountIdTB.setEnabled(false);
 		accountNameTB.setEnabled(false);
+		alternateNameTB.setEnabled(false);
 		ownerIdSB.setEnabled(false);
 		passwordLocationTB.setEnabled(false);
 		speedTypeTB.setEnabled(false);
@@ -966,6 +972,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			accountIdTB.setEnabled(true);
 		}
 		accountNameTB.setEnabled(true);
+		alternateNameTB.setEnabled(true);
 		ownerIdSB.setEnabled(true);
 		passwordLocationTB.setEnabled(true);
 		speedTypeTB.setEnabled(true);

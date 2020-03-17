@@ -844,6 +844,20 @@ a:visited {
 	color: orange;
 }
 
+.featuresMenuHeader {
+	background: #232f3e;
+	color: #fff;
+	font-size: 14px;
+	text-align: left;
+	cursor: pointer;
+	padding-right: 15px;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+}
+
+.featuresMenuHeader:hover {
+	color: orange;
+}
+
 .menuItemSeparator {
 	width: 1px;
 		height: 1px;

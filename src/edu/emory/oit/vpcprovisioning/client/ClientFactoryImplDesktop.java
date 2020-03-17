@@ -21,6 +21,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIpAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListFirewallRule;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListResourceTaggingProfile;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceControl;
@@ -39,6 +40,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainElasticIpAssi
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainFirewallExceptionRequest;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainIncident;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainNotification;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainResourceTaggingProfile;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityAssessment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
@@ -76,6 +78,8 @@ import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelineView;
@@ -164,6 +168,8 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private VpncpStatusView vpncpStatusView;
 	private MaintainVpnConnectionProvisioningView maintainVpnConnectionProvisioningView;
 	private ServiceAssessmentReportView serviceAssessmentReportView;
+	private ListResourceTaggingProfileView listResourceTaggingProfileView;
+	private MaintainResourceTaggingProfileView maintainResourceTaggingProfileView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -694,5 +700,25 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
     protected ServiceAssessmentReportView createServiceAssessmentReportView() {
         return new DesktopServiceAssessmentReport();
+    }
+	@Override
+	public ListResourceTaggingProfileView getListResourceTaggingProfileView() {
+        if (listResourceTaggingProfileView == null) {
+        	listResourceTaggingProfileView = createListResourceTaggingProfileView();
+        }
+        return listResourceTaggingProfileView;
+	}
+    protected ListResourceTaggingProfileView createListResourceTaggingProfileView() {
+        return new DesktopListResourceTaggingProfile();
+    }
+	@Override
+	public MaintainResourceTaggingProfileView getMaintainResourceTaggingProfileView() {
+        if (maintainResourceTaggingProfileView == null) {
+        	maintainResourceTaggingProfileView = createMaintainResourceTaggingProfileView();
+        }
+        return maintainResourceTaggingProfileView;
+	}
+    protected MaintainResourceTaggingProfileView createMaintainResourceTaggingProfileView() {
+        return new DesktopMaintainResourceTaggingProfile();
     }
 }

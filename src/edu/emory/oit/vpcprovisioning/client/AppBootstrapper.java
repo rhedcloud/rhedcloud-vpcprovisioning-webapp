@@ -53,13 +53,14 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlac
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServicePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityAssessmentView;
-import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceControlPresenter;
@@ -447,7 +448,14 @@ public class AppBootstrapper {
 				placeController.goTo(new ListVpnConnectionProfilePlace(false));
 			}
 		});
-		
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_RTP, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_RTP.onAction");
+				placeController.goTo(new ListResourceTaggingProfilePlace(false));
+			}
+		});
+
 
 		ActionEvent.register(eventBus, ActionNames.CREATE_VPN_CONNECTION_PROFILE, new ActionEvent.Handler() {
 			@Override
@@ -775,6 +783,42 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(new ListElasticIpAssignmentPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.RTP_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListResourceTaggingProfilePlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.RTP_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListResourceTaggingProfilePlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_RTP_REVISION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainResourceTaggingProfilePlace.createMaintainResourceTaggingProfilePlace(true, event.getResourceTaggingProfile()));
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.CREATE_RTP, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper:MaintainRTP event fired.");
+				placeController.goTo(MaintainResourceTaggingProfilePlace.getMaintainResourceTaggingProfilePlace());
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_RTP, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("AppBootstrapper...rtp from event is: " + event.getResourceTaggingProfile());
+				placeController.goTo(MaintainResourceTaggingProfilePlace.createMaintainResourceTaggingProfilePlace(false, event.getResourceTaggingProfile()));
 			}
 		});
 

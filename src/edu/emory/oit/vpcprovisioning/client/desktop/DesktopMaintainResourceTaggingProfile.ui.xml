@@ -1,0 +1,171 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:ScrollPanel width="99%" height="99%">
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:Grid cellSpacing="8">
+			<g:row>
+		    	<g:customCell>
+					<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.mediumLabel}">General RTP Info:</g:Label>
+					    	</g:customCell>
+						</g:row>
+						<!--
+						<!ELEMENT ResourceTaggingProfile (ProfileId?, Namespace, ProfileName, Revision, ManagedTag*)>
+						 -->
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Namespace:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="namespaceTB" debugId="namespaceTB" enabled="false"/>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Profile Name:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="profileNameTB" debugId="profileNameTB" enabled="false"/>
+					    	</g:customCell>
+				    	</g:row>
+						<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}">Revision:</g:Label>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="revisionTB" debugId="revisionTB" enabled="false"/>
+					    	</g:customCell>
+				    	</g:row>
+				    	<g:row>
+					    	<g:customCell>
+								<g:Label addStyleNames="{style.label}"></g:Label>
+					    	</g:customCell>
+				    		<g:customCell>
+				    			<g:CheckBox addStyleNames="{style.label}" ui:field="isActiveCB" 
+									title="Toggle profile between active and inactive">Active Profile</g:CheckBox>				    		
+				    		</g:customCell>
+				    	</g:row>
+					</g:Grid>
+		    	</g:customCell>
+		    </g:row>
+		    <g:row>
+		    	<g:customCell>
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="propertiesVP" height="100%" width="100%">
+						<g:Label addStyleNames="{style.mediumLabel}">Add/Update/Remove Managed Tags:</g:Label>
+						<g:HorizontalPanel ui:field="addTagHP" spacing="16">
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:TextBox ui:field="tagNameTB" debugId="tagNameTB" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:TextBox ui:field="tagValueTB" debugId="tagValueTB" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:Button ui:field="addTagButton" debugId="addTagButton"
+									addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+							</g:cell>
+						</g:HorizontalPanel>
+						<g:VerticalPanel spacing="8" width="100%">
+							<g:Label addStyleNames="{style.mediumLabel}">Managed Tags associated to this profile:</g:Label>
+							<g:FlexTable ui:field="managedTagsTable" debugId="managedTagsTable" cellSpacing="3" cellPadding="3" width="100%"/>
+						</g:VerticalPanel>
+					</g:VerticalPanel>
+		    	</g:customCell>
+		    </g:row>
+		</g:Grid>
+		<g:Grid>
+			<g:row>
+		    	<g:customCell>
+					<g:VerticalPanel ui:field="existingRtpsPanel" addStyleNames="{style.statusPanel}" width="100%" spacing="8">
+						<g:HTML ui:field="existingRtpsHeader" addStyleNames="{style.mediumLabel}">Resource Tagging Profile(s) with same namespace/profile name</g:HTML>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+							<g:Grid cellSpacing="12">
+								<g:row>
+									<g:customCell>
+										<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+									</g:customCell>
+							    	<g:customCell>
+										<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+											ui:field="filterTB" debugId="filterTB" title="Enter a search string that you'd like to filter the list by."/>
+							    	</g:customCell>
+									<g:customCell>
+										<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+											ui:field="filterTypesLB" debugId="filterTypesLB" />
+									</g:customCell>
+									<g:customCell>
+										<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+									</g:customCell>
+									<g:customCell>
+										<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+									</g:customCell>
+									<g:customCell>
+										<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
+											addStyleNames="{style.refreshButton}"
+											title="Refresh table content"/>
+									</g:customCell>
+									<g:customCell>
+										<g:HTML ui:field="filteredHTML" visible="false" addStyleNames="{style.body}"><i>* Filtered</i></g:HTML>
+									</g:customCell>
+								</g:row>
+							</g:Grid>
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+							<g:VerticalPanel ui:field="rtpListPanel" width="100%">
+								<g:Grid>
+									<g:row>
+										<g:customCell>
+											<c:CellTable width="100%" ui:field="listTable" debugId="listTable" title="Resource Tagging Profiles with the same namespace and profile name"/>
+										</g:customCell>
+									</g:row>
+									<g:row>
+										<g:customCell>
+											<c:SimplePager ui:field="listPager" debugId="listPager"/>
+										</g:customCell>
+									</g:row>
+								</g:Grid>
+							</g:VerticalPanel>
+						</g:cell>
+					</g:VerticalPanel>
+		    	</g:customCell>
+		    </g:row>
+			<g:row>
+		    	<g:customCell>
+					<g:Grid cellSpacing="12">
+						<g:row>
+					    	<g:customCell>
+								<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+									ui:field="okayButton" debugId="okayButton">Save</g:Button>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+									ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+					    	</g:customCell>
+						</g:row>
+					</g:Grid>
+		    	</g:customCell>
+		    </g:row>
+		</g:Grid>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 

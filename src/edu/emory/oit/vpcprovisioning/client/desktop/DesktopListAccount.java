@@ -71,11 +71,11 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	@UiField ListBox filterTypesLB;
 	@UiField PushButton refreshButton;
 	
-	@UiField Button homeButton;
-	@UiHandler("homeButton")
-	void homeButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-	}
+//	@UiField Button homeButton;
+//	@UiHandler("homeButton")
+//	void homeButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+//	}
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
 		presenter.refreshList(userLoggedIn);
@@ -132,6 +132,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 	void clearFilterButtonClicked(ClickEvent e) {
 		// clear filter
 		filterTB.setText("");
+		filterTypesLB.setSelectedIndex(0);
 		presenter.clearFilter();
 	}
 	@UiHandler("actionsButton")
@@ -451,6 +452,23 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		accountListTable.addColumn(acctNameColumn, "Account Name");
 		
+		// alternate name
+		Column<AccountPojo, String> acctAltNameColumn = 
+			new Column<AccountPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(AccountPojo object) {
+				return (object.getAlternateName() == null ? "Comming Soon" : object.getAlternateName());
+			}
+		};
+		acctAltNameColumn.setSortable(true);
+		sortHandler.setComparator(acctAltNameColumn, new Comparator<AccountPojo>() {
+			public int compare(AccountPojo o1, AccountPojo o2) {
+				return o1.getAlternateName().compareTo(o2.getAlternateName());
+			}
+		});
+		accountListTable.addColumn(acctAltNameColumn, "Alternate Name");
+
 		// account owner
 		Column<AccountPojo, String> ownerColumn = 
 			new Column<AccountPojo, String> (new TextCell()) {

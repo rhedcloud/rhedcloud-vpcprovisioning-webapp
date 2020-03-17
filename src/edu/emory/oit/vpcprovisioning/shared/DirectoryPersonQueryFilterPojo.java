@@ -7,6 +7,15 @@ public class DirectoryPersonQueryFilterPojo extends SharedObject implements IsSe
 	String searchString;
 	String key;
 	String testRequest;
+	UserAccountPojo userLoggedIn;
+
+	public UserAccountPojo getUserLoggedIn() {
+		return userLoggedIn;
+	}
+
+	public void setUserLoggedIn(UserAccountPojo userLoggedIn) {
+		this.userLoggedIn = userLoggedIn;
+	}
 
 	public DirectoryPersonQueryFilterPojo() {
 	}

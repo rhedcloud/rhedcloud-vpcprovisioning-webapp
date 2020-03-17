@@ -21,6 +21,17 @@ public class AccountPojo extends SharedObject implements IsSerializable, Compara
 	List<PropertyPojo> properties = new java.util.ArrayList<PropertyPojo>();
 	AccountPojo baseline;
 	
+	// phase 2 mods
+	String alternateName;
+	
+	public String getAlternateName() {
+		return alternateName;
+	}
+
+	public void setAlternateName(String alternateName) {
+		this.alternateName = alternateName;
+	}
+
 	public static final ProvidesKey<AccountPojo> KEY_PROVIDER = new ProvidesKey<AccountPojo>() {
 		@Override
 		public Object getKey(AccountPojo item) {

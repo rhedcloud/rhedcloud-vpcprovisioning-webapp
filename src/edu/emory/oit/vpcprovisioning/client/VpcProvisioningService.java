@@ -288,4 +288,13 @@ public interface VpcProvisioningService extends RemoteService {
 	// Emory CIMP Specific methods
 	boolean isCimpInstance() throws RpcException;
 	String getFinancialAccountFieldLabel() throws RpcException;
+	
+	// Resource Tagging Profile
+	ResourceTaggingProfileQueryResultPojo getResourceTaggingProfilesForFilter(ResourceTaggingProfileQueryFilterPojo filter) throws RpcException;
+	ResourceTaggingProfilePojo createResourceTaggingProfile(ResourceTaggingProfilePojo account) throws RpcException;
+	ResourceTaggingProfilePojo updateResourceTaggingProfile(ResourceTaggingProfilePojo account) throws RpcException;
+	void updateResourceTaggingProfiles(List<ResourceTaggingProfilePojo> profile) throws RpcException;
+	void deleteResourceTaggingProfile(boolean deleteAllMatchingProfiles, ResourceTaggingProfilePojo account) throws RpcException;
+
+	PropertiesPojo getPropertiesForMenu(String menuId) throws RpcException;
 }

@@ -14,6 +14,17 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 	String lastUpdateUser;
 	UserAccountPojo userLoggedIn;
 	boolean fuzzyFilter=false;
+	
+	// phase 2 mods
+	String alternateAccountName;
+
+	public String getAlternateAccountName() {
+		return alternateAccountName;
+	}
+
+	public void setAlternateAccountName(String alternateAccountName) {
+		this.alternateAccountName = alternateAccountName;
+	}
 
 	public AccountQueryFilterPojo() {
 	}

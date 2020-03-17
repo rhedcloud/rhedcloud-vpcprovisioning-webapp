@@ -32,6 +32,8 @@ import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelineView;
@@ -114,6 +116,8 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private MaintainVpnConnectionProfileAssignmentView maintainVpnConnectionProfileAssignmentView;
 	private MaintainVpnConnectionProvisioningView maintainVpnConnectionProvisioningView;
 	private ServiceAssessmentReportView serviceAssessmentReportView;
+	private ListResourceTaggingProfileView listResourceTaggingProfileView;
+	private MaintainResourceTaggingProfileView maintainResourceTaggingProfileView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -402,6 +406,16 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	@Override
 	public ServiceAssessmentReportView getServiceAssessmentReportView() {
 		
+		return null;
+	}
+	@Override
+	public ListResourceTaggingProfileView getListResourceTaggingProfileView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainResourceTaggingProfileView getMaintainResourceTaggingProfileView() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

@@ -34,6 +34,9 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPlac
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPlace;
@@ -304,6 +307,18 @@ public class AppActivityMapper implements ActivityMapper {
 			};
 		}
 
+		if (place instanceof ListResourceTaggingProfilePlace) {
+			// The list of case records.
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListResourceTaggingProfilePresenter presenter = new ListResourceTaggingProfilePresenter(clientFactory, (ListResourceTaggingProfilePlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
 		if (place instanceof BillSummaryPlace) {
 			// Generate/Maintain vpcp
 			return new BillSummaryActivity(clientFactory, (BillSummaryPlace) place);
@@ -437,6 +452,10 @@ public class AppActivityMapper implements ActivityMapper {
 
 		if (place instanceof ServiceAssessmentReportPlace) {
 			return new ServiceAssessmentReportActivity(clientFactory, (ServiceAssessmentReportPlace) place);
+		}
+
+		if (place instanceof MaintainResourceTaggingProfilePlace) {
+			return new MaintainResourceTaggingProfileActivity(clientFactory, (MaintainResourceTaggingProfilePlace) place);
 		}
 
 		return null;

@@ -173,14 +173,15 @@ public class Constants implements IsSerializable {
 	public static final String MOA_VPNC_DEPROVISIONING_QUERY_SPEC = "VpnConnectionDeprovisioningQuerySpecification.v1_0";
 	public static final String MOA_VPN_CONNECTION_REQUISITION = "VpnConnectionRequisition.v1_0";
 	public static final String MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION = "VpnConnectionProfileAssignmentRequisition.v1_0";
-
 	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST = "FirewallExceptionAddRequest.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST_QUERY_SPEC = "FirewallExceptionAddRequestQuerySpecification.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_ADD_REQUEST_REQUISITION = "FirewallExceptionAddRequestRequisition.v1_0";
-	
 	public static final String MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST = "FirewallExceptionRemoveRequest.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_QUERY_SPEC = "FirewallExceptionRemoveRequestQuerySpecification.v1_0";
 	public static final String MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_REQUISITION = "FirewallExceptionRemoveRequestRequisition.v1_0";
+	public static final String MOA_RESOURCE_TAGGING_PROFILE_QUERY_SPEC = "ResourceTaggingProfileQuerySpecification.v1_0";
+	public static final String MOA_RESOURCE_TAGGING_PROFILE = "ResourceTaggingProfile.v1_0";
+
 	public static final String REQUEST_STATE_OPEN = "Open";
 	
 	public static final String SVC_FILTER_CONSOLE_CATEGORY = "Console Category";
@@ -200,12 +201,14 @@ public class Constants implements IsSerializable {
 	public static final String PROVISIONING_STEP_EXECUTION_METHOD_SIMULATED = "simulated";
 	public static final String FILTER_ACCT_ID = "Account Id";
 	public static final String FILTER_ACCT_NAME = "Account Name";
+	public static final String FILTER_ACCT_ALT_NAME = "Alternate Account Name";
 	public static final String MAINTAIN_ACCOUNT = "maintainAccount";
 	public static final String MAINTAIN_VPC = "maintainVpc";
 	public static final String VPCP_STATUS = "vpcpStatus";
 	public static final String MAINTAIN_SERVICE = "maintainService";
 	public static final String MAINTAIN_SECURITY_ASSESSMENT = "maintainSecurityAssessment";
 	public static final String MAINTAIN_ELASTIC_IP = "maintainElasticIp";
+	public static final String MAINTAIN_RTP = "maintainRtp";
 	public static final String STATIC_NAT_STAUS = "staticNatStatus";
 	public static final String VPNC_STATUS = "vpncpStatus";
 	public static final String MAINTAIN_VPN_CONNECTION_PROFILE = "maintainVpnConnectionProfile";
@@ -219,4 +222,9 @@ public class Constants implements IsSerializable {
 	public static final String USR_NOT_FILTER_REF_ID = "Reference Id";
 	public static final String SUGGESTION_TYPE_CONSOLE_FEATURE = "Console Feature";
 	public static final String FEATURE_CACHE = "FeatureCache";
+	public static final String LIST_RESOURCE_TAGGING_PROFILE = "listResourceTaggingProfile";
+	public static final String FILTER_PROFILE_NAMESPACE = "Profile Namespace";
+	public static final String FILTER_PROFILE_NAME = "Profile Name";
+	public static final String FILTER_PROFILE_NAMESPACE_AND_NAME = "Namespace and Profile Name (separated by comma)";
+	public static final String FILTER_MANAGED_TAG_NAME_VALUE = "Managed Tag Name/Value (tagName=tagValue)";
 }

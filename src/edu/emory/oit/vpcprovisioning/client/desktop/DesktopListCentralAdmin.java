@@ -53,11 +53,11 @@ public class DesktopListCentralAdmin extends ViewImplBase implements ListCentral
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField HTML introBodyHTML;
 
-	@UiField Button homeButton;
-	@UiHandler("homeButton")
-	void homeButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-	}
+//	@UiField Button homeButton;
+//	@UiHandler("homeButton")
+//	void homeButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+//	}
 
 	@UiField PushButton refreshButton;
 

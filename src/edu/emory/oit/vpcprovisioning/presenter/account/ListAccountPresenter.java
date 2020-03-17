@@ -116,6 +116,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 				List<String> filterTypeItems = new java.util.ArrayList<String>();
 				filterTypeItems.add(Constants.FILTER_ACCT_ID);
 				filterTypeItems.add(Constants.FILTER_ACCT_NAME);
+				filterTypeItems.add(Constants.FILTER_ACCT_ALT_NAME);
 				getView().setFilterTypeItems(filterTypeItems);
 
 				// Request the account list now.
@@ -325,6 +326,15 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		filter = new AccountQueryFilterPojo();
 		filter.setFuzzyFilter(true);
 		filter.setAccountName(name);
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByAlternateAccountName(String name) {
+		getView().showPleaseWaitDialog("Filtering accounts");
+		filter = new AccountQueryFilterPojo();
+		filter.setFuzzyFilter(true);
+		filter.setAlternateAccountName(name);
 		this.getUserAndRefreshList();
 	}
 }

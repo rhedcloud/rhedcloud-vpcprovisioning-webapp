@@ -9,20 +9,19 @@
 		<g:layer top='0px' height='9.5em' left='0px' right='0px'>
 			<g:HorizontalPanel ui:field="linksPanel" addStyleNames="{style.linksPanel}" width="100%" height="100%">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-			<g:VerticalPanel>
+			<g:VerticalPanel spacing="4">
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HorizontalPanel spacing="8">
+					<g:HorizontalPanel spacing="12">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 							<g:HTMLPanel addStyleNames="{style.logo}" ui:field='logoTitleBar' title="Home">
 								<div style="padding-left: 4px; padding-right: 4px" ui:field='logoElem'><img src="images/banner-logo-154x45.png"/></div>
 							</g:HTMLPanel>
 						</g:cell>
-						<!-- 
-						<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
-				    		<g:Anchor addStyleNames="{style.systemStatusLink}" 
-				    			ui:field="esbServiceStatusAnchor">Check System Status</g:Anchor>
+						<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_BOTTOM">
+							<g:HTMLPanel styleName="{style.featuresMenuHeader}" ui:field='featuresTitleBar' title="Features">
+								<div ui:field='featuresElem'>Console Features  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/></div>
+							</g:HTMLPanel>
 						</g:cell>
-						 -->
 					</g:HorizontalPanel>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -39,18 +38,31 @@
 						<img src="images/bell-512.png" width="24" height="24"/>
 					</g:HTML>
 				</g:cell>
+				<!-- 
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:HTMLPanel styleName="{style.productsMenuHeader}" ui:field='productsTitleBar' title="AWS at Emory">
 						<div ui:field='productsElem'>Products  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/></div>
 					</g:HTMLPanel>
 				</g:cell>
+				 -->
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+					<g:MenuBar ui:field="productsMenuBar" autoOpen="false" animationEnabled="true" styleName="{style.linksMenu}">
+						<g:MenuItem ui:field="productsMenu" debugId="productsMenu" styleName="{style.linksMenuHeader}">Products  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>
+							<g:MenuBar vertical="true">
+								<g:MenuItem ui:field="productsItem" debugId="productsItem" title="Search all products" styleName="{style.linksMenuItem}">Search All Services</g:MenuItem>
+								<g:MenuItem ui:field="hipaaServicesItem" debugId="hipaaServicesItem" title="List of services available in HIPAA accounts" styleName="{style.linksMenuItem}">Available HIPAA Account Services</g:MenuItem>
+								<g:MenuItem ui:field="standardServicesItem" debugId="standardServicesItem" title="List of services available in Standard accounts" styleName="{style.linksMenuItem}">Available Standard Account Services</g:MenuItem>
+							</g:MenuBar>
+						</g:MenuItem>
+					</g:MenuBar>
+				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:MenuBar ui:field="documentationMenuBar" autoOpen="false" animationEnabled="true" styleName="{style.linksMenu}">
-						<g:MenuItem ui:field="documentationMenu" styleName="{style.linksMenuHeader}">Documentation  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>
+						<g:MenuItem ui:field="documentationMenu" debugId="documentationMenu" styleName="{style.linksMenuHeader}">Documentation  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>
 							<g:MenuBar vertical="true">
-								<g:MenuItem ui:field="emoryKbItem" debugId="emoryKbItem" title="Search Emory Research Service Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://emory.service-now.com/sp?id=kb_view2">Emory Knowledge Base</a></g:MenuItem>
+								<g:MenuItem ui:field="emoryKbItem" debugId="emoryKbItem" styleName="{style.linksMenuItem}"></g:MenuItem>
 								<g:MenuItem ui:field="awsDocumentationItem" debugId="awsDocumentationItem" title="AWS Documentation" styleName="{style.linksMenuItem}"><a target="_blank" href="https://aws.amazon.com/documentation/">AWS Documentation</a></g:MenuItem>
-								<g:MenuItem ui:field="demoItem" debugId="demoItem" title="View the AWS at Emory Demos" styleName="{style.linksMenuItem}"><a id="awsDocumentationAnchor" target="_blank" href="https://www.rhedcloud.org/pages/demos">View the AWS at Emory Demos</a></g:MenuItem>
+								<g:MenuItem ui:field="demoItem" debugId="demoItem" styleName="{style.linksMenuItem}"></g:MenuItem>
 							</g:MenuBar>
 						</g:MenuItem>
 					</g:MenuBar>
@@ -61,11 +73,10 @@
 							<g:MenuBar vertical="true">
 								<g:MenuItem ui:field="contactAwsItem" debugId="contactAwsItem" title="Contact AWS Support" styleName="{style.linksMenuItem}"> Contact AWS Support
 									<g:MenuBar vertical="true">
-										<g:MenuItem ui:field="awsItem" debugId="awsItem" title="Login to your AWS account" styleName="{style.linksMenuItemUnFollowable}">
-											<a id="emoryAwsLoginAnchor" title="Login to your AWS Account" target="_self" href="http://console.aws.emory.edu/">Login</a> to your AWS account, then click the Support Link in the upper right corner</g:MenuItem>
+										<g:MenuItem ui:field="awsItem" debugId="awsItem" styleName="{style.linksMenuItem}"></g:MenuItem>
 									</g:MenuBar>
 								</g:MenuItem>
-								<g:MenuItem ui:field="emoryAwsItem" debugId="emoryAwsItem" title="Contact Emory Support" styleName="{style.linksMenuItem}"><a id="emoryAwsSupportAnchor" target="_self" href="https://emory.service-now.com/sp?id=sc_cat_item&amp;sys_id=62b4a2a3db771700d1b958a8dc961994">Contact Emory Support</a></g:MenuItem>
+								<g:MenuItem ui:field="emoryAwsItem" debugId="emoryAwsItem" styleName="{style.linksMenuItem}"></g:MenuItem>
 								<g:MenuItem ui:field="esbServiceStatusItem" debugId="esbServiceStatusItem" title="Check System Status" styleName="{style.linksMenuItem}">Check System Status (Central Admins)</g:MenuItem>
 							</g:MenuBar>
 						</g:MenuItem>
@@ -94,7 +105,7 @@
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 			<g:VerticalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HorizontalPanel spacing="8">
+					<g:HorizontalPanel spacing="4">
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 							<g:HTMLPanel addStyleNames="{style.logo}" ui:field='awsLogoTitleBar' title="Home">
 								<div style="padding: 6px" ui:field='awsLogoElem'><img src="images/powered-by-aws-white-126x45.png"/></div>
@@ -113,7 +124,7 @@
 		</g:layer>
 		
 		<!-- Content -->
-		<g:layer top='10.0em' bottom='0px' left='0px' right='0px'>
+		<g:layer top='9.5em' bottom='0px' left='0px' right='0px'>
 			<g:ScrollPanel width="100%" height="99%">
 			<g:HorizontalPanel width="100%">
 				<g:cell horizontalAlignment="ALIGN_LEFT" width="1%"><g:HTML></g:HTML></g:cell>
@@ -122,26 +133,13 @@
 					<g:VerticalPanel visible="false" ui:field="otherFeaturesPanel">
 						<g:HTML>Other features panel</g:HTML>
 					</g:VerticalPanel>
-					<!-- <g:VerticalPanel ui:field="mainPanel"> -->
-					<!-- 
-						<g:DeckLayoutPanel ui:field="homeContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="accountContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="vpcContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="vpcpContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="servicesContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="centralAdminContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="elasticIpContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="staticNatContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="vpnConnectionContentContainer" width="100%"/>
-						<g:DeckLayoutPanel ui:field="vpnConnectionProfileContentContainer" width="100%"/>
-					 -->
-					<!-- </g:VerticalPanel> -->
+					<g:VerticalPanel ui:field="serviceListPanel" width="100%"/>
 					<g:TabLayoutPanel 
 						barHeight="0" 
 						barUnit="EM" 
 						width="100%"
 						height="900px" 
-						animationDuration="500" 
+						animationDuration="1000" 
 						animationVertical="false" 
 						ui:field="mainTabPanel"
 						addStyleNames="gwt-TabLayoutPanel">
@@ -150,44 +148,6 @@
 							<g:header>Home</g:header>
  							<g:DeckLayoutPanel ui:field="homeContentContainer" width="100%"/>
 						</g:tab>
-						<!-- 
-						<g:tab>
-							<g:header>AWS Accounts</g:header>
- 							<g:DeckLayoutPanel ui:field="accountContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>VPC Maintenance</g:header>
- 							<g:DeckLayoutPanel ui:field="vpcContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>VPC Provisioning</g:header>
- 							<g:DeckLayoutPanel ui:field="vpcpContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>Services</g:header>
- 							<g:DeckLayoutPanel ui:field="servicesContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>Central Admin</g:header>
- 							<g:DeckLayoutPanel ui:field="centralAdminContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>Elastic IPs</g:header>
-							<g:DeckLayoutPanel ui:field="elasticIpContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>Static NAT</g:header>
-							<g:DeckLayoutPanel ui:field="staticNatContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>VPN Provisioning</g:header>
-							<g:DeckLayoutPanel ui:field="vpnConnectionContentContainer" width="100%"/>
-						</g:tab>
-						<g:tab>
-							<g:header>VPN Connection Profiles</g:header>
-							<g:DeckLayoutPanel ui:field="vpnConnectionProfileContentContainer" width="100%"/>
-						</g:tab>
-						 -->
 					</g:TabLayoutPanel>
 					</g:VerticalPanel>
 				</g:cell>

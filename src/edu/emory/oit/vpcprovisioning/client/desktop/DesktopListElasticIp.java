@@ -62,11 +62,11 @@ public class DesktopListElasticIp extends ViewImplBase implements ListElasticIpV
 	@UiField(provided=true) CellTable<ElasticIpSummaryPojo> elasticIpListTable = new CellTable<ElasticIpSummaryPojo>(15, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 
-	@UiField Button homeButton;
-	@UiHandler("homeButton")
-	void homeButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-	}
+//	@UiField Button homeButton;
+//	@UiHandler("homeButton")
+//	void homeButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+//	}
 	public interface MyCellTableResources extends CellTable.Resources {
 
 	     @Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })

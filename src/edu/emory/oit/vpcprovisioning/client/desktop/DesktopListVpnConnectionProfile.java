@@ -75,11 +75,11 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	@UiField PushButton refreshButton;
 	@UiField HTML filteredHTML;
 	@UiField HTML profileSummaryHTML;
-	@UiField Button homeButton;
-	@UiHandler("homeButton")
-	void homeButtonClicked(ClickEvent e) {
-		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-	}
+//	@UiField Button homeButton;
+//	@UiHandler("homeButton")
+//	void homeButtonClicked(ClickEvent e) {
+//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
+//	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
 

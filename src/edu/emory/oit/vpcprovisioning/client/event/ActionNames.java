@@ -44,6 +44,8 @@ public interface ActionNames {
 	final String MAINTAIN_ELASTIC_IP = "maintainElasticIp";
 	final String CREATE_ELASTIC_IP_ASSIGNMENT = "createElasticIpAssignment";
 	final String MAINTAIN_ELASTIC_IP_ASSIGNMENT = "maintainElasticIpAssignment";
+	final String CREATE_RTP = "createRtp";
+	final String MAINTAIN_RTP = "maintainRtp";
 
 	final String FIREWALL_EXCEPTION_REQUEST_EDITING_CANCELED = "firewallExceptionRequestEditingCanceled";
 	final String VPC_EDITING_CANCELED = "vpcEditingCanceled";
@@ -56,6 +58,7 @@ public interface ActionNames {
 	final String ELASTIC_IP_ASSIGNMENT_EDITING_CANCELED = "elasticIpAssignmentEditingCanceled";
 	final String SERVICE_EDITING_CANCELED = "svcEditingCanceled";
 	final String NOTIFICATION_EDITING_CANCELED = "notificationEditingCanceled";
+	final String RTP_EDITING_CANCELED = "rtpEditingCanceled";
 
 	final String GO_HOME = "goHome";
 	final String GO_HOME_FIREWALL_RULE = "goHomeFirewallRule";
@@ -78,6 +81,7 @@ public interface ActionNames {
 	final String GO_HOME_ELASTIC_IP_ASSIGNMENT = "goHomeElasticIpAssignment";
 	final String GO_BACK_ELASTIC_IP_ASSIGNMENT = "goBackElasticIpAssignment";
 	final String GO_HOME_NOTIFICATION = "goHomeNotification";
+	final String GO_HOME_RTP = "goHomeResourceTagging";
 
 	final String VPC_CACHED = "vpcCached";
 	final String ACCOUNT_CACHED = "accountCached";
@@ -85,6 +89,7 @@ public interface ActionNames {
 	final String CIDR_ASSIGNMENT_CACHED = "cidrAssignmentCached";
 	final String ELASTIC_IP_CACHED = "elasticIpCached";
 	final String ELASTIC_IP_ASSIGNMENT_CACHED = "elasticIpAssignmentCached";
+	final String RTP_CACHED = "rtpCached";
 	
 	final String FIREWALL_EXCEPTION_REQUEST_DELETED = "firewallExceptionRequestDeleted";
 	final String VPC_DELETED = "vpcDeleted";
@@ -93,6 +98,7 @@ public interface ActionNames {
 	final String CIDR_ASSIGNMENT_DELETED = "cidrAssignmentDeleted";
 	final String ELASTIC_IP_DELETED = "elasticIpDeleted";
 	final String ELASTIC_IP_ASSIGNMENT_DELETED = "elasticIpAssignmentDeleted";
+	final String RTP_DELETED = "rtpDeleted";
 	
 	final String FIREWALL_EXCEPTION_REQUEST_SAVED = "firewallExceptionRequestSaved";
 	final String VPCP_GENERATED = "vpcpGenerated";
@@ -106,6 +112,7 @@ public interface ActionNames {
 	final String ELASTIC_IP_ASSIGNMENT_SAVED = "elasticIpAssignmentSaved";
 	final String SERVICE_SAVED = "svcSaved";
 	final String NOTIFICATION_SAVED = "notificationSaved";
+	final String RTP_SAVED = "rtpSaved";
 
 	final String INAUTHENTIC_CLIENT = "inauthenticClient";
 
@@ -189,4 +196,5 @@ public interface ActionNames {
 	final String VPNCDP_GENERATED = "vpncdpGenerated";
 	final String GENERATE_VPN_CONNECTION_DEPROVISIONING = "generateVpnConnectionDeprovisioning";
 	final String VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT = "viewSecurityAssessmentReport";
+	final String CREATE_RTP_REVISION = "createRtpRevision";
 }

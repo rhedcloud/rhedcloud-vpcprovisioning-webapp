@@ -22,6 +22,8 @@ import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelineView;
@@ -128,4 +130,6 @@ public interface ClientFactory {
 	VpncpStatusView getVpncpStatusView();
 	MaintainVpnConnectionProvisioningView getMaintainVpnConnectionProvisioningView();
 	ServiceAssessmentReportView getServiceAssessmentReportView();
+	ListResourceTaggingProfileView getListResourceTaggingProfileView();
+	MaintainResourceTaggingProfileView getMaintainResourceTaggingProfileView();
 }

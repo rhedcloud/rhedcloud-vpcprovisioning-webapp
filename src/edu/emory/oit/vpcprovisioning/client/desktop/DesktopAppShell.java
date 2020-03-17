@@ -7,9 +7,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,6 +25,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -35,9 +40,11 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DeckLayoutPanel;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -48,6 +55,8 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ResizeComposite;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -57,6 +66,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.client.common.ConsoleFeatureRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.ConsoleFeatureSuggestion;
 import edu.emory.oit.vpcprovisioning.client.common.Notification;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
@@ -70,6 +81,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
@@ -89,7 +102,11 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceStatisticPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.PropertiesPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
@@ -132,6 +149,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //		accountContentContainer.getElement().getStyle().setOverflow(Overflow.AUTO);
 		this.clientFactory = clientFactory;
 		this.eventBus = eventBus;
+		
+		initMenus();
 	}
 
 	@Override
@@ -204,14 +223,20 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		homeContentContainer.add(maintainVpncpView);
 		homeContentContainer.add(vpncpStatusView2);
 		// end 1/28/2020
+		
+		// 3/5/2020 resource tagging profile
+		ListResourceTaggingProfileView listRtpView = clientFactory.getListResourceTaggingProfileView();
+		MaintainResourceTaggingProfileView maintainRtpView = clientFactory.getMaintainResourceTaggingProfileView();
+		homeContentContainer.add(listRtpView);
+		homeContentContainer.add(maintainRtpView);
+		homeContentContainer.setAnimationDuration(500);
+
 
 		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
 		if (hash == null || hash.trim().length() == 0) {
 			GWT.log("null hash: home tab");
 			GWT.log("need to get Home Content.");
 			firstHomeContentWidget = true;
-//			homeView = clientFactory.getHomeView();
-//			homeContentContainer.add(homeView);
 			
 			ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 		}
@@ -219,97 +244,73 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			if (hash.trim().equals("#" + Constants.LIST_ACCOUNT + ":")) {
 				GWT.log("Need to go to Account Maintenance (list) tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
-//				mainTabPanel.selectTab(1);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ACCOUNT + ":")) >= 0) {
 				GWT.log("Need to go to Account Maintenance (maintain) tab");
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_ACCOUNT);
-//				mainTabPanel.selectTab(1, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPC + ":")) {
 				GWT.log("Need to go to VPC Maintenance tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
-//				mainTabPanel.selectTab(2);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPC + ":")) >= 0) {
 				GWT.log("Need to go to VPC Maintenance (maintain) tab");
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_VPC);
-//				mainTabPanel.selectTab(2, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPCP + ":")) {
 				GWT.log("Need to go to VPCP Maintenance tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
-//				mainTabPanel.selectTab(3);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.VPCP_STATUS + ":")) >= 0) {
 				GWT.log("Need to go to VPCP Maintenance tab (status)");
-				ActionEvent.fire(eventBus, ActionNames.SHOW_VPCP_STATUS);
-//				mainTabPanel.selectTab(3, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_SERVICES + ":")) {
 				GWT.log("Need to go to Services tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-//				mainTabPanel.selectTab(4);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SERVICE + ":")) >= 0) {
 				GWT.log("Need to go to Services tab (maintain)");
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SERVICE);
-//				mainTabPanel.selectTab(4, false);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_SECURITY_ASSESSMENT + ":")) >= 0) {
 				GWT.log("Need to go to Services tab (maintain assessment)");
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT);
-//				mainTabPanel.selectTab(4, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_CENTRAL_ADMIN + ":")) {
 				GWT.log("Need to go to Cetnral Admin tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
-//				mainTabPanel.selectTab(5);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_ELASTIC_IP + ":")) {
 				GWT.log("Need to go to Elastic IP tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
-//				mainTabPanel.selectTab(6);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_ELASTIC_IP + ":")) >= 0) {
 				GWT.log("Need to go to Elastic IP tab (maintain)");
-				ActionEvent.fire(eventBus, ActionNames.MAINTAIN_ELASTIC_IP);
-//				mainTabPanel.selectTab(6, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_STATIC_NAT + ":")) {
 				GWT.log("Need to go to Static Nat tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY);
-//				mainTabPanel.selectTab(7);
 			}
 			// TODO: this one isn't really working yet...the activity isn't working
 			else if (hash.trim().indexOf(("#" + Constants.STATIC_NAT_STAUS + ":")) >= 0) {
 				GWT.log("Need to go to Static Nat tab (status)");
-				ActionEvent.fire(eventBus, ActionNames.SHOW_STATIC_NAT_STATUS);
-//				mainTabPanel.selectTab(7, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION + ":")) {
 				GWT.log("Need to go to VPN Connection Provisioning tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
-//				mainTabPanel.selectTab(8);
 			}
 			else if (hash.trim().indexOf(("#" + Constants.VPNC_STATUS + ":")) >= 0) {
 				GWT.log("Need to go to VPN Connection Provisioning tab (status)");
-				ActionEvent.fire(eventBus, ActionNames.SHOW_VPNCP_STATUS);
-//				mainTabPanel.selectTab(8, false);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION_PROFILE + ":")) {
 				GWT.log("Need to go to VPN Profile tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
-//				mainTabPanel.selectTab(9);
 			}
-			// this one is irrelevant because it's maintained in a dialog box
-//			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_VPN_CONNECTION_PROFILE + ":")) >= 0) {
-//				GWT.log("Need to go to VPN Profile tab (maintain)");
-//				mainTabPanel.selectTab(9, false);
-//			}
+			else if (hash.trim().equals("#" + Constants.LIST_RESOURCE_TAGGING_PROFILE + ":")) {
+				GWT.log("Need to go to Resource Tagging Profile tab");
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_RTP);
+			}
+			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_RTP + ":")) >= 0) {
+				GWT.log("Need to go to Resource Tagging Profile tab (maintain)");
+			}
 			else {
 				GWT.log("[default] home tab");
-//				mainTabPanel.selectTab(0);
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 			}
 		}
@@ -322,46 +323,254 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField VerticalPanel appShellPanel;
 	@UiField VerticalPanel otherFeaturesPanel;
 	@UiField TabLayoutPanel mainTabPanel;
-//	@UiField DeckLayoutPanel accountContentContainer;
-//	@UiField DeckLayoutPanel vpcContentContainer;
-//	@UiField DeckLayoutPanel vpcpContentContainer;
 	@UiField DeckLayoutPanel homeContentContainer;
-//	@UiField DeckLayoutPanel servicesContentContainer;
-//	@UiField DeckLayoutPanel centralAdminContentContainer;
-//	
-//	@UiField DeckLayoutPanel elasticIpContentContainer;
-//	@UiField DeckLayoutPanel staticNatContentContainer;
-//	@UiField DeckLayoutPanel vpnConnectionContentContainer;
-//	@UiField DeckLayoutPanel vpnConnectionProfileContentContainer;
 
 	@UiField Element userNameElem;
 
 	PopupPanel productsPopup = new PopupPanel(true);
     boolean productsShowing=false;
 	@UiField Element releaseInfoElem;
-	@UiField Element productsElem;
-	//	@UiField Element notificationsElem;
+//	@UiField Element productsElem;
 	@UiField Element logoElem;
 	@UiField HorizontalPanel generalInfoPanel;
 	@UiField HorizontalPanel linksPanel;
 	@UiField HTML notificationsHTML;
-//	@UiField Anchor esbServiceStatusAnchor;
 	@UiField MenuItem tkiClientItem;
 	@UiField MenuItem esbServiceStatusItem;
+	@UiField MenuItem emoryKbItem;
+	@UiField MenuItem demoItem;
+	@UiField MenuItem contactAwsItem;
+	@UiField MenuItem emoryAwsItem;
+	@UiField MenuItem awsItem;
 	
+	@UiField MenuItem productsItem;
+	@UiField MenuItem hipaaServicesItem;
+	@UiField MenuItem standardServicesItem;
+	@UiField VerticalPanel serviceListPanel;
+
+	Command productsCommand = new Command() {
+		public void execute() {
+			showProductsPopup();
+		}
+	};
+	Command hipaaServicesCommand = new Command() {
+		public void execute() {
+			showServicesList("List of Services Available for HIPAA Accounts", true);
+		}
+	};
+	Command standardServicesCommand = new Command() {
+		public void execute() {
+			showServicesList("List of Services Available for Standard Accounts", false);
+		}
+	};
+	
+	void initMenus() {
+		AsyncCallback<PropertiesPojo> kb_cb = new AsyncCallback<PropertiesPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception Menu Properties", caught);
+				showMessageToUser("Exception getting menu properties, menus won't work:  " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(PropertiesPojo result) {
+				emoryKbItem.setTitle(result.getProperty("title", "Unknown"));
+				emoryKbItem.setText(result.getProperty("text", "Unknown"));
+				final String target = result.getProperty("target", null);
+				final String href = result.getProperty("href", "Unknown");
+				emoryKbItem.setScheduledCommand(new Command() {
+					@Override
+					public void execute() {
+						if (target != null && target.equalsIgnoreCase("_blank")) {
+							Window.open(href, "_blank", "");
+						}
+						else {
+//							leavingPage=true;
+							Window.Location.assign(href);
+						}
+					}
+				});
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getPropertiesForMenu("kbItem", kb_cb);
+
+		AsyncCallback<PropertiesPojo> demo_cb = new AsyncCallback<PropertiesPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception Menu Properties", caught);
+				showMessageToUser("Exception getting menu properties, menus won't work:  " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(PropertiesPojo result) {
+				demoItem.setTitle(result.getProperty("title", "Unknown"));
+				demoItem.setText(result.getProperty("text", "Unknown"));
+				final String target = result.getProperty("target", null);
+				final String href = result.getProperty("href", "Unknown");
+				demoItem.setScheduledCommand(new Command() {
+					@Override
+					public void execute() {
+						if (target != null && target.equalsIgnoreCase("_blank")) {
+							Window.open(href, "_blank", "");
+						}
+						else {
+//							leavingPage=true;
+							Window.Location.assign(href);
+						}
+					}
+				});
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getPropertiesForMenu("demoItem", demo_cb);
+
+		AsyncCallback<PropertiesPojo> awsSupport_cb = new AsyncCallback<PropertiesPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception Menu Properties", caught);
+				showMessageToUser("Exception getting menu properties, menus won't work:  " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(PropertiesPojo result) {
+				awsItem.setTitle(result.getProperty("title", "Unknown"));
+				awsItem.setText(result.getProperty("text", "Unknown"));
+				final String target = result.getProperty("target", null);
+				final String href = result.getProperty("href", "Unknown");
+				awsItem.setScheduledCommand(new Command() {
+					@Override
+					public void execute() {
+						if (target != null && target.equalsIgnoreCase("_blank")) {
+							Window.open(href, "_blank", "");
+						}
+						else {
+//							leavingPage=true;
+							Window.Location.assign(href);
+						}
+					}
+				});
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getPropertiesForMenu("awsSupportItem", awsSupport_cb);
+
+		AsyncCallback<PropertiesPojo> siteSupport_cb = new AsyncCallback<PropertiesPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception Menu Properties", caught);
+				showMessageToUser("Exception getting menu properties, menus won't work:  " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(PropertiesPojo result) {
+				emoryAwsItem.setTitle(result.getProperty("title", "Unknown"));
+				emoryAwsItem.setText(result.getProperty("text", "Unknown"));
+				final String target = result.getProperty("target", null);
+				final String href = result.getProperty("href", "Unknown");
+				emoryAwsItem.setScheduledCommand(new Command() {
+					@Override
+					public void execute() {
+						if (target != null && target.equalsIgnoreCase("_blank")) {
+							Window.open(href, "_blank", "");
+						}
+						else {
+//							leavingPage=true;
+							Window.Location.assign(href);
+						}
+					}
+				});
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getPropertiesForMenu("siteSupportItem", siteSupport_cb);
+	}
+
+
+	private void showServicesList(String header, boolean hipaaOnly) {
+		serviceListPanel.clear();
+		serviceListPanel.setSpacing(8);
+		Button closeButton = new Button("Close List");
+		serviceListPanel.add(closeButton);
+		closeButton.addStyleName("normalButton");
+		closeButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showMainTabPanel();
+				hideServiceListPanel();
+				hideOtherFeaturesPanel();
+			}
+		});
+		
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setWidth("100%");
+		hp.getElement().getStyle().setBackgroundColor("#232f3e");
+		hp.getElement().getStyle().setPadding(2.0, Unit.EM);
+		
+		serviceListPanel.add(hp);
+		HTML headerHTML = new HTML(header);
+		headerHTML.getElement().getStyle().setFontSize(2.5, Unit.EM);
+		headerHTML.getElement().getStyle().setColor("#fff");
+		headerHTML.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		headerHTML.getElement().getStyle().setTextAlign(TextAlign.LEFT);
+		headerHTML.getElement().getStyle().setLineHeight(2.0, Unit.EM);
+		hp.add(headerHTML);
+
+		StringBuffer sbuf = new StringBuffer();
+		if (serviceSummary != null) {
+			sbuf.append("<ul>");
+			Object[] keys = serviceSummary.getServiceMap().keySet().toArray();
+			Arrays.sort(keys);
+			
+			for (final Object catName : keys) {
+				List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
+				for (final AWSServicePojo svc : services) {
+					String svcStatus = svc.getSiteStatus();
+					String hipaaStatus = svc.getSiteHipaaEligible();
+					String svcName = "Unknown";
+					if (svc.getCombinedServiceName() != null) {
+						svcName = svc.getCombinedServiceName();
+					}
+					else if (svc.getAlternateServiceName() != null) {
+						svcName = svc.getAlternateServiceName();
+					}
+					else {
+						svcName = svc.getAwsServiceName();
+					}
+					if (hipaaOnly) {
+						if (svc.isSiteHipaaEligible() && !svc.isBlocked()) {
+							sbuf.append("<h3><li>" + catName + " : " + svcName + "</li></h3>");
+						}
+					}
+					else {
+						if (!svc.isBlocked()) {
+							sbuf.append("<h3><li>" + catName + " : " + svcName + "</li></h3>");
+						}
+					}
+				}
+			}
+			sbuf.append("</ul>");
+			HTML svcList = new HTML(sbuf.toString());
+			svcList.getElement().getStyle().setTextAlign(TextAlign.LEFT);
+			VerticalPanel vp = new VerticalPanel();
+			vp.getElement().getStyle().setPaddingLeft(3.5, Unit.EM);
+			
+			serviceListPanel.add(vp);
+			vp.add(svcList);
+		}
+		else {
+			HTML h = new HTML("<h3>Service list is not available yet.  Try again in a bit.</h3>");
+			VerticalPanel vp = new VerticalPanel();
+			vp.getElement().getStyle().setPaddingLeft(3.5, Unit.EM);
+			
+			serviceListPanel.add(vp);
+			vp.add(h);
+		}
+		hideMainTabPanel();
+		hideOtherFeaturesPanel();
+		showServiceListPanel();
+	}
+
 	/**
 	 * A boolean indicating that we have not yet seen the first content widget.
 	 */
-//	private boolean firstAccountContentWidget = true;
-//	private boolean firstVpcContentWidget = true;
-//	private boolean firstVpcpContentWidget = true;
 	private boolean firstHomeContentWidget = true;
-//	private boolean firstCentralAdminContentWidget = true;
-//	private boolean firstServicesContentWidget = true;
-//	private boolean firstElasticIpContentWidget = true;
-//	private boolean firstStaticNatContentWidget = true;
-//	private boolean firstVpnConnectionContentWidget = true;
-//	private boolean firstVpnConnectionProfileContentWidget = true;
 
 	private void startServiceRefreshTimer() {
 		// Create a new timer that checks for notifications
@@ -404,6 +613,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		tkiClientItem.setScheduledCommand(tkiClientCommand);
 		esbServiceStatusItem.setScheduledCommand(esbServiceStatusCommand);
 
+		productsItem.setScheduledCommand(productsCommand);
+		hipaaServicesItem.setScheduledCommand(hipaaServicesCommand);
+		standardServicesItem.setScheduledCommand(standardServicesCommand);
+
 		Event.sinkEvents(logoElem, Event.ONCLICK);
 		Event.setEventListener(logoElem, new EventListener() {
 			@Override
@@ -412,7 +625,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					productsPopup.hide();
 					hideOtherFeaturesPanel();
 					showMainTabPanel();
-//					mainTabPanel.selectTab(0);
 					ActionEvent.fire(eventBus, ActionNames.GO_HOME);
 				}
 			}
@@ -494,12 +706,23 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 		});
 
-		Event.sinkEvents(productsElem, Event.ONCLICK);
-		Event.setEventListener(productsElem, new EventListener() {
+//		Event.sinkEvents(productsElem, Event.ONCLICK);
+//		Event.setEventListener(productsElem, new EventListener() {
+//			@Override
+//			public void onBrowserEvent(Event event) {
+//				if(Event.ONCLICK == event.getTypeInt()) {
+//					showServices();
+//				}
+//			}
+//		});
+
+		Event.sinkEvents(featuresElem, Event.ONCLICK);
+		Event.setEventListener(featuresElem, new EventListener() {
 			@Override
 			public void onBrowserEvent(Event event) {
 				if(Event.ONCLICK == event.getTypeInt()) {
-					showServices();
+					GWT.log("show features...");
+					showFeatures();
 				}
 			}
 		});
@@ -879,6 +1102,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showOtherFeaturesPanel() {
+		serviceListPanel.setVisible(false);
+		mainTabPanel.setVisible(false);
 		otherFeaturesPanel.setVisible(true);
 	}
 
@@ -889,12 +1114,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showMainTabPanel() {
-//		mainTabPanel.setVisible(true);
+		otherFeaturesPanel.setVisible(false);
+		serviceListPanel.setVisible(false);
+		mainTabPanel.setVisible(true);
 	}
 
 	@Override
 	public void hideMainTabPanel() {
-//		mainTabPanel.setVisible(false);
+		mainTabPanel.setVisible(false);
 	}
 
 	@Override
@@ -1123,12 +1350,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		searchIntro.getElement().getStyle().setFontSize(16, Unit.PX);
 		searchIntro.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		searchGrid.setWidget(0, 0, searchIntro);
+		
 		final TextBox searchTB = new TextBox();
 		searchGrid.setWidget(1, 0, searchTB);
 		searchTB.setText("");
 		searchTB.getElement().setPropertyString("placeholder", "enter all or part of the service name");
 		searchTB.addStyleName("field");
 		searchTB.addStyleName("glowing-border");
+		
 		Button searchButton = new Button("Search");
 		searchGrid.setWidget(1, 1, searchButton);
 		searchButton.addStyleName("normalButton");
@@ -1162,6 +1391,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		categoryVp.add(categoryGrid);
 
 		final VerticalPanel servicesVp = new VerticalPanel();
+		servicesVp.ensureDebugId("servicesVp");
 		servicesVp.getElement().getStyle().setBackgroundColor("#232f3e");
 		servicesVp.setWidth("400px");
 		servicesVp.setSpacing(8);
@@ -1200,9 +1430,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			categoryAnchor.getElement().getStyle().setColor("#ddd");
 			categoryAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
 			categoryAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			categoryAnchor.getElement().getStyle().setPaddingLeft(10, Unit.PX);
 			categoryAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
+					List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
 					assessmentVp.clear();
 					servicesVp.clear();
 					
@@ -1213,7 +1445,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					svcCatHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 					servicesVp.add(svcCatHeading);
 
-					List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
 					for (final AWSServicePojo svc : services) {
 						addServiceToServicesPanel(servicesVp, assessmentVp, svc);
 					}
@@ -1271,10 +1502,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	// this method will be used by the normal functionality and the search functionality
 	void addServiceToServicesPanel(VerticalPanel servicesVp, final VerticalPanel assessmentVp, final AWSServicePojo svc) {
 		GWT.log("Adding service: " + svc.getAwsServiceName());
+		
 		Grid svcGrid = new Grid(4, 2);
 		svcGrid.getElement().getStyle().setBackgroundColor("#232f3e");
 		servicesVp.add(svcGrid);
 		
+		// the service
 		final Anchor svcAnchor = new Anchor();
 		svcGrid.setWidget(0, 0, svcAnchor);
 		if (svc.getCombinedServiceName() != null && 
@@ -1314,13 +1547,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				assessmentAnchor.setTitle("View the full assessment.");
 				assessmentVp.add(assessmentAnchor);
 
-//				HTML assessmentHeading = new HTML("Assessment of the " + svcAnchor.getText() + " service." );
-//				assessmentHeading.getElement().getStyle().setBackgroundColor("#232f3e");
-//				assessmentHeading.getElement().getStyle().setColor("#ddd");
-//				assessmentHeading.getElement().getStyle().setFontSize(16, Unit.PX);
-//				assessmentHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-//				assessmentVp.add(assessmentHeading);
-				
 				// add service assessment info if it exists
 				ServiceSecurityAssessmentQueryFilterPojo filter = new ServiceSecurityAssessmentQueryFilterPojo();
 				filter.setServiceId(svc.getServiceId());
@@ -1704,30 +1930,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showNetworkAdminTabs() {
-//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(6).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(7).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(8).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(9).getParent().setVisible(true);
 	}
 
 	@Override
 	public void showAuditorTabs() {
-//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 
 	@Override
@@ -1735,17 +1941,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		// Need to link off to VPC Management area
 		ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
-		
-//		mainTabPanel.getTabWidget(0).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(1).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(2).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(4).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(5).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 
 	@Override
@@ -1755,29 +1950,245 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void showCimpAuditorTabs() {
-//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
 	}
 
 	@Override
 	public void showCimpAdminTabs() {
-//		mainTabPanel.getTabWidget(0).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(1).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(2).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(3).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(4).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(5).getParent().setVisible(true);
-//		mainTabPanel.getTabWidget(6).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(7).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(8).getParent().setVisible(false);
-//		mainTabPanel.getTabWidget(9).getParent().setVisible(false);
+	}
+	
+	@UiField Element featuresElem;
+	VerticalPanel recentlyUsedConsoleFeaturesPanel = new VerticalPanel();
+	VerticalPanel allConsoleFeaturesPanel = new VerticalPanel();
+	DisclosurePanel allConsoleFeaturesDP = new DisclosurePanel();
+	DisclosurePanel recentlyUsedFeaturesDP = new DisclosurePanel();
+    PopupPanel featuresPopup = new PopupPanel(true);
+    @UiField HTMLPanel featuresTitleBar;
+    
+	private void showFeatures() {
+		final ConsoleFeatureRpcSuggestOracle consoleFeatureSuggestions = new ConsoleFeatureRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
+		final SuggestBox featureSearchSB = new SuggestBox(consoleFeatureSuggestions, new TextBox());
+		
+		AsyncCallback<ConsoleFeatureQueryResultPojo> svcCallback = new AsyncCallback<ConsoleFeatureQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("[DesktopAppShell] problem getting console services..." + caught.getMessage());
+			}
+	
+			@Override
+			public void onSuccess(ConsoleFeatureQueryResultPojo result) {
+				GWT.log("[DesktopAppShell] got " + result.getResults().size() + " console services back.");
+				if (result != null) {
+					if (result.getResults() != null) {
+						// set the console services on the view
+						setConsoleFeatures(result.getResults());
+					}
+				}
+				AsyncCallback<ConsoleFeatureQueryResultPojo> recentSvcsCB = new AsyncCallback<ConsoleFeatureQueryResultPojo>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("[DesktopAppShell] problem getting recently used console services..." + caught.getMessage());
+					}
+
+					@Override
+					public void onSuccess(ConsoleFeatureQueryResultPojo result) {
+						GWT.log("[DesktopAppShell] got " + result.getResults().size() + " recently used console services back.");
+						if (result != null) {
+							if (result.getResults() != null) {
+								// set the console services on the view
+								setRecentlyUsedConsoleFeatures(result.getResults());
+							}
+						}
+						featuresPopup.clear();
+						featuresPopup.setAutoHideEnabled(true);
+						featuresPopup.setAnimationEnabled(true);
+						featuresPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+						
+						HorizontalPanel mainHP = new HorizontalPanel();
+						mainHP.setSpacing(8);
+						
+						VerticalPanel mainVp = new VerticalPanel();
+						mainHP.add(mainVp);
+						
+						Button homeButton = new Button("Home");
+						homeButton.ensureDebugId("consoleFeaturesHomeButton");
+						homeButton.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+						homeButton.getElement().getStyle().setPaddingTop(5, Unit.PX);
+						homeButton.getElement().getStyle().setPaddingBottom(5, Unit.PX);
+						homeButton.getElement().getStyle().setPaddingLeft(10, Unit.PX);
+						homeButton.getElement().getStyle().setPaddingRight(10, Unit.PX);
+
+						
+						mainHP.add(homeButton);
+						homeButton.addClickHandler(new ClickHandler() {
+							@Override
+							public void onClick(ClickEvent event) {
+								featuresPopup.hide();
+								showMainTabPanel();
+								ActionEvent.fire(eventBus, ActionNames.GO_HOME);
+							}
+						});
+						
+						mainVp.setSpacing(8);
+						mainVp.add(new HTML("<b>Find Features</b>"));
+						mainVp.add(new HTML("You can search for features by their names, key words or acronyms."));
+						
+						featureSearchSB.setText("");
+						featureSearchSB.getElement().setPropertyString("placeholder", "Example: Accounts, VPC, VPN etc.");
+						featureSearchSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+							@Override
+							public void onSelection(SelectionEvent<Suggestion> event) {
+								featuresPopup.hide();
+								ConsoleFeatureSuggestion suggestion = (ConsoleFeatureSuggestion)event.getSelectedItem();
+								if (suggestion.getService() != null) {
+									showMainTabPanel();
+									saveConsoleFeatureInCacheForUser(suggestion.getService(), userLoggedIn);
+									ActionEvent.fire(eventBus, suggestion.getService().getActionName());
+								}
+							}
+						});
+
+						featureSearchSB.addStyleName("longField");
+						featureSearchSB.addStyleName("glowing-border");
+						mainVp.add(featureSearchSB);
+						
+						recentlyUsedFeaturesDP.clear();
+						recentlyUsedFeaturesDP.setHeader(new HTML("Recently used and popular features"));
+						recentlyUsedFeaturesDP.add(recentlyUsedConsoleFeaturesPanel);
+						recentlyUsedFeaturesDP.setOpen(true);
+						mainVp.add(recentlyUsedFeaturesDP);
+						
+						allConsoleFeaturesDP.clear();
+						allConsoleFeaturesDP.setHeader(new HTML("All features"));
+						allConsoleFeaturesDP.add(allConsoleFeaturesPanel);
+						allConsoleFeaturesDP.setOpen(false);
+						mainVp.add(allConsoleFeaturesDP);
+						
+					    featuresPopup.add(mainHP);
+//						featuresPopup.showRelativeTo(linksPanel);
+						featuresPopup.showRelativeTo(featuresTitleBar);
+						Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+					        public void execute () {
+				        		featureSearchSB.setFocus(true);
+					        }
+					    });
+
+					}
+				};
+				VpcProvisioningService.Util.getInstance().getCachedConsoleFeaturesForUserLoggedIn(recentSvcsCB);
+			}
+		};
+		ConsoleFeatureQueryFilterPojo filter = new ConsoleFeatureQueryFilterPojo();
+		VpcProvisioningService.Util.getInstance().getConsoleFeaturesForFilter(filter, svcCallback);
+	}
+
+	@Override
+	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user) {
+		AsyncCallback<Void> cb = new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("error saving console service in the server's cache...", caught);
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				GWT.log("saved console service in the server's cache...");
+			}
+			
+		};
+		VpcProvisioningService.Util.getInstance().saveConsoleFeatureInCacheForUser(service, user, cb);
+	}
+
+	@Override
+	public void setConsoleFeatures(List<ConsoleFeaturePojo> features) {
+		int numRows = (features.size() / 3) + 1;
+		Grid featuresGrid = new Grid(numRows, 3);
+		allConsoleFeaturesPanel.clear();
+		int rowCounter = 0;
+		int columnCounter = 0;
+		for (int i=0; i<features.size(); i++) {
+			final ConsoleFeaturePojo service = features.get(i);
+			Anchor serviceAnchor = new Anchor(service.getName());
+			serviceAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			serviceAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			serviceAnchor.setTitle(service.getDescription() + " action:" + service.getActionName() + " isPopular=" + service.isPopular());
+			serviceAnchor.ensureDebugId(service.getName() + "-allFeatures");
+			serviceAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					featuresPopup.hide();
+					showMainTabPanel();
+					saveConsoleFeatureInCacheForUser(service, userLoggedIn);
+					ActionEvent.fire(eventBus, service.getActionName());
+				}
+			});
+			Grid g = new Grid(2,1);
+			g.setWidget(0, 0, serviceAnchor);
+			g.setWidget(1, 0, new HTML("<i>" + service.getDescription() + "</i>"));
+			featuresGrid.setWidget(rowCounter, columnCounter, g);
+			featuresGrid.getCellFormatter().setWidth(rowCounter, columnCounter, "350px");
+			if (columnCounter >= 2) {
+				columnCounter = 0;
+				rowCounter++;
+			}
+			else {
+				columnCounter++;
+			}
+		}
+		allConsoleFeaturesPanel.add(featuresGrid);
+	}
+
+	@Override
+	public void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> features) {
+		int numRows = (features.size() / 3) + 1;
+		Grid featuresGrid = new Grid(numRows, 3);
+		recentlyUsedConsoleFeaturesPanel.clear();
+		int rowCounter = 0;
+		int columnCounter = 0;
+		for (int i=0; i<features.size(); i++) {
+			final ConsoleFeaturePojo service = features.get(i);
+			Anchor serviceAnchor = new Anchor(service.getName());
+			serviceAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			serviceAnchor.setTitle(service.getDescription() + " action:" + service.getActionName() + " isPopular=" + service.isPopular());
+			serviceAnchor.ensureDebugId(service.getName() + "-recentFeatures");
+			serviceAnchor.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					featuresPopup.hide();
+					showMainTabPanel();
+					saveConsoleFeatureInCacheForUser(service, userLoggedIn);
+					ActionEvent.fire(eventBus, service.getActionName());
+				}
+			});
+			Grid g = new Grid(1,1);
+			g.setWidget(0, 0, serviceAnchor);
+			featuresGrid.setWidget(rowCounter, columnCounter, g);
+			featuresGrid.getCellFormatter().setWidth(rowCounter, columnCounter, "250px");
+			if (columnCounter >= 2) {
+				columnCounter = 0;
+				rowCounter++;
+			}
+			else {
+				columnCounter++;
+			}
+		}
+		if (features.size() == 0) {
+			recentlyUsedConsoleFeaturesPanel.add(new HTML("No recently used features to diplay."));
+		}
+		else {
+			recentlyUsedConsoleFeaturesPanel.add(featuresGrid);
+		}
+	}
+
+	@Override
+	public void showServiceListPanel() {
+		mainTabPanel.setVisible(false);
+		otherFeaturesPanel.setVisible(false);
+		serviceListPanel.setVisible(true);
+	}
+
+	@Override
+	public void hideServiceListPanel() {
+		serviceListPanel.setVisible(false);
 	}
 }

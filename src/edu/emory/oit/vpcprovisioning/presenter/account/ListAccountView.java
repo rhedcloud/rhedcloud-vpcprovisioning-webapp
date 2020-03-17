@@ -34,6 +34,7 @@ public interface ListAccountView extends IsWidget, View {
 		
 		void filterByAccountId(String accountId);
 		void filterByAccountName(String name);
+		void filterByAlternateAccountName(String name);
 		void clearFilter();
 		void refreshList(final UserAccountPojo user);
 	}
