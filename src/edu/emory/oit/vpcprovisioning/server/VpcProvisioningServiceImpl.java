@@ -7676,7 +7676,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
-	@SuppressWarnings({ "unused", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	private void populateUserProfilePojo(UserProfile moa,
 			UserProfilePojo pojo) throws XmlEnterpriseObjectException,
 			ParseException, EnterpriseConfigurationObjectException {
@@ -7691,14 +7691,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				prop.setName(m_prop.getKey());
 				prop.setValue(m_prop.getValue());
 				Properties props = getAppConfig().getProperties(USER_PROFILE_PROPERTIES);
+
 				String prettyName = props.getProperty(prop.getName(), null);
+				if (prettyName == null) {
+					Iterator<Object> keys = props.keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String)keys.next();
+						if (key.indexOf(prop.getName()) == 0) {
+							prettyName = props.getProperty(key, null);
+						}
+					}
+				}
 				if (prettyName == null) {
 					prop.setPrettyName(prop.getName());
 				}
 				else {
 					prop.setPrettyName(prettyName);
 				}
-
 				pojo.getProperties().add(prop);
 			}
 		}
@@ -7741,6 +7750,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateUserProfilePojo(moa, pojo);
 				this.populateUserProfilePojo(moa, baseline);
 				pojo.setBaseline(baseline);
+				
+				// now see if they have any of the new properties
+				List<PropertyPojo> userProfileProps = this.getUserProfileProperties();
+				for (PropertyPojo prop : userProfileProps) {
+					if (pojo.hasProperty(prop.getName()) == false) {
+						pojo.getProperties().add(prop);
+					}
+					else {
+						PropertyPojo existingProp = pojo.getProperty(prop.getName());
+						if (existingProp != null) {
+							existingProp.setEditable(prop.isEditable());
+						}
+					}
+				}
+
 				pojos.add(pojo);
 			}
 
@@ -12607,5 +12631,52 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
+	}
+
+	@Override
+	public List<PropertyPojo> getUserProfileProperties() throws RpcException {
+		List<PropertyPojo> results = new java.util.ArrayList<PropertyPojo>();
+		try {
+			Properties props = getAppConfig().getProperties(USER_PROFILE_PROPERTIES);
+			Iterator<Object> keys = props.keySet().iterator();
+			List<String> propertyNames = new java.util.ArrayList<String>();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				propertyNames.add((String)key);
+			}
+			Collections.sort(propertyNames);
+			for (String propertyName : propertyNames) {
+				PropertyPojo prop = new PropertyPojo();
+				String sEditable="false";
+				if (propertyName.indexOf("editable:") >= 0) {
+					sEditable = propertyName.substring(propertyName.indexOf("editable:") + 9).trim();
+					if (sEditable != null) {
+						boolean editable = Boolean.parseBoolean(sEditable);
+						prop.setEditable(editable);
+					}
+					else {
+						prop.setEditable(false);
+					}
+				}
+				else {
+					prop.setEditable(true);
+				}
+				String prettyName = props.getProperty((String)propertyName);
+				if (propertyName.indexOf("editable:") >= 0) {
+					propertyName = propertyName.substring(0, propertyName.indexOf("editable:")).trim();
+				}
+				prop.setName(propertyName);
+				// default value
+				prop.setValue("true");
+				prop.setPrettyName(prettyName);
+				info("PropertyPojo: name=" + propertyName + " prettyName=" + prettyName + " editable=" + prop.isEditable());
+				results.add(prop);
+			}
+		}
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+		return results;
 	}
 }

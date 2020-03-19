@@ -297,4 +297,5 @@ public interface VpcProvisioningService extends RemoteService {
 	void deleteResourceTaggingProfile(boolean deleteAllMatchingProfiles, ResourceTaggingProfilePojo account) throws RpcException;
 
 	PropertiesPojo getPropertiesForMenu(String menuId) throws RpcException;
+	List<PropertyPojo> getUserProfileProperties() throws RpcException;
 }

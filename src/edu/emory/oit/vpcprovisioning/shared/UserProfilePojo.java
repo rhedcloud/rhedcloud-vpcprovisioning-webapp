@@ -80,4 +80,22 @@ public class UserProfilePojo extends SharedObject implements IsSerializable, Com
 			}
 		}
 	}
+	
+	public boolean hasProperty(String properyName) {
+		for (PropertyPojo prop : getProperties()) {
+			if (prop.getName().equalsIgnoreCase(properyName)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public PropertyPojo getProperty(String propertyName) {
+		for (PropertyPojo prop : getProperties()) {
+			if (prop.getName().equalsIgnoreCase(propertyName)) {
+				return prop;
+			}
+		}
+		return null;
+	}
 }

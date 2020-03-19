@@ -275,4 +275,5 @@ public interface VpcProvisioningServiceAsync {
 	void deleteResourceTaggingProfile(boolean deleteAllMatchingProfiles, ResourceTaggingProfilePojo pojo, AsyncCallback<Void> callback);
 
 	void getPropertiesForMenu(String menuId, AsyncCallback<PropertiesPojo> callback);
+	void getUserProfileProperties(AsyncCallback<List<PropertyPojo>> callback);
 }

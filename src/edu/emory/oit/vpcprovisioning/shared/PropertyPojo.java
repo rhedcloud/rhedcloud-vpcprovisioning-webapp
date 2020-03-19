@@ -7,6 +7,15 @@ public class PropertyPojo extends SharedObject implements IsSerializable {
 	String name;
 	String value;
 	String prettyName;
+	boolean editable;
+
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+	}
 
 	public PropertyPojo() {
 		

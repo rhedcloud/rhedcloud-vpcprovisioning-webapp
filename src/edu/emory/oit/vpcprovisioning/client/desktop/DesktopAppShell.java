@@ -644,16 +644,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					VerticalPanel vp = new VerticalPanel();
 					vp.setSpacing(8);;
 					Grid g = new Grid(userProfile.getProperties().size() + 1, 2);
+					g.setCellSpacing(8);
 					vp.add(g);
 					HTML keyHeader = new HTML("<b>Profile Setting</b>");
 					g.setWidget(0, 0, keyHeader);
 					HTML valueHeader = new HTML("<b>Value</b>");
 					g.setWidget(0, 1, valueHeader);
+					boolean isOdd = true;
 					for (int i=0; i<userProfile.getProperties().size(); i++) {
 						final PropertyPojo prop = userProfile.getProperties().get(i);
 						HTML key = new HTML(prop.getPrettyName());
 						String value = prop.getValue();
 						final CheckBox valueCb = new CheckBox();
+						if (prop.isEditable() == false) {
+							valueCb.setEnabled(false);
+						}
 						valueCb.setValue(Boolean.parseBoolean(value));
 						valueCb.addClickHandler(new ClickHandler() {
 							@Override
@@ -663,6 +668,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						});
 						g.setWidget(i+1, 0, key);
 						g.setWidget(i+1, 1, valueCb);
+						if (isOdd) {
+							g.getRowFormatter().getElement(i+1).getStyle().setBackgroundColor("#fef5e7");
+//							g.getRowFormatter().addStyleName(i+1, "gridOddRow");
+							isOdd = false;
+						}
+						else {
+							g.getRowFormatter().getElement(i+1).getStyle().setBackgroundColor("#fff");
+//							g.getRowFormatter().addStyleName(i+1, "gridEvenRow");
+							isOdd = true;
+						}
 					}
 					HorizontalPanel hp = new HorizontalPanel();
 					hp.setSpacing(8);
