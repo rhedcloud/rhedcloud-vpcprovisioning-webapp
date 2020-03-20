@@ -633,87 +633,34 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			public void onBrowserEvent(Event event) {
 				if(Event.ONCLICK == event.getTypeInt()) {
 					if (userProfile == null) {
-						showMessageToUser("There does not appear to be anyone logged in.  Please log in and try again.");
-						return;
-					}
-					// display a dialog with the contents of the current user profile
-					final DialogBox db = new DialogBox();
-					db.setText("Maintain User Profile");
-					db.setGlassEnabled(true);
-					db.center();
-					VerticalPanel vp = new VerticalPanel();
-					vp.setSpacing(8);;
-					Grid g = new Grid(userProfile.getProperties().size() + 1, 2);
-					g.setCellSpacing(8);
-					vp.add(g);
-					HTML keyHeader = new HTML("<b>Profile Setting</b>");
-					g.setWidget(0, 0, keyHeader);
-					HTML valueHeader = new HTML("<b>Value</b>");
-					g.setWidget(0, 1, valueHeader);
-					boolean isOdd = true;
-					for (int i=0; i<userProfile.getProperties().size(); i++) {
-						final PropertyPojo prop = userProfile.getProperties().get(i);
-						HTML key = new HTML(prop.getPrettyName());
-						String value = prop.getValue();
-						final CheckBox valueCb = new CheckBox();
-						if (prop.isEditable() == false) {
-							valueCb.setEnabled(false);
-						}
-						valueCb.setValue(Boolean.parseBoolean(value));
-						valueCb.addClickHandler(new ClickHandler() {
+						AsyncCallback<UserProfileQueryResultPojo> up_callback = new AsyncCallback<UserProfileQueryResultPojo>() {
+
 							@Override
-							public void onClick(ClickEvent event) {
-								userProfile.updateProperty(prop.getName(), Boolean.toString(valueCb.getValue()));
+							public void onFailure(Throwable caught) {
+								showMessageToUser("There does not appear to be anyone logged in.  Please log in and try again.");
+								return;
 							}
-						});
-						g.setWidget(i+1, 0, key);
-						g.setWidget(i+1, 1, valueCb);
-						if (isOdd) {
-							g.getRowFormatter().getElement(i+1).getStyle().setBackgroundColor("#fef5e7");
-//							g.getRowFormatter().addStyleName(i+1, "gridOddRow");
-							isOdd = false;
-						}
-						else {
-							g.getRowFormatter().getElement(i+1).getStyle().setBackgroundColor("#fff");
-//							g.getRowFormatter().addStyleName(i+1, "gridEvenRow");
-							isOdd = true;
-						}
+
+							@Override
+							public void onSuccess(UserProfileQueryResultPojo result) {
+								if (result != null && result.getResults().size() > 0) {
+									setUserProfile(result.getResults().get(0));
+									showUserProfileDialog();
+								}
+								else {
+									showMessageToUser("There does not appear to be anyone logged in.  Please log in and try again.");
+									return;
+								}
+							}
+						};
+						UserProfileQueryFilterPojo up_filter = new UserProfileQueryFilterPojo();
+						up_filter.setUserId(userLoggedIn.getPublicId());
+						up_filter.setUserAccount(userLoggedIn);
+						VpcProvisioningService.Util.getInstance().getUserProfilesForFilter(up_filter, up_callback);
 					}
-					HorizontalPanel hp = new HorizontalPanel();
-					hp.setSpacing(8);
-					hp.setWidth("100%");
-					vp.add(hp);
-					vp.setCellHorizontalAlignment(hp, HasHorizontalAlignment.ALIGN_CENTER);
-
-					Button ok_button = new Button("Save");
-					ok_button.addStyleName("normalButton");
-					ok_button.setWidth("150px");
-					hp.add(ok_button);
-					hp.setCellHorizontalAlignment(ok_button, HasHorizontalAlignment.ALIGN_CENTER);
-					ok_button.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							updateUserProfile(userProfile);
-							db.hide();
-						}
-					});
-
-					Button cancel_button = new Button("Cancel");
-					cancel_button.addStyleName("normalButton");
-					cancel_button.setWidth("150px");
-					hp.setCellHorizontalAlignment(cancel_button, HasHorizontalAlignment.ALIGN_CENTER);
-					hp.add(cancel_button);
-					cancel_button.addClickHandler(new ClickHandler() {
-						@Override
-						public void onClick(ClickEvent event) {
-							db.hide();
-						}
-					});
-
-					db.setWidget(vp);
-					db.show();
-					db.center();
-
+					else {
+						showUserProfileDialog();
+					}
 				}
 			}
 		});
@@ -740,6 +687,85 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		});
 	}
 
+	private void showUserProfileDialog() {
+		// display a dialog with the contents of the current user profile
+		final DialogBox db = new DialogBox();
+		db.setText("Maintain User Profile");
+		db.setGlassEnabled(true);
+		db.center();
+		VerticalPanel vp = new VerticalPanel();
+		vp.setSpacing(8);;
+		Grid g = new Grid(userProfile.getProperties().size() + 1, 2);
+		g.setCellSpacing(8);
+		vp.add(g);
+		HTML keyHeader = new HTML("<b>Profile Setting</b>");
+		g.setWidget(0, 0, keyHeader);
+		HTML valueHeader = new HTML("<b>Value</b>");
+		g.setWidget(0, 1, valueHeader);
+		boolean isOdd = true;
+		for (int i=0; i<userProfile.getProperties().size(); i++) {
+			final PropertyPojo prop = userProfile.getProperties().get(i);
+			HTML key = new HTML(prop.getPrettyName());
+			String value = prop.getValue();
+			final CheckBox valueCb = new CheckBox();
+			if (prop.isEditable() == false) {
+				valueCb.setEnabled(false);
+			}
+			valueCb.setValue(Boolean.parseBoolean(value));
+			valueCb.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					userProfile.updateProperty(prop.getName(), Boolean.toString(valueCb.getValue()));
+				}
+			});
+			g.setWidget(i+1, 0, key);
+			g.setWidget(i+1, 1, valueCb);
+			if (isOdd) {
+				g.getRowFormatter().getElement(i+1).getStyle().setBackgroundColor("#fef5e7");
+				isOdd = false;
+			}
+			else {
+				g.getRowFormatter().getElement(i+1).getStyle().setBackgroundColor("#fff");
+				isOdd = true;
+			}
+		}
+		HorizontalPanel hp = new HorizontalPanel();
+		hp.setSpacing(8);
+		hp.setWidth("100%");
+		vp.add(hp);
+		vp.setCellHorizontalAlignment(hp, HasHorizontalAlignment.ALIGN_CENTER);
+
+		Button ok_button = new Button("Save");
+		ok_button.addStyleName("normalButton");
+		ok_button.setWidth("150px");
+		hp.add(ok_button);
+		hp.setCellHorizontalAlignment(ok_button, HasHorizontalAlignment.ALIGN_CENTER);
+		ok_button.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				updateUserProfile(userProfile);
+				db.hide();
+			}
+		});
+
+		Button cancel_button = new Button("Cancel");
+		cancel_button.addStyleName("normalButton");
+		cancel_button.setWidth("150px");
+		hp.setCellHorizontalAlignment(cancel_button, HasHorizontalAlignment.ALIGN_CENTER);
+		hp.add(cancel_button);
+		cancel_button.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				db.hide();
+			}
+		});
+
+		db.setWidget(vp);
+		db.show();
+		db.center();
+
+	}
+	
 	/*** Handlers ***/
 	@UiHandler("notificationsHTML")
 	void notificationsClick(ClickEvent e) {
