@@ -19,10 +19,16 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:Grid cellSpacing="8">
-			<g:row>
-		    	<g:customCell>
-					<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+			<g:Label addStyleNames="{style.mediumLabel}">Account Maintenance</g:Label>
+		</g:cell>
+		<g:HorizontalPanel>
+			<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+				<g:VerticalPanel width="100%" spacing="8">
+				
+					<!-- General Account Info -->
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" width="100%">
+					<g:Grid cellSpacing="8">
 						<g:row>
 					    	<g:customCell>
 								<g:Label addStyleNames="{style.mediumLabel}">General Account Info:</g:Label>
@@ -95,37 +101,32 @@
 					    	</g:customCell>
 				    	</g:row>
 					</g:Grid>
-		    	</g:customCell>
-		    </g:row>
-		    <g:row>
-		    	<g:customCell>
-					<g:ScrollPanel>
-						<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="emailsVP" height="100%">
-							<g:Label addStyleNames="{style.mediumLabel}">Add/remove email(s):</g:Label>
-							<g:HorizontalPanel ui:field="addEmailHP" spacing="16">
-								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-									<g:TextBox ui:field="addEmailTF" debugId="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-								</g:cell>
-								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-									<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
-										ui:field="addEmailTypeLB" debugId="addEmailTypeLB" />
-								</g:cell>
-								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-									<g:Button ui:field="addEmailButton" debugId="addEmailButton"
-										addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-								</g:cell>
-							</g:HorizontalPanel>
-							<g:VerticalPanel spacing="8">
-								<g:Label addStyleNames="{style.mediumLabel}">e-mail addresses associated to this account:</g:Label>
-								<g:FlexTable ui:field="emailTable" debugId="emailTable" cellSpacing="3" cellPadding="3"/>
-							</g:VerticalPanel>
+					</g:VerticalPanel>
+					
+					<!--  Account Emails -->
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="emailsVP" height="100%" width="100%">
+						<g:Label addStyleNames="{style.mediumLabel}">Add/remove email(s):</g:Label>
+						<g:HorizontalPanel ui:field="addEmailHP" spacing="16">
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:TextBox ui:field="addEmailTF" debugId="addEmailTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+									ui:field="addEmailTypeLB" debugId="addEmailTypeLB" />
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:Button ui:field="addEmailButton" debugId="addEmailButton"
+									addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+							</g:cell>
+						</g:HorizontalPanel>
+						<g:VerticalPanel spacing="8">
+							<g:Label addStyleNames="{style.mediumLabel}">e-mail addresses associated to this account:</g:Label>
+							<g:FlexTable ui:field="emailTable" debugId="emailTable" cellSpacing="3" cellPadding="3"/>
 						</g:VerticalPanel>
-					</g:ScrollPanel>
-		    	</g:customCell>
-		    </g:row>
-		    <g:row>
-		    	<g:customCell>
-					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="propertiesVP" height="100%">
+					</g:VerticalPanel>
+					
+					<!-- Account Properties -->
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="propertiesVP" height="100%" width="100%">
 						<g:Label addStyleNames="{style.mediumLabel}">Add/Update/Remove Properties:</g:Label>
 						<g:HorizontalPanel ui:field="addPropertyHP" spacing="16">
 							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -144,8 +145,34 @@
 							<g:FlexTable ui:field="propertiesTable" debugId="propertiesTable" cellSpacing="3" cellPadding="3"/>
 						</g:VerticalPanel>
 					</g:VerticalPanel>
-		    	</g:customCell>
-		    </g:row>
+				</g:VerticalPanel>
+			</g:cell>			
+			
+			<!-- Users/Role -->
+			<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_TOP">
+				<g:VerticalPanel spacing="8">
+				<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="adminVP" height="100%">
+					<g:Label addStyleNames="{style.mediumLabel}">Add/remove Users/Roles:</g:Label>
+					<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
+						</g:cell>
+						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+							<g:Button ui:field="addAdminButton" debugId="addAdminButton"
+								addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+						</g:cell>
+					</g:HorizontalPanel>
+					<g:VerticalPanel spacing="8">
+						<g:Label ui:field="adminLabel" addStyleNames="{style.mediumLabel}">Users/Roles associated to this AWS Account:</g:Label>
+						<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
+					</g:VerticalPanel>
+				</g:VerticalPanel>
+				</g:VerticalPanel>
+			</g:cell>			
+		</g:HorizontalPanel>
+		
+		<!-- Save/Cancel Buttons -->
+		<g:Grid cellSpacing="8" cellPadding="8">
 			<g:row>
 		    	<g:customCell>
 					<g:Grid cellSpacing="12">
@@ -167,84 +194,67 @@
 		    	</g:customCell>
 		    </g:row>
 		</g:Grid>
-		<g:Grid>
-			<g:row>
-		    	<g:customCell>
-					<g:ScrollPanel>
-						<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="adminVP" height="100%">
-							<g:Label addStyleNames="{style.mediumLabel}">Add/remove Users/Roles:</g:Label>
-							<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
-								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-									<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
-								</g:cell>
-								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-									<g:Button ui:field="addAdminButton" debugId="addAdminButton"
-										addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-								</g:cell>
-							</g:HorizontalPanel>
-							<g:VerticalPanel spacing="8">
-								<g:Label ui:field="adminLabel" addStyleNames="{style.mediumLabel}">Users/Roles associated to this AWS Account:</g:Label>
-								<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
-							</g:VerticalPanel>
-						</g:VerticalPanel>
-					</g:ScrollPanel>
-		    	</g:customCell>
-		    	<g:customCell>
-					<g:VerticalPanel addStyleNames="{style.statusPanel}" width="100%" spacing="8">
-						<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
-							<g:Grid cellSpacing="12">
+		
+		<!-- Account Notifications -->
+		<g:HorizontalPanel>
+			<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+				<g:VerticalPanel spacing="8">
+				<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8">
+					<g:HTML ui:field="accountNotificationsHeader" addStyleNames="{style.mediumLabel}">Account Notifications</g:HTML>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+						<g:Grid cellSpacing="12">
+							<g:row>
+						    	<g:customCell>
+									<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+										ui:field="filterTB" debugId="filterTB" title="Enter a search string that you'd like to filter the list by."/>
+						    	</g:customCell>
+								<g:customCell>
+									<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+										ui:field="filterTypesLB" debugId="filterTypesLB" />
+								</g:customCell>
+								<g:customCell>
+									<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+								</g:customCell>
+								<g:customCell>
+									<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+								</g:customCell>
+								<g:customCell>
+									<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
+										addStyleNames="{style.refreshButton}"
+										title="Refresh table content"/>
+								</g:customCell>
+								<g:customCell>
+									<g:HTML ui:field="filteredHTML" visible="false" addStyleNames="{style.body}"><i>* Filtered</i></g:HTML>
+								</g:customCell>
+								<!-- 
+								<g:customCell>
+									<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+								</g:customCell>
+								 -->
+							</g:row>
+						</g:Grid>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
+						<g:VerticalPanel ui:field="notificationListPanel" width="100%">
+							<g:Grid>
 								<g:row>
-							    	<g:customCell>
-										<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-											ui:field="filterTB" debugId="filterTB" title="Enter a search string that you'd like to filter the list by."/>
-							    	</g:customCell>
 									<g:customCell>
-										<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-											ui:field="filterTypesLB" debugId="filterTypesLB" />
+										<c:CellTable width="100%" ui:field="listTable" debugId="listTable" title="Existing Account Notifications"/>
 									</g:customCell>
+								</g:row>
+								<g:row>
 									<g:customCell>
-										<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+										<c:SimplePager ui:field="listPager" debugId="listPager"/>
 									</g:customCell>
-									<g:customCell>
-										<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
-									</g:customCell>
-									<g:customCell>
-										<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
-											addStyleNames="{style.refreshButton}"
-											title="Refresh table content"/>
-									</g:customCell>
-									<g:customCell>
-										<g:HTML ui:field="filteredHTML" visible="false" addStyleNames="{style.body}"><i>* Filtered</i></g:HTML>
-									</g:customCell>
-									<!-- 
-									<g:customCell>
-										<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
-									</g:customCell>
-									 -->
 								</g:row>
 							</g:Grid>
-						</g:cell>
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
-							<g:VerticalPanel ui:field="notificationListPanel" width="100%">
-								<g:Grid>
-									<g:row>
-										<g:customCell>
-											<c:CellTable width="100%" ui:field="listTable" debugId="listTable" title="Existing Account Notifications"/>
-										</g:customCell>
-									</g:row>
-									<g:row>
-										<g:customCell>
-											<c:SimplePager ui:field="listPager" debugId="listPager"/>
-										</g:customCell>
-									</g:row>
-								</g:Grid>
-							</g:VerticalPanel>
-						</g:cell>
-					</g:VerticalPanel>
-		    	</g:customCell>
-		    </g:row>
-		</g:Grid>
+						</g:VerticalPanel>
+					</g:cell>
+				</g:VerticalPanel>
+				</g:VerticalPanel>
+		</g:cell>
+		</g:HorizontalPanel>
+
 	</g:VerticalPanel>
 	</g:ScrollPanel>
 </ui:UiBinder>

@@ -4,7 +4,7 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<g:VerticalPanel spacing="8" width="100%">
+	<g:VerticalPanel spacing="12" width="100%">
 		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
 			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 				<g:VerticalPanel spacing="8">
@@ -17,25 +17,14 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel width="100%">
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+			<g:Label addStyleNames="{style.mediumLabel}">Generate a VPC</g:Label>
+		</g:cell>
+		<g:HorizontalPanel width="100%" spacing="8">
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			
 			<!-- Hide this one when generating -->
-			<g:Grid ui:field="maintainVpcpGrid" cellSpacing="8" visible="false">
-			<!-- NEEDS these (when maintaining):
-				<!ELEMENT VirtualPrivateCloudProvisioning (
-					ProvisioningId, 
-					VirtualPrivateCloudRequisition, 
-					Status, 
-					ProvisioningResult?, 
-					ActualTime?, 
-					AnticipatedTime?, 
-					ProvisioningStep*, 
-					CreateUser, 
-					CreateDatetime, 
-					LastUpdateUser?, 
-					LastUpdateDatetime?)>
-			 -->
+			<g:Grid addStyleNames="{style.statusPanel}" ui:field="maintainVpcpGrid" cellSpacing="8" visible="false">
 				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Provisioning ID:</g:Label>
@@ -68,14 +57,7 @@
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 			<!-- hide this one when maintaining -->
-			<g:VerticalPanel ui:field="generateVpcpPanel">
-			<!-- NEEDS these (when generating):
-			<!ELEMENT VirtualPrivateCloudRequisition (
-				AccountId?, TicketId?, AuthenticatedRequestorNetId, 
-				AccountOwnerNetId, FinancialAccountNumber, 
-				CustomerAdminNetId+, Type, ComplianceClass, 
-				SensitiveDataType*, Purpose, NotifyAdmins)>
-			 -->
+			<g:VerticalPanel addStyleNames="{style.statusPanel}" ui:field="generateVpcpPanel" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
@@ -85,15 +67,9 @@
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
 							ui:field="accountLB" debugId="accountLB" />
 			    	</g:customCell>
-			    	<!-- 
-			    	<g:customCell>
-			    		<g:CaptionPanel ui:field="accountCP" debugId="accountCP" captionHTML="Account Info">
-			    		</g:CaptionPanel>
-			    	</g:customCell>
-			    	 -->
 			    </g:row>
 			</g:Grid>
-			<g:Grid cellSpacing="12">
+			<g:Grid cellSpacing="8">
 			    <g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
@@ -102,17 +78,6 @@
 						<g:SuggestBox ui:field="ownerLookupSB" debugId="ownerLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
 			    	</g:customCell>
 				</g:row>
-				<!-- 
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Ticket ID:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqTicketIdTB" debugId="vpcpReqTicketIdTB" />
-			    	</g:customCell>
-		    	</g:row>
-				 -->
 		    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Requestor:</g:Label>
@@ -130,10 +95,10 @@
 							ui:field="vpcpReqSpeedTypeTB" debugId="vpcpReqSpeedTypeTB" />
 			    	</g:customCell>
 			    	<g:customCell>
-					<g:HTML ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
+						<g:HTML width="50px" ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
 			    	</g:customCell>
-			    	</g:row>
-			    	<g:row>
+		    	</g:row>
+		    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
 			    	</g:customCell>
@@ -151,36 +116,6 @@
 							ui:field="vpcpReqComplianceClassLB" debugId="vpcpReqComplianceClassLB" />
 			    	</g:customCell>
 				</g:row>
-				<!-- 
-				<g:row>
-					<g:customCell><g:HTML></g:HTML></g:customCell>
-			    	<g:customCell>
-			    		<g:CaptionPanel ui:field="sensitiveDataCP" debugId="sensitiveDataCP" captionHTML="Sensitive Data">
-			    			<g:VerticalPanel spacing="8">
-								<g:Label addStyleNames="{style.label-left}">Please select all sensitive data regimes that might be used by this VPC:</g:Label>
-								<g:Grid cellSpacing="12">
-								    <g:row>
-								    	<g:customCell>
-											<g:Label addStyleNames="{style.label}">FISMA:</g:Label>
-								    	</g:customCell>
-								    	<g:customCell>
-								    		<g:CheckBox ui:field="fismaCB" debugId="fismaCB" title="Will use FISMA"/>
-								    	</g:customCell>
-								    </g:row>
-								    <g:row>
-								    	<g:customCell>
-											<g:Label addStyleNames="{style.label}">PCI:</g:Label>
-								    	</g:customCell>
-								    	<g:customCell>
-								    		<g:CheckBox ui:field="pciCB" debugId="pciCB" title="Will use PCI"/>
-								    	</g:customCell>
-								    </g:row>
-								</g:Grid>
-			    			</g:VerticalPanel>
-			    		</g:CaptionPanel>
-			    	</g:customCell>
-				</g:row>
-				 -->
 		    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
@@ -215,7 +150,7 @@
 			<g:HorizontalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 						<g:ScrollPanel>
-							<g:VerticalPanel spacing="8" ui:field="adminVP" height="100%">
+							<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="adminVP" height="100%">
 								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
 								<g:HorizontalPanel ui:field="addAdminHP" spacing="16">
 									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
@@ -233,28 +168,6 @@
 							</g:VerticalPanel>
 						</g:ScrollPanel>
 				</g:cell>
-				<!-- 
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
-						<g:ScrollPanel>
-							<g:VerticalPanel spacing="8" ui:field="netIdVP" height="100%">
-								<g:Label addStyleNames="{style.heading_label}">Add/remove Admin NetId(s):</g:Label>
-								<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:TextBox ui:field="addNetIdTF" debugId="addNetIdTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
-									</g:cell>
-									<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-										<g:Button ui:field="addNetIdButton" debugId="addNetIdButton"
-											addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-									</g:cell>
-								</g:HorizontalPanel>
-								<g:VerticalPanel spacing="8">
-									<g:Label addStyleNames="{style.heading_label}">Admin Net Ids associated to this VPC:</g:Label>
-									<g:FlexTable ui:field="netIdTable" debugId="netIdTable" cellSpacing="3" cellPadding="3"/>
-								</g:VerticalPanel>
-							</g:VerticalPanel>
-						</g:ScrollPanel>
-				</g:cell>
-				 -->
 			</g:HorizontalPanel>
 		</g:cell>
 		</g:HorizontalPanel>

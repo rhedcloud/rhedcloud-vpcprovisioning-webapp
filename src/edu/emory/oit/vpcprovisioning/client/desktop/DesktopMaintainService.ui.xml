@@ -9,9 +9,9 @@
 	<g:VerticalPanel spacing="8" width="100%">
 		<g:HTML addStyleNames="{style.mediumLabel}">Maintain Service</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:HorizontalPanel>
-				<g:VerticalPanel spacing="12">
-				<g:Grid cellSpacing="8">
+			<g:HorizontalPanel spacing="8">
+				<g:VerticalPanel spacing="8" width="100%">
+				<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
 					<g:row>
 				    	<g:customCell>
 							<g:Label addStyleNames="{style.label}">AWS Service Code:</g:Label>
@@ -135,7 +135,7 @@
 					</g:Grid>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
-					<g:VerticalPanel>
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8">
 						<g:HTML addStyleNames="{style.mediumLabel}">Security Assessments</g:HTML>
 						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 							<g:Grid cellSpacing="12">
@@ -166,17 +166,18 @@
 					</g:VerticalPanel>
 				</g:cell>
 				</g:VerticalPanel>
-				<g:VerticalPanel>
+				<g:VerticalPanel spacing="8" width="100%">
 					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-						<g:Grid cellSpacing="8">
+						<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
 							<g:row>
 						    	<g:customCell>
 									<g:HorizontalPanel>
 										<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 												<g:ScrollPanel>
 													<g:VerticalPanel spacing="8" ui:field="categoriesVP" height="100%">
+														<g:HTML addStyleNames="{style.mediumLabel}">AWS Categories</g:HTML>
 														<g:Label addStyleNames="{style.heading_label}">Add/remove AWS Categories:</g:Label>
-														<g:HorizontalPanel ui:field="categoriesTagHP" spacing="16">
+														<g:HorizontalPanel ui:field="categoriesTagHP" spacing="8">
 															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 																<g:TextBox ui:field="categoryTF" debugId="tagKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
 															</g:cell>
@@ -198,15 +199,16 @@
 					    </g:Grid>
 					</g:cell>
 					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-						<g:Grid cellSpacing="8">
+						<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
 							<g:row>
 						    	<g:customCell>
 									<g:HorizontalPanel>
 										<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 												<g:ScrollPanel>
 													<g:VerticalPanel spacing="8" ui:field="consoleCategoriesVP" height="100%">
+														<g:HTML addStyleNames="{style.mediumLabel}">Console Categories</g:HTML>
 														<g:Label addStyleNames="{style.heading_label}">Add/remove Console Categories:</g:Label>
-														<g:HorizontalPanel ui:field="consoleCategoriesTagHP" spacing="16">
+														<g:HorizontalPanel ui:field="consoleCategoriesTagHP" spacing="8">
 															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 																<g:TextBox ui:field="consoleCategoryTF" debugId="consoleCategoryTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
 															</g:cell>
@@ -228,15 +230,16 @@
 					    </g:Grid>
 					</g:cell>
 					<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-						<g:Grid cellSpacing="8">
+						<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
 							<g:row>
 						    	<g:customCell>
 									<g:HorizontalPanel>
 										<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="50%">
 												<g:ScrollPanel>
 													<g:VerticalPanel spacing="8" ui:field="tagsVP" height="100%">
+														<g:HTML addStyleNames="{style.mediumLabel}">Tags</g:HTML>
 														<g:Label addStyleNames="{style.heading_label}">Add/remove Tags:</g:Label>
-														<g:HorizontalPanel ui:field="addTagHP" spacing="16">
+														<g:HorizontalPanel ui:field="addTagHP" spacing="8">
 															<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 																<g:TextBox ui:field="tagKeyTF" debugId="tagKeyTF" addStyleNames="{style.field} {style.glowing-border}"></g:TextBox>
 															</g:cell>

@@ -4,22 +4,14 @@
 	<ui:style src="DesktopStyles.css" />
 	<ui:style field="otherStyles">
 	</ui:style>
-	<g:VerticalPanel spacing="8" width="100%">
+	<g:VerticalPanel spacing="12" width="100%">
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+			<g:Label addStyleNames="{style.mediumLabel}">Register a VPC</g:Label>
+		</g:cell>
 		<g:HorizontalPanel spacing="12">
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
 			
-			<g:Grid ui:field="registerVpcGrid" cellSpacing="8">
-			<!-- NEEDS these (when registering an existing VPC -> Vpc.Create):
-				<!ELEMENT VirtualPrivateCloud (
-					AccountId, 
-					VpcId, 
-					Type, 
-					CustomerAdminNetId+, 
-					CreateUser (view only), 
-					CreateDatetime (view only), 
-					LastUpdateUser? (view only), 
-					LastUpdateDatetime? (view only))>
-			 -->
+			<g:Grid addStyleNames="{style.statusPanel}" ui:field="registerVpcGrid" cellSpacing="8">
 				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Select Account:</g:Label>
@@ -116,7 +108,6 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<!-- TODO: VPC Properties -->
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>

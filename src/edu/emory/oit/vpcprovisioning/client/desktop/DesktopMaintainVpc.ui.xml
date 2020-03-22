@@ -20,15 +20,18 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+			<g:Label addStyleNames="{style.mediumLabel}">VPC Maintenance</g:Label>
+		</g:cell>
 		<g:HorizontalPanel spacing="12">
 			<g:cell horizontalAlignment="ALIGN_LEFT"
 				verticalAlignment="ALIGN_TOP">
 	
 				<!-- Hide this one when generating, use when registering/maintaining -->
-				<g:Grid ui:field="maintainVpcGrid" cellSpacing="8">
+				<g:Grid addStyleNames="{style.statusPanel}" ui:field="maintainVpcGrid" cellSpacing="8">
 					<g:row>
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.mediumLabel}">Maintain VPC</g:Label>
+							<g:Label addStyleNames="{style.mediumLabel}">General Info:</g:Label>
 				    	</g:customCell>
 					</g:row>
 					<g:row>
@@ -117,7 +120,7 @@
 			<g:cell horizontalAlignment="ALIGN_LEFT"
 				verticalAlignment="ALIGN_TOP">
 
-				<g:VerticalPanel ui:field="vpnInfoOuterPanel">
+				<g:VerticalPanel addStyleNames="{style.statusPanel}" ui:field="vpnInfoOuterPanel">
 					<g:cell horizontalAlignment="ALIGN_LEFT"
 						verticalAlignment="ALIGN_TOP">
 						<g:Grid ui:field="vpnInfoHeaderGrid" cellSpacing="8">
@@ -314,6 +317,7 @@
 					width="100%" height="600px" animationDuration="500"
 					animationVertical="false" ui:field="vpcTabPanel"
 					debugId="vpcTabPanel" addStyleNames="gwt-TabLayoutPanel">
+					<!-- debugId="vpcTabPanel" addStyleNames="gwt-TabLayoutPanel {style.statusPanel}"> -->
 
 					<g:tab>
 						<g:header>Firewall Rules</g:header>
