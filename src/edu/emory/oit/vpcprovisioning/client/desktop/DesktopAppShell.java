@@ -784,25 +784,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		filter.setUserId(userLoggedIn.getPublicId());
 		ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION, filter);
 	}
-//	@UiHandler("esbServiceStatusAnchor")
-//	void esbServiceStatusAnchorClick(ClickEvent e) {
-//		AsyncCallback<String> callback = new AsyncCallback<String>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				String msg = "Exception getting ESB service status URL."; 
-//				GWT.log(msg, caught);
-//				showMessageToUser(msg + 
-//					"<p>Message from server is: " + caught.getMessage() + "</p>");
-//			}
-//
-//			@Override
-//			public void onSuccess(String result) {
-//				GWT.log("opening " + result);
-//				Window.open(result, "_blank", "");
-//			}
-//		};
-//		VpcProvisioningService.Util.getInstance().getEsbServiceStatusURL(callback);
-//	}
 
 	@UiHandler ("mainTabPanel") 
 	void tabSelected(SelectionEvent<Integer> e) {

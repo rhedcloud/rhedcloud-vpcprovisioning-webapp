@@ -66,11 +66,6 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	     public CellTable.Style cellTableStyle();
 	}
 
-//	@UiField(provided=true) SimplePager listPager = new SimplePager(TextLocation.RIGHT, false, true);
-//	@UiField(provided=true) CellTable<CounterMeasurePojo> listTable = new CellTable<CounterMeasurePojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
-//	@UiField Button createButton;
-//	@UiField Button actionsButton;
-
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
@@ -83,86 +78,13 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	@UiField DateBox assessmentDB;
 	
 	@UiField VerticalPanel serviceControlPanel;
+	@UiField Button calculateRiskButton;
 
-//	@UiHandler("actionsButton")
-//	void actionsButtonClicked(ClickEvent e) {
-//		actionsPopup.clear();
-//		actionsPopup.setAutoHideEnabled(true);
-//		actionsPopup.setAnimationEnabled(true);
-//		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//
-//		Grid grid;
-//		if (userLoggedIn.isCentralAdmin()) {
-//			grid =  new Grid(2, 1);
-//		}
-//		else {
-//			grid = new Grid(1,1);
-//		}
-//
-//		grid.setCellSpacing(8);
-//		actionsPopup.add(grid);
-//
-//		Anchor editAnchor = new Anchor("View/Maintain Counter Measure");
-//		editAnchor.addStyleName("productAnchor");
-//		editAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		editAnchor.setTitle("View/Maintain selected Counter Measure");
-//		editAnchor.ensureDebugId(editAnchor.getText());
-//		editAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				actionsPopup.hide();
-//				CounterMeasurePojo m = selectionModel.getSelectedObject();
-//				if (m == null) {
-//					showMessageToUser("Please select an item from the list");
-//					return;
-//				}
-//				// counter measure maintenance (see service test req, test, step
-//				presenter.maintainServiceControl(m);
-//			}
-//		});
-//		grid.setWidget(0, 0, editAnchor);
-//
-//		if (userLoggedIn.isCentralAdmin()) {
-//			Anchor deleteAnchor = new Anchor("Delete Counter Measure");
-//			deleteAnchor.addStyleName("productAnchor");
-//			deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//			deleteAnchor.setTitle("Delete selected Security Risk");
-//			deleteAnchor.ensureDebugId(deleteAnchor.getText());
-//			deleteAnchor.addClickHandler(new ClickHandler() {
-//				@Override
-//				public void onClick(ClickEvent event) {
-//					actionsPopup.hide();
-//					if (selectionModel.getSelectedSet().size() == 0) {
-//						showMessageToUser("Please select one or more item(s) from the list");
-//						return;
-//					}
-//					
-//					Iterator<CounterMeasurePojo> nIter = selectionModel.getSelectedSet().iterator();
-//					while (nIter.hasNext()) {
-//						CounterMeasurePojo m = nIter.next();
-//						if (m != null) {
-//							// update the status of the notification
-//							presenter.deleteServiceControl(m);
-//						}
-//						else {
-//							showMessageToUser("Please select one or more item(s) from the list");
-//						}
-//					}
-//				}
-//			});
-//			grid.setWidget(1, 0, deleteAnchor);
-//		}
-//
-//		actionsPopup.showRelativeTo(actionsButton);
-//	}
-
-//	@UiHandler ("createButton")
-//	void createCounterMeasureClicked(ClickEvent e) {
-//		// create a new coutermeasure
-//		populateRiskWithFormData();
-//		presenter.createServiceControl();
-//	}
-
+	@UiHandler ("calculateRiskButton")
+	void calculateRiskButtonClicked(ClickEvent e) {
+		showMessageToUser("This feature is comming soon!");
+	}
+	
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
 		if (userLoggedIn.isCentralAdmin()) {

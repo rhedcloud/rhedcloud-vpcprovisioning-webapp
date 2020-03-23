@@ -65,9 +65,20 @@
 							<g:Label addStyleNames="{style.label}">Risk Level:</g:Label>
 						</g:customCell>
 						<g:customCell>
-							<g:ListBox
-								addStyleNames="{style.field} {style.glowing-border}"
-								ui:field="riskLevelLB" debugId="riskLevelLB" />
+							<g:HorizontalPanel>
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+									<g:ListBox
+										addStyleNames="{style.field} {style.glowing-border}"
+										ui:field="riskLevelLB" debugId="riskLevelLB" />
+								</g:cell>
+								<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+									<g:HorizontalPanel spacing="8">
+										<g:Button
+											addStyleNames="{style.glowing-border} {style.normalButton}"
+											ui:field="calculateRiskButton" debugId="calculateRiskButton">Calculate...</g:Button>
+									</g:HorizontalPanel>
+								</g:cell>
+							</g:HorizontalPanel>
 						</g:customCell>
 					</g:row>
 					<g:row>

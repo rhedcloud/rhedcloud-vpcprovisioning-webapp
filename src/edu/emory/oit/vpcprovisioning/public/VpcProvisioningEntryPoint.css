@@ -15,17 +15,76 @@ a:visited {
 }
 
 .gwt-DialogBox {
-	border: 2px solid #AAAAAA;
+	/*border: 1px solid #D2D2D2;*/
 	background-color: white;
 }
 
 .gwt-DialogBox .Caption {
-	background-image: url(gray_gradient.gif);
-	background-repeat: repeat-x;
-	padding: 4px;
-	padding-bottom: 8px;
-	font-weight: bold;
-	cursor: default;
+  background: #F1F1F1;
+  padding: 4px 8px 4px 4px;
+  cursor: default;
+  font-family: Arial Unicode MS, Arial, sans-serif;
+  font-weight: bold;
+  border-bottom: 1px solid #bbbbbb;
+  /*border-top: 1px solid #D2D2D2;*/
+}
+.gwt-DialogBox .dialogContent {
+}
+
+.gwt-DialogBox .dialogMiddleCenter {
+  padding: 3px;
+  background: white;
+}
+
+.gwt-DialogBox .dialogTopLeftInner {
+  width: 8px;
+  height: 6px;
+  zoom: 1;
+}
+
+.gwt-DialogBox .dialogTopRightInner {
+  width: 8px;
+  zoom: 1;
+}
+
+.gwt-DialogBox .dialogBottomLeftInner {
+  width: 8px;
+  height: 10px;
+  zoom: 1;
+}
+
+.gwt-DialogBox .dialogBottomRightInner {
+  width: 8px;
+  height: 8px;
+  zoom: 1;
+}
+
+html>body .gwt-DialogBox {
+}
+
+* html .gwt-DialogBox .dialogTopLeftInner {
+  width: 8px;
+  overflow: hidden;
+}
+
+* html .gwt-DialogBox .dialogTopRightInner {
+  width: 8px;
+  overflow: hidden;
+}
+
+* html .gwt-DialogBox .dialogBottomLeftInner {
+  width: 8px;
+  height: 10px;
+  overflow: hidden;
+}
+
+* html .gwt-DialogBox .dialogBottomRightInner {
+  width: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.cw-DialogBox {
 }
 
 .gwt-MenuBar {
