@@ -205,7 +205,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String IDM_SERVICE_NAME = "IDMRequestService";
 	private static final String DIRECTORY_SERVICE_NAME = "DirectoryRequestService";
 	private static final String SERVICE_NOW_SERVICE_NAME = "ServiceNowRequestService";
-	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
+//	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
 	private static final String PEOPLE_SOFT_SERVICE_NAME = "PeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
@@ -238,7 +238,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	Properties generalProps = null;
 	private String configDocPath = null;
 	private String appId = null;
-	private ProducerPool identityServiceProducerPool = null;
+//	private ProducerPool identityServiceProducerPool = null;
 	private ProducerPool idmProducerPool = null;
 	private ProducerPool directoryProducerPool = null;
 	private ProducerPool awsProducerPool = null;
@@ -356,8 +356,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("AppConfig initialized...");
 			peopleSoftProducerPool = (ProducerPool) getAppConfig().getObject(
 					PEOPLE_SOFT_SERVICE_NAME);
-			identityServiceProducerPool = (ProducerPool) getAppConfig().getObject(
-					IDENTITY_SERVICE_NAME);
+//			identityServiceProducerPool = (ProducerPool) getAppConfig().getObject(
+//					IDENTITY_SERVICE_NAME);
 			awsProducerPool = (ProducerPool) getAppConfig().getObject(
 					AWS_SERVICE_NAME);
 			firewallProducerPool = (ProducerPool) getAppConfig().getObject(
@@ -2222,12 +2222,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
-	private RequestService getIdentityServiceRequestService() throws JMSException {
-		RequestService reqSvc = (RequestService) identityServiceProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
-		return reqSvc;
-	}
+//	private RequestService getIdentityServiceRequestService() throws JMSException {
+//		RequestService reqSvc = (RequestService) identityServiceProducerPool.getProducer();
+//		((PointToPointProducer) reqSvc)
+//				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+//		return reqSvc;
+//	}
 	private RequestService getPeopleSoftRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) peopleSoftProducerPool.getProducer();
 		((PointToPointProducer) reqSvc)
@@ -3733,13 +3733,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return false;
 	}
 
-	public ProducerPool getIdentityServiceProducerPool() {
-		return identityServiceProducerPool;
-	}
-
-	public void setIdentityServiceProducerPool(ProducerPool identityServiceProducerPool) {
-		this.identityServiceProducerPool = identityServiceProducerPool;
-	}
+//	public ProducerPool getIdentityServiceProducerPool() {
+//		return identityServiceProducerPool;
+//	}
+//
+//	public void setIdentityServiceProducerPool(ProducerPool identityServiceProducerPool) {
+//		this.identityServiceProducerPool = identityServiceProducerPool;
+//	}
 
 	@Override
 	public DirectoryMetaDataPojo getDirectoryMetaDataForPublicId(String publicId) throws RpcException {
