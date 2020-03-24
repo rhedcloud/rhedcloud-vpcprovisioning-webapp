@@ -307,12 +307,65 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		return 0;
 	}
 
+	public boolean isBlockedPendingReview() {
+		if (siteStatus == null) {
+			return true;
+		}
+		if (siteStatus.equalsIgnoreCase("blocked pending review")) {
+			return true;
+		}
+		return false;
+	}
 	public boolean isBlocked() {
 		if (siteStatus == null) {
 			return true;
 		}
-		if (siteStatus.toLowerCase().indexOf("blocked") >= 0) {
+		if (siteStatus.equalsIgnoreCase("blocked")) {
 			return true;
+		}
+		return false;
+	}
+	public boolean isAvailableStandard() {
+		if (siteStatus == null) {
+			return false;
+		}
+		if (siteStatus.equalsIgnoreCase("available")) {
+			return true;
+		}
+		return false;
+	}
+	public boolean isAvailableWithCountermeasuresStandard() {
+		if (siteStatus == null) {
+			return false;
+		}
+		if (siteStatus.equalsIgnoreCase("available with countermeasures")) {
+			return true;
+		}
+		return false;
+	}
+	public boolean isAvailableHIPAA() {
+		if (siteStatus == null) {
+			return false;
+		}
+		if (siteStatus.equalsIgnoreCase("available")) {
+			if (siteHipaaEligible != null) {
+				boolean b = Boolean.parseBoolean(siteHipaaEligible);
+				return b;
+			}
+			return false;
+		}
+		return false;
+	}
+	public boolean isAvailableWithCountermeasuresHIPAA() {
+		if (siteStatus == null) {
+			return false;
+		}
+		if (siteStatus.equalsIgnoreCase("available with countermeasures")) {
+			if (siteHipaaEligible != null) {
+				boolean b = Boolean.parseBoolean(siteHipaaEligible);
+				return b;
+			}
+			return false;
 		}
 		return false;
 	}

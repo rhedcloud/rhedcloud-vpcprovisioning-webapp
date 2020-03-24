@@ -22,17 +22,38 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 	// - aws hipaa eligible count
 	// - aws not hipaa eligible count
 	
-	List<AWSServiceStatisticPojo> serviceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
+	List<AWSServiceStatisticPojo> awsServiceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
+	public List<AWSServiceStatisticPojo> getAwsServiceStatistics() {
+		return awsServiceStatistics;
+	}
+
+	public void setAwsServiceStatistics(List<AWSServiceStatisticPojo> awsServiceStatistics) {
+		this.awsServiceStatistics = awsServiceStatistics;
+	}
+
+	public List<AWSServiceStatisticPojo> getSiteServiceStatistics() {
+		return siteServiceStatistics;
+	}
+
+	public void setSiteServiceStatistics(List<AWSServiceStatisticPojo> siteServiceStatistics) {
+		this.siteServiceStatistics = siteServiceStatistics;
+	}
+
+	List<AWSServiceStatisticPojo> siteServiceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
+	
 	
 	public AWSServiceSummaryPojo() {
 	}
 
 	public void initializeStatistics() {
-		serviceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
+		awsServiceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
+		siteServiceStatistics = new java.util.ArrayList<AWSServiceStatisticPojo>();
 		
 		int blockedPendingReviewCount = 0;
 		int availableCount = 0;
 		int availableWithCounterMeasuresCount = 0;
+		int emoryHipaaAvailableCount=0;
+		int emoryHipaaAvailableWithCountermeasuresCount=0;
 		int blockedCount = 0;
 		int emoryHipaaEligibleCount=0;
 		int emoryNotHipaaEligibleCount=0;
@@ -46,7 +67,6 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 		Date today = new java.util.Date();
 		Date ninetyDaysAgo = new Date(today.getTime() - (Constants.MILLIS_PER_DAY * 90));
 		Date oneHundredEightyDaysAgo = new Date(today.getTime() - (Constants.MILLIS_PER_DAY * 180));
-//		Date threeHundredSixtyDaysAgo = new Date(today.getTime() - (Constants.MILLIS_PER_DAY * 360));
 
 		for (AWSServicePojo svc : serviceList) {
 			long createTime = svc.getCreateTime().getTime();
@@ -60,16 +80,16 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 				threeSixtyDayCount++;
 			}
 			
-			if (svc.getSiteStatus().equalsIgnoreCase("blocked pending review")) {
+			if (svc.isBlockedPendingReview()) {
 				blockedPendingReviewCount++;
 			}
-			else if (svc.getSiteStatus().equalsIgnoreCase("available")) {
+			if (svc.isAvailableStandard()) {
 				availableCount++;
 			}
-			else if (svc.getSiteStatus().equalsIgnoreCase("available with countermeasures")) {
+			if (svc.isAvailableWithCountermeasuresStandard()) {
 				availableWithCounterMeasuresCount++;
 			}
-			else if (svc.getSiteStatus().equalsIgnoreCase("blocked")) {
+			if (svc.isBlocked()) {
 				blockedCount++;
 			}
 			
@@ -80,6 +100,13 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 				awsNotHipaaEligibleCount++;
 			}
 
+			if (svc.isAvailableHIPAA()) {
+				emoryHipaaAvailableCount++;
+			}
+			if (svc.isAvailableWithCountermeasuresHIPAA()) {
+				emoryHipaaAvailableWithCountermeasuresCount++;
+			}
+			
 			if (svc.isSiteHipaaEligible()) {
 				emoryHipaaEligibleCount++;
 			}
@@ -90,71 +117,76 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 			if (svc.getAwsStatus().equalsIgnoreCase("active")) {
 				awsActiveCount++;
 			}
-			else if (svc.getAwsStatus().equalsIgnoreCase("deprecated")) {
+			if (svc.getAwsStatus().equalsIgnoreCase("deprecated")) {
 				awsDeprecatedCount++;
 			}
 		}
 
-		AWSServiceStatisticPojo s1 = new AWSServiceStatisticPojo("Total Number of Services");
+		AWSServiceStatisticPojo s1 = new AWSServiceStatisticPojo("Total number of services offered by AWS");
 		s1.setCount(serviceList.size());
-		serviceStatistics.add(s1);
-
-		AWSServiceStatisticPojo s2 = new AWSServiceStatisticPojo("Services not Assessed yet");
-		s2.setCount(blockedPendingReviewCount);
-		serviceStatistics.add(s2);
-		
-		AWSServiceStatisticPojo s3 = new AWSServiceStatisticPojo("Emory Available Services");
-		s3.setCount(availableCount);
-		serviceStatistics.add(s3);
-		
-		AWSServiceStatisticPojo s4 = new AWSServiceStatisticPojo("Emory Services Available with Countermeasures");
-		s4.setCount(availableWithCounterMeasuresCount);
-		serviceStatistics.add(s4);
-
-		AWSServiceStatisticPojo s5 = new AWSServiceStatisticPojo("Emory Services Blocked Pending Review");
-		s5.setCount(blockedPendingReviewCount);
-		serviceStatistics.add(s5);
-
-		AWSServiceStatisticPojo s6 = new AWSServiceStatisticPojo("Emory Services Blocked");
-		s6.setCount(blockedCount);
-		serviceStatistics.add(s6);
-
-		AWSServiceStatisticPojo s7 = new AWSServiceStatisticPojo("Emory HIPAA Eligible Services");
-		s7.setCount(emoryHipaaEligibleCount);
-		serviceStatistics.add(s7);
-		
-		AWSServiceStatisticPojo s8 = new AWSServiceStatisticPojo("Emory HIPAA NOT Eligible Services");
-		s8.setCount(emoryNotHipaaEligibleCount);
-		serviceStatistics.add(s8);
-		
-		AWSServiceStatisticPojo s9 = new AWSServiceStatisticPojo("AWS HIPAA Eligible Services");
-		s9.setCount(awsHipaaEligibleCount);
-		serviceStatistics.add(s9);
-		
-		AWSServiceStatisticPojo s10 = new AWSServiceStatisticPojo("AWS HIPAA NOT Eligible Services");
-		s10.setCount(awsNotHipaaEligibleCount);
-		serviceStatistics.add(s10);
-
-		AWSServiceStatisticPojo s11 = new AWSServiceStatisticPojo("AWS active Services");
-		s11.setCount(awsActiveCount);
-		serviceStatistics.add(s11);
-		
-		AWSServiceStatisticPojo s12 = new AWSServiceStatisticPojo("AWS deprecated Services");
-		s12.setCount(awsDeprecatedCount);
-		serviceStatistics.add(s12);
+		awsServiceStatistics.add(s1);
 
 		AWSServiceStatisticPojo s13 = new AWSServiceStatisticPojo("New Services in the last 90 days");
 		s13.setCount(ninetyDayCount);
-		serviceStatistics.add(s13);
+		awsServiceStatistics.add(s13);
 		
 		AWSServiceStatisticPojo s14 = new AWSServiceStatisticPojo("New Services in the last 180 days");
 		s14.setCount(oneEightyDayCount);
-		serviceStatistics.add(s14);
+		awsServiceStatistics.add(s14);
 		
 		AWSServiceStatisticPojo s15 = new AWSServiceStatisticPojo("New Services in the last 360 days");
 		s15.setCount(threeSixtyDayCount);
-		serviceStatistics.add(s15);
+		awsServiceStatistics.add(s15);
 		
+		AWSServiceStatisticPojo s6 = new AWSServiceStatisticPojo("Services blocked by Emory after review");
+		s6.setCount(blockedCount);
+		siteServiceStatistics.add(s6);
+
+		AWSServiceStatisticPojo s5 = new AWSServiceStatisticPojo("Services blocked pending Emory review");
+		s5.setCount(blockedPendingReviewCount);
+		siteServiceStatistics.add(s5);
+
+		AWSServiceStatisticPojo s3 = new AWSServiceStatisticPojo("Services available in Emory Standard Accounts without Countermeasures");
+		s3.setCount(availableCount);
+		siteServiceStatistics.add(s3);
+		
+		AWSServiceStatisticPojo s4 = new AWSServiceStatisticPojo("Services available in Emory Standard Accounts with Countermeasures");
+		s4.setCount(availableWithCounterMeasuresCount);
+		siteServiceStatistics.add(s4);
+
+		AWSServiceStatisticPojo s7 = new AWSServiceStatisticPojo("Services available in Emory HIPAA Accounts without Countermeasures");
+		s7.setCount(emoryHipaaAvailableCount);
+		siteServiceStatistics.add(s7);
+		
+		AWSServiceStatisticPojo s8 = new AWSServiceStatisticPojo("Services available in Emory HIPAA Accounts with Countermeasures");
+		s8.setCount(emoryHipaaAvailableWithCountermeasuresCount);
+		siteServiceStatistics.add(s8);
+		
+
+//		AWSServiceStatisticPojo s2 = new AWSServiceStatisticPojo("Services not Assessed yet");
+//		s2.setCount(blockedPendingReviewCount);
+//		serviceStatistics.add(s2);
+//		
+//		AWSServiceStatisticPojo s8 = new AWSServiceStatisticPojo("Emory HIPAA NOT Eligible Services");
+//		s8.setCount(emoryNotHipaaEligibleCount);
+//		serviceStatistics.add(s8);
+//		
+		AWSServiceStatisticPojo s9 = new AWSServiceStatisticPojo("AWS HIPAA Eligible Services");
+		s9.setCount(awsHipaaEligibleCount);
+		awsServiceStatistics.add(s9);
+		
+		AWSServiceStatisticPojo s10 = new AWSServiceStatisticPojo("AWS HIPAA NOT Eligible Services");
+		s10.setCount(awsNotHipaaEligibleCount);
+		awsServiceStatistics.add(s10);
+
+		AWSServiceStatisticPojo s11 = new AWSServiceStatisticPojo("AWS active Services");
+		s11.setCount(awsActiveCount);
+		awsServiceStatistics.add(s11);
+		
+		AWSServiceStatisticPojo s12 = new AWSServiceStatisticPojo("AWS deprecated Services");
+		s12.setCount(awsDeprecatedCount);
+		awsServiceStatistics.add(s12);
+
 	}
 	
 	public HashMap<String, List<AWSServicePojo>> getServiceMap() {
@@ -163,14 +195,6 @@ public class AWSServiceSummaryPojo extends SharedObject implements IsSerializabl
 
 	public void setServiceMap(HashMap<String, List<AWSServicePojo>> serviceMap) {
 		this.serviceMap = serviceMap;
-	}
-
-	public List<AWSServiceStatisticPojo> getServiceStatistics() {
-		return serviceStatistics;
-	}
-
-	public void setServiceStatistics(List<AWSServiceStatisticPojo> serviceStatistics) {
-		this.serviceStatistics = serviceStatistics;
 	}
 
 	public List<AWSServicePojo> getServiceList() {

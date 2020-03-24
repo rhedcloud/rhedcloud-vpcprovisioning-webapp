@@ -515,11 +515,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			Object[] keys = serviceSummary.getServiceMap().keySet().toArray();
 			Arrays.sort(keys);
 			
+			int hipaaCnt=0;
+			int stdCnt=0;
+			int totalSvcCnt=0;
 			for (final Object catName : keys) {
 				List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
+				totalSvcCnt += services.size();
 				for (final AWSServicePojo svc : services) {
-					String svcStatus = svc.getSiteStatus();
-					String hipaaStatus = svc.getSiteHipaaEligible();
 					String svcName = "Unknown";
 					if (svc.getCombinedServiceName() != null) {
 						svcName = svc.getCombinedServiceName();
@@ -531,17 +533,22 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						svcName = svc.getAwsServiceName();
 					}
 					if (hipaaOnly) {
-						if (svc.isSiteHipaaEligible() && !svc.isBlocked()) {
+						if (svc.isAvailableHIPAA() || svc.isAvailableWithCountermeasuresHIPAA()) {
+							hipaaCnt++;
 							sbuf.append("<h3><li>" + catName + " : " + svcName + "</li></h3>");
 						}
 					}
 					else {
-						if (!svc.isBlocked()) {
+						if (svc.isAvailableStandard() || svc.isAvailableWithCountermeasuresStandard()) {
+							stdCnt++;
 							sbuf.append("<h3><li>" + catName + " : " + svcName + "</li></h3>");
 						}
 					}
 				}
 			}
+			GWT.log("Total Services count: " + totalSvcCnt);
+			GWT.log("HIPAA count: " + hipaaCnt);
+			GWT.log("Standard count: " + stdCnt);
 			sbuf.append("</ul>");
 			HTML svcList = new HTML(sbuf.toString());
 			svcList.getElement().getStyle().setTextAlign(TextAlign.LEFT);
@@ -785,133 +792,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION, filter);
 	}
 
-	@UiHandler ("mainTabPanel") 
-	void tabSelected(SelectionEvent<Integer> e) {
-		clientFactory.getVpcpStatusView().stopTimer();
-		clientFactory.getVpncpStatusView().stopTimer();
-		clientFactory.getStaticNatProvisioningStatusView().stopTimer();
-		switch (e.getSelectedItem()) {
-		case 0:
-//			GWT.log("need to get Home Content.");
-//			firstHomeContentWidget = true;
-//			homeContentContainer.clear();
-//			HomeView view = clientFactory.getHomeView();
-//			homeContentContainer.setWidget(view);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME);
-//			break;
-		case 1:
-//			GWT.log("need to get Account Maintenance Content.");
-//			firstAccountContentWidget = true;
-//			accountContentContainer.clear();
-//			ListAccountView listAccountView = clientFactory.getListAccountView();
-//			MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
-//			BillSummaryView billSummaryView = clientFactory.getBillSummaryView();
-//			accountContentContainer.add(listAccountView);
-//			accountContentContainer.add(maintainAccountView);
-//			accountContentContainer.add(billSummaryView);
-//			accountContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT);
-//			break;
-		case 2:
-//			GWT.log("need to get VPC Maintentenance content.");
-//			firstVpcContentWidget = true;
-//			vpcContentContainer.clear();
-//			ListVpcView listVpcView = clientFactory.getListVpcView();
-//			MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
-//			vpcContentContainer.add(listVpcView);
-//			vpcContentContainer.add(maintainVpcView);
-//			vpcContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
-//			break;
-		case 3:
-//			GWT.log("need to get VPCP Maintentenance content.");
-//			firstVpcpContentWidget = true;
-//			vpcpContentContainer.clear();
-//			ListVpcpView listVpcpView = clientFactory.getListVpcpView();
-//			MaintainVpcpView maintainVpcpView = clientFactory.getMaintainVpcpView();
-//			VpcpStatusView vpcpStatusView = clientFactory.getVpcpStatusView();
-//			vpcpContentContainer.add(listVpcpView);
-//			vpcpContentContainer.add(maintainVpcpView);
-//			vpcpContentContainer.add(vpcpStatusView);
-//			vpcpContentContainer.setAnimationDuration(500);
-//			if (userLoggedIn.isGenerateVpcFromUnauthorizedUser()) {
-//				ActionEvent.fire(eventBus, ActionNames.GENERATE_VPCP);
-//			}
-//			else {
-//				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPCP);
-//			}
-//			break;
-		case 4:
-//			GWT.log("need to get Services content.");
-//			firstServicesContentWidget = true;
-//			servicesContentContainer.clear();
-//			ListServiceView listServiceView = clientFactory.getListServiceView();
-//			MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
-//			ServiceAssessmentReportView svcAssessmentReport = clientFactory.getServiceAssessmentReportView();
-//			vpcpContentContainer.add(listServiceView);
-//			vpcpContentContainer.add(maintainServiceView);
-//			vpcpContentContainer.add(svcAssessmentReport);
-//			vpcpContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_SERVICE);
-//			break;
-		case 5:
-//			GWT.log("need to get Central Admin Content.");
-//			firstCentralAdminContentWidget = true;
-//			centralAdminContentContainer.clear();
-//			ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
-//			centralAdminContentContainer.add(listCentralAdminView);
-//			centralAdminContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN);
-//			break;
-		case 6:
-//			GWT.log("need to get Elastic IP content.");
-//			firstElasticIpContentWidget = true;
-//			elasticIpContentContainer.clear();
-//			ListElasticIpView listElasticIpView = clientFactory.getListElasticIpView();
-//			MaintainElasticIpView maintainElasticIpView = clientFactory.getMaintainElasticIpView();
-//			elasticIpContentContainer.add(listElasticIpView);
-//			elasticIpContentContainer.add(maintainElasticIpView);
-//			elasticIpContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_ELASTIC_IP);
-//			break;
-		case 7:
-//			GWT.log("need to get Static NAT content.");
-//			firstStaticNatContentWidget = true;
-//			staticNatContentContainer.clear();
-//			ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
-//			StaticNatProvisioningStatusView snpStatusView = clientFactory.getStaticNatProvisioningStatusView();
-//			staticNatContentContainer.add(listStaticNatView);
-//			staticNatContentContainer.add(snpStatusView);
-//			staticNatContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_STATIC_NAT_PROVISIONING_SUMMARY);
-//			break;
-		case 8:
-//			GWT.log("need to get VPN Connection content.");
-//			firstVpnConnectionContentWidget = true;
-//			vpnConnectionContentContainer.clear();
-//			ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
-//			VpncpStatusView vpncpStatusView = clientFactory.getVpncpStatusView();
-//			vpnConnectionContentContainer.add(listVpncpView);
-//			vpnConnectionContentContainer.add(vpncpStatusView);
-//			vpnConnectionContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
-//			break;
-		case 9:
-//			GWT.log("need to get VPN Connection Profile content.");
-//			firstVpnConnectionProfileContentWidget = true;
-//			vpnConnectionProfileContentContainer.clear();
-//			ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
-//			MaintainVpnConnectionProvisioningView maintainVpncpView = clientFactory.getMaintainVpnConnectionProvisioningView();
-//			VpncpStatusView vpncpStatusView2 = clientFactory.getVpncpStatusView();
-//			vpnConnectionProfileContentContainer.add(listVpnConnectionProfileView);
-//			vpnConnectionProfileContentContainer.add(maintainVpncpView);
-//			vpnConnectionProfileContentContainer.add(vpncpStatusView2);
-//			vpnConnectionProfileContentContainer.setAnimationDuration(500);
-//			ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
-//			break;
-		}
-	}
-
 	@Override
 	public void setWidget(IsWidget w) {
 		GWT.log("DesktopAppShell.setWidget");
@@ -936,160 +816,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		return;
 		// end 1/28/2020
 		
-//		if (w instanceof HomePresenter) {
-//			GWT.log("DesktopAppShell homePresenter");
-//			homeContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstHomeContentWidget) {
-//				firstHomeContentWidget = false;
-//				homeContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//
-//		if (w instanceof ListAccountPresenter || 
-//				w instanceof MaintainAccountPresenter ||
-//				w instanceof BillSummaryPresenter) {
-//			
-//			accountContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstAccountContentWidget) {
-//				firstAccountContentWidget = false;
-//				accountContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//
-//		if (w instanceof ListVpcPresenter || w instanceof MaintainVpcPresenter 
-//				|| w instanceof RegisterVpcPresenter
-//				|| w instanceof MaintainCidrAssignmentPresenter) {
-//			vpcContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstVpcContentWidget) {
-//				firstVpcContentWidget = false;
-//				vpcContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//
-//		if (w instanceof ListVpcpPresenter || 
-//				w instanceof MaintainVpcpPresenter ||
-//				w instanceof VpcpStatusPresenter) {
-//			vpcpContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstVpcpContentWidget) {
-//				firstVpcpContentWidget = false;
-//				vpcpContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//
-//		if (w instanceof ListCentralAdminPresenter) {
-//			centralAdminContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstCentralAdminContentWidget) {
-//				firstCentralAdminContentWidget = false;
-//				centralAdminContentContainer.animate(0);
-//			}
-//			return;
-//		}
-
-//		if (w instanceof ListNotificationPresenter || w instanceof MaintainNotificationPresenter) {
-//			GWT.log("It's the notifications presenter...");
-//			otherFeaturesPanel.clear();
-//			otherFeaturesPanel.add(w);
-//			return;
-//		}
-
-//		if (w instanceof ListServicePresenter || 
-//				w instanceof MaintainServicePresenter || 
-//				w instanceof MaintainSecurityAssessmentPresenter || 
-//				w instanceof ServiceAssessmentReportPresenter) {
-//			servicesContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstServicesContentWidget) {
-//				firstServicesContentWidget = false;
-//				servicesContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//
-//		if (w instanceof ListElasticIpPresenter || 
-//			w instanceof MaintainElasticIpPresenter) {
-//			GWT.log("It's the elastic ip presenter...");
-//			elasticIpContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstElasticIpContentWidget) {
-//				firstElasticIpContentWidget = false;
-//				elasticIpContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//		
-//		if (w instanceof ListStaticNatProvisioningSummaryPresenter || 
-//			w instanceof StaticNatProvisioningStatusPresenter) {
-//			staticNatContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstStaticNatContentWidget) {
-//				firstStaticNatContentWidget = false;
-//				staticNatContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//
-//		if (w instanceof ListVpnConnectionProfilePresenter || 
-//			w instanceof MaintainVpnConnectionProfilePresenter || 
-//			w instanceof MaintainVpnConnectionProvisioningPresenter) {
-//			GWT.log("It's the vpn connection profile presenter...");
-//			vpnConnectionProfileContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstVpnConnectionProfileContentWidget) {
-//				firstVpnConnectionProfileContentWidget = false;
-//				vpnConnectionProfileContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//		if (mainTabPanel.getSelectedIndex() == 9 && 
-//			(w instanceof VpncpStatusPresenter || 
-//			 w instanceof ListVpnConnectionProfilePresenter)) {
-//			vpnConnectionProfileContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstVpnConnectionProfileContentWidget) {
-//				firstVpnConnectionProfileContentWidget = false;
-//				vpnConnectionProfileContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//		
-//		if (w instanceof ListVpnConnectionProvisioningPresenter) {
-//			GWT.log("It's the vpn connection provisioning presenter...");
-//			vpnConnectionContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstVpnConnectionContentWidget) {
-//				firstVpnConnectionContentWidget = false;
-//				vpnConnectionContentContainer.animate(0);
-//			}
-//			return;
-//		}
-//		
-//		if (mainTabPanel.getSelectedIndex() == 8 && w instanceof VpncpStatusPresenter) {
-//			vpnConnectionContentContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstVpnConnectionContentWidget) {
-//				firstVpnConnectionContentWidget = false;
-//				vpnConnectionContentContainer.animate(0);
-//			}
-//			return;
-//		}
-
-//		// if we get here, it's the home tab, just set the widget to what's passed in for now
-//		homeContentContainer.setWidget(w);
-//		// Do not animate the first time we show a widget.
-//		if (firstHomeContentWidget) {
-//			firstHomeContentWidget = false;
-//			homeContentContainer.animate(0);
-//		}
-
 	}
 
 	@Override
@@ -1319,43 +1045,59 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			sbuf.append("<ul>");
 
 			FlexTable svcStatsTable = new FlexTable();
-			svcStatsTable.setCellSpacing(12);
 			svcStatsVp.add(svcStatsTable);
-			int statTableRow=0;
-			int statTableColumn=0;
-			for (AWSServiceStatisticPojo stat : serviceSummary.getServiceStatistics()) {
-				if (statTableRow >= 6) {
-					sbuf.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
-					sbuf.append("</ul>");
-					HTML statHtml = new HTML(sbuf.toString());
-					statHtml.getElement().getStyle().setColor("orange");
-					statHtml.getElement().getStyle().setFontSize(14, Unit.PX);
-					statHtml.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-					svcStatsTable.setWidget(0, statTableColumn, statHtml);
-					svcStatsTable.getCellFormatter().setVerticalAlignment(0, statTableColumn, HasVerticalAlignment.ALIGN_TOP);
-					statTableRow = 0;
-					statTableColumn++;
-					sbuf = new StringBuffer();
-					sbuf.append("<ul>");
-				}
-				else {
-					sbuf.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
-					statTableRow++;
-				}
+			
+			// AWS stats in column 1
+			HTML awsColumnHeading = new HTML("AWS Service Statistics");
+			awsColumnHeading.getElement().getStyle().setColor("#ddd");
+			awsColumnHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+			awsColumnHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			svcStatsTable.setWidget(0, 0, awsColumnHeading);
+			svcStatsTable.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);
+			svcStatsTable.getCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_BOTTOM);
+			
+			for (AWSServiceStatisticPojo stat : serviceSummary.getAwsServiceStatistics()) {
+				sbuf.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
 			}
-			if (sbuf.length() > 0) {
-				statTableColumn++;
-				sbuf.append("</ul>");
-				HTML statHtml = new HTML(sbuf.toString());
-				statHtml.getElement().getStyle().setColor("orange");
-				statHtml.getElement().getStyle().setFontSize(14, Unit.PX);
-				statHtml.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-				svcStatsTable.setWidget(0, statTableColumn, statHtml);
-				svcStatsTable.getCellFormatter().setVerticalAlignment(0, statTableColumn, HasVerticalAlignment.ALIGN_TOP);
+			
+			sbuf.append("</ul>");
+			HTML statHtml = new HTML(sbuf.toString());
+			statHtml.getElement().getStyle().setColor("orange");
+			statHtml.getElement().getStyle().setFontSize(14, Unit.PX);
+			statHtml.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			svcStatsTable.setWidget(1, 0, statHtml);
+			svcStatsTable.getCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
+
+			// site stats in column 2
+			sbuf = new StringBuffer();
+			sbuf.append("<ul>");
+			HTML siteColumnHeading = new HTML("Site Specific Service Statistics");
+			siteColumnHeading.getElement().getStyle().setColor("#ddd");
+			siteColumnHeading.getElement().getStyle().setFontSize(16, Unit.PX);
+			siteColumnHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			svcStatsTable.setWidget(0, 1, siteColumnHeading);
+			svcStatsTable.getCellFormatter().setHorizontalAlignment(0, 1, HasHorizontalAlignment.ALIGN_CENTER);
+			svcStatsTable.getCellFormatter().setVerticalAlignment(0, 1, HasVerticalAlignment.ALIGN_BOTTOM);
+
+			for (AWSServiceStatisticPojo stat : serviceSummary.getSiteServiceStatistics()) {
+				sbuf.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
 			}
+			
+			sbuf.append("</ul>");
+			HTML statHtml2 = new HTML(sbuf.toString());
+			statHtml2.getElement().getStyle().setColor("orange");
+			statHtml2.getElement().getStyle().setFontSize(14, Unit.PX);
+			statHtml2.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			svcStatsTable.setWidget(1, 1, statHtml2);
+			svcStatsTable.getCellFormatter().setVerticalAlignment(1, 1, HasVerticalAlignment.ALIGN_TOP);
 		}
 		else {
-			svcStatsVp.add(new HTML("Service Statistics not available yet.  Try again in a bit."));
+			HTML h = new HTML("Service Statistics are not available yet.  Try again in a bit.");
+			h.getElement().getStyle().setColor("orange");
+			h.getElement().getStyle().setFontSize(16, Unit.PX);
+			h.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			svcStatsVp.add(h);
+			productsPopup.showRelativeTo(linksPanel);
 			return;
 		}
 		

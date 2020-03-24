@@ -133,24 +133,30 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 			public void onSuccess(SecurityAssessmentSummaryQueryResultPojo result) {
 				sbView.append("<h3>AWS at Emory Service at a Glance</h3>");
 				sbView.append("<table>");
+
+				sbView.append("<tr>");
+				sbView.append("<td align=\"center\">");
+				sbView.append("<b>AWS Service Statistics</b>");
+				sbView.append("</td>");
+				sbView.append("<td align=\"center\">");
+				sbView.append("<b>Site Specific Service Statistics</b>");
+				sbView.append("</td>");
+				sbView.append("</tr>");
+				
 				sbView.append("<tr>");
 				sbView.append("<td valign=\"top\">");
 				sbView.append("<ul>");
-				int statCounter = 0;
 				AWSServiceSummaryPojo serviceSummary = result.getServiceSummary();
-				for (AWSServiceStatisticPojo stat : serviceSummary.getServiceStatistics()) {
-					if (statCounter >= 6) {
-						sbView.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
-						sbView.append("</ul>");
-						sbView.append("</td>");
-						sbView.append("<td valign=\"top\">");
-						sbView.append("<ul>");
-						statCounter = 0;
-					}
-					else {
-						sbView.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
-						statCounter++;
-					}
+				for (AWSServiceStatisticPojo stat : serviceSummary.getAwsServiceStatistics()) {
+					sbView.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
+				}
+				sbView.append("</ul>");
+				sbView.append("</td>");
+				sbView.append("<td valign=\"top\">");
+				sbView.append("<ul>");
+
+				for (AWSServiceStatisticPojo stat : serviceSummary.getSiteServiceStatistics()) {
+					sbView.append("<li>" + stat.getStatisticName() + ":  " + stat.getCount() + "</li>");
 				}
 
 				sbView.append("</ul>");
@@ -190,7 +196,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 					sbView.append("</td></tr>");
 
 					String imgString;
-					if (!svc.isBlocked()) {
+					if (!svc.isBlocked() && !svc.isBlockedPendingReview()) {
 						imgString = "<img src=\"images/green-checkbox-icon-15.jpg\" alt=\"Smiley face\" height=\"16\" width=\"16\">";
 					}
 					else {

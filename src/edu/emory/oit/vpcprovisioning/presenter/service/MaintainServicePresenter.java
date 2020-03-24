@@ -183,6 +183,14 @@ public class MaintainServicePresenter extends PresenterBase implements MaintainS
 		}
 		else {
 			setAssessmentList(Collections.<ServiceSecurityAssessmentPojo> emptyList());
+			if (user.isCentralAdmin()) {
+				getView().applyCentralAdminMask();
+			}
+			else {
+				getView().applyAWSAccountAuditorMask();
+			}
+            getView().hidePleaseWaitPanel();
+            getView().hidePleaseWaitDialog();
 		}
 	}
 

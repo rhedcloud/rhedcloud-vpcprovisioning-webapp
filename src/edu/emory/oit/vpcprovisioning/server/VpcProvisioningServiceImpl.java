@@ -284,6 +284,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info(ri.toString() + " initialization complete.");
 	}
 
+	private void debug(String msg) {
+		log.log(java.util.logging.Level.FINEST, msg);
+	}
 	private void info(String msg) {
 		log.info(msg);
 	}
@@ -4908,7 +4911,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// if it's less than one minute, don't refresh
 				if (millisSinceUpdated <= 60000) {
 					info("[getAWSServiceMap] service summary found in cache and it's NOT stale, returning cached service summary");
-				    info("[getAWSServiceMap] there are " + serviceSummary.getServiceStatistics().size() + " service stats in the cached summary.");
+				    int statCount = serviceSummary.getAwsServiceStatistics().size() + serviceSummary.getSiteServiceStatistics().size();
+				    info("[getAWSServiceMap] there are " + statCount + " service stats in the cached summary.");
 					return serviceSummary;
 				}
 				info("[getAWSServiceMap] service summary was found in cached but it's stale, refreshing service summary");
