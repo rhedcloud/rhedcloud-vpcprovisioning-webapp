@@ -104,6 +104,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
@@ -1475,8 +1476,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setAccountName(pojo.getAccountName());
 		moa.setPasswordLocation(pojo.getPasswordLocation());
-		// TODO: uncomment once moa is changed.
-//		moa.setAlternateName(pojo.getAlternateName());
+		moa.setAlternateName(pojo.getAlternateName());
 		moa.setAccountOwnerId(pojo.getAccountOwnerDirectoryMetaData().getPublicId());
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setComplianceClass(pojo.getComplianceClass());
@@ -1505,8 +1505,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setAccountName(moa.getAccountName());
-		// TODO: uncomment after moa is changed
-//		pojo.setAlternateName(moa.getAlternateName());
+		pojo.setAlternateName(moa.getAlternateName());
 		
 		// need a clean meta data object because if we use the one from the cache
 		// we'll run into issues when we go to do an update later (baseline missmatch)
@@ -11716,9 +11715,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			SecurityAssessmentSummaryQueryFilterPojo filter) throws RpcException {
 
 		AWSServiceSummaryPojo serviceSummary = this.getAWSServiceMap();
-//		AWSServiceSummaryPojo serviceSummary = new AWSServiceSummaryPojo();
-//		AWSServiceQueryResultPojo servicesResult = this.getServicesForFilter(null);
-//		serviceSummary.setServiceList(servicesResult.getResults());
 		
 		SecurityAssessmentSummaryQueryResultPojo result = new SecurityAssessmentSummaryQueryResultPojo();
 		result.setServiceSummary(serviceSummary);
@@ -11734,6 +11730,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (ssa_result.getResults().size() > 0) {
 					ServiceSecurityAssessmentPojo assessment = ssa_result.getResults().get(0);
 					dereferencePublicIdsForAssessment(assessment);
+
+					// Phase2:Sprint4:  if the assessment has multiple services associated to it, we need to get
+					// the service names for those as well and store it in the assessment so it 
+					// can be used by the report
+//					if (assessment.getServiceIds().size() > 1) {
+//						for (String assessmentSvcId : assessment.getServiceIds()) {
+//							AWSServiceQueryFilterPojo svcFilter = new AWSServiceQueryFilterPojo();
+//							svcFilter.setServiceId(assessmentSvcId);
+//							AWSServiceQueryResultPojo svcResult = this.getServicesForFilter(svcFilter);
+//							if (svcResult.getResults().size() > 0) {
+//								AWSServicePojo assessmentSvc = svcResult.getResults().get(0);
+//								assessment.getServiceNames().add(assessmentSvc.getAwsServiceName());
+//							}
+//						}
+//					}
+
 					sas.setAssessment(assessment);
 				}
 				result.getResults().add(sas);
@@ -11753,6 +11765,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (ssa_result.getResults().size() > 0) {
 					ServiceSecurityAssessmentPojo assessment = ssa_result.getResults().get(0);
 					dereferencePublicIdsForAssessment(assessment);
+					
+					// Phase2:Sprint4:  if the assessment has multiple services associated to it, we need to get
+					// the service names for those as well and store it in the assessment so it 
+					// can be used by the report
+//					if (assessment.getServiceIds().size() > 1) {
+//						for (String assessmentSvcId : assessment.getServiceIds()) {
+//							AWSServiceQueryFilterPojo svcFilter = new AWSServiceQueryFilterPojo();
+//							svcFilter.setServiceId(assessmentSvcId);
+//							AWSServiceQueryResultPojo svcResult = this.getServicesForFilter(svcFilter);
+//							if (svcResult.getResults().size() > 0) {
+//								AWSServicePojo assessmentSvc = svcResult.getResults().get(0);
+//								assessment.getServiceNames().add(assessmentSvc.getAwsServiceName());
+//							}
+//						}
+//					}
+					
 					sas.setAssessment(assessment);
 				}
 				result.getResults().add(sas);
@@ -12682,5 +12710,35 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e.getMessage());
 		}
 		return results;
+	}
+
+	@Override
+	public List<AccountSpeedChartPojo> getBadSpeedChartsForUser(UserAccountPojo user) throws RpcException {
+		List<AccountSpeedChartPojo> pojos = new java.util.ArrayList<AccountSpeedChartPojo>();
+		
+		AccountQueryFilterPojo acctFilter = new AccountQueryFilterPojo();
+		acctFilter.setUserLoggedIn(user);
+		AccountQueryResultPojo acctResult = this.getAccountsForFilter(acctFilter);
+		for (AccountPojo account : acctResult.getResults()) {
+			SpeedChartPojo scp = this.getSpeedChartForFinancialAccountNumber(account.getSpeedType());
+			
+			if (scp != null) {
+				if (!scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
+					// speed chart is either invalid or it's in a warning state
+					// user should be notified about these
+					AccountSpeedChartPojo asc = new AccountSpeedChartPojo();
+					asc.setAccount(account);
+					asc.setSpeedChart(scp);
+					pojos.add(asc);
+				}
+			}
+			else {
+				// no speed chart found for that financial account number, this has to be bad
+				AccountSpeedChartPojo asc = new AccountSpeedChartPojo();
+				asc.setAccount(account);
+				pojos.add(asc);
+			}
+		}
+		return pojos;
 	}
 }

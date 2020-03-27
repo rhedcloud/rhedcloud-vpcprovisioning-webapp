@@ -441,28 +441,6 @@ public class DesktopMaintainSecurityAssessment extends ViewImplBase implements M
 			return;
 		}
 
-//		if (w instanceof ListServiceControlPresenter || w instanceof MaintainServiceControlPresenter) {
-//			GWT.log("Maintain Security Assessment, setWidget: Service Control");
-//			serviceControlsContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstServiceControlWidget) {
-//				firstServiceControlWidget = false;
-//				serviceControlsContainer.animate(0);
-//			}
-//			return;
-//		}
-		
-//		if (w instanceof ListServiceGuidelinePresenter || w instanceof MaintainServiceGuidelinePresenter) {
-//			GWT.log("Maintain Security Assessment, setWidget: Service Guideline");
-//			serviceGuidelinesContainer.setWidget(w);
-//			// Do not animate the first time we show a widget.
-//			if (firstServiceGuidelineWidget) {
-//				firstServiceGuidelineWidget = false;
-//				serviceGuidelinesContainer.animate(0);
-//			}
-//			return;
-//		}
-		
 		if (w instanceof MaintainServiceTestPlanPresenter) {
 			GWT.log("Maintain Security Assessment, setWidget: Test Plan");
 			testPlanContainer.setWidget(w);

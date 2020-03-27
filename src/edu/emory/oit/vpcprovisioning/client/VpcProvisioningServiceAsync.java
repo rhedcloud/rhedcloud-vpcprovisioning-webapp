@@ -276,4 +276,5 @@ public interface VpcProvisioningServiceAsync {
 
 	void getPropertiesForMenu(String menuId, AsyncCallback<PropertiesPojo> callback);
 	void getUserProfileProperties(AsyncCallback<List<PropertyPojo>> callback);
+	void getBadSpeedChartsForUser(UserAccountPojo user, AsyncCallback<List<AccountSpeedChartPojo>> callback);
 }

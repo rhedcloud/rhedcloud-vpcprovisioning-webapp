@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningAuthorizationPojo
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountSpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryResultPojo;
@@ -57,7 +58,7 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 		setReleaseInfo(clientFactory);
 		
-		if (this.userLoggedIn == null) {
+		if (getUserLoggedIn() == null) {
 			getView().showPleaseWaitDialog("Retrieving User Logged In...");
 			AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 
@@ -105,6 +106,23 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 //		AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
 //		filter.setUserLoggedIn(user);
 //		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
+		
+		// TODO: Phase2:Sprint4: check for accounts this user is associated to that are using invalid or nearly invalid speedtypes
+		/*
+		AsyncCallback<List<AccountSpeedChartPojo>> sp_cb = new AsyncCallback<List<AccountSpeedChartPojo>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception retrieving bad speed charts", caught);
+			}
+
+			@Override
+			public void onSuccess(List<AccountSpeedChartPojo> result) {
+				getView().showMessageToUser("You are associated to " + result.size() + 
+					" accounts with bad, or nearly bad, speed charts");
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getBadSpeedChartsForUser(getUserLoggedIn(), sp_cb);
+		*/
 		
 		// just to prime the pump for directory person results so the first page load
 		// on the account details page won't take so long.  this could be done in a number

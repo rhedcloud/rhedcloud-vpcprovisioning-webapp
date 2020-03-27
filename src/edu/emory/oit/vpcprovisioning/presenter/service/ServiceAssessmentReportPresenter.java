@@ -168,8 +168,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 				for (SecurityAssessmentSummaryPojo sas : result.getResults()) {
 					AWSServicePojo svc = sas.getService();
 					ServiceSecurityAssessmentPojo assessment = sas.getAssessment();
-					String serviceName;
-					serviceName = svc.getAwsServiceName();
+					String serviceName = svc.getAwsServiceName();
 //					if (svc.getCombinedServiceName() != null && 
 //							svc.getCombinedServiceName().length() > 0) {
 //							serviceName = svc.getCombinedServiceName();
@@ -185,8 +184,23 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 					sbView.append("<table>");
 					
 					// service name
-					String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
 					sbView.append("<tr><td>");
+
+					// Phase2:Sprint4: if the assessment has multiple services associated to it, 
+					// we need to get the service names for those as well so they'll show up in the report too
+//					if (assessment != null && assessment.getServiceIds().size() > 1) {
+//						sbView.append("<b>Service names this assessment applies to:");
+//						for (String svcName : assessment.getServiceNames()) {
+//							String serviceAnchorString = "<a style=\"padding-left:12px\" href=\"" + svc.getAwsLandingPageUrl() + "\">" + svcName + "</a>";
+//							sbView.append("</br> " + serviceAnchorString);
+//						}
+//						sbView.append("</b>");
+//					}
+//					else {
+//						String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
+//						sbView.append("<b>Service name:  " + serviceAnchorString + "</b>");
+//					}
+					String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
 					sbView.append("<b>Service name:  " + serviceAnchorString + "</b>");
 					sbView.append("</td></tr>");
 					

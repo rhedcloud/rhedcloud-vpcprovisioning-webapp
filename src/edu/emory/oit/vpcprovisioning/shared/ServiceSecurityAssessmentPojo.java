@@ -24,7 +24,9 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 		}
 	};
 	String serviceSecurityAssessmentId;
+	// ids of services that share this assessment
 	List<String> serviceIds = new java.util.ArrayList<String>();
+	List<String> serviceNames = new java.util.ArrayList<String>();
 	String status;
 	List<SecurityRiskPojo> securityRisks = new java.util.ArrayList<SecurityRiskPojo>();
 //	List<ServiceControlPojo> serviceControls = new java.util.ArrayList<ServiceControlPojo>();
@@ -108,6 +110,14 @@ public class ServiceSecurityAssessmentPojo extends SharedObject implements IsSer
 			return 0;
 		}
 		return c1.compareTo(c2);
+	}
+
+	public List<String> getServiceNames() {
+		return serviceNames;
+	}
+
+	public void setServiceNames(List<String> serviceNames) {
+		this.serviceNames = serviceNames;
 	}
 
 }

@@ -458,7 +458,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 			
 			@Override
 			public String getValue(AccountPojo object) {
-				return (object.getAlternateName() == null ? "Comming Soon" : object.getAlternateName());
+				return object.getAlternateName();
 			}
 		};
 		acctAltNameColumn.setSortable(true);
