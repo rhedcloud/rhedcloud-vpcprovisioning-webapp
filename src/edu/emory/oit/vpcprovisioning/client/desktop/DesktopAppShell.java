@@ -703,9 +703,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		VerticalPanel vp = new VerticalPanel();
 		vp.setSpacing(8);;
 		Grid g = new Grid(userProfile.getProperties().size() + 1, 2);
-		g.setCellSpacing(8);
+		g.setCellSpacing(12);
 		vp.add(g);
-		HTML keyHeader = new HTML("<b>Profile Setting</b>");
+		HTML keyHeader = new HTML("<b>Select any other e-mail notifications you'd like to receive</b>");
 		g.setWidget(0, 0, keyHeader);
 		HTML valueHeader = new HTML("<b>Value</b>");
 		g.setWidget(0, 1, valueHeader);
