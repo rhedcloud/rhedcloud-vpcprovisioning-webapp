@@ -10,9 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -72,6 +70,7 @@ import edu.emory.oit.vpcprovisioning.client.common.Notification;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
+import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
@@ -300,7 +299,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_VPN_CONNECTION_PROFILE + ":")) {
 				GWT.log("Need to go to VPN Profile tab");
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPNCP);
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_RESOURCE_TAGGING_PROFILE + ":")) {
 				GWT.log("Need to go to Resource Tagging Profile tab");
@@ -626,6 +625,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			@Override
 			public void onBrowserEvent(Event event) {
 				if(Event.ONCLICK == event.getTypeInt()) {
+					hidePleaseWaitDialogs();
 					productsPopup.hide();
 					hideOtherFeaturesPanel();
 					showMainTabPanel();
@@ -789,6 +789,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		showOtherFeaturesPanel();
 		UserNotificationQueryFilterPojo filter = new UserNotificationQueryFilterPojo();
 		filter.setUserId(userLoggedIn.getPublicId());
+		hidePleaseWaitDialogs();
 		ActionEvent.fire(eventBus, ActionNames.GO_HOME_NOTIFICATION, filter);
 	}
 
@@ -1332,7 +1333,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 									public void onClick(ClickEvent event) {
 										// link to the detailed assessment
 										if (eventBus != null) {
-											mainTabPanel.selectTab(4, false);
+											hidePleaseWaitDialogs();
+											showMainTabPanel();
 											productsPopup.hide();
 											ActionEvent.fire(eventBus, ActionNames.MAINTAIN_SECURITY_ASSESSMENT, svc, assessment);
 										}
@@ -1701,6 +1703,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void showVpcpTab() {
 		
 		// Need to link off to VPC Management area
+		hidePleaseWaitDialogs();
 		ActionEvent.fire(eventBus, ActionNames.GO_HOME_VPC);
 	}
 
@@ -1784,6 +1787,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 						homeButton.addClickHandler(new ClickHandler() {
 							@Override
 							public void onClick(ClickEvent event) {
+								hidePleaseWaitDialogs();
 								featuresPopup.hide();
 								showMainTabPanel();
 								ActionEvent.fire(eventBus, ActionNames.GO_HOME);
@@ -1802,6 +1806,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 								featuresPopup.hide();
 								ConsoleFeatureSuggestion suggestion = (ConsoleFeatureSuggestion)event.getSelectedItem();
 								if (suggestion.getService() != null) {
+									hidePleaseWaitDialogs();
 									showMainTabPanel();
 									saveConsoleFeatureInCacheForUser(suggestion.getService(), userLoggedIn);
 									ActionEvent.fire(eventBus, suggestion.getService().getActionName());
@@ -1843,6 +1848,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		VpcProvisioningService.Util.getInstance().getConsoleFeaturesForFilter(filter, svcCallback);
 	}
 
+	private void hidePleaseWaitDialogs() {
+		for (int i=0; i<homeContentContainer.getWidgetCount(); i++) {
+			Widget w = homeContentContainer.getWidget(i);
+			if (w instanceof View) {
+				View v = (View)w;
+				v.hidePleaseWaitDialog();
+			}
+		}
+	}
+	
 	@Override
 	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user) {
 		AsyncCallback<Void> cb = new AsyncCallback<Void>() {
@@ -1878,6 +1893,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			serviceAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
+					hidePleaseWaitDialogs();
 					featuresPopup.hide();
 					showMainTabPanel();
 					saveConsoleFeatureInCacheForUser(service, userLoggedIn);
@@ -1916,6 +1932,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			serviceAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
+					hidePleaseWaitDialogs();
 					featuresPopup.hide();
 					showMainTabPanel();
 					saveConsoleFeatureInCacheForUser(service, userLoggedIn);
