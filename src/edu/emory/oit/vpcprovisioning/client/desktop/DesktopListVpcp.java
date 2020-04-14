@@ -92,6 +92,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 			@Override
 			public void onClick(ClickEvent event) {
 				GWT.log("Should go to generate vpcp here...");
+				hidePleaseWaitDialog();
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPCP);
 			}
 		}, ClickEvent.getType());
