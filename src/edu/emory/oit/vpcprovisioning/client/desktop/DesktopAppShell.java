@@ -1119,11 +1119,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		searchTB.getElement().setPropertyString("placeholder", "enter all or part of the service name");
 		searchTB.addStyleName("field");
 		searchTB.addStyleName("glowing-border");
+		searchTB.ensureDebugId("serviceSearchTB");
 		
 		Button searchButton = new Button("Search");
 		searchGrid.setWidget(1, 1, searchButton);
 		searchButton.addStyleName("normalButton");
 		searchButton.addStyleName("glowing-border");
+		searchButton.ensureDebugId("seviceSearchButton");
 		
 		HorizontalPanel catSvcAssessmentHP = new HorizontalPanel();
 		catSvcAssessmentHP.getElement().getStyle().setBackgroundColor("#232f3e");
@@ -1271,6 +1273,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		// the service
 		final Anchor svcAnchor = new Anchor();
+		svcAnchor.ensureDebugId("serviceAnchor");
 		svcGrid.setWidget(0, 0, svcAnchor);
 		if (svc.getCombinedServiceName() != null && 
 			svc.getCombinedServiceName().length() > 0) {
@@ -1307,6 +1310,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				assessmentAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
 				assessmentAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 				assessmentAnchor.setTitle("View the full assessment.");
+				assessmentAnchor.ensureDebugId("assessmentAnchor");
 				assessmentVp.add(assessmentAnchor);
 
 				// add service assessment info if it exists
@@ -1326,7 +1330,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					@Override
 					public void onSuccess(ServiceSecurityAssessmentQueryResultPojo result) {
 						if (result.getResults().size() > 0) {
-							// TODO: get all relevant assessment info for the service
+							// get all relevant assessment info for the service
 							for (final ServiceSecurityAssessmentPojo assessment : result.getResults()) {
 								assessmentAnchor.addClickHandler(new ClickHandler() {
 									@Override
