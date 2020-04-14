@@ -1273,7 +1273,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		// the service
 		final Anchor svcAnchor = new Anchor();
-		svcAnchor.ensureDebugId("serviceAnchor");
 		svcGrid.setWidget(0, 0, svcAnchor);
 		if (svc.getCombinedServiceName() != null && 
 			svc.getCombinedServiceName().length() > 0) {
@@ -1287,6 +1286,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			svcAnchor.setText(svc.getAwsServiceName());
 		}
 		
+		svcAnchor.ensureDebugId("serviceAnchor-" + svcAnchor.getText());
 		svcAnchor.addStyleName("productAnchor");
 		svcAnchor.getElement().getStyle().setFontSize(16, Unit.PX);
 		svcAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
