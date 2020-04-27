@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelineView;
@@ -132,4 +133,5 @@ public interface ClientFactory {
 	ServiceAssessmentReportView getServiceAssessmentReportView();
 	ListResourceTaggingProfileView getListResourceTaggingProfileView();
 	MaintainResourceTaggingProfileView getMaintainResourceTaggingProfileView();
+	CalculateSecurityRiskView getCalculateSecurityRiskView();
 }

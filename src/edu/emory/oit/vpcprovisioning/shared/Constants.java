@@ -227,4 +227,5 @@ public class Constants implements IsSerializable {
 	public static final String FILTER_PROFILE_NAME = "Profile Name";
 	public static final String FILTER_PROFILE_NAMESPACE_AND_NAME = "Namespace and Profile Name (separated by comma)";
 	public static final String FILTER_MANAGED_TAG_NAME_VALUE = "Managed Tag Name/Value (tagName=tagValue)";
+	public static final String MOA_SECURITY_RISK_DETECTION_REQUISITION = "SecurityRiskDetectionRequisition.v1_0";
 }

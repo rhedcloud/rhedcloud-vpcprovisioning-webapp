@@ -33,12 +33,15 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -52,8 +55,11 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.shared.AccountMetadataFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ManagedTagPojo;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -94,7 +100,65 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
 	@UiField FlexTable managedTagsTable;
+	@UiField Button simulateButton;
 
+	@UiHandler("filterButton")
+	void filterButtonClicked(ClickEvent e) {
+		// filter list by account id typed in accountIdTB
+		String filterType = filterTypesLB.getSelectedValue();
+		String filterValue = filterTB.getText();
+		
+		if ((filterType != null && filterType.length() > 0) &&
+				(filterValue != null && filterValue.length() > 0)) {
+			if (filterType.equalsIgnoreCase(Constants.FILTER_PROFILE_NAMESPACE)) {
+				presenter.filterByNamespace(filterValue);
+			}
+			else if (filterType.equalsIgnoreCase(Constants.FILTER_PROFILE_NAME)) {
+				presenter.filterByProfileName(filterValue); 
+			}
+			else if (filterType.equalsIgnoreCase(Constants.FILTER_PROFILE_NAMESPACE_AND_NAME)) {
+				if (filterValue.indexOf(",") < 0) {
+					this.showMessageToUser("Please enter namespace and profile name separated by a comma.");
+					return;
+				}
+				presenter.filterByNamespaceAndProfileName(filterValue); 
+			}
+			else if (filterType.equalsIgnoreCase(Constants.FILTER_MANAGED_TAG_NAME_VALUE)) {
+				presenter.filterByManagedTagNameAndValue(filterValue);
+			}
+			else {
+				// invalid filter type...but how?
+			}
+		}
+		else {
+			this.showMessageToUser("Please enter a Filter Value AND select a Filter Type");
+		}
+	}
+
+	@UiHandler("clearFilterButton")
+	void clearFilterButtonClicked(ClickEvent e) {
+		// clear filter
+		filterTB.setText("");
+		filterTypesLB.setSelectedIndex(0);
+		presenter.clearFilter();
+	}
+
+	@UiHandler ("simulateButton")
+	void simulateButtonClick(ClickEvent e) {
+		// - Save the current RTP
+		if (presenter.getResourceTaggingProfile().getProfileId() != null) {
+			List<ResourceTaggingProfilePojo> profiles = new java.util.ArrayList<ResourceTaggingProfilePojo>();
+			profiles.add(presenter.getResourceTaggingProfile());
+			presenter.updateResourceTaggingProfiles(true, profiles);
+		}
+		else {
+			presenter.saveResourceTaggingProfile(true);
+		}
+		// - prompt for account id
+		presenter.getAccounts();
+		
+//		showMessageToUser("This feature is coming soon!");
+	}
 	@UiHandler ("okayButton")
 	void okayButtonClick(ClickEvent e) {
 		if (!editing) {
@@ -103,26 +167,24 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 			presenter.getResourceTaggingProfile().setProfileName(profileNameTB.getText());
 			presenter.getResourceTaggingProfile().setRevision("1");
 			presenter.getResourceTaggingProfile().setActive(isActiveCB.getValue());
-			// TODO: have to update the managed tag info somehow.  part of it is already taken care of
+			// have to update the managed tag info somehow.  part of it is already taken care of
 			// like when they add stuff but not when they change things or add descriptions etc.
 			// need to gather that info...
-			presenter.saveResourceTaggingProfile();
+			presenter.saveResourceTaggingProfile(false);
 			return;
 		}
 		
 		if (presenter.isNewRevision()) {
-//			showMessageToUser("Create a new revision (newRevision=true)...");
-			presenter.saveResourceTaggingProfile();
+			presenter.saveResourceTaggingProfile(false);
 			return;
 		}
 		
 		if (editing) {
-//			showMessageToUser("Create a new revision (newRevision=false)...");
 			int newRevision = Integer.parseInt(presenter.getResourceTaggingProfile().getRevision());
 			newRevision++;
 			presenter.getResourceTaggingProfile().setRevision(Integer.toString(newRevision));
 			presenter.getResourceTaggingProfile().setActive(isActiveCB.getValue());
-			presenter.saveResourceTaggingProfile();
+			presenter.saveResourceTaggingProfile(false);
 			return;
 		}
 	}
@@ -172,7 +234,7 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 					}
 					m.setActive(true);
 					profiles.add(m);
-					presenter.updateResourceTaggingProfiles(profiles);
+					presenter.updateResourceTaggingProfiles(false, profiles);
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -713,7 +775,7 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 			removeResourceButton.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
-					// TODO: remove the resource from the corresponding service filter
+					// remove the resource from the corresponding service filter
 					filter.getResourceNames().remove(resourceName);
 					final Grid newResourcesGrid = buildServiceFilterResourceGrid(filterVP, filter);
 					filterVP.remove(resourceGrid);
@@ -804,32 +866,23 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 
 	@Override
 	public Widget getStatusMessageSource() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void applyNetworkAdminMask() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void applyCentralAdminMask() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void applyAWSAccountAdminMask() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void applyAWSAccountAuditorMask() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -851,56 +904,40 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 
 	@Override
 	public void resetFieldStyles() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public HasClickHandlers getCancelWidget() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public HasClickHandlers getOkayWidget() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void vpcpPromptOkay(String valueEntered) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void vpcpPromptCancel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void vpcpConfirmOkay() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -910,8 +947,6 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 
 	@Override
 	public void setLocked(boolean locked) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -970,74 +1005,64 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 
 	@Override
 	public void setReleaseInfo(String releaseInfoHTML) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setSpeedTypeStatus(String status) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setSpeedTypeColor(String color) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public Widget getSpeedTypeWidget() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setSpeedTypeConfirmed(boolean confirmed) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public boolean isSpeedTypeConfirmed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public void enableAdminMaintenance() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void disableAdminMaintenance() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void showFilteredStatus() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void hideFilteredStatus() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void setFilterTypeItems(List<String> filterTypes) {
-		// TODO Auto-generated method stub
+		filterTB.setText("");
+		filterTB.getElement().setPropertyString("placeholder", "enter filter value");
+
+		this.filterTypeItems = filterTypes;
+		filterTypesLB.clear();
 		
+		filterTypesLB.addItem("-- Select Filter Type --", "");
+		if (filterTypeItems != null) {
+			for (String filterType : filterTypeItems) {
+				filterTypesLB.addItem(filterType, filterType);
+			}
+		}
 	}
 
 	@Override
 	public void setFinancialAccountFieldLabel(String label) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -1202,7 +1227,6 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 			@Override
 			public SafeHtml getValue(ResourceTaggingProfilePojo object) {
 				StringBuffer sbuf = new StringBuffer();
-				boolean hasServiceFilter=false;
 				boolean isFirst = true;
 				for (ManagedTagPojo tag : object.getManagedTags()) {
 					if (tag.getServiceFilter() != null) {
@@ -1235,7 +1259,6 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 			@Override
 			public SafeHtml getValue(ResourceTaggingProfilePojo object) {
 				StringBuffer sbuf = new StringBuffer();
-				boolean hasMetadata=false;
 				boolean isFirst = true;
 				for (ManagedTagPojo tag : object.getManagedTags()) {
 					if (tag.getAccountMetadataFilter() != null) {
@@ -1262,5 +1285,155 @@ public class DesktopMaintainResourceTaggingProfile extends ViewImplBase implemen
 		};
 		listTable.addColumn(metadataColumn, "Account Metadata Filter(s)");
 		
+	}
+	@Override
+	public void displaySRDs(List<SecurityRiskDetectionPojo> srds) {
+		// display the SRD to the user
+		final PopupPanel srdPopup = new PopupPanel(true);
+		srdPopup.setAutoHideEnabled(true);
+		srdPopup.setWidth("600px");
+		srdPopup.setHeight("400px");
+		srdPopup.setAnimationEnabled(true);
+		srdPopup.getElement().getStyle().setBackgroundColor("#f6f6f6");
+
+		ScrollPanel sp = new ScrollPanel();
+		sp.setHeight("99%");
+		srdPopup.add(sp);
+		
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+		vp.setHeight("100%");
+		vp.setSpacing(8);
+		sp.add(vp);
+		
+		HTML heading = new HTML("<h3>Profile Simulation Result</h3>");
+		vp.add(heading);
+		
+		boolean isFirst=true;
+		for (SecurityRiskDetectionPojo srd : srds) {
+			if (!isFirst) {
+				vp.add(new HTML("<hr>"));
+			}
+			isFirst=false;
+			HTML srdHtml = new HTML(srd.toHTML());
+			vp.add(srdHtml);
+		}
+		
+		Button okayButton = new Button("Okay");
+		okayButton.addStyleName("normalButton");
+		okayButton.addStyleName("glowing-border");
+		okayButton.getElement().getStyle().setWidth(105, Unit.PX);
+		vp.add(okayButton);
+		vp.setCellHorizontalAlignment(okayButton, HasHorizontalAlignment.ALIGN_CENTER);
+		okayButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				srdPopup.hide();
+			}
+		});
+
+		srdPopup.showRelativeTo(simulateButton);
+		
+	}
+	@Override
+	public void displayAccountSelectionDialogWithAccounts(List<AccountPojo> accounts) {
+		final PopupPanel accountsPopup = new PopupPanel(true);
+		accountsPopup.setAutoHideEnabled(true);
+		accountsPopup.setWidth("600px");
+		accountsPopup.setHeight("300px");
+		accountsPopup.setAnimationEnabled(true);
+		accountsPopup.getElement().getStyle().setBackgroundColor("#f6f6f6");
+
+		VerticalPanel vp = new VerticalPanel();
+		vp.setWidth("100%");
+		vp.setHeight("100%");
+		vp.setSpacing(8);
+		accountsPopup.add(vp);
+		
+		HTML heading = new HTML("<h3>Select one or more accounts to simulate this profile against</h3>");
+		vp.add(heading);
+		
+		Grid g = new Grid(2, 1);
+		g.setCellSpacing(8);
+		vp.add(g);
+		vp.setCellVerticalAlignment(g, HasVerticalAlignment.ALIGN_TOP);
+		vp.setCellHorizontalAlignment(g, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		final ListBox accountLB = new ListBox();
+		accountLB.addStyleName("longField");
+		accountLB.addStyleName("glowing-border");
+		accountLB.setMultipleSelect(true);
+		g.setWidget(1, 0, accountLB);
+		if (accounts != null) {
+			for (AccountPojo account : accounts) {
+				accountLB.addItem(account.getAccountId() + "-" + account.getAccountName(), account.getAccountId());
+			}
+		}
+		
+		final CheckBox selectAllCB = new CheckBox("Select all Accounts");
+		g.setWidget(0, 0, selectAllCB);
+		selectAllCB.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (selectAllCB.getValue()) {
+					int lbCount = accountLB.getItemCount();
+					for (int i=0; i<lbCount; i++) {
+						accountLB.setItemSelected(i, true);
+					}
+				}
+				else {
+					int lbCount = accountLB.getItemCount();
+					for (int i=0; i<lbCount; i++) {
+						accountLB.setItemSelected(i, false);
+					}
+				}
+			}
+		});
+		
+		Grid g2 = new Grid(1, 2);
+		g2.setCellSpacing(8);
+		vp.add(g2);
+		vp.setCellHorizontalAlignment(g2, HasHorizontalAlignment.ALIGN_CENTER);
+		
+		Button okayButton = new Button("Okay");
+		okayButton.addStyleName("normalButton");
+		okayButton.addStyleName("glowing-border");
+		okayButton.getElement().getStyle().setWidth(105, Unit.PX);
+		g2.setWidget(0, 0, okayButton);
+		okayButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				// generate the SRD using the account selected
+				List<String> accountIds = new java.util.ArrayList<String>();
+				int lbCount = accountLB.getItemCount();
+				for (int i=0; i<lbCount; i++) {
+					if (accountLB.isItemSelected(i)) {
+						String accountId = accountLB.getValue(i);
+						accountIds.add(accountId);
+					}
+				}
+				if (accountIds.size() == 0) {
+					showMessageToUser("Please select one or more accounts");
+				}
+				else {
+					presenter.generateSrdWithCurrentRTP(accountIds);
+					accountsPopup.hide();
+				}
+			}
+		});
+		
+		Button cancelButton = new Button("Cancel");
+		cancelButton.addStyleName("normalButton");
+		cancelButton.addStyleName("glowing-border");
+		cancelButton.getElement().getStyle().setWidth(105, Unit.PX);
+		g2.setWidget(0, 1, cancelButton);
+		cancelButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				accountsPopup.hide();
+			}
+		});
+		
+		accountsPopup.showRelativeTo(simulateButton);
 	}
 }

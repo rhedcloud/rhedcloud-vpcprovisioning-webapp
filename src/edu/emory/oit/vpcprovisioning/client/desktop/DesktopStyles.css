@@ -467,8 +467,10 @@ a:visited {
     font-family: Helvetica,Arial,"MS Trebuchet",sans-serif;
     font-size: 14px;
 	font-weight: bold;
+	/*
     margin: 0 0 0;
     padding: 0 0 0;
+    */
     text-align: right;
     vertical-align: middle;
 }
@@ -1212,4 +1214,9 @@ a:active {
 }
 .tableAnchor:hover {
 	color: orange;
+}
+.wizardPanel {
+	color: grey;
+	border-top: 1px solid;
+    /*border-radius: 5px;*/
 }

@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.activity.AppActivityMapper;
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopAppShell;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopBillSummary;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopCalculateSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopHome;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListAccount;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCentralAdmin;
@@ -80,6 +81,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelineView;
@@ -170,6 +172,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ServiceAssessmentReportView serviceAssessmentReportView;
 	private ListResourceTaggingProfileView listResourceTaggingProfileView;
 	private MaintainResourceTaggingProfileView maintainResourceTaggingProfileView;
+	private CalculateSecurityRiskView calculateSecurityRiskView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -720,5 +723,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
     protected MaintainResourceTaggingProfileView createMaintainResourceTaggingProfileView() {
         return new DesktopMaintainResourceTaggingProfile();
+    }
+	@Override
+	public CalculateSecurityRiskView getCalculateSecurityRiskView() {
+        if (calculateSecurityRiskView == null) {
+        	calculateSecurityRiskView = createCalculateSecurityRiskView();
+        }
+        return calculateSecurityRiskView;
+	}
+    protected CalculateSecurityRiskView createCalculateSecurityRiskView() {
+        return new DesktopCalculateSecurityRisk();
     }
 }

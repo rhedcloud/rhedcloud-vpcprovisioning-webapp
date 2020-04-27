@@ -55,6 +55,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceGuidelinePresenter;
@@ -165,7 +166,7 @@ public class AppBootstrapper {
 		vp.add(loader);
 		
 		HTML message = new HTML();
-		message.setHTML("<p><b>Loading the VPCP Console.  Please wait...</b></p>");
+		message.setHTML("<p><b>Loading the RHEDcloud Console.  Please wait...</b></p>");
 		vp.add(message);
 
 		vp.setCellHorizontalAlignment(loader, HasHorizontalAlignment.ALIGN_CENTER);
@@ -456,6 +457,63 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.CREATE_SECURITY_RISK_CALCULATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				final DialogBox db = new DialogBox();
+				db.setText("Calculate Security Risk");
+				db.setGlassEnabled(true);
+				db.center();
+				final CalculateSecurityRiskPresenter presenter = new CalculateSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SECURITY_RISK_CALCULATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				final DialogBox db = new DialogBox();
+				db.setText("Calculate Security Risk");
+				db.setGlassEnabled(true);
+				db.center();
+				final CalculateSecurityRiskPresenter presenter = new CalculateSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment(), event.getSecurityRisk());
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.getView().getOkayWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						if (!presenter.getView().hasFieldViolations()) {
+							db.hide();
+						}
+					}
+				});
+				presenter.start(eventBus);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
+			}
+		});
 
 		ActionEvent.register(eventBus, ActionNames.CREATE_VPN_CONNECTION_PROFILE, new ActionEvent.Handler() {
 			@Override
@@ -483,7 +541,6 @@ public class AppBootstrapper {
 				db.setWidget(presenter);
 				db.show();
 				db.center();
-//				placeController.goTo(MaintainVpnConnectionProfilePlace.getMaintainVpnConnectionProfilePlace());
 			}
 		});
 

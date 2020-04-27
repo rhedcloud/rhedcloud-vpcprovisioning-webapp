@@ -285,6 +285,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 //	}
 	@UiHandler ("createServiceButton")
 	void createSserviceClicked(ClickEvent e) {
+		hidePleaseWaitDialog();
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SERVICE);
 	}
 

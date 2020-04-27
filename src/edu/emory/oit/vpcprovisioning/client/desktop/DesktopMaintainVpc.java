@@ -550,7 +550,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		if (editing) {
 			vpcTypeLB.clear();
 			if (vpcTypes != null) {
-				int i=1;
+				int i=0;
 				for (String type : vpcTypes) {
 					vpcTypeLB.addItem("Type: " + type, type);
 					if (presenter.getVpc() != null) {
@@ -567,6 +567,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		}
 		else {
 			vpcReqTypeLB.clear();
+			vpcReqTypeLB.addItem("-- Select --", "");
 			if (vpcTypes != null) {
 				int i=1;
 				for (String type : vpcTypes) {

@@ -13,12 +13,16 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ManagedTagPojo;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfileQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -35,7 +39,7 @@ public class MaintainResourceTaggingProfilePresenter extends PresenterBase imple
 	private boolean isCimp=false;
 	private boolean newRevision;
 	private ManagedTagPojo selectedManagedTag;
-
+	
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
 	 * new case record.
@@ -108,79 +112,15 @@ public class MaintainResourceTaggingProfilePresenter extends PresenterBase imple
 			public void onSuccess(final UserAccountPojo user) {
 				userLoggedIn = user;
 				getView().setUserLoggedIn(user);
+
 				List<String> filterTypeItems = new java.util.ArrayList<String>();
+				filterTypeItems.add(Constants.FILTER_PROFILE_NAMESPACE);
+				filterTypeItems.add(Constants.FILTER_PROFILE_NAME);
+				filterTypeItems.add(Constants.FILTER_PROFILE_NAMESPACE_AND_NAME);
 				filterTypeItems.add(Constants.FILTER_MANAGED_TAG_NAME_VALUE);
 				getView().setFilterTypeItems(filterTypeItems);
 				
-				AsyncCallback<ResourceTaggingProfileQueryResultPojo> rtp_cb2 = new AsyncCallback<ResourceTaggingProfileQueryResultPojo>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log("Exception retrieving resourceTaggingProfile list", caught);
-					}
-
-					@Override
-					public void onSuccess(ResourceTaggingProfileQueryResultPojo result) {
-						GWT.log("[maintainprofilepresenter] Got " + result.getResults().size() + 
-								" profiles back for namespace: " + resourceTaggingProfile.getNamespace() + 
-								" profile name: " + resourceTaggingProfile.getProfileName());
-						getView().setResourceTaggingProfiles(result.getResults());
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-					}
-				};
-				// get all rtps with the same namespace/profile name as the one being edited
-				if (isEditing) {
-					ResourceTaggingProfileQueryFilterPojo filter = new ResourceTaggingProfileQueryFilterPojo();
-					filter.setNamespace(resourceTaggingProfile.getNamespace());
-					filter.setProfileName(resourceTaggingProfile.getProfileName());
-					VpcProvisioningService.Util.getInstance().getResourceTaggingProfilesForFilter(filter, rtp_cb2);
-				}
-				
-				// get latest version of the resourceTaggingProfile from the server
-				AsyncCallback<ResourceTaggingProfileQueryResultPojo> rtp_cb = new AsyncCallback<ResourceTaggingProfileQueryResultPojo>() {
-					@Override
-					public void onFailure(Throwable caught) {
-						getView().hidePleaseWaitDialog();
-						getView().hidePleaseWaitPanel();
-						getView().disableAdminMaintenance();
-						GWT.log("Exception retrieving resourceTaggingProfile details", caught);
-						getView().showMessageToUser("There was an exception on the " +
-								"server retrieving the details for this resourceTaggingProfile.  Message " +
-								"from server is: " + caught.getMessage());
-					}
-
-					@Override
-					public void onSuccess(ResourceTaggingProfileQueryResultPojo result) {
-						GWT.log("[maintainprofilepresenter] Got " + result.getResults().size() + " profiles back for profile id: " + profileId);
-						if (result.getResults().size() != 1) {
-							// error
-							getView().showMessageToUser("There was an exception on the " +
-									"server retrieving the details for this resource tagging profile.  "
-									+ "More than one record returned for profile id: " + profileId + " "
-											+ "this should not be possible.");
-							return;
-						}
-						resourceTaggingProfile = result.getResults().get(0);
-						if (isNewRevision()) {
-							resourceTaggingProfile.setActive(false);
-						}
-						getView().initPage();
-						getView().setFieldViolations(false);
-						getView().setInitialFocus();
-					}
-				};
-				if (isEditing) {
-					ResourceTaggingProfileQueryFilterPojo filter = new ResourceTaggingProfileQueryFilterPojo();
-					filter.setProfileId(profileId);
-					VpcProvisioningService.Util.getInstance().getResourceTaggingProfilesForFilter(filter, rtp_cb);
-				}
-				else {
-					getView().initPage();
-					getView().hidePleaseWaitDialog();
-					getView().hidePleaseWaitPanel();
-					getView().setFieldViolations(false);
-					getView().setInitialFocus();
-				}
+				refreshList(userLoggedIn);
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
@@ -245,7 +185,7 @@ public class MaintainResourceTaggingProfilePresenter extends PresenterBase imple
 	}
 
 	@Override
-	public void saveResourceTaggingProfile() {
+	public void saveResourceTaggingProfile(final boolean isSimulation) {
 		// TODO: i think this will always be a create
 		getView().showPleaseWaitDialog("Saving resourceTaggingProfile...");
 		List<Widget> fields = getView().getMissingRequiredFields();
@@ -276,7 +216,9 @@ public class MaintainResourceTaggingProfilePresenter extends PresenterBase imple
 			public void onSuccess(ResourceTaggingProfilePojo result) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				ActionEvent.fire(eventBus, ActionNames.RTP_SAVED, resourceTaggingProfile);
+				if (!isSimulation) {
+					ActionEvent.fire(eventBus, ActionNames.RTP_SAVED, resourceTaggingProfile);
+				}
 			}
 		};
 		// it's a create
@@ -481,7 +423,7 @@ public class MaintainResourceTaggingProfilePresenter extends PresenterBase imple
 	}
 
 	@Override
-	public void updateResourceTaggingProfiles(List<ResourceTaggingProfilePojo> profiles) {
+	public void updateResourceTaggingProfiles(final boolean isSimulation, List<ResourceTaggingProfilePojo> profiles) {
 		getView().showPleaseWaitDialog("Updating resourceTaggingProfile...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
@@ -511,10 +453,230 @@ public class MaintainResourceTaggingProfilePresenter extends PresenterBase imple
 			public void onSuccess(Void result) {
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();
-				ActionEvent.fire(eventBus, ActionNames.RTP_SAVED, resourceTaggingProfile);
+				if (!isSimulation) {
+					ActionEvent.fire(eventBus, ActionNames.RTP_SAVED, resourceTaggingProfile);
+				}
 			}
 		};
 		// it's a create
 		VpcProvisioningService.Util.getInstance().updateResourceTaggingProfiles(profiles, callback);
+	}
+
+	@Override
+	public void generateSrdWithCurrentRTP(List<String> accountIds) {
+		// TODO Auto-generated method stub
+		// - SecurityRiskDetection.Generate passing:
+		// 	- account id (user selected)
+		// 	- detectory name
+		// 	- remediator name
+		// 	- ns
+		// 	- pname
+		// 	- revision
+		// - Display the results (SecurityRiskDetection in this view) 
+		getView().showPleaseWaitDialog("Simulating resource taggging profile");
+		List<SecurityRiskDetectionRequisitionPojo> srdrs = new java.util.ArrayList<SecurityRiskDetectionRequisitionPojo>();
+		for (String accountId : accountIds) {
+			SecurityRiskDetectionRequisitionPojo srdr = new SecurityRiskDetectionRequisitionPojo();
+			srdr.setAccountId(accountId);
+			srdr.setSecurityRiskDetector("TagPolicyViolationDetector");
+			srdr.setSecurityRiskRemediator("TagPolicyViolationSimulationRemediator");
+			srdr.setRtpNamespace(getResourceTaggingProfile().getNamespace());
+			srdr.setRtpProfileName(getResourceTaggingProfile().getProfileName());
+			srdr.setRtpRevision(getResourceTaggingProfile().getRevision());
+			srdrs.add(srdr);
+		}
+		
+		AsyncCallback<List<SecurityRiskDetectionPojo>> cb = new AsyncCallback<List<SecurityRiskDetectionPojo>>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				GWT.log("Exception simulating the security risk detection for this profile", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server simulating the security risk detection for this profile.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(List<SecurityRiskDetectionPojo> result) {
+				// show the detection result to the user via the view's displaySrd method.
+				getView().hidePleaseWaitDialog();
+				getView().displaySRDs(result);
+			}
+			
+		};
+		VpcProvisioningService.Util.getInstance().generateSrds(srdrs, cb);
+	}
+
+	@Override
+	public void getAccounts() {
+		AsyncCallback<AccountQueryResultPojo> acct_cb = new AsyncCallback<AccountQueryResultPojo>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(AccountQueryResultPojo accountItems) {
+				getView().displayAccountSelectionDialogWithAccounts(accountItems.getResults());
+			}
+			
+		};
+		VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, acct_cb);
+	}
+
+	@Override
+	public void filterByProfileName(String name) {
+		getView().showPleaseWaitDialog("Filtering resource tagging profiles");
+		filter = new ResourceTaggingProfileQueryFilterPojo();
+		filter.setFuzzyFilter(true);
+		filter.setProfileName(name.toLowerCase());
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByNamespace(String namespace) {
+		getView().showPleaseWaitDialog("Filtering resource tagging profiles");
+		filter = new ResourceTaggingProfileQueryFilterPojo();
+		filter.setFuzzyFilter(true);
+		filter.setNamespace(namespace.toLowerCase());
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByNamespaceAndProfileName(String filterString) {
+		getView().showPleaseWaitDialog("Filtering resource tagging profiles");
+		filter = new ResourceTaggingProfileQueryFilterPojo();
+		filter.setFuzzyFilter(true);
+		if (filterString.indexOf(",") >= 0) {
+			String namespace = filterString.substring(0, filterString.indexOf(","));
+			String profileName = filterString.substring(filterString.indexOf(",")+1);
+			filter.setNamespace(namespace.toLowerCase());
+			filter.setProfileName(profileName.toLowerCase());
+		}
+		else {
+			// just use namespace
+			filter.setNamespace(filterString.toLowerCase());
+		}
+		this.getUserAndRefreshList();
+	}
+
+	@Override
+	public void filterByManagedTagNameAndValue(String tagNameAndValue) {
+		getView().showPleaseWaitDialog("Filtering resource tagging profiles");
+		filter = new ResourceTaggingProfileQueryFilterPojo();
+		filter.setFuzzyFilter(true);
+		if (tagNameAndValue.indexOf("=") >= 0) {
+			String tagName = tagNameAndValue.substring(0, tagNameAndValue.indexOf("="));
+			String tagValue = tagNameAndValue.substring(tagNameAndValue.indexOf("=")+1);
+			filter.setManagedTagName(tagName.toLowerCase());
+			filter.setManagedTagValue(tagValue.toLowerCase());
+		}
+		else {
+			// just set the tag name
+			filter.setManagedTagName(tagNameAndValue.toLowerCase());
+		}
+		this.getUserAndRefreshList();
+	}
+	
+	@Override
+	public void clearFilter() {
+		getView().showPleaseWaitDialog("Clearing filter");
+		filter = null;
+		this.getUserAndRefreshList();
+	}
+
+	private void getUserAndRefreshList() {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				refreshList(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
+	}
+	
+	public void refreshList(final UserAccountPojo user) {
+		AsyncCallback<ResourceTaggingProfileQueryResultPojo> rtp_cb2 = new AsyncCallback<ResourceTaggingProfileQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Exception retrieving resourceTaggingProfile list", caught);
+			}
+
+			@Override
+			public void onSuccess(ResourceTaggingProfileQueryResultPojo result) {
+				GWT.log("[maintainprofilepresenter] Got " + result.getResults().size() + 
+						" profiles back for namespace: " + resourceTaggingProfile.getNamespace() + 
+						" profile name: " + resourceTaggingProfile.getProfileName());
+				getView().setResourceTaggingProfiles(result.getResults());
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+			}
+		};
+		// get all rtps with the same namespace/profile name as the one being edited
+		if (isEditing) {
+			// if they're filtering (fuzzy match) just use that one for this part
+			if (filter == null) {
+				filter = new ResourceTaggingProfileQueryFilterPojo();
+				filter.setNamespace(resourceTaggingProfile.getNamespace());
+				filter.setProfileName(resourceTaggingProfile.getProfileName());
+			}
+			VpcProvisioningService.Util.getInstance().getResourceTaggingProfilesForFilter(filter, rtp_cb2);
+		}
+		
+		// get latest version of the resourceTaggingProfile from the server
+		AsyncCallback<ResourceTaggingProfileQueryResultPojo> rtp_cb = new AsyncCallback<ResourceTaggingProfileQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().disableAdminMaintenance();
+				GWT.log("Exception retrieving resourceTaggingProfile details", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the details for this resourceTaggingProfile.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(ResourceTaggingProfileQueryResultPojo result) {
+				GWT.log("[maintainprofilepresenter] Got " + result.getResults().size() + " profiles back for profile id: " + profileId);
+				if (result.getResults().size() != 1) {
+					// error
+					getView().showMessageToUser("There was an exception on the " +
+							"server retrieving the details for this resource tagging profile.  "
+							+ "More than one record returned for profile id: " + profileId + " "
+									+ "this should not be possible.");
+					return;
+				}
+				resourceTaggingProfile = result.getResults().get(0);
+				if (isNewRevision()) {
+					resourceTaggingProfile.setActive(false);
+				}
+				getView().initPage();
+				getView().setFieldViolations(false);
+				getView().setInitialFocus();
+			}
+		};
+		if (isEditing) {
+			// clear the filter for this part
+			filter = new ResourceTaggingProfileQueryFilterPojo();
+			filter.setProfileId(profileId);
+			VpcProvisioningService.Util.getInstance().getResourceTaggingProfilesForFilter(filter, rtp_cb);
+		}
+		else {
+			getView().initPage();
+			getView().hidePleaseWaitDialog();
+			getView().hidePleaseWaitPanel();
+			getView().setFieldViolations(false);
+			getView().setInitialFocus();
+		}
 	}
 }

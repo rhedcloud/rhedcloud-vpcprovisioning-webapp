@@ -1,0 +1,67 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<!-- <g:ScrollPanel width="99%" height="99%"> -->
+	<g:VerticalPanel spacing="8" width="100%">
+		<!-- 
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		 -->
+		
+		
+		<!-- My wizard -->
+		<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+			<g:HorizontalPanel ui:field="buttonsPanel" width="100%" spacing="12">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+					<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+						ui:field="prevButton" debugId="prevButton">Previous</g:Button>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:TabLayoutPanel 
+						barHeight="0" 
+						width="450px"
+						height="350px" 
+						animationVertical="false" 
+						ui:field="wizardTabPanel">
+					
+						<g:tab>
+							<g:header>wizard</g:header>
+			 				<g:DeckLayoutPanel ui:field="wizardContainer" width="100%" addStyleNames="{style.wizardPanel}"/>
+						</g:tab>
+					</g:TabLayoutPanel>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
+					<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+						ui:field="nextButton" debugId="nextButton">Next</g:Button>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:cell>
+
+		<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+			<g:HorizontalPanel spacing="50">
+				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+						ui:field="okayButton" debugId="okayButton">Okay</g:Button>
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+						ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:cell>
+	</g:VerticalPanel>
+	<!-- </g:ScrollPanel> -->
+</ui:UiBinder> 

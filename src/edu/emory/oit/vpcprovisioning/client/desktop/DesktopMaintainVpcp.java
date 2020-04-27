@@ -4,9 +4,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -17,11 +16,11 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CaptionPanel;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
@@ -102,7 +101,18 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField Button addAdminButton;
 	@UiField FlexTable adminTable;
 	@UiField ListBox regionLB;
+	@UiField CheckBox provisionWithVpcCB;
+	@UiField VerticalPanel vpcpReqTypePanel;
 
+	@UiHandler ("provisionWithVpcCB")
+	void provisionWithVpcChanged(ClickEvent e) {
+		if (provisionWithVpcCB.getValue()) {
+			vpcpReqTypeLB.setVisible(true);
+		}
+		else {
+			vpcpReqTypeLB.setVisible(false);
+		}
+	}
 	@UiHandler ("vpcpReqSpeedTypeTB")
 	void speedTypeMouseOver(MouseOverEvent e) {
 		String acct = vpcpReqSpeedTypeTB.getText();
@@ -180,7 +190,13 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				presenter.getVpcRequisition().setComplianceClass(vpcpReqComplianceClassLB.getSelectedValue());
 				presenter.getVpcRequisition().setNotifyAdmins(vpcpReqNotifyAdminsCB.getValue());
 				presenter.getVpcRequisition().setAccountId(accountLB.getSelectedValue());
-				presenter.getVpcRequisition().setType(vpcpReqTypeLB.getSelectedValue());
+				if (vpcpReqTypeLB.getSelectedValue() == null || vpcpReqTypeLB.getSelectedValue().length() == 0) {
+					// they're not provisioning with a VPC
+					presenter.getVpcRequisition().setType("0");
+				}
+				else {
+					presenter.getVpcRequisition().setType(vpcpReqTypeLB.getSelectedValue());
+				}
 				presenter.getVpcRequisition().setPurpose(vpcpReqPurposeTA.getText());
 				presenter.getVpcRequisition().setRegion(regionLB.getSelectedValue());
 				// customer admin net id list is already maintained as they add/remove them
@@ -367,6 +383,11 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		this.registerHandlers();
 		adminLookupSB.setText("");
 		adminLookupSB.getElement().setPropertyString("placeholder", "enter name");
+
+		vpcpReqTypePanel.getElement().getStyle().setLineHeight(2.6, Unit.EM);
+		vpcpReqTypeLB.setVisible(false);
+		provisionWithVpcCB.setValue(false, true);
+		
 		if (editing) {
 			GWT.log("maintain VPCP view initPage.  editing");
 			// hide generate grid, show maintain grid
@@ -379,6 +400,10 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			if (presenter.getVpcp() != null) {
 				GWT.log("maintain VPCP view initPage.  VPCP: " + presenter.getVpcp().getProvisioningId());
 				provisioningIdTB.setText(presenter.getVpcp().getProvisioningId());
+				if (presenter.getVpcp().getVpcRequisition().getType() != null) {
+					provisionWithVpcCB.setValue(true);
+					vpcpReqTypeLB.setVisible(true);
+				}
 			}
 		}
 		else {
@@ -434,7 +459,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		if (editing) {
 			vpcTypeLB.clear();
 			if (vpcTypes != null) {
-				int i=1;
+				int i=0;
 				for (String type : vpcTypes) {
 					vpcTypeLB.addItem("Type: " + type, type);
 					if (presenter.getVpcp() != null) {
@@ -450,7 +475,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		}
 		else {
 			vpcpReqTypeLB.clear();
-			vpcpReqTypeLB.addItem("-- Select --", "");
+			vpcpReqTypeLB.addItem("-- Select VPC Type --", "");
 			if (vpcTypes != null) {
 				int i=1;
 				for (String type : vpcTypes) {

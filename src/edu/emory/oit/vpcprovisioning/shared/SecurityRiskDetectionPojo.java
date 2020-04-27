@@ -76,4 +76,35 @@ SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, LastU
 		this.detectionResult = detectionResult;
 	}
 
+	public String toHTML() {
+		StringBuffer sbuf = new StringBuffer();
+		sbuf.append("<b>Account:</b>  " + accountId + "</br>");
+		sbuf.append("<b>Detector:</b>  " + this.securityRiskDetector + "</br>");
+		sbuf.append("<b>Remediator:</b>  " + this.securityRiskRemediator + "</br>");
+		sbuf.append("<b>Type:</b>  " + this.detectionResult.getType() + "</br>");
+		sbuf.append("<b>Status:</b>  " + this.detectionResult.getStatus() + "</br></br>");
+		sbuf.append("<b>Errors:</b> </br>");
+		if (detectionResult.getErrors().size() > 0) {
+			for (String error : this.detectionResult.getErrors()) {
+				sbuf.append(error + "</br>");
+			}
+		}
+		else {
+			sbuf.append("None</br>");
+		}
+		sbuf.append("</br>");
+		sbuf.append("<b>Detected Risks:</b> </br>");
+		if (this.detectedSecurityRisks.size() > 0) {
+			for (DetectedSecurityRiskPojo dsr : this.detectedSecurityRisks) {
+				sbuf.append("<b>Resource Name:</b>  " + dsr.getAmazonResourceName() + "</br>");
+				sbuf.append("<b>Type:  </b>" + dsr.getType() + "</br>");
+				sbuf.append("<b>Remediation Status:  </b>" + dsr.getRemediationResult().getStatus() + "</br>");
+				sbuf.append("<b>Remediation Result:  </b>" + dsr.getRemediationResult().getDescription() + "</br></br>");
+			}
+		}
+		else {
+			sbuf.append("None</br>");
+		}
+		return sbuf.toString();
+	}
 }

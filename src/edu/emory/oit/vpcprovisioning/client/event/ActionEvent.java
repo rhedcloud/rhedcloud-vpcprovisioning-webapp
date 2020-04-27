@@ -348,6 +348,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		eventBus.fireEventFromSource(new ActionEvent(filter), sourceName);
 	}
 
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo securityAssessment, SecurityRiskPojo risk) {
+		
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment, risk), sourceName);
+	}
 	public static void fire(EventBus eventBus, String sourceName,
 			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo securityRisk,
 			CounterMeasurePojo object) {
@@ -634,6 +640,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.securityAssessment = assessment;
 		this.securityRisk = securityRisk2;
 		this.counterMeasure = object;
+	}
+
+	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo securityAssessment, SecurityRiskPojo risk) {
+		this.awsService = service;
+		this.securityAssessment = securityAssessment;
+		this.securityRisk = risk;
 	}
 
 	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo securityAssessment2) {

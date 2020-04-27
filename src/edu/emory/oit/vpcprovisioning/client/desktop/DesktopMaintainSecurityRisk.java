@@ -82,7 +82,13 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 
 	@UiHandler ("calculateRiskButton")
 	void calculateRiskButtonClicked(ClickEvent e) {
-		showMessageToUser("This feature is comming soon!");
+		// Phase2:Sprint4
+		if (presenter.getSecurityRisk() == null) {
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_RISK_CALCULATION, presenter.getService(), presenter.getSecurityAssessment());
+		}
+		else {
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK_CALCULATION, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityRisk());
+		}
 	}
 	
 	@UiHandler ("okayButton")

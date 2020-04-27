@@ -125,6 +125,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 			@Override
 			public void onClick(ClickEvent event) {
 				GWT.log("Should go to register vpc here...");
+				hidePleaseWaitDialog();
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.REGISTER_VPC);
 			}
 		}, ClickEvent.getType());

@@ -10,10 +10,12 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ManagedTagPojo;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfileQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface MaintainResourceTaggingProfileView extends Editor<ResourceTaggingProfilePojo>, IsWidget, View {
@@ -30,7 +32,7 @@ public interface MaintainResourceTaggingProfileView extends Editor<ResourceTaggi
 		 * Create a new account or save the current account based on the values in the
 		 * inputs.
 		 */
-		void saveResourceTaggingProfile();
+		void saveResourceTaggingProfile(boolean isSimulation);
 		ResourceTaggingProfilePojo getResourceTaggingProfile();
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
@@ -51,7 +53,14 @@ public interface MaintainResourceTaggingProfileView extends Editor<ResourceTaggi
 		public void updateManagedTag(ManagedTagPojo tag);
 		public void addManagedTag(ManagedTagPojo tag);
 		public void setSelectedResourceTaggingProfile(ResourceTaggingProfilePojo selected);
-		public void updateResourceTaggingProfiles(List<ResourceTaggingProfilePojo> profiles);
+		public void updateResourceTaggingProfiles(boolean isSimulation, List<ResourceTaggingProfilePojo> profiles);
+		public void generateSrdWithCurrentRTP(List<String> accountIds);
+		public void getAccounts();
+		void filterByNamespace(String namespace);
+		void filterByProfileName(String profileName);
+		void filterByNamespaceAndProfileName(String filterString);
+		void filterByManagedTagNameAndValue(String tagNameAndValue);
+		void clearFilter();
 	}
 
 	/**
@@ -92,4 +101,6 @@ public interface MaintainResourceTaggingProfileView extends Editor<ResourceTaggi
 	void setFilterTypeItems(List<String> filterTypes);
 	public void setFinancialAccountFieldLabel(String label);
 	void setResourceTaggingProfiles(List<ResourceTaggingProfilePojo> profiles);
+	void displaySRDs(List<SecurityRiskDetectionPojo> srds);
+	void displayAccountSelectionDialogWithAccounts(List<AccountPojo> accounts);
 }

@@ -88,6 +88,7 @@ import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.RemediationResult;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceControl;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.ServiceSecurityAssessmentQuerySpecification;
@@ -104,7 +105,6 @@ import com.amazon.aws.moa.objects.resources.v1_0.UserProfileQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.VirtualPrivateCloudRequisition;
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.oracle.peoplesoft.moa.jmsobjects.finance.v1_0.SPEEDCHART;
 import com.oracle.peoplesoft.moa.objects.resources.v1_0.SPEEDCHART_QUERY;
@@ -200,6 +200,7 @@ import edu.emory.oit.vpcprovisioning.shared.*;
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
+	private static final String RISK_CALCULATION_PROPERTIES = "RiskCalculationProperties";
 	private static final String MENU_PROPERTIES = "MenuProperties";
 	private static final String RTP_SERVICE_NAME = "ResourceTaggingProfileRequestService";
 	private static final String ELASTIC_IP_SERVICE_NAME = "ElasticIpRequestService";
@@ -1519,6 +1520,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ownerDmdp.setNetId(cachedDmdp.getNetId());
 			ownerDmdp.setFirstName(cachedDmdp.getFirstName());
 			ownerDmdp.setLastName(cachedDmdp.getLastName());
+		}
+		else {
+			ownerDmdp.setPublicId(moa.getAccountOwnerId());
+			ownerDmdp.setNetId("Unknown");
+			ownerDmdp.setFirstName("Unknown");
+			ownerDmdp.setLastName("Unknown");
 		}
 		pojo.setAccountOwnerDirectoryMetaData(ownerDmdp);
 		pojo.setPasswordLocation(moa.getPasswordLocation());
@@ -3811,6 +3818,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				throw new RpcException(e);
 			} 
 			catch (EnterpriseObjectQueryException e) {
+				if (e.getMessage().toLowerCase().indexOf("no match".toString()) >= 0) {
+					return dmd;
+				}
 				e.printStackTrace();
 				throw new RpcException(e);
 			} 
@@ -12740,5 +12750,290 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 		return pojos;
+	}
+
+	@Override
+	public RiskCalculationPropertiesPojo getPropertiesForRiskCalculation(String calculationName) throws RpcException {
+		RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
+		try {
+			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-" + calculationName);
+			String questionText = props.getProperty("questionText");
+			rcp.setQuestionText(questionText);
+			
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				if (key.toLowerCase().indexOf("answer-") >= 0) {
+					// it's an answer
+					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
+					String riskLevel = key.substring(6);
+					String answerText = props.getProperty(key);
+					rca.setRiskLevel(Integer.parseInt(riskLevel));
+					rca.setAnswerText(answerText);
+					rcp.getAnswers().add(rca);
+				}
+			}
+			Collections.sort(rcp.getAnswers());
+			return rcp;
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+	}
+
+	@Override
+	public List<RiskCalculationPropertiesPojo> getRiskCalculationProperties() throws RpcException {
+		List<RiskCalculationPropertiesPojo> rcps = new java.util.ArrayList<RiskCalculationPropertiesPojo>();
+		try {
+			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
+			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-LikelihoodOfAttack");
+			String questionText = props.getProperty("questionText");
+			rcp.setQuestionText(questionText);
+			rcp.setQuestionNumber(1);
+			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
+			rcp.setStepName("Step " + rcp.getStepNumber());
+			
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				if (key.toLowerCase().indexOf("answer-") >= 0) {
+					// it's an answer
+					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
+					String riskLevel = key.substring(7);
+					String answerText = props.getProperty(key);
+					rca.setRiskLevel(Integer.parseInt(riskLevel));
+					rca.setAnswerText(answerText);
+					rcp.getAnswers().add(rca);
+				}
+			}
+			Collections.sort(rcp.getAnswers());
+			rcps.add(rcp);
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+			
+		try {
+			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
+			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-AttackFrequency");
+			String questionText = props.getProperty("questionText");
+			rcp.setQuestionText(questionText);
+			rcp.setQuestionNumber(2);
+			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
+			rcp.setStepName("Step " + rcp.getStepNumber());
+			
+			Iterator<Object> keys1 = props.keySet().iterator();
+			while (keys1.hasNext()) {
+				String key = (String)keys1.next();
+				if (key.toLowerCase().indexOf("answer-") >= 0) {
+					// it's an answer
+					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
+					String riskLevel = key.substring(7);
+					String answerText = props.getProperty(key);
+					rca.setRiskLevel(Integer.parseInt(riskLevel));
+					rca.setAnswerText(answerText);
+					rcp.getAnswers().add(rca);
+				}
+			}
+			Collections.sort(rcp.getAnswers());
+			rcps.add(rcp);
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+			
+		try {
+			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
+			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-LikelihoodOfDamage");
+			String questionText = props.getProperty("questionText");
+			rcp.setQuestionText(questionText);
+			rcp.setQuestionNumber(3);
+			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
+			rcp.setStepName("Step " + rcp.getStepNumber());
+
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				if (key.toLowerCase().indexOf("answer-") >= 0) {
+					// it's an answer
+					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
+					String riskLevel = key.substring(7);
+					String answerText = props.getProperty(key);
+					rca.setRiskLevel(Integer.parseInt(riskLevel));
+					rca.setAnswerText(answerText);
+					rcp.getAnswers().add(rca);
+				}
+			}
+			Collections.sort(rcp.getAnswers());
+			rcps.add(rcp);
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+		
+		// TODO: Step 3, Table G-5
+		try {
+			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
+			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-OverallLikelihood");
+			rcp.setQuestionText("This will be table G-5");
+			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "3")));
+			rcp.setStepName("Step " + rcp.getStepNumber());
+			rcp.setTableHeading(props.getProperty("tableHeading", "Unknown"));
+			
+//			Iterator<Object> keys = props.keySet().iterator();
+//			while (keys.hasNext()) {
+//				String key = (String)keys.next();
+//				if (key.toLowerCase().indexOf("answer-") >= 0) {
+//					// it's an answer
+//					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
+//					String riskLevel = key.substring(6);
+//					String answerText = props.getProperty(key);
+//					rca.setRiskLevel(Integer.parseInt(riskLevel));
+//					rca.setAnswerText(answerText);
+//					rcp.getAnswers().add(rca);
+//				}
+//			}
+//			Collections.sort(rcp.getAnswers());
+			rcps.add(rcp);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+		
+		try {
+			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
+			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-ImpactOfDamage");
+			String questionText = props.getProperty("questionText");
+			rcp.setQuestionText(questionText);
+			rcp.setQuestionNumber(4);
+			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
+			rcp.setStepName("Step " + rcp.getStepNumber());
+			
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				if (key.toLowerCase().indexOf("answer-") >= 0) {
+					// it's an answer
+					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
+					String riskLevel = key.substring(7);
+					String answerText = props.getProperty(key);
+					rca.setRiskLevel(Integer.parseInt(riskLevel));
+					rca.setAnswerText(answerText);
+					rcp.getAnswers().add(rca);
+				}
+			}
+			Collections.sort(rcp.getAnswers());
+			rcps.add(rcp);
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+		
+		// TODO: Step 5, Table I-5
+		try {
+			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
+			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-OverallRiskLevel");
+			rcp.setQuestionText("This will be table I-5 (final risk level)");
+			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
+			rcp.setStepName("Step " + rcp.getStepNumber());
+			rcp.setTableHeading(props.getProperty("tableHeading", "Unknown"));
+			
+//			Iterator<Object> keys = props.keySet().iterator();
+//			while (keys.hasNext()) {
+//				String key = (String)keys.next();
+//				if (key.toLowerCase().indexOf("answer-") >= 0) {
+//					// it's an answer
+//					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
+//					String riskLevel = key.substring(6);
+//					String answerText = props.getProperty(key);
+//					rca.setRiskLevel(Integer.parseInt(riskLevel));
+//					rca.setAnswerText(answerText);
+//					rcp.getAnswers().add(rca);
+//				}
+//			}
+//			Collections.sort(rcp.getAnswers());
+			rcps.add(rcp);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
+
+		return rcps;
+	}
+
+	@Override
+	public SecurityRiskDetectionPojo generateSrd(SecurityRiskDetectionRequisitionPojo srdRequisition) throws RpcException {
+		try {
+			info("generating SecurityRiskDetection on the server...");
+			SecurityRiskDetection actionable = (SecurityRiskDetection) getObject(Constants.MOA_SECURITY_RISK_DETECTION);
+			SecurityRiskDetectionRequisition seed = (SecurityRiskDetectionRequisition) getObject(Constants.MOA_SECURITY_RISK_DETECTION_REQUISITION);
+			
+			seed.setAccountId(srdRequisition.getAccountId());
+			seed.setSecurityRiskDetector(srdRequisition.getSecurityRiskDetector());
+			seed.setSecurityRiskRemediator(srdRequisition.getSecurityRiskRemediator());
+			seed.setSecurityRiskResourceTaggingProfile(seed.newSecurityRiskResourceTaggingProfile());
+			seed.getSecurityRiskResourceTaggingProfile().setNamespace(srdRequisition.getRtpNamespace());
+			seed.getSecurityRiskResourceTaggingProfile().setProfileName(srdRequisition.getRtpProfileName());
+			seed.getSecurityRiskResourceTaggingProfile().setRevision(srdRequisition.getRtpRevision());
+
+			info("doing the SecurityRiskDetection.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			@SuppressWarnings("unchecked")
+			List<SecurityRiskDetection> result = actionable.generate(seed, this.getSrdRequestService());
+			info("SecurityRiskDetection.generate is complete...");
+			if (result != null) {
+				info("There were " + result.size() + " SRDs returned...");
+			}
+			// if more than one returned, it's an error...
+			SecurityRiskDetectionPojo pojo = new SecurityRiskDetectionPojo();
+			for (SecurityRiskDetection moa : result) {
+				info("SRD as XML: " + moa.toXmlString());
+				this.populateSecurityRiskDetectionPojo(moa, pojo);
+			}
+
+			return pojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@Override
+	public List<SecurityRiskDetectionPojo> generateSrds(List<SecurityRiskDetectionRequisitionPojo> srdRequisitions)
+			throws RpcException {
+		
+		List<SecurityRiskDetectionPojo> srds = new java.util.ArrayList<SecurityRiskDetectionPojo>();
+		for (SecurityRiskDetectionRequisitionPojo srdr : srdRequisitions) {
+			SecurityRiskDetectionPojo srd = this.generateSrd(srdr);
+			srds.add(srd);
+		}
+		return srds;
 	}
 }

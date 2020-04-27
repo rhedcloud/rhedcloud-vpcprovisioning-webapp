@@ -37,6 +37,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPlace;
@@ -458,6 +459,10 @@ public class AppActivityMapper implements ActivityMapper {
 			return new MaintainResourceTaggingProfileActivity(clientFactory, (MaintainResourceTaggingProfilePlace) place);
 		}
 
+		if (place instanceof CalculateSecurityRiskPlace) {
+			return new CalculateSecurityRiskActivity(clientFactory, (CalculateSecurityRiskPlace) place);
+		}
+		
 		return null;
 	}
 

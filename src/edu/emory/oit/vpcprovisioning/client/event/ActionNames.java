@@ -197,4 +197,7 @@ public interface ActionNames {
 	final String GENERATE_VPN_CONNECTION_DEPROVISIONING = "generateVpnConnectionDeprovisioning";
 	final String VIEW_SERVICE_SECURITY_ASSESSMENT_REPORT = "viewSecurityAssessmentReport";
 	final String CREATE_RTP_REVISION = "createRtpRevision";
+	
+	final String CREATE_SECURITY_RISK_CALCULATION = "createSecurityRiskCalculation";
+	final String MAINTAIN_SECURITY_RISK_CALCULATION = "maintainSecurityRiskCalculation";
 }

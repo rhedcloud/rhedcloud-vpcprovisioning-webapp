@@ -401,11 +401,11 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 							addDirectoryPersonInRoleToAccount(rsp.getSelectedRoleName());
 						}
 						else {
-							Window.alert("You must select a role to assign this person to.");
+							showMessageToUser("You must select a role to assign this person to.");
 						}
 					}
 					else {
-						Window.alert("You must select a role to assign this person to.");
+						showMessageToUser("You must select a role to assign this person to.");
 					}
 				}
 			}

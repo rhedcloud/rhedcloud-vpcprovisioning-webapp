@@ -66,6 +66,10 @@
 				    			<g:CheckBox addStyleNames="{style.label}" ui:field="isActiveCB" 
 									title="Toggle profile between active and inactive">Active Profile</g:CheckBox>				    		
 				    		</g:customCell>
+					    	<g:customCell>
+								<g:Button addStyleNames="{style.glowing-border} {style.actionButton}"
+									ui:field="simulateButton" debugId="simulateButton">Simulate</g:Button>
+					    	</g:customCell>
 				    	</g:row>
 					</g:Grid>
 		    	</g:customCell>

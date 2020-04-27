@@ -77,7 +77,7 @@ public class RoleSelectionPopup extends PopupPanel {
 				}
 				else {
 					setRoleSelected(false);
-					Window.alert("Please select a role name");
+					VpcpAlert.alert("Missing Information", "Please select a role name");
 					return;
 				}
 				hide();

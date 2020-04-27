@@ -101,6 +101,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 			@Override
 			public void onClick(ClickEvent event) {
 				GWT.log("Should go to maintain account here...");
+				hidePleaseWaitDialog();
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_ACCOUNT);
 			}
 		}, ClickEvent.getType());

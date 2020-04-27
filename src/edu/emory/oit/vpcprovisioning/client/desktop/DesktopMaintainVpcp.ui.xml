@@ -68,8 +68,6 @@
 							ui:field="accountLB" debugId="accountLB" />
 			    	</g:customCell>
 			    </g:row>
-			</g:Grid>
-			<g:Grid cellSpacing="8">
 			    <g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
@@ -88,25 +86,43 @@
 				</g:row>
 				<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
+						<g:Label width="150px" addStyleNames="{style.label}">10-Digit SpeedType:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
 							ui:field="vpcpReqSpeedTypeTB" debugId="vpcpReqSpeedTypeTB" />
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:HTML width="50px" ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
+						<g:HTML width="150px" ui:field="speedTypeHTML">SpeedType HTML</g:HTML>
 			    	</g:customCell>
 		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}"></g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+			    		<g:VerticalPanel ui:field="vpcpReqTypePanel">
+			    		<g:CheckBox text="Provision with a VPC" ui:field="provisionWithVpcCB" debugId="provisionWithVpcCB" title="Check if you want to provision this account with a VPC."/>
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+							ui:field="vpcpReqTypeLB" debugId="vpcpReqTypeLB"/>
+			    		</g:VerticalPanel>
+			    	</g:customCell>
+			    	<!-- 
+			    	<g:customCell>
+			    	</g:customCell>
+			    	 -->
+				</g:row>
+				<!-- 
 		    	<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="vpcpReqTypeLB" debugId="vpcpReqTypeLB" />
+							ui:field="vpcpReqTypeLB" debugId="vpcpReqTypeLB"/>
 			    	</g:customCell>
 				</g:row>
+				 -->
 				<g:row>
 			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>

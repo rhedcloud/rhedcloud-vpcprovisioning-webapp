@@ -75,11 +75,6 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 	@UiField PushButton refreshButton;
 	@UiField HTML filteredHTML;
 	@UiField HTML profileSummaryHTML;
-//	@UiField Button homeButton;
-//	@UiHandler("homeButton")
-//	void homeButtonClicked(ClickEvent e) {
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-//	}
 
 	public interface MyCellTableResources extends CellTable.Resources {
 
@@ -136,22 +131,11 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 		presenter.refreshList(userLoggedIn);
 	}
 
-//	@UiHandler("assignButton")
-//	void assignButtonClicked(ClickEvent e) {
-//		showMessageToUser("This feature is not yet implemented.");
-////		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
-//	}
-
 	@UiHandler("createButton")
 	void createButtonClicked(ClickEvent e) {
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_VPN_CONNECTION_PROFILE);
 	}
 	
-//	@UiHandler("provisionButton")
-//	void provisionButtonClicked(ClickEvent e) {
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING);
-//	}
-
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
@@ -315,15 +299,6 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 								return;
 							}
 
-//							VpnConnectionRequisitionPojo vpnConnectionRequisition = new VpnConnectionRequisitionPojo();
-//							vpnConnectionRequisition.setProfile(m.getProfile());
-//							vpnConnectionRequisition.setOwnerId(m.getAssignment().getOwnerId());
-//
-//							// maybe we just need to go to the VPNCP maintenance page and collect 
-//							// the vpnipaddress and shared key, passing the requisition
-//							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_VPN_CONNECTION_DEPROVISIONING, vpnConnectionRequisition, m.getAssignment());
-							
-//							presenter.deprovisionVpnConnectionForVpcId(m.getAssignment().getOwnerId());
 							presenter.deprovisionVpnConnectionForAssignment(m.getAssignment());
 						}
 						else {
@@ -352,7 +327,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 					return;
 				}
 				if (selectionModel.getSelectedSet().size() > 1) {
-					showMessageToUser("Please select one Profile to view");
+					showMessageToUser("Please select one Profile Assignment to delete");
 					return;
 				}
 				Iterator<VpnConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
@@ -360,15 +335,32 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				VpnConnectionProfileSummaryPojo m = nIter.next();
 				if (m != null) {
 					if (m.getAssignment() != null) {
-						int i=0;
 						summaryLoop: for (VpnConnectionProfileSummaryPojo summary : profileList) {
 							if (summary.equals(m)) {
 								break summaryLoop;
 							}
-							i++;
 						}
-						presenter.deleteVpnConnectionProfileAssignment(i, m);
-//						showMessageToUser("This feature is coming soon.");
+						
+						// NOTE:  this assumes profile ids are numbers AND sequential AND the table is 
+						// sorted by profile id so we can refresh a single row later
+						// This is the only way I can get the row number of the assignment
+						// being deleted as far as i can tell.  So, if we ever break any of those
+						// assumptions this won't work as intended.
+						// This is all being done in an effort to just refresh the selected
+						// row instead of refreshing the entire table.  It's complicated by
+						// the fact that we're using a multi-select selection model in this case.
+						// as of 4/9/2020, refreshing a single row really doesn't appear to work
+						int row = 0;
+						String profileId = m.getProfile().getVpnConnectionProfileId();
+						try {
+							row = Integer.parseInt(profileId) - 1;
+						}
+						catch (Exception e) {
+							GWT.log("couldn't parse the profile id as an integer.  refreshing row 0");
+							row = 0;
+						}
+						GWT.log("Refreshing row: " + row);
+						presenter.deleteVpnConnectionProfileAssignment(row, m);
 					}
 					else {
 						showMessageToUser("The selected profile does not appear to be assigned.  "
@@ -404,12 +396,10 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				VpnConnectionProfileSummaryPojo m = nIter.next();
 				if (m != null) {
 					if (m.getAssignment() != null) {
-						int i=0;
 						summaryLoop: for (VpnConnectionProfileSummaryPojo summary : profileList) {
 							if (summary.equals(m)) {
 								break summaryLoop;
 							}
-							i++;
 						}
 						presenter.getVpnStatusForVpc(m.getAssignment().getOwnerId());
 					}
@@ -674,37 +664,12 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 			public SafeHtml getValue(VpnConnectionProfileSummaryPojo object) {
 				if (object.getProfile().getTunnelProfiles().size() > 0) {
 					StringBuffer sbuf = new StringBuffer();
-					/*
-						<p>Collapsible Set:</p>
-						<button class="collapsible">Open Section 1</button>
-						<div class="content">
-						  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-						</div>
-						<button class="collapsible">Open Section 2</button>
-						<div class="content">
-						  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-						</div>
-						<button class="collapsible">Open Section 3</button>
-						<div class="content">
-						  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-						</div>
-					 */
 					for (int i=0; i<object.getProfile().getTunnelProfiles().size(); i++) {
 						TunnelProfilePojo tpp = object.getProfile().getTunnelProfiles().get(i);
-//						sbuf.append("<button class=\"collapsible\">" + tpp.getTunnelId() + "</button>");
-//						sbuf.append("<div class=\"content\">");
 						sbuf.append("<p>");
 						sbuf.append("<b>Tunnel Id: </b>" + tpp.getTunnelId() + "</br>");
 						sbuf.append("<b>Tunnel Description: </b>" + tpp.getTunnelDescription() + "</br>");
-//						sbuf.append("<b>Crypto Keyring: </b>" + tpp.getCryptoKeyringName() + "</br>");
-//						sbuf.append("<b>ISAKAMP Profile: </b>" + tpp.getIsakampProfileName() + "</br>");
-//						sbuf.append("<b>IPSEC Profile: </b>" + tpp.getIpsecProfileName() + "</br>");
-//						sbuf.append("<b>IPSEC Transform Set: </b>" + tpp.getIpsecTransformSetName() + "</br>");
-//						sbuf.append("<b>Customer Gateway IP: </b>" + tpp.getCustomerGatewayIp() + "</br>");
-//						sbuf.append("<b>VPN Inside CIDR 1: </b>" + tpp.getVpnInsideIpCidr1() + "</br>");
-//						sbuf.append("<b>VPN Inside CIDR 2: </b>" + tpp.getVpnInsideIpCidr2() + "</br>");
 						sbuf.append("</p>");
-//						sbuf.append("</div>");
 					}
 					return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml(sbuf.toString());
 				}
@@ -946,7 +911,8 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				+ "Profile id is: " + summary.getProfile().getVpnConnectionProfileId() + "  "
 				+ "nullProfile=" + nullProfile + " nullAssignment=" + nullAssignment);
 		profileList.set(rowNumber, summary);
-		listTable.redrawRow(rowNumber);
+//		listTable.redrawRow(rowNumber);
+		listTable.redraw();
 	}
 
 	@Override
