@@ -6,6 +6,7 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -13,6 +14,9 @@ import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
+import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 
 public class VpcpAlert extends DialogBox {
 
@@ -27,9 +31,23 @@ public class VpcpAlert extends DialogBox {
 		vp.setSpacing(12);
 		
 		HTML h = new HTML(message);
-//		h.addStyleName("alertMessage");
 		h.setWidth("100%");
 		vp.add(h);
+
+		final HTML h2 = new HTML();
+		vp.add(h2);
+		AsyncCallback<ReleaseInfo> riCallback = new AsyncCallback<ReleaseInfo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Error getting release info", caught);
+			}
+
+			@Override
+			public void onSuccess(ReleaseInfo result) {
+				h2.setHTML(result.toString());
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getReleaseInfo(riCallback);
 
 		final String hostPageBaseURL = GWT.getHostPageBaseURL();
 		// only do this in dev, test and stage
