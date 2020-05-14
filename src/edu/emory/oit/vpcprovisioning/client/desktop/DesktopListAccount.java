@@ -42,6 +42,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
+import edu.emory.oit.vpcprovisioning.shared.AccountDeprovisioningRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
@@ -277,10 +278,11 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		grid.setWidget(4, 0, createServiceAccountAnchor);
 
-		Anchor terminateAnchor = new Anchor("Terminate Account");
+		// this will change to Deprovision or Close account
+		Anchor terminateAnchor = new Anchor("Permanently Close Account");
 		terminateAnchor.addStyleName("productAnchor");
 		terminateAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		terminateAnchor.setTitle("Terminate selected Account");
+		terminateAnchor.setTitle("Permanently close the selected Account");
 		terminateAnchor.ensureDebugId(terminateAnchor.getText());
 		terminateAnchor.addClickHandler(new ClickHandler() {
 			@Override
@@ -290,7 +292,10 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				if (m != null) {
 					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
 						// dialog for terminating account
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.INCIDENT_TERMINATE_ACCOUNT, m);
+						AccountDeprovisioningRequisitionPojo req = new AccountDeprovisioningRequisitionPojo();
+						req.setAccountId(m.getAccountId());
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION, req, m);
+//						ActionEvent.fire(presenter.getEventBus(), ActionNames.INCIDENT_TERMINATE_ACCOUNT, m);
 					}
 					else {
 						showMessageToUser("You are not authorized to perform this function for this account.");

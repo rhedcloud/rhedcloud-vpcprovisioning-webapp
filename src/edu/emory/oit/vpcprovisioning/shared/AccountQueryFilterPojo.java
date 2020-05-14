@@ -14,6 +14,7 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 	String lastUpdateUser;
 	UserAccountPojo userLoggedIn;
 	boolean fuzzyFilter=false;
+	boolean suggestBoxFilter = false;
 	
 	// phase 2 mods
 	String alternateAccountName;
@@ -105,6 +106,14 @@ public class AccountQueryFilterPojo extends SharedObject implements IsSerializab
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public boolean isSuggestBoxFilter() {
+		return suggestBoxFilter;
+	}
+
+	public void setSuggestBoxFilter(boolean suggestBoxFilter) {
+		this.suggestBoxFilter = suggestBoxFilter;
 	}
 
 }

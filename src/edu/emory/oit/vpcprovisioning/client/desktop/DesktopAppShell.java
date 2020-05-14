@@ -73,6 +73,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
@@ -230,6 +231,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		homeContentContainer.add(maintainRtpView);
 		homeContentContainer.setAnimationDuration(500);
 
+		// 5/8/2020 Account Deprovisioning
+		ListAccountProvisioningView listAccountProvisioningView = clientFactory.getListAccountProvisioningView();
+//		AccountProvisioningStatusView accountProvisioningStatusView = clientFactory.getAccountProvisioningStatusView();
+		homeContentContainer.add(listAccountProvisioningView);
+//		homeContentContainer.add(accountProvisioningStatusView);
+
+
 
 		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
 		if (hash == null || hash.trim().length() == 0) {
@@ -307,6 +315,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			else if (hash.trim().indexOf(("#" + Constants.MAINTAIN_RTP + ":")) >= 0) {
 				GWT.log("Need to go to Resource Tagging Profile tab (maintain)");
+			}
+			else if (hash.trim().indexOf(("#" + Constants.LIST_ACCOUNT_PROVISIONING + ":")) >= 0) {
+				GWT.log("Need to go to account provisioning tab (list)");
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT_PROVISIONING);
 			}
 			else {
 				GWT.log("[default] home tab");

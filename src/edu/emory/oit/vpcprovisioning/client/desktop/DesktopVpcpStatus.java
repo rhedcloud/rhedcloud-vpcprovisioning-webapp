@@ -15,6 +15,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Grid;
@@ -41,6 +42,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	boolean startTimer = true;
 	int netIdRowNum = 0;
 	int netIdColumnNum = 0;
+	Timer timer;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button doneButton;
@@ -100,7 +102,7 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 		refreshButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				startTimer = false;
+				stopTimer();
 				presenter.refreshVpcpStatusForId(presenter.getVpcp().getProvisioningId());
 			}
 		}, ClickEvent.getType());
@@ -162,11 +164,29 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 
 	@Override
 	public void startTimer(int delayMs) {
-		GWT.log("[VIEW] starting timer...");
+//		GWT.log("[VIEW] starting timer...");
+//		startTimer = true;
+//		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
+//			@Override
+//			public boolean execute() {
+//				GWT.log("[VIEW] refreshing status information for VPCP: " + presenter.getVpcp().getProvisioningId());
+//				presenter.refreshVpcpStatusForId(presenter.getVpcp().getProvisioningId());
+//				// change startTimer to 'false' to stop the timer.  This may
+//				// happen if we allow the user to click a button to refresh
+//				
+//				// check the status of the VPCP and if it's done generating
+//				// don't keep running the timer.
+//				if (presenter.getVpcp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+//					startTimer = false;
+//				}
+//				return startTimer;
+//			}
+//		}, delayMs);
+		
 		startTimer = true;
-		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
-			@Override
-			public boolean execute() {
+		timer = new Timer() {
+            @Override
+            public void run() {
 				GWT.log("[VIEW] refreshing status information for VPCP: " + presenter.getVpcp().getProvisioningId());
 				presenter.refreshVpcpStatusForId(presenter.getVpcp().getProvisioningId());
 				// change startTimer to 'false' to stop the timer.  This may
@@ -175,11 +195,13 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 				// check the status of the VPCP and if it's done generating
 				// don't keep running the timer.
 				if (presenter.getVpcp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-					startTimer = false;
+					stopTimer();
 				}
-				return startTimer;
-			}
-		}, delayMs);
+            }
+        };
+
+        // Schedule the timer to close the popup in 3 seconds.
+        timer.scheduleRepeating(delayMs);
 	}
 
 	@Override
@@ -408,6 +430,9 @@ public class DesktopVpcpStatus extends ViewImplBase implements VpcpStatusView {
 	@Override
 	public void stopTimer() {
 		startTimer = false;
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 
 	@Override

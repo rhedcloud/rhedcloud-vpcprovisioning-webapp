@@ -43,7 +43,6 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 
 public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	Presenter presenter;

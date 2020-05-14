@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -34,6 +35,7 @@ public class DesktopStaticNatProvisioningStatus extends ViewImplBase implements 
 	boolean locked;
 	UserAccountPojo userLoggedIn;
 
+	Timer timer;
 	boolean startTimer = true;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
@@ -71,7 +73,7 @@ public class DesktopStaticNatProvisioningStatus extends ViewImplBase implements 
 		refreshButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				startTimer = false;
+				stopTimer();
 				if (presenter.getProvisioning() != null) {
 					presenter.refreshProvisioningStatusForId(presenter.getProvisioning().getProvisioningId());
 				}
@@ -217,33 +219,58 @@ public class DesktopStaticNatProvisioningStatus extends ViewImplBase implements 
 	@Override
 	public void startTimer(int delayMs) {
 		GWT.log("[VIEW] starting timer...");
+//		startTimer = true;
+//		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
+//			@Override
+//			public boolean execute() {
+//				if (presenter.getProvisioning() != null) {
+//					GWT.log("[VIEW] refreshing status information for StaticNatProvisioning: " + presenter.getProvisioning().getProvisioningId());
+//					presenter.refreshProvisioningStatusForId(presenter.getProvisioning().getProvisioningId());
+//					if (presenter.getProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+//						startTimer = false;
+//					}
+//					return startTimer;
+//				}
+//				else {
+//					GWT.log("[VIEW] refreshing status information for StaticNatDeprovisioning: " + presenter.getDeprovisioning().getProvisioningId());
+//					presenter.refreshDeprovisioningStatusForId(presenter.getDeprovisioning().getProvisioningId());
+//					if (presenter.getDeprovisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+//						startTimer = false;
+//					}
+//					return startTimer;
+//				}
+//			}
+//		}, delayMs);
+
 		startTimer = true;
-		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
-			@Override
-			public boolean execute() {
+		timer = new Timer() {
+            @Override
+            public void run() {
 				if (presenter.getProvisioning() != null) {
-					GWT.log("[VIEW] refreshing status information for StaticNatProvisioning: " + presenter.getProvisioning().getProvisioningId());
 					presenter.refreshProvisioningStatusForId(presenter.getProvisioning().getProvisioningId());
 					if (presenter.getProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-						startTimer = false;
+						stopTimer();
 					}
-					return startTimer;
 				}
 				else {
-					GWT.log("[VIEW] refreshing status information for StaticNatDeprovisioning: " + presenter.getDeprovisioning().getProvisioningId());
 					presenter.refreshDeprovisioningStatusForId(presenter.getDeprovisioning().getProvisioningId());
 					if (presenter.getDeprovisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-						startTimer = false;
+						stopTimer();
 					}
-					return startTimer;
 				}
-			}
-		}, delayMs);
+            }
+        };
+
+        // Schedule the timer to close the popup in 3 seconds.
+        timer.scheduleRepeating(delayMs);
 	}
 
 	@Override
 	public void stopTimer() {
 		startTimer = false;
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 
 	@Override

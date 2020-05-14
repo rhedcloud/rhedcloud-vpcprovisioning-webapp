@@ -110,7 +110,7 @@ public interface VpcProvisioningService extends RemoteService {
 	List<String> getVpcTypeItems() throws RpcException;
 	
 	// VPCP
-	VpcpQueryResultPojo getVpcpsForFilter(VpcpQueryFilterPojo filter) throws RpcException;
+	VpcpQueryResultPojo getVpcpSummariesForFilter(VpcpQueryFilterPojo filter) throws RpcException;
 	void deleteVpcp(VpcpPojo vpc) throws RpcException;
 	VpcpPojo generateVpcp(VpcRequisitionPojo vpcRequisition) throws RpcException;
 	VpcpPojo updateVpcp(VpcpPojo vpc) throws RpcException;
@@ -304,4 +304,8 @@ public interface VpcProvisioningService extends RemoteService {
 
 	SecurityRiskDetectionPojo generateSrd(SecurityRiskDetectionRequisitionPojo srdRequisition) throws RpcException;
 	List<SecurityRiskDetectionPojo> generateSrds(List<SecurityRiskDetectionRequisitionPojo> srdRequisitions) throws RpcException;
+	
+	// Account Provisioning/Deprovisioning
+	AccountProvisioningQueryResultPojo getAccountProvisioningSummariesForFilter(AccountProvisioningQueryFilterPojo filter) throws RpcException;
+	AccountDeprovisioningPojo generateAccountDeprovisioning(AccountDeprovisioningRequisitionPojo requisition) throws RpcException;
 }

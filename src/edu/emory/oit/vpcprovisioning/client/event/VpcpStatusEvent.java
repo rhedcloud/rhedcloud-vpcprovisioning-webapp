@@ -3,7 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.event;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 
 public class VpcpStatusEvent extends GwtEvent<VpcpStatusEvent.Handler> {
 	  /**
@@ -18,10 +18,10 @@ public class VpcpStatusEvent extends GwtEvent<VpcpStatusEvent.Handler> {
 	   */
 	  public static final Type<VpcpStatusEvent.Handler> TYPE = new Type<VpcpStatusEvent.Handler>();
 
-	  private final VpcpPojo vpcp;
+	  private final VpcpSummaryPojo vpcpSummary;
 
-	  public VpcpStatusEvent(VpcpPojo vpcp) {
-	    this.vpcp = vpcp;
+	  public VpcpStatusEvent(VpcpSummaryPojo vpcpSummary) {
+	    this.vpcpSummary = vpcpSummary;
 	  }
 
 	  @Override
@@ -29,8 +29,8 @@ public class VpcpStatusEvent extends GwtEvent<VpcpStatusEvent.Handler> {
 	    return TYPE;
 	  }
 
-	  public VpcpPojo getVpcp() {
-	    return vpcp;
+	  public VpcpSummaryPojo getVpcpSummary() {
+	    return vpcpSummary;
 	  }
 
 	  @Override

@@ -18,7 +18,6 @@ import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningAuthorizationPojo
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
-import edu.emory.oit.vpcprovisioning.shared.AccountSpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryResultPojo;

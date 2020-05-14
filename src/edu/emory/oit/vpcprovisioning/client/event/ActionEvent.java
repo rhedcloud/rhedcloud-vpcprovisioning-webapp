@@ -25,8 +25,10 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountDeprovisioningRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
@@ -56,6 +58,7 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfileAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpnConnectionProfilePojo;
@@ -90,15 +93,15 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private AccountPojo account;
 	private VpcPojo vpc;
 	private VpcpPojo vpcp;
+	private VpcpSummaryPojo vpcpSummary;
 	private ElasticIpPojo elasticIp;
 	private ElasticIpAssignmentPojo elasticIpAssignment;
 	private ElasticIpAssignmentSummaryPojo elasticIpAssignmentSummary;
 	private AWSServicePojo awsService;
 	private UserNotificationPojo notification;
 	private FirewallRulePojo firewallRule;
-//	private FirewallExceptionRequestPojo firewallExceptionRequest;
 	private CidrSummaryPojo cidrSummary;
-	ServiceSecurityAssessmentPojo securityAssessment;
+	private ServiceSecurityAssessmentPojo securityAssessment;
 	private SecurityRiskPojo securityRisk;
 	private CounterMeasurePojo counterMeasure;
 	private ServiceControlPojo serviceControl;
@@ -127,6 +130,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private List<AWSServicePojo> servicesToAssess = new java.util.ArrayList<AWSServicePojo>();
 	private boolean newSecurityRiskWindow=false;
 	private ResourceTaggingProfilePojo resourceTaggingProfile;
+	private AccountProvisioningSummaryPojo accountProvisioningSummary;
+	private AccountDeprovisioningRequisitionPojo acctDeprovisioningRequisition;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -232,6 +237,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, VpcpPojo vpcp) {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(vpcp), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, VpcpSummaryPojo vpcpSummary) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(vpcpSummary), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, StaticNatProvisioningSummaryPojo snp) {
@@ -507,6 +517,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(VpcpPojo vpcp) {
 		this.vpcp = vpcp;
+	}
+	
+	public ActionEvent(VpcpSummaryPojo vpcpSummary) {
+		this.vpcpSummary = vpcpSummary;
 	}
 	
 	public ActionEvent(VpcPojo vpc) {
@@ -786,6 +800,15 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.securityRisk = risk;
 		this.serviceControl = m;
 		this.newSecurityRiskWindow = newWindow;
+	}
+
+	public ActionEvent(AccountProvisioningSummaryPojo summary) {
+		this.accountProvisioningSummary = summary;
+	}
+
+	public ActionEvent(AccountDeprovisioningRequisitionPojo requisition, AccountPojo account) {
+		this.acctDeprovisioningRequisition = requisition;
+		this.account = account;
 	}
 
 	@Override
@@ -1126,4 +1149,38 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.newSecurityRiskWindow = newSecurityRiskWindow;
 	}
 
+	public VpcpSummaryPojo getVpcpSummary() {
+		return vpcpSummary;
+	}
+
+	public void setVpcpSummary(VpcpSummaryPojo vpcpSummary) {
+		this.vpcpSummary = vpcpSummary;
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, AccountProvisioningSummaryPojo summary) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(summary), sourceName);
+	}
+
+	public AccountProvisioningSummaryPojo getAccountProvisioningSummary() {
+		return accountProvisioningSummary;
+	}
+
+	public void setAccountProvisioningSummary(AccountProvisioningSummaryPojo accountProvisioningSummary) {
+		this.accountProvisioningSummary = accountProvisioningSummary;
+	}
+
+	public static void fire(EventBus eventBus, String sourceName,
+			AccountDeprovisioningRequisitionPojo requisition, AccountPojo account) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(requisition, account), sourceName);
+	}
+
+	public AccountDeprovisioningRequisitionPojo getAcctDeprovisioningRequisition() {
+		return acctDeprovisioningRequisition;
+	}
+
+	public void setAcctDeprovisioningRequisition(AccountDeprovisioningRequisitionPojo acctDeprovisioningRequisition) {
+		this.acctDeprovisioningRequisition = acctDeprovisioningRequisition;
+	}
 }

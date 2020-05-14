@@ -6,7 +6,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 @SuppressWarnings("serial")
 public class VpnConnectionProvisioningQueryResultPojo extends SharedObject implements IsSerializable {
-	// TODO: change this to VpnConnectionProvisioningSummaryPojo
 	List<VpnConnectionProvisioningSummaryPojo> results = new java.util.ArrayList<VpnConnectionProvisioningSummaryPojo>();
 	VpnConnectionProvisioningQueryFilterPojo filterUsed;
 	

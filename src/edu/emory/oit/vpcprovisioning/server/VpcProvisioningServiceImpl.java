@@ -66,6 +66,7 @@ import org.rhedcloud.moa.objects.resources.v1_0.ServiceFilter;
 
 import com.amazon.aws.moa.jmsobjects.billing.v1_0.Bill;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountDeprovisioning;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
@@ -76,11 +77,14 @@ import com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUse;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.TermsOfUseAgreement;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserNotification;
 import com.amazon.aws.moa.jmsobjects.user.v1_0.UserProfile;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.AccountDeprovisioningRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountNotificationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizationQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.DeprovisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.DetectedSecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
@@ -2875,21 +2879,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
 
 			if (filter != null) {
-				queryObject.setAccountId(filter.getAccountId());
-				if (!filter.isFuzzyFilter()) {
-					queryObject.setAccountName(filter.getAccountName());
+				// if it's a suggestbox filter, we want to get all accounts
+				// and do a fuzzy match
+				if (!filter.isSuggestBoxFilter()) {
+					queryObject.setAccountId(filter.getAccountId());
+					if (!filter.isFuzzyFilter()) {
+						queryObject.setAccountName(filter.getAccountName());
+					}
+					// TODO may have to make email a list in the filter and query spec...
+					if (filter.getEmail() != null) {
+						EmailAddress emailMoa = actionable.newEmailAddress();
+						emailMoa.setType(filter.getEmail().getType());
+						emailMoa.setEmail(filter.getEmail().getEmailAddress());
+						queryObject.setEmailAddress(emailMoa);
+					}
+					queryObject.setAccountOwnerId(filter.getAccountOwnerId());
+					queryObject.setFinancialAccountNumber(filter.getSpeedType());
+					queryObject.setCreateUser(filter.getCreateUser());
+					queryObject.setLastUpdateUser(filter.getLastUpdateUser());
 				}
-				// TODO may have to make email a list in the filter and query spec...
-				if (filter.getEmail() != null) {
-					EmailAddress emailMoa = actionable.newEmailAddress();
-					emailMoa.setType(filter.getEmail().getType());
-					emailMoa.setEmail(filter.getEmail().getEmailAddress());
-					queryObject.setEmailAddress(emailMoa);
-				}
-				queryObject.setAccountOwnerId(filter.getAccountOwnerId());
-				queryObject.setFinancialAccountNumber(filter.getSpeedType());
-				queryObject.setCreateUser(filter.getCreateUser());
-				queryObject.setLastUpdateUser(filter.getLastUpdateUser());
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
@@ -2910,20 +2918,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 
 			// if filter.isFuzzyFilter(), go through the list of pojos (Accounts)
-			// and filter out the ones that don't "fuzzy match" the account name passed in
+			// and filter out the ones that don't "fuzzy match" the account id, name or 
+			// alternate name passed in
 			List<AccountPojo> filteredPojos = new java.util.ArrayList<AccountPojo>();
 			if (filter != null && filter.isFuzzyFilter()) {
 				for (AccountPojo acct : pojos) {
+					if (filter.getAccountId() != null && filter.getAccountId().length() > 0) {
+						if (acct.getAccountId().toLowerCase().indexOf(filter.getAccountId().toLowerCase()) >= 0) {
+							filteredPojos.add(acct);
+						}
+					}
 					if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
 						if (acct.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
 							filteredPojos.add(acct);
 						}
 					}
 					if (filter.getAlternateAccountName() != null && filter.getAlternateAccountName().length() > 0) {
-						// TODO: uncomment once moa is changed
-//						if (acct.getAlternateAccountName().toLowerCase().indexOf(filter.getAlternateAccountName().toLowerCase()) >= 0) {
-//							filteredPojos.add(acct);
-//						}
+						if (acct.getAlternateName().toLowerCase().indexOf(filter.getAlternateAccountName().toLowerCase()) >= 0) {
+							filteredPojos.add(acct);
+						}
 					}
 				}
 			}
@@ -3884,27 +3897,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public VpcpQueryResultPojo getVpcpsForFilter(VpcpQueryFilterPojo filter) throws RpcException {
+	public VpcpQueryResultPojo getVpcpSummariesForFilter(VpcpQueryFilterPojo filter) throws RpcException {
 		VpcpQueryResultPojo result = new VpcpQueryResultPojo();
-		List<VpcpPojo> pojos = new java.util.ArrayList<VpcpPojo>();
+		List<VpcpSummaryPojo> summaries = new java.util.ArrayList<VpcpSummaryPojo>();
+		
+		// First, get the VPCPs (provisioning runs) and add them to the summaries list
+		List<VpcpPojo> vpcps = new java.util.ArrayList<VpcpPojo>();
 		if (fakeVpcpGen) {
 			if (filter != null) {
 				VpcpPojo vpcp = vpcpMap.get(filter.getProvisioningId());
 				if (vpcp != null) {
-					pojos.add(vpcp);
-					Collections.sort(pojos);
+					vpcps.add(vpcp);
+					Collections.sort(vpcps);
 				}
 			}
 			else {
 				Iterator<String> keys = vpcpMap.keySet().iterator();
 				while (keys.hasNext()) {
-					pojos.add(vpcpMap.get(keys.next()));
+					vpcps.add(vpcpMap.get(keys.next()));
 				}
 			}
-			result.setResults(pojos);
+			for (VpcpPojo vpcp : vpcps) {
+				VpcpSummaryPojo summary = new VpcpSummaryPojo();
+				summary.setProvisioning(vpcp);
+				summaries.add(summary);
+			}
+			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
 		}
+		
 		try {
 			VirtualPrivateCloudProvisioningQuerySpecification queryObject = (VirtualPrivateCloudProvisioningQuerySpecification) getObject(Constants.MOA_VPCP_QUERY_SPEC);
 			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP);
@@ -3962,11 +3984,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateVpcpPojo(moa, pojo);
 				this.populateVpcpPojo(moa, baseline);
 				pojo.setBaseline(baseline);
-				pojos.add(pojo);
+				
+				VpcpSummaryPojo summary = new VpcpSummaryPojo();
+				summary.setProvisioning(pojo);
+				summaries.add(summary);
 			}
 
-			Collections.sort(pojos);
-			result.setResults(pojos);
+			Collections.sort(summaries);
+			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
 		} 
@@ -3994,6 +4019,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
+		
+		// TODO: Now, get the VPCP Deprovisioning items
 	}
 
 	@Override
@@ -9889,7 +9916,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		VpnConnectionProvisioningQueryResultPojo result = new VpnConnectionProvisioningQueryResultPojo();
-//		List<VpnConnectionProvisioningPojo> pojos = new java.util.ArrayList<VpnConnectionProvisioningPojo>();
 		List<VpnConnectionProvisioningSummaryPojo> summaries = new java.util.ArrayList<VpnConnectionProvisioningSummaryPojo>();
 		try {
 			VpnConnectionProvisioningQuerySpecification queryObject = (VpnConnectionProvisioningQuerySpecification) getObject(Constants.MOA_VPNCP_QUERY_SPEC);
@@ -9898,18 +9924,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filter != null) {
 				if (filter.isDefaultMaxVpncps()) {
 					info("[getVpncpSummariesForFilter] using 'maxVpncps' query language to get VPCPs");
-//					QueryLanguage ql = queryObject.newQueryLanguage();
-//					ql.setName("maxVpncps");
-//					ql.setType("hql");
-//					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
-//					queryObject.setQueryLanguage(ql);
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("maxVpncps");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					queryObject.setQueryLanguage(ql);
 				}
 				else if (filter.isAllVpncps()) {
 					info("[getVpncpSummariesForFilter] using 'allVpncps' query language to get VPCPs");
-//					QueryLanguage ql = queryObject.newQueryLanguage();
-//					ql.setName("allVpncps");
-//					ql.setType("hql");
-//					queryObject.setQueryLanguage(ql);
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("allVpncps");
+					ql.setType("hql");
+					queryObject.setQueryLanguage(ql);
 				}
 				else {
 					queryObject.setProvisioningId(filter.getProvisioningId());
@@ -9961,9 +9987,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filter != null) {
 				if (filter.isDefaultMaxVpncps()) {
 					info("[getVpncpSummariesForFilter] using 'maxVpncps' query language to get VPCDPs");
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("maxVpncdps");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					queryObject.setQueryLanguage(ql);
 				}
 				else if (filter.isAllVpncps()) {
 					info("[getVpncpSummariesForFilter] using 'allVpncps' query language to get VPCDPs");
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("allVpncdps");
+					ql.setType("hql");
+					queryObject.setQueryLanguage(ql);
 				}
 				else {
 					deprov_queryObject.setProvisioningId(filter.getProvisioningId());
@@ -13036,4 +13071,280 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		return srds;
 	}
+
+	@Override
+	public AccountProvisioningQueryResultPojo getAccountProvisioningSummariesForFilter(
+			AccountProvisioningQueryFilterPojo filter) throws RpcException {
+
+		AccountProvisioningQueryResultPojo result = new AccountProvisioningQueryResultPojo();
+		List<AccountProvisioningSummaryPojo> summaries = new java.util.ArrayList<AccountProvisioningSummaryPojo>();
+		
+		// temporary until the service is functional
+//		if (true) {
+//			result.setResults(summaries);
+//			return result;
+//		}
+
+		try {
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("accountProvisioningListTimeoutMillis", "30000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getAWSRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
+			// get any provisioning objects (future maybe)
+//			AccountProvisioningQuerySpecification queryObject = (AccountProvisioningQuerySpecification) getObject(Constants.MOA_ACCOUNT_PROVISIONING_QUERY_SPEC);
+//			AccountProvisioning actionable = (VpnConnectionProvisioning) getObject(Constants.MOA_ACCOUNT_PROVISIONING);
+//
+//			if (filter != null) {
+//				if (filter.isDefaultMaxObjects()) {
+//					info("[getAccountProvisioningSummariesForFilter] using 'maxVpncps' query language to get VPCPs");
+//				}
+//				else if (filter.isAllObjects()) {
+//					info("[getAccountProvisioningSummariesForFilter] using 'allVpncps' query language to get VPCPs");
+//				}
+//				else {
+//					queryObject.setProvisioningId(filter.getProvisioningId());
+//					queryObject.setAccountId(filter.getAccountId());
+//					queryObject.setCreateUser(filter.getCreateUser());
+//					queryObject.setLastUpdateUser(filter.getUpdateUser());
+//					info("[getAccountProvisioningSummariesForFilter] getting VPNCPs for filter: " + queryObject.toXmlString());
+//				}
+//			}
+//			else {
+//				info("[getAccountProvisioningSummariesForFilter] no filter passed in.  Getting all VPNCPs");
+//			}
+//
+//			String authUserId = this.getAuthUserIdForHALS();
+//			actionable.getAuthentication().setAuthUserId(authUserId);
+//			info("[getAccountProvisioningSummariesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+//
+//			info("AccountProvisioningQuerySpecification: " + queryObject.toXmlString());
+//			@SuppressWarnings("unchecked")
+//			List<VpnConnectionProvisioning> moas = 
+//				actionable.query(queryObject, reqSvc);
+//			
+//			info("[getAccountProvisioningSummariesForFilter] got " + moas.size() + " Account Provisioning objects back from the server.");
+//			for (VpnConnectionProvisioning moa : moas) {
+//				AccountProvisioningPojo pojo = new AccountProvisioningPojo();
+//				AccountProvisioningPojo baseline = new AccountProvisioningPojo();
+////				this.populateAccountProvisioningPojo(moa, pojo);
+////				this.populateAccountProvisioningPojo(moa, baseline);
+//				pojo.setBaseline(baseline);
+//				AccountProvisioningSummaryPojo summary = new AccountProvisioningSummaryPojo();
+//				summary.setProvisioning(pojo);
+//				summaries.add(summary);
+//			}
+			
+			// now get the account deprovisioning objects
+			AccountDeprovisioningQuerySpecification deprov_queryObject = (AccountDeprovisioningQuerySpecification) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING_QUERY_SPEC);
+			AccountDeprovisioning deprov_actionable = (AccountDeprovisioning) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING);
+
+			if (filter != null) {
+				if (filter.isDefaultMaxObjects()) {
+					info("[getAccountProvisioningSummariesForFilter] using 'maxObjects' query language to get VPCDPs");
+					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+					ql.setName("maxAccountDeprovisionings");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					deprov_queryObject.setQueryLanguage(ql);
+				}
+				else if (filter.isAllObjects()) {
+					info("[getAccountProvisioningSummariesForFilter] using 'allVpncps' query language to get VPCDPs");
+					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+					ql.setName("allAccountDeprovisionings");
+					ql.setType("hql");
+					deprov_queryObject.setQueryLanguage(ql);
+				}
+				else {
+					deprov_queryObject.setDeprovisioningId(filter.getDeprovisioningId());
+					deprov_queryObject.setType(filter.getType());
+					deprov_queryObject.setComplianceClass(filter.getComplianceClass());
+					deprov_queryObject.setCreateUser(filter.getCreateUser());
+					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
+					info("[getAccountProvisioningSummariesForFilter] getting Account Deprovisionings for filter: " + deprov_queryObject.toXmlString());
+				}
+			}
+			else {
+				info("[getAccountProvisioningSummariesForFilter] no filter passed in.  Getting all Account Deprovisioning objects from the server");
+			}
+
+			info("AccountDeprovisioningQuerySpecification: " + deprov_queryObject.toXmlString());
+			String authUserId = this.getAuthUserIdForHALS();
+			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
+
+			@SuppressWarnings("unchecked")
+			List<AccountDeprovisioning> deprov_moas = 
+				deprov_actionable.query(deprov_queryObject, reqSvc);
+			
+			info("[getAccountProvisioningSummariesForFilter] got " + deprov_moas.size() + " Account Deprovisioning objects back from the server.");
+			for (AccountDeprovisioning moa : deprov_moas) {
+				AccountDeprovisioningPojo pojo = new AccountDeprovisioningPojo();
+				AccountDeprovisioningPojo baseline = new AccountDeprovisioningPojo();
+				this.populateAccountDeprovisioningPojo(moa, pojo);
+				this.populateAccountDeprovisioningPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				AccountProvisioningSummaryPojo summary = new AccountProvisioningSummaryPojo();
+				summary.setDeprovisioning(pojo);
+				summaries.add(summary);
+			}
+
+			Collections.sort(summaries);
+			result.setResults(summaries);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateAccountDeprovisioningPojo(AccountDeprovisioning moa, AccountDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setDeprovisioningId(moa.getDeprovisioningId());
+		pojo.setStatus(moa.getStatus());
+		pojo.setDeprovisioningResult(moa.getDeprovisioningResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getAccountDeprovisioningRequisition() != null) {
+			AccountDeprovisioningRequisitionPojo vpcr = new AccountDeprovisioningRequisitionPojo();
+			this.populateAccountDeprovisioningRequisitionPojo(moa.getAccountDeprovisioningRequisition(), vpcr);
+			pojo.setRequisition(vpcr);
+		}
+
+		// provisioningsteps
+		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
+		for (DeprovisioningStep ps : (List<DeprovisioningStep>) moa.getDeprovisioningStep()) {
+			ProvisioningStepPojo psp = new ProvisioningStepPojo();
+			this.populateDeprovisioningStepPojo(ps, psp);
+			pspList.add(psp);
+		}
+		Collections.sort(pspList);
+		pojo.setDeprovisioningSteps(pspList);
+
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateDeprovisioningStepPojo(DeprovisioningStep moa, ProvisioningStepPojo pojo) {
+		pojo.setProvisioningId(moa.getDeprovisioningId());
+		pojo.setProvisioningStepId(moa.getDeprovisioningStepId());
+		pojo.setStepId(moa.getStepId());
+		pojo.setType(moa.getType());
+		pojo.setDescription(moa.getDescription());
+		pojo.setStatus(moa.getStatus());
+		pojo.setStepResult(moa.getStepResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getProperty() != null) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+				pojo.getProperties().put(stepProps.getKey(), stepProps.getValue());
+			}
+		}
+	}
+
+	private void populateAccountDeprovisioningRequisitionPojo(
+			AccountDeprovisioningRequisition moa,
+			AccountDeprovisioningRequisitionPojo pojo) {
+
+		pojo.setAccountId(moa.getAccountId());
+	}
+
+	@Override
+	public AccountDeprovisioningPojo generateAccountDeprovisioning(AccountDeprovisioningRequisitionPojo requisition)
+			throws RpcException {
+		
+		info("[generateAccountDeprovisioning] preparing an AccountDeprovisioning.Generate-Request");
+		
+		// temporary until the service is functional
+//		if (true) {
+//			AccountDeprovisioningPojo fakePojo = new AccountDeprovisioningPojo();
+//			fakePojo.setDeprovisioningId("fakeId");
+//			fakePojo.setStatus("fakeStatus");
+//			fakePojo.setDeprovisioningResult("fakeResult");
+//			fakePojo.setActualTime("30000");
+//			fakePojo.setAnticipatedTime("30000");
+//			fakePojo.setRequisition(requisition);
+//			info("[generateAccountDeprovisioning] returning fake AccountDeprovisioning pojo");
+//			return fakePojo;
+//		}
+		
+		try {
+			info("generating AccountDeprovisioning on the server...");
+			AccountDeprovisioning actionable = (AccountDeprovisioning) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING);
+			AccountDeprovisioningRequisition seed = (AccountDeprovisioningRequisition) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING_REQUISITION);
+			info("populating moa");
+			seed.setAccountId(requisition.getAccountId());
+
+			
+			info("doing the AccountDeprovisioning.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("AccountDeprovisioning.generate seed data is: " + seed.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<AccountDeprovisioning> result = actionable.generate(seed, getAWSRequestService());
+			AccountDeprovisioningPojo deprovisionPojo = new AccountDeprovisioningPojo();
+			for (AccountDeprovisioning deprovision : result) {
+				info("generated AccountDeprovisioning is: " + deprovision.toXmlString());
+				this.populateAccountDeprovisioningPojo(deprovision, deprovisionPojo);
+				// set fromProvisioningList to be whatever was passed in the req
+				// so the client side will know where to go back to if the user
+				// leaves the status screen.
+				deprovisionPojo.getRequisition().setFromProvisioningList(requisition.isFromProvisioningList());
+			}
+			info("AccountDeprovisioning.generate is complete...");
+
+			return deprovisionPojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
 }

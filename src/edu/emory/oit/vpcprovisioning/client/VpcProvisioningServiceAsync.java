@@ -89,7 +89,7 @@ public interface VpcProvisioningServiceAsync {
 	void getVpcTypeItems(AsyncCallback<List<String>> callback);
 	
 	// VPCP
-	void getVpcpsForFilter(VpcpQueryFilterPojo filter, AsyncCallback<VpcpQueryResultPojo> callback);
+	void getVpcpSummariesForFilter(VpcpQueryFilterPojo filter, AsyncCallback<VpcpQueryResultPojo> callback);
 	void deleteVpcp(VpcpPojo vpc, AsyncCallback<Void> callback);
 	void generateVpcp(VpcRequisitionPojo vpcRequisition, AsyncCallback<VpcpPojo> callback);
 	void updateVpcp(VpcpPojo vpc, AsyncCallback<VpcpPojo> callback);
@@ -282,4 +282,9 @@ public interface VpcProvisioningServiceAsync {
 
 	void generateSrd(SecurityRiskDetectionRequisitionPojo srdRequisition, AsyncCallback<SecurityRiskDetectionPojo> callback);
 	void generateSrds(List<SecurityRiskDetectionRequisitionPojo> srdRequisitions, AsyncCallback<List<SecurityRiskDetectionPojo>> callback);
+	
+	// Account Provisioning/Deprovisioning
+	void getAccountProvisioningSummariesForFilter(AccountProvisioningQueryFilterPojo filter, AsyncCallback<AccountProvisioningQueryResultPojo> callback);
+	void generateAccountDeprovisioning(AccountDeprovisioningRequisitionPojo requisition, AsyncCallback<AccountDeprovisioningPojo> callback);
+	
 }

@@ -28,6 +28,7 @@ import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 
 public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcpView.Presenter {
 	private final ClientFactory clientFactory;
@@ -317,10 +318,11 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 				// a VPCP can be updated, we'll already have the flow here.
 				if (!isEditing) {
 					// show VPCP status page
-//					getVpcpForId(result.getProvisioningId());
 					vpcp = result;
 					GWT.log("VPCP was generated on the server, showing status page.  VPCP is: " + vpcp);
-					ActionEvent.fire(eventBus, ActionNames.VPCP_GENERATED, vpcp);
+					VpcpSummaryPojo vpcpSummary = new VpcpSummaryPojo();
+					vpcpSummary.setProvisioning(vpcp);
+					ActionEvent.fire(eventBus, ActionNames.VPCP_GENERATED, vpcpSummary);
 				}
 				else {
 					// go back to the list VPCP page (this will likely never happen)

@@ -13,15 +13,27 @@ import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 
 public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView.Presenter {
 	private final ClientFactory clientFactory;
 	private EventBus eventBus;
 	private String provisioningId;
 	private VpcpPojo vpcp;
+	private VpcDeprovisioningPojo vpcd;
+	private VpcpSummaryPojo vpcpSummary;
+
+	public VpcDeprovisioningPojo getVpcd() {
+		return vpcd;
+	}
+
+	public void setVpcd(VpcDeprovisioningPojo vpcd) {
+		this.vpcd = vpcd;
+	}
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -35,6 +47,8 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 	public VpcpStatusPresenter(ClientFactory clientFactory) {
 		this.isEditing = false;
 		this.vpcp = null;
+		this.vpcpSummary = null;
+		this.vpcd = null;
 		this.provisioningId = null;
 		this.clientFactory = clientFactory;
 		clientFactory.getVpcpStatusView().setPresenter(this);
@@ -43,12 +57,19 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 	/**
 	 * For editing an existing VPC.
 	 */
-	public VpcpStatusPresenter(ClientFactory clientFactory, VpcpPojo vpcp) {
+	public VpcpStatusPresenter(ClientFactory clientFactory, VpcpSummaryPojo vpcpSummary) {
 		this.isEditing = true;
-		this.provisioningId = vpcp.getProvisioningId();
 		this.clientFactory = clientFactory;
-		this.vpcp = vpcp;
-		clientFactory.getVpcpStatusView().setPresenter(this);
+		this.vpcpSummary = vpcpSummary;
+		this.vpcp = vpcpSummary.getProvisioning();
+		this.vpcd = vpcpSummary.getDeprovisioning();
+		if (vpcpSummary.isProvision()) {
+			this.provisioningId = vpcp.getProvisioningId();
+		}
+		else {
+			this.provisioningId = vpcd.getProvisioningId();
+		}
+		getView().setPresenter(this);
 	}
 
 	@Override
@@ -143,12 +164,6 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 			return;
 		}
 
-		// TODO Delete the vpcp on server then fire onVpcpDeleted();
-	}
-
-	@Override
-	public void saveVpcp() {
-//		getView().showPleaseWaitDialog();
 	}
 
 	@Override
@@ -235,7 +250,8 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 				}
 				else {
 					// expected behavior
-					setVpcp(result.getResults().get(0));
+					setVpcp(result.getResults().get(0).getProvisioning());
+					setVpcd(result.getResults().get(0).getDeprovisioning());
 					if (vpcp.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
 						getView().stopTimer();
 					}
@@ -250,7 +266,7 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
         getView().showPleaseWaitDialog("Retrieving VPCs for the provisioning id: " + provisioningId);
 		VpcpQueryFilterPojo filter = new VpcpQueryFilterPojo();
 		filter.setProvisioningId(provisioningId);
-		VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, callback);
+		VpcProvisioningService.Util.getInstance().getVpcpSummariesForFilter(filter, callback);
 	}
 
 	@Override
@@ -295,5 +311,10 @@ public class VpcpStatusPresenter extends PresenterBase implements VpcpStatusView
 		else {
 			GWT.log("null key, can't validate yet");
 		}
+	}
+
+	@Override
+	public VpcpSummaryPojo getVpcpSummary() {
+		return vpcpSummary;
 	}
 }

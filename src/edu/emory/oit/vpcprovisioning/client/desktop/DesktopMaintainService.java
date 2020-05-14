@@ -49,8 +49,6 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSTagPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
-import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
-import edu.emory.oit.vpcprovisioning.shared.ServiceGuidelinePojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceTestPlanPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;

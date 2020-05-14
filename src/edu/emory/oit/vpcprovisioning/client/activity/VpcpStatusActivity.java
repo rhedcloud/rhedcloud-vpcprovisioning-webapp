@@ -10,9 +10,9 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.VpcpStatusEvent;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.VpcpStatusPresenter;
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class VpcpStatusActivity extends AbstractActivity {
@@ -58,12 +58,12 @@ public class VpcpStatusActivity extends AbstractActivity {
 			public void onShowVpcpStatus(VpcpStatusEvent event) {
 				// Stop the read presenter
 				onStop();
-				presenter = startShowStatus(event.getVpcp());
+				presenter = startShowStatus(event.getVpcpSummary());
 				container.setWidget(presenter);
 			}
 		});
 
-		if (place.getVpcp() == null) {
+		if (place.getVpcpSummary() == null) {
 			// go get it
 			AsyncCallback<VpcpQueryResultPojo> cb = new AsyncCallback<VpcpQueryResultPojo>() {
 				@Override
@@ -74,23 +74,23 @@ public class VpcpStatusActivity extends AbstractActivity {
 
 				@Override
 				public void onSuccess(VpcpQueryResultPojo result) {
-					VpcpPojo vpcp = result.getResults().get(0);
-					presenter = startShowStatus(vpcp);
+					VpcpSummaryPojo vpcpSummary = result.getResults().get(0);
+					presenter = startShowStatus(vpcpSummary);
 					container.setWidget(presenter);
 				}
 			};
 			VpcpQueryFilterPojo filter = new VpcpQueryFilterPojo();
 			filter.setProvisioningId(place.getProvisioningId());
-			VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, cb);
+			VpcProvisioningService.Util.getInstance().getVpcpSummariesForFilter(filter, cb);
 		}
 		else {
-			presenter = startShowStatus(place.getVpcp());
+			presenter = startShowStatus(place.getVpcpSummary());
 			container.setWidget(presenter);
 		}
 	}
 
-	private PresentsWidgets startShowStatus(VpcpPojo vpcp) {
-		PresentsWidgets rtn = new VpcpStatusPresenter(clientFactory, vpcp);
+	private PresentsWidgets startShowStatus(VpcpSummaryPojo vpcpSummary) {
+		PresentsWidgets rtn = new VpcpStatusPresenter(clientFactory, vpcpSummary);
 		rtn.start(childEventBus);
 		return rtn;
 	}

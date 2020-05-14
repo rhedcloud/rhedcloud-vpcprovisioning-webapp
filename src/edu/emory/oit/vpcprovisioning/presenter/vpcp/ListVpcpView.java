@@ -10,6 +10,7 @@ import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface ListVpcpView extends IsWidget, View {
@@ -17,11 +18,6 @@ public interface ListVpcpView extends IsWidget, View {
 	 * The presenter for this view.
 	 */
 	public interface Presenter extends PresentsWidgets {
-		/**
-		 * Select a caseRecord.
-		 * 
-		 * @param selected the selected caseRecord
-		 */
 		void selectVpcp(VpcpPojo selected);
 		public EventBus getEventBus();
 		public VpcpQueryFilterPojo getFilter();
@@ -54,10 +50,10 @@ public interface ListVpcpView extends IsWidget, View {
 	 * 
 	 * @param cidrs the list of caseRecords
 	 */
-	void setVpcps(List<VpcpPojo> vpcps);
+	void setVpcpSummaries(List<VpcpSummaryPojo> vpcpSummaries);
 	
 	void setReleaseInfo(String releaseInfoHTML);
-	void removeVpcpFromView(VpcpPojo vpcp);
+	void removeVpcpSummaryFromView(VpcpSummaryPojo summary);
 	
 	boolean viewAllVpcps();
 	void initPage();

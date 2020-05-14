@@ -12,6 +12,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -36,6 +37,7 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 	UserAccountPojo userLoggedIn;
 
 	boolean startTimer = true;
+	Timer timer;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField HTML pleaseWaitHTML;
@@ -68,12 +70,7 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 					// need to account for vpn connection deprovision generates here too
 					// if it's from a generate BUT is a deprovision, we'll want to go to GO_HOME_VPNCP
 					// because that's where VPNs are deprovisioned from
-//					if (presenter.getVpncpSummary().isProvision()) {
-						ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
-//					}
-//					else {
-//						ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
-//					}
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
 				}
 				else {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPNCP);
@@ -231,31 +228,56 @@ public class DesktopVpncpStatus extends ViewImplBase implements VpncpStatusView 
 	@Override
 	public void startTimer(int delayMs) {
 		GWT.log("[VIEW] starting timer...");
+//		startTimer = true;
+//		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
+//			@Override
+//			public boolean execute() {
+//				if (presenter.getVpncpSummary().isProvision()) {
+//					presenter.refreshProvisioningStatusForId(presenter.getVpncp().getProvisioningId());
+//					if (presenter.getVpncp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+//						startTimer = false;
+//					}
+//					return startTimer;
+//				}
+//				else {
+//					presenter.refreshProvisioningStatusForId(presenter.getVpncdp().getProvisioningId());
+//					if (presenter.getVpncdp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+//						startTimer = false;
+//					}
+//					return startTimer;
+//				}
+//			}
+//		}, delayMs);
+		
 		startTimer = true;
-		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
-			@Override
-			public boolean execute() {
+		timer = new Timer() {
+            @Override
+            public void run() {
 				if (presenter.getVpncpSummary().isProvision()) {
 					presenter.refreshProvisioningStatusForId(presenter.getVpncp().getProvisioningId());
 					if (presenter.getVpncp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-						startTimer = false;
+						stopTimer();
 					}
-					return startTimer;
 				}
 				else {
 					presenter.refreshProvisioningStatusForId(presenter.getVpncdp().getProvisioningId());
 					if (presenter.getVpncdp().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-						startTimer = false;
+						stopTimer();
 					}
-					return startTimer;
 				}
-			}
-		}, delayMs);
+            }
+        };
+
+        // Schedule the timer to close the popup in 3 seconds.
+        timer.scheduleRepeating(delayMs);
 	}
 
 	@Override
 	public void stopTimer() {
 		startTimer = false;
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 
 	@Override

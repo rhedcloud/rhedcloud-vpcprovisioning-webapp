@@ -134,6 +134,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_TERMS_OF_USE_AGREEMENT = "TermsOfUseAgreement.v1_0";
 	public static final String MOA_TERMS_OF_USE_AGREEMENT_QUERY_SPECIFICATION = "TermsOfUseAgreementQuerySpecification.v1_0";
 	
+	public static final String LIST_ACCOUNT_PROVISIONING = "listAccountProvisioning";
 	public static final String LIST_ACCOUNT = "listAccount";
 	public static final String LIST_VPC = "listVpc";
 	public static final String LIST_VPCP = "listVpcp";
@@ -228,4 +229,8 @@ public class Constants implements IsSerializable {
 	public static final String FILTER_PROFILE_NAMESPACE_AND_NAME = "Namespace and Profile Name (separated by comma)";
 	public static final String FILTER_MANAGED_TAG_NAME_VALUE = "Managed Tag Name/Value (tagName=tagValue)";
 	public static final String MOA_SECURITY_RISK_DETECTION_REQUISITION = "SecurityRiskDetectionRequisition.v1_0";
+	public static final String GO_HOME_ACCOUNT_PROVISIONING = "goHomeAccountProvisioning";
+	public static final String MOA_ACCOUNT_DEPROVISIONING = "AccountDeprovisioning.v1_0";
+	public static final String MOA_ACCOUNT_DEPROVISIONING_QUERY_SPEC = "AccountDeprovisioningQuerySpecification.v1_0";
+	public static final String MOA_ACCOUNT_DEPROVISIONING_REQUISITION = "AccountDeprovisioningRequisition.v1_0";
 }

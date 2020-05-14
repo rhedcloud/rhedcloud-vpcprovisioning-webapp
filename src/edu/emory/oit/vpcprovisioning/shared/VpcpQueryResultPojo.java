@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 @SuppressWarnings("serial")
 public class VpcpQueryResultPojo extends SharedObject implements IsSerializable {
 	VpcpQueryFilterPojo filterUsed;
-	List<VpcpPojo> results;
+	List<VpcpSummaryPojo> results;
 
 	public VpcpQueryResultPojo() {
 		
@@ -21,11 +21,11 @@ public class VpcpQueryResultPojo extends SharedObject implements IsSerializable 
 		this.filterUsed = filterUsed;
 	}
 
-	public List<VpcpPojo> getResults() {
+	public List<VpcpSummaryPojo> getResults() {
 		return results;
 	}
 
-	public void setResults(List<VpcpPojo> results) {
+	public void setResults(List<VpcpSummaryPojo> results) {
 		this.results = results;
 	}
 

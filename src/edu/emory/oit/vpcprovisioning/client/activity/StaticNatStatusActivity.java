@@ -5,12 +5,10 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.ResettableEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
-import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.StaticNatStatusEvent;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPresenter;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public class StaticNatStatusActivity extends AbstractActivity {

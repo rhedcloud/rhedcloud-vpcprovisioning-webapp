@@ -11,6 +11,10 @@ import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.AccountProvisioningStatusPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.DeprovisionAccountPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPlace;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPresenter;
@@ -320,6 +324,17 @@ public class AppActivityMapper implements ActivityMapper {
 			};
 		}
 
+		if (place instanceof ListAccountProvisioningPlace) {
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListAccountProvisioningPresenter presenter = new ListAccountProvisioningPresenter(clientFactory, (ListAccountProvisioningPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
 		if (place instanceof BillSummaryPlace) {
 			// Generate/Maintain vpcp
 			return new BillSummaryActivity(clientFactory, (BillSummaryPlace) place);
@@ -438,12 +453,10 @@ public class AppActivityMapper implements ActivityMapper {
 		}
 
 		if (place instanceof StaticNatProvisioningStatusPlace) {
-			// Generate/Maintain vpcp
 			return new StaticNatStatusActivity(clientFactory, (StaticNatProvisioningStatusPlace) place);
 		}
 
 		if (place instanceof VpncpStatusPlace) {
-			// Generate/Maintain vpcp
 			return new VpncpStatusActivity(clientFactory, (VpncpStatusPlace) place);
 		}
 
@@ -463,6 +476,14 @@ public class AppActivityMapper implements ActivityMapper {
 			return new CalculateSecurityRiskActivity(clientFactory, (CalculateSecurityRiskPlace) place);
 		}
 		
+		if (place instanceof DeprovisionAccountPlace) {
+			return new DeprovisionAccountActivity(clientFactory, (DeprovisionAccountPlace) place);
+		}
+		
+		if (place instanceof AccountProvisioningStatusPlace) {
+			return new AccountProvisioningStatusActivity(clientFactory, (AccountProvisioningStatusPlace) place);
+		}
+
 		return null;
 	}
 

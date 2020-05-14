@@ -10,11 +10,14 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class AwsAccountRpcSuggestOracle extends SuggestOracle {
 	String type=null;
+	UserAccountPojo user;
 
-	public AwsAccountRpcSuggestOracle(String type) {
+	public AwsAccountRpcSuggestOracle(UserAccountPojo user, String type) {
+		this.user = user;
 		this.type = type;
 	}
 
@@ -42,7 +45,17 @@ public class AwsAccountRpcSuggestOracle extends SuggestOracle {
 				for (AccountPojo pojo : result.getResults()) {
 					if (!accountNames.contains(pojo.getAccountName())) {
 						accountNames.add(pojo.getAccountName());
-						descList.add(new MultiWordRpcSuggestion(pojo.getAccountId(), pojo.getAccountName(), pojo));
+						String displayString;
+						if (pojo.getAlternateName() != null) {
+							displayString = pojo.getAccountId() + " / " + 
+									pojo.getAccountName() + " / " + 
+									pojo.getAlternateName();
+						}
+						else {
+							displayString = pojo.getAccountId() + " / " + 
+									pojo.getAccountName();
+						}
+						descList.add(new MultiWordRpcSuggestion(displayString, pojo.getAccountName(), pojo));
 					}
 				}
 				Response resp =
@@ -51,6 +64,9 @@ public class AwsAccountRpcSuggestOracle extends SuggestOracle {
 			}
 		};
 		AccountQueryFilterPojo filter = new AccountQueryFilterPojo();
+		filter.setSuggestBoxFilter(true);
+		filter.setFuzzyFilter(true);
+		filter.setAccountName(request.getQuery());
 		filter.setAccountId(request.getQuery());
 		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
 	}

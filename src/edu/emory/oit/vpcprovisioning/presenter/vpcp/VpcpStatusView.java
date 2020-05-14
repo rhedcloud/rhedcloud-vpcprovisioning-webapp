@@ -7,7 +7,9 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.VpcDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
 public interface VpcpStatusView extends Editor<VpcpPojo>, IsWidget, View {
@@ -20,19 +22,15 @@ public interface VpcpStatusView extends Editor<VpcpPojo>, IsWidget, View {
 		 */
 		void deleteVpcp();
 
-		/**
-		 * generate a new Vpcp or save the current Vpcp based on the values in the
-		 * inputs.
-		 */
-		void saveVpcp();
 		VpcpPojo getVpcp();
+		VpcDeprovisioningPojo getVpcd();
+		VpcpSummaryPojo getVpcpSummary();
+		
 		public boolean isValidVpcpId(String value);
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void refreshVpcpStatusForId(String provisioningId);
 		public void setDirectoryMetaDataTitleOnWidget(final String netId, final Widget w);
-//		public void setSpeedChartStatusForKeyOnWidget(String key, Widget w);
-//		public void setSpeedChartStatusForKey(String key, Label label);
 		public void logMessageOnServer(final String message);
 		public void setSpeedChartStatusForKeyOnWidget(String speedChartNumber, Widget w);
 	}

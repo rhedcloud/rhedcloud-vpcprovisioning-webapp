@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 
 public class VpcpListUpdateEvent extends GwtEvent<VpcpListUpdateEvent.Handler> {
 
@@ -22,10 +22,10 @@ public class VpcpListUpdateEvent extends GwtEvent<VpcpListUpdateEvent.Handler> {
 
 	  public static final Type<VpcpListUpdateEvent.Handler> TYPE = new Type<VpcpListUpdateEvent.Handler>();
 
-	  private final List<VpcpPojo> vpcps;
+	  private final List<VpcpSummaryPojo> vpcpSummaries;
 
-	  public VpcpListUpdateEvent(List<VpcpPojo> vpcps) {
-	    this.vpcps = vpcps;
+	  public VpcpListUpdateEvent(List<VpcpSummaryPojo> vpcpSummaries) {
+	    this.vpcpSummaries = vpcpSummaries;
 	  }
 
 	  @Override
@@ -33,8 +33,8 @@ public class VpcpListUpdateEvent extends GwtEvent<VpcpListUpdateEvent.Handler> {
 	    return TYPE;
 	  }
 
-	  public List<VpcpPojo> getVpcps() {
-	    return vpcps;
+	  public List<VpcpSummaryPojo> getVpcpSummaries() {
+	    return vpcpSummaries;
 	  }
 
 	  @Override

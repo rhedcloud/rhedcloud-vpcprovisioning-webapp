@@ -5,6 +5,9 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.AccountProvisioningStatusView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.DeprovisionAccountView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
@@ -134,4 +137,7 @@ public interface ClientFactory {
 	ListResourceTaggingProfileView getListResourceTaggingProfileView();
 	MaintainResourceTaggingProfileView getMaintainResourceTaggingProfileView();
 	CalculateSecurityRiskView getCalculateSecurityRiskView();
+	ListAccountProvisioningView getListAccountProvisioningView();
+	DeprovisionAccountView getDeprovisionAccountView();
+	AccountProvisioningStatusView getAccountProvisioningStatusView();
 }

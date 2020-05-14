@@ -200,4 +200,14 @@ public interface ActionNames {
 	
 	final String CREATE_SECURITY_RISK_CALCULATION = "createSecurityRiskCalculation";
 	final String MAINTAIN_SECURITY_RISK_CALCULATION = "maintainSecurityRiskCalculation";
+
+	final String SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION = "showAccountDeprovisioningConfirmation";
+	final String SHOW_ACCOUNT_PROVISIONING_STATUS = "showAccountProvisioningStatus";
+	final String GO_HOME_ACCOUNT_PROVISIONING = "goHomeAccountProvisioning";
+	final String ACCOUNT_PROVISIONING_GENERATED = "accountProvisioningGenerated";
+	final String ACCOUNT_PROVISIONING_SAVED = "AccountProvisioningSaved";
+	final String GENERATE_ACCOUNT_PROVISIONING = "generateAccountProvisioning";
+	final String ACCOUNT_DEPROVISIONING_GENERATED = "accountDeprovisioningGenerated";
+	final String GENERATE_ACCOUNT_DEPROVISIONING = "generateAccountDeprovisioning";
+	final String ACCOUNT_DEPROVISIONING_GENERATED_FROM_PROVISIONING_LIST = "accountDeprovisioningGeneratedFromProvisioningList";
 }

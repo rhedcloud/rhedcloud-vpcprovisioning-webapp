@@ -15,6 +15,9 @@ import edu.emory.oit.vpcprovisioning.client.mobile.MobileHome;
 import edu.emory.oit.vpcprovisioning.client.mobile.MobileListAccount;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.AccountProvisioningStatusView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.DeprovisionAccountView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
@@ -119,6 +122,10 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ServiceAssessmentReportView serviceAssessmentReportView;
 	private ListResourceTaggingProfileView listResourceTaggingProfileView;
 	private MaintainResourceTaggingProfileView maintainResourceTaggingProfileView;
+	private CalculateSecurityRiskView calculateSecurityRiskView;
+	private ListAccountProvisioningView listAccountProvisioningView;
+	private DeprovisionAccountView deprovisionAccountView;
+	private AccountProvisioningStatusView accountProvisioningStatusView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -421,6 +428,21 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public CalculateSecurityRiskView getCalculateSecurityRiskView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListAccountProvisioningView getListAccountProvisioningView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public DeprovisionAccountView getDeprovisionAccountView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public AccountProvisioningStatusView getAccountProvisioningStatusView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcpQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 
 public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Presenter {
 	private static final Logger log = Logger.getLogger(ListVpcPresenter.class.getName());
@@ -136,7 +137,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 			@Override
 			public void onSuccess(VpcpQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " Vpcps for " + result.getFilterUsed());
-				setVpcpList(result.getResults());
+				setVpcpSummaryList(result.getResults());
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
 					getView().applyCentralAdminMask();
@@ -150,7 +151,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 		};
 
 		GWT.log("refreshing Vpcp list...");
-		VpcProvisioningService.Util.getInstance().getVpcpsForFilter(filter, callback);
+		VpcProvisioningService.Util.getInstance().getVpcpSummariesForFilter(filter, callback);
 	}
 
 	@Override
@@ -200,10 +201,10 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 	/**
 	 * Set the list of Vpcs.
 	 */
-	private void setVpcpList(List<VpcpPojo> vpcps) {
-		getView().setVpcps(vpcps);
+	private void setVpcpSummaryList(List<VpcpSummaryPojo> vpcpSummaries) {
+		getView().setVpcpSummaries(vpcpSummaries);
 		if (eventBus != null) {
-			eventBus.fireEventFromSource(new VpcpListUpdateEvent(vpcps), this);
+			eventBus.fireEventFromSource(new VpcpListUpdateEvent(vpcpSummaries), this);
 		}
 	}
 

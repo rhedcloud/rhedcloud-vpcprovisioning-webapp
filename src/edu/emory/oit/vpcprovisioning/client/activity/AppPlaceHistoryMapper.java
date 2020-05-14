@@ -5,6 +5,9 @@ import com.google.gwt.place.shared.WithTokenizers;
 
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.AccountProvisioningStatusPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.DeprovisionAccountPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
@@ -98,8 +101,11 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 				 MaintainVpnConnectionProvisioningPlace.Tokenizer.class,
 				 ServiceAssessmentReportPlace.Tokenizer.class,
 				 ListResourceTaggingProfilePlace.Tokenizer.class,
-				 MaintainResourceTaggingProfilePlace.Tokenizer.class, 
-				 CalculateSecurityRiskPlace.Tokenizer.class})
+				 MaintainResourceTaggingProfilePlace.Tokenizer.class,
+				 ListAccountProvisioningPlace.Tokenizer.class,
+				 CalculateSecurityRiskPlace.Tokenizer.class,
+				 DeprovisionAccountPlace.Tokenizer.class,
+				 AccountProvisioningStatusPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

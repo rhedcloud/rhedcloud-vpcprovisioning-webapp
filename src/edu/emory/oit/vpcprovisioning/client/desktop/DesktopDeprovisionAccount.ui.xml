@@ -1,0 +1,83 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<!-- <g:ScrollPanel width="99%" height="99%"> -->
+	<g:VerticalPanel spacing="8" width="100%">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid cellSpacing="12">
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="terminateAccountLabel" width="500px" addStyleNames="{style.mediumLabel}">Terminate an AWS Account</g:Label>
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="acctOwnerApprovesLabel" width="500px" addStyleNames="{style.label-left}">Please confirm the Account Owner (ACCOUNT_OWNER) is aware and approves the termination of this account.</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:CheckBox	ui:field="acctOwnerApprovesCB" debugId="acctOwnerApprovesCB" title="Confirm the account owner approves of closing this account"/>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="acctReadyLabel" width="500px" addStyleNames="{style.label-left}">Please confirm all services and infrastructure in the account have been terminated.</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:CheckBox ui:field="acctReadyCB" debugId="acctReadyCB" title="Confirm all services and infrastructure in the account have been terminated"/>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="acctConfirmLabel" width="500px" addStyleNames="{style.label-left}">Terminating an account is a permanent act.  When an account is deleted, it will no longer be accessible.  Are you sure you want to terminate this account?</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:CheckBox ui:field="acctConfirmCB" debugId="acctConfirmCB" title="Confirm you really want to permanently close this account"/>
+			    	</g:customCell>
+		    	</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label ui:field="acctNameLabel" width="500px" addStyleNames="{style.label-left}">Please confirm the Account Name (ACCOUNT_NAME).</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="acctNameTB" debugId="acctNameTB" title="Enter the account name for confirmation"/>
+			    	</g:customCell>
+		    	</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_TOP">
+			<g:HorizontalPanel>
+				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:Grid cellSpacing="60">
+						<g:row>
+					    	<g:customCell>
+								<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+									ui:field="okayButton" debugId="okayButton" title="Permanently close this AWS Account.">Close Account</g:Button>
+					    	</g:customCell>
+					    	<g:customCell>
+								<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
+									ui:field="cancelButton" debugId="cancelButton">Cancel</g:Button>
+					    	</g:customCell>
+						</g:row>
+					</g:Grid>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:cell>
+	</g:VerticalPanel>
+	<!-- </g:ScrollPanel> -->
+</ui:UiBinder> 

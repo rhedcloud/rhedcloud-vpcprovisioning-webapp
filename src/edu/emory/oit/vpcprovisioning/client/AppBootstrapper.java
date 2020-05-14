@@ -25,11 +25,15 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.UmbrellaException;
 
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPlace;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.AccountProvisioningStatusPlace;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.DeprovisionAccountPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminPlace;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrPlace;
@@ -1087,14 +1091,14 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.VPCP_GENERATED, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(VpcpStatusPlace.createVpcpStatusPlace(event.getVpcp()));
+				placeController.goTo(VpcpStatusPlace.createVpcpStatusPlace(event.getVpcpSummary()));
 			}
 		});
 
 		ActionEvent.register(eventBus, ActionNames.SHOW_VPCP_STATUS, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				placeController.goTo(VpcpStatusPlace.createVpcpStatusPlace(event.getVpcp()));
+				placeController.goTo(VpcpStatusPlace.createVpcpStatusPlace(event.getVpcpSummary()));
 			}
 		});
 
@@ -1966,6 +1970,87 @@ public class AppBootstrapper {
 				    }
 				});
 				*/				
+			}
+		});
+		
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_ACCOUNT_PROVISIONING, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_ACCOUNT_PROVISIONING.onAction");
+				placeController.goTo(new ListAccountProvisioningPlace(false));
+			}
+		});
+
+//		ActionEvent.register(eventBus, ActionNames.GENERATE_ACCOUNT_PROVISIONING, new ActionEvent.Handler() {
+//			@Override
+//			public void onAction(ActionEvent event) {
+//				if (event.getVpnConnectonProfileAssignment() != null) {
+//					placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpnConnectionProfile(), event.getVpnConnectonProfileAssignment()));
+//				}
+//				else {
+//					placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpnConnectionProfile()));
+//				}
+//			}
+//		});
+//
+//		ActionEvent.register(eventBus, ActionNames.GENERATE_ACCOUNT_DEPROVISIONING, new ActionEvent.Handler() {
+//			@Override
+//			public void onAction(ActionEvent event) {
+//				placeController.goTo(MaintainVpnConnectionProvisioningPlace.createMaintainVpnConnectionProvisioningPlace(event.getVpncRequisition(), event.getVpnConnectonProfileAssignment()));
+//			}
+//		});
+//
+//		ActionEvent.register(eventBus, ActionNames.ACCOUNT_PROVISIONING_GENERATED, new ActionEvent.Handler() {
+//			@Override
+//			public void onAction(ActionEvent event) {
+//				placeController.goTo(VpncpStatusPlace.createVpncpStatusPlaceFromGenerate(event.getVpncpSummary()));
+//			}
+//		});
+//
+		ActionEvent.register(eventBus, ActionNames.ACCOUNT_DEPROVISIONING_GENERATED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(AccountProvisioningStatusPlace.createAccountProvisioningStatusPlaceFromGenerate(event.getAccountProvisioningSummary(), false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.ACCOUNT_DEPROVISIONING_GENERATED_FROM_PROVISIONING_LIST, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(AccountProvisioningStatusPlace.createAccountProvisioningStatusPlaceFromGenerate(event.getAccountProvisioningSummary(), true));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SHOW_ACCOUNT_PROVISIONING_STATUS, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				VpcpAlert.alert("Info", "Comming soon...");
+
+				placeController.goTo(AccountProvisioningStatusPlace.createAccountProvisioningStatusPlace(event.getAccountProvisioningSummary()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				final DialogBox db = new DialogBox();
+				db.setText("Permanently Close Account: " + event.getAccount().getAccountName() + 
+					" (" + event.getAccount().getAccountId() + ")");
+				db.setGlassEnabled(true);
+				db.center();
+				// MaintainSrd view, place, presenter, etc...
+				final DeprovisionAccountPresenter presenter = new DeprovisionAccountPresenter(clientFactory, event.getAcctDeprovisioningRequisition(), event.getAccount());
+				presenter.start(eventBus);
+				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						db.hide();
+					}
+				});
+				presenter.setAccountDeprovisioningDialog(db);
+				db.setWidget(presenter);
+				db.show();
+				db.center();
 			}
 		});
 

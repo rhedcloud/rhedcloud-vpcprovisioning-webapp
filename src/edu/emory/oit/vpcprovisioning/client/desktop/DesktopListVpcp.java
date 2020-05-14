@@ -23,8 +23,8 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -45,13 +45,13 @@ import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 
 public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	Presenter presenter;
-	private ListDataProvider<VpcpPojo> dataProvider = new ListDataProvider<VpcpPojo>();
-	private SingleSelectionModel<VpcpPojo> selectionModel;
-	List<VpcpPojo> vpcpList = new java.util.ArrayList<VpcpPojo>();
+	private ListDataProvider<VpcpSummaryPojo> dataProvider = new ListDataProvider<VpcpSummaryPojo>();
+	private SingleSelectionModel<VpcpSummaryPojo> selectionModel;
+	List<VpcpSummaryPojo> summaryList = new java.util.ArrayList<VpcpSummaryPojo>();
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
 
@@ -60,7 +60,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@UiField(provided=true) SimplePager vpcpListPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField Button generateVpcButton;
 	@UiField Button actionsButton;
-	@UiField(provided=true) CellTable<VpcpPojo> vpcpListTable = new CellTable<VpcpPojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	@UiField(provided=true) CellTable<VpcpSummaryPojo> vpcpListTable = new CellTable<VpcpSummaryPojo>(20, (CellTable.Resources)GWT.create(MyCellTableResources.class));
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button filterButton;
 	@UiField Button clearFilterButton;
@@ -69,11 +69,6 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	@UiField CheckBox viewAllCB;
 	@UiField HTML filteredHTML;
 
-//	@UiField Button homeButton;
-//	@UiHandler("homeButton")
-//	void homeButtonClicked(ClickEvent e) {
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME);
-//	}
 	public interface MyCellTableResources extends CellTable.Resources {
 
 		@Source({CellTable.Style.DEFAULT_CSS, "cellTableStyles.css" })
@@ -164,7 +159,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
-				VpcpPojo m = selectionModel.getSelectedObject();
+				VpcpSummaryPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_VPCP_STATUS, m);
 				}
@@ -217,8 +212,8 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	}
 
 	@Override
-	public void setVpcps(List<VpcpPojo> vpcps) {
-		this.vpcpList = vpcps;
+	public void setVpcpSummaries(List<VpcpSummaryPojo> summaries) {
+		this.summaryList = summaries;
 		this.initializeVpcpListTable();
 		vpcpListPager.setDisplay(vpcpListTable);
 		topListPager.setDisplay(vpcpListTable);
@@ -233,25 +228,30 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		vpcpListTable.setVisibleRange(0, 15);
 
 		// create dataprovider
-		dataProvider = new ListDataProvider<VpcpPojo>();
+		dataProvider = new ListDataProvider<VpcpSummaryPojo>();
 		dataProvider.addDataDisplay(vpcpListTable);
 		dataProvider.getList().clear();
-		dataProvider.getList().addAll(this.vpcpList);
+		dataProvider.getList().addAll(this.summaryList);
 
 		selectionModel = 
-				new SingleSelectionModel<VpcpPojo>(VpcpPojo.KEY_PROVIDER);
+				new SingleSelectionModel<VpcpSummaryPojo>(VpcpSummaryPojo.KEY_PROVIDER);
 		vpcpListTable.setSelectionModel(selectionModel);
 
 		selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 			@Override
 			public void onSelectionChange(SelectionChangeEvent event) {
-				VpcpPojo m = selectionModel.getSelectedObject();
-				GWT.log("Selected vpcp is: " + m.getProvisioningId());
+				VpcpSummaryPojo m = selectionModel.getSelectedObject();
+				if (m.getProvisioning() != null) {
+					GWT.log("Selected vpcp is: " + m.getProvisioning().getProvisioningId());
+				}
+				else if (m.getDeprovisioning() != null) {
+					GWT.log("Selected vpcd is: " + m.getDeprovisioning().getProvisioningId());
+				}
 			}
 		});
 
-		ListHandler<VpcpPojo> sortHandler = 
-				new ListHandler<VpcpPojo>(dataProvider.getList());
+		ListHandler<VpcpSummaryPojo> sortHandler = 
+				new ListHandler<VpcpSummaryPojo>(dataProvider.getList());
 		vpcpListTable.addColumnSortHandler(sortHandler);
 
 		if (vpcpListTable.getColumnCount() == 0) {
@@ -261,13 +261,13 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		return vpcpListTable;
 	}
 
-	private void initVpcpListTableColumns(ListHandler<VpcpPojo> sortHandler) {
+	private void initVpcpListTableColumns(ListHandler<VpcpSummaryPojo> sortHandler) {
 		GWT.log("initializing VPCP list table columns...");
 
-		Column<VpcpPojo, Boolean> checkColumn = new Column<VpcpPojo, Boolean>(
+		Column<VpcpSummaryPojo, Boolean> checkColumn = new Column<VpcpSummaryPojo, Boolean>(
 				new CheckboxCell(true, false)) {
 			@Override
-			public Boolean getValue(VpcpPojo object) {
+			public Boolean getValue(VpcpSummaryPojo object) {
 				// Get the value from the selection model.
 				return selectionModel.isSelected(object);
 			}
@@ -276,126 +276,277 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		vpcpListTable.setColumnWidth(checkColumn, 40, Unit.PX);
 
 		// create time
-		Column<VpcpPojo, String> createTimeColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpcpSummaryPojo, String> createTimeColumn = 
+				new Column<VpcpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
-				Date createTime = object.getCreateTime();
-				return createTime != null ? dateFormat.format(createTime) : "Unknown";
+			public String getValue(VpcpSummaryPojo object) {
+				if (object.isProvision()) {
+					Date createTime = object.getProvisioning().getCreateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+				}
+				else {
+					Date createTime = object.getDeprovisioning().getCreateTime();
+					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+				}
 			}
 		};
 		createTimeColumn.setSortable(true);
-		sortHandler.setComparator(createTimeColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
-				Date c1 = o1.getCreateTime();
-				Date c2 = o2.getCreateTime();
-				if (c1 == null || c2 == null) {
+		sortHandler.setComparator(createTimeColumn, new Comparator<VpcpSummaryPojo>() {
+			public int compare(VpcpSummaryPojo o1, VpcpSummaryPojo o2) {
+				if (o1.isProvision() && o2.isProvision()) {
+					Date c1 = o1.getProvisioning().getCreateTime();
+					Date c2 = o2.getProvisioning().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				}
+				else if (o1.isProvision() && !o2.isProvision()) {
+					Date c1 = o1.getProvisioning().getCreateTime();
+					Date c2 = o2.getDeprovisioning().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				}
+				else if (!o1.isProvision() && !o2.isProvision()) {
+					Date c1 = o1.getDeprovisioning().getCreateTime();
+					Date c2 = o2.getDeprovisioning().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				}
+				else if (!o1.isProvision() && o2.isProvision()) {
+					Date c1 = o1.getDeprovisioning().getCreateTime();
+					Date c2 = o2.getProvisioning().getCreateTime();
+					if (c1 == null || c2 == null) {
+						return 0;
+					}
+					return c1.compareTo(c2);
+				}
+				else {
 					return 0;
 				}
-				return c1.compareTo(c2);
 			}
 		});
 		vpcpListTable.addColumn(createTimeColumn, "Create Time");
+		
+		// TODO: provisioning type column
 
 		// Provisioning id column
-		Column<VpcpPojo, String> provIdColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpcpSummaryPojo, String> provIdColumn = 
+				new Column<VpcpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
-				return object.getProvisioningId();
+			public String getValue(VpcpSummaryPojo object) {
+				if (object.isProvision()) {
+					return object.getProvisioning().getProvisioningId();
+				}
+				else {
+					return object.getDeprovisioning().getProvisioningId();
+				}
 			}
 		};
 		provIdColumn.setSortable(true);
-		sortHandler.setComparator(provIdColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
-				return o1.getProvisioningId().compareTo(o2.getProvisioningId());
+		sortHandler.setComparator(provIdColumn, new Comparator<VpcpSummaryPojo>() {
+			public int compare(VpcpSummaryPojo o1, VpcpSummaryPojo o2) {
+				if (o1.isProvision() && o2.isProvision()) {
+					return o1.getProvisioning().getProvisioningId().compareTo(o2.getProvisioning().getProvisioningId());
+				}
+				else if (o1.isProvision() && !o2.isProvision()) {
+					return o1.getProvisioning().getProvisioningId().compareTo(o2.getDeprovisioning().getProvisioningId());
+				}
+				else if (!o1.isProvision() && !o2.isProvision()) {
+					return o1.getDeprovisioning().getProvisioningId().compareTo(o2.getDeprovisioning().getProvisioningId());
+				}
+				else if (!o1.isProvision() && o2.isProvision()) {
+					return o1.getDeprovisioning().getProvisioningId().compareTo(o2.getProvisioning().getProvisioningId());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcpListTable.addColumn(provIdColumn, "Provisioning ID");
 
 		// Status
-		Column<VpcpPojo, String> statusColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpcpSummaryPojo, String> statusColumn = 
+				new Column<VpcpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
-				return object.getStatus();
+			public String getValue(VpcpSummaryPojo object) {
+				if (object.isProvision()) {
+					return object.getProvisioning().getStatus();
+				}
+				else {
+					return object.getDeprovisioning().getStatus();
+				}
 			}
 		};
 		statusColumn.setSortable(true);
-		sortHandler.setComparator(provIdColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
-				return o1.getStatus().compareTo(o2.getStatus());
+		sortHandler.setComparator(provIdColumn, new Comparator<VpcpSummaryPojo>() {
+			public int compare(VpcpSummaryPojo o1, VpcpSummaryPojo o2) {
+				if (o1.isProvision() && o2.isProvision()) {
+					return o1.getProvisioning().getStatus().compareTo(o2.getProvisioning().getStatus());
+				}
+				else if (o1.isProvision() && !o2.isProvision()) {
+					return o1.getProvisioning().getStatus().compareTo(o2.getDeprovisioning().getStatus());
+				}
+				else if (!o1.isProvision() && !o2.isProvision()) {
+					return o1.getDeprovisioning().getStatus().compareTo(o2.getDeprovisioning().getStatus());
+				}
+				else if (!o1.isProvision() && o2.isProvision()) {
+					return o1.getDeprovisioning().getStatus().compareTo(o2.getProvisioning().getStatus());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcpListTable.addColumn(statusColumn, "Status");
 
 		// VPC region column
-		Column<VpcpPojo, String> regionColumn = 
-			new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpcpSummaryPojo, String> regionColumn = 
+			new Column<VpcpSummaryPojo, String> (new TextCell()) {
 			
 			@Override
-			public String getValue(VpcpPojo object) {
-				return object.getVpcRequisition().getRegion();
+			public String getValue(VpcpSummaryPojo object) {
+				if (object.isProvision()) {
+					return object.getProvisioning().getVpcRequisition().getRegion();
+				}
+				else {
+					return object.getDeprovisioning().getVpcRequisition().getRegion();
+				}
 			}
 		};
 		regionColumn.setSortable(true);
-		sortHandler.setComparator(regionColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
-				return o1.getVpcRequisition().getRegion().compareTo(o2.getVpcRequisition().getRegion());
+		sortHandler.setComparator(regionColumn, new Comparator<VpcpSummaryPojo>() {
+			public int compare(VpcpSummaryPojo o1, VpcpSummaryPojo o2) {
+				if (o1.isProvision() && o2.isProvision()) {
+					return o1.getProvisioning().getVpcRequisition().getRegion().compareTo(o2.getProvisioning().getVpcRequisition().getRegion());
+				}
+				else if (o1.isProvision() && !o2.isProvision()) {
+					return o1.getProvisioning().getVpcRequisition().getRegion().compareTo(o2.getDeprovisioning().getVpcRequisition().getRegion());
+				}
+				else if (!o1.isProvision() && !o2.isProvision()) {
+					return o1.getDeprovisioning().getVpcRequisition().getRegion().compareTo(o2.getDeprovisioning().getVpcRequisition().getRegion());
+				}
+				else if (!o1.isProvision() && o2.isProvision()) {
+					return o1.getDeprovisioning().getVpcRequisition().getRegion().compareTo(o2.getProvisioning().getVpcRequisition().getRegion());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcpListTable.addColumn(regionColumn, "Region");
 		
 		// Provisioning result
-		Column<VpcpPojo, String> resultColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpcpSummaryPojo, String> resultColumn = 
+				new Column<VpcpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
-				return object.getProvisioningResult();
+			public String getValue(VpcpSummaryPojo object) {
+				if (object.isProvision()) {
+					return object.getProvisioning().getProvisioningResult();
+				}
+				else {
+					return object.getDeprovisioning().getProvisioningResult();
+				}
 			}
 		};
 		resultColumn.setSortable(true);
-		sortHandler.setComparator(resultColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
-				return o1.getProvisioningResult().compareTo(o2.getProvisioningResult());
+		sortHandler.setComparator(resultColumn, new Comparator<VpcpSummaryPojo>() {
+			public int compare(VpcpSummaryPojo o1, VpcpSummaryPojo o2) {
+				if (o1.isProvision() && o2.isProvision()) {
+					return o1.getProvisioning().getProvisioningResult().compareTo(o2.getProvisioning().getProvisioningResult());
+				}
+				else if (o1.isProvision() && !o2.isProvision()) {
+					return o1.getProvisioning().getProvisioningResult().compareTo(o2.getDeprovisioning().getProvisioningResult());
+				}
+				else if (!o1.isProvision() && !o2.isProvision()) {
+					return o1.getDeprovisioning().getProvisioningResult().compareTo(o2.getDeprovisioning().getProvisioningResult());
+				}
+				else if (!o1.isProvision() && o2.isProvision()) {
+					return o1.getDeprovisioning().getProvisioningResult().compareTo(o2.getProvisioning().getProvisioningResult());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcpListTable.addColumn(resultColumn, "Provisioning Result");
 
 		// Anticipated time
-		Column<VpcpPojo, String> anticipatedTimeColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpcpSummaryPojo, String> anticipatedTimeColumn = 
+				new Column<VpcpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
-				return formatMillisForDisplay(object.getAnticipatedTime());
+			public String getValue(VpcpSummaryPojo object) {
+				if (object.isProvision()) {
+					return formatMillisForDisplay(object.getProvisioning().getAnticipatedTime());
+				}
+				else {
+					return formatMillisForDisplay(object.getDeprovisioning().getAnticipatedTime());
+				}
 			}
 		};
 		anticipatedTimeColumn.setSortable(true);
-		sortHandler.setComparator(anticipatedTimeColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
-				return o1.getAnticipatedTime().compareTo(o2.getAnticipatedTime());
+		sortHandler.setComparator(anticipatedTimeColumn, new Comparator<VpcpSummaryPojo>() {
+			public int compare(VpcpSummaryPojo o1, VpcpSummaryPojo o2) {
+				if (o1.isProvision() && o2.isProvision()) {
+					return o1.getProvisioning().getAnticipatedTime().compareTo(o2.getProvisioning().getAnticipatedTime());
+				}
+				else if (o1.isProvision() && !o2.isProvision()) {
+					return o1.getProvisioning().getAnticipatedTime().compareTo(o2.getDeprovisioning().getAnticipatedTime());
+				}
+				else if (!o1.isProvision() && !o2.isProvision()) {
+					return o1.getDeprovisioning().getAnticipatedTime().compareTo(o2.getDeprovisioning().getAnticipatedTime());
+				}
+				else if (!o1.isProvision() && o2.isProvision()) {
+					return o1.getDeprovisioning().getAnticipatedTime().compareTo(o2.getProvisioning().getAnticipatedTime());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcpListTable.addColumn(anticipatedTimeColumn, "Anticipated Time");
 
 		// Actual time
-		Column<VpcpPojo, String> actualTimeColumn = 
-				new Column<VpcpPojo, String> (new TextCell()) {
+		Column<VpcpSummaryPojo, String> actualTimeColumn = 
+				new Column<VpcpSummaryPojo, String> (new TextCell()) {
 
 			@Override
-			public String getValue(VpcpPojo object) {
-				return formatMillisForDisplay(object.getActualTime());
+			public String getValue(VpcpSummaryPojo object) {
+				if (object.isProvision()) {
+					return formatMillisForDisplay(object.getProvisioning().getActualTime());
+				}
+				else {
+					return formatMillisForDisplay(object.getDeprovisioning().getActualTime());
+				}
 			}
 		};
 		actualTimeColumn.setSortable(true);
-		sortHandler.setComparator(actualTimeColumn, new Comparator<VpcpPojo>() {
-			public int compare(VpcpPojo o1, VpcpPojo o2) {
-				return o1.getActualTime().compareTo(o2.getActualTime());
+		sortHandler.setComparator(actualTimeColumn, new Comparator<VpcpSummaryPojo>() {
+			public int compare(VpcpSummaryPojo o1, VpcpSummaryPojo o2) {
+				if (o1.isProvision() && o2.isProvision()) {
+					return o1.getProvisioning().getActualTime().compareTo(o2.getProvisioning().getActualTime());
+				}
+				else if (o1.isProvision() && !o2.isProvision()) {
+					return o1.getProvisioning().getActualTime().compareTo(o2.getDeprovisioning().getActualTime());
+				}
+				else if (!o1.isProvision() && !o2.isProvision()) {
+					return o1.getDeprovisioning().getActualTime().compareTo(o2.getDeprovisioning().getActualTime());
+				}
+				else if (!o1.isProvision() && o2.isProvision()) {
+					return o1.getDeprovisioning().getActualTime().compareTo(o2.getProvisioning().getActualTime());
+				}
+				else {
+					return 0;
+				}
 			}
 		});
 		vpcpListTable.addColumn(actualTimeColumn, "Actual Time");
@@ -403,13 +554,19 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 		// Provisioning steps progress status
 		final SafeHtmlCell stepProgressCell = new SafeHtmlCell();
 
-		Column<VpcpPojo, SafeHtml> stepProgressCol = new Column<VpcpPojo, SafeHtml>(
+		Column<VpcpSummaryPojo, SafeHtml> stepProgressCol = new Column<VpcpSummaryPojo, SafeHtml>(
 				stepProgressCell) {
 
 			@Override
-			public SafeHtml getValue(VpcpPojo value) {
-				SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getTotalStepCount(), value.getCompletedSuccessfulCount());
-				return sh;
+			public SafeHtml getValue(VpcpSummaryPojo value) {
+				if (value.isProvision()) {
+					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getProvisioning().getTotalStepCount(), value.getProvisioning().getCompletedSuccessfulCount());
+					return sh;
+				}
+				else {
+					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getDeprovisioning().getTotalStepCount(), value.getDeprovisioning().getCompletedSuccessfulCount());
+					return sh;
+				}
 			}
 		};		 
 		vpcpListTable.addColumn(stepProgressCol, "Progress");
@@ -439,8 +596,8 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 	}
 
 	@Override
-	public void removeVpcpFromView(VpcpPojo vpcp) {
-		dataProvider.getList().remove(vpcp);
+	public void removeVpcpSummaryFromView(VpcpSummaryPojo summary) {
+		dataProvider.getList().remove(summary);
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
-import edu.emory.oit.vpcprovisioning.shared.VpcpPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcpSummaryPojo;
 
 public class VpcpStatusPlace extends Place {
 	/**
@@ -44,8 +44,13 @@ public class VpcpStatusPlace extends Place {
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 * @return the place
 	 */
-	public static VpcpStatusPlace createVpcpStatusPlace(VpcpPojo vpcp) {
-		return new VpcpStatusPlace(vpcp.getProvisioningId(), vpcp);
+	public static VpcpStatusPlace createVpcpStatusPlace(VpcpSummaryPojo vpcpSummary) {
+		if (vpcpSummary.isProvision()) {
+			return new VpcpStatusPlace(vpcpSummary.getProvisioning().getProvisioningId(), vpcpSummary);
+		}
+		else {
+			return new VpcpStatusPlace(vpcpSummary.getDeprovisioning().getProvisioningId(), vpcpSummary);
+		}
 	}
 
 	/**
@@ -61,7 +66,8 @@ public class VpcpStatusPlace extends Place {
 		return singleton;
 	}
 
-	private final VpcpPojo vpcp;
+	private final VpcpSummaryPojo vpcpSummary;
+//	private final VpcpPojo vpcp;
 	private final String provisioningId;
 	public String getProvisioningId() {
 		return provisioningId;
@@ -73,17 +79,17 @@ public class VpcpStatusPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private VpcpStatusPlace(String provisioningId, VpcpPojo vpcp) {
+	private VpcpStatusPlace(String provisioningId, VpcpSummaryPojo vpcpSummary) {
 		this.provisioningId = provisioningId;
-		this.vpcp = vpcp;
+//		this.vpcp = vpcp;
+		this.vpcpSummary = vpcpSummary;
 	}
 
-	/**
-	 * Get the caseRecord to edit.
-	 * 
-	 * @return the caseRecord to edit, or null if not available
-	 */
-	public VpcpPojo getVpcp() {
-		return vpcp;
+//	public VpcpPojo getVpcp() {
+//		return vpcp;
+//	}
+
+	public VpcpSummaryPojo getVpcpSummary() {
+		return vpcpSummary;
 	}
 }

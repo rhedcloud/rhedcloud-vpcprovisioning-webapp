@@ -10,11 +10,14 @@ import com.google.web.bindery.event.shared.SimpleEventBus;
 
 import edu.emory.oit.vpcprovisioning.client.activity.AppActivityMapper;
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopAccountProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopAppShell;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopBillSummary;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopCalculateSecurityRisk;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopDeprovisionAccount;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopHome;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListAccount;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListAccountProvisioning;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCentralAdmin;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidrAssignment;
@@ -62,6 +65,9 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpncpStatus;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountView;
 import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.AccountProvisioningStatusView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.DeprovisionAccountView;
+import edu.emory.oit.vpcprovisioning.presenter.acctprovisioning.ListAccountProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.cidr.ListCidrView;
@@ -173,6 +179,9 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListResourceTaggingProfileView listResourceTaggingProfileView;
 	private MaintainResourceTaggingProfileView maintainResourceTaggingProfileView;
 	private CalculateSecurityRiskView calculateSecurityRiskView;
+	private ListAccountProvisioningView listAccountProvisioningView;
+	private DeprovisionAccountView deprovisionAccountView;
+	private AccountProvisioningStatusView accountProvisioningStatusView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -733,5 +742,35 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
     protected CalculateSecurityRiskView createCalculateSecurityRiskView() {
         return new DesktopCalculateSecurityRisk();
+    }
+	@Override
+	public ListAccountProvisioningView getListAccountProvisioningView() {
+        if (listAccountProvisioningView == null) {
+        	listAccountProvisioningView = createListAccountProvisioningView();
+        }
+        return listAccountProvisioningView;
+	}
+    protected ListAccountProvisioningView createListAccountProvisioningView() {
+        return new DesktopListAccountProvisioning();
+    }
+	@Override
+	public DeprovisionAccountView getDeprovisionAccountView() {
+        if (deprovisionAccountView == null) {
+        	deprovisionAccountView = createDeprovisionAccountView();
+        }
+        return deprovisionAccountView;
+	}
+    protected DeprovisionAccountView createDeprovisionAccountView() {
+        return new DesktopDeprovisionAccount();
+    }
+	@Override
+	public AccountProvisioningStatusView getAccountProvisioningStatusView() {
+        if (accountProvisioningStatusView == null) {
+        	accountProvisioningStatusView = createAccountProvisioningStatusView();
+        }
+        return accountProvisioningStatusView;
+	}
+    protected AccountProvisioningStatusView createAccountProvisioningStatusView() {
+        return new DesktopAccountProvisioningStatus();
     }
 }
