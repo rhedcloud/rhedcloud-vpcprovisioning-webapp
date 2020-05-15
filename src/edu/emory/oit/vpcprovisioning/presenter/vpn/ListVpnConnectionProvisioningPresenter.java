@@ -123,7 +123,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	 * Refresh the CIDR list.
 	 */
 	public void refreshList(final UserAccountPojo user) {
-		getView().showPleaseWaitDialog("Retrieving VPN Provisioning items from the Network OPs Service...");
+//		getView().showPleaseWaitDialog("Retrieving VPN Provisioning items from the Network OPs Service...");
 		// use RPC to get all Vpcs for the current filter being used
 		AsyncCallback<VpnConnectionProvisioningQueryResultPojo> callback = new AsyncCallback<VpnConnectionProvisioningQueryResultPojo>() {
 			@Override
@@ -174,7 +174,7 @@ public class ListVpnConnectionProvisioningPresenter extends PresenterBase implem
 	@Override
 	public void refreshListWithAllVpnConnectionProvisionings(UserAccountPojo user) {
         getView().hidePleaseWaitDialog();
-		getView().showPleaseWaitDialog("Retrieving ALL VPCP objects from the AWS Account service (this could take a while)...");
+		getView().showPleaseWaitDialog("Retrieving ALL VPNP objects from the Network OPS service (this could take a while)...");
 
 		filter = new VpnConnectionProvisioningQueryFilterPojo();
 		filter.setAllVpncps(true);
