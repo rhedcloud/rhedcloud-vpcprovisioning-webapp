@@ -2047,8 +2047,13 @@ public class AppBootstrapper {
 				});
 				presenter.setAccountDeprovisioningDialog(db);
 				db.setWidget(presenter);
-				db.show();
-				db.center();
+				if (event.getActionSourceWidget() != null) {
+					db.showRelativeTo(event.getActionSourceWidget());
+				}
+				else {
+					db.show();
+					db.center();
+				}
 			}
 		});
 

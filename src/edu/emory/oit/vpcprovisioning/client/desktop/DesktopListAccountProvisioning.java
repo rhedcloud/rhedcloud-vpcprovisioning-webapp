@@ -813,7 +813,7 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 				req.setAccountId(selectedAccount.getAccountId());
 				req.setRequestorId(selectedRequestor.getKey());
 				req.setFromProvisioningList(true);
-				ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION, req, selectedAccount);
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION, generateButton, req, selectedAccount);
 			}
 		});
 

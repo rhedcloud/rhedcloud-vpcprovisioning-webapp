@@ -294,6 +294,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 						// dialog for terminating account
 						AccountDeprovisioningRequisitionPojo req = new AccountDeprovisioningRequisitionPojo();
 						req.setAccountId(m.getAccountId());
+						req.setRequestorId(userLoggedIn.getPublicId());
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION, req, m);
 //						ActionEvent.fire(presenter.getEventBus(), ActionNames.INCIDENT_TERMINATE_ACCOUNT, m);
 					}

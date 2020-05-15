@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.place.shared.Place;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
@@ -132,6 +133,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private ResourceTaggingProfilePojo resourceTaggingProfile;
 	private AccountProvisioningSummaryPojo accountProvisioningSummary;
 	private AccountDeprovisioningRequisitionPojo acctDeprovisioningRequisition;
+	private Widget actionSourceWidget;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -806,6 +808,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.accountProvisioningSummary = summary;
 	}
 
+	public ActionEvent(Widget actionSourceWidget, AccountDeprovisioningRequisitionPojo requisition, AccountPojo account) {
+		this.acctDeprovisioningRequisition = requisition;
+		this.account = account;
+		this.actionSourceWidget = actionSourceWidget;
+	}
+
 	public ActionEvent(AccountDeprovisioningRequisitionPojo requisition, AccountPojo account) {
 		this.acctDeprovisioningRequisition = requisition;
 		this.account = account;
@@ -1171,16 +1179,30 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	}
 
 	public static void fire(EventBus eventBus, String sourceName,
+			Widget actionSourceWidget, AccountDeprovisioningRequisitionPojo requisition, AccountPojo account) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(actionSourceWidget, requisition, account), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName,
 			AccountDeprovisioningRequisitionPojo requisition, AccountPojo account) {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(requisition, account), sourceName);
 	}
-
+	
 	public AccountDeprovisioningRequisitionPojo getAcctDeprovisioningRequisition() {
 		return acctDeprovisioningRequisition;
 	}
 
 	public void setAcctDeprovisioningRequisition(AccountDeprovisioningRequisitionPojo acctDeprovisioningRequisition) {
 		this.acctDeprovisioningRequisition = acctDeprovisioningRequisition;
+	}
+
+	public Widget getActionSourceWidget() {
+		return actionSourceWidget;
+	}
+
+	public void setActionSourceWidget(Widget actionSourceWidget) {
+		this.actionSourceWidget = actionSourceWidget;
 	}
 }
