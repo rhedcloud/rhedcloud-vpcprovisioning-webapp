@@ -131,9 +131,9 @@ public class ListAccountProvisioningPresenter extends PresenterBase implements L
 			public void onFailure(Throwable caught) {
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
-				log.log(Level.SEVERE, "Exception Retrieving VPNs", caught);
+				log.log(Level.SEVERE, "Exception Retrieving Account Provisioning/Deprovisioning items", caught);
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving your list of VPNs.  " +
+						"server retrieving your list of Account Provisioning/Deprovisioning items  " +
 						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
@@ -163,7 +163,7 @@ public class ListAccountProvisioningPresenter extends PresenterBase implements L
 	@Override
 	public void refreshListWithMaximumAccountProvisionings(UserAccountPojo user) {
         getView().hidePleaseWaitDialog();
-		getView().showPleaseWaitDialog("Retrieving the default maximum list of VPNP objects from the Network OPs service...");
+		getView().showPleaseWaitDialog("Retrieving the default maximum list of Account Provisioning/Deprovisioning objects from the Network OPs service...");
 
 		filter = new AccountProvisioningQueryFilterPojo();
 		filter.setAllObjects(false);
@@ -175,7 +175,7 @@ public class ListAccountProvisioningPresenter extends PresenterBase implements L
 	@Override
 	public void refreshListWithAllAccountProvisionings(UserAccountPojo user) {
         getView().hidePleaseWaitDialog();
-		getView().showPleaseWaitDialog("Retrieving ALL VPCP objects from the AWS Account service (this could take a while)...");
+		getView().showPleaseWaitDialog("Retrieving ALL Account Provisioning/Deprovisioning items from the AWS Account service (this could take a while)...");
 
 		filter = new AccountProvisioningQueryFilterPojo();
 		filter.setAllObjects(true);
@@ -259,52 +259,15 @@ public class ListAccountProvisioningPresenter extends PresenterBase implements L
 
 	@Override
 	public void vpcpConfirmOkay() {
-//		AsyncCallback<AccountDeprovisioningPojo> callback = new AsyncCallback<AccountDeprovisioningPojo>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				getView().hidePleaseWaitDialog();
-//				GWT.log("Exception generating the AccountDeprovisioning", caught);
-//				getView().showMessageToUser("There was an exception on the " +
-//						"server generating the AccountDeprovisioning.  Message " +
-//						"from server is: " + caught.getMessage());
-//			}
-//
-//			@Override
-//			public void onSuccess(AccountDeprovisioningPojo result) {
-//				getView().hidePleaseWaitDialog();
-//				// if it was a generate, we'll take them to the VPNCP status view
-//				// So we won't go directly back
-//				// to the list just yet but instead, we'll show them an immediate 
-//				// status and give them the opportunity to watch it for a bit
-//				// before they go back.  So, we'll only fire the VPCP_SAVED event 
-//				// when/if it's an update and not on the generate.  As of right now
-//				// we don't think there will be a VPCP update so the update handling 
-//				// stuff is just here to maintain consistency and if we ever decide
-//				// a VPCP can be updated, we'll already have the flow here.
-//				// show VPNCP status page
-//				final AccountDeprovisioningPojo vpncdp = result;
-//				GWT.log("VPNCDP was generated on the server, showing status page.  "
-//						+ "VPNCDP is: " + vpncdp);
-//				AccountProvisioningSummaryPojo vpncpSummary = new AccountProvisioningSummaryPojo();
-//				vpncpSummary.setDeprovisioning(vpncdp);
-//				ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
-//			}
-//		};
-//		getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
-//		VpcProvisioningService.Util.getInstance().generateAccountDeprovisioning(selectedProvisioning.getRequisition(), callback);
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
-		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN was NOT deprovisioned");
+		getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  Account was NOT deprovisioned");
 	}
 
 	@Override
 	public void getAccountDeprovisioningConfirmation(List<AccountDeprovisioningRequisitionPojo> requisitions) {
-		// TODO: Show the terminate account dialog where they have to answser questions
-		// and type in the account name or id (see MaintainIncident which is where this is done currently)
-		// If they answer the questions and click on the button on that account, the accounts will be
-		// deprovisioned there.  This will all be done in the DeprovisionAccountConfirmation place/presenter/view
 	}
 
 	@Override
@@ -332,71 +295,5 @@ public class ListAccountProvisioningPresenter extends PresenterBase implements L
 		getView().showPleaseWaitDialog("Retrieving accounts...");
 		VpcProvisioningService.Util.getInstance().getAccountsForFilter(null, acct_cb);
 	}
-
-//	@Override
-//	public void saveProvisioning(AccountProvisioningPojo pojo) {
-//		// update the provisioning object 
-//        getView().hidePleaseWaitDialog();
-//		getView().showPleaseWaitDialog("Saving VPN Connection Provisioning object...");
-//		AsyncCallback<AccountProvisioningPojo> cb = new AsyncCallback<AccountProvisioningPojo>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//                getView().hidePleaseWaitPanel();
-//                getView().hidePleaseWaitDialog();
-//                getView().disableButtons();
-//				getView().showMessageToUser("There was an exception on the " +
-//						"server updating the VPN Connection Provisioning object.  " +
-//						"<p>Message from server is: " + caught.getMessage() + "</p>");
-//			}
-//
-//			@Override
-//			public void onSuccess(AccountProvisioningPojo result) {
-//		        getView().hidePleaseWaitDialog();
-//				// Request the Vpc list now.
-//				if (getView().viewAllAccountProvisionings()) {
-//					// show all of them
-//					refreshListWithAllAccountProvisionings(userLoggedIn);
-//				}
-//				else {
-//					// only show the default maximum
-//					refreshListWithMaximumAccountProvisionings(userLoggedIn);
-//				}
-//			}
-//		};
-//		VpcProvisioningService.Util.getInstance().updateAccountProvisioning(pojo, cb);
-//	}
-//
-//	@Override
-//	public void saveDeprovisioning(AccountDeprovisioningPojo pojo) {
-//		// update the deprovisioning object
-//        getView().hidePleaseWaitDialog();
-//		getView().showPleaseWaitDialog("Saving VPN Connection Deprovisioning object...");
-//		AsyncCallback<AccountDeprovisioningPojo> cb = new AsyncCallback<AccountDeprovisioningPojo>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//                getView().hidePleaseWaitPanel();
-//                getView().hidePleaseWaitDialog();
-//                getView().disableButtons();
-//				getView().showMessageToUser("There was an exception on the " +
-//						"server updating the VPN Connection Deprovisioning object.  " +
-//						"<p>Message from server is: " + caught.getMessage() + "</p>");
-//			}
-//
-//			@Override
-//			public void onSuccess(AccountDeprovisioningPojo result) {
-//		        getView().hidePleaseWaitDialog();
-//				// Request the Vpc list now.
-//				if (getView().viewAllAccountProvisionings()) {
-//					// show all of them
-//					refreshListWithAllAccountProvisionings(userLoggedIn);
-//				}
-//				else {
-//					// only show the default maximum
-//					refreshListWithMaximumAccountProvisionings(userLoggedIn);
-//				}
-//			}
-//		};
-//		VpcProvisioningService.Util.getInstance().updateAccountDeprovisioning(pojo, cb);
-//	}
 
 }

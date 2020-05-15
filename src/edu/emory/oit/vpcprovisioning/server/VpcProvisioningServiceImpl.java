@@ -13269,6 +13269,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			AccountDeprovisioningRequisitionPojo pojo) {
 
 		pojo.setAccountId(moa.getAccountId());
+		pojo.setRequestorId(moa.getAuthenticatedRequestorUserId());
 	}
 
 	@Override
@@ -13277,25 +13278,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 		info("[generateAccountDeprovisioning] preparing an AccountDeprovisioning.Generate-Request");
 		
-		// temporary until the service is functional
-//		if (true) {
-//			AccountDeprovisioningPojo fakePojo = new AccountDeprovisioningPojo();
-//			fakePojo.setDeprovisioningId("fakeId");
-//			fakePojo.setStatus("fakeStatus");
-//			fakePojo.setDeprovisioningResult("fakeResult");
-//			fakePojo.setActualTime("30000");
-//			fakePojo.setAnticipatedTime("30000");
-//			fakePojo.setRequisition(requisition);
-//			info("[generateAccountDeprovisioning] returning fake AccountDeprovisioning pojo");
-//			return fakePojo;
-//		}
-		
 		try {
 			info("generating AccountDeprovisioning on the server...");
 			AccountDeprovisioning actionable = (AccountDeprovisioning) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING);
 			AccountDeprovisioningRequisition seed = (AccountDeprovisioningRequisition) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING_REQUISITION);
 			info("populating moa");
 			seed.setAccountId(requisition.getAccountId());
+			seed.setAuthenticatedRequestorUserId(requisition.getRequestorId());
 
 			
 			info("doing the AccountDeprovisioning.generate...");

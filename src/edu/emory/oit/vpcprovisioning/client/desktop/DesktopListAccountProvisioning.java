@@ -52,6 +52,8 @@ import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.common.AwsAccountRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.AwsAccountSuggestion;
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
@@ -62,6 +64,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class DesktopListAccountProvisioning extends ViewImplBase implements ListAccountProvisioningView {
@@ -72,8 +75,10 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
 	DialogBox accountSelectionDialog = new DialogBox();
+	DirectoryPersonRpcSuggestOracle personSuggestions;
 	AwsAccountRpcSuggestOracle accountSuggestions;
 	AccountPojo selectedAccount;
+	DirectoryPersonPojo selectedRequestor;
 
 	/*** FIELDS ***/
 	@UiField(provided=true) SimplePager topListPager = new SimplePager(TextLocation.RIGHT, false, true);
@@ -345,6 +350,8 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 		accountSuggestions = new AwsAccountRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
 		filterTB.setText("");
 		filterTB.getElement().setPropertyString("placeholder", "enter a provisioning id");
+		
+		personSuggestions  = new DirectoryPersonRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
 	}
 
 	@Override
@@ -690,19 +697,16 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 
 		// Provisioning steps progress status
 		final SafeHtmlCell stepProgressCell = new SafeHtmlCell();
-
 		Column<AccountProvisioningSummaryPojo, SafeHtml> stepProgressCol = new Column<AccountProvisioningSummaryPojo, SafeHtml>(
 				stepProgressCell) {
 
 			@Override
 			public SafeHtml getValue(AccountProvisioningSummaryPojo value) {
 				if (value.isProvision()) {
-					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getProvisioning().getTotalStepCount(), value.getProvisioning().getCompletedSuccessfulCount());
-					return sh;
+					return HTMLUtils.getProgressBarSafeHtml(value.getProvisioning().getTotalStepCount(), value.getProvisioning().getCompletedSuccessfulCount());
 				}
 				else {
-					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getDeprovisioning().getTotalStepCount(), value.getDeprovisioning().getCompletedSuccessfulCount());
-					return sh;
+					return HTMLUtils.getProgressBarSafeHtml(value.getDeprovisioning().getTotalStepCount(), value.getDeprovisioning().getCompletedSuccessfulCount());
 				}
 			}
 		};		 
@@ -711,7 +715,7 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 
 	@Override
 	public void showAccountSelectionList(final List<AccountPojo> accounts) {
-		// TODO: show a popup that allows them to select one (or more?) accounts to deprovision
+		// show a popup that allows them to select one (or more?) accounts to deprovision
 		accountSelectionDialog.clear();
 		accountSelectionDialog.setText("Select Account(s) to Deprovision");
 		accountSelectionDialog.setGlassEnabled(true);
@@ -724,7 +728,7 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 		accountSelectionDialog.setWidget(vp);
 		
 		Grid grid;
-		grid = new Grid(1,2);
+		grid = new Grid(2,3);
 
 		grid.setCellSpacing(8);
 		vp.add(grid);
@@ -768,6 +772,31 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 		accountSB.addStyleName("longField");
 		accountSB.addStyleName("glowing-border");
 		grid.setWidget(0, 1, accountSB);
+		
+		// requestor suggestbox
+		Label l_requestor = new Label("Enter the requestor:");
+		l_requestor.addStyleName("label");
+		l_requestor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+		l_requestor.getElement().getStyle().setFontSize(14, Unit.PX);
+		l_requestor.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
+		grid.setWidget(1, 0, l_requestor);
+
+		final SuggestBox requestorLookupSB = new SuggestBox(personSuggestions, new TextBox());
+		requestorLookupSB.setText("");
+		requestorLookupSB.getElement().setPropertyString("placeholder", "Enter requestor's (case insensitive)");
+		requestorLookupSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				DirectoryPersonSuggestion suggestion = (DirectoryPersonSuggestion)event.getSelectedItem();
+				if (suggestion.getDirectoryPerson() != null) {
+					selectedRequestor = suggestion.getDirectoryPerson();
+				}
+			}
+		});
+
+		requestorLookupSB.addStyleName("longField");
+		requestorLookupSB.addStyleName("glowing-border");
+		grid.setWidget(1, 1, requestorLookupSB);
 
 
 		Grid buttonGrid;
@@ -789,6 +818,7 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 //				String acct_id = accts_lb.getSelectedValue();
 				AccountDeprovisioningRequisitionPojo req = new AccountDeprovisioningRequisitionPojo();
 				req.setAccountId(selectedAccount.getAccountId());
+				req.setRequestorId(selectedRequestor.getKey());
 				req.setFromProvisioningList(true);
 //				req.setAccountId(acct_id);
 //				AccountPojo account = getAccountForId(selectedAccountId, accounts);

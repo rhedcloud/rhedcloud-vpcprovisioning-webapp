@@ -6,6 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class AccountDeprovisioningRequisitionPojo extends SharedObject implements IsSerializable {
 
 	String accountId;
+	String requestorId;
 	boolean fromProvisioningList;
 	
 	public AccountDeprovisioningRequisitionPojo() {
@@ -26,6 +27,14 @@ public class AccountDeprovisioningRequisitionPojo extends SharedObject implement
 
 	public void setFromProvisioningList(boolean fromProvisioningList) {
 		this.fromProvisioningList = fromProvisioningList;
+	}
+
+	public void setRequestorId(String key) {
+		requestorId = key;
+	}
+
+	public String getRequestorId() {
+		return requestorId;
 	}
 
 }
