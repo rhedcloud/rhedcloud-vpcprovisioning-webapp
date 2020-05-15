@@ -213,21 +213,28 @@ public class AccountProvisioningStatusPresenter extends PresenterBase implements
 						if (provisioning.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
 							getView().stopTimer();
 						}
+						else {
+							// start the timer
+			                if (!getView().isTimerRunning()) {
+								getView().startTimer(5000);
+			                }
+						}
 					}
 					else {
 						setDeprovisioning(result.getResults().get(0).getDeprovisioning());
 						if (deprovisioning.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
 							getView().stopTimer();
 						}
+						else {
+							// start the timer
+			                if (!getView().isTimerRunning()) {
+								getView().startTimer(5000);
+			                }
+						}
 					}
 					getView().refreshProvisioningStatusInformation();
 	                getView().hidePleaseWaitDialog();
 	                getView().hidePleaseWaitPanel();
-
-					// start the timer
-	                if (!getView().isTimerRunning()) {
-						getView().startTimer(5000);
-	                }
 				}
 			}
 		};

@@ -8,10 +8,12 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
@@ -52,7 +54,8 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 	@UiField Label provisioningResultLabel;
 	@UiField Label anticipatedTimeLabel;
 	@UiField Label actualTimeLabel;
-	
+	@UiField Label requestorLabel;
+
 	@UiField HTML progressHTML;
 	@UiField VerticalPanel stepsPanel;
 
@@ -61,6 +64,17 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 			.create(DesktopAccountProvisioningStatusUiBinder.class);
 
 	interface DesktopAccountProvisioningStatusUiBinder extends UiBinder<Widget, DesktopAccountProvisioningStatus> {
+	}
+
+	@UiHandler ("requestorLabel")
+	void requestorMouseOver(MouseOverEvent e) {
+		if (presenter.getProvisioningSummary().isProvision()) {
+//			presenter.setDirectoryMetaDataTitleOnWidget(presenter.getProvisioningSummary().getProvisioning().getRequisition().getAuthenticatedRequestorUserId(), requestorNetIdLabel);
+		}
+		else {
+			presenter.setDirectoryMetaDataTitleOnWidget(presenter.getProvisioningSummary().getDeprovisioning().getRequisition().getRequestorId(), requestorLabel);
+			
+		}
 	}
 
 	public DesktopAccountProvisioningStatus() {
@@ -278,6 +292,7 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 			provisioningIdLabel.setText(presenter.getProvisioning().getProvisioningId());
 			provisioningTypeLabel.setText(Constants.VPN_PROVISIONING);
 			statusLabel.setText(presenter.getProvisioning().getStatus());
+//			requestorLabel.setText(presenter.getProvisioning().getRequisition().getRequestorId());
 			if (presenter.getProvisioning().getProvisioningResult() == null) {
 				provisioningResultLabel.setText(Constants.NOT_APPLICABLE);
 			}
@@ -291,6 +306,7 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 			provisioningIdLabel.setText(presenter.getDeprovisioning().getDeprovisioningId());
 			provisioningTypeLabel.setText(Constants.VPN_DEPROVISIONING);
 			statusLabel.setText(presenter.getDeprovisioning().getStatus());
+			requestorLabel.setText(presenter.getDeprovisioning().getRequisition().getRequestorId());
 			if (presenter.getDeprovisioning().getDeprovisioningResult() == null) {
 				provisioningResultLabel.setText(Constants.NOT_APPLICABLE);
 			}
@@ -455,6 +471,7 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 		provisioningResultLabel.setText("");
 		anticipatedTimeLabel.setText("");
 		actualTimeLabel.setText("");
+		requestorLabel.setText("");
 		stepsPanel.clear();
 		setProvisioningProgress();
 	}

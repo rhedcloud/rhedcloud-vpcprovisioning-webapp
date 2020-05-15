@@ -3973,6 +3973,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			((PointToPointProducer) reqSvc)
 				.setRequestTimeoutInterval(interval);
 
+			info("VpcpProvisonningQuerySpec: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
 			List<VirtualPrivateCloudProvisioning> moas = 
 				actionable.query(queryObject, reqSvc);

@@ -97,6 +97,22 @@
 							<g:Label ui:field="actualTimeLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
 					</g:row>
+					<g:row>
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Requestor:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="requestorLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	<!-- 
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="ownerLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
+				    	 -->
+					</g:row>
     			</g:Grid>
     			<g:Grid ui:field="progressGrid" cellSpacing ="8">
 					<g:row>
