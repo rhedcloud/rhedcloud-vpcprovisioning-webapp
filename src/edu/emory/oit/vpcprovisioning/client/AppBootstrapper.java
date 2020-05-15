@@ -2024,8 +2024,6 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.SHOW_ACCOUNT_PROVISIONING_STATUS, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
-				VpcpAlert.alert("Info", "Comming soon...");
-
 				placeController.goTo(AccountProvisioningStatusPlace.createAccountProvisioningStatusPlace(event.getAccountProvisioningSummary()));
 			}
 		});
