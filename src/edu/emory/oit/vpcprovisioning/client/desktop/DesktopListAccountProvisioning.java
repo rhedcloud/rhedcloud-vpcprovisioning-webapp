@@ -9,7 +9,11 @@ import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -74,7 +78,7 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 	List<AccountProvisioningSummaryPojo> provisioningSummaries = new java.util.ArrayList<AccountProvisioningSummaryPojo>();
 	UserAccountPojo userLoggedIn;
 	PopupPanel actionsPopup = new PopupPanel(true);
-	DialogBox accountSelectionDialog = new DialogBox();
+	PopupPanel accountSelectionPopup = new PopupPanel(true);
 	DirectoryPersonRpcSuggestOracle personSuggestions;
 	AwsAccountRpcSuggestOracle accountSuggestions;
 	AccountPojo selectedAccount;
@@ -347,6 +351,8 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 
 	@Override
 	public void initPage() {
+		selectedAccount = null;
+		selectedRequestor = null;
 		accountSuggestions = new AwsAccountRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
 		filterTB.setText("");
 		filterTB.getElement().setPropertyString("placeholder", "enter a provisioning id");
@@ -716,16 +722,14 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 	@Override
 	public void showAccountSelectionList(final List<AccountPojo> accounts) {
 		// show a popup that allows them to select one (or more?) accounts to deprovision
-		accountSelectionDialog.clear();
-		accountSelectionDialog.setText("Select Account(s) to Deprovision");
-		accountSelectionDialog.setGlassEnabled(true);
-		accountSelectionDialog.setAnimationEnabled(true);
-		accountSelectionDialog.center();
-		accountSelectionDialog.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		accountSelectionPopup.clear();
+		accountSelectionPopup.setAnimationEnabled(true);
+		accountSelectionPopup.setAutoHideEnabled(true);
+		accountSelectionPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
 		VerticalPanel vp = new VerticalPanel();
 		vp.setSpacing(8);
-		accountSelectionDialog.setWidget(vp);
+		accountSelectionPopup.setWidget(vp);
 		
 		Grid grid;
 		grid = new Grid(2,3);
@@ -733,29 +737,13 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 		grid.setCellSpacing(8);
 		vp.add(grid);
 		
-		Label l_accts = new Label("Select Account(s):");
+		Label l_accts = new Label("Select Account:");
 		l_accts.addStyleName("label");
 		l_accts.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		l_accts.getElement().getStyle().setFontSize(14, Unit.PX);
 		l_accts.getElement().getStyle().setTextAlign(TextAlign.RIGHT);
 		grid.setWidget(0, 0, l_accts);
 
-//		final ListBox accts_lb = new ListBox();
-//		accts_lb.setMultipleSelect(false);
-//		accts_lb.addStyleName("listBoxField");
-//		accts_lb.addStyleName("glowing-border");
-//		accts_lb.getElement().getStyle().setWidth(300, Unit.PX);
-//		if (!accts_lb.isMultipleSelect()) {
-//			accts_lb.addItem("-- Select --", "");
-//		}
-//		else {
-//			accts_lb.setVisibleItemCount(25);
-//		}
-//		for (AccountPojo acct : accounts) {
-//			accts_lb.addItem(acct.getAccountId() + " - " + acct.getAccountName(), acct.getAccountId());
-//		}
-//		grid.setWidget(0, 1, accts_lb);
-		
 		final SuggestBox accountSB = new SuggestBox(accountSuggestions, new TextBox());
 		accountSB.setText("");
 		accountSB.getElement().setPropertyString("placeholder", "Enter Account ID, Name or Alternate Name (case insensitive)");
@@ -806,35 +794,37 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 		vp.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
 		
 		Button okayButton = new Button("Okay");
-		okayButton.addStyleName("normalButton");
-		okayButton.addStyleName("glowing-border");
+//		okayButton.addStyleName("normalButton");
+//		okayButton.addStyleName("glowing-border");
+		applyNormalButtonStyles(okayButton);
 		okayButton.setWidth("105px");
 		buttonGrid.setWidget(0, 0, okayButton);
 		okayButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				// TODO: get the account and confirm they want to deprovision etc.
-				accountSelectionDialog.hide();
-//				String acct_id = accts_lb.getSelectedValue();
+				// confirm they've selected an account an a requestor
+				if (selectedAccount == null || selectedRequestor == null) {
+					showMessageToUser("Please select an account AND and an authorized requestor.");
+					return;
+				}
+				// get the account and the authorized requestor and confirm they want to deprovision etc.
+				accountSelectionPopup.hide();
 				AccountDeprovisioningRequisitionPojo req = new AccountDeprovisioningRequisitionPojo();
 				req.setAccountId(selectedAccount.getAccountId());
 				req.setRequestorId(selectedRequestor.getKey());
 				req.setFromProvisioningList(true);
-//				req.setAccountId(acct_id);
-//				AccountPojo account = getAccountForId(selectedAccountId, accounts);
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION, req, selectedAccount);
 			}
 		});
 
 		Button cancelButton = new Button("Cancel");
-		cancelButton.addStyleName("normalButton");
-		cancelButton.addStyleName("glowing-border");
+		applyNormalButtonStyles(cancelButton);
 		cancelButton.setWidth("105px");
 		buttonGrid.setWidget(0, 1, cancelButton);
 		cancelButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				accountSelectionDialog.hide();
+				accountSelectionPopup.hide();
 			}
 		});
 		
@@ -844,8 +834,9 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 	        }
 	    });
 
-		accountSelectionDialog.show();
-		accountSelectionDialog.center();
+//		accountSelectionDialog.show();
+//		accountSelectionDialog.center();
+		accountSelectionPopup.showRelativeTo(generateButton);
 	}
 	
 	private AccountPojo getAccountForId(String acctId, List<AccountPojo> accounts) {
@@ -855,5 +846,46 @@ public class DesktopListAccountProvisioning extends ViewImplBase implements List
 			}
 		}
 		return null;
+	}
+	
+	public void applyNormalButtonStyles(Button button) {
+		/*
+		border: 1px solid #ccc !important;
+		background: -moz-linear-gradient(top, #f6f6f6 0%, #e0e0e0) !important;
+		box-shadow: 0 0 0 rgba(000,000,000,0),inset 0 0 2px rgba(255,255,255,1) !important;
+		text-shadow: 0 1px 0 rgba(255, 255, 255, 1),0 0 0 rgba(255, 255, 255, 0) !important;
+		font-weight: bold !important;
+		cursor: pointer !important;
+		text-transform: none !important;
+		overflow: visible !important;
+		padding-top: 5px !important;
+		padding-bottom: 5px !important;
+		padding-left: 10px !important;
+		padding-right: 10px !important;
+		border-radius: 3px !important;
+		min-width: 105px !important;
+		display: inline-block !important;
+		height: 35px !important;
+		text-align: center !important;
+		font-size: 14px !important;
+		color: #444 !important;
+		 */
+		
+//		button.getElement().getStyle().setBorderColor("#ccc");
+//		button.getElement().getStyle().setBorderWidth(1, Unit.PX);
+//		button.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		button.getElement().getStyle().setBackgroundColor("-moz-linear-gradient(top, #f6f6f6 0%, #e0e0e0)");
+		button.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+//		button.getElement().getStyle().setCursor(Cursor.POINTER);
+//		button.getElement().getStyle().setOverflow(Overflow.VISIBLE);
+//		button.getElement().getStyle().setPaddingTop(5, Unit.PX);
+//		button.getElement().getStyle().setPaddingBottom(5, Unit.PX);
+//		button.getElement().getStyle().setPaddingLeft(10, Unit.PX);
+//		button.getElement().getStyle().setPaddingRight(10, Unit.PX);
+//		button.getElement().getStyle().setDisplay(Display.INLINE_BLOCK);
+//		button.getElement().getStyle().setHeight(35, Unit.PX);
+//		button.getElement().getStyle().setTextAlign(TextAlign.CENTER);
+//		button.getElement().getStyle().setFontSize(14, Unit.PX);
+//		button.getElement().getStyle().setColor("#444");
 	}
 }

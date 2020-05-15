@@ -1,20 +1,28 @@
 package edu.emory.oit.vpcprovisioning.client.ui;
 
+import com.google.gwt.dom.client.Style.Clear;
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.safecss.shared.SafeStylesBuilder;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 public abstract class HTMLUtils {
 
 	public static SafeHtml getProgressBarSafeHtml(int totalSteps, int completedSteps) {
+		SafeStylesBuilder b = new SafeStylesBuilder();
+		b.clear(Clear.BOTH);
+		b.display(Display.BLOCK);
+		
         SafeHtmlBuilder sb = new SafeHtmlBuilder();
         float percent = new Float(completedSteps)
                 / new Float(totalSteps);
         int rounded = Math.round(percent * 100);
+//        sb.appendHtmlConstant("<div style='content: \"\"; clear: both; display: table-cell;'>");
         sb.appendHtmlConstant("<div style='width: 250px; height: 20px; position: relative; "
         		+ "border: 1px solid; border-radius: 5px;'>");
         sb.appendHtmlConstant("<div style='z-index: 2; display: inline; width: 250px; "
         		+ "position: absolute; left: 0px, top: 0px; text-align: center; font-weight: bold; "
-        		+ "color: black'>"
+        		+ "color: black;'>"
                 + completedSteps
                 + "/"
                 + totalSteps
@@ -27,6 +35,7 @@ public abstract class HTMLUtils {
                 + (100 - rounded)
                 + "%; height: 20px; background-color: #DC143C;'></div></div>");
         sb.appendHtmlConstant("</div>");
+//        sb.appendHtmlConstant("</div>");
         return sb.toSafeHtml();
 	}
 }

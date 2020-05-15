@@ -963,3 +963,13 @@ hr {
 .tableAnchor:hover {
 	color: orange;
 }
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+.vpcp-PopupPanel-GlassStyle {
+	background-color : #333;
+	opacity          :   0.4;
+	clip             :   rect(auto,auto,auto,auto);
+}
