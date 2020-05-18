@@ -543,33 +543,10 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 					String fullName = fName + " " + lName;
 					vpcRequisition.getCustomerAdminUserIdList().add(filter.getPublicId());
 					getView().addAdminUserId(filter.getPublicId(), fullName);
-//					List<NetworkIdentityPojo> networkIds = fp.getNetworkIdentities();
-//					if (networkIds != null) {
-//						if (networkIds.size() == 1) {
-//							String principal = networkIds.get(0).getValue();
-//							vpcRequisition.getCustomerAdminUserIdList().add(principal);
-//							getView().addAdminUserId(principal);
-//						}
-//						else {
-//							networkIdLoop: for (NetworkIdentityPojo networkId : networkIds) {
-//								String domain = networkId.getDomain();
-//								GWT.log("NetworkId.domain: " + domain);
-//								String principal = networkId.getValue();
-//								GWT.log("NetworkId.value: " + principal);
-//								if (domain.equalsIgnoreCase("EMORYUNIVAD")) {
-//									vpcRequisition.getCustomerAdminUserIdList().add(principal);
-//									getView().addAdminUserId(principal);
-//									break networkIdLoop;
-//								}
-//							}
-//						}
-//					}
-//					else {
-//						// TODO: error?
-//					}
 				}
 				else {
 					// TODO: error
+					GWT.log("got " + result.getResults().size() + " FullPerson objects for public id: " + filter.getPublicId());
 				}
 				getView().hidePleaseWaitDialog();
 				getView().hidePleaseWaitPanel();

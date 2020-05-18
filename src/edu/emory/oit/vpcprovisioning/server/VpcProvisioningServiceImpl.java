@@ -6431,7 +6431,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				dp_filter.setSearchString(filter.getNetId());
 			}
 			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-			for (DirectoryPersonPojo dp : dp_result.getResults()) {
+			if (dp_result.getResults().size() > 0) {
+				DirectoryPersonPojo dp = dp_result.getResults().get(0);
 				FullPersonPojo fp = new FullPersonPojo();
 				fp.setPublicId(dp.getKey());
 				PersonPojo person = new PersonPojo();
@@ -6442,6 +6443,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				fp.getPerson().setPersonalName(pnp);
 				pojos.add(fp);
 			}
+//			for (DirectoryPersonPojo dp : dp_result.getResults()) {
+//				FullPersonPojo fp = new FullPersonPojo();
+//				fp.setPublicId(dp.getKey());
+//				PersonPojo person = new PersonPojo();
+//				fp.setPerson(person);
+//				PersonalNamePojo pnp = new PersonalNamePojo();
+//				pnp.setFirstName(dp.getFirstMiddle());
+//				pnp.setLastName(dp.getLastName());
+//				fp.getPerson().setPersonalName(pnp);
+//				pojos.add(fp);
+//			}
 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
