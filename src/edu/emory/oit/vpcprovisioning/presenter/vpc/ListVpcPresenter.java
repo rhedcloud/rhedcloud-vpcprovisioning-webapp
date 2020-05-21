@@ -39,6 +39,7 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	
 	VpcQueryFilterPojo filter;
 	VpcPojo selectedVpc;
+	private List<VpcPojo> fullVpcList = new java.util.ArrayList<VpcPojo>();
 
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -144,6 +145,9 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 			@Override
 			public void onSuccess(VpcQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " Vpcs for " + result.getFilterUsed());
+				if (filter == null || filter.isFuzzyFilter() == false) {
+					fullVpcList = result.getResults();
+				}
 				setVpcList(result.getResults());
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
@@ -285,7 +289,20 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 		filter = new VpcQueryFilterPojo();
 		filter.setAccountName(acctName);
 		filter.setFuzzyFilter(true);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+		
+		// just try filtering from out full list
+		List<VpcPojo> filteredList = new java.util.ArrayList<VpcPojo>();
+		GWT.log("checking " + fullVpcList.size() + " VPCs for a match of " + filter.getAccountName());
+		for (VpcPojo vpc : fullVpcList) {
+			if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
+				if (vpc.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
+					GWT.log("found an account with a name that matches " + filter.getAccountName());
+					filteredList.add(vpc);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -294,7 +311,19 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 		filter = new VpcQueryFilterPojo();
 		filter.setVpcId(vpcId);
 		filter.setFuzzyFilter(true);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+
+		List<VpcPojo> filteredList = new java.util.ArrayList<VpcPojo>();
+		GWT.log("checking " + fullVpcList.size() + " VPCs for a match of " + filter.getVpcId());
+		for (VpcPojo vpc : fullVpcList) {
+			if (filter.getVpcId() != null && filter.getVpcId().length() > 0) {
+				if (vpc.getVpcId().toLowerCase().indexOf(filter.getVpcId().toLowerCase()) >= 0) {
+					GWT.log("found an account with a name that matches " + filter.getVpcId());
+					filteredList.add(vpc);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -303,7 +332,19 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 		filter = new VpcQueryFilterPojo();
 		filter.setAccountId(acctId);
 		filter.setFuzzyFilter(true);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+
+		List<VpcPojo> filteredList = new java.util.ArrayList<VpcPojo>();
+		GWT.log("checking " + fullVpcList.size() + " VPCs for a match of " + filter.getVpcId());
+		for (VpcPojo vpc : fullVpcList) {
+			if (filter.getAccountId() != null && filter.getAccountId().length() > 0) {
+				if (vpc.getAccountId().toLowerCase().indexOf(filter.getAccountId().toLowerCase()) >= 0) {
+					GWT.log("found an account with a name that matches " + filter.getAccountId());
+					filteredList.add(vpc);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -325,6 +366,24 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 			public void onSuccess(UserAccountPojo result) {
 				getView().setUserLoggedIn(result);
 				refreshList(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
+	}
+	private void getUserAndRefreshList(final List<VpcPojo> filteredList) {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				setVpcList(filteredList);
+                getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
 			}
 		};
 		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);

@@ -19,6 +19,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListAccountPresenter extends PresenterBase implements ListAccountView.Presenter {
 	private static final Logger log = Logger.getLogger(ListAccountPresenter.class.getName());
@@ -40,6 +41,7 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	AccountQueryFilterPojo filter;
 	AccountPojo account;
 	AccountPojo selectedAccount;
+	private List<AccountPojo> fullAccountList = new java.util.ArrayList<AccountPojo>();
 
 	/**
 	 * The refresh timer used to periodically refresh the account list.
@@ -147,6 +149,9 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 			@Override
 			public void onSuccess(AccountQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " accounts for " + result.getFilterUsed());
+				if (filter == null || filter.isFuzzyFilter() == false) {
+					fullAccountList = result.getResults();
+				}
 				setAccountList(result.getResults());
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
@@ -261,7 +266,20 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		getView().showPleaseWaitDialog("Filtering accounts");
 		filter = new AccountQueryFilterPojo();
 		filter.setAccountId(accountId);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+
+		// just try filtering from out full list
+		List<AccountPojo> filteredList = new java.util.ArrayList<AccountPojo>();
+		GWT.log("checking " + fullAccountList.size() + " Accounts for a match of " + filter.getAccountId());
+		for (AccountPojo pojo : fullAccountList) {
+			if (filter.getAccountId() != null && filter.getAccountId().length() > 0) {
+				if (pojo.getAccountId().toLowerCase().indexOf(filter.getAccountId().toLowerCase()) >= 0) {
+					GWT.log("found an account with a name that matches " + filter.getAccountId());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -326,7 +344,20 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		filter = new AccountQueryFilterPojo();
 		filter.setFuzzyFilter(true);
 		filter.setAccountName(name);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+		
+		// just try filtering from out full list
+		List<AccountPojo> filteredList = new java.util.ArrayList<AccountPojo>();
+		GWT.log("checking " + fullAccountList.size() + " Accounts for a match of " + filter.getAccountName());
+		for (AccountPojo pojo : fullAccountList) {
+			if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
+				if (pojo.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
+					GWT.log("found an account with a name that matches " + filter.getAccountName());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -335,6 +366,38 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 		filter = new AccountQueryFilterPojo();
 		filter.setFuzzyFilter(true);
 		filter.setAlternateAccountName(name);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+
+		// just try filtering from out full list
+		List<AccountPojo> filteredList = new java.util.ArrayList<AccountPojo>();
+		GWT.log("checking " + fullAccountList.size() + " Accounts for a match of " + filter.getAlternateAccountName());
+		for (AccountPojo pojo : fullAccountList) {
+			if (filter.getAlternateAccountName() != null && filter.getAlternateAccountName().length() > 0) {
+				if (pojo.getAlternateName().toLowerCase().indexOf(filter.getAlternateAccountName().toLowerCase()) >= 0) {
+					GWT.log("found an account with a name that matches " + filter.getAlternateAccountName());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
+	}
+
+	private void getUserAndRefreshList(final List<AccountPojo> filteredList) {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				setAccountList(filteredList);
+                getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 }
