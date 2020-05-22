@@ -149,9 +149,6 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 			@Override
 			public void onSuccess(AccountQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " accounts for " + result.getFilterUsed());
-				if (filter == null || filter.isFuzzyFilter() == false) {
-					fullAccountList = result.getResults();
-				}
 				setAccountList(result.getResults());
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
@@ -204,6 +201,9 @@ public class ListAccountPresenter extends PresenterBase implements ListAccountVi
 	 */
 	private void setAccountList(List<AccountPojo> accounts) {
 		getView().setAccounts(accounts);
+		if (filter == null || filter.isFuzzyFilter() == false) {
+			fullAccountList = accounts;
+		}
 		if (eventBus != null) {
 			eventBus.fireEventFromSource(new AccountListUpdateEvent(accounts), this);
 		}

@@ -145,9 +145,6 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 			@Override
 			public void onSuccess(VpcQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " Vpcs for " + result.getFilterUsed());
-				if (filter == null || filter.isFuzzyFilter() == false) {
-					fullVpcList = result.getResults();
-				}
 				setVpcList(result.getResults());
 				// apply authorization mask
 				if (user.isCentralAdmin()) {
@@ -181,10 +178,13 @@ public class ListVpcPresenter extends PresenterBase implements ListVpcView.Prese
 	/**
 	 * Set the list of Vpcs.
 	 */
-	private void setVpcList(List<VpcPojo> Vpcs) {
-		getView().setVpcs(Vpcs);
+	private void setVpcList(List<VpcPojo> vpcs) {
+		getView().setVpcs(vpcs);
+		if (filter == null || filter.isFuzzyFilter() == false) {
+			fullVpcList = vpcs;
+		}
 		if (eventBus != null) {
-			eventBus.fireEventFromSource(new VpcListUpdateEvent(Vpcs), this);
+			eventBus.fireEventFromSource(new VpcListUpdateEvent(vpcs), this);
 		}
 	}
 

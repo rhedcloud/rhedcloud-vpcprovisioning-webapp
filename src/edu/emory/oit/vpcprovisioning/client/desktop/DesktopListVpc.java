@@ -74,6 +74,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
+		filterTypesLB.setSelectedIndex(0);
 		filterTB.setText("");
 		presenter.clearFilter();
 	}

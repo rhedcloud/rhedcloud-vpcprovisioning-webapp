@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -40,6 +41,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	
 	AWSServiceQueryFilterPojo filter;
 	AWSServicePojo selectedService;
+	List<AWSServicePojo> fullServiceList = new java.util.ArrayList<AWSServicePojo>();
 
 	/**
 	 * The refresh timer used to periodically refresh the Vpc list.
@@ -132,7 +134,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	}
 
 	/**
-	 * Refresh the CIDR list.
+	 * Refresh the service list.
 	 */
 	public void refreshList(final UserAccountPojo user) {
 		getView().showPleaseWaitDialog("Retrieving services from the AWS Account Service...");
@@ -174,6 +176,9 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 	 */
 	private void setServiceList(List<AWSServicePojo> services) {
 		getView().setServices(services);
+		if (filter == null || filter.isFuzzyFilter() == false) {
+			fullServiceList = services;
+		}
 		if (eventBus != null) {
 			eventBus.fireEventFromSource(new ServiceListUpdateEvent(services), this);
 		}
@@ -281,7 +286,22 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 //		}
 		filter.getConsoleCategories().add(categories);
 		filter.setFuzzyFilter(true);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+		
+		List<AWSServicePojo> filteredList = new java.util.ArrayList<AWSServicePojo>();
+		GWT.log("checking " + fullServiceList.size() + " Services for a match of " + filter.getSiteStatus());
+		for (AWSServicePojo pojo : fullServiceList) {
+			if (filter.getConsoleCategories().size() > 0) {
+				String filterCat = filter.getConsoleCategories().get(0);
+				for (String consoleCat : (List<String>)pojo.getConsoleCategories()) {
+					if (consoleCat.toLowerCase().indexOf(filterCat.toLowerCase()) >= 0) {
+						GWT.log("found a service with a name that matches " + filterCat);
+						filteredList.add(pojo);
+					}
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -290,7 +310,19 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		filter = new AWSServiceQueryFilterPojo();
 		filter.setAwsServiceName(name);
 		filter.setFuzzyFilter(true);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+		
+		List<AWSServicePojo> filteredList = new java.util.ArrayList<AWSServicePojo>();
+		GWT.log("checking " + fullServiceList.size() + " Services for a match of " + filter.getAwsServiceName());
+		for (AWSServicePojo pojo : fullServiceList) {
+			if (filter.getAwsServiceName() != null && filter.getAwsServiceName().length() > 0) {
+				if (pojo.getAwsServiceName().toLowerCase().indexOf(filter.getAwsServiceName().toLowerCase()) >= 0) {
+					GWT.log("found a service with a name that matches " + filter.getAwsServiceName());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -298,7 +330,19 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		getView().showPleaseWaitDialog("Filtering services by AWS Service status...");
 		filter = new AWSServiceQueryFilterPojo();
 		filter.setAwsStatus(status);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+
+		List<AWSServicePojo> filteredList = new java.util.ArrayList<AWSServicePojo>();
+		GWT.log("checking " + fullServiceList.size() + " Services for a match of " + filter.getAwsStatus());
+		for (AWSServicePojo pojo : fullServiceList) {
+			if (filter.getAwsStatus() != null && filter.getAwsStatus().length() > 0) {
+				if (pojo.getAwsStatus().toLowerCase().indexOf(filter.getAwsStatus().toLowerCase()) >= 0) {
+					GWT.log("found a service with a name that matches " + filter.getAwsStatus());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -306,7 +350,19 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 		getView().showPleaseWaitDialog("Filtering services by AWS Site status...");
 		filter = new AWSServiceQueryFilterPojo();
 		filter.setSiteStatus(status);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+
+		List<AWSServicePojo> filteredList = new java.util.ArrayList<AWSServicePojo>();
+		GWT.log("checking " + fullServiceList.size() + " Services for a match of " + filter.getSiteStatus());
+		for (AWSServicePojo pojo : fullServiceList) {
+			if (filter.getSiteStatus() != null && filter.getSiteStatus().length() > 0) {
+				if (pojo.getSiteStatus().toLowerCase().indexOf(filter.getSiteStatus().toLowerCase()) >= 0) {
+					GWT.log("found a service with a name that matches " + filter.getSiteStatus());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
 	}
 
 	@Override
@@ -344,7 +400,20 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 			status = Constants.FALSE;
 		}
 		filter.setAwsHipaaEligible(status);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+		
+		List<AWSServicePojo> filteredList = new java.util.ArrayList<AWSServicePojo>();
+		GWT.log("checking " + fullServiceList.size() + " Services for a match of " + filter.getAwsHipaaEligible());
+		for (AWSServicePojo pojo : fullServiceList) {
+			if (filter.getAwsHipaaEligible() != null && filter.getAwsHipaaEligible().length() > 0) {
+				if (pojo.getAwsHipaaEligible().toLowerCase().indexOf(filter.getAwsHipaaEligible().toLowerCase()) >= 0) {
+					GWT.log("found a service with a name that matches " + filter.getAwsHipaaEligible());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
+
 	}
 
 	@Override
@@ -358,6 +427,40 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 			status = Constants.FALSE;
 		}
 		filter.setSiteHipaaEligible(status);
-		this.getUserAndRefreshList();
+//		this.getUserAndRefreshList();
+
+		List<AWSServicePojo> filteredList = new java.util.ArrayList<AWSServicePojo>();
+		GWT.log("checking " + fullServiceList.size() + " Services for a match of " + filter.getSiteHipaaEligible());
+		for (AWSServicePojo pojo : fullServiceList) {
+			if (filter.getSiteHipaaEligible() != null && filter.getSiteHipaaEligible().length() > 0) {
+				if (pojo.getSiteHipaaEligible().toLowerCase().indexOf(filter.getSiteHipaaEligible().toLowerCase()) >= 0) {
+					GWT.log("found a service with a name that matches " + filter.getSiteHipaaEligible());
+					filteredList.add(pojo);
+				}
+			}
+		}
+		getUserAndRefreshList(filteredList);
+	}
+
+	private void getUserAndRefreshList(final List<AWSServicePojo> filteredList) {
+		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				
+				
+			}
+
+			@Override
+			public void onSuccess(UserAccountPojo result) {
+				getView().setUserLoggedIn(result);
+				if (filter != null) {
+					filter.setFuzzyFilter(true);
+				}
+				setServiceList(filteredList);
+                getView().hidePleaseWaitPanel();
+				getView().hidePleaseWaitDialog();
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 }

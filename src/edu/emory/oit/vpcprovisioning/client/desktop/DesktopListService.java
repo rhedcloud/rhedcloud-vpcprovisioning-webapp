@@ -94,6 +94,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 
 	@UiHandler("clearFilterButton")
 	void clearFilterButtonClicked(ClickEvent e) {
+		filterTypesLB.setSelectedIndex(0);
 		filterTB.setText("");
 		presenter.clearFilter();
 	}
@@ -132,6 +133,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 	}
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
+		presenter.clearFilter();
 		presenter.refreshList(userLoggedIn);
 	}
 
