@@ -375,4 +375,22 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		
 	}
 
+	@Override
+	public void addBreadCrumb(String name, String action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeBreadCrumb(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clearBreadCrumbs() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

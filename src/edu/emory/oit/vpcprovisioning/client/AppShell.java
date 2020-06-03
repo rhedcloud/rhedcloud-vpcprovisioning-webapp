@@ -52,4 +52,8 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user);
 	void setConsoleFeatures(List<ConsoleFeaturePojo> services);
 	void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> services);
+	
+	void addBreadCrumb(String name, String url);
+	void removeBreadCrumb(String name);
+	void clearBreadCrumbs();
 }

@@ -1746,7 +1746,6 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	private ConsoleFeatureRpcSuggestOracle consoleFeatureSuggestions;
     
 	private void showFeatures() {
-//		final ConsoleFeatureRpcSuggestOracle consoleFeatureSuggestions = new ConsoleFeatureRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
 		final SuggestBox featureSearchSB = new SuggestBox(consoleFeatureSuggestions, new TextBox());
 		
 		AsyncCallback<ConsoleFeatureQueryResultPojo> svcCallback = new AsyncCallback<ConsoleFeatureQueryResultPojo>() {
@@ -1985,5 +1984,23 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void hideServiceListPanel() {
 		serviceListPanel.setVisible(false);
+	}
+
+	@Override
+	public void addBreadCrumb(String name, String action) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeBreadCrumb(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clearBreadCrumbs() {
+		// TODO Auto-generated method stub
+		
 	}
 }

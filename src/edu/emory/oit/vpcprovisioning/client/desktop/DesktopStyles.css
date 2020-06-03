@@ -1220,3 +1220,11 @@ a:active {
 	border-top: 1px solid;
     /*border-radius: 5px;*/
 }
+.rhedcloudLogo {
+	background: #232f3e;
+	color: #fff;
+	font-size: 14px;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+	cursor: pointer;
+}
+
