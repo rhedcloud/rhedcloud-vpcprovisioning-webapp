@@ -211,7 +211,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String IDM_SERVICE_NAME = "IDMRequestService";
 	private static final String DIRECTORY_SERVICE_NAME = "DirectoryRequestService";
 	private static final String SERVICE_NOW_SERVICE_NAME = "ServiceNowRequestService";
-//	private static final String IDENTITY_SERVICE_NAME = "IdentityRequestService";
 	private static final String PEOPLE_SOFT_SERVICE_NAME = "PeopleSoftRequestService";
 	private static final String AWS_SERVICE_NAME = "AWSRequestService";
 	private static final String FIREWALL_SERVICE_NAME = "FirewallRequestService";
@@ -244,7 +243,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	Properties generalProps = null;
 	private String configDocPath = null;
 	private String appId = null;
-//	private ProducerPool identityServiceProducerPool = null;
 	private ProducerPool idmProducerPool = null;
 	private ProducerPool directoryProducerPool = null;
 	private ProducerPool awsProducerPool = null;
@@ -731,9 +729,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("useShibboleth from config doc: " + shib);
 				useShibboleth = Boolean.parseBoolean(shib);
 				String testUserEppn = props.getProperty("testUserEppn", "jtjacks@emory.edu");
-				String testUserPpid = props.getProperty("testUserPpid", "P7247525");
-				String testUserFirstName = props.getProperty("testUserFirstName", "Tod");
-				String testUserLastName = props.getProperty("testUserLastName", "Jackson");
 
 				if (useShibboleth) {
 					// error condition, somehow they've got to the app
@@ -752,11 +747,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
 					}
 					user.setEppn(testUserEppn);
-//					user.setPublicId(testUserPpid);
-//					PersonalNamePojo pnp = new PersonalNamePojo();
-//					pnp.setFirstName(testUserFirstName);
-//					pnp.setLastName(testUserLastName);
-//					user.setPersonalName(pnp);
 
 					if (useAuthzService) {
 						// get permissions
@@ -926,120 +916,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		getThreadLocalRequest().getSession().removeAttribute("UserID");
 		getThreadLocalRequest().getSession().invalidate();
 	}
-
-//	protected void getRolesForUser_orig(UserAccountPojo user) throws RpcException {
-//		// get the fullperson object for the user.principal
-//		// set the user's publicId
-//		// get the roleassignments for the user.publicId
-//		// for each roleassignment:
-//		//	- get the aws account id
-//		//  - verify the account exists in this series (environment)
-//		//	- get the role name associated to that account for this user
-//		//	- create a new AccountRolePojo, populate it with account id and role name
-//		//	- add the AccountRolePojo to the user passed in
-//		
-//		java.util.Date startTime = new java.util.Date();
-//		if (user.getPublicId() == null) {
-//			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
-//			fp_filter.setNetId(user.getPrincipal());
-//			fp_filter.setUserLoggedIn(user);
-//			FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
-//			if (fp_result != null) {
-//				info("[getRolesForUser] got " + fp_result.getResults().size() + 
-//					" FullPerson objects back for net id: " + fp_filter.getNetId());
-//			}
-//			else {
-//				// error
-//				info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
-//				throw new RpcException("Null FullPerson returned from ESB for NetId: " + user.getPrincipal());
-//			}
-//			FullPersonPojo fullPerson = fp_result.getResults().get(0);
-//			user.setPublicId(fullPerson.getPublicId());
-//			user.setPersonalName(fullPerson.getPerson().getPersonalName());
-//			info("[getRolesForUser] User public id is: " + user.getPublicId());
-//		}
-//		else {
-//			info("[getRolesForUser] no need to get full person object.");
-//		}
-//		
-//		try {
-//			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
-//			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
-//			
-//			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
-//			idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, user.getPublicId());
-//			ra_filter.setUserDN(idDn);
-//			ra_filter.setIdentityType("USER");
-//			ra_filter.setDirectAssignOnly(true);
-//			ra_filter.setUserLoggedIn(user);
-//
-//			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
-//			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-//			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
-//
-//			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
-//				String roleDn = roleAssignment.getRoleDN();
-//				if (roleDn != null) {
-//					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
-//						AccountRolePojo arp = new AccountRolePojo();
-//						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-//						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-//						user.addAccountRole(arp);
-//						continue;
-//					}
-//					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
-//						AccountRolePojo arp = new AccountRolePojo();
-//						arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
-//						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-//						user.addAccountRole(arp);
-//						continue;
-//					}
-//					if (roleDn.indexOf("RGR_AWS") >= 0) {
-//						String[] cns = roleDn.split(",");
-//						String acctCn = cns[0];
-//						String[] idRoles = acctCn.split("-");
-//						if (idRoles.length != 3) {
-//							continue;
-//						}
-//						String acctId = idRoles[1];
-//						String roleName = idRoles[2];
-//						AccountPojo verifiedAcct = this.getAccountById(acctId); 
-//						if (acctId != null && verifiedAcct != null) {
-//							AccountRolePojo arp = new AccountRolePojo();
-//							arp.setAccountId(acctId);
-//							arp.setAccountName(verifiedAcct.getAccountName());
-//							arp.setRoleName(roleName);
-//							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-//							user.addAccountRole(arp);
-//						}
-//						else if (acctId == null && 
-//								(roleName.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 || 
-//								 roleName.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN) >= 0)) {
-//							
-//							AccountRolePojo arp = new AccountRolePojo();
-//							arp.setRoleName(roleName);
-//							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-//							user.addAccountRole(arp);
-//						}
-//						else {
-//							continue;
-//						}
-//					}
-//				}
-//			}
-//			
-//			info("[getRolesForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
-//			java.util.Date endTime = new java.util.Date();
-//			long elapsedTime = endTime.getTime() - startTime.getTime();
-//			info("[getRolesForUser] elaspsed time: " + formatMillisForDisplay(elapsedTime));
-//		} 
-//		catch (EnterpriseConfigurationObjectException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		}
-//	}
 	
 	protected void getRolesForUser(UserAccountPojo user) throws RpcException {
+		
+		// TODO: this will need to be re-worked to support other IDM systems
+		// like grouper etc.
+		
 		// get the fullperson object for the user.principal
 		// set the user's publicId
 		// get the roleassignments for the user.publicId
@@ -1056,23 +938,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("[getRolesForUser] got " + accounts.size() + " accounts from getAllAccounts");
 		
 		if (user.getPublicId() == null) {
-//			FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
-//			fp_filter.setNetId(user.getPrincipal());
-//			fp_filter.setUserLoggedIn(user);
-//			FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
-//			if (fp_result != null) {
-//				info("[getRolesForUser] got " + fp_result.getResults().size() + 
-//					" FullPerson objects back for net id: " + fp_filter.getNetId());
-//			}
-//			else {
-//				// error
-//				info("[getRolesForUser] null FullPersonQueryResultPojo.  This is bad.");
-//				throw new RpcException("Null FullPerson returned from ESB for NetId: " + user.getPrincipal());
-//			}
-//			FullPersonPojo old_fullPerson = fp_result.getResults().get(0);
-//			user.setPublicId(old_fullPerson.getPublicId());
-//			user.setPersonalName(old_fullPerson.getPerson().getPersonalName());
-			
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
 			dp_filter.setUserLoggedIn(user);
@@ -4968,7 +4833,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		svcCnt = servicesResult.getResults().size();
 		for (AWSServicePojo service : servicesResult.getResults()) {
 	    	// see if this category is already in the awsServicesMap
-			String category = "Unknown";
 			if (service.getConsoleCategories() != null && 
 				service.getConsoleCategories().size() > 0) {
 				
@@ -5408,10 +5272,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			UserNotificationQuerySpecification queryObject = (UserNotificationQuerySpecification) getObject(Constants.MOA_USER_NOTIFICATION_QUERY_SPEC);
 			UserNotification actionable = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
 
-			boolean increaseReqSvcTimeout = true;
 			if (filter != null) {
 				if (filter.isUseQueryLanguage()) {
-					increaseReqSvcTimeout = false;
 					QueryLanguage ql = queryObject.newQueryLanguage();
 					if (filter.getReadStr() != null) {
 						if (filter.isRead() == false) {
@@ -5439,7 +5301,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					queryObject.setQueryLanguage(ql);
 				}
 				else {
-					increaseReqSvcTimeout = true;
 					queryObject.setUserId(filter.getUserId());
 					queryObject.setPriority(filter.getPriority());
 					queryObject.setType(filter.getType());
@@ -5462,14 +5323,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 
 			RequestService reqSvc = this.getAWSRequestService();
-			// if they're asking for ALL notifications, we'll have to bump 
-			// the timeout interval WAY up
-//			if (increaseReqSvcTimeout) {
-//				info("[getUserNotificationsForFilter] potentially big UserNotification.Query, "
-//						+ "increasing RequestService timeout interval."); 
-//				((PointToPointProducer) reqSvc)
-//				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval() * 10);
-//			}
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("userNotificationTimeoutMillis", "1000000");
 			int interval = Integer.parseInt(s_interval);
@@ -10595,12 +10448,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private void populateVpncpRequisitionPojo(VpnConnectionRequisition moa,
 			VpnConnectionRequisitionPojo pojo) throws XmlEnterpriseObjectException {
 
 		pojo.setOwnerId(moa.getOwnerId());
-//		pojo.setRemoteVpnIpAddress(moa.getRemoteVpnIpAddress());
-//		pojo.setPresharedKey(moa.getPresharedKey());
 		for (RemoteVpnConnectionInfo rvci : (List<RemoteVpnConnectionInfo>) moa.getRemoteVpnConnectionInfo()) {
 			RemoteVpnConnectionInfoPojo p_rvci = new RemoteVpnConnectionInfoPojo();
 			p_rvci.setRemoteVpnConnectionId(rvci.getRemoteVpnConnectionId());
@@ -10626,8 +10478,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			VpnConnectionRequisition moa) throws XmlEnterpriseObjectException, EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 
 		moa.setOwnerId(pojo.getOwnerId());
-//		moa.setRemoteVpnIpAddress(pojo.getRemoteVpnIpAddress());
-//		moa.setPresharedKey(pojo.getPresharedKey());
 		for (RemoteVpnConnectionInfoPojo rvci : pojo.getRemoteVpnConnectionInfo()) {
 			RemoteVpnConnectionInfo m_rvci = moa.newRemoteVpnConnectionInfo();
 			m_rvci.setRemoteVpnConnectionId(rvci.getRemoteVpnConnectionId());
@@ -13092,12 +12942,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		AccountProvisioningQueryResultPojo result = new AccountProvisioningQueryResultPojo();
 		List<AccountProvisioningSummaryPojo> summaries = new java.util.ArrayList<AccountProvisioningSummaryPojo>();
 		
-		// temporary until the service is functional
-//		if (true) {
-//			result.setResults(summaries);
-//			return result;
-//		}
-
 		try {
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("accountProvisioningListTimeoutMillis", "30000");
