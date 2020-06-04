@@ -25,6 +25,7 @@ public class VpcpAlert extends DialogBox {
 		vpcpAlert.setAutoHideEnabled(false);
 		vpcpAlert.setModal(true);
 		vpcpAlert.setHTML(title);
+		vpcpAlert.ensureDebugId("VpcpAlert");
 		
 		VerticalPanel vp = new VerticalPanel();
 		vp.setWidth("100%");
@@ -64,8 +65,10 @@ public class VpcpAlert extends DialogBox {
 		vp.add(sessionAnchor);
 		
 		if (message.trim().toLowerCase().endsWith("is: 0") || 
-			message.trim().toLowerCase().endsWith("is: 0</p>")) {
+			message.trim().toLowerCase().endsWith("is: 0</p>") ||
+			message.trim().toLowerCase().indexOf("is: 0") >= 0) {
 			
+			vpcpAlert.ensureDebugId("VpcpAlert-MessageZero");
 			Anchor newSessionAnchor = new Anchor("It appears as though your session has expired.  "
 				+ "Please click here to start a new session.");
 			newSessionAnchor.addStyleName("errorAnchor");

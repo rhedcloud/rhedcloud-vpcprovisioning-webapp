@@ -114,7 +114,7 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 				getView().hidePleaseWaitPanel();
 				getView().disableButtons();
 				getView().showMessageToUser("There was an exception on the " +
-						"server retrieving the VPCs you're associated to.  " +
+						"server retrieving the user logged in.  " +
 						"<p>Message from server is: " + caught.getMessage() + "</p>");
 			}
 
