@@ -46,6 +46,7 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 	List<AWSTagPojo> tags = new java.util.ArrayList<AWSTagPojo>(); 
 	AWSServicePojo baseline;
 	boolean skeleton;
+	PropertiesPojo siteServiceStatusProperties;
 
 	public static final ProvidesKey<AWSServicePojo> KEY_PROVIDER = new ProvidesKey<AWSServicePojo>() {
 		@Override
@@ -311,7 +312,11 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		if (siteStatus == null) {
 			return true;
 		}
-		if (siteStatus.equalsIgnoreCase("blocked pending review")) {
+		String blockedPendingReviewStatus = "blocked pending review";
+		if (siteServiceStatusProperties != null) {
+			blockedPendingReviewStatus = siteServiceStatusProperties.getProperty("BLOCKED_PENDING_REVIEW", blockedPendingReviewStatus);
+		}
+		if (siteStatus.equalsIgnoreCase(blockedPendingReviewStatus)) {
 			return true;
 		}
 		return false;
@@ -320,7 +325,11 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		if (siteStatus == null) {
 			return true;
 		}
-		if (siteStatus.equalsIgnoreCase("blocked")) {
+		String blockedStatus = "blocked";
+		if (siteServiceStatusProperties != null) {
+			blockedStatus = siteServiceStatusProperties.getProperty("BLOCKED", blockedStatus);
+		}
+		if (siteStatus.equalsIgnoreCase(blockedStatus)) {
 			return true;
 		}
 		return false;
@@ -329,7 +338,11 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		if (siteStatus == null) {
 			return false;
 		}
-		if (siteStatus.equalsIgnoreCase("available")) {
+		String availableStatus = "available";
+		if (siteServiceStatusProperties != null) {
+			availableStatus = siteServiceStatusProperties.getProperty("AVAILABLE", availableStatus);
+		}
+		if (siteStatus.equalsIgnoreCase(availableStatus)) {
 			return true;
 		}
 		return false;
@@ -338,7 +351,11 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		if (siteStatus == null) {
 			return false;
 		}
-		if (siteStatus.equalsIgnoreCase("available with countermeasures")) {
+		String availableWithCmStatus = "available with countermeasures";
+		if (siteServiceStatusProperties != null) {
+			availableWithCmStatus = siteServiceStatusProperties.getProperty("AVAILABLE_W_CM", availableWithCmStatus);
+		}
+		if (siteStatus.equalsIgnoreCase(availableWithCmStatus)) {
 			return true;
 		}
 		return false;
@@ -347,7 +364,11 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		if (siteStatus == null) {
 			return false;
 		}
-		if (siteStatus.equalsIgnoreCase("available")) {
+		String availableStatus = "available";
+		if (siteServiceStatusProperties != null) {
+			availableStatus = siteServiceStatusProperties.getProperty("AVAILABLE", availableStatus);
+		}
+		if (siteStatus.equalsIgnoreCase(availableStatus)) {
 			if (siteHipaaEligible != null) {
 				boolean b = Boolean.parseBoolean(siteHipaaEligible);
 				return b;
@@ -360,7 +381,11 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 		if (siteStatus == null) {
 			return false;
 		}
-		if (siteStatus.equalsIgnoreCase("available with countermeasures")) {
+		String availableWithCmStatus = "available with countermeasures";
+		if (siteServiceStatusProperties != null) {
+			availableWithCmStatus = siteServiceStatusProperties.getProperty("AVAILABLE_W_CM", availableWithCmStatus);
+		}
+		if (siteStatus.equalsIgnoreCase(availableWithCmStatus)) {
 			if (siteHipaaEligible != null) {
 				boolean b = Boolean.parseBoolean(siteHipaaEligible);
 				return b;
@@ -368,5 +393,15 @@ public class AWSServicePojo extends SharedObject implements IsSerializable, Comp
 			return false;
 		}
 		return false;
+	}
+
+
+	public PropertiesPojo getSiteServiceStatusProperties() {
+		return siteServiceStatusProperties;
+	}
+
+
+	public void setSiteServiceStatusProperties(PropertiesPojo siteServiceStatusProperties) {
+		this.siteServiceStatusProperties = siteServiceStatusProperties;
 	}
 }

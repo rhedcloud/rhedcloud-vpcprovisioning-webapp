@@ -529,6 +529,12 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			int hipaaCnt=0;
 			int stdCnt=0;
 			int totalSvcCnt=0;
+			if (hipaaOnly) {
+				GWT.log("Only showing HIPAA eligible services.");
+			}
+			else {
+				GWT.log("Showing all eligible services.");
+			}
 			for (final Object catName : keys) {
 				List<AWSServicePojo> services = serviceSummary.getServiceMap().get(catName);
 				totalSvcCnt += services.size();
@@ -545,12 +551,18 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					}
 					if (hipaaOnly) {
 						if (svc.isAvailableHIPAA() || svc.isAvailableWithCountermeasuresHIPAA()) {
+							GWT.log("service name: " + svcName);
+							GWT.log("site status: " + svc.getSiteStatus());
+							GWT.log("site hipaa eligible: " + svc.getSiteHipaaEligible());
 							hipaaCnt++;
 							sbuf.append("<h3><li>" + catName + " : " + svcName + "</li></h3>");
 						}
 					}
 					else {
 						if (svc.isAvailableStandard() || svc.isAvailableWithCountermeasuresStandard()) {
+							GWT.log("service name: " + svcName);
+							GWT.log("site status: " + svc.getSiteStatus());
+							GWT.log("site hipaa eligible: " + svc.getSiteHipaaEligible());
 							stdCnt++;
 							sbuf.append("<h3><li>" + catName + " : " + svcName + "</li></h3>");
 						}

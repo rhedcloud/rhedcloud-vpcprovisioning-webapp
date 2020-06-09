@@ -272,6 +272,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	// Key is account id, List is a list of Bills for that account id
 	private HashMap<String, List<BillPojo>> billsByAccount = new HashMap<String, List<BillPojo>>();
 	HashMap<String, String> ppidToNameMap = new HashMap<String, String>();
+	Properties siteServiceStatusProps;
 
 	// temporary
 	List<UserNotificationPojo> notificationList = new java.util.ArrayList<UserNotificationPojo>();
@@ -4964,7 +4965,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.getTags().add(ptag);
 			}
 		}
-		
+
+		try {
+			PropertiesPojo propsPojo = new PropertiesPojo();
+			if (siteServiceStatusProps == null) {
+				siteServiceStatusProps = getAppConfig().getProperties(SITE_SERVICE_STATUS_PROPERTIES); 
+			}
+			Iterator<Object> keys = siteServiceStatusProps.keySet().iterator();
+			while (keys.hasNext()) {
+				Object key = keys.next();
+				String value = siteServiceStatusProps.getProperty((String)key);
+				propsPojo.setProperty((String)key, value);
+			}
+			pojo.setSiteServiceStatusProperties(propsPojo);
+		} catch (EnterpriseConfigurationObjectException e) {
+			info("Exception getting " + SITE_SERVICE_STATUS_PROPERTIES + " from AppConfig.  Processing will continue.");
+		}
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
@@ -4972,6 +4989,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException {
+		long startTime = System.currentTimeMillis();
 		AWSServiceSummaryPojo serviceSummary = null;
 		if (filter == null || filter.isEmpty()) {
 			info("[getServicesForFilter] checking cache for existing service summary...");
@@ -5082,6 +5100,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			
 			Collections.sort(pojos);
+			long endTime = System.currentTimeMillis();
+			long elapsedTime = endTime - startTime;
+			info("[getServicessForFilter] elapsed time (ms): " + elapsedTime);
 			result.setResults(pojos);
 		} 
 		catch (EnterpriseConfigurationObjectException e) {
@@ -11230,6 +11251,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			((PointToPointProducer) reqSvc)
 				.setRequestTimeoutInterval(interval);
 
+			info("[getVpnConnectionsForFilter] query spec: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
 			List<VpnConnection> moas = 
 				actionable.query(queryObject, reqSvc);
