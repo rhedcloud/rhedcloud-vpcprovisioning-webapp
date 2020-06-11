@@ -1226,5 +1226,7 @@ a:active {
 	font-size: 14px;
 	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
 	cursor: pointer;
+	padding-bottom: 2px;
+	padding-top: 4px;
 }
 
