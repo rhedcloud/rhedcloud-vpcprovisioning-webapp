@@ -98,6 +98,23 @@
 		    	</g:row>
 				<g:row>
 			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
+							ui:field="vpcpReqComplianceClassLB" debugId="vpcpReqComplianceClassLB" />
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
+			    	</g:customCell>
+			    	<g:customCell>
+			    		<g:CheckBox ui:field="vpcpReqNotifyAdminsCB" debugId="vpcpReqNotifyAdminsCB" title="Check if you want to notify admins when this VPCP is generated."/>
+			    	</g:customCell>
+				</g:row>
+				<g:row>
+			    	<g:customCell>
 						<g:Label addStyleNames="{style.label}"></g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
@@ -107,58 +124,29 @@
 							ui:field="vpcpReqTypeLB" debugId="vpcpReqTypeLB"/>
 			    		</g:VerticalPanel>
 			    	</g:customCell>
-			    	<!-- 
-			    	<g:customCell>
-			    	</g:customCell>
-			    	 -->
-				</g:row>
-				<!-- 
-		    	<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">VPC Type:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="vpcpReqTypeLB" debugId="vpcpReqTypeLB"/>
-			    	</g:customCell>
-				</g:row>
-				 -->
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Compliance Class:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-						<g:ListBox addStyleNames="{style.listBoxField} {style.glowing-border}"
-							ui:field="vpcpReqComplianceClassLB" debugId="vpcpReqComplianceClassLB" />
-			    	</g:customCell>
 				</g:row>
 		    	<g:row>
 			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Purpose:</g:Label>
+						<g:Label addStyleNames="{style.label}"></g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
 						<g:TextArea addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="vpcpReqPurposeTA" debugId="vpcpReqPurposeTA" />
+							ui:field="vpcpReqPurposeTA" debugId="vpcpReqPurposeTA" visible="false"/>
 			    	</g:customCell>
 				</g:row>
 				<g:row>
+			    	<g:customCell>
+						<g:Label addStyleNames="{style.label}"></g:Label>
+			    	</g:customCell>
 					<g:customCell>
-						<g:Label addStyleNames="{style.label}">AWS Region:</g:Label>
-					</g:customCell>
-					<g:customCell>
-						<g:ListBox
-							addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="regionLB" debugId="regionLB" />
+						<g:HorizontalPanel ui:field="regionPanel" visible ="false">
+							<!-- <g:Label addStyleNames="{style.label}">AWS Region:</g:Label> -->
+							<g:ListBox
+								addStyleNames="{style.field} {style.glowing-border}"
+								ui:field="regionLB" debugId="regionLB" />
+						</g:HorizontalPanel>
 					</g:customCell>
 				</g:row>					
-				<g:row>
-			    	<g:customCell>
-						<g:Label addStyleNames="{style.label}">Notify Admins:</g:Label>
-			    	</g:customCell>
-			    	<g:customCell>
-			    		<g:CheckBox ui:field="vpcpReqNotifyAdminsCB" debugId="vpcpReqNotifyAdminsCB" title="Check if you want to notify admins when this VPCP is generated."/>
-			    	</g:customCell>
-				</g:row>
 			</g:Grid>
 			</g:VerticalPanel>
 		</g:cell>

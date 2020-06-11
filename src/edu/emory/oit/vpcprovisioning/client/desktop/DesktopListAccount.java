@@ -296,7 +296,6 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 						req.setAccountId(m.getAccountId());
 						req.setRequestorId(userLoggedIn.getPublicId());
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_ACCOUNT_DEPROVISIONING_CONFIRMATION, req, m);
-//						ActionEvent.fire(presenter.getEventBus(), ActionNames.INCIDENT_TERMINATE_ACCOUNT, m);
 					}
 					else {
 						showMessageToUser("You are not authorized to perform this function for this account.");

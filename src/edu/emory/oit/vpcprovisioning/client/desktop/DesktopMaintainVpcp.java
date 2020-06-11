@@ -79,19 +79,13 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	
 	// used when generating vpc
 	@UiField VerticalPanel generateVpcpPanel;
-//	@UiField TextBox vpcpReqTicketIdTB;
-//	@UiField TextBox vpcpReqRequestorNetIdTB;
 	@UiField(provided=true) SuggestBox requestorLookupSB = new SuggestBox(personSuggestions, new TextBox());
-//	@UiField TextBox vpcpReqOwnerNetIdTB;
 	@UiField(provided=true) SuggestBox ownerLookupSB = new SuggestBox(personSuggestions, new TextBox());
 	@UiField TextBox vpcpReqSpeedTypeTB;
 	@UiField ListBox vpcpReqTypeLB;
 	@UiField ListBox vpcpReqComplianceClassLB;
-//	@UiField CheckBox fismaCB;
-//	@UiField CheckBox pciCB;
 	@UiField CheckBox vpcpReqNotifyAdminsCB;
 	@UiField ListBox accountLB;
-//	@UiField CaptionPanel accountCP;
 	@UiField HTML speedTypeHTML;
 	@UiField TextArea vpcpReqPurposeTA;
 
@@ -102,14 +96,19 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	@UiField ListBox regionLB;
 	@UiField CheckBox provisionWithVpcCB;
 	@UiField VerticalPanel vpcpReqTypePanel;
+	@UiField HorizontalPanel regionPanel;
 
 	@UiHandler ("provisionWithVpcCB")
 	void provisionWithVpcChanged(ClickEvent e) {
 		if (provisionWithVpcCB.getValue()) {
 			vpcpReqTypeLB.setVisible(true);
+			regionPanel.setVisible(true);
+			vpcpReqPurposeTA.setVisible(true);
 		}
 		else {
 			vpcpReqTypeLB.setVisible(false);
+			regionPanel.setVisible(false);
+			vpcpReqPurposeTA.setVisible(false);
 		}
 	}
 	@UiHandler ("vpcpReqSpeedTypeTB")
@@ -383,6 +382,9 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 		adminLookupSB.setText("");
 		adminLookupSB.getElement().setPropertyString("placeholder", "enter name");
 
+		vpcpReqPurposeTA.setText("");
+		vpcpReqPurposeTA.getElement().setPropertyString("placeholder", "enter a purpose for this VPC");
+		
 		vpcpReqTypePanel.getElement().getStyle().setLineHeight(2.6, Unit.EM);
 		vpcpReqTypeLB.setVisible(false);
 		provisionWithVpcCB.setValue(false, true);
@@ -402,6 +404,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 				if (presenter.getVpcp().getVpcRequisition().getType() != null) {
 					provisionWithVpcCB.setValue(true);
 					vpcpReqTypeLB.setVisible(true);
+					regionPanel.setVisible(true);
 				}
 			}
 		}
@@ -539,8 +542,6 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			// no customer admins were added so we'll just put the owner id in the list as the on
 			// customer admin
 			vpcr.getCustomerAdminUserIdList().add(vpcr.getAccountOwnerUserId());
-//			this.setFieldViolations(true);
-//			fields.add(adminLookupSB);
 		}
 		if (vpcr.getType() == null || vpcr.getType().length() == 0) {
 			this.setFieldViolations(true);
@@ -550,9 +551,25 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 			this.setFieldViolations(true);
 			fields.add(vpcpReqComplianceClassLB);
 		}
-		if (vpcr.getRegion() == null || vpcr.getRegion().length() == 0) {
-			this.setFieldViolations(true);
-			fields.add(regionLB);
+		// if provision with VPC is checked, they have to specify a region.
+		// otherwise, we'll just select the first one from the list in the region drop down
+		if (provisionWithVpcCB.getValue()) {
+			if (vpcr.getRegion() == null || vpcr.getRegion().length() == 0) {
+				this.setFieldViolations(true);
+				fields.add(regionLB);
+			}
+		}
+		else {
+			vpcr.setRegion(regionLB.getValue(1));
+		}
+		if (provisionWithVpcCB.getValue()) {
+			if (vpcr.getPurpose() == null || vpcr.getPurpose().length() == 0) {
+				this.setFieldViolations(true);
+				fields.add(vpcpReqPurposeTA);
+			}
+		}
+		else {
+			vpcr.setPurpose("Not applicable (no VPC)");
 		}
 		return fields;
 	}
@@ -643,7 +660,7 @@ public class DesktopMaintainVpcp  extends ViewImplBase implements MaintainVpcpVi
 	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
 		this.regionTypes = regionTypes;
 		regionLB.clear();
-		regionLB.addItem("-- Select --", "");
+		regionLB.addItem("-- Select Region --", "");
 		if (regionTypes != null) {
 			for (AWSRegionPojo region : regionTypes) {
 				regionLB.addItem(region.getValue(), region.getCode());

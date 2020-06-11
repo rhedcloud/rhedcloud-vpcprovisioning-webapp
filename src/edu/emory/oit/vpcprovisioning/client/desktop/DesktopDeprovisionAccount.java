@@ -207,9 +207,10 @@ public class DesktopDeprovisionAccount extends ViewImplBase implements Deprovisi
 		acctOwnerApprovesLabel.setText(intro);
 		
 		String accountName = presenter.getAccount().getAccountName();
-		String acctInfo = acctNameLabel.getText().replaceAll("ACCOUNT_NAME", accountName);
-		acctNameLabel.setText(acctInfo);
-
+//		String acctInfo = acctNameLabel.getText().replaceAll("ACCOUNT_NAME", accountName);
+//		acctNameLabel.setText(acctInfo);
+		String acctNameLabelText = "Please confirm the Account Name (" + accountName + ").";
+		acctNameLabel.setText(acctNameLabelText);
 	}
 
 	@Override
