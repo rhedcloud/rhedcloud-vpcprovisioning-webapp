@@ -427,7 +427,21 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	void okayButtonClick(ClickEvent e) {
 		presenter.getAccount().setAccountId(accountIdTB.getText());
 		presenter.getAccount().setAccountName(accountNameTB.getText());
-		presenter.getAccount().setAlternateName(alternateNameTB.getText());
+		String alternateName = alternateNameTB.getText();
+		if (alternateName != null) {
+			if (!isAlphaNumeric(alternateName)) {
+				setFieldViolations(true);
+				List<Widget> fields = new java.util.ArrayList<Widget>();
+				fields.add(alternateNameTB);
+				applyStyleToMissingFields(fields);
+				showMessageToUser("Alternate name can only consist of numbers and letters.  "
+					+ "Special characters are not allowed.  Please enter a valid alternate name.");
+				return;
+			}
+		}
+		setFieldViolations(false);
+		resetFieldStyles();
+		presenter.getAccount().setAlternateName(alternateName);
 		presenter.getAccount().setComplianceClass(complianceClassLB.getSelectedValue());
 		presenter.getAccount().setPasswordLocation(passwordLocationTB.getText());
 		presenter.getAccount().setSpeedType(speedTypeTB.getText());

@@ -104,14 +104,18 @@
 				    	<g:customCell>
 							<g:Label ui:field="requestorLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
-				    	<!-- 
 				    	<g:customCell>
-							<g:Label addStyleNames="{style.label}">Account Owner:</g:Label>
+							<g:Label addStyleNames="{style.label}">Account ID:</g:Label>
 				    	</g:customCell>
 				    	<g:customCell>
-							<g:Label ui:field="ownerLabel" addStyleNames="{style.statusLabel}"/>
+							<g:Label ui:field="acctIdLabel" addStyleNames="{style.statusLabel}"/>
 				    	</g:customCell>
-				    	 -->
+				    	<g:customCell>
+							<g:Label addStyleNames="{style.label}">Account Name:</g:Label>
+				    	</g:customCell>
+				    	<g:customCell>
+							<g:Label ui:field="acctNameLabel" addStyleNames="{style.statusLabel}"/>
+				    	</g:customCell>
 					</g:row>
     			</g:Grid>
     			<g:Grid ui:field="progressGrid" cellSpacing ="8">

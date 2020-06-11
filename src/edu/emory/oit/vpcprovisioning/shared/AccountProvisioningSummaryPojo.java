@@ -9,6 +9,7 @@ import com.google.gwt.view.client.ProvidesKey;
 public class AccountProvisioningSummaryPojo extends SharedObject implements IsSerializable, Comparable<AccountProvisioningSummaryPojo> {
 	AccountProvisioningPojo provisioning;
 	AccountDeprovisioningPojo deprovisioning;
+	AccountPojo account;
 	
 	public static final ProvidesKey<AccountProvisioningSummaryPojo> KEY_PROVIDER = new ProvidesKey<AccountProvisioningSummaryPojo>() {
 		@Override
@@ -84,5 +85,13 @@ public class AccountProvisioningSummaryPojo extends SharedObject implements IsSe
 			return true;
 		}
 		return false;
+	}
+
+	public AccountPojo getAccount() {
+		return account;
+	}
+
+	public void setAccount(AccountPojo account) {
+		this.account = account;
 	}
 }

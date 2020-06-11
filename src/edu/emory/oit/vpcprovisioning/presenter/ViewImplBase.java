@@ -82,6 +82,10 @@ public abstract class ViewImplBase extends Composite {
 	  newWindow.print(); 
 	}-*/;
 
+	public boolean isAlphaNumeric(String s1) {
+		return s1.matches("[a-zA-Z0-9]+");
+	}
+	
 	public void getFullNameForPublicId(final StringBuffer ppid) {
 		AsyncCallback<String> callback = new AsyncCallback<String>() {
 			@Override

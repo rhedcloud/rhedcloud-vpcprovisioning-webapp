@@ -6359,55 +6359,55 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void populateFullPersonPojo(FullPerson moa,
-			FullPersonPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
-		/*
-	String publicId;
-	PersonPojo person;
-	List<NetworkIdentityPojo> networkIdentities = new ArrayList<NetworkIdentityPojo>();
-	EmployeePojo employee;
-	StudentPojo student;
-	List<SponsoredPersonPojo> sponsoredPersons = new ArrayList<SponsoredPersonPojo>();
-		 */
-		pojo.setPublicId(moa.getPublicId());
-		
-		if (moa.getPerson() != null) {
-			PersonPojo personPojo = new PersonPojo();
-			this.populatePersonPojo(moa.getPerson(), personPojo);
-			pojo.setPerson(personPojo);
-		}
-
-		if (moa.getEmployee() != null) {
-			EmployeePojo employeePojo = new EmployeePojo();
-			this.populateEmployeePojo(moa.getEmployee(), employeePojo);
-			pojo.setEmployee(employeePojo);
-		}
-
-		if (moa.getStudent() != null) {
-			StudentPojo studentPojo = new StudentPojo();
-			this.populateStudentPojo(moa.getStudent(), studentPojo);
-			pojo.setStudent(studentPojo);
-		}
-		
-		if (moa.getNetworkIdentity() != null & moa.getNetworkIdentityLength() > 0) {
-			for (NetworkIdentity niMoa : (List<NetworkIdentity>) moa.getNetworkIdentity()) {
-				NetworkIdentityPojo niPojo = new NetworkIdentityPojo();
-				this.populateNetworkIdentityPojo(niMoa, niPojo);
-				pojo.getNetworkIdentities().add(niPojo);
-			}
-		}
-		
-		if (moa.getSponsoredPerson() != null & moa.getSponsoredPersonLength() > 0) {
-			for (SponsoredPerson spMoa : (List<SponsoredPerson>) moa.getSponsoredPerson()) {
-				SponsoredPersonPojo spPojo = new SponsoredPersonPojo();
-				this.populateSponsoredPersonPojo(spMoa, spPojo);
-				pojo.getSponsoredPersons().add(spPojo);
-			}
-		}
-	}
+//	@SuppressWarnings("unchecked")
+//	private void populateFullPersonPojo(FullPerson moa,
+//			FullPersonPojo pojo) throws XmlEnterpriseObjectException,
+//			ParseException {
+//		
+//		/*
+//	String publicId;
+//	PersonPojo person;
+//	List<NetworkIdentityPojo> networkIdentities = new ArrayList<NetworkIdentityPojo>();
+//	EmployeePojo employee;
+//	StudentPojo student;
+//	List<SponsoredPersonPojo> sponsoredPersons = new ArrayList<SponsoredPersonPojo>();
+//		 */
+//		pojo.setPublicId(moa.getPublicId());
+//		
+//		if (moa.getPerson() != null) {
+//			PersonPojo personPojo = new PersonPojo();
+//			this.populatePersonPojo(moa.getPerson(), personPojo);
+//			pojo.setPerson(personPojo);
+//		}
+//
+//		if (moa.getEmployee() != null) {
+//			EmployeePojo employeePojo = new EmployeePojo();
+//			this.populateEmployeePojo(moa.getEmployee(), employeePojo);
+//			pojo.setEmployee(employeePojo);
+//		}
+//
+//		if (moa.getStudent() != null) {
+//			StudentPojo studentPojo = new StudentPojo();
+//			this.populateStudentPojo(moa.getStudent(), studentPojo);
+//			pojo.setStudent(studentPojo);
+//		}
+//		
+//		if (moa.getNetworkIdentity() != null & moa.getNetworkIdentityLength() > 0) {
+//			for (NetworkIdentity niMoa : (List<NetworkIdentity>) moa.getNetworkIdentity()) {
+//				NetworkIdentityPojo niPojo = new NetworkIdentityPojo();
+//				this.populateNetworkIdentityPojo(niMoa, niPojo);
+//				pojo.getNetworkIdentities().add(niPojo);
+//			}
+//		}
+//		
+//		if (moa.getSponsoredPerson() != null & moa.getSponsoredPersonLength() > 0) {
+//			for (SponsoredPerson spMoa : (List<SponsoredPerson>) moa.getSponsoredPerson()) {
+//				SponsoredPersonPojo spPojo = new SponsoredPersonPojo();
+//				this.populateSponsoredPersonPojo(spMoa, spPojo);
+//				pojo.getSponsoredPersons().add(spPojo);
+//			}
+//		}
+//	}
 	private void populatePersonPojo(Person moa,
 			PersonPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
@@ -13068,6 +13068,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.setBaseline(baseline);
 				AccountProvisioningSummaryPojo summary = new AccountProvisioningSummaryPojo();
 				summary.setDeprovisioning(pojo);
+				AccountPojo acct = this.getAccountById(pojo.getRequisition().getAccountId());
+				summary.setAccount(acct);
 				summaries.add(summary);
 			}
 

@@ -55,6 +55,8 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 	@UiField Label anticipatedTimeLabel;
 	@UiField Label actualTimeLabel;
 	@UiField Label requestorLabel;
+	@UiField Label acctIdLabel;
+	@UiField Label acctNameLabel;
 
 	@UiField HTML progressHTML;
 	@UiField VerticalPanel stepsPanel;
@@ -307,6 +309,8 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 			provisioningTypeLabel.setText(Constants.VPN_DEPROVISIONING);
 			statusLabel.setText(presenter.getDeprovisioning().getStatus());
 			requestorLabel.setText(presenter.getDeprovisioning().getRequisition().getRequestorId());
+			acctIdLabel.setText(presenter.getDeprovisioning().getRequisition().getAccountId());
+			acctNameLabel.setText(presenter.getProvisioningSummary().getAccount().getAccountName());
 			if (presenter.getDeprovisioning().getDeprovisioningResult() == null) {
 				provisioningResultLabel.setText(Constants.NOT_APPLICABLE);
 			}
@@ -472,6 +476,8 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 		anticipatedTimeLabel.setText("");
 		actualTimeLabel.setText("");
 		requestorLabel.setText("");
+		acctIdLabel.setText("");
+		acctNameLabel.setText("");
 		stepsPanel.clear();
 		setProvisioningProgress();
 	}
