@@ -155,7 +155,7 @@
 			<g:HorizontalPanel spacing="8" width="100%">
 				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 					<g:HTMLPanel addStyleNames="{style.rhedcloudLogo}" ui:field='rhedcloudLogo' title="rhedcloud.org">
-						<div style="padding-left: 4px; padding-right: 4px" ui:field='rhedcloudLogoElem'><img src="images/rhedcloud-attribution.png"/></div>
+						<div style="padding-left: 4px; padding-right: 4px" ui:field='rhedcloudLogoElem'><a style="background: #232f3e" target="_blank" href="https://www.rhedcloud.org"><img src="images/rhedcloud-attribution.png"/></a></div>
 					</g:HTMLPanel>
 				</g:cell>
 			</g:HorizontalPanel>
