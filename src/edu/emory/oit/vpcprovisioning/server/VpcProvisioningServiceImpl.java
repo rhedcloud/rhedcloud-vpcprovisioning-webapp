@@ -6211,11 +6211,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getDirectoryPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("directoryPersonTimeoutMillis", "180000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getDirectoryRequestService();
+			info("[getVpcpsForFilter] setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
 			List<DirectoryPerson> moas = null;
 			try {
 				info("Query spec is: " + queryObject.toXmlString());
-				moas = actionable.query(queryObject,
-						this.getDirectoryRequestService());
+				moas = actionable.query(queryObject, reqSvc);
 			} catch (EnterpriseObjectQueryException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -6224,11 +6232,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("[service layer] got " + moas.size() + " DirectoryPerson objects back from ESB.");
 				for (DirectoryPerson moa : moas) {
 					DirectoryPersonPojo pojo = new DirectoryPersonPojo();
-	//				DirectoryPersonPojo baseline = new DirectoryPersonPojo();
 					info("DirectoryPerson: " + moa.toXmlString());
 					this.populateDirectoryPersonPojo(moa, pojo);
-	//				this.populateDirectoryPersonPojo(moa, baseline);
-	//				pojo.setBaseline(baseline);
 					pojos.add(pojo);
 				}
 			}
