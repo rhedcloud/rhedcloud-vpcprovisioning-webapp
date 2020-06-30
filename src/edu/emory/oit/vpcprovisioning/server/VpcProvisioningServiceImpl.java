@@ -941,9 +941,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (user.getPublicId() == null) {
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
+			dp_filter.setKey(user.getPrincipal());
 			dp_filter.setUserLoggedIn(user);
 			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
 			if (dp_result != null) {
+				if (dp_result.getResults().size() == 0) {
+					// match not found in directory, bad...
+					info("[getRolesForUser] Empty DirectoryPersonQueryResultPojo.  This is bad.");
+					throw new RpcException("No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
+				}
 				info("[getRolesForUser] got " + dp_result.getResults().size() + 
 					" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
 			}
@@ -6156,8 +6162,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			DirectoryPersonPojo pojo) throws XmlEnterpriseObjectException,
 			ParseException {
 		
-		//DepartmentName?, Email?, Fax?, FirstMiddle?, FullName, Key, LastName?, DirectoryLocation?, 
-		// MailStop?, DirectoryPhone?, SchoolDivision?, StudentPhone?, Suffix?, Title?, Type)>
 		pojo.setDepartmentName(moa.getDepartmentName());
 		if (moa.getEmail() != null) {
 			EmailPojo emailPojo = new EmailPojo();
@@ -6179,8 +6183,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setSuffix(moa.getSuffix());
 		pojo.setTitle(moa.getTitle());
 		pojo.setType(moa.getType());
-//		this.setPojoCreateInfo(pojo, moa);
-//		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -6252,6 +6254,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		} 
 		catch (JMSException e) {
+			// TODO: if it's a timeout exception AND 'key' field is null 
+			// but 'searchString' has data
+			// we may need to do something here.
+			if (e.getMessage().toLowerCase().indexOf("timed out waiting") >= 0) {
+				
+			}
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 

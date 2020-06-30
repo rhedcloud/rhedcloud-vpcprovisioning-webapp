@@ -220,37 +220,6 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 		}
 	}
 
-//	@Override
-//	public void filterBySearchString(boolean includeAllNotifications, String searchString) {
-//		getView().showPleaseWaitDialog("Filtering notifications...");
-//		
-//		if (searchString == null || searchString.length() == 0) {
-//			getView().hidePleaseWaitDialog();
-//			getView().showMessageToUser("Please enter a search string");
-//			return;
-//		}
-//
-//		getView().showFilteredStatus();
-//		if (includeAllNotifications) {
-//			filter = new UserNotificationQueryFilterPojo();
-//			filter.setUserId(userLoggedIn.getPublicId());
-//			filter.setReadStr(null);
-//			filter.setUseQueryLanguage(true);
-//			filter.setMaxRows(200);
-//			filter.setSearchString(searchString);
-//		}
-//		else {
-//			filter = new UserNotificationQueryFilterPojo();
-//			filter.setUserId(userLoggedIn.getPublicId());
-//			filter.setReadStr("false");
-//			filter.setRead(false);
-//			filter.setUseQueryLanguage(true);
-//			filter.setMaxRows(200);
-//			filter.setSearchString(searchString);
-//		}
-//		refreshList(userLoggedIn);
-//	}
-
 	@Override
 	public void stop() {
 		

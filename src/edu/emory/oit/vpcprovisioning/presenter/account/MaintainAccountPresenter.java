@@ -551,29 +551,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		return speedType;
 	}
 
-//	@Override
-//	public void getDirectoryPerson(final String suggestion) {
-//		AsyncCallback<DirectoryPersonQueryResultPojo> callback = new AsyncCallback<DirectoryPersonQueryResultPojo>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//			}
-//
-//			@Override
-//			public void onSuccess(DirectoryPersonQueryResultPojo result) {
-//				if (result != null) {
-//					GWT.log("directoryLookupSB: got a directory person back for: '" + suggestion + "'");
-//					setDirectoryPerson(result.getResults().get(0));
-//				}
-//				else {
-//					GWT.log("directoryLookupSB: no directory person found for: '" + suggestion + "'");
-//				}
-//			}
-//		};
-//		DirectoryPersonQueryFilterPojo filter = new DirectoryPersonQueryFilterPojo();
-//		filter.setSearchString(suggestion);
-//		VpcProvisioningService.Util.getInstance().getDirectoryPersonsForFilter(filter, callback);
-//	}
-
 	@Override
 	public DirectoryPersonPojo getDirectoryPerson() {
 		return directoryPerson;
@@ -779,25 +756,6 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		}
 		VpcProvisioningService.Util.getInstance().getAccountNotificationsForFilter(filter, acct_not_cb);
 	}
-
-//	@Override
-//	public void filterBySearchString(String searchString) {
-//		getView().showPleaseWaitDialog("Filtering notifications...");
-//		
-//		if (searchString == null || searchString.length() == 0) {
-//			getView().hidePleaseWaitDialog();
-//			getView().showMessageToUser("Please enter a search string");
-//			return;
-//		}
-//
-//		getView().showFilteredStatus();
-//		filter = new AccountNotificationQueryFilterPojo();
-//		filter.setAccountId(accountId);
-//		filter.setUseQueryLanguage(true);
-//		filter.setMaxRows(200);
-//		filter.setSearchString(searchString);
-//		refreshAccountNotificationList(userLoggedIn);
-//	}
 
 	@Override
 	public void setSelectedProperty(PropertyPojo prop) {
