@@ -204,6 +204,10 @@ import edu.emory.oit.vpcprovisioning.shared.*;
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
+	
+	private static final String IDM_SYSTEM_NETIQ = "netiq";
+	private static final String IDM_SYSTEM_GROUPER = "grouper";
+	
 	private static final String RISK_CALCULATION_PROPERTIES = "RiskCalculationProperties";
 	private static final String MENU_PROPERTIES = "MenuProperties";
 	private static final String RTP_SERVICE_NAME = "ResourceTaggingProfileRequestService";
@@ -909,7 +913,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			return false;
 		}
 	}
-
+	
 	@Override
 	public void invalidateSessionForUser(String userId) {
 		Cache.getCache().remove(userId);
@@ -918,7 +922,150 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		getThreadLocalRequest().getSession().invalidate();
 	}
 	
+	private String getIdmSystemName() {
+		String idmSystemName=null;
+		try {
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			idmSystemName = props.getProperty("idmSystemName", "netiq");
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+		}
+		return idmSystemName;
+	}
+
 	protected void getRolesForUser(UserAccountPojo user) throws RpcException {
+		String idmSystemName = this.getIdmSystemName();
+		if (idmSystemName.equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
+			this.getRolesForUser_netiq(user);
+		}
+		else if (idmSystemName.equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
+			this.getRolesForUser_grouper(user);
+		}
+	}
+	
+	protected void getRolesForUser_grouper(UserAccountPojo user) throws RpcException {
+		// TODO: 
+		// - get all accounts
+		// - for each account
+
+		java.util.Date startTime = new java.util.Date();
+		info("[getRolesForUser_grouper] getting accounts...");
+		List<AccountPojo> accounts = this.getAllAccounts().getResults();
+		info("[getRolesForUser_grouper] got " + accounts.size() + " accounts from getAllAccounts");
+		
+		if (user.getPublicId() == null) {
+			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+			dp_filter.setSearchString(user.getPrincipal());
+			
+			// RICE-SPECIFIC - only do this if we're using Grouper (Rice)
+			dp_filter.setKey(user.getPrincipal());
+			// END RICE-SPECIFIC
+			
+			dp_filter.setUserLoggedIn(user);
+			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+			if (dp_result != null) {
+				if (dp_result.getResults().size() == 0) {
+					// match not found in directory, bad...
+					info("[getRolesForUser_grouper] Empty DirectoryPersonQueryResultPojo.  This is bad.");
+					throw new RpcException("No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
+				}
+				info("[getRolesForUser_grouper] got " + dp_result.getResults().size() + 
+					" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
+			}
+			else {
+				// error
+				info("[getRolesForUser_grouper] null DirectoryPersonQueryResultPojo.  This is bad.");
+				throw new RpcException("Null DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
+			}
+			DirectoryPersonPojo directoryPerson = dp_result.getResults().get(0);
+			user.setPublicId(directoryPerson.getKey());
+			PersonalNamePojo personalName = new PersonalNamePojo();
+			personalName.setFirstName(directoryPerson.getFirstMiddle());
+			personalName.setLastName(directoryPerson.getLastName());
+			user.setPersonalName(personalName);
+			
+			info("[getRolesForUser_grouper] User public id is: " + user.getPublicId());
+		}
+		else {
+			info("[getRolesForUser_grouper] no need to get full person object.");
+		}
+		
+		for (AccountPojo account : accounts) {
+			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
+			ra_filter.setRoleDN(account.getAccountId() + ":" + "c_admin");
+			
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
+			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+
+			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
+					// user is a central admin in this account
+					AccountRolePojo arp = new AccountRolePojo();
+					arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
+					info("[getRolesForUser_grouper] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+					user.addAccountRole(arp);
+					
+					AccountRolePojo arp2 = new AccountRolePojo();
+					arp2.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
+					info("[getRolesForUser_grouper] adding AccountRolePojo " + arp2.toString() + " to UserAccount logged in.");
+					user.addAccountRole(arp);
+					
+					break raLoop;
+				}
+			}
+		}
+
+		for (AccountPojo account : accounts) {
+			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
+			ra_filter.setRoleDN(account.getAccountId() + ":" + "admin");
+			
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
+			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+
+			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
+					// user is a central admin in this account
+					AccountRolePojo arp = new AccountRolePojo();
+					arp.setAccountId(account.getAccountId());
+					arp.setAccountName(account.getAccountName());
+					arp.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+					info("[getRolesForUser_grouper] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+					user.addAccountRole(arp);
+					
+					break raLoop;
+				}
+			}
+		}
+
+		for (AccountPojo account : accounts) {
+			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
+			ra_filter.setRoleDN(account.getAccountId() + ":" + "auditor");
+			
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
+			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
+
+			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
+					// user is a central admin in this account
+					AccountRolePojo arp = new AccountRolePojo();
+					arp.setAccountId(account.getAccountId());
+					arp.setAccountName(account.getAccountName());
+					arp.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+					info("[getRolesForUser_grouper] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+					user.addAccountRole(arp);
+					
+					break raLoop;
+				}
+			}
+		}
+
+		info("[getRolesForUser_grouper] added " + user.getAccountRoles().size() + " AccountRoles to User");
+		java.util.Date endTime = new java.util.Date();
+		long elapsedTime = endTime.getTime() - startTime.getTime();
+		info("[getRolesForUser_grouper] elaspsed time: " + formatMillisForDisplay(elapsedTime));
+	}
+	
+	protected void getRolesForUser_netiq(UserAccountPojo user) throws RpcException {
 		
 		// TODO: this will need to be re-worked to support other IDM systems
 		// like grouper etc.
@@ -934,28 +1081,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		//	- add the AccountRolePojo to the user passed in
 		
 		java.util.Date startTime = new java.util.Date();
-		info("[getRolesForUser] getting accounts...");
+		info("[getRolesForUser_netiq] getting accounts...");
 		List<AccountPojo> accounts = this.getAllAccounts().getResults();
-		info("[getRolesForUser] got " + accounts.size() + " accounts from getAllAccounts");
+		info("[getRolesForUser_netiq] got " + accounts.size() + " accounts from getAllAccounts");
 		
 		if (user.getPublicId() == null) {
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
-			dp_filter.setKey(user.getPrincipal());
 			dp_filter.setUserLoggedIn(user);
 			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
 			if (dp_result != null) {
 				if (dp_result.getResults().size() == 0) {
 					// match not found in directory, bad...
-					info("[getRolesForUser] Empty DirectoryPersonQueryResultPojo.  This is bad.");
+					info("[getRolesForUser_netiq] Empty DirectoryPersonQueryResultPojo.  This is bad.");
 					throw new RpcException("No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
 				}
-				info("[getRolesForUser] got " + dp_result.getResults().size() + 
+				info("[getRolesForUser_netiq] got " + dp_result.getResults().size() + 
 					" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
 			}
 			else {
 				// error
-				info("[getRolesForUser] null DirectoryPersonQueryResultPojo.  This is bad.");
+				info("[getRolesForUser_netiq] null DirectoryPersonQueryResultPojo.  This is bad.");
 				throw new RpcException("Null DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
 			}
 			DirectoryPersonPojo directoryPerson = dp_result.getResults().get(0);
@@ -965,10 +1111,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			personalName.setLastName(directoryPerson.getLastName());
 			user.setPersonalName(personalName);
 			
-			info("[getRolesForUser] User public id is: " + user.getPublicId());
+			info("[getRolesForUser_netiq] User public id is: " + user.getPublicId());
 		}
 		else {
-			info("[getRolesForUser] no need to get full person object.");
+			info("[getRolesForUser_netiq] no need to get full person object.");
 		}
 		
 		try {
@@ -992,14 +1138,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
 						AccountRolePojo arp = new AccountRolePojo();
 						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 						user.addAccountRole(arp);
 						continue;
 					}
 					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
 						AccountRolePojo arp = new AccountRolePojo();
 						arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
-						info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 						user.addAccountRole(arp);
 						continue;
 					}
@@ -1016,11 +1162,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						AccountPojo verifiedAcct = this.getAccountByIdFromList(acctId, accounts);
 						
 						if (acctId != null && verifiedAcct != null) {
+							// this gets account admins and auditors
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setAccountId(acctId);
 							arp.setAccountName(verifiedAcct.getAccountName());
 							arp.setRoleName(roleName);
-							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+							info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 							user.addAccountRole(arp);
 						}
 						else if (acctId == null && 
@@ -1029,7 +1176,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setRoleName(roleName);
-							info("[getRolesForUser] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+							info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 							user.addAccountRole(arp);
 						}
 						else {
@@ -1039,10 +1186,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 			}
 			
-			info("[getRolesForUser] added " + user.getAccountRoles().size() + " AccountRoles to User");
+			info("[getRolesForUser_netiq] added " + user.getAccountRoles().size() + " AccountRoles to User");
 			java.util.Date endTime = new java.util.Date();
 			long elapsedTime = endTime.getTime() - startTime.getTime();
-			info("[getRolesForUser] elaspsed time: " + formatMillisForDisplay(elapsedTime));
+			info("[getRolesForUser_netiq] elaspsed time: " + formatMillisForDisplay(elapsedTime));
 		} 
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
@@ -3667,23 +3814,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //						this.getIdentityServiceRequestService());
 //				
 //				// should only get one back
-//				info("[getDirectoryMetaDataForNetId] got " + moas.size() + " FullPerson moas back from ESB for PublicID '" + publicId + "'");
+//				info("[getDirectoryMetaDataForPublicId] got " + moas.size() + " FullPerson moas back from ESB for PublicID '" + publicId + "'");
 //				FullPerson moa = moas.get(0);
-//				info("[getDirectoryMetaDataForNetId] FullPerson xml: " + moa.toXmlString());
+//				info("[getDirectoryMetaDataForPublicId] FullPerson xml: " + moa.toXmlString());
 
 				
 				DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
 				DirectoryPerson actionable = (DirectoryPerson) getObject(Constants.MOA_DIRECTORY_PERSON);
 
 				queryObject.setKey(publicId);
-				info("[getDirectoryMetaDataForNetId] query spec: " + queryObject.toXmlString());
+				info("[getDirectoryMetaDataForPublicId] query spec: " + queryObject.toXmlString());
 
 				@SuppressWarnings("unchecked")
 				List<DirectoryPerson>moas = actionable.query(queryObject, this.getDirectoryRequestService());
-				info("[getDirectoryMetaDataForNetId] got " + moas.size() + " DirectoryPerson moas back from ESB for PublicID '" + publicId + "'");
+				info("[getDirectoryMetaDataForPublicId] got " + moas.size() + " DirectoryPerson moas back from ESB for PublicID '" + publicId + "'");
 				DirectoryPerson moa = moas.get(0);
 				for (DirectoryPerson lmoa : moas) {
-					info("[getDirectoryMetaDataForNetId] DirectoryPerson xml: " + lmoa.toXmlString());
+					info("[getDirectoryMetaDataForPublicId] DirectoryPerson xml: " + lmoa.toXmlString());
 				}
 
 				
