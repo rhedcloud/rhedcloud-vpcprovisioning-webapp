@@ -990,14 +990,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getRolesForUser_grouper] no need to get full person object.");
 		}
 		
-		for (AccountPojo account : accounts) {
+		accountLoop: for (AccountPojo account : accounts) {
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 			ra_filter.setRoleDN(account.getAccountId() + ":" + "c_admin");
 			
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 
-			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
 					// user is a central admin in this account
 					AccountRolePojo arp = new AccountRolePojo();
@@ -1010,7 +1010,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					info("[getRolesForUser_grouper] adding AccountRolePojo " + arp2.toString() + " to UserAccount logged in.");
 					user.addAccountRole(arp);
 					
-					break raLoop;
+					// if they're a central admin, the accountLoop here really 
+					// doesn't need to go any further
+					break accountLoop;
 				}
 			}
 		}
