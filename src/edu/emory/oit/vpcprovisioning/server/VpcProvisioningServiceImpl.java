@@ -993,7 +993,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		accountLoop: for (AccountPojo account : accounts) {
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 			ra_filter.setRoleDN(account.getAccountId() + ":" + "c_admin");
-			
+			ra_filter.setUserLoggedIn(user);
+
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 
@@ -1002,12 +1003,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					// user is a central admin in this account
 					AccountRolePojo arp = new AccountRolePojo();
 					arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-					info("[getRolesForUser_grouper] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+					info("[getRolesForUser_grouper] adding AccountRolePojo " + 
+					arp.toString() + " to UserAccount logged in.");
 					user.addAccountRole(arp);
 					
 					AccountRolePojo arp2 = new AccountRolePojo();
 					arp2.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
-					info("[getRolesForUser_grouper] adding AccountRolePojo " + arp2.toString() + " to UserAccount logged in.");
+					info("[getRolesForUser_grouper] adding AccountRolePojo " + 
+					arp2.toString() + " to UserAccount logged in.");
 					user.addAccountRole(arp);
 					
 					// if they're a central admin, the accountLoop here really 
@@ -1020,6 +1023,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		for (AccountPojo account : accounts) {
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 			ra_filter.setRoleDN(account.getAccountId() + ":" + "admin");
+			ra_filter.setUserLoggedIn(user);
 			
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
@@ -1042,6 +1046,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		for (AccountPojo account : accounts) {
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 			ra_filter.setRoleDN(account.getAccountId() + ":" + "auditor");
+			ra_filter.setUserLoggedIn(user);
 			
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
