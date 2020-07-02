@@ -6743,9 +6743,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			@SuppressWarnings("unchecked")
 			List<RoleAssignment> moas = actionable.query(queryObject,
 					this.getIDMRequestService());
-//			info("[getRoleAssignmentsForFilter] got " + moas.size() + " RoleAssignments back from ESB service.");
+			info("[getRoleAssignmentsForFilter] got " + moas.size() + " RoleAssignments back from ESB service.");
 			for (RoleAssignment moa : moas) {
-//				info("[getRoleAssignmentsForFilter] RoleAssignment.toXmlString: " + moa.toXmlString());
+				info("[getRoleAssignmentsForFilter] RoleAssignment.toXmlString: " + moa.toXmlString());
 				String roleDn = moa.getRoleDN();
 				if (roleDn != null) {
 					if (roleDn.indexOf("RGR_AWS") >= 0 || 
