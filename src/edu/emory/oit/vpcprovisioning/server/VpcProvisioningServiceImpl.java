@@ -8938,6 +8938,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		TermsOfUseSummaryPojo summary = new TermsOfUseSummaryPojo();
 		summary.setHasValidTermsOfUseAgreement(false);
 		
+		// TEMPORARY:
+		summary.setHasValidTermsOfUseAgreement(true);
+		if (true) {
+			return summary;
+		}
+		// END TEMPORARY
+		
 		TermsOfUseQueryFilterPojo tou_filter = new TermsOfUseQueryFilterPojo();
 		tou_filter.setEffectiveTerms(true);
 		tou_filter.setUserAccount(user);
