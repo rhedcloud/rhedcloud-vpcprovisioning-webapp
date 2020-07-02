@@ -6759,10 +6759,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info(tag + "RoleAssignment.toXmlString: " + moa.toXmlString());
 				String roleDn = moa.getRoleDN();
 				if (roleDn != null) {
-					if (roleDn.indexOf("RGR_AWS") >= 0 || 
-						roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 ||
-						roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >=0) {
-						
+					if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
+						if (roleDn.indexOf("RGR_AWS") >= 0 || 
+							roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 ||
+							roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >=0) {
+								
+							RoleAssignmentPojo pojo = new RoleAssignmentPojo();
+							this.populateRoleAssignmentPojo(moa, pojo);
+							pojos.add(pojo);
+						}
+					}
+					else if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 						RoleAssignmentPojo pojo = new RoleAssignmentPojo();
 						this.populateRoleAssignmentPojo(moa, pojo);
 						pojos.add(pojo);
