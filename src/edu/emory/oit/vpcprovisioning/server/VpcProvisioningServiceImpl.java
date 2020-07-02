@@ -7126,16 +7126,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 								DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache().get(
 										Constants.DIRECTORY_PERSON + publicId);
 								if (cached_dp == null) {
-									DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
-									dp_filter.setKey(publicId);
-									DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-									if (dp_result.getResults().size() > 0) {
-										cached_dp = dp_result.getResults().get(0);
-										// add to cache
-										Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
+									if (publicId.length() > 10) {
+										info(tag + " skipping public id: " + publicId + " it doesn't appear to be valid");
+										continue;
 									}
 									else {
-										throw new RpcException("Could not find a DirectoryPerson for the public id: " + publicId);
+										DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+										dp_filter.setKey(publicId);
+										DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+										if (dp_result.getResults().size() > 0) {
+											cached_dp = dp_result.getResults().get(0);
+											// add to cache
+											Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
+										}
+										else {
+											throw new RpcException("Could not find a DirectoryPerson for the public id: " + publicId);
+										}
 									}
 								}
 								
