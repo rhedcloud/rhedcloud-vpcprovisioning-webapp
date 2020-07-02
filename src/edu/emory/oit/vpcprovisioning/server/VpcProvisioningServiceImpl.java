@@ -999,6 +999,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				info("roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
+				info("user.PublicId=" + user.getPublicId());
 				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
 					// user is a central admin in this account
 					AccountRolePojo arp = new AccountRolePojo();
