@@ -990,6 +990,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			info(tag + "no need to get full person object.");
 		}
+
+		// empty user's list of roles
+		user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 		
 		info(tag + "Processing c_admin role assignments for " + accounts.size() + " accounts.");
 		accountLoop: for (AccountPojo account : accounts) {
@@ -999,7 +1002,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ra_filter.setUserLoggedIn(user);
 
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 			info(tag + "got " + ra_result.getResults().size() + " role assignments back from getRoleAssignmentsForFilter");
 
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
@@ -1034,7 +1036,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ra_filter.setUserLoggedIn(user);
 			
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 
 			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
@@ -1059,7 +1060,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ra_filter.setUserLoggedIn(user);
 			
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-			user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 
 			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
@@ -6725,6 +6725,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public RoleAssignmentQueryResultPojo getRoleAssignmentsForFilter(RoleAssignmentQueryFilterPojo filter)
 			throws RpcException {
 
+		String tag = "[getRoleAssignmentsForFilter] ";
 		RoleAssignmentQueryResultPojo result = new RoleAssignmentQueryResultPojo();
 		List<RoleAssignmentPojo> pojos = new java.util.ArrayList<RoleAssignmentPojo>();
 		try {
@@ -6747,15 +6748,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				authUserId = this.getAuthUserIdForHALS();
 			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getRoleAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			info(tag + "AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 			
-			info("[getRoleAssignmentsForFilter] QuerySpec is: " + queryObject.toXmlString());
+			info(tag + "QuerySpec is: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
 			List<RoleAssignment> moas = actionable.query(queryObject,
 					this.getIDMRequestService());
-			info("[getRoleAssignmentsForFilter] got " + moas.size() + " RoleAssignments back from ESB service.");
+			info(tag + "got " + moas.size() + " RoleAssignments back from ESB service.");
 			for (RoleAssignment moa : moas) {
-				info("[getRoleAssignmentsForFilter] RoleAssignment.toXmlString: " + moa.toXmlString());
+				info(tag + "RoleAssignment.toXmlString: " + moa.toXmlString());
 				String roleDn = moa.getRoleDN();
 				if (roleDn != null) {
 					if (roleDn.indexOf("RGR_AWS") >= 0 || 
@@ -6769,9 +6770,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 			}
 
+			info(tag + "pojos size is: " + pojos.size());
 			Collections.sort(pojos);
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
+			info(tag + "returning " + result.getResults().size() + " RoleAssignmentPojos to caller.");
 			return result;
 		} 
 		catch (EnterpriseConfigurationObjectException e) {
