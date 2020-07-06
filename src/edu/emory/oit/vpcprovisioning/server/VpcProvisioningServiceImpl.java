@@ -6305,11 +6305,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			moa.setRoleDNs(roleDns);
 		}
-		ExplicitIdentityDNs eid = moa.newExplicitIdentityDNs();
-		for (String eid_dn : pojo.getExplicityIdentitiyDNs().getDistinguishedNames()) {
-			eid.addDistinguishedName(eid_dn);
+		if (pojo.getExplicityIdentitiyDNs() != null) {
+			ExplicitIdentityDNs eid = moa.newExplicitIdentityDNs();
+			for (String eid_dn : pojo.getExplicityIdentitiyDNs().getDistinguishedNames()) {
+				eid.addDistinguishedName(eid_dn);
+			}
+			moa.setExplicitIdentityDNs(eid);
 		}
-		moa.setExplicitIdentityDNs(eid);
 		moa.setRoleDN(pojo.getRoleDN());
 		
 		Datetime expirationDatetime = moa.newExpirationDatetime();
