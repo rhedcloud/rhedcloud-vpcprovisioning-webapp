@@ -6434,6 +6434,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 
 			}
+			
+			// TEMPORARY (MAYBE) - RICE Specific
+			// because rice doesn't have a ppid and when search string is passed (without key)
+			// it causes a massive directory scan, we're going to look for that situation 
+			// and set the key to whatever is passed in the search string to see if
+			// we can get the directory person oracles to work without timing out all the time
+			if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
+				if (queryObject.getKey() == null || 
+					queryObject.getKey().length() == 0 && 
+					queryObject.getSearchString() != null) {
+					
+					queryObject.setKey(queryObject.getSearchString());
+				}
+			}
 
 			if (authUserId == null) {
 				authUserId = this.getAuthUserIdForHALS();
