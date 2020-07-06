@@ -35,9 +35,9 @@
 		<b>Terminating Emory AWS Accounts</b><br/><br/>
 		To request termination of an Emory AWS Account, select the account 
 		you administer in the VPCP application and select "Terminate Account." 
-		You will be presented with a dialog to create a request to LITS 
+		You will be presented with a dialog to create a request to 
 		administrators to terminate your account. Termination of the 
-		account is not immediate, but is a manual process in which LITS 
+		account is not immediate, but is a manual process in which 
 		administrators will contact the account owners and confirm the 
 		desire to terminate the account and all activity in the account. 
 		This process is intended to ensure that no account is 

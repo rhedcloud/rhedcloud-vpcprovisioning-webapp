@@ -6731,22 +6731,39 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			try {
 				Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 				RoleAssignmentRequisition requisition = (RoleAssignmentRequisition) getObject(Constants.MOA_ROLE_ASSIGNMENT_REQUISITION);
-				requisition.setRoleAssignmentActionType("grant");
-				requisition.setRoleAssignmentType("USER_TO_ROLE");
-				requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() +")");
-				
-				String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
-				idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, publicId);
-				requisition.setIdentityDN(idDn);
-				
-				String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
-				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
-				distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
-				RoleDNs roleDns = requisition.newRoleDNs();
-				roleDns.addDistinguishedName(distName);
-				requisition.setRoleDNs(roleDns);
-
 				RoleAssignment moa = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
+				if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
+					requisition.setRoleAssignmentActionType("grant");
+					requisition.setRoleAssignmentType("USER_TO_ROLE");
+					requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() +")");
+					
+					String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
+					idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, publicId);
+					requisition.setIdentityDN(idDn);
+					
+					String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+					distName = distName.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
+					distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
+					RoleDNs roleDns = requisition.newRoleDNs();
+					roleDns.addDistinguishedName(distName);
+					requisition.setRoleDNs(roleDns);
+				}
+				else if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
+					requisition.setRoleAssignmentActionType("grant");
+					requisition.setRoleAssignmentType("USER_TO_ROLE");
+					requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() +")");
+					requisition.setIdentityDN(publicId);
+					RoleDNs roleDns = requisition.newRoleDNs();
+					List<String> dns = new java.util.ArrayList<String>();
+					if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
+						dns.add(accountId + ":" + "admin");
+					}
+					else if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
+						dns.add(accountId + ":" + "auditor");
+						
+					}
+					roleDns.setDistinguishedName(dns);
+				}
 
 				info("generating ROLE Assignment record on the server:  " + requisition.toXmlString());
 				List<ActionableEnterpriseObject> results = this.doGenerate(moa, requisition, getIDMRequestService());
