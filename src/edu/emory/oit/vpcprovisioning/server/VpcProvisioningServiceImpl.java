@@ -7245,12 +7245,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				moa.setReason("Removed using VPCP App by (" + getUserLoggedIn(false).getEppn() +")");
 				
 				if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
+					RoleDNs roleDns = moa.newRoleDNs();
 					if (roleAssignment.getRoleDN().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
 						moa.setRoleDN(accountId + ":admin");
+						roleDns.addDistinguishedName(accountId + ":admin"); 
 					}
 					else if (roleAssignment.getRoleDN().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
 						moa.setRoleDN(accountId + ":auditor");
+						roleDns.addDistinguishedName(accountId + ":auditor"); 
 					}
+					moa.setRoleDNs(roleDns);
 				}
 
 				info("doing the RoleAssignment.delete:  " + moa.toXmlString());
