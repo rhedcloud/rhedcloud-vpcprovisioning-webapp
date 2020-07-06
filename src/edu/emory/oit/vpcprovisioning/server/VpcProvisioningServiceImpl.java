@@ -6754,15 +6754,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() +")");
 					requisition.setIdentityDN(publicId);
 					RoleDNs roleDns = requisition.newRoleDNs();
-					List<String> dns = new java.util.ArrayList<String>();
 					if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
-						dns.add(accountId + ":" + "admin");
+						roleDns.addDistinguishedName(accountId + ":" + "admin");
 					}
 					else if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
-						dns.add(accountId + ":" + "auditor");
+						roleDns.addDistinguishedName(accountId + ":" + "auditor");
 						
 					}
-					roleDns.setDistinguishedName(dns);
+					requisition.setRoleDNs(roleDns);
 				}
 
 				info("generating ROLE Assignment record on the server:  " + requisition.toXmlString());
