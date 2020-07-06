@@ -7118,7 +7118,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			else if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 				// we'll externalize this eventually
 				String[] accountRoleNames = new String[] {
-						"c_admin",
+//						"c_admin",
 						"admin",
 						"auditor"
 				};
@@ -7132,6 +7132,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (ra_result != null) {
 						if (ra_result.getResults().size() > 0) {
 							for (RoleAssignmentPojo ra : ra_result.getResults()) {
+								if (ra.getRoleDN().toLowerCase().indexOf("admin") >= 0) {
+									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+								}
+								else if (ra.getRoleDN().toLowerCase().indexOf("auditor") >= 0) {
+									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+								}
 								// get directoryperson for publicid
 								// check cache to see if the DirectoryPerson is already in the cache
 								// if not, go get it.
