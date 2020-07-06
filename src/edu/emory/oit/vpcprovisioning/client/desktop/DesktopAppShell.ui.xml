@@ -38,13 +38,6 @@
 						<img src="images/bell-512.png" width="24" height="24"/>
 					</g:HTML>
 				</g:cell>
-				<!-- 
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-					<g:HTMLPanel styleName="{style.productsMenuHeader}" ui:field='productsTitleBar' title="AWS at Emory">
-						<div ui:field='productsElem'>Products  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/></div>
-					</g:HTMLPanel>
-				</g:cell>
-				 -->
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:MenuBar ui:field="productsMenuBar" autoOpen="false" animationEnabled="true" styleName="{style.linksMenu}">
 						<g:MenuItem ui:field="productsMenu" debugId="productsMenu" styleName="{style.linksMenuHeader}">Products  <img src="images/icon-arrow-down-b-512.png" width="16" height="16"/>

@@ -25,19 +25,19 @@
 			</g:cell>
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.mediumLabel}">Service List</g:HTML>
-		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
-		Emory AWS Services that you can view or edit.<br/><br/>
-		These reside in the database associated to the Emory AWS ESB Service.  
-		The Emory AWS Service is authoritatative for 
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing  
+		AWS Services that you can view or edit.<br/><br/>
+		These reside in the database associated to the RHEDcloud AWS ESB Service.  
+		The RHEDcloud AWS Service is authoritatative for 
 		AWS Service objects and allows applications like this one 
 		to query, create, update and delete those objects.<br/><br/>
 		Click the 'Add Service' button to go to the Service maintenance 
-		page where you can create a new Emory AWS Service.</g:HTML>
+		page where you can create a new AWS Service.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Grid cellSpacing="8">
 				<g:row>
 					<g:customCell>
-						<g:Button ui:field="createServiceButton" debugId="createServiceButton" text="Add Service" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create Emory AWS Service"/>
+						<g:Button ui:field="createServiceButton" debugId="createServiceButton" text="Add Service" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create AWS Service"/>
 					</g:customCell>
 					<g:customCell>
 						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>

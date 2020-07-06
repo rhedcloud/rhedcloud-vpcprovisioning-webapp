@@ -133,6 +133,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	HomeView homeView;
 	String hash=null;
 	ReleaseInfo releaseInfo;
+    String serviceName = null;
 
 	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -1059,7 +1060,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		svcStatsVp.getElement().getStyle().setBackgroundColor("#232f3e");
 		svcStatsVp.getElement().getStyle().setBorderColor("black");
 		svcStatsVp.setWidth("100%");
-		HTML svcStatsHeading = new HTML("AWS at Emory Service at a Glance");
+		HTML svcStatsHeading = new HTML("RHEDcloud Service at a Glance");
 		svcStatsHeading.getElement().getStyle().setColor("#ddd");
 		svcStatsHeading.getElement().getStyle().setFontSize(20, Unit.PX);
 		svcStatsHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -1425,7 +1426,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		// emory hipaa eligibility
-		HTML svcHipaaStatus = new HTML("Emory HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
+		HTML svcHipaaStatus = new HTML("RHEDcloud HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
 		svcHipaaStatus.addStyleName("productDescription");
 		svcHipaaStatus.getElement().getStyle().setColor("orange");
 		svcHipaaStatus.getElement().getStyle().setFontSize(14, Unit.PX);
@@ -1437,7 +1438,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			img.getElement().getStyle().setBackgroundColor("#232f3e");
 			img.setWidth("16px");
 			img.setHeight("16px");
-			img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
+			img.setTitle("This service IS HIPAA eligible according to RHEDcloud's HIPAA policy");
 			svcGrid.setWidget(2, 1, img);
 		}
 		else {
@@ -1446,7 +1447,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			img.getElement().getStyle().setBackgroundColor("#232f3e");
 			img.setWidth("16px");
 			img.setHeight("16px");
-			img.setTitle("This service IS NOT HIPAA eligible according to Emory's HIPAA policy");
+			img.setTitle("This service IS NOT HIPAA eligible according to RHEDcloud's HIPAA policy");
 			svcGrid.setWidget(2, 1, img);
 		}
 
@@ -1703,7 +1704,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		db.setGlassEnabled(true);
 		db.center();
 		HTML h = new HTML("<p>A system error has occurred and the application cannot "
-				+ "continue.  The application was unable to verify your Emory Rules of Behavior agreement "
+				+ "continue.  The application was unable to verify your Rules of Behavior agreement "
 				+ "status.</p><p>The error that lead to this situation is listed below.</p>"
 				+ "<p>Please try refreshing your browser to start over and if "
 				+ "the problem persists, contact the help desk.</p>"

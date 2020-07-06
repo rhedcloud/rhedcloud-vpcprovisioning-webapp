@@ -144,7 +144,6 @@ import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
 import edu.emory.moa.jmsobjects.identity.v2_0.Employee;
-import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
 //import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
 import edu.emory.moa.jmsobjects.identity.v2_0.NetworkIdentity;
 import edu.emory.moa.jmsobjects.identity.v2_0.Person;
@@ -207,6 +206,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	
 	private static final String IDM_SYSTEM_NETIQ = "netiq";
 	private static final String IDM_SYSTEM_GROUPER = "grouper";
+	private static final String SITE_SPECIFIC_TEXT_PROPERTIES = "SiteSpecificTextProperties";
 	
 	private static final String RISK_CALCULATION_PROPERTIES = "RiskCalculationProperties";
 	private static final String MENU_PROPERTIES = "MenuProperties";
@@ -13594,6 +13594,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 
+	}
+
+	@Override
+	public PropertiesPojo getSiteSpecificTextProperties() throws RpcException {
+		try {
+			Properties props = getAppConfig().getProperties(SITE_SPECIFIC_TEXT_PROPERTIES);
+			PropertiesPojo p = new PropertiesPojo();
+			Iterator<Object> keys = props.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				String value = props.getProperty(key);
+				p.setProperty(key, value);
+			}
+			return p;
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e.getMessage());
+		}
 	}
 
 }

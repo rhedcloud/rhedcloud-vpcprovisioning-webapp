@@ -21,8 +21,8 @@
 		
 		<g:HTML addStyleNames="{style.mediumLabel}">Elastic IP Assignments</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing ElasticIpAssignments that you can view or delete.<br/><br/>
-		These reside in the database associated to the Emory ElasticIp ESB Service.  
-		The Emory ElasticIp Service is authoritatative for 
+		These reside in the database associated to the RHEDcloud ElasticIp ESB Service.  
+		The RHEDcloud ElasticIp Service is authoritatative for 
 		ElasticIp and ElasticIpAssignment objects and allows applications like this one 
 		to query, create, update and delete those objects if appropriate.</g:HTML>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">

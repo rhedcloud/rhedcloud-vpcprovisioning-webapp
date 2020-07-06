@@ -308,4 +308,6 @@ public interface VpcProvisioningService extends RemoteService {
 	// Account Provisioning/Deprovisioning
 	AccountProvisioningQueryResultPojo getAccountProvisioningSummariesForFilter(AccountProvisioningQueryFilterPojo filter) throws RpcException;
 	AccountDeprovisioningPojo generateAccountDeprovisioning(AccountDeprovisioningRequisitionPojo requisition) throws RpcException;
+
+	PropertiesPojo getSiteSpecificTextProperties() throws RpcException;
 }
