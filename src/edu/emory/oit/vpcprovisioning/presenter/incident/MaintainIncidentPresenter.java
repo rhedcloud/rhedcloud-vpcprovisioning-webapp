@@ -414,7 +414,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 					setSubCategory(result.getProperty("SubCategory", "Remove"));
 					setRecordType(result.getProperty("RecordType", "Service Request"));
 					setContactType(result.getProperty("ContactType", "Integration"));
-					setCmdbCi(result.getProperty("CmdbCi", "Emory AWS Service"));
+					setCmdbCi(result.getProperty("CmdbCi", getView().getAppShell().getSiteName() + " AWS Service"));
 					setAssignmentGroup(result.getProperty("AssignmentGroup", "LITS: Systems Support - Tier 3"));
 				}
 				else if (incidentType.equalsIgnoreCase(Constants.INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT)) {
@@ -425,7 +425,7 @@ public class MaintainIncidentPresenter extends PresenterBase implements Maintain
 					setSubCategory(result.getProperty("SubCategory", "Add"));
 					setRecordType(result.getProperty("RecordType", "Service Request"));
 					setContactType(result.getProperty("ContactType", "Integration"));
-					setCmdbCi(result.getProperty("CmdbCi", "Emory AWS Service"));
+					setCmdbCi(result.getProperty("CmdbCi", getView().getAppShell().getSiteName() + " AWS Service"));
 					setAssignmentGroup(result.getProperty("AssignmentGroup", "LITS: Systems Support - Tier 3"));
 				}
 			}

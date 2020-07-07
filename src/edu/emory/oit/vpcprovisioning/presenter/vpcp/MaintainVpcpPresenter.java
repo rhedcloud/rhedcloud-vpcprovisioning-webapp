@@ -470,7 +470,8 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 	@Override
 	public boolean didConfirmSpeedType() {
 		boolean confirmed = Window.confirm("Are you sure you want to use this SpeedType?  "
-				+ "NOTE:  Using an invalid SpeedType is a violation of Emory's Terms of Use.");
+				+ "NOTE:  Using an invalid SpeedType is a violation of " + 
+				getView().getAppShell().getSiteName() + "'s Terms of Use.");
 		if (confirmed) {
 			// log that the user acknowldged the speed type (on the server)
 			String msg = "User " + this.userLoggedIn.getPublicId() + " acknowledged "

@@ -5090,6 +5090,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	    info("[getAWSServiceMap] returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
 	    serviceSummary.setServiceList(servicesResult.getResults());
 	    serviceSummary.setServiceMap(awsServicesMap);
+	    
+	    PropertiesPojo siteProperties = this.getSiteSpecificTextProperties();
+		String siteName = siteProperties.getProperty("siteName", "Emory");
+		serviceSummary.setSiteName(siteName);
+
 	    serviceSummary.initializeStatistics();
 	    serviceSummary.setUpdateTime(new java.util.Date());
 		Cache.getCache().put(Constants.SERVICE_SUMMARY + getCurrentSessionId(), serviceSummary);
@@ -5364,6 +5369,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (serviceSummary != null) {
 			serviceSummary.setServiceList(result.getResults());
 		    serviceSummary.setUpdateTime(new java.util.Date());
+		    
+		    PropertiesPojo siteProperties = this.getSiteSpecificTextProperties();
+			String siteName = siteProperties.getProperty("siteName", "Emory");
+			serviceSummary.setSiteName(siteName);
+
 			Cache.getCache().put(Constants.SERVICE_SUMMARY + getCurrentSessionId(), serviceSummary);
 		}
 		return result;
