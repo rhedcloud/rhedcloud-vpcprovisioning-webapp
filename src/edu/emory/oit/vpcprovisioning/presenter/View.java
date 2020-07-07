@@ -6,6 +6,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public interface View extends IsWidget {
@@ -38,4 +39,6 @@ public interface View extends IsWidget {
 	void vpcpConfirmCancel();
 	void disableButtons();
 	void enableButtons();
+	public void setAppShell(AppShell appShell);
+	public AppShell getAppShell();
 }
