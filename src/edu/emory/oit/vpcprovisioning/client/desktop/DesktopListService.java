@@ -583,7 +583,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				return new OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml("No console categories yet");
 			}
 		};
-		serviceListTable.addColumn(emoryCategoryColumn, "Emory Category(ies)");
+		serviceListTable.addColumn(emoryCategoryColumn, getAppShell().getSiteName() + " Category(ies)");
 		
 		// emory status
 		Column<AWSServicePojo, String> emoryStatusColumn = 
@@ -600,7 +600,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				return o1.getSiteStatus().compareTo(o2.getSiteStatus());
 			}
 		});
-		serviceListTable.addColumn(emoryStatusColumn, "Emory Status");
+		serviceListTable.addColumn(emoryStatusColumn, getAppShell().getSiteName() + " Status");
 
 		// emory hipaa eligible
 		Column<AWSServicePojo, String> emoryHipaaEligibleColumn = new Column<AWSServicePojo, String>(
@@ -610,7 +610,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 				return (object.isSiteHipaaEligible() ? "Yes" : "No");
 			}
 		};
-		serviceListTable.addColumn(emoryHipaaEligibleColumn, "Emory HIPAA Eligible");
+		serviceListTable.addColumn(emoryHipaaEligibleColumn, getAppShell().getSiteName() + " HIPAA Eligible");
 		serviceListTable.setColumnWidth(emoryHipaaEligibleColumn, 40, Unit.PX);
 
 		// combined name
