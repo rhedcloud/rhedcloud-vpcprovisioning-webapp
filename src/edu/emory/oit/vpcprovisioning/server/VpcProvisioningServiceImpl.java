@@ -6872,6 +6872,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		UserAccountPojo user = this.getUserLoggedIn(false);
 		String roleName = "c_admin";
+		List<String> idsAdded = new java.util.ArrayList<String>();
 		for (AccountPojo account : accounts) {
 			info(tag + "Processing " + roleName + " role assignments for account: " + account.getAccountId());
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
@@ -6882,6 +6883,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info(tag + "got " + ra_result.getResults().size() + " role assignments back from getRoleAssignmentsForFilter");
 
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				if (idsAdded.contains(roleAssignment.getIdentityDN())) {
+					continue;
+				}
+				else {
+					idsAdded.add(roleAssignment.getIdentityDN());
+				}
 				info(tag + "roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
 				
 				// get the DirectoryPerson for the roleAssignment.identityDN
