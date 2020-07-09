@@ -27,17 +27,17 @@
 		<g:HTML addStyleNames="{style.mediumLabel}">Account List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
 		AWS Accounts with which you are affiliated.<br/><br/>This account 
-		metadata resides in the database of the Emory AWS ESB Service 
-		and was created at the time the AWS account was provisioned for 
-		Emory. You may view or manage this information after provisioning 
+		metadata resides in the database of the RHEDcloud AWS ESB Service 
+		and was created at the time the AWS account was provisioned.  
+		You may view or manage this information after provisioning 
 		from this application. Only central administrators may register 
 		accounts by adding them here.<br/><br/>
-		<b>Terminating Emory AWS Accounts</b><br/><br/>
-		To request termination of an Emory AWS Account, select the account 
+		<b>Terminating AWS Accounts</b><br/><br/>
+		To request termination of an AWS Account, select the account 
 		you administer in the VPCP application and select "Terminate Account." 
-		You will be presented with a dialog to create a request to LITS 
+		You will be presented with a dialog to create a request to 
 		administrators to terminate your account. Termination of the 
-		account is not immediate, but is a manual process in which LITS 
+		account is not immediate, but is a manual process in which 
 		administrators will contact the account owners and confirm the 
 		desire to terminate the account and all activity in the account. 
 		This process is intended to ensure that no account is 

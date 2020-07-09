@@ -1812,7 +1812,7 @@ public class AppBootstrapper {
 				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
 				presenter.setIncidentType(Constants.INCIDENT_TYPE_TERMINATE_ACCOUNT);
 				presenter.setAccount(event.getAccount());
-				presenter.setShortDescription("AWS at Emory - Account Termination Request: " + presenter.getAccount().getAccountId());
+				presenter.setShortDescription("AWS at " + shell.getSiteName() + " - Account Termination Request: " + presenter.getAccount().getAccountId());
 //				presenter.initializeIncidentProperties(Constants.INCIDENT_TYPE_TERMINATE_ACCOUNT);
 				// TODO: externalize these and retrieve them in the presenter
 				presenter.setUrgency("3");
@@ -1822,7 +1822,7 @@ public class AppBootstrapper {
 				presenter.setSubCategory("Remove");
 				presenter.setRecordType("Service Request");
 				presenter.setContactType("Integration");
-				presenter.setCmdbCi("Emory AWS Service");
+				presenter.setCmdbCi(shell.getSiteName() + " AWS Service");
 				presenter.setAssignmentGroup("LITS: Systems Support - Tier 3");
 				// done - TODO
 				presenter.setIncidentDialog(db);
@@ -1851,7 +1851,7 @@ public class AppBootstrapper {
 				final MaintainIncidentPresenter presenter = new MaintainIncidentPresenter(clientFactory);
 				presenter.setIncidentType(Constants.INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT);
 				presenter.setAccount(event.getAccount());
-				presenter.setShortDescription("AWS at Emory - Create Service Account for: " + presenter.getAccount().getAccountId());
+				presenter.setShortDescription("AWS at " + shell.getSiteName() + " - Create Service Account for: " + presenter.getAccount().getAccountId());
 //				presenter.initializeIncidentProperties(Constants.INCIDENT_TYPE_CREATE_SERVICE_ACCOUNT);
 				// TODO: externalize these and retrieve them in the presenter
 				presenter.setUrgency("3");
@@ -1861,7 +1861,7 @@ public class AppBootstrapper {
 				presenter.setSubCategory("Add");
 				presenter.setRecordType("Service Request");
 				presenter.setContactType("Integration");
-				presenter.setCmdbCi("Emory AWS Service");
+				presenter.setCmdbCi(shell.getSiteName() + " AWS Service");
 				presenter.setAssignmentGroup("LITS: Systems Support - Tier 3");
 				// done - TODO
 				presenter.setIncidentDialog(db);

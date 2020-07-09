@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertiesPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
@@ -56,4 +57,8 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void addBreadCrumb(String name, String url);
 	void removeBreadCrumb(String name);
 	void clearBreadCrumbs();
+	PropertiesPojo getSiteSpecificProperties();
+	void setSiteSpecificProperties(PropertiesPojo properties);
+	String getSiteSpecificServiceName();
+	String getSiteName();
 }

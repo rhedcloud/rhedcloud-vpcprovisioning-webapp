@@ -287,4 +287,5 @@ public interface VpcProvisioningServiceAsync {
 	void getAccountProvisioningSummariesForFilter(AccountProvisioningQueryFilterPojo filter, AsyncCallback<AccountProvisioningQueryResultPojo> callback);
 	void generateAccountDeprovisioning(AccountDeprovisioningRequisitionPojo requisition, AsyncCallback<AccountDeprovisioningPojo> callback);
 	
+	void getSiteSpecificTextProperties(AsyncCallback<PropertiesPojo> callback);
 }

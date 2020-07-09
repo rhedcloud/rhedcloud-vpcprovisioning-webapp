@@ -418,7 +418,7 @@ public class ListServicePresenter extends PresenterBase implements ListServiceVi
 
 	@Override
 	public void filterBySiteHipaaStatus(String status) {
-		getView().showPleaseWaitDialog("Filtering services by Emory HIPAA eligibility...");
+		getView().showPleaseWaitDialog("Filtering services by site-specific HIPAA eligibility...");
 		filter = new AWSServiceQueryFilterPojo();
 		if (status.equalsIgnoreCase(Constants.YES)) {
 			status = Constants.TRUE;

@@ -16,7 +16,7 @@
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:CheckBox ui:field="agreeToTermsCB" 
-				title="Agree to rules">By checking this box, you agree to the Emory Rules for Behavior as stated above.</g:CheckBox>
+				title="Agree to rules">By checking this box, you agree to the Rules for Behavior as stated above.</g:CheckBox>
 		</g:cell>
 		<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE" width="100%">
 			<g:Button enabled="false" addStyleNames="{style.glowing-border} {style.normalButton}"

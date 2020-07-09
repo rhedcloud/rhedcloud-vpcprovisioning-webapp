@@ -19,8 +19,8 @@
 		</g:HorizontalPanel>
 		<g:HTML addStyleNames="{style.mediumLabel}">CIDR Assignments</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of existing CidrAssignments that you can view or delete.<br/><br/>
-		These reside in the database associated to the Emory Cidr ESB Service.  
-		The Emory Cidr Service is authoritatative for 
+		These reside in the database associated to the RHEDcloud Cidr ESB Service.  
+		The RHEDcloud Cidr Service is authoritatative for 
 		Cidr and CidrAssignment objects and allows applications like this one 
 		to query, create, update and delete those objects if appropriate.</g:HTML>
 		<!-- 

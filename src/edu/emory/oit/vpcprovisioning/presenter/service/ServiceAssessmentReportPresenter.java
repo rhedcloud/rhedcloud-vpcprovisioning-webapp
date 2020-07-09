@@ -131,7 +131,9 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 
 			@Override
 			public void onSuccess(SecurityAssessmentSummaryQueryResultPojo result) {
-				sbView.append("<h3>AWS at Emory Service at a Glance</h3>");
+				sbView.append("<h3>AWS at " + 
+						getView().getAppShell().getSiteName() + 
+						" Service at a Glance</h3>");
 				sbView.append("<table>");
 
 				sbView.append("<tr>");
@@ -228,7 +230,7 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 						imgString = "<img src=\"images/red-circle-white-x.png\" alt=\"Smiley face\" height=\"16\" width=\"16\">";
 					}
 					sbView.append("<tr><td>");
-					sbView.append("<b>Emory HIPAA Eligibility:</b>  " + svc.getSiteHipaaEligible());
+					sbView.append("<b>" + getView().getAppShell().getSiteName() + " HIPAA Eligibility:</b>  " + svc.getSiteHipaaEligible());
 					sbView.append("</td><td>" + imgString + "</td>");
 					sbView.append("</tr>");
 

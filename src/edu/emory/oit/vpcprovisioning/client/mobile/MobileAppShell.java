@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.presenter.cidrassignment.MaintainCidrAssign
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
+import edu.emory.oit.vpcprovisioning.shared.PropertiesPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
@@ -391,6 +392,30 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	public void clearBreadCrumbs() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public PropertiesPojo getSiteSpecificProperties() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSiteSpecificProperties(PropertiesPojo properties) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getSiteSpecificServiceName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getSiteName() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

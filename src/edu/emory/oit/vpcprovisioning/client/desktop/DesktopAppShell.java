@@ -133,6 +133,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	HomeView homeView;
 	String hash=null;
 	ReleaseInfo releaseInfo;
+    String siteSpecificServiceName = null;
+    String siteName = null;
+    PropertiesPojo siteSpecificProperties;
 
 	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -157,6 +160,30 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void initPage() {
 		GWT.log("DesktopAppShell:  constructor");
 		
+		AsyncCallback<PropertiesPojo> sst_cb = new AsyncCallback<PropertiesPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(PropertiesPojo result) {
+				setSiteSpecificProperties(result);
+				String defaultSiteName = "Emory";
+				String defaultServiceName = "AWS at Emory";
+				if (result != null) {
+					siteSpecificServiceName = result.getProperty("siteServiceName", defaultServiceName);
+					siteName = result.getProperty("siteName", defaultSiteName);
+				}
+				else {
+					siteSpecificServiceName = defaultServiceName;
+					siteName = defaultSiteName;
+				}
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getSiteSpecificTextProperties(sst_cb);
+
+		
 		consoleFeatureSuggestions = new ConsoleFeatureRpcSuggestOracle(userLoggedIn, Constants.SUGGESTION_TYPE_CONSOLE_FEATURE);
 		mainTabPanel.addStyleName("tab-style-content");
 		registerEvents();
@@ -168,57 +195,79 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		firstHomeContentWidget = true;
 		homeContentContainer.clear();
 		HomeView view = clientFactory.getHomeView();
+		view.setAppShell(this);
 		homeContentContainer.add(view);
 
 		ListAccountView listAccountView = clientFactory.getListAccountView();
+		listAccountView.setAppShell(this);
 		MaintainAccountView maintainAccountView = clientFactory.getMaintainAccountView();
+		maintainAccountView.setAppShell(this);
 		BillSummaryView billSummaryView = clientFactory.getBillSummaryView();
+		billSummaryView.setAppShell(this);
 		homeContentContainer.add(listAccountView);
 		homeContentContainer.add(maintainAccountView);
 		homeContentContainer.add(billSummaryView);
 		homeContentContainer.setAnimationDuration(500);
 
 		ListVpcView listVpcView = clientFactory.getListVpcView();
+		listVpcView.setAppShell(this);
 		MaintainVpcView maintainVpcView = clientFactory.getMaintainVpcView();
+		maintainVpcView.setAppShell(this);
 		homeContentContainer.add(listVpcView);
 		homeContentContainer.add(maintainVpcView);
 		homeContentContainer.setAnimationDuration(500);
 		
 		ListVpcpView listVpcpView = clientFactory.getListVpcpView();
+		listVpcpView.setAppShell(this);
 		MaintainVpcpView maintainVpcpView = clientFactory.getMaintainVpcpView();
+		maintainVpcpView.setAppShell(this);
 		VpcpStatusView vpcpStatusView = clientFactory.getVpcpStatusView();
+		vpcpStatusView.setAppShell(this);
 		homeContentContainer.add(listVpcpView);
 		homeContentContainer.add(maintainVpcpView);
 		homeContentContainer.add(vpcpStatusView);
 		
 		ListServiceView listServiceView = clientFactory.getListServiceView();
+		listServiceView.setAppShell(this);
 		MaintainServiceView maintainServiceView = clientFactory.getMaintainServiceView();
+		maintainServiceView.setAppShell(this);
 		ServiceAssessmentReportView svcAssessmentReport = clientFactory.getServiceAssessmentReportView();
+		svcAssessmentReport.setAppShell(this);
 		homeContentContainer.add(listServiceView);
 		homeContentContainer.add(maintainServiceView);
 		homeContentContainer.add(svcAssessmentReport);
 		
 		ListCentralAdminView listCentralAdminView = clientFactory.getListCentralAdminView();
+		listCentralAdminView.setAppShell(this);
 		homeContentContainer.add(listCentralAdminView);
 
 		ListElasticIpView listElasticIpView = clientFactory.getListElasticIpView();
+		listElasticIpView.setAppShell(this);
 		MaintainElasticIpView maintainElasticIpView = clientFactory.getMaintainElasticIpView();
+		maintainElasticIpView.setAppShell(this);
 		homeContentContainer.add(listElasticIpView);
 		homeContentContainer.add(maintainElasticIpView);
 
 		ListStaticNatProvisioningSummaryView listStaticNatView = clientFactory.getListStaticNatProvisioningSummaryView();
+		listStaticNatView.setAppShell(this);
 		StaticNatProvisioningStatusView snpStatusView = clientFactory.getStaticNatProvisioningStatusView();
+		snpStatusView.setAppShell(this);
 		homeContentContainer.add(listStaticNatView);
 		homeContentContainer.add(snpStatusView);
 
 		ListVpnConnectionProvisioningView listVpncpView = clientFactory.getListVpnConnectionProvisioningView();
+		listVpncpView.setAppShell(this);
 		VpncpStatusView vpncpStatusView = clientFactory.getVpncpStatusView();
+		vpncpStatusView.setAppShell(this);
 		homeContentContainer.add(listVpncpView);
 		homeContentContainer.add(vpncpStatusView);
 
 		ListVpnConnectionProfileView listVpnConnectionProfileView = clientFactory.getListVpnConnectionProfileView();
+		listVpnConnectionProfileView.setAppShell(this);
 		MaintainVpnConnectionProvisioningView maintainVpncpView = clientFactory.getMaintainVpnConnectionProvisioningView();
+		maintainVpncpView.setAppShell(this);
 		VpncpStatusView vpncpStatusView2 = clientFactory.getVpncpStatusView();
+		vpncpStatusView2.setAppShell(this);
 		homeContentContainer.add(listVpnConnectionProfileView);
 		homeContentContainer.add(maintainVpncpView);
 		homeContentContainer.add(vpncpStatusView2);
@@ -226,13 +275,16 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		
 		// 3/5/2020 resource tagging profile
 		ListResourceTaggingProfileView listRtpView = clientFactory.getListResourceTaggingProfileView();
+		listRtpView.setAppShell(this);
 		MaintainResourceTaggingProfileView maintainRtpView = clientFactory.getMaintainResourceTaggingProfileView();
+		maintainRtpView.setAppShell(this);
 		homeContentContainer.add(listRtpView);
 		homeContentContainer.add(maintainRtpView);
 		homeContentContainer.setAnimationDuration(500);
 
 		// 5/8/2020 Account Deprovisioning
 		ListAccountProvisioningView listAccountProvisioningView = clientFactory.getListAccountProvisioningView();
+		listAccountProvisioningView.setAppShell(this);
 //		AccountProvisioningStatusView accountProvisioningStatusView = clientFactory.getAccountProvisioningStatusView();
 		homeContentContainer.add(listAccountProvisioningView);
 //		homeContentContainer.add(accountProvisioningStatusView);
@@ -1059,7 +1111,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		svcStatsVp.getElement().getStyle().setBackgroundColor("#232f3e");
 		svcStatsVp.getElement().getStyle().setBorderColor("black");
 		svcStatsVp.setWidth("100%");
-		HTML svcStatsHeading = new HTML("AWS at Emory Service at a Glance");
+		HTML svcStatsHeading = new HTML("RHEDcloud Service at a Glance");
 		svcStatsHeading.getElement().getStyle().setColor("#ddd");
 		svcStatsHeading.getElement().getStyle().setFontSize(20, Unit.PX);
 		svcStatsHeading.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -1425,7 +1477,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		}
 
 		// emory hipaa eligibility
-		HTML svcHipaaStatus = new HTML("Emory HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
+		HTML svcHipaaStatus = new HTML("RHEDcloud HIPAA Eligibility: " + (svc.isSiteHipaaEligible() ? "Eligible" : "Not Eligible"));
 		svcHipaaStatus.addStyleName("productDescription");
 		svcHipaaStatus.getElement().getStyle().setColor("orange");
 		svcHipaaStatus.getElement().getStyle().setFontSize(14, Unit.PX);
@@ -1437,7 +1489,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			img.getElement().getStyle().setBackgroundColor("#232f3e");
 			img.setWidth("16px");
 			img.setHeight("16px");
-			img.setTitle("This service IS HIPAA eligible according to Emory's HIPAA policy");
+			img.setTitle("This service IS HIPAA eligible according to RHEDcloud's HIPAA policy");
 			svcGrid.setWidget(2, 1, img);
 		}
 		else {
@@ -1446,7 +1498,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			img.getElement().getStyle().setBackgroundColor("#232f3e");
 			img.setWidth("16px");
 			img.setHeight("16px");
-			img.setTitle("This service IS NOT HIPAA eligible according to Emory's HIPAA policy");
+			img.setTitle("This service IS NOT HIPAA eligible according to RHEDcloud's HIPAA policy");
 			svcGrid.setWidget(2, 1, img);
 		}
 
@@ -1703,7 +1755,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		db.setGlassEnabled(true);
 		db.center();
 		HTML h = new HTML("<p>A system error has occurred and the application cannot "
-				+ "continue.  The application was unable to verify your Emory Rules of Behavior agreement "
+				+ "continue.  The application was unable to verify your Rules of Behavior agreement "
 				+ "status.</p><p>The error that lead to this situation is listed below.</p>"
 				+ "<p>Please try refreshing your browser to start over and if "
 				+ "the problem persists, contact the help desk.</p>"
@@ -2014,5 +2066,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	public void clearBreadCrumbs() {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public PropertiesPojo getSiteSpecificProperties() {
+		return siteSpecificProperties;
+	}
+
+	@Override
+	public void setSiteSpecificProperties(PropertiesPojo properties) {
+		siteSpecificProperties = properties;
+	}
+
+	@Override
+	public String getSiteSpecificServiceName() {
+		return this.siteSpecificServiceName;
+	}
+
+	@Override
+	public String getSiteName() {
+		return this.siteName;
 	}
 }

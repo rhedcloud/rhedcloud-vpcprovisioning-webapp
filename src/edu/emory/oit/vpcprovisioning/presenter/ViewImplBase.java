@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.AppShell;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
@@ -34,6 +35,15 @@ public abstract class ViewImplBase extends Composite {
 	protected final DateTimeFormat dateFormat_short = DateTimeFormat.getFormat("MM-dd-yyyy");
 	PopupPanel pleaseWaitDialog;
 	protected boolean fieldViolations = false;
+	AppShell appShell;
+	
+	public void setAppShell(AppShell appShell) {
+		this.appShell = appShell;
+	}
+	public AppShell getAppShell() {
+		return appShell;
+	}
+
 	
 	public static boolean isInteger(String s, int radix) {
 	    if(s.isEmpty()) return false;
