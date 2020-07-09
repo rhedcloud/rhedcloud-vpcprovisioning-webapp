@@ -6786,6 +6786,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				else {
 					RoleAssignment generated = (RoleAssignment)results.get(0);
 					info("RoleAssignment returned from the generate: " + generated.toXmlString());
+					
+					if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
+						// change the roleDNs back to the common values
+						if (generated.getRoleDN().indexOf(":admin") >= 0) {
+							generated.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+						}
+						else if (generated.getRoleDN().indexOf(":auditor") >= 0) {
+							generated.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+						}
+						info("RoleAssignment after Grouper specific mods: " + generated.toXmlString());
+					}
+					
 					RoleAssignmentPojo roleAssignment = new RoleAssignmentPojo();
 					info("populating pojo");
 					this.populateRoleAssignmentPojo(generated, roleAssignment);
@@ -7160,10 +7172,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (ra_result != null) {
 						if (ra_result.getResults().size() > 0) {
 							for (RoleAssignmentPojo ra : ra_result.getResults()) {
-								if (ra.getRoleDN().toLowerCase().indexOf("admin") >= 0) {
+								if (ra.getRoleDN().toLowerCase().indexOf(":admin") >= 0) {
 									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 								}
-								else if (ra.getRoleDN().toLowerCase().indexOf("auditor") >= 0) {
+								else if (ra.getRoleDN().toLowerCase().indexOf(":auditor") >= 0) {
 									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
 								}
 								// get directoryperson for publicid
