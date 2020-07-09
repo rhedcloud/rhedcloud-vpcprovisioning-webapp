@@ -1057,88 +1057,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 			}
 		}
-		
-//		info(tag + "Processing c_admin role assignments for " + accounts.size() + " accounts.");
-//		accountLoop: for (AccountPojo account : accounts) {
-//			info(tag + "Processing c_admin role assignments for account: " + account.getAccountId());
-//			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
-//			ra_filter.setRoleDN(account.getAccountId() + ":" + "c_admin");
-//			ra_filter.setUserLoggedIn(user);
-//
-//			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-//			info(tag + "got " + ra_result.getResults().size() + " role assignments back from getRoleAssignmentsForFilter");
-//
-//			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
-//				info(tag + "roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
-//				info(tag + "user.PublicId=" + user.getPublicId());
-//				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
-//					// user is a central admin in this account
-//					AccountRolePojo arp = new AccountRolePojo();
-//					arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-//					info(tag + "adding AccountRolePojo " + 
-//					arp.toString() + " to UserAccount logged in.");
-//					user.addAccountRole(arp);
-//					
-//					AccountRolePojo arp2 = new AccountRolePojo();
-//					arp2.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
-//					info(tag + "adding AccountRolePojo " + 
-//					arp2.toString() + " to UserAccount logged in.");
-//					user.addAccountRole(arp);
-//					
-//					// if they're a central admin, the accountLoop here really 
-//					// doesn't need to go any further
-//					break accountLoop;
-//				}
-//			}
-//		}
-//
-//		info(tag + "Processing admin role assignments for " + accounts.size() + " accounts.");
-//		for (AccountPojo account : accounts) {
-//			info(tag + "Processing admin role assignments for account: " + account.getAccountId());
-//			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
-//			ra_filter.setRoleDN(account.getAccountId() + ":" + "admin");
-//			ra_filter.setUserLoggedIn(user);
-//			
-//			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-//
-//			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
-//				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
-//					// user is an admin in this account
-//					AccountRolePojo arp = new AccountRolePojo();
-//					arp.setAccountId(account.getAccountId());
-//					arp.setAccountName(account.getAccountName());
-//					arp.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
-//					info(tag + "adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-//					user.addAccountRole(arp);
-//					
-//					break raLoop;
-//				}
-//			}
-//		}
-//
-//		info(tag + "Processing auditor role assignments for " + accounts.size() + " accounts.");
-//		for (AccountPojo account : accounts) {
-//			info(tag + "Processing auditor role assignments for account: " + account.getAccountId());
-//			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
-//			ra_filter.setRoleDN(account.getAccountId() + ":" + "auditor");
-//			ra_filter.setUserLoggedIn(user);
-//			
-//			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-//
-//			raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
-//				if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
-//					// user is an auditor in this account
-//					AccountRolePojo arp = new AccountRolePojo();
-//					arp.setAccountId(account.getAccountId());
-//					arp.setAccountName(account.getAccountName());
-//					arp.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
-//					info(tag + "adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
-//					user.addAccountRole(arp);
-//					
-//					break raLoop;
-//				}
-//			}
-//		}
 
 		info(tag + "added " + user.getAccountRoles().size() + " AccountRoles to User");
 		java.util.Date endTime = new java.util.Date();
@@ -6930,6 +6848,81 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<RoleAssignmentSummaryPojo> getCentralAdmins() throws RpcException {
+		String idmSystemName = this.getIdmSystemName();
+		if (idmSystemName.equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
+			return getCentralAdmins_netiq();
+		}
+		else if (idmSystemName.equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
+			return getCentralAdmins_grouper();
+		}
+		return new java.util.ArrayList<RoleAssignmentSummaryPojo>();
+	}
+
+	// grouper-specific
+	private List<RoleAssignmentSummaryPojo> getCentralAdmins_grouper() throws RpcException {
+		String tag = "[getCentralAdmins_grouper] ";
+		
+		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
+		List<RoleAssignmentPojo> pojos = new java.util.ArrayList<RoleAssignmentPojo>();
+
+		java.util.Date startTime = new java.util.Date();
+		info(tag + "getting accounts...");
+		List<AccountPojo> accounts = this.getAllAccounts().getResults();
+		info(tag + "got " + accounts.size() + " accounts from getAllAccounts");
+
+		UserAccountPojo user = this.getUserLoggedIn(false);
+		String roleName = "c_admin";
+		for (AccountPojo account : accounts) {
+			info(tag + "Processing " + roleName + " role assignments for account: " + account.getAccountId());
+			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
+			ra_filter.setRoleDN(account.getAccountId() + ":" + roleName);
+			ra_filter.setUserLoggedIn(user);
+
+			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
+			info(tag + "got " + ra_result.getResults().size() + " role assignments back from getRoleAssignmentsForFilter");
+
+			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				info(tag + "roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
+				
+				// get the DirectoryPerson for the roleAssignment.identityDN
+				DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+				dp_filter.setSearchString(roleAssignment.getIdentityDN());
+				
+				// RICE-SPECIFIC - only do this if we're using Grouper (Rice)
+				dp_filter.setKey(roleAssignment.getIdentityDN());
+				// END RICE-SPECIFIC
+				
+				dp_filter.setUserLoggedIn(user);
+				DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+				if (dp_result != null) {
+					if (dp_result.getResults().size() == 0) {
+						// match not found in directory, bad...
+						info(tag + "Empty DirectoryPersonQueryResultPojo.  This is bad.");
+						throw new RpcException("No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
+					}
+					info(tag + "got " + dp_result.getResults().size() + 
+						" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
+				}
+				else {
+					// error
+					info(tag + "null DirectoryPersonQueryResultPojo.  This is bad.");
+					throw new RpcException("Null DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
+				}
+				DirectoryPersonPojo directoryPerson = dp_result.getResults().get(0);
+				
+				// create RoleAssignmentSummaryPojo and add it to the results
+				RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
+				ra_summary.setDirectoryPerson(directoryPerson);
+				ra_summary.setRoleAssignment(roleAssignment);
+				results.add(ra_summary);
+			}
+		}
+
+		return results;
+	}
+	
+	// netiq specific
+	private List<RoleAssignmentSummaryPojo> getCentralAdmins_netiq() throws RpcException {
 		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
 		List<RoleAssignmentPojo> pojos = new java.util.ArrayList<RoleAssignmentPojo>();
 
