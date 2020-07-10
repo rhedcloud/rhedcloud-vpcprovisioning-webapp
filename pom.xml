@@ -68,21 +68,21 @@
 		<artifactId>com.service_now</artifactId>
 		<version>1.0</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/servicenow-moa.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/rhedcloud-servicenow-moas-master-4.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>com.paloaltonetworks</groupId>
 		<artifactId>com.paloaltonetworks</artifactId>
 		<version>1.0</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/paloaltonetworks-moa-master-9.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/rhedcloud-paloaltonetworks-moas-master-3.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>com.oracle</groupId>
 		<artifactId>com.oracle</artifactId>
 		<version>1.0</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/peoplesoft-moa.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/rhedcloud-peoplesoft-moas-master-2.jar</systemPath>
 	</dependency>		
 
 	<!-- AWS SDK Jars to get it to commit -->
