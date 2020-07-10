@@ -6889,6 +6889,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				else {
 					idsAdded.add(roleAssignment.getIdentityDN());
 				}
+				if (roleAssignment.getIdentityDN().length() > 10) {
+					// it's a UUID, skip it...
+					info("Skipping identityDN " + roleAssignment.getIdentityDN() + " not a valid value.");
+					continue;
+				}
 				info(tag + "roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
 				
 				// get the DirectoryPerson for the roleAssignment.identityDN
