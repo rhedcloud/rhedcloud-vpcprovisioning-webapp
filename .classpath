@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/any-openeai-enterprise-moa.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aspectjrt-1.8.2.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aspectjweaver.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aws-java-sdk-1.11.406.jar"/>
@@ -50,10 +49,7 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/netty-resolver-4.1.17.Final.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/netty-transport-4.1.17.Final.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/openeai_utils.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/paloaltonetworks-moa-master-9.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/peoplesoft-moa.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/restygwt-2.2.0.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/servicenow-moa.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-beans-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-context-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-core-3.0.7.RELEASE.jar"/>
@@ -64,5 +60,9 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-aws-moas-master-11.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-emory-moas-master-6.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-moas-master-50.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-anyopeneaienterprise-moas-master-8.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-paloaltonetworks-moas-master-3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-peoplesoft-moas-master-2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-servicenow-moas-master-4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
