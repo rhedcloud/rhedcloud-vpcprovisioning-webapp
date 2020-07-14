@@ -428,7 +428,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		presenter.getAccount().setAccountId(accountIdTB.getText());
 		presenter.getAccount().setAccountName(accountNameTB.getText());
 		String alternateName = alternateNameTB.getText();
-		if (alternateName != null) {
+		if (alternateName != null && alternateName.trim().length() > 0) {
 			if (!isAlphaNumeric(alternateName)) {
 				setFieldViolations(true);
 				List<Widget> fields = new java.util.ArrayList<Widget>();

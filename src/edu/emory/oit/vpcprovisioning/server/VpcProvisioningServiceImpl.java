@@ -9151,10 +9151,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		summary.setHasValidTermsOfUseAgreement(false);
 		
 		// TEMPORARY:
-		summary.setHasValidTermsOfUseAgreement(true);
-		if (true) {
-			return summary;
-		}
+//		summary.setHasValidTermsOfUseAgreement(true);
+//		if (true) {
+//			return summary;
+//		}
 		// END TEMPORARY
 		
 		TermsOfUseQueryFilterPojo tou_filter = new TermsOfUseQueryFilterPojo();
