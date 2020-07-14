@@ -18,7 +18,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.introHeading}">RHEDcloud Console Home</g:HTML>
+		<g:HTML addStyleNames="{style.introHeading}">RHEDcloud Console for AWS: Home</g:HTML>
 		<g:HTML ui:field="introBodyHTML" addStyleNames="{style.body}">Welcome, FIRST_NAME, take a look at the information below...</g:HTML>
 		 <g:cell>
 		 	<g:HTML ui:field="backgroundNoticeHTML" addStyleNames="{style.waitingForWork}">*** Work is 
