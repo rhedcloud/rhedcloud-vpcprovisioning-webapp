@@ -310,7 +310,14 @@ public class DesktopAccountProvisioningStatus extends ViewImplBase implements Ac
 			statusLabel.setText(presenter.getDeprovisioning().getStatus());
 			requestorLabel.setText(presenter.getDeprovisioning().getRequisition().getRequestorId());
 			acctIdLabel.setText(presenter.getDeprovisioning().getRequisition().getAccountId());
-			acctNameLabel.setText(presenter.getProvisioningSummary().getAccount().getAccountName());
+			GWT.log("Getting account name...");
+			if (presenter.getProvisioningSummary().getAccount() != null) {
+				acctNameLabel.setText(presenter.getProvisioningSummary().getAccount().getAccountName());
+			}
+			else {
+				acctNameLabel.setText("Account Metadata Not Present");
+			}
+			GWT.log("Got account name...");
 			if (presenter.getDeprovisioning().getDeprovisioningResult() == null) {
 				provisioningResultLabel.setText(Constants.NOT_APPLICABLE);
 			}
