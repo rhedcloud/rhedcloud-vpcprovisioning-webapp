@@ -36,8 +36,8 @@ public class DesktopDeprovisionAccount extends ViewImplBase implements Deprovisi
 	// terminate account fields
 	@UiField Label acctOwnerApprovesLabel;
 	@UiField CheckBox acctOwnerApprovesCB;
-	@UiField Label acctReadyLabel;
-	@UiField CheckBox acctReadyCB;
+//	@UiField Label acctReadyLabel;
+//	@UiField CheckBox acctReadyCB;
 	@UiField Label acctConfirmLabel;
 	@UiField CheckBox acctConfirmCB;
 	@UiField Label acctNameLabel;
@@ -117,9 +117,9 @@ public class DesktopDeprovisionAccount extends ViewImplBase implements Deprovisi
 		if (!acctOwnerApprovesCB.getValue()) {
 			fields.add(acctOwnerApprovesCB);
 		}
-		if (!acctReadyCB.getValue()) {
-			fields.add(acctReadyCB);
-		}
+//		if (!acctReadyCB.getValue()) {
+//			fields.add(acctReadyCB);
+//		}
 		if (!acctConfirmCB.getValue()) {
 			fields.add(acctConfirmCB);
 		}
@@ -135,7 +135,7 @@ public class DesktopDeprovisionAccount extends ViewImplBase implements Deprovisi
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		fields.add(acctOwnerApprovesCB);
-		fields.add(acctReadyCB);
+//		fields.add(acctReadyCB);
 		fields.add(acctConfirmCB);
 		fields.add(acctNameTB);
 		this.resetFieldStyles(fields);
@@ -195,7 +195,7 @@ public class DesktopDeprovisionAccount extends ViewImplBase implements Deprovisi
 	@Override
 	public void initPage() {
 		acctOwnerApprovesCB.setValue(false);
-		acctReadyCB.setValue(false);
+//		acctReadyCB.setValue(false);
 		acctConfirmCB.setValue(false);
 		acctNameTB.setText("");
 		acctNameTB.getElement().setPropertyString("placeholder", "enter the account name");

@@ -33,6 +33,7 @@
 						<g:CheckBox	ui:field="acctOwnerApprovesCB" debugId="acctOwnerApprovesCB" title="Confirm the account owner approves of closing this account"/>
 			    	</g:customCell>
 		    	</g:row>
+		    	<!-- 
 				<g:row>
 			    	<g:customCell>
 						<g:Label ui:field="acctReadyLabel" width="500px" addStyleNames="{style.label-left}">Please confirm all services and infrastructure in the account have been terminated.</g:Label>
@@ -41,6 +42,7 @@
 						<g:CheckBox ui:field="acctReadyCB" debugId="acctReadyCB" title="Confirm all services and infrastructure in the account have been terminated"/>
 			    	</g:customCell>
 		    	</g:row>
+		    	 -->
 				<g:row>
 			    	<g:customCell>
 						<g:Label ui:field="acctConfirmLabel" width="500px" addStyleNames="{style.label-left}">Terminating an account is a permanent act.  When an account is deleted, it will no longer be accessible.  Are you sure you want to terminate this account?</g:Label>
