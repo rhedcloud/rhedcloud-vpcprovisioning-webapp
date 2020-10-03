@@ -291,7 +291,7 @@
 		<artifactId>openeai</artifactId>
 		<version>1</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/openeai-core-5.0.59.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/openeai-core-5.0.60.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>edu.emory</groupId>
