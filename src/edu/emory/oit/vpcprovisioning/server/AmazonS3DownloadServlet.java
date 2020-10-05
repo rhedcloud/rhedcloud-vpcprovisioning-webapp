@@ -142,7 +142,7 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 			}
 			
 	        info("[doGet] " + downloadType + " accessId=" + accessId);
-	        info("[doGet] " + downloadType  + " secretKey=" + secretKey);
+	        info("[doGet] " + downloadType  + " secretKey=" + secretKey.substring(0, 7));
 	        info("[doGet] " + downloadType + " bucketName="  + bucket_name);
 	        info("[doGet] " + downloadType + " keyName="  + key_name);
 	        
@@ -219,8 +219,6 @@ public class AmazonS3DownloadServlet extends HttpServlet {
 		s3Builder.setCredentials(credProvider);
 		final AmazonS3 s3 = s3Builder.build();
 
-		info("access id starts with: " + accessId.substring(0, 7));
-		info("secret kdy starts with: " + secretKey.substring(0, 7));
 		info("getting key: " + key_name + " from the bucket: " + bucket_name);
 	    S3Object o = s3.getObject(bucket_name, key_name);
 		info("got key: " + key_name + " from the bucket: " + bucket_name);
