@@ -88,14 +88,14 @@
 	<!-- AWS SDK Jars to get it to commit -->
 	<dependency>
 		<groupId>aws-java-sdk</groupId>
-		<artifactId>aws-java-sdk</artifactId>
+		<artifactId>aws-java-sdk-core</artifactId>
 		<version>1.0</version>
 		<scope>system</scope>
 		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-java-sdk-core-1.11.406.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>aws-java-sdk</groupId>
-		<artifactId>aws-java-sdk</artifactId>
+		<artifactId>aws-java-sdk-s3</artifactId>
 		<version>1.0</version>
 		<scope>system</scope>
 		<systemPath>${project.basedir}/war/WEB-INF/lib/aws-java-sdk-s3-1.11.406.jar</systemPath>
