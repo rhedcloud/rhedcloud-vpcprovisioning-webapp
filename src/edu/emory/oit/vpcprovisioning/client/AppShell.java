@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertiesPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.SharedObject;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
 
@@ -54,7 +55,7 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void setConsoleFeatures(List<ConsoleFeaturePojo> services);
 	void setRecentlyUsedConsoleFeatures(List<ConsoleFeaturePojo> services);
 	
-	void addBreadCrumb(String name, String url);
+	void addBreadCrumb(String name, String url, SharedObject pojo);
 	void removeBreadCrumb(String name);
 	void clearBreadCrumbs();
 	void goToBredCrumbLocation(String name);

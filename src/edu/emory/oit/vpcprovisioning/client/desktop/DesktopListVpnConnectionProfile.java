@@ -168,7 +168,7 @@ public class DesktopListVpnConnectionProfile extends ViewImplBase implements Lis
 				
 				VpnConnectionProfileSummaryPojo m = nIter.next();
 				if (m != null) {
-					getAppShell().addBreadCrumb("Maintain VPN Profile", ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE);
+					getAppShell().addBreadCrumb("Maintain VPN Profile", ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE, m.getProfile());
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE, m.getProfile());
 				}
 				else {

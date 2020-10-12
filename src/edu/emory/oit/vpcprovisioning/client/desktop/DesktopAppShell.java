@@ -114,6 +114,7 @@ import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceSecurityAssessmentQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.SharedObject;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationQueryFilterPojo;
@@ -1983,7 +1984,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					showMainTabPanel();
 					saveConsoleFeatureInCacheForUser(feature, userLoggedIn);
 					clearBreadCrumbs();
-					addBreadCrumb(feature.getName(), feature.getActionName());
+					addBreadCrumb(feature.getName(), feature.getActionName(), null);
 					ActionEvent.fire(eventBus, feature.getActionName());
 				}
 			});
@@ -2024,7 +2025,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					showMainTabPanel();
 					saveConsoleFeatureInCacheForUser(feature, userLoggedIn);
 					clearBreadCrumbs();
-					addBreadCrumb(feature.getName(), feature.getActionName());
+					addBreadCrumb(feature.getName(), feature.getActionName(), null);
 					ActionEvent.fire(eventBus, feature.getActionName());
 				}
 			});
@@ -2061,7 +2062,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void addBreadCrumb(final String name, final String action) {
+	public void addBreadCrumb(final String name, final String action, final SharedObject pojo) {
 //		if (true) {
 //			return;
 //		}
@@ -2099,8 +2100,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					}
 					// if it's at the end of the list, don't fire anything
 					if (fireEvent) {
-						ActionEvent.fire(eventBus, action);
-					}
+						// TODO: need to figure out a way to get to a 
+						// "maintenance" page
+					
+						if (pojo == null) {
+							GWT.log("no pojo passed in...");
+							ActionEvent.fire(eventBus, action);
+						}
+						else {
+							if (pojo instanceof AWSServicePojo) {
+								GWT.log("maintaining a service...");
+								ActionEvent.fire(eventBus, action, (AWSServicePojo)pojo);
+							}
+						}
+					}					
+
 					else {
 						GWT.log(nameWithCarrot + " is the last bread crumb.  Not firing anything.");
 					}
@@ -2133,7 +2147,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //		}
 		breadCrumbPanel.clear();
 		breadCrumbNames.clear();
-		addBreadCrumb("Home", ActionNames.GO_HOME);
+		addBreadCrumb("Home", ActionNames.GO_HOME, null);
 	}
 
 	@Override

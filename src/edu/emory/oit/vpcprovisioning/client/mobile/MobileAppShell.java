@@ -26,6 +26,7 @@ import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPresenter;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertiesPojo;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.SharedObject;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserProfilePojo;
 
@@ -377,7 +378,7 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void addBreadCrumb(String name, String action) {
+	public void addBreadCrumb(String name, String action, SharedObject pojo) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -157,7 +157,7 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 				if (m != null) {
 //					if (userLoggedIn.isCentralAdmin() || userLoggedIn.isAdminForAccount(m.getAccountId())) {
 						ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPC, m);
-						getAppShell().addBreadCrumb("Maintain VPC", ActionNames.MAINTAIN_VPC);
+						getAppShell().addBreadCrumb("Maintain VPC", ActionNames.MAINTAIN_VPC, m);
 //					}
 //					else {
 //						showMessageToUser("You are not authorized to perform this action for this VPC.");
