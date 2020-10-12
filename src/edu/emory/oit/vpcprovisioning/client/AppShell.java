@@ -57,6 +57,7 @@ public interface AppShell extends AcceptsOneWidget, IsWidget {
 	void addBreadCrumb(String name, String url);
 	void removeBreadCrumb(String name);
 	void clearBreadCrumbs();
+	void goToBredCrumbLocation(String name);
 	PropertiesPojo getSiteSpecificProperties();
 	void setSiteSpecificProperties(PropertiesPojo properties);
 	String getSiteSpecificServiceName();

@@ -170,6 +170,7 @@ public class DesktopListVpnConnectionProvisioning extends ViewImplBase implement
 				actionsPopup.hide();
 				VpnConnectionProvisioningSummaryPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
+					getAppShell().addBreadCrumb("Show VPNCP Status", ActionNames.SHOW_VPNCP_STATUS);
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_VPNCP_STATUS, m);
 				}
 				else {

@@ -788,13 +788,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 									+ "Processing will continue.");
 							}
 							else {
-								// ERROR, user does not have any required permissions to use
-								// this app
-								info("[local] user " + user.getEppn() + " is not authorized to use this application.");
-								throw new RpcException("[local] The user id being used to log " +
-									"in is not authorized to use this application.  " +
-									"Please contact your support representative to " +
-									"gain access to this application.");
+								// we'll go ahead and refresh the roles here just in case the user closed
+								// their browser and they still have a shib session but no session in the app server
+								this.getRolesForUser(user);
+
+								if (user.getAccountRoles().size() == 0) {
+									// ERROR, user does not have any required permissions to use
+									// this app
+									info("[local] user " + user.getEppn() + " is not authorized to use this application.");
+									throw new RpcException("[local] The user id being used to log " +
+										"in is not authorized to use this application.  " +
+										"Please contact your support representative to " +
+										"gain access to this application.");
+								}
 							}
 						}
 					}
@@ -12070,17 +12076,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					// Phase2:Sprint4:  if the assessment has multiple services associated to it, we need to get
 					// the service names for those as well and store it in the assessment so it 
 					// can be used by the report
-//					if (assessment.getServiceIds().size() > 1) {
-//						for (String assessmentSvcId : assessment.getServiceIds()) {
-//							AWSServiceQueryFilterPojo svcFilter = new AWSServiceQueryFilterPojo();
-//							svcFilter.setServiceId(assessmentSvcId);
-//							AWSServiceQueryResultPojo svcResult = this.getServicesForFilter(svcFilter);
-//							if (svcResult.getResults().size() > 0) {
-//								AWSServicePojo assessmentSvc = svcResult.getResults().get(0);
-//								assessment.getServiceNames().add(assessmentSvc.getAwsServiceName());
-//							}
-//						}
-//					}
+					if (assessment.getServiceIds().size() > 1) {
+						for (String assessmentSvcId : assessment.getServiceIds()) {
+							AWSServiceQueryFilterPojo svcFilter = new AWSServiceQueryFilterPojo();
+							svcFilter.setServiceId(assessmentSvcId);
+							AWSServiceQueryResultPojo svcResult = this.getServicesForFilter(svcFilter);
+							if (svcResult.getResults().size() > 0) {
+								AWSServicePojo assessmentSvc = svcResult.getResults().get(0);
+								assessment.getServiceNames().add(assessmentSvc.getAwsServiceName());
+							}
+						}
+					}
 
 					sas.setAssessment(assessment);
 				}
@@ -12105,17 +12111,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					// Phase2:Sprint4:  if the assessment has multiple services associated to it, we need to get
 					// the service names for those as well and store it in the assessment so it 
 					// can be used by the report
-//					if (assessment.getServiceIds().size() > 1) {
-//						for (String assessmentSvcId : assessment.getServiceIds()) {
-//							AWSServiceQueryFilterPojo svcFilter = new AWSServiceQueryFilterPojo();
-//							svcFilter.setServiceId(assessmentSvcId);
-//							AWSServiceQueryResultPojo svcResult = this.getServicesForFilter(svcFilter);
-//							if (svcResult.getResults().size() > 0) {
-//								AWSServicePojo assessmentSvc = svcResult.getResults().get(0);
-//								assessment.getServiceNames().add(assessmentSvc.getAwsServiceName());
-//							}
-//						}
-//					}
+					if (assessment.getServiceIds().size() > 1) {
+						for (String assessmentSvcId : assessment.getServiceIds()) {
+							AWSServiceQueryFilterPojo svcFilter = new AWSServiceQueryFilterPojo();
+							svcFilter.setServiceId(assessmentSvcId);
+							AWSServiceQueryResultPojo svcResult = this.getServicesForFilter(svcFilter);
+							if (svcResult.getResults().size() > 0) {
+								AWSServicePojo assessmentSvc = svcResult.getResults().get(0);
+								assessment.getServiceNames().add(assessmentSvc.getAwsServiceName());
+							}
+						}
+					}
 					
 					sas.setAssessment(assessment);
 				}

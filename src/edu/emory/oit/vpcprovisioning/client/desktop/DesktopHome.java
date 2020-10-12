@@ -394,6 +394,8 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 				@Override
 				public void onClick(ClickEvent event) {
 					presenter.saveConsoleFeatureInCacheForUser(service, userLoggedIn);
+					getAppShell().clearBreadCrumbs();
+					getAppShell().addBreadCrumb(service.getName(), service.getActionName());
 					ActionEvent.fire(presenter.getEventBus(), service.getActionName());
 				}
 			});
@@ -428,6 +430,8 @@ public class DesktopHome extends ViewImplBase implements HomeView {
 				@Override
 				public void onClick(ClickEvent event) {
 					presenter.saveConsoleFeatureInCacheForUser(service, userLoggedIn);
+					getAppShell().clearBreadCrumbs();
+					getAppShell().addBreadCrumb(service.getName(), service.getActionName());
 					ActionEvent.fire(presenter.getEventBus(), service.getActionName());
 				}
 			});

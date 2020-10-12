@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningAuthorizationPojo
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountSpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryResultPojo;
@@ -116,6 +117,9 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 
 			@Override
 			public void onSuccess(List<AccountSpeedChartPojo> result) {
+				// TODO: build a list of accounts so they can click to see
+				// all the accounts they need to adjust or something
+				// Talk to John C. about what kind of interface he wants for this.
 				getView().showMessageToUser("You are associated to " + result.size() + 
 					" accounts with bad, or nearly bad, speed charts");
 			}

@@ -161,6 +161,7 @@ public class DesktopListVpcp extends ViewImplBase implements ListVpcpView {
 				actionsPopup.hide();
 				VpcpSummaryPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
+					getAppShell().addBreadCrumb("VPCP Status", ActionNames.SHOW_VPCP_STATUS);
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_VPCP_STATUS, m);
 				}
 				else {

@@ -190,18 +190,18 @@ public class ServiceAssessmentReportPresenter extends PresenterBase implements S
 
 					// Phase2:Sprint4: if the assessment has multiple services associated to it, 
 					// we need to get the service names for those as well so they'll show up in the report too
-//					if (assessment != null && assessment.getServiceIds().size() > 1) {
-//						sbView.append("<b>Service names this assessment applies to:");
-//						for (String svcName : assessment.getServiceNames()) {
-//							String serviceAnchorString = "<a style=\"padding-left:12px\" href=\"" + svc.getAwsLandingPageUrl() + "\">" + svcName + "</a>";
-//							sbView.append("</br> " + serviceAnchorString);
-//						}
-//						sbView.append("</b>");
-//					}
-//					else {
-//						String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
-//						sbView.append("<b>Service name:  " + serviceAnchorString + "</b>");
-//					}
+					if (assessment != null && assessment.getServiceIds().size() > 1) {
+						sbView.append("<b>Service names this assessment applies to:");
+						for (String svcName : assessment.getServiceNames()) {
+							String serviceAnchorString = "<a style=\"padding-left:12px\" href=\"" + svc.getAwsLandingPageUrl() + "\">" + svcName + "</a>";
+							sbView.append("</br> " + serviceAnchorString);
+						}
+						sbView.append("</b>");
+					}
+					else {
+						String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
+						sbView.append("<b>Service name:  " + serviceAnchorString + "</b>");
+					}
 					String serviceAnchorString = "<a href=\"" + svc.getAwsLandingPageUrl() + "\">" + serviceName + "</a>";
 					sbView.append("<b>Service name:  " + serviceAnchorString + "</b>");
 					sbView.append("</td></tr>");

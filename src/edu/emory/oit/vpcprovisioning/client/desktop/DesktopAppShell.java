@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
@@ -136,6 +137,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
     String siteSpecificServiceName = null;
     String siteName = null;
     PropertiesPojo siteSpecificProperties;
+    List<String> breadCrumbNames = new java.util.ArrayList<String>();
+    List<Anchor> breadCrumbAnchors = new java.util.ArrayList<Anchor>();
 
 	private static DesktopAppShellUiBinder uiBinder = GWT.create(DesktopAppShellUiBinder.class);
 
@@ -159,6 +162,8 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@Override
 	public void initPage() {
 		GWT.log("DesktopAppShell:  constructor");
+		
+		clearBreadCrumbs();
 		
 		AsyncCallback<PropertiesPojo> sst_cb = new AsyncCallback<PropertiesPojo>() {
 			@Override
@@ -407,6 +412,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	@UiField MenuItem hipaaServicesItem;
 	@UiField MenuItem standardServicesItem;
 	@UiField VerticalPanel serviceListPanel;
+	@UiField HorizontalPanel breadCrumbPanel;
 
 	Command productsCommand = new Command() {
 		public void execute() {
@@ -1963,25 +1969,27 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		int rowCounter = 0;
 		int columnCounter = 0;
 		for (int i=0; i<features.size(); i++) {
-			final ConsoleFeaturePojo service = features.get(i);
-			Anchor serviceAnchor = new Anchor(service.getName());
-			serviceAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-			serviceAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-			serviceAnchor.setTitle(service.getDescription() + " action:" + service.getActionName() + " isPopular=" + service.isPopular());
-			serviceAnchor.ensureDebugId(service.getName() + "-allFeatures");
-			serviceAnchor.addClickHandler(new ClickHandler() {
+			final ConsoleFeaturePojo feature = features.get(i);
+			Anchor featureAnchor = new Anchor(feature.getName());
+			featureAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			featureAnchor.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			featureAnchor.setTitle(feature.getDescription() + " action:" + feature.getActionName() + " isPopular=" + feature.isPopular());
+			featureAnchor.ensureDebugId(feature.getName() + "-allFeatures");
+			featureAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					hidePleaseWaitDialogs();
 					featuresPopup.hide();
 					showMainTabPanel();
-					saveConsoleFeatureInCacheForUser(service, userLoggedIn);
-					ActionEvent.fire(eventBus, service.getActionName());
+					saveConsoleFeatureInCacheForUser(feature, userLoggedIn);
+					clearBreadCrumbs();
+					addBreadCrumb(feature.getName(), feature.getActionName());
+					ActionEvent.fire(eventBus, feature.getActionName());
 				}
 			});
 			Grid g = new Grid(2,1);
-			g.setWidget(0, 0, serviceAnchor);
-			g.setWidget(1, 0, new HTML("<i>" + service.getDescription() + "</i>"));
+			g.setWidget(0, 0, featureAnchor);
+			g.setWidget(1, 0, new HTML("<i>" + feature.getDescription() + "</i>"));
 			featuresGrid.setWidget(rowCounter, columnCounter, g);
 			featuresGrid.getCellFormatter().setWidth(rowCounter, columnCounter, "350px");
 			if (columnCounter >= 2) {
@@ -2003,23 +2011,25 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		int rowCounter = 0;
 		int columnCounter = 0;
 		for (int i=0; i<features.size(); i++) {
-			final ConsoleFeaturePojo service = features.get(i);
-			Anchor serviceAnchor = new Anchor(service.getName());
-			serviceAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-			serviceAnchor.setTitle(service.getDescription() + " action:" + service.getActionName() + " isPopular=" + service.isPopular());
-			serviceAnchor.ensureDebugId(service.getName() + "-recentFeatures");
-			serviceAnchor.addClickHandler(new ClickHandler() {
+			final ConsoleFeaturePojo feature = features.get(i);
+			Anchor featureAnchor = new Anchor(feature.getName());
+			featureAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+			featureAnchor.setTitle(feature.getDescription() + " action:" + feature.getActionName() + " isPopular=" + feature.isPopular());
+			featureAnchor.ensureDebugId(feature.getName() + "-recentFeatures");
+			featureAnchor.addClickHandler(new ClickHandler() {
 				@Override
 				public void onClick(ClickEvent event) {
 					hidePleaseWaitDialogs();
 					featuresPopup.hide();
 					showMainTabPanel();
-					saveConsoleFeatureInCacheForUser(service, userLoggedIn);
-					ActionEvent.fire(eventBus, service.getActionName());
+					saveConsoleFeatureInCacheForUser(feature, userLoggedIn);
+					clearBreadCrumbs();
+					addBreadCrumb(feature.getName(), feature.getActionName());
+					ActionEvent.fire(eventBus, feature.getActionName());
 				}
 			});
 			Grid g = new Grid(1,1);
-			g.setWidget(0, 0, serviceAnchor);
+			g.setWidget(0, 0, featureAnchor);
 			featuresGrid.setWidget(rowCounter, columnCounter, g);
 			featuresGrid.getCellFormatter().setWidth(rowCounter, columnCounter, "250px");
 			if (columnCounter >= 2) {
@@ -2051,19 +2061,82 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 	}
 
 	@Override
-	public void addBreadCrumb(String name, String action) {
-		// TODO Auto-generated method stub
+	public void addBreadCrumb(final String name, final String action) {
+//		if (true) {
+//			return;
+//		}
+		final String nameWithCarrot = name + " > ";
+		GWT.log("adding breadcrumb: " + nameWithCarrot);
+		breadCrumbNames.add(nameWithCarrot);
+		Anchor breadCrumbAnchor = new Anchor(nameWithCarrot);
+		breadCrumbAnchors.add(breadCrumbAnchor);
+		breadCrumbAnchor.addStyleName("breadCrumbAnchor");
+		breadCrumbAnchor.getElement().getStyle().setColor("grey");
+		breadCrumbAnchor.getElement().getStyle().setBackgroundColor("#232f3e");
+		breadCrumbAnchor.getElement().getStyle().setCursor(Cursor.POINTER);
+		breadCrumbAnchor.setTitle(name + ":" + action);
 		
+		breadCrumbAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				if (name.equalsIgnoreCase("home")) {
+					clearBreadCrumbs();
+					ActionEvent.fire(eventBus, action);
+				}
+				else {
+					int anchorIndex = breadCrumbNames.indexOf(nameWithCarrot);
+					boolean fireEvent = (anchorIndex < breadCrumbNames.size() - 1 ? true : false);
+					GWT.log(nameWithCarrot + " is at the " + anchorIndex + " position in the breadCrumbNames list");
+					GWT.log("breadCrumbNames.size is: " + breadCrumbNames.size());
+					if (anchorIndex < breadCrumbNames.size() - 1) {
+						int numberToRemove = (breadCrumbNames.size() - 1) - anchorIndex;
+						GWT.log("need to remove " + numberToRemove + " anchors.");
+						for (int i=breadCrumbNames.size()-1; i>anchorIndex; i--) {
+							String nameToRemove = breadCrumbNames.get(i);
+							removeBreadCrumb(nameToRemove);
+						}
+					}
+					// if it's at the end of the list, don't fire anything
+					if (fireEvent) {
+						ActionEvent.fire(eventBus, action);
+					}
+					else {
+						GWT.log(nameWithCarrot + " is the last bread crumb.  Not firing anything.");
+					}
+				}
+			}
+		});
+		breadCrumbPanel.add(breadCrumbAnchor);
 	}
 
 	@Override
 	public void removeBreadCrumb(String name) {
-		// TODO Auto-generated method stub
-		
+//		if (true) {
+//			return;
+//		}
+		GWT.log("removing anchor: " + name);
+		for (Anchor a : breadCrumbAnchors) {
+			if (a.getText().equalsIgnoreCase(name)) {
+				GWT.log("found anchor: " + name + " removing it from the panel etc.");
+				breadCrumbPanel.remove(a);
+				breadCrumbAnchors.remove(a);
+				breadCrumbNames.remove(name);
+			}
+		}
 	}
 
 	@Override
 	public void clearBreadCrumbs() {
+//		if (true) {
+//			return;
+//		}
+		breadCrumbPanel.clear();
+		breadCrumbNames.clear();
+		addBreadCrumb("Home", ActionNames.GO_HOME);
+	}
+
+	@Override
+	public void goToBredCrumbLocation(String name) {
 		// TODO Auto-generated method stub
 		
 	}

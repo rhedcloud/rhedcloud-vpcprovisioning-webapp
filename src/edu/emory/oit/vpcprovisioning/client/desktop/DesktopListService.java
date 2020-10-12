@@ -180,6 +180,7 @@ public class DesktopListService extends ViewImplBase implements ListServiceView 
 					break svcLoop;
 				}
 				if (m != null) {
+					getAppShell().addBreadCrumb("Maintain Service", ActionNames.MAINTAIN_SERVICE);
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SERVICE, m);
 				}
 				else {

@@ -118,7 +118,7 @@ public class ListElasticIpPresenter extends PresenterBase implements ListElastic
 			}
 		};
 		GWT.log("getting user logged in from server...");
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override

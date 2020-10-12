@@ -167,6 +167,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 				actionsPopup.hide();
 				ServiceSecurityAssessmentPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
+					getAppShell().addBreadCrumb("Maintain Assessment", ActionNames.MAINTAIN_SECURITY_ASSESSMENT);
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), m);
 				}
 				else {
@@ -789,6 +790,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		acctIdColumn.setFieldUpdater(new FieldUpdater<ServiceSecurityAssessmentPojo, String>() {
 	    	@Override
 	    	public void update(int index, ServiceSecurityAssessmentPojo object, String value) {
+				getAppShell().addBreadCrumb("Maintain Assessment", ActionNames.MAINTAIN_SECURITY_ASSESSMENT);
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), object);
 	    	}
 	    });
@@ -813,6 +815,7 @@ public class DesktopMaintainService extends ViewImplBase implements MaintainServ
 		statusColumn.setFieldUpdater(new FieldUpdater<ServiceSecurityAssessmentPojo, String>() {
 	    	@Override
 	    	public void update(int index, ServiceSecurityAssessmentPojo object, String value) {
+				getAppShell().addBreadCrumb("Maintain Assessment", ActionNames.MAINTAIN_SECURITY_ASSESSMENT);
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_ASSESSMENT, presenter.getService(), object);
 	    	}
 	    });

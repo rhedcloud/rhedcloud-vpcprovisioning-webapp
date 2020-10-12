@@ -164,6 +164,7 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 				actionsPopup.hide();
 				AccountPojo m = selectionModel.getSelectedObject();
 				if (m != null) {
+					getAppShell().addBreadCrumb("Maintain Account", ActionNames.MAINTAIN_ACCOUNT);
 					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, m);
 				}
 				else {

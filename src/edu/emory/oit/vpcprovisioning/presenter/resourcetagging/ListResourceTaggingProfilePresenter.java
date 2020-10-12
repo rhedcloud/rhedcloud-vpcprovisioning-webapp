@@ -124,7 +124,7 @@ public class ListResourceTaggingProfilePresenter extends PresenterBase implement
 			}
 		};
 		GWT.log("getting user logged in from server...");
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	/**

@@ -137,7 +137,7 @@ public class ListNotificationPresenter extends PresenterBase implements ListNoti
 			}
 		};
 		GWT.log("getting user logged in from server...");
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	/**

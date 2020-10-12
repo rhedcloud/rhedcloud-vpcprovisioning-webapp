@@ -973,3 +973,17 @@ hr {
 	opacity          :   0.4;
 	clip             :   rect(auto,auto,auto,auto);
 }
+.breadCrumbAnchor {
+	color: grey;
+	font-size: 14px;
+	text-align: left;
+	cursor: pointer;
+	padding-right: 10px;
+	padding-bottom: 2px;
+	padding-top: 3px;
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+	background: #232f3e;
+}
+.breadCrumbAnchor:hover {
+	color: orange;
+}

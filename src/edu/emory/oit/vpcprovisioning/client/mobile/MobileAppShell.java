@@ -418,4 +418,10 @@ public class MobileAppShell extends ResizeComposite implements AppShell {
 		return null;
 	}
 
+	@Override
+	public void goToBredCrumbLocation(String name) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

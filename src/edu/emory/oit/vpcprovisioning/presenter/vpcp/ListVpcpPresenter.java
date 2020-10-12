@@ -115,7 +115,7 @@ public class ListVpcpPresenter extends PresenterBase implements ListVpcpView.Pre
 			}
 		};
 		GWT.log("getting user logged in from server...");
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	/**

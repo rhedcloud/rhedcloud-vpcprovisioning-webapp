@@ -130,7 +130,7 @@ public class ListVpnConnectionProfilePresenter extends PresenterBase implements 
 			}
 		};
 		GWT.log("getting user logged in from server...");
-		VpcProvisioningService.Util.getInstance().getUserLoggedIn(userCallback);
+		VpcProvisioningService.Util.getInstance().getUserLoggedIn(false, userCallback);
 	}
 
 	@Override

@@ -27,7 +27,7 @@
 			<g:HorizontalPanel ui:field="buttonsPanel" width="100%" spacing="12">
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-						ui:field="prevButton" debugId="prevButton">Previous</g:Button>
+						ui:field="prevButton" debugId="prevButton">&lt;&lt; Previous</g:Button>
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 					<g:TabLayoutPanel 
@@ -45,7 +45,7 @@
 				</g:cell>
 				<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
 					<g:Button addStyleNames="{style.glowing-border} {style.normalButton}"
-						ui:field="nextButton" debugId="nextButton">Next</g:Button>
+						ui:field="nextButton" debugId="nextButton">Next &gt;&gt;</g:Button>
 				</g:cell>
 			</g:HorizontalPanel>
 		</g:cell>
