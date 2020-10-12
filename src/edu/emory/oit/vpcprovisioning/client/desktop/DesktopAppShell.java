@@ -2074,6 +2074,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		breadCrumbAnchor.getElement().getStyle().setColor("grey");
 		breadCrumbAnchor.getElement().getStyle().setBackgroundColor("#232f3e");
 		breadCrumbAnchor.getElement().getStyle().setCursor(Cursor.POINTER);
+		breadCrumbAnchor.getElement().getStyle().setFontSize(12, Unit.PX);
 		breadCrumbAnchor.setTitle(name + ":" + action);
 		
 		breadCrumbAnchor.addClickHandler(new ClickHandler() {
