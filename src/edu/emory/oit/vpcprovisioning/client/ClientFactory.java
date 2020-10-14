@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
@@ -140,4 +141,5 @@ public interface ClientFactory {
 	ListAccountProvisioningView getListAccountProvisioningView();
 	DeprovisionAccountView getDeprovisionAccountView();
 	AccountProvisioningStatusView getAccountProvisioningStatusView();
+	ListFinancialAccountsView getListFinancialAccountsView();
 }

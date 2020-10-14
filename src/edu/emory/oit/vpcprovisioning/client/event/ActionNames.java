@@ -82,6 +82,7 @@ public interface ActionNames {
 	final String GO_BACK_ELASTIC_IP_ASSIGNMENT = "goBackElasticIpAssignment";
 	final String GO_HOME_NOTIFICATION = "goHomeNotification";
 	final String GO_HOME_RTP = "goHomeResourceTagging";
+	final String GO_HOME_FINANCIAL_ACCOUNTS = "goHomeFinancialAccounts";
 
 	final String VPC_CACHED = "vpcCached";
 	final String ACCOUNT_CACHED = "accountCached";

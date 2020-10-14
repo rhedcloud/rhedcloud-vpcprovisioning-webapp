@@ -108,6 +108,10 @@ public class HomePresenter extends PresenterBase implements HomeView.Presenter {
 //		VpcProvisioningService.Util.getInstance().getAccountsForFilter(filter, acct_callback);
 		
 		// TODO: Phase2:Sprint4: check for accounts this user is associated to that are using invalid or nearly invalid speedtypes
+		// TODO: move this to DesktopAppShell and make it so when/if they have 
+		// invalid speedtypes, they go to a new page instead of the home page
+		// they'll go to the ListUserFinancialAccountsView where they'll be able 
+		// to update/fix any accounts that are in bad standing
 		/*
 		AsyncCallback<List<AccountSpeedChartPojo>> sp_cb = new AsyncCallback<List<AccountSpeedChartPojo>>() {
 			@Override

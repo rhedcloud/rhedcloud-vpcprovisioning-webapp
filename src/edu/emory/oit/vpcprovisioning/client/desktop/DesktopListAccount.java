@@ -513,6 +513,24 @@ public class DesktopListAccount extends ViewImplBase implements ListAccountView 
 		});
 		accountListTable.addColumn(complianceClassColumn, "Compliance Class");
 		
+		// speed type (financial account number)
+		Column<AccountPojo, String> finAcctColumn = 
+			new Column<AccountPojo, String> (new TextCell()) {
+			
+			@Override
+			public String getValue(AccountPojo object) {
+				return object.getSpeedType();
+			}
+		};
+		finAcctColumn.setSortable(true);
+		finAcctColumn.setCellStyleNames("tableBody");
+		sortHandler.setComparator(finAcctColumn, new Comparator<AccountPojo>() {
+			public int compare(AccountPojo o1, AccountPojo o2) {
+				return o1.getSpeedType().compareTo(o2.getSpeedType());
+			}
+		});
+		accountListTable.addColumn(finAcctColumn, "Financial Acct Number");
+		
 		// password location
 		Column<AccountPojo, String> pwLocColumn = 
 				new Column<AccountPojo, String> (new TextCell()) {

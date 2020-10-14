@@ -298,7 +298,7 @@ public interface VpcProvisioningService extends RemoteService {
 
 	PropertiesPojo getPropertiesForMenu(String menuId) throws RpcException;
 	List<PropertyPojo> getUserProfileProperties() throws RpcException;
-	List<AccountSpeedChartPojo> getBadSpeedChartsForUser(UserAccountPojo user) throws RpcException;
+	List<AccountSpeedChartPojo> getFinancialAccountsForUser(UserAccountPojo user) throws RpcException;
 	RiskCalculationPropertiesPojo getPropertiesForRiskCalculation(String calculationName) throws RpcException;
 	List<RiskCalculationPropertiesPojo> getRiskCalculationProperties() throws RpcException;
 

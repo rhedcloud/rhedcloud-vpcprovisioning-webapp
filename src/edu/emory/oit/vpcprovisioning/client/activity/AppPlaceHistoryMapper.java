@@ -18,6 +18,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsPlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
 import edu.emory.oit.vpcprovisioning.presenter.incident.MaintainIncidentPlace;
@@ -105,7 +106,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 				 ListAccountProvisioningPlace.Tokenizer.class,
 				 CalculateSecurityRiskPlace.Tokenizer.class,
 				 DeprovisionAccountPlace.Tokenizer.class,
-				 AccountProvisioningStatusPlace.Tokenizer.class})
+				 AccountProvisioningStatusPlace.Tokenizer.class,
+				 ListFinancialAccountsPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

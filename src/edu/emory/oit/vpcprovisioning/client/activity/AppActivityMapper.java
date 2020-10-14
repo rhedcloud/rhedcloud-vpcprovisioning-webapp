@@ -30,6 +30,8 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsPlace;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomePlace;
@@ -329,6 +331,17 @@ public class AppActivityMapper implements ActivityMapper {
 				@Override
 				public void start(AcceptsOneWidget panel, EventBus eventBus) {
 					ListAccountProvisioningPresenter presenter = new ListAccountProvisioningPresenter(clientFactory, (ListAccountProvisioningPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
+		if (place instanceof ListFinancialAccountsPlace) {
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListFinancialAccountsPresenter presenter = new ListFinancialAccountsPresenter(clientFactory, (ListFinancialAccountsPlace) place);
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}

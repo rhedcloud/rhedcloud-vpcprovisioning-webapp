@@ -23,6 +23,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidr;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListCidrAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListElasticIpAssignment;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListFinancialAccounts;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListFirewallRule;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListResourceTaggingProfile;
@@ -78,6 +79,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
@@ -182,6 +184,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListAccountProvisioningView listAccountProvisioningView;
 	private DeprovisionAccountView deprovisionAccountView;
 	private AccountProvisioningStatusView accountProvisioningStatusView;
+	private ListFinancialAccountsView listFinancialAccountsView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -773,4 +776,14 @@ public class ClientFactoryImplDesktop implements ClientFactory {
     protected AccountProvisioningStatusView createAccountProvisioningStatusView() {
         return new DesktopAccountProvisioningStatus();
     }
+	@Override
+	public ListFinancialAccountsView getListFinancialAccountsView() {
+        if (listFinancialAccountsView == null) {
+        	listFinancialAccountsView = createListFinancialAccountsView();
+        }
+        return listFinancialAccountsView;
+	}
+	private ListFinancialAccountsView createListFinancialAccountsView() {
+		return new DesktopListFinancialAccounts();
+	}
 }

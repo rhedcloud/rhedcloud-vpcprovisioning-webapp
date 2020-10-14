@@ -25,7 +25,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.UmbrellaException;
 
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
-import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
@@ -48,6 +47,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpPresen
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPlace;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentPlace;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsPlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePlace;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRulePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestPresenter;
@@ -398,6 +398,18 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				GWT.log("Bootstrapper, GO_HOME_ACCOUNT.onAction");
 				placeController.goTo(new ListAccountPlace(false));
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_FINANCIAL_ACCOUNTS.onAction");
+				if (event.isShowBadFinAcctsHTML()) {
+					placeController.goTo(new ListFinancialAccountsPlace(false, true));
+				}
+				else {
+					placeController.goTo(new ListFinancialAccountsPlace(false));
+				}
 			}
 		});
 		ActionEvent.register(eventBus, ActionNames.GO_HOME_CENTRAL_ADMIN, new ActionEvent.Handler() {

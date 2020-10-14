@@ -79,6 +79,7 @@ import edu.emory.oit.vpcprovisioning.presenter.bill.BillSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.centraladmin.ListCentralAdminView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
 import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
@@ -103,6 +104,7 @@ import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceStatisticPojo;
 import edu.emory.oit.vpcprovisioning.shared.AWSServiceSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountSpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeaturePojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.ConsoleFeatureQueryResultPojo;
@@ -200,9 +202,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		// TJ - 1/28/2020
 		firstHomeContentWidget = true;
 		homeContentContainer.clear();
-		HomeView view = clientFactory.getHomeView();
-		view.setAppShell(this);
-		homeContentContainer.add(view);
+		HomeView homeView = clientFactory.getHomeView();
+		homeView.setAppShell(this);
+		homeContentContainer.add(homeView);
 
 		ListAccountView listAccountView = clientFactory.getListAccountView();
 		listAccountView.setAppShell(this);
@@ -294,16 +296,55 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 //		AccountProvisioningStatusView accountProvisioningStatusView = clientFactory.getAccountProvisioningStatusView();
 		homeContentContainer.add(listAccountProvisioningView);
 //		homeContentContainer.add(accountProvisioningStatusView);
+		
+		// 10/12/2020 Bad financial account maintenance (speedchart)
+		ListFinancialAccountsView listFinancialAccountsView = clientFactory.getListFinancialAccountsView();
+		listFinancialAccountsView.setAppShell(this);
+		homeContentContainer.add(listFinancialAccountsView);
 
 
 
 		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
 		if (hash == null || hash.trim().length() == 0) {
-			GWT.log("null hash: home tab");
-			GWT.log("need to get Home Content.");
-			firstHomeContentWidget = true;
-			
-			ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+			// Phase2:Sprint4: check for accounts this user is 
+			// associated to that are using invalid or nearly invalid speedtypes/financialaccounts
+			showPleaseWaitDialog("Loading the RHEDcloud Console please wait...");
+			AsyncCallback<List<AccountSpeedChartPojo>> sp_cb = new AsyncCallback<List<AccountSpeedChartPojo>>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					hidePleaseWaitDialog();
+					GWT.log("Exception retrieving bad speed charts", caught);
+					firstHomeContentWidget = true;			
+					ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+				}
+
+				@Override
+				public void onSuccess(List<AccountSpeedChartPojo> result) {
+//					if (true) {
+//						GWT.log("need to get List Financial Accounts Content.");
+//						firstHomeContentWidget = true;			
+//						ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn);
+//						return;
+//					}
+					hidePleaseWaitDialog();
+					if (result != null && result.size() > 0) {
+						// TODO: when/if they have invalid speedtypes, they'll 
+						// go to a new page instead of the home page 
+						// they'll go to the ListUserFinancialAccountsView where they'll be able 
+						// to update/fix any accounts that are in bad standing
+						GWT.log("need to get List Financial Accounts Content.");
+						firstHomeContentWidget = true;			
+						ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn, true);
+					}
+					else {
+						GWT.log("null hash: home tab");
+						GWT.log("need to get Home Content.");
+						firstHomeContentWidget = true;			
+						ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+					}
+				}
+			};
+			VpcProvisioningService.Util.getInstance().getFinancialAccountsForUser(userLoggedIn, sp_cb);
 		}
 		else {
 			if (hash.trim().equals("#" + Constants.LIST_ACCOUNT + ":")) {
@@ -378,9 +419,52 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				GWT.log("Need to go to account provisioning tab (list)");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ACCOUNT_PROVISIONING);
 			}
+			else if (hash.trim().indexOf(("#" + Constants.LIST_FINANCIAL_ACCOUNTS + ":")) >= 0) {
+				GWT.log("Need to go to list financial accounts tab (list)");
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn);
+			}
 			else {
-				GWT.log("[default] home tab");
-				ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+				// TODO: when/if they have invalid speedtypes, they'll... 
+				// Phase2:Sprint4: check for accounts this user is 
+				// associated to that are using invalid or nearly invalid speedtypes/financialaccounts
+				AsyncCallback<List<AccountSpeedChartPojo>> sp_cb = new AsyncCallback<List<AccountSpeedChartPojo>>() {
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("Exception retrieving bad speed charts", caught);
+						hidePleaseWaitDialog();
+						firstHomeContentWidget = true;			
+						ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+					}
+
+					@Override
+					public void onSuccess(List<AccountSpeedChartPojo> result) {
+//						if (true) {
+//							GWT.log("need to get List Financial Accounts Content.");
+//							firstHomeContentWidget = true;			
+//							ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn);
+//							return;
+//						}
+						hidePleaseWaitDialog();
+						if (result != null && result.size() > 0) {
+							// TODO: when/if they have invalid speedtypes, they'll 
+							// go to a new page instead of the home page 
+							// they'll go to the ListUserFinancialAccountsView where they'll be able 
+							// to update/fix any accounts that are in bad standing
+							GWT.log("need to get List Financial Accounts Content.");
+							firstHomeContentWidget = true;			
+							ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn, true);
+						}
+						else {
+							GWT.log("[default] home tab");
+							firstHomeContentWidget = true;			
+							ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+						}
+					}
+				};
+				VpcProvisioningService.Util.getInstance().getFinancialAccountsForUser(userLoggedIn, sp_cb);
+
+//				GWT.log("[default] home tab");
+//				ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
 			}
 		}
 	}
@@ -2072,7 +2156,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		Anchor breadCrumbAnchor = new Anchor(nameWithCarrot);
 		breadCrumbAnchors.add(breadCrumbAnchor);
 		breadCrumbAnchor.addStyleName("breadCrumbAnchor");
-		breadCrumbAnchor.getElement().getStyle().setColor("grey");
+		breadCrumbAnchor.getElement().getStyle().setColor("#ccd1d1");
 		breadCrumbAnchor.getElement().getStyle().setBackgroundColor("#232f3e");
 		breadCrumbAnchor.getElement().getStyle().setCursor(Cursor.POINTER);
 		breadCrumbAnchor.getElement().getStyle().setFontSize(12, Unit.PX);

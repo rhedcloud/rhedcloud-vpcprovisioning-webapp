@@ -30,6 +30,7 @@ import edu.emory.oit.vpcprovisioning.shared.AccountDeprovisioningRequisitionPojo
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.AccountSpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
@@ -133,6 +134,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private ResourceTaggingProfilePojo resourceTaggingProfile;
 	private AccountProvisioningSummaryPojo accountProvisioningSummary;
 	private AccountDeprovisioningRequisitionPojo acctDeprovisioningRequisition;
+	private boolean showBadFinAcctsHTML;
 	private Widget actionSourceWidget;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
@@ -819,6 +821,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.account = account;
 	}
 
+	public ActionEvent(UserAccountPojo userLoggedIn2, boolean showBadFinAcctsHTML) {
+		this.userLoggedIn = userLoggedIn2;
+		this.setShowBadFinAcctsHTML(showBadFinAcctsHTML);
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -1205,4 +1212,20 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public void setActionSourceWidget(Widget actionSourceWidget) {
 		this.actionSourceWidget = actionSourceWidget;
 	}
+
+	public static void fire(EventBus eventBus, String goHomeFinancialAccounts, UserAccountPojo userLoggedIn2,
+			boolean showBadFinAcctsHTML) {
+
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(userLoggedIn2, showBadFinAcctsHTML), goHomeFinancialAccounts);
+	}
+
+	public boolean isShowBadFinAcctsHTML() {
+		return showBadFinAcctsHTML;
+	}
+
+	public void setShowBadFinAcctsHTML(boolean showBadFinAcctsHTML) {
+		this.showBadFinAcctsHTML = showBadFinAcctsHTML;
+	}
+
 }

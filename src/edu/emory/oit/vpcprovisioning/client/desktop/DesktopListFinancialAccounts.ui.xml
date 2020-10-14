@@ -1,0 +1,41 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:ScrollPanel width="99%" height="99%" debugId="accountsScrollPanel">	
+	<g:VerticalPanel width="100%" spacing="20">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:HTML addStyleNames="{style.mediumLabel}">Financial Account List</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of existing 
+		AWS Accounts with which you are affiliated and the financial account 
+		numbers that have been specified for those accounts.<br/><br/>
+		This page is a convenient place where you can modify financial account 
+		numbers associted to your accounts.
+		</g:HTML>
+		<g:HTML ui:field="badFinAcctsHTML" addStyleNames="{style.body}" visible="false">
+		If you're seeing this page, it means you have AWS Accounts that have 
+		invalid or nearly invalid financial accounts associated to them.<br/><br/>
+		This page is a convenient place where you can fix these issues.<br/><br/>
+		This page will be displayed when you first log in until all financial 
+		account numbers are valid for all accounts you are affiliated with.
+		</g:HTML>
+		<g:VerticalPanel ui:field="accountListPanel" width="100%">
+			<g:FlexTable ui:field="accountTable" debugId="accountTable" cellSpacing="8" cellPadding="8" addStyleNames="{style.myFlexTable}"/>
+		</g:VerticalPanel>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder>

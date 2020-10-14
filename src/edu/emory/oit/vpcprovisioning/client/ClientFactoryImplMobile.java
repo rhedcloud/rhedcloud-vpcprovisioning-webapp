@@ -28,6 +28,7 @@ import edu.emory.oit.vpcprovisioning.presenter.elasticip.ListElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticip.MaintainElasticIpView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.ListElasticIpAssignmentView;
 import edu.emory.oit.vpcprovisioning.presenter.elasticipassignment.MaintainElasticIpAssignmentView;
+import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.ListFirewallRuleView;
 import edu.emory.oit.vpcprovisioning.presenter.firewall.MaintainFirewallExceptionRequestView;
 import edu.emory.oit.vpcprovisioning.presenter.home.HomeView;
@@ -126,6 +127,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ListAccountProvisioningView listAccountProvisioningView;
 	private DeprovisionAccountView deprovisionAccountView;
 	private AccountProvisioningStatusView accountProvisioningStatusView;
+	private ListFinancialAccountsView listFinancialAccountsView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -443,6 +445,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public AccountProvisioningStatusView getAccountProvisioningStatusView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListFinancialAccountsView getListFinancialAccountsView() {
 		// TODO Auto-generated method stub
 		return null;
 	}
