@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -15,7 +16,9 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -30,7 +33,6 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.finacct.ListFinancialAccountsView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountSpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
@@ -48,7 +50,18 @@ public class DesktopListFinancialAccounts extends ViewImplBase implements ListFi
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField FlexTable accountTable;
 	@UiField HTML badFinAcctsHTML;
+	@UiField Button continueTopButton;
+	@UiField Button continueBottomButton;
 	
+	@UiHandler("continueTopButton")
+	void continueTopButtonClicke(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME, userLoggedIn);
+	}
+	@UiHandler("continueBottomButton")
+	void continueBottomButtonClicke(ClickEvent e) {
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME, userLoggedIn);
+	}
+
 	TextBox speedTypeTB;
 	String speedTypeBeingTyped=null;
 	boolean speedTypeConfirmed = false;

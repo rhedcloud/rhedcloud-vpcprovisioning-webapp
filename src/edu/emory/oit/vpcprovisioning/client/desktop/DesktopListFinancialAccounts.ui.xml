@@ -33,8 +33,20 @@
 		This page will be displayed when you first log in until all financial 
 		account numbers are valid for all accounts you are affiliated with.
 		</g:HTML>
-		<g:VerticalPanel ui:field="accountListPanel" width="100%">
+		<g:VerticalPanel ui:field="accountListPanel" width="100%" spacing="8">
+			<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+				<g:Button ui:field="continueTopButton" debugId="continueTopButton" 
+					text="Continue" 
+					addStyleNames="{style.glowing-border} {style.normalButton}" 
+					title="Close this page and go to the Home page"/>
+			</g:cell>
 			<g:FlexTable ui:field="accountTable" debugId="accountTable" cellSpacing="8" cellPadding="8" addStyleNames="{style.myFlexTable}"/>
+			<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+				<g:Button ui:field="continueBottomButton" debugId="continueBottomButton" 
+					text="Continue" 
+					addStyleNames="{style.glowing-border} {style.normalButton}" 
+					title="Close this page and go to the Home page"/>
+			</g:cell>
 		</g:VerticalPanel>
 	</g:VerticalPanel>
 	</g:ScrollPanel>

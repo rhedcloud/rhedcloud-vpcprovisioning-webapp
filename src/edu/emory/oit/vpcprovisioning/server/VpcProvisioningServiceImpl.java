@@ -8951,7 +8951,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<String> getRiskLevelTypeItems() {
-		// TEMP
 		List<String> l = new java.util.ArrayList<String>();
 
 		try {
