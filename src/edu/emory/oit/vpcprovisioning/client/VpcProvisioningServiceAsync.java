@@ -277,6 +277,7 @@ public interface VpcProvisioningServiceAsync {
 	void getPropertiesForMenu(String menuId, AsyncCallback<PropertiesPojo> callback);
 	void getUserProfileProperties(AsyncCallback<List<PropertyPojo>> callback);
 	void getFinancialAccountsForUser(UserAccountPojo user, AsyncCallback<List<AccountSpeedChartPojo>> callback);
+	void isUserAssociatedToBadSpeedTypes(UserAccountPojo user, AsyncCallback<Boolean> callback);
 	void getPropertiesForRiskCalculation(String calculationName, AsyncCallback<RiskCalculationPropertiesPojo> callback);
 	void getRiskCalculationProperties(AsyncCallback<List<RiskCalculationPropertiesPojo>> callback);
 

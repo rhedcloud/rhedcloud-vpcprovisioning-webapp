@@ -309,7 +309,37 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			// Phase2:Sprint4: check for accounts this user is 
 			// associated to that are using invalid or nearly invalid speedtypes/financialaccounts
 			showPleaseWaitDialog("Loading the RHEDcloud Console please wait...");
-			AsyncCallback<List<AccountSpeedChartPojo>> sp_cb = new AsyncCallback<List<AccountSpeedChartPojo>>() {
+//			AsyncCallback<List<AccountSpeedChartPojo>> sp_cb = new AsyncCallback<List<AccountSpeedChartPojo>>() {
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					hidePleaseWaitDialog();
+//					GWT.log("Exception retrieving bad speed charts", caught);
+//					firstHomeContentWidget = true;			
+//					ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+//				}
+//
+//				@Override
+//				public void onSuccess(List<AccountSpeedChartPojo> result) {
+//					hidePleaseWaitDialog();
+//					if (result != null && result.size() > 0) {
+//						// TODO: when/if they have invalid speedtypes, they'll 
+//						// go to a new page instead of the home page 
+//						// they'll go to the ListUserFinancialAccountsView where they'll be able 
+//						// to update/fix any accounts that are in bad standing
+//						GWT.log("need to get List Financial Accounts Content.");
+//						firstHomeContentWidget = true;			
+//						ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn, true);
+//					}
+//					else {
+//						GWT.log("null hash: home tab");
+//						GWT.log("need to get Home Content.");
+//						firstHomeContentWidget = true;			
+//						ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+//					}
+//				}
+//			};
+//			VpcProvisioningService.Util.getInstance().getFinancialAccountsForUser(userLoggedIn, sp_cb);
+			AsyncCallback<Boolean> badStCb = new AsyncCallback<Boolean>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					hidePleaseWaitDialog();
@@ -319,16 +349,10 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 				}
 
 				@Override
-				public void onSuccess(List<AccountSpeedChartPojo> result) {
-//					if (true) {
-//						GWT.log("need to get List Financial Accounts Content.");
-//						firstHomeContentWidget = true;			
-//						ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn);
-//						return;
-//					}
+				public void onSuccess(Boolean result) {
 					hidePleaseWaitDialog();
-					if (result != null && result.size() > 0) {
-						// TODO: when/if they have invalid speedtypes, they'll 
+					if (result) {
+						// when/if they have invalid speedtypes, they'll 
 						// go to a new page instead of the home page 
 						// they'll go to the ListUserFinancialAccountsView where they'll be able 
 						// to update/fix any accounts that are in bad standing
@@ -344,7 +368,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					}
 				}
 			};
-			VpcProvisioningService.Util.getInstance().getFinancialAccountsForUser(userLoggedIn, sp_cb);
+			VpcProvisioningService.Util.getInstance().isUserAssociatedToBadSpeedTypes(userLoggedIn, badStCb);
 		}
 		else {
 			if (hash.trim().equals("#" + Constants.LIST_ACCOUNT + ":")) {

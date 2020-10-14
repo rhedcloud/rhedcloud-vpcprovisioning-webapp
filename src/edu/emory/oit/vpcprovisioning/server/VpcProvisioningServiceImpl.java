@@ -13065,14 +13065,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			SpeedChartPojo scp = this.getSpeedChartForFinancialAccountNumber(account.getSpeedType());
 			
 			if (scp != null) {
-//				if (!scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
-					// speed chart is either invalid or it's in a warning state
-					// user should be notified about these
-					AccountSpeedChartPojo asc = new AccountSpeedChartPojo();
-					asc.setAccount(account);
-					asc.setSpeedChart(scp);
-					pojos.add(asc);
-//				}
+				// speed chart is either invalid or it's in a warning state
+				// user should be notified about these
+				AccountSpeedChartPojo asc = new AccountSpeedChartPojo();
+				asc.setAccount(account);
+				asc.setSpeedChart(scp);
+				pojos.add(asc);
 			}
 			else {
 				// no speed chart found for that financial account number, this has to be bad
@@ -13083,6 +13081,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		Collections.sort(pojos);
 		return pojos;
+	}
+
+	@Override
+	public boolean isUserAssociatedToBadSpeedTypes(UserAccountPojo user) throws RpcException {
+		List<AccountSpeedChartPojo> pojos = this.getFinancialAccountsForUser(user);
+
+		for (AccountSpeedChartPojo asc : pojos) {
+			if (asc.getSpeedChart() != null) {
+				if (!asc.getSpeedChart().getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
+					// speed chart is either invalid or it's in a warning state
+					// user should be notified about these
+					return true;
+				}
+				
+			}
+		}
+		return false;
 	}
 
 	@Override
