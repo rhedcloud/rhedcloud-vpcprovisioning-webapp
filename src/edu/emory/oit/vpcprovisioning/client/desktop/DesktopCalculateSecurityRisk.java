@@ -474,17 +474,20 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 	}
 	
 	private int getOverallLikelihoodAsInt(String olhText) {
-		switch (olhText.toLowerCase()) {
-		case "very low":
+		if (olhText.equalsIgnoreCase("very low")) {
 			return 1;
-		case "low":
-			return 2;
-		case "medium":
-			return 3;
-		case "high":
-			return 4;
-		case "critical":
-			return 5;
+		}
+		if (olhText.equalsIgnoreCase("low")) {
+			return 1;
+		}
+		if (olhText.equalsIgnoreCase("medium")) {
+			return 1;
+		}
+		if (olhText.equalsIgnoreCase("high")) {
+			return 1;
+		}
+		if (olhText.equalsIgnoreCase("critical")) {
+			return 1;
 		}
 		return 0;
 	}
