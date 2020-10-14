@@ -24,7 +24,7 @@
 		AWS Accounts with which you are affiliated and the financial account 
 		numbers that have been specified for those accounts.<br/><br/>
 		This page is a convenient place where you can modify financial account 
-		numbers associted to your accounts.
+		numbers associated to your accounts.
 		</g:HTML>
 		<g:HTML ui:field="badFinAcctsHTML" addStyleNames="{style.body}" visible="false">
 		If you're seeing this page, it means you have AWS Accounts that have 
