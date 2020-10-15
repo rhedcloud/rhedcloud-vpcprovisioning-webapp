@@ -33,7 +33,7 @@
 					<g:TabLayoutPanel 
 						barHeight="0" 
 						width="450px"
-						height="350px" 
+						height="400px" 
 						animationVertical="false" 
 						ui:field="wizardTabPanel">
 					

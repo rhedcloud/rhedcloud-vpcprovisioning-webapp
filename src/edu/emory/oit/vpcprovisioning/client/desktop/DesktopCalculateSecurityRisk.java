@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -224,14 +225,6 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			int step2RiskLevel = presenter.getRiskLevelCalculation().getRiskLevelForQuestion(3);
 			resultsPanel.add(new HTML("Step 2 Risk Level (from question 3): " + step2RiskLevel));
 			
-			// overall likelihood
-//			if (step1RiskLevel > step2RiskLevel) {
-//				presenter.getRiskLevelCalculation().setOverallLikelihood(step1RiskLevel);
-//			}
-//			else {
-//				presenter.getRiskLevelCalculation().setOverallLikelihood(step2RiskLevel);
-//			}
-
 			VerticalPanel tablePanel = new VerticalPanel();
 			tablePanel.setSpacing(4);
 			resultsPanel.add(tablePanel);
@@ -245,6 +238,7 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			table.setWidth("100%");
 			tablePanel.add(table);
 			table.setCellSpacing(0);
+			table.setCellPadding(6);
 			table.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
 			table.getElement().getStyle().setBorderWidth(1, Unit.PX);
 			
@@ -254,161 +248,52 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			// high     = 4
 			// critical = 5
 			
-			// column headings
-			table.setWidget(1, 0, new HTML("<b>Critical</b>"));
-			table.getCellFormatter().getElement(1, 0).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(1, 0).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(1, 0).getStyle().setBackgroundColor("#e5e8e8");
-			
-			// Row 1, columns 1 - 5
-			table.setWidget(1, 1, new HTML("Low"));
-			table.getCellFormatter().getElement(1, 1).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(1, 1).getStyle().setBorderWidth(1, Unit.PX);
+			// Row 1, columns 0 - 5
+			this.addCellToTable(table, 1, 0, "<b>Critical</b>", "#e5e8e8");
+			this.addCellToTable(table, 1, 1, "Low", null);
+			this.addCellToTable(table, 1, 2, "Medium", null);
+			this.addCellToTable(table, 1, 3, "High", null);
+			this.addCellToTable(table, 1, 4, "Critical", null);
+			this.addCellToTable(table, 1, 5, "Critical", null);
 
-			table.setWidget(1, 2, new HTML("Medium"));
-			table.getCellFormatter().getElement(1, 2).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(1, 2).getStyle().setBorderWidth(1, Unit.PX);
+			// Row 2, columns 0 - 5
+			this.addCellToTable(table, 2, 0, "<b>High</b>", "#e5e8e8");
+			this.addCellToTable(table, 2, 1, "Low", null);
+			this.addCellToTable(table, 2, 2, "Medium", null);
+			this.addCellToTable(table, 2, 3, "Medium", null);
+			this.addCellToTable(table, 2, 4, "High", null);
+			this.addCellToTable(table, 2, 5, "Critical", null);
 
-			table.setWidget(1, 3, new HTML("High"));
-			table.getCellFormatter().getElement(1, 3).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(1, 3).getStyle().setBorderWidth(1, Unit.PX);
+			// Row 3, columns 0 - 5
+			this.addCellToTable(table, 3, 0, "<b>Medium</b>", "#e5e8e8");
+			this.addCellToTable(table, 3, 1, "Low", null);
+			this.addCellToTable(table, 3, 2, "Low", null);
+			this.addCellToTable(table, 3, 3, "Medium", null);
+			this.addCellToTable(table, 3, 4, "Medium", null);
+			this.addCellToTable(table, 3, 5, "High", null);
 
-			table.setWidget(1, 4, new HTML("Critical"));
-			table.getCellFormatter().getElement(1, 4).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(1, 4).getStyle().setBorderWidth(1, Unit.PX);
+			// Row 4, columns 0-5
+			this.addCellToTable(table, 4, 0, "<b>Low</b>", "#e5e8e8");
+			this.addCellToTable(table, 4, 1, "Very Low", null);
+			this.addCellToTable(table, 4, 2, "Low", null);
+			this.addCellToTable(table, 4, 3, "Low", null);
+			this.addCellToTable(table, 4, 4, "Medium", null);
+			this.addCellToTable(table, 4, 5, "Medium", null);
 
-			table.setWidget(1, 5, new HTML("Critical"));
-			table.getCellFormatter().getElement(1, 5).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(1, 5).getStyle().setBorderWidth(1, Unit.PX);
-
-			// Row 2, columns 1 - 5
-			table.setWidget(2, 0, new HTML("<b>High</b>"));
-			table.getCellFormatter().getElement(2, 0).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(2, 0).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(2, 1, new HTML("Low"));
-			table.getCellFormatter().getElement(2, 1).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(2, 1).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(2, 2, new HTML("Medium"));
-			table.getCellFormatter().getElement(2, 2).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(2, 2).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(2, 3, new HTML("Medium"));
-			table.getCellFormatter().getElement(2, 3).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(2, 3).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(2, 4, new HTML("High"));
-			table.getCellFormatter().getElement(2, 4).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(2, 4).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(2, 5, new HTML("Critical"));
-			table.getCellFormatter().getElement(2, 5).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(2, 5).getStyle().setBorderWidth(1, Unit.PX);
-
-			// Row 3, columns 1 - 5
-			table.setWidget(3, 0, new HTML("<b>Medium</b>"));
-			table.getCellFormatter().getElement(3, 0).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(3, 0).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(3, 0).getStyle().setBackgroundColor("#e5e8e8");
-
-			table.setWidget(3, 1, new HTML("Low"));
-			table.getCellFormatter().getElement(3, 1).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(3, 1).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(3, 2, new HTML("Low"));
-			table.getCellFormatter().getElement(3, 2).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(3, 2).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(3, 3, new HTML("Medium"));
-			table.getCellFormatter().getElement(3, 3).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(3, 3).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(3, 4, new HTML("Medium"));
-			table.getCellFormatter().getElement(3, 4).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(3, 4).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(3, 5, new HTML("High"));
-			table.getCellFormatter().getElement(3, 5).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(3, 5).getStyle().setBorderWidth(1, Unit.PX);
-
-			// Row 4, columns 1-5
-			table.setWidget(4, 0, new HTML("<b>Low</b>"));
-			table.getCellFormatter().getElement(4, 0).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(4, 0).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(4, 0).getStyle().setBackgroundColor("#e5e8e8");
-
-			table.setWidget(4, 1, new HTML("Very Low"));
-			table.getCellFormatter().getElement(4, 1).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(4, 1).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(4, 2, new HTML("Low"));
-			table.getCellFormatter().getElement(4, 2).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(4, 2).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(4, 3, new HTML("Low"));
-			table.getCellFormatter().getElement(4, 3).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(4, 3).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(4, 4, new HTML("Medium"));
-			table.getCellFormatter().getElement(4, 4).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(4, 4).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(4, 5, new HTML("Medium"));
-			table.getCellFormatter().getElement(4, 5).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(4, 5).getStyle().setBorderWidth(1, Unit.PX);
-
-			// Row 5 columns 1-5
-			table.setWidget(5, 0, new HTML("<b>Very Low</b>"));
-			table.getCellFormatter().getElement(5, 0).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(5, 0).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(5, 0).getStyle().setBackgroundColor("#e5e8e8");
-
-			table.setWidget(5, 1, new HTML("Very Low"));
-			table.getCellFormatter().getElement(5, 1).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(5, 1).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(5, 2, new HTML("Very Low"));
-			table.getCellFormatter().getElement(5, 2).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(5, 2).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(5, 3, new HTML("Low"));
-			table.getCellFormatter().getElement(5, 3).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(5, 3).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(5, 4, new HTML("Low"));
-			table.getCellFormatter().getElement(5, 4).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(5, 4).getStyle().setBorderWidth(1, Unit.PX);
-
-			table.setWidget(5, 5, new HTML("Low"));
-			table.getCellFormatter().getElement(5, 5).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(5, 5).getStyle().setBorderWidth(1, Unit.PX);
+			// Row 5 columns 0-5
+			this.addCellToTable(table, 5, 0, "<b>Very Low</b>", "#e5e8e8");
+			this.addCellToTable(table, 5, 1, "Very Low", null);
+			this.addCellToTable(table, 5, 2, "Very Low", null);
+			this.addCellToTable(table, 5, 3, "Low", null);
+			this.addCellToTable(table, 5, 4, "Low", null);
+			this.addCellToTable(table, 5, 5, "Low", null);
 
 			// row headings
-			table.setWidget(0, 5, new HTML("<b>Critical</b>"));
-			table.getCellFormatter().getElement(0, 5).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(0, 5).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(0, 5).getStyle().setBackgroundColor("#e5e8e8");
-
-			table.setWidget(0, 4, new HTML("<b>High</b>"));
-			table.getCellFormatter().getElement(0, 4).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(0, 4).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(0, 4).getStyle().setBackgroundColor("#e5e8e8");
-
-			table.setWidget(0, 3, new HTML("<b>Medium</b>"));
-			table.getCellFormatter().getElement(0, 3).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(0, 3).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(0, 3).getStyle().setBackgroundColor("#e5e8e8");
-
-			table.setWidget(0, 2, new HTML("<b>Low</b>"));
-			table.getCellFormatter().getElement(0, 2).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(0, 2).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(0, 2).getStyle().setBackgroundColor("#e5e8e8");
-
-			table.setWidget(0, 1, new HTML("<b>Very Low</b>"));
-			table.getCellFormatter().getElement(0, 1).getStyle().setBorderStyle(BorderStyle.SOLID);
-			table.getCellFormatter().getElement(0, 1).getStyle().setBorderWidth(1, Unit.PX);
-			table.getCellFormatter().getElement(0, 1).getStyle().setBackgroundColor("#e5e8e8");
+			this.addCellToTable(table, 0, 5, "<b>Critical</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 4, "<b>High</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 3, "<b>Medium</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 2, "<b>Low</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 1, "<b>Very Low</b>", "#e5e8e8");
 
 			// highlight the appropriate cell
 			int row = 0;
@@ -448,21 +333,103 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			dock = wizardPanels.get(panelCounter);
 			wizardContainer.remove(dock);
 			
-			int overallLikelihood = presenter.getRiskLevelCalculation().getOverallLikelihood();
-			int step4Answer = presenter.getRiskLevelCalculation().getRiskLevelForQuestion(4);
+			int likelihood = presenter.getRiskLevelCalculation().getOverallLikelihood();
+			int impact = presenter.getRiskLevelCalculation().getRiskLevelForQuestion(4);
 
 			dock = createDock(nextRcp.getQuestionText());
 			VerticalPanel resultsPanel = new VerticalPanel();
 			resultsPanel.setSpacing(4);
 			dock.add(resultsPanel, DockPanel.NORTH);
 			
-			resultsPanel.add(new HTML("Overall likelihood (from table G5): " + overallLikelihood));
-			resultsPanel.add(new HTML("Step 4 Question 4 answer: " + step4Answer));
+			resultsPanel.add(new HTML("Overall likelihood (from table G5): " + likelihood));
+			resultsPanel.add(new HTML("Step 4 Question 4 answer: " + impact));
 
 			HTML dpContent = new HTML(nextRcp.getTableHeading());
 			resultsPanel.add(dpContent);
-			resultsPanel.add(new HTML("I-2 Table"));
+			resultsPanel.setCellHorizontalAlignment(dpContent, HasHorizontalAlignment.ALIGN_CENTER);
+			HTML dpSubHeading = new HTML(nextRcp.getTableSubHeading());
+			resultsPanel.add(dpSubHeading);
+			resultsPanel.setCellHorizontalAlignment(dpSubHeading, HasHorizontalAlignment.ALIGN_CENTER);
+
+			// TODO: build the table using overallLikelihood and step4Answer to 
+			// highlight the appropriate cell and derive the appropriate
+			// overall risk level using the text->number from the cell
+			// that gets highlighted
+
+			HorizontalPanel headerPanel = new HorizontalPanel();
+			headerPanel.setWidth("96%");
+			headerPanel.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+			headerPanel.getElement().getStyle().setBorderWidth(1, Unit.PX);
+			headerPanel.getElement().getStyle().setBackgroundColor("#e5e8e8");
+			resultsPanel.add(headerPanel);
 			
+			HTML likelihoodHeader = new HTML("<b>Likelihood</b>");
+			HTML impactHeader = new HTML("<b>Level of Impact</b>");
+			headerPanel.add(likelihoodHeader);
+			headerPanel.setCellHorizontalAlignment(likelihoodHeader, HasHorizontalAlignment.ALIGN_LEFT);
+			headerPanel.add(impactHeader);
+			headerPanel.setCellHorizontalAlignment(impactHeader, HasHorizontalAlignment.ALIGN_CENTER);
+			
+			Grid table = new Grid(7,7);
+//			table.setWidth("100%");
+			resultsPanel.add(table);
+			table.setCellSpacing(0);
+			table.setCellPadding(6);
+//			table.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+//			table.getElement().getStyle().setBorderWidth(1, Unit.PX);
+
+			// blank cell
+			this.addCellToTable(table, 0, 0, "", "#e5e8e8");
+
+			// column headings (row 0, columns 1-5)
+			this.addCellToTable(table, 0, 1, "<b>Very Low</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 2, "<b>Low</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 3, "<b>Medium</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 4, "<b>High</b>", "#e5e8e8");
+			this.addCellToTable(table, 0, 5, "<b>Critical</b>", "#e5e8e8");
+
+			// Row headings, column 0, row 1-5
+			this.addCellToTable(table, 1, 0, "<b>Critical</b>", "#e5e8e8");
+			this.addCellToTable(table, 2, 0, "<b>High</b>", "#e5e8e8");
+			this.addCellToTable(table, 3, 0, "<b>Medium</b>", "#e5e8e8");
+			this.addCellToTable(table, 4, 0, "<b>Low</b>", "#e5e8e8");
+			this.addCellToTable(table, 5, 0, "<b>Very Low</b>", "#e5e8e8");
+			
+			// row 1, columns 1 - 5
+			this.addCellToTable(table, 1, 1, "<b>Very Low</b>", null);
+			this.addCellToTable(table, 1, 2, "<b>Low</b>", null);
+			this.addCellToTable(table, 1, 3, "<b>Medium</b>", null);
+			this.addCellToTable(table, 1, 4, "<b>High</b>", null);
+			this.addCellToTable(table, 1, 5, "<b>Critical</b>", null);
+
+			// row 2, columns 1 - 5
+			this.addCellToTable(table, 2, 1, "<b>Very Low</b>", null);
+			this.addCellToTable(table, 2, 2, "<b>Low</b>", null);
+			this.addCellToTable(table, 2, 3, "<b>Medium</b>", null);
+			this.addCellToTable(table, 2, 4, "<b>High</b>", null);
+			this.addCellToTable(table, 2, 5, "<b>Critical</b>", null);
+
+			// row 3, columns 1 - 5
+			this.addCellToTable(table, 3, 1, "<b>Very Low</b>", null);
+			this.addCellToTable(table, 3, 2, "<b>Low</b>", null);
+			this.addCellToTable(table, 3, 3, "<b>Medium</b>", null);
+			this.addCellToTable(table, 3, 4, "<b>Medium</b>", null);
+			this.addCellToTable(table, 3, 5, "<b>High</b>", null);
+
+			// row 4, columns 1 - 5
+			this.addCellToTable(table, 4, 1, "<b>Very Low</b>", null);
+			this.addCellToTable(table, 4, 2, "<b>Low</b>", null);
+			this.addCellToTable(table, 4, 3, "<b>Low</b>", null);
+			this.addCellToTable(table, 4, 4, "<b>Low</b>", null);
+			this.addCellToTable(table, 4, 5, "<b>Medium</b>", null);
+
+			// row 5, columns 1 - 5
+			this.addCellToTable(table, 5, 1, "<b>Very Low</b>", null);
+			this.addCellToTable(table, 5, 2, "<b>Very Low</b>", null);
+			this.addCellToTable(table, 5, 3, "<b>Very Low</b>", null);
+			this.addCellToTable(table, 5, 4, "<b>Low</b>", null);
+			this.addCellToTable(table, 5, 5, "<b>Low</b>", null);
+
 			wizardPanels.add(panelCounter, dock);
 			wizardContainer.insert(dock, panelCounter);
 		}
@@ -473,21 +440,35 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 		wizardContainer.animate(700);
 	}
 	
+	private void addCellToTable(Grid table, int row, int column, String htmlText, String backgroundColor) {
+		table.setWidget(row, column, new HTML(htmlText));
+		table.getCellFormatter().getElement(row, column).getStyle().setBorderStyle(BorderStyle.SOLID);
+		table.getCellFormatter().getElement(row, column).getStyle().setBorderWidth(1, Unit.PX);
+		
+		if (backgroundColor != null) {
+			table.getCellFormatter().getElement(row, column).getStyle().setBackgroundColor(backgroundColor);
+		}
+	}
+	
+	private int getOverallRiskLevelAsInt(String overallRiskText) {
+		return 0;
+	}
+	
 	private int getOverallLikelihoodAsInt(String olhText) {
 		if (olhText.equalsIgnoreCase("very low")) {
 			return 1;
 		}
 		if (olhText.equalsIgnoreCase("low")) {
-			return 1;
+			return 2;
 		}
 		if (olhText.equalsIgnoreCase("medium")) {
-			return 1;
+			return 3;
 		}
 		if (olhText.equalsIgnoreCase("high")) {
-			return 1;
+			return 4;
 		}
 		if (olhText.equalsIgnoreCase("critical")) {
-			return 1;
+			return 5;
 		}
 		return 0;
 	}

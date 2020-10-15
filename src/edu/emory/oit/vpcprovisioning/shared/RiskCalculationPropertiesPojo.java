@@ -11,6 +11,7 @@ public class RiskCalculationPropertiesPojo extends SharedObject implements IsSer
 	int stepNumber;
 	String questionText;
 	String tableHeading;
+	String tableSubHeading;
 	List<RiskCalculationAnswerPojo> answers = new java.util.ArrayList<RiskCalculationAnswerPojo>();
 	public RiskCalculationPropertiesPojo() {
 		
@@ -50,6 +51,12 @@ public class RiskCalculationPropertiesPojo extends SharedObject implements IsSer
 	}
 	public void setTableHeading(String tableHeading) {
 		this.tableHeading = tableHeading;
+	}
+	public String getTableSubHeading() {
+		return tableSubHeading;
+	}
+	public void setTableSubHeading(String tableSubHeading) {
+		this.tableSubHeading = tableSubHeading;
 	}
 	
 }

@@ -13284,6 +13284,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
 			rcp.setStepName("Step " + rcp.getStepNumber());
 			rcp.setTableHeading(props.getProperty("tableHeading", "Unknown"));
+			rcp.setTableSubHeading(props.getProperty("tableSubHeading", "Unknown"));
 			
 //			Iterator<Object> keys = props.keySet().iterator();
 //			while (keys.hasNext()) {
