@@ -49,6 +49,7 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
     @UiField Button nextButton;
     @UiField Button okayButton;
     @UiField Button cancelButton;
+    String overallRiskLevelText = null;
 
 	private static DesktopCalculateSecurityRiskUiBinder uiBinder = GWT
 			.create(DesktopCalculateSecurityRiskUiBinder.class);
@@ -58,6 +59,12 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 
 	public DesktopCalculateSecurityRisk() {
 		initWidget(uiBinder.createAndBindUi(this));
+	}
+	
+	@UiHandler ("okayButton")
+	void okayButtonClicked(ClickEvent e) {
+		GWT.log("[calculate risk dialog] overall risk is: " + overallRiskLevelText);
+		presenter.getMaintainSecurityRiskView().setRiskLevel(overallRiskLevelText);
 	}
 	
 	@Override
@@ -455,7 +462,7 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			}
 			table.getCellFormatter().getElement(row, impact).getStyle().setBackgroundColor("#f1948a");
 			HTML overallRiskLevelHTML = (HTML)table.getWidget(row, impact);
-			String overallRiskLevelText = overallRiskLevelHTML.getText();
+			overallRiskLevelText = overallRiskLevelHTML.getText();
 			if (presenter.getRisk() != null) {
 				GWT.log("Overall risk level for the " + 
 					presenter.getRisk().getSecurityRiskName() + " security risk"
@@ -645,8 +652,13 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 
 	@Override
 	public void initPage() {
-		// TODO Auto-generated method stub
-		
+		overallRiskLevelText = "Medium";	// default value
+		panelNumber=0;
+	    numberOfDockPanels = 0;
+	    panelCounter = 0;
+	    firstPrevClick=true;
+	    firstNextClick=true;
+		nextButton.setEnabled(true);
 	}
 
 	@Override

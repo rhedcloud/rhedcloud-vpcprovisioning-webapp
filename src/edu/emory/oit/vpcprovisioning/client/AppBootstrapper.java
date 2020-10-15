@@ -476,11 +476,13 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.CREATE_SECURITY_RISK_CALCULATION, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, CREATE_SECURITY_RISK_CALCULATION.onAction");
 				final DialogBox db = new DialogBox();
-				db.setText("Calculate Security Risk");
+				db.setText("Calculate Security Riskxxxx");
 				db.setGlassEnabled(true);
 				db.center();
 				final CalculateSecurityRiskPresenter presenter = new CalculateSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment());
+				presenter.setMaintainSecurityRiskView(event.getMaintainSecurityRiskView());
 				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
@@ -505,11 +507,13 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.MAINTAIN_SECURITY_RISK_CALCULATION, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, MAINTAIN_SECURITY_RISK_CALCULATION.onAction");
 				final DialogBox db = new DialogBox();
 				db.setText("Calculate Security Risk");
 				db.setGlassEnabled(true);
 				db.center();
 				final CalculateSecurityRiskPresenter presenter = new CalculateSecurityRiskPresenter(clientFactory, event.getAwsService(), event.getSecurityAssessment(), event.getSecurityRisk());
+				presenter.setMaintainSecurityRiskView(event.getMaintainSecurityRiskView());
 				presenter.getView().getCancelWidget().addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {

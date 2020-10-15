@@ -27,6 +27,7 @@ public class CalculateSecurityRiskPresenter extends PresenterBase implements Cal
 	private String securityRiskId;
 	private boolean isEditing;
 	private RiskLevelCalculationPojo rlcp;
+	private MaintainSecurityRiskView maintainSecurityRiskView;
 
 	/**
 	 * For creating a new service.
@@ -107,12 +108,12 @@ public class CalculateSecurityRiskPresenter extends PresenterBase implements Cal
 					@Override
 					public void onSuccess(List<RiskCalculationPropertiesPojo> result) {
 						getView().setRiskCalculationProperties(result);
+						getView().initPage();
 						for (RiskCalculationPropertiesPojo rcp : result) {
 							getView().createWizardQuestionPanel(rcp);
 						}
 						getView().setInitialWizardPanel();
 						
-						getView().initPage();
 						getView().setInitialFocus();
 					}
 				};
@@ -197,5 +198,13 @@ public class CalculateSecurityRiskPresenter extends PresenterBase implements Cal
 	@Override
 	public RiskLevelCalculationPojo getRiskLevelCalculation() {
 		return this.rlcp;
+	}
+
+	public MaintainSecurityRiskView getMaintainSecurityRiskView() {
+		return maintainSecurityRiskView;
+	}
+
+	public void setMaintainSecurityRiskView(MaintainSecurityRiskView maintainSecurityRiskView) {
+		this.maintainSecurityRiskView = maintainSecurityRiskView;
 	}
 }

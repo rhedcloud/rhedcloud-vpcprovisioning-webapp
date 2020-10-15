@@ -29,6 +29,8 @@ public interface CalculateSecurityRiskView extends Editor<AWSServicePojo>, IsWid
 		public ServiceSecurityAssessmentPojo getAssessment();
 		public SecurityRiskPojo getRisk();
 		public RiskLevelCalculationPojo getRiskLevelCalculation();
+		public MaintainSecurityRiskView getMaintainSecurityRiskView();
+		public void setMaintainSecurityRiskView(MaintainSecurityRiskView view);
 	}
 
 	/**

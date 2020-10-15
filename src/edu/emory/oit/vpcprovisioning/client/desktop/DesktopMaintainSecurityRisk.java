@@ -84,10 +84,10 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	void calculateRiskButtonClicked(ClickEvent e) {
 		// TODO: Phase2:Sprint4
 		if (presenter.getSecurityRisk() == null) {
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_RISK_CALCULATION, presenter.getService(), presenter.getSecurityAssessment());
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_SECURITY_RISK_CALCULATION, presenter.getService(), presenter.getSecurityAssessment(), this);
 		}
 		else {
-			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK_CALCULATION, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityRisk());
+			ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_SECURITY_RISK_CALCULATION, presenter.getService(), presenter.getSecurityAssessment(), presenter.getSecurityRisk(), this);
 		}
 	}
 	
@@ -306,7 +306,6 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 	    		GWT.log("serviceControlPanel widget count (1): " + serviceControlPanel.getWidgetCount());
 	    		serviceControlPanel.clear();
 	    		GWT.log("serviceControlPanel widget count (2): " + serviceControlPanel.getWidgetCount());
-	    		GWT.log("sc_presenter.asWidget is: " + sc_presenter.asWidget());
 	    		serviceControlPanel.add(sc_presenter.asWidget());
 	    		GWT.log("serviceControlPanel widget count (3): " + serviceControlPanel.getWidgetCount());
 	        }
@@ -739,5 +738,27 @@ public class DesktopMaintainSecurityRisk extends ViewImplBase implements Maintai
 //			}
 			return;
 		}
+	}
+
+	@Override
+	public void setRiskLevel(String riskLevel) {
+		int itemIndex=0;
+		rlLoop: for (int i=0; i<this.riskLevelItems.size(); i++) {
+			String rl = riskLevelItems.get(i);
+			if (rl.equalsIgnoreCase(riskLevel)) {
+				itemIndex = i;
+				break rlLoop;
+			}
+		}
+		itemIndex++;	// have to do this because the first row is "-- Select --"
+		// this may not do what i want it to...
+		GWT.log("maintain security risk] selecting risk level lb index " + itemIndex);
+		GWT.log("value we should be selected from list box: " + riskLevelLB.getItemText(itemIndex));
+		riskLevelLB.setSelectedIndex(itemIndex);
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+	        	riskDescriptionTA.setFocus(true);
+	        }
+	    });
 	}
 }

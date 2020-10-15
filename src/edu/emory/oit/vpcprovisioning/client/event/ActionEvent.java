@@ -25,12 +25,12 @@ import com.google.web.bindery.event.shared.Event;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
+import edu.emory.oit.vpcprovisioning.presenter.service.MaintainSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.shared.AWSServicePojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountDeprovisioningRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountProvisioningSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.AccountSpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
@@ -136,6 +136,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private AccountDeprovisioningRequisitionPojo acctDeprovisioningRequisition;
 	private boolean showBadFinAcctsHTML;
 	private Widget actionSourceWidget;
+	private MaintainSecurityRiskView maintainSecurityRiskView;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -368,6 +369,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment, risk), sourceName);
 	}
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo securityAssessment, SecurityRiskPojo risk, MaintainSecurityRiskView view) {
+		
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment, risk, view), sourceName);
+	}
 	public static void fire(EventBus eventBus, String sourceName,
 			ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo securityRisk,
 			CounterMeasurePojo object) {
@@ -380,6 +387,12 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment2), sourceName);
+	}
+	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service,
+			ServiceSecurityAssessmentPojo securityAssessment2, MaintainSecurityRiskView view) {
+		
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(service, securityAssessment2, view), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, boolean newWindow, AWSServicePojo service,
@@ -666,9 +679,21 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.securityRisk = risk;
 	}
 
+	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo securityAssessment, SecurityRiskPojo risk, MaintainSecurityRiskView view) {
+		this.awsService = service;
+		this.securityAssessment = securityAssessment;
+		this.securityRisk = risk;
+		this.maintainSecurityRiskView = view;
+	}
+
 	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo securityAssessment2) {
 		this.awsService = service;
 		this.securityAssessment = securityAssessment2;
+	}
+	public ActionEvent(AWSServicePojo service, ServiceSecurityAssessmentPojo securityAssessment2, MaintainSecurityRiskView view) {
+		this.awsService = service;
+		this.securityAssessment = securityAssessment2;
+		this.maintainSecurityRiskView = view;
 	}
 
 	public ActionEvent(boolean newWindow, AWSServicePojo service, ServiceSecurityAssessmentPojo assessment, SecurityRiskPojo m) {
@@ -1226,6 +1251,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setShowBadFinAcctsHTML(boolean showBadFinAcctsHTML) {
 		this.showBadFinAcctsHTML = showBadFinAcctsHTML;
+	}
+
+	public MaintainSecurityRiskView getMaintainSecurityRiskView() {
+		return maintainSecurityRiskView;
+	}
+
+	public void setMaintainSecurityRiskView(MaintainSecurityRiskView maintainSecurityRiskView) {
+		this.maintainSecurityRiskView = maintainSecurityRiskView;
 	}
 
 }

@@ -77,6 +77,7 @@ public interface MaintainSecurityRiskView extends Editor<SecurityRiskPojo>, Acce
 	
 	void setRiskLevelItems(List<String> riskLevels);
 	void populateRiskWithFormData();
+	void setRiskLevel(String riskLevel);
 
 //	void setServiceControlStatusItems(List<String> statuses);
 //	void setServiceControls(List<ServiceControlPojo> serviceControls);
