@@ -202,6 +202,7 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 		DockPanel dock;
 		
 		if (nextRcp.getStepNumber() == 3) {
+			// OVERALL LIKELIHOOD TABLE
 			dock = wizardPanels.get(panelCounter);
 			wizardContainer.remove(dock);
 			wizardPanels.remove(dock);
@@ -216,14 +217,14 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			int step1RiskLevel = 0;
 			if (step1answer1 > step1answer2) {
 				step1RiskLevel = step1answer1;
-				resultsPanel.add(new HTML("Step 1 Risk Level (from question 1): " + step1RiskLevel));
+				resultsPanel.add(new HTML("Step 1 Risk Level (from question 1): " + this.getRiskLevelForInt(step1RiskLevel)));
 			}
 			else {
 				step1RiskLevel = step1answer2;
-				resultsPanel.add(new HTML("Step 1 Risk Level (from question 2): " + step1RiskLevel));
+				resultsPanel.add(new HTML("Step 1 Risk Level (from question 2): " + this.getRiskLevelForInt(step1RiskLevel)));
 			}
 			int step2RiskLevel = presenter.getRiskLevelCalculation().getRiskLevelForQuestion(3);
-			resultsPanel.add(new HTML("Step 2 Risk Level (from question 3): " + step2RiskLevel));
+			resultsPanel.add(new HTML("Step 2 Risk Level (from question 3): " + this.getRiskLevelForInt(step2RiskLevel)));
 			
 			VerticalPanel tablePanel = new VerticalPanel();
 			tablePanel.setSpacing(4);
@@ -330,19 +331,22 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			wizardContainer.insert(dock, panelCounter);
 		}
 		else if (nextRcp.getStepNumber() == 5) {
+			// FINAL RISK CALULATION TABLE
 			dock = wizardPanels.get(panelCounter);
 			wizardContainer.remove(dock);
 			
+			// tow to highlight
 			int likelihood = presenter.getRiskLevelCalculation().getOverallLikelihood();
+			// column to highlight
 			int impact = presenter.getRiskLevelCalculation().getRiskLevelForQuestion(4);
 
-			dock = createDock(nextRcp.getQuestionText());
+			dock = createDock(null);
 			VerticalPanel resultsPanel = new VerticalPanel();
 			resultsPanel.setSpacing(4);
 			dock.add(resultsPanel, DockPanel.NORTH);
 			
-			resultsPanel.add(new HTML("Overall likelihood (from table G5): " + likelihood));
-			resultsPanel.add(new HTML("Step 4 Question 4 answer: " + impact));
+			resultsPanel.add(new HTML("Overall likelihood: " + this.getRiskLevelForInt(likelihood)));
+			resultsPanel.add(new HTML("Level of impact   : " + this.getRiskLevelForInt(impact)));
 
 			HTML dpContent = new HTML(nextRcp.getTableHeading());
 			resultsPanel.add(dpContent);
@@ -430,6 +434,41 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			this.addCellToTable(table, 5, 4, "<b>Low</b>", null);
 			this.addCellToTable(table, 5, 5, "<b>Low</b>", null);
 
+			// highlight the appropriate cell
+			int row = 0;
+			switch (likelihood) {
+			case 1:
+				row = 5;
+				break;
+			case 2:
+				row = 4;
+				break;
+			case 3:
+				row = 3;
+				break;
+			case 4:
+				row = 2;
+				break;
+			case 5:
+				row = 1;
+				break;
+			}
+			table.getCellFormatter().getElement(row, impact).getStyle().setBackgroundColor("#f1948a");
+			HTML overallRiskLevelHTML = (HTML)table.getWidget(row, impact);
+			String overallRiskLevelText = overallRiskLevelHTML.getText();
+			if (presenter.getRisk() != null) {
+				GWT.log("Overall risk level for the " + 
+					presenter.getRisk().getSecurityRiskName() + " security risk"
+					+ "in the " + presenter.getService().getAwsServiceName() + " is: " + 
+					overallRiskLevelText);
+			}
+			else {
+				GWT.log("Overall risk level for the 'null' security risk is: " + 
+					overallRiskLevelText);
+			}
+			
+			// TODO: how to get the risk level back to the security risk object/view
+
 			wizardPanels.add(panelCounter, dock);
 			wizardContainer.insert(dock, panelCounter);
 		}
@@ -450,6 +489,21 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 		}
 	}
 	
+	private String getRiskLevelForInt(int level) {
+		switch (level) {
+		case 1:
+			return "Very Low";
+		case 2:
+			return "Low";
+		case 3:
+			return "Medium";
+		case 4:
+			return "High";
+		case 5:
+			return "Critical";
+		}
+		return "Unknown";
+	}
 	private int getOverallRiskLevelAsInt(String overallRiskText) {
 		return 0;
 	}
