@@ -382,12 +382,9 @@ public class DesktopCalculateSecurityRisk extends ViewImplBase implements Calcul
 			headerPanel.setCellHorizontalAlignment(impactHeader, HasHorizontalAlignment.ALIGN_CENTER);
 			
 			Grid table = new Grid(7,7);
-//			table.setWidth("100%");
 			resultsPanel.add(table);
 			table.setCellSpacing(0);
 			table.setCellPadding(6);
-//			table.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
-//			table.getElement().getStyle().setBorderWidth(1, Unit.PX);
 
 			// blank cell
 			this.addCellToTable(table, 0, 0, "", "#e5e8e8");

@@ -246,18 +246,6 @@ public class DesktopListFinancialAccounts extends ViewImplBase implements ListFi
 
 	@Override
 	public void setFilterTypeItems(List<String> filterTypes) {
-//		filterTB.setText("");
-//		filterTB.getElement().setPropertyString("placeholder", "enter filter value");
-//
-//		this.filterTypeItems = filterTypes;
-//		filterTypesLB.clear();
-//		
-//		filterTypesLB.addItem("-- Select Filter Type --", "");
-//		if (filterTypeItems != null) {
-//			for (String filterType : filterTypeItems) {
-//				filterTypesLB.addItem(filterType, filterType);
-//			}
-//		}
 	}
 	
 	private void initializeAccountPanel() {
