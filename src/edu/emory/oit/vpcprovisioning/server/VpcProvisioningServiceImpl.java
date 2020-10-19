@@ -646,7 +646,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
 				}
 				user.setEppn(eppn);
-				user.setPublicId(serialNumber);
+//				user.setPublicId(serialNumber);
 
 				if (useAuthzService) {
 					// get roles for the user
