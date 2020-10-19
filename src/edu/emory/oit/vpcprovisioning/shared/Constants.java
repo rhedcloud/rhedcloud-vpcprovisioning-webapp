@@ -234,4 +234,9 @@ public class Constants implements IsSerializable {
 	public static final String MOA_ACCOUNT_DEPROVISIONING_QUERY_SPEC = "AccountDeprovisioningQuerySpecification.v1_0";
 	public static final String MOA_ACCOUNT_DEPROVISIONING_REQUISITION = "AccountDeprovisioningRequisition.v1_0";
 	public static final String LIST_FINANCIAL_ACCOUNTS = "listFinancialAccounts";
+	public static final String MOA_ROLE_PROVISIONING_QUERY_SPEC = "RoleProvisioningQuerySpecification.v1_0";
+	public static final String MOA_ROLE_PROVISIONING = "RoleProvisioning.v1_0";
+	public static final String MOA_ROLE_PROVISIONING_REQUISITION = "RoleProvisioningRequisition.v1_0";
+	public static final String MOA_ROLE_DEPROVISIONING_QUERY_SPEC = "RoleDeprovisioningQuerySpecification.v1_0";
+	public static final String MOA_ROLE_DEPROVISIONING = "RoleDeprovisioning.v1_0";
 }

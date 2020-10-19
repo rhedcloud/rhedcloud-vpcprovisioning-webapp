@@ -69,6 +69,8 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountDeprovisioning;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleDeprovisioning;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleProvisioning;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloudProvisioning;
 import com.amazon.aws.moa.jmsobjects.security.v1_0.SecurityRiskDetection;
@@ -90,6 +92,8 @@ import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.RemediationResult;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionRequisition;
@@ -143,12 +147,6 @@ import com.service_now.moa.objects.resources.v2_0.SupportGroup;
 import edu.emory.moa.jmsobjects.identity.v1_0.DirectoryPerson;
 import edu.emory.moa.jmsobjects.identity.v1_0.Role;
 import edu.emory.moa.jmsobjects.identity.v1_0.RoleAssignment;
-import edu.emory.moa.jmsobjects.identity.v2_0.Employee;
-//import edu.emory.moa.jmsobjects.identity.v2_0.FullPerson;
-import edu.emory.moa.jmsobjects.identity.v2_0.NetworkIdentity;
-import edu.emory.moa.jmsobjects.identity.v2_0.Person;
-import edu.emory.moa.jmsobjects.identity.v2_0.SponsoredPerson;
-import edu.emory.moa.jmsobjects.identity.v2_0.Student;
 import edu.emory.moa.jmsobjects.network.v1_0.Cidr;
 import edu.emory.moa.jmsobjects.network.v1_0.CidrAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIp;
@@ -621,8 +619,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			info("no user currently logged in, checking for Shibboleth information");
 			String eppn = (String) request.getHeader("eduPersonPrincipalName");
+			// ppid is released via serialNumber (at Emory)
+			String serialNumber = (String) request.getHeader("serialNumber");
 			if (eppn == null) {
 				eppn = (String) request.getAttribute("eduPersonPrincipalName");
+			}
+			if (serialNumber == null) {
+				serialNumber = (String) request.getAttribute("serialNumber");
 			}
 			
 			if (eppn != null) {
@@ -641,9 +644,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
 				}
 				user.setEppn(eppn);
-				// 9/19/2018 - create session immediately even before we get their roles
-//				Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
-//				this.createSession(eppn);
+				user.setPublicId(serialNumber);
 
 				if (useAuthzService) {
 					// get roles for the user
@@ -1091,6 +1092,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("[getRolesForUser_netiq] got " + accounts.size() + " accounts from getAllAccounts");
 		
 		if (user.getPublicId() == null) {
+//		if (user.getPersonalName() == null) {
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
 			dp_filter.setUserLoggedIn(user);
@@ -6117,9 +6119,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteFirewallRule(FirewallRulePojo rule) throws RpcException {
-		// TODO: this will be a request to service now (FirewallRuleExceptionRequest.Create)
-		FirewallExceptionRemoveRequestRequisitionPojo pojo_req = new FirewallExceptionRemoveRequestRequisitionPojo();
-		// TODO: populate the fer with stuff from the rule passed in.
+		// this will be a request to service now (FirewallRuleExceptionRequest.Create)
+//		FirewallExceptionRemoveRequestRequisitionPojo pojo_req = new FirewallExceptionRemoveRequestRequisitionPojo();
+		// populate the fer with stuff from the rule passed in.
 		/*
 			<!ELEMENT FirewallExceptionRequest (
 				UserNetID, 
@@ -6140,24 +6142,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				DefaultDenyZone, 
 				Tag+, 
 		 */
-		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
+//		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
+//				Constants.USER_ACCOUNT + getCurrentSessionId());
 
-//		fer.setUserNetId(user.getPrincipal());
-//		fer.setApplicationName("VPCP");
-//		fer.setTimeRule("Indefinitely");
-//		StringBuffer sources = new StringBuffer();
-//		for (int i=0; i<rule.getSources().size(); i++) {
-//			String source = rule.getSources().get(i);
-//			sources.append(source);
-//		}
-//		for (String tag : rule.getTags()) {
-//			fer.getTags().add(tag);
-//		}
-		
 		try {
-			// TODO: should be a FirewallExceptionRemoveRequestRequisition now I believe
-			FirewallExceptionRemoveRequestPojo pojo = this.generateFirewallExceptionRemoveRequest(pojo_req);
+			// should be a FirewallExceptionRemoveRequestRequisition now I believe
+//			FirewallExceptionRemoveRequestPojo pojo = this.generateFirewallExceptionRemoveRequest(pojo_req);
 
 			return;
 		} 
@@ -6455,40 +6445,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public FullPersonQueryResultPojo getFullPersonsForFilter(FullPersonQueryFilterPojo filter) throws RpcException {
 		FullPersonQueryResultPojo result = new FullPersonQueryResultPojo();
 		List<FullPersonPojo> pojos = new java.util.ArrayList<FullPersonPojo>();
-//		try {
-//			FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
-//			FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
-//			String authUserId = null;
-//			
-//			if (filter != null) {
-//				queryObject.setPublicId(filter.getPublicId());
-//				queryObject.setNetId(filter.getNetId());
-//				queryObject.setEmplId(filter.getEmplId());
-//				queryObject.setPrsni(filter.getPrsni());
-//				queryObject.setCode(filter.getCode());
-//				if (filter.getUserLoggedIn() != null) {
-//					authUserId = this.getAuthUserIdForHALS(filter.getUserLoggedIn());
-//				}
-//			}
-//
-//			if (authUserId == null) {
-//				authUserId = this.getAuthUserIdForHALS();
-//			}
-//			actionable.getAuthentication().setAuthUserId(authUserId);
-//			info("[getFullPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-//			
-//			@SuppressWarnings("unchecked")
-//			List<FullPerson> moas = actionable.query(queryObject,
-//					this.getIdentityServiceRequestService());
-//			if (moas != null) {
-//				info("[service layer] got " + moas.size() + " FullPerson objects back from ESB.");
-//			}
-//			for (FullPerson moa : moas) {
-//				FullPersonPojo pojo = new FullPersonPojo();
-//				info("FullPerson xml: " + moa.toXmlString());
-//				this.populateFullPersonPojo(moa, pojo);
-//				pojos.add(pojo);
-//			}
 			
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			if (filter != null) {
@@ -6508,152 +6464,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				fp.getPerson().setPersonalName(pnp);
 				pojos.add(fp);
 			}
-//			for (DirectoryPersonPojo dp : dp_result.getResults()) {
-//				FullPersonPojo fp = new FullPersonPojo();
-//				fp.setPublicId(dp.getKey());
-//				PersonPojo person = new PersonPojo();
-//				fp.setPerson(person);
-//				PersonalNamePojo pnp = new PersonalNamePojo();
-//				pnp.setFirstName(dp.getFirstMiddle());
-//				pnp.setLastName(dp.getLastName());
-//				fp.getPerson().setPersonalName(pnp);
-//				pojos.add(fp);
-//			}
 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-//		} 
-//		catch (EnterpriseConfigurationObjectException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (EnterpriseFieldException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (EnterpriseObjectQueryException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (JMSException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (XmlEnterpriseObjectException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (ParseException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		}
-	}
-
-//	@SuppressWarnings("unchecked")
-//	private void populateFullPersonPojo(FullPerson moa,
-//			FullPersonPojo pojo) throws XmlEnterpriseObjectException,
-//			ParseException {
-//		
-//		/*
-//	String publicId;
-//	PersonPojo person;
-//	List<NetworkIdentityPojo> networkIdentities = new ArrayList<NetworkIdentityPojo>();
-//	EmployeePojo employee;
-//	StudentPojo student;
-//	List<SponsoredPersonPojo> sponsoredPersons = new ArrayList<SponsoredPersonPojo>();
-//		 */
-//		pojo.setPublicId(moa.getPublicId());
-//		
-//		if (moa.getPerson() != null) {
-//			PersonPojo personPojo = new PersonPojo();
-//			this.populatePersonPojo(moa.getPerson(), personPojo);
-//			pojo.setPerson(personPojo);
-//		}
-//
-//		if (moa.getEmployee() != null) {
-//			EmployeePojo employeePojo = new EmployeePojo();
-//			this.populateEmployeePojo(moa.getEmployee(), employeePojo);
-//			pojo.setEmployee(employeePojo);
-//		}
-//
-//		if (moa.getStudent() != null) {
-//			StudentPojo studentPojo = new StudentPojo();
-//			this.populateStudentPojo(moa.getStudent(), studentPojo);
-//			pojo.setStudent(studentPojo);
-//		}
-//		
-//		if (moa.getNetworkIdentity() != null & moa.getNetworkIdentityLength() > 0) {
-//			for (NetworkIdentity niMoa : (List<NetworkIdentity>) moa.getNetworkIdentity()) {
-//				NetworkIdentityPojo niPojo = new NetworkIdentityPojo();
-//				this.populateNetworkIdentityPojo(niMoa, niPojo);
-//				pojo.getNetworkIdentities().add(niPojo);
-//			}
-//		}
-//		
-//		if (moa.getSponsoredPerson() != null & moa.getSponsoredPersonLength() > 0) {
-//			for (SponsoredPerson spMoa : (List<SponsoredPerson>) moa.getSponsoredPerson()) {
-//				SponsoredPersonPojo spPojo = new SponsoredPersonPojo();
-//				this.populateSponsoredPersonPojo(spMoa, spPojo);
-//				pojo.getSponsoredPersons().add(spPojo);
-//			}
-//		}
-//	}
-	private void populatePersonPojo(Person moa,
-			PersonPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-
-		//PublicId, PersonalName, LocalizedNameList?, SSN?, BirthDay?, BirthMonth?, BirthYear?, 
-		// DriversLicense?, NationalIdCard*, Gender?, Association*, Eligibility*, Tag*, 
-		// FallbackContact*,Phone*,Email*, Prsni, Location?, DirectoryTitle?, EmailRestricted?, 
-		// PhoneRestricted?, LocationRestricted?)>
-
-		pojo.setPublicId(moa.getPublicId());
-		if (moa.getPersonalName() != null) {
-			/*
-			<!ELEMENT PersonalName (LastName, FirstName, MiddleName?, NameSuffix?, Prefix?, Suffix?, CompositeName?)>
-			<!ATTLIST PersonalName
-				type CDATA #REQUIRED
-				order (east | west) #IMPLIED
-				noFirstName (true | false) #IMPLIED
-			>
-			*/
-			PersonalNamePojo pn = new PersonalNamePojo();
-			pn.setLastName(moa.getPersonalName().getLastName());
-			pn.setFirstName(moa.getPersonalName().getFirstName());
-			pn.setCompositeName(moa.getPersonalName().getCompositeName());
-			pojo.setPersonalName(pn);
-		}
-	}
-	private void populateNetworkIdentityPojo(NetworkIdentity moa,
-			NetworkIdentityPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		/*
-		<!ELEMENT NetworkIdentity (Value, PublicId?, CreateDate, EndDate?, Domain?, Tag*, InitialPassword?)>
-		<!ATTLIST NetworkIdentity
-			type CDATA #REQUIRED
-			status (reserved | active | inactive) #REQUIRED
-			ancillary (true | false) "false"
-		>
-		 */
-		pojo.setValue(moa.getValue());
-		pojo.setPublicId(moa.getPublicId());
-		pojo.setDomain(moa.getDomain());
-		pojo.setType(moa.getType());
-		pojo.setStatus(moa.getStatus());
-		pojo.setAncillary(this.toBooleanFromString(moa.getAncillary()));
-	}
-	private void populateEmployeePojo(Employee moa,
-			EmployeePojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-	}
-	private void populateStudentPojo(Student moa,
-			StudentPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-	}
-	private void populateSponsoredPersonPojo(SponsoredPerson moa,
-			SponsoredPersonPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
 	}
 
 	@Override
@@ -6869,9 +6683,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		String tag = "[getCentralAdmins_grouper] ";
 		
 		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
-		List<RoleAssignmentPojo> pojos = new java.util.ArrayList<RoleAssignmentPojo>();
 
-		java.util.Date startTime = new java.util.Date();
 		info(tag + "getting accounts...");
 		List<AccountPojo> accounts = this.getAllAccounts().getResults();
 		info(tag + "got " + accounts.size() + " accounts from getAllAccounts");
@@ -13661,6 +13473,188 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
+	}
+
+	@Override
+	public RoleProvisioningQueryResultPojo getRoleProvisioningSummariesForFilter(RoleProvisioningQueryFilterPojo filter)
+			throws RpcException {
+
+		RoleProvisioningQueryResultPojo result = new RoleProvisioningQueryResultPojo();
+		List<RoleProvisioningSummaryPojo> summaries = new java.util.ArrayList<RoleProvisioningSummaryPojo>();
+		
+		try {
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("accountProvisioningListTimeoutMillis", "30000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getAWSRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
+			String authUserId = this.getAuthUserIdForHALS();
+
+			// ******
+			// role provisioning logic
+			// ******
+			RoleProvisioningQuerySpecification queryObject = (RoleProvisioningQuerySpecification) getObject(Constants.MOA_ROLE_PROVISIONING_QUERY_SPEC);
+			RoleProvisioning actionable = (RoleProvisioning) getObject(Constants.MOA_ROLE_PROVISIONING);
+
+			if (filter != null) {
+				if (filter.isDefaultMaxObjects()) {
+					info("[getRoleProvisioningSummariesForFilter] using 'maxVpncps' query language to get VPCPs");
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("maxRoleProvisionings");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					queryObject.setQueryLanguage(ql);
+				}
+				else if (filter.isAllObjects()) {
+					info("[getRoleProvisioningSummariesForFilter] using 'allVpncps' query language to get VPCPs");
+					QueryLanguage ql = queryObject.newQueryLanguage();
+					ql.setName("allRoleProvisionings");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					queryObject.setQueryLanguage(ql);
+				}
+				else {
+					queryObject.setProvisioningId(filter.getProvisioningId());
+					queryObject.setCreateUser(filter.getCreateUser());
+					queryObject.setLastUpdateUser(filter.getUpdateUser());
+					info("[getRoleProvisioningSummariesForFilter] getting VPNCPs for filter: " + queryObject.toXmlString());
+				}
+			}
+			else {
+				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all VPNCPs");
+			}
+
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getRoleProvisioningSummariesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+
+			info("RoleProvisioningQuerySpecification: " + queryObject.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<RoleProvisioning> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getRoleProvisioningSummariesForFilter] got " + moas.size() + " Role Provisioning objects back from the server.");
+			for (RoleProvisioning moa : moas) {
+				RoleProvisioningPojo pojo = new RoleProvisioningPojo();
+				this.populateRoleProvisioningPojo(moa, pojo);
+				RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
+				summary.setProvisioning(pojo);
+				summaries.add(summary);
+			}
+			// ******
+			// end role provisioning logic
+			// ******
+
+			// ******
+			// now get the role deprovisioning objects  (future maybe)
+			// ******
+			RoleDeprovisioningQuerySpecification deprov_queryObject = (RoleDeprovisioningQuerySpecification) getObject(Constants.MOA_ROLE_DEPROVISIONING_QUERY_SPEC);
+			RoleDeprovisioning deprov_actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
+
+			if (filter != null) {
+				if (filter.isDefaultMaxObjects()) {
+					info("[getRoleDeprovisioningSummariesForFilter] using 'maxRoleDeprovisionings' query language to get Role deprovisioning objecs");
+					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+					ql.setName("maxRoleDeprovisionings");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					deprov_queryObject.setQueryLanguage(ql);
+				}
+				else if (filter.isAllObjects()) {
+					info("[getRoleDeprovisioningSummariesForFilter] using 'allRoleDeprovisionings' query language to get Role Deprovisioning objects");
+					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+					ql.setName("allRoleDeprovisionings");
+					ql.setType("hql");
+					deprov_queryObject.setQueryLanguage(ql);
+				}
+				else {
+					deprov_queryObject.setDeprovisioningId(filter.getDeprovisioningId());
+					deprov_queryObject.setType(filter.getType());
+					deprov_queryObject.setComplianceClass(filter.getComplianceClass());
+					deprov_queryObject.setCreateUser(filter.getCreateUser());
+					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
+					info("[getRoleProvisioningSummariesForFilter] getting Role Deprovisionings for filter: " + deprov_queryObject.toXmlString());
+				}
+			}
+			else {
+				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all Role Deprovisioning objects from the server");
+			}
+
+			info("RoleDeprovisioningQuerySpecification: " + deprov_queryObject.toXmlString());
+			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
+
+			@SuppressWarnings("unchecked")
+			List<RoleDeprovisioning> deprov_moas = 
+				deprov_actionable.query(deprov_queryObject, reqSvc);
+			
+			info("[getRoleProvisioningSummariesForFilter] got " + deprov_moas.size() + " Role Deprovisioning objects back from the server.");
+			for (RoleDeprovisioning moa : deprov_moas) {
+				RoleDeprovisioningPojo pojo = new RoleDeprovisioningPojo();
+				this.populateRoleDeprovisioningPojo(moa, pojo);
+				RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
+				summary.setDeprovisioning(pojo);
+//				RolePojo role = this.getAccountById(pojo.getRequisition().getAccountId());
+				RolePojo role = new RolePojo();
+				summary.setRole(role);
+				summaries.add(summary);
+			}
+			// ******
+			// end role deprovisioning logic
+			// ******
+			
+			Collections.sort(summaries);
+			result.setResults(summaries);
+			result.setFilterUsed(filter);
+			return result;
+		
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	private void populateRoleDeprovisioningPojo(RoleDeprovisioning moa, RoleDeprovisioningPojo pojo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void populateRoleProvisioningPojo(RoleProvisioning moa, RoleProvisioningPojo pojo) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public RoleProvisioningPojo generateRoleProvisioning(RoleProvisioningRequisitionPojo requisition)
+			throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RoleDeprovisioningPojo generateRoleDeprovisioning(RoleDeprovisioningRequisitionPojo requisition)
+			throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
