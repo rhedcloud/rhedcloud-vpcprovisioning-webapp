@@ -85,6 +85,8 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.ListNotificationPres
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
@@ -302,6 +304,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		listFinancialAccountsView.setAppShell(this);
 		homeContentContainer.add(listFinancialAccountsView);
 
+		// 10/20/2020 - Sprint 4 - Custom Role Provisioning
+		ListRoleProvisioningView listRoleProvisioningView = clientFactory.getListRoleProvisioningView();
+		listRoleProvisioningView.setAppShell(this);
+		RoleProvisioningStatusView roleProvisioningStatusView = clientFactory.getRoleProvisioningStatusView();
+		roleProvisioningStatusView.setAppShell(this);
+		homeContentContainer.add(listRoleProvisioningView);
+		homeContentContainer.add(roleProvisioningStatusView);
 
 
 		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
@@ -416,6 +425,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			else if (hash.trim().indexOf(("#" + Constants.LIST_FINANCIAL_ACCOUNTS + ":")) >= 0) {
 				GWT.log("Need to go to list financial accounts tab (list)");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_ROLE_PROVISIONING + ":")) {
+				GWT.log("Need to go to Role Provisioning tab");
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_ROLE_PROVISIONING);
+			}
+			else if (hash.trim().indexOf(("#" + Constants.ROLE_PROVISIONING_STATUS + ":")) >= 0) {
+				GWT.log("Need to go to Role Provisioning tab (status)");
 			}
 			else {
 				// when/if they have invalid speedtypes, they'll... 

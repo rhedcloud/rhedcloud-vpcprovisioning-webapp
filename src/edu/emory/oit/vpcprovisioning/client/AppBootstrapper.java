@@ -59,6 +59,8 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningPlace;
+import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPresenter;
@@ -1909,6 +1911,22 @@ public class AppBootstrapper {
 				placeController.goTo(new ListVpnConnectionProvisioningPlace(false));
 			}
 		});
+
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_ROLE_PROVISIONING, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_ROLE_PROVISIONING.onAction");
+				placeController.goTo(new ListRoleProvisioningPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.SHOW_ROLE_PROVISIONING_STATUS, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(RoleProvisioningStatusPlace.createRoleProvisioningStatusPlace(event.getRoleProvisioningSummary()));
+			}
+		});
+
 
 		ActionEvent.register(eventBus, ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, new ActionEvent.Handler() {
 			@Override

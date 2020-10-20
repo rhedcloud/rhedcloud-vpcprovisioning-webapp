@@ -43,6 +43,9 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningPlace;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPresenter;
@@ -348,6 +351,18 @@ public class AppActivityMapper implements ActivityMapper {
 			};
 		}
 
+		if (place instanceof ListRoleProvisioningPlace) {
+			// The list of role provisioning runs
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListRoleProvisioningPresenter presenter = new ListRoleProvisioningPresenter(clientFactory, (ListRoleProvisioningPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
 		if (place instanceof BillSummaryPlace) {
 			// Generate/Maintain vpcp
 			return new BillSummaryActivity(clientFactory, (BillSummaryPlace) place);
@@ -495,6 +510,10 @@ public class AppActivityMapper implements ActivityMapper {
 		
 		if (place instanceof AccountProvisioningStatusPlace) {
 			return new AccountProvisioningStatusActivity(clientFactory, (AccountProvisioningStatusPlace) place);
+		}
+
+		if (place instanceof RoleProvisioningStatusPlace) {
+			return new RoleProvisioningStatusActivity(clientFactory, (RoleProvisioningStatusPlace) place);
 		}
 
 		return null;

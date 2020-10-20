@@ -10,14 +10,14 @@ import com.google.gwt.view.client.ProvidesKey;
 public class RoleProvisioningPojo extends SharedObject implements IsSerializable, Comparable<RoleProvisioningPojo> {
 
 	/*
-	<!ELEMENT AccountDeprovisioning (
-		DeprovisioningId, 
-		AccountDeprovisioningRequisition, 
+	<!ELEMENT AccountProvisioning (
+		ProvisioningId, 
+		AccountProvisioningRequisition, 
 		Status, 
-		DeprovisioningResult?, 
+		ProvisioningResult?, 
 		ActualTime?, 
 		AnticipatedTime?, 
-		DeprovisioningStep*, 
+		ProvisioningStep*, 
 		CreateUser, 
 		CreateDatetime, 
 		LastUpdateUser?, 
@@ -26,20 +26,20 @@ public class RoleProvisioningPojo extends SharedObject implements IsSerializable
 	String provisioningId;
 	RoleProvisioningRequisitionPojo requisition;
 	String status;
-	String deprovisioningResult;
+	String provisioningResult;
 	String actualTime;
 	String anticipatedTime;
-	List<ProvisioningStepPojo> deprovisioningSteps = new java.util.ArrayList<ProvisioningStepPojo>();	
+	List<ProvisioningStepPojo> provisioningSteps = new java.util.ArrayList<ProvisioningStepPojo>();	
 	RoleProvisioningPojo baseline;
 	
 	public int getTotalStepCount() {
-		return deprovisioningSteps.size();
+		return provisioningSteps.size();
 	}
 	
 	public int getCompletedSuccessfulCount() {
 		// if status is 'complete' and stepResult is 'success' increment counter
 		int cnt = 0;
-		for (ProvisioningStepPojo step : deprovisioningSteps) {
+		for (ProvisioningStepPojo step : provisioningSteps) {
 			if (step.getStatus() != null) {
 				if (step.getStatus().equalsIgnoreCase(Constants.PROVISIONING_STEP_STATUS_COMPLETED)) {
 					if (step.getStepResult() != null) {
@@ -98,12 +98,12 @@ public class RoleProvisioningPojo extends SharedObject implements IsSerializable
 		this.status = status;
 	}
 
-	public String getDeprovisioningResult() {
-		return deprovisioningResult;
+	public String getProvisioningResult() {
+		return provisioningResult;
 	}
 
-	public void setDeprovisioningResult(String provisioningResult) {
-		this.deprovisioningResult = provisioningResult;
+	public void setProvisioningResult(String provisioningResult) {
+		this.provisioningResult = provisioningResult;
 	}
 
 	public String getActualTime() {
@@ -122,12 +122,12 @@ public class RoleProvisioningPojo extends SharedObject implements IsSerializable
 		this.anticipatedTime = anticipatedTime;
 	}
 
-	public List<ProvisioningStepPojo> getDeprovisioningSteps() {
-		return deprovisioningSteps;
+	public List<ProvisioningStepPojo> getProvisioningSteps() {
+		return provisioningSteps;
 	}
 
-	public void setDeprovisioningSteps(List<ProvisioningStepPojo> provisioningSteps) {
-		this.deprovisioningSteps = provisioningSteps;
+	public void setProvisioningSteps(List<ProvisioningStepPojo> provisioningSteps) {
+		this.provisioningSteps = provisioningSteps;
 	}
 
 	public RoleProvisioningPojo getBaseline() {
@@ -137,5 +137,4 @@ public class RoleProvisioningPojo extends SharedObject implements IsSerializable
 	public void setBaseline(RoleProvisioningPojo baseline) {
 		this.baseline = baseline;
 	}
-
 }

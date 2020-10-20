@@ -38,6 +38,8 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
@@ -128,6 +130,8 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private DeprovisionAccountView deprovisionAccountView;
 	private AccountProvisioningStatusView accountProvisioningStatusView;
 	private ListFinancialAccountsView listFinancialAccountsView;
+	private ListRoleProvisioningView listRoleProvisioningView;
+	private RoleProvisioningStatusView roleProvisioningStatusView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -450,6 +454,16 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public ListFinancialAccountsView getListFinancialAccountsView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListRoleProvisioningView getListRoleProvisioningView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public RoleProvisioningStatusView getRoleProvisioningStatusView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -46,6 +46,7 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
 import edu.emory.oit.vpcprovisioning.shared.ServiceControlPojo;
@@ -137,6 +138,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private boolean showBadFinAcctsHTML;
 	private Widget actionSourceWidget;
 	private MaintainSecurityRiskView maintainSecurityRiskView;
+	private RoleProvisioningSummaryPojo roleProvisioningSummary;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -851,6 +853,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.setShowBadFinAcctsHTML(showBadFinAcctsHTML);
 	}
 
+	public ActionEvent(RoleProvisioningSummaryPojo m) {
+		this.roleProvisioningSummary = m;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -1259,6 +1265,19 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setMaintainSecurityRiskView(MaintainSecurityRiskView maintainSecurityRiskView) {
 		this.maintainSecurityRiskView = maintainSecurityRiskView;
+	}
+
+	public static void fire(EventBus eventBus, String showRoleProvisioningStatus, RoleProvisioningSummaryPojo m) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(m), showRoleProvisioningStatus);
+	}
+
+	public RoleProvisioningSummaryPojo getRoleProvisioningSummary() {
+		return roleProvisioningSummary;
+	}
+
+	public void setRoleProvisioningSummary(RoleProvisioningSummaryPojo roleProvisioningSummary) {
+		this.roleProvisioningSummary = roleProvisioningSummary;
 	}
 
 }

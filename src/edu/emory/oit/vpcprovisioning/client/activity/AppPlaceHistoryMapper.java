@@ -27,6 +27,8 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationPlace;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningPlace;
+import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlPlace;
@@ -107,7 +109,9 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 				 CalculateSecurityRiskPlace.Tokenizer.class,
 				 DeprovisionAccountPlace.Tokenizer.class,
 				 AccountProvisioningStatusPlace.Tokenizer.class,
-				 ListFinancialAccountsPlace.Tokenizer.class})
+				 ListFinancialAccountsPlace.Tokenizer.class,
+				 ListRoleProvisioningPlace.Tokenizer.class,
+				 RoleProvisioningStatusPlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

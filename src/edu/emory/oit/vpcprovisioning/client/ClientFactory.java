@@ -28,6 +28,8 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
@@ -142,4 +144,6 @@ public interface ClientFactory {
 	DeprovisionAccountView getDeprovisionAccountView();
 	AccountProvisioningStatusView getAccountProvisioningStatusView();
 	ListFinancialAccountsView getListFinancialAccountsView();
+	ListRoleProvisioningView getListRoleProvisioningView();
+	RoleProvisioningStatusView getRoleProvisioningStatusView();
 }

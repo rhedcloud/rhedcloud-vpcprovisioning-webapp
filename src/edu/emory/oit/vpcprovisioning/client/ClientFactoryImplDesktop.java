@@ -27,6 +27,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListFinancialAccounts
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListFirewallRule;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListResourceTaggingProfile;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListRoleProvisioning;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceControl;
@@ -60,6 +61,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnection
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfileAssignment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProvisioning;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRegisterVpc;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopRoleProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopServiceAssessmentReport;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopStaticNatProvisioningStatus;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopVpcpStatus;
@@ -89,6 +91,8 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainAccountNotif
 import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotificationView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceControlView;
@@ -185,6 +189,8 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private DeprovisionAccountView deprovisionAccountView;
 	private AccountProvisioningStatusView accountProvisioningStatusView;
 	private ListFinancialAccountsView listFinancialAccountsView;
+	private ListRoleProvisioningView listRoleProvisioningView;
+	private RoleProvisioningStatusView roleProvisioningStatusView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -785,5 +791,25 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	private ListFinancialAccountsView createListFinancialAccountsView() {
 		return new DesktopListFinancialAccounts();
+	}
+	@Override
+	public ListRoleProvisioningView getListRoleProvisioningView() {
+        if (listRoleProvisioningView == null) {
+        	listRoleProvisioningView = createListRoleProvisioningView();
+        }
+        return listRoleProvisioningView;
+	}
+	private ListRoleProvisioningView createListRoleProvisioningView() {
+		return new DesktopListRoleProvisioning();
+	}
+	@Override
+	public RoleProvisioningStatusView getRoleProvisioningStatusView() {
+        if (roleProvisioningStatusView == null) {
+        	roleProvisioningStatusView = createRoleProvisioningStatusView();
+        }
+        return roleProvisioningStatusView;
+	}
+	private RoleProvisioningStatusView createRoleProvisioningStatusView() {
+		return new DesktopRoleProvisioningStatus();
 	}
 }
