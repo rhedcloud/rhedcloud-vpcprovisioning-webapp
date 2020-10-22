@@ -1,5 +1,6 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -36,8 +37,12 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 
 	@Override
 	public int compareTo(VpcPojo o) {
-		
-		return 0;
+		Date c1 = o.getCreateTime();
+		Date c2 = this.getCreateTime();
+		if (c1 == null || c2 == null) {
+			return 0;
+		}
+		return c1.compareTo(c2);
 	}
 
 	public String getAccountId() {
