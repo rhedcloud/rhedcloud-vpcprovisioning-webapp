@@ -4,6 +4,7 @@ import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningSummaryPojo;
 
 public class RoleProvisioningStatusPlace extends Place {
@@ -45,6 +46,12 @@ public class RoleProvisioningStatusPlace extends Place {
 	 * @return the place
 	 */
 	public static RoleProvisioningStatusPlace createRoleProvisioningStatusPlace(RoleProvisioningSummaryPojo roleProvisioningSummary) {
+		// START:  TEMPORARY
+		if (roleProvisioningSummary.getProvisioning() == null) {
+			roleProvisioningSummary.setProvisioning(new RoleProvisioningPojo());
+			roleProvisioningSummary.getProvisioning().setProvisioningId("sample role provisioning id");
+		}
+		// END:  TEMPORARY
 		if (roleProvisioningSummary.isProvision()) {
 			return new RoleProvisioningStatusPlace(roleProvisioningSummary.getProvisioning().getProvisioningId(), roleProvisioningSummary);
 		}

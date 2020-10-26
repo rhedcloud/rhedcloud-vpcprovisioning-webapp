@@ -45,6 +45,7 @@ import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggi
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.role.MaintainRoleProvisioningPlace;
 import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskPlace;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskPlace;
@@ -514,6 +515,10 @@ public class AppActivityMapper implements ActivityMapper {
 
 		if (place instanceof RoleProvisioningStatusPlace) {
 			return new RoleProvisioningStatusActivity(clientFactory, (RoleProvisioningStatusPlace) place);
+		}
+
+		if (place instanceof MaintainRoleProvisioningPlace) {
+			return new MaintainRoleProvisioningActivity(clientFactory, (MaintainRoleProvisioningPlace) place);
 		}
 
 		return null;

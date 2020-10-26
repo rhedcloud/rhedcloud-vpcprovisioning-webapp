@@ -10,6 +10,7 @@ public class RoleProvisioningSummaryPojo extends SharedObject implements IsSeria
 	RoleProvisioningPojo provisioning;
 	RoleDeprovisioningPojo deprovisioning;
 	RolePojo role;
+	AccountPojo account;
 	
 	public static final ProvidesKey<RoleProvisioningSummaryPojo> KEY_PROVIDER = new ProvidesKey<RoleProvisioningSummaryPojo>() {
 		@Override
@@ -93,5 +94,13 @@ public class RoleProvisioningSummaryPojo extends SharedObject implements IsSeria
 
 	public void setRole(RolePojo role) {
 		this.role = role;
+	}
+
+	public AccountPojo getAccount() {
+		return account;
+	}
+
+	public void setAccount(AccountPojo account) {
+		this.account = account;
 	}
 }

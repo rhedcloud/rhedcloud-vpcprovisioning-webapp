@@ -73,7 +73,8 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
 				}
 				else {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ROLE_PROVISIONING);
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ROLE_PROVISIONING);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, presenter.getRoleProvisioningSummary().getAccount());
 				}
 			}
 		}, ClickEvent.getType());

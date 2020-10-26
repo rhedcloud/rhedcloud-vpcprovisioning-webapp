@@ -86,6 +86,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.role.MaintainRoleProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
@@ -309,7 +310,11 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		listRoleProvisioningView.setAppShell(this);
 		RoleProvisioningStatusView roleProvisioningStatusView = clientFactory.getRoleProvisioningStatusView();
 		roleProvisioningStatusView.setAppShell(this);
+		MaintainRoleProvisioningView maintainRoleProvisioningView = clientFactory.getMaintainRoleProvisioningView();
+		maintainRoleProvisioningView.setAppShell(this);
+		
 		homeContentContainer.add(listRoleProvisioningView);
+		homeContentContainer.add(maintainRoleProvisioningView);
 		homeContentContainer.add(roleProvisioningStatusView);
 
 

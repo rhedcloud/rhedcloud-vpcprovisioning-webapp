@@ -39,6 +39,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.role.MaintainRoleProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
@@ -132,6 +133,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ListFinancialAccountsView listFinancialAccountsView;
 	private ListRoleProvisioningView listRoleProvisioningView;
 	private RoleProvisioningStatusView roleProvisioningStatusView;
+	private MaintainRoleProvisioningView maintainRoleProvisioningView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -464,6 +466,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public RoleProvisioningStatusView getRoleProvisioningStatusView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainRoleProvisioningView getMaintainRoleProvisioningView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

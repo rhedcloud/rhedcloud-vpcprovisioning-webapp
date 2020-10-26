@@ -361,18 +361,6 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.SHOW_BILL_SUMMARY_FOR_ACCOUNT, presenter.getAccount());
 	}
 	
-//	@UiHandler ("ownerIdSB")
-//	void ownerIdSBMouseOver(MouseOverEvent e) {
-//		DirectoryMetaDataPojo dmd = presenter.getAccount().getAccountOwnerDirectoryMetaData();
-//		if (dmd != null) {
-//			ownerIdSB.setTitle(dmd.getFirstName() + " " + 
-//					dmd.getLastName() + 
-//					" - From the IdentityService.");
-//		}
-//		else {
-//			ownerIdSB.setTitle("Owner ID");
-//		}
-//	}
 	@UiHandler ("addAdminButton")
 	void addAdminButtonClick(ClickEvent e) {
 		if (accountIdTB.getText() == null || accountIdTB.getText().trim().length() == 0) {
@@ -386,6 +374,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		// present a dialog where user must select a role
 		// then pass that role to the add method
 		final RoleSelectionPopup rsp = new RoleSelectionPopup();
+		rsp.setAccount(presenter.getAccount());
+		rsp.setEventBus(presenter.getEventBus());
 		rsp.setAssigneeName(directoryLookupSB.getText());
 		rsp.initPanel();
 		rsp.showRelativeTo(addAdminButton);
@@ -394,7 +384,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 			@Override
 			public void onClose(CloseEvent event) {
 				GWT.log("selected role is: " + rsp.getSelectedRoleName());
-				if (!rsp.isCanceled()) {
+				if (!rsp.isCanceled() && !rsp.isGenerate()) {
 					if (rsp.isRoleSelected()) {
 						if (rsp.getSelectedRoleName() != null) {
 							addDirectoryPersonInRoleToAccount(rsp.getSelectedRoleName());

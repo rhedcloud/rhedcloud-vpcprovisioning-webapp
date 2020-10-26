@@ -47,6 +47,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainFirewallExcep
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainIncident;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainNotification;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainResourceTaggingProfile;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainRoleProvisioning;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityAssessment;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSecurityRisk;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainService;
@@ -92,6 +93,7 @@ import edu.emory.oit.vpcprovisioning.presenter.notification.MaintainNotification
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.ListResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.resourcetagging.MaintainResourceTaggingProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.role.ListRoleProvisioningView;
+import edu.emory.oit.vpcprovisioning.presenter.role.MaintainRoleProvisioningView;
 import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.service.CalculateSecurityRiskView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ListSecurityRiskView;
@@ -191,6 +193,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListFinancialAccountsView listFinancialAccountsView;
 	private ListRoleProvisioningView listRoleProvisioningView;
 	private RoleProvisioningStatusView roleProvisioningStatusView;
+	private MaintainRoleProvisioningView maintainRoleProvisioningView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -811,5 +814,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	private RoleProvisioningStatusView createRoleProvisioningStatusView() {
 		return new DesktopRoleProvisioningStatus();
+	}
+	@Override
+	public MaintainRoleProvisioningView getMaintainRoleProvisioningView() {
+        if (maintainRoleProvisioningView == null) {
+        	maintainRoleProvisioningView = createMaintainRoleProvisioningView();
+        }
+        return maintainRoleProvisioningView;
+	}
+	private MaintainRoleProvisioningView createMaintainRoleProvisioningView() {
+		return new DesktopMaintainRoleProvisioning();
 	}
 }

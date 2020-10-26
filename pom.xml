@@ -47,7 +47,7 @@
 		<artifactId>aws-moa</artifactId>
 		<version>1</version>
 		<scope>system</scope>
-		<systemPath>${project.basedir}/war/WEB-INF/lib/rhedcloud-aws-moas-master-16.jar</systemPath>
+		<systemPath>${project.basedir}/war/WEB-INF/lib/rhedcloud-aws-moas-master-17.jar</systemPath>
 	</dependency>		
 	<dependency>
 		<groupId>edu.emory</groupId>

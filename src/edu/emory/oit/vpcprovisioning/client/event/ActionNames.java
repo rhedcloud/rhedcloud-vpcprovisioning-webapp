@@ -211,6 +211,15 @@ public interface ActionNames {
 	final String ACCOUNT_DEPROVISIONING_GENERATED = "accountDeprovisioningGenerated";
 	final String GENERATE_ACCOUNT_DEPROVISIONING = "generateAccountDeprovisioning";
 	final String ACCOUNT_DEPROVISIONING_GENERATED_FROM_PROVISIONING_LIST = "accountDeprovisioningGeneratedFromProvisioningList";
+
 	final String SHOW_ROLE_PROVISIONING_STATUS = "showRoleProvisioningStatus";
 	final String GO_HOME_ROLE_PROVISIONING = "goHomeRoleProvisioning";
+	final String ROLE_PROVISIONING_GENERATED = "roleProvisioningGenerated";
+	final String ROLE_PROVISIONING_SAVED = "roleProvisioningSaved";
+	final String GENERATE_ROLE_PROVISIONING = "generateRoleProvisioning";
+	final String ROLE_DEPROVISIONING_GENERATED = "roleDeprovisioningGenerated";
+	final String GENERATE_ROLE_DEPROVISIONING = "generateRoleDeprovisioning";
+	final String ROLE_PROVISIONING_EDITING_CANCELED = "roleProvisioningEditingCanceled";
+//	final String ROLE_DEPROVISIONING_GENERATED_FROM_PROVISIONING_LIST = "accountDeprovisioningGeneratedFromProvisioningList";
+//	final String ROLE_PROVISIONING_GENERATED_FROM_PROVISIONING_LIST = "accountDeprovisioningGeneratedFromProvisioningList";
 }

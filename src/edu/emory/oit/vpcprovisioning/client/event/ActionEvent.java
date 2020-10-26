@@ -46,6 +46,8 @@ import edu.emory.oit.vpcprovisioning.shared.FirewallRulePojo;
 import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 import edu.emory.oit.vpcprovisioning.shared.QueryFilter;
 import edu.emory.oit.vpcprovisioning.shared.ResourceTaggingProfilePojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskPojo;
@@ -139,6 +141,8 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private Widget actionSourceWidget;
 	private MaintainSecurityRiskView maintainSecurityRiskView;
 	private RoleProvisioningSummaryPojo roleProvisioningSummary;
+	private RoleProvisioningPojo roleProvisioning;
+	private RoleProvisioningRequisitionPojo roleProvisioningRequisition;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -857,6 +861,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.roleProvisioningSummary = m;
 	}
 
+	public ActionEvent(RoleProvisioningPojo roleProvisioning2) {
+		this.roleProvisioning = roleProvisioning2;
+	}
+
+	public ActionEvent(RoleProvisioningRequisitionPojo rprp) {
+		this.roleProvisioningRequisition = rprp;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -1278,6 +1290,34 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setRoleProvisioningSummary(RoleProvisioningSummaryPojo roleProvisioningSummary) {
 		this.roleProvisioningSummary = roleProvisioningSummary;
+	}
+
+	public static void fire(EventBus eventBus, String roleProvisioningGenerated,
+			RoleProvisioningPojo roleProvisioning) {
+
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(roleProvisioning), roleProvisioningGenerated);
+	}
+
+	public RoleProvisioningPojo getRoleProvisioning() {
+		return roleProvisioning;
+	}
+
+	public void setRoleProvisioning(RoleProvisioningPojo roleProvisioning) {
+		this.roleProvisioning = roleProvisioning;
+	}
+
+	public RoleProvisioningRequisitionPojo getRoleProvisioningRequisition() {
+		return roleProvisioningRequisition;
+	}
+
+	public void setRoleProvisioningRequisition(RoleProvisioningRequisitionPojo roleProvisioningRequisition) {
+		this.roleProvisioningRequisition = roleProvisioningRequisition;
+	}
+
+	public static void fire(EventBus eventBus, String generateRoleProvisioning, RoleProvisioningRequisitionPojo rprp) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(rprp), generateRoleProvisioning);
 	}
 
 }

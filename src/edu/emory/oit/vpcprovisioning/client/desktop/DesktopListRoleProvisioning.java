@@ -141,7 +141,7 @@ public class DesktopListRoleProvisioning extends ViewImplBase implements ListRol
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(3, 1);
+		Grid grid = new Grid(2, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -166,21 +166,21 @@ public class DesktopListRoleProvisioning extends ViewImplBase implements ListRol
 		});
 		grid.setWidget(0, 0, assignAnchor);
 
-		Anchor generateRoleAnchor = new Anchor("Generate Role");
-		generateRoleAnchor.addStyleName("productAnchor");
-		generateRoleAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		generateRoleAnchor.setTitle("Generate a new custom Role");
-		generateRoleAnchor.ensureDebugId(generateRoleAnchor.getText());
-		generateRoleAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				showMessageToUser("Comming soon...");
-//				getAppShell().addBreadCrumb("Show GENERATE_ROLE", ActionNames.GENERATE_ROLE);
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_ROLE, m);
-			}
-		});
-		grid.setWidget(1, 0, generateRoleAnchor);
+//		Anchor generateRoleAnchor = new Anchor("Generate Role");
+//		generateRoleAnchor.addStyleName("productAnchor");
+//		generateRoleAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		generateRoleAnchor.setTitle("Generate a new custom Role");
+//		generateRoleAnchor.ensureDebugId(generateRoleAnchor.getText());
+//		generateRoleAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				showMessageToUser("Comming soon...");
+////				getAppShell().addBreadCrumb("Show GENERATE_ROLE", ActionNames.GENERATE_ROLE);
+////				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_ROLE, m);
+//			}
+//		});
+//		grid.setWidget(1, 0, generateRoleAnchor);
 
 		Anchor deprovisionAnchor = new Anchor("De-Provisiong Role");
 		deprovisionAnchor.addStyleName("productAnchor");
@@ -210,7 +210,7 @@ public class DesktopListRoleProvisioning extends ViewImplBase implements ListRol
 				}
 			}
 		});
-		grid.setWidget(2, 0, deprovisionAnchor);
+		grid.setWidget(1, 0, deprovisionAnchor);
 		
 		actionsPopup.showRelativeTo(actionsButton);
 	}

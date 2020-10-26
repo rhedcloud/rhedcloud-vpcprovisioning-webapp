@@ -64,6 +64,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/openeai-core-5.0.61.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aws-java-sdk-core-1.11.406.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aws-java-sdk-s3-1.11.406.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-aws-moas-master-16.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-aws-moas-master-17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
