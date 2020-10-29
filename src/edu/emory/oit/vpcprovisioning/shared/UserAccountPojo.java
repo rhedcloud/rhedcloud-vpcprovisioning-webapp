@@ -11,7 +11,7 @@ public class UserAccountPojo implements IsSerializable {
 	private List<String> permissions = new ArrayList<String>();
 	String publicId;
 	List<AccountRolePojo> accountRoles = new ArrayList<AccountRolePojo>();
-	PersonalNamePojo personalName = new PersonalNamePojo();
+	PersonalNamePojo personalName;
 	boolean superUser=false;
 	boolean hasValidTermsOfUseAgreement;
 	String authUserIdForHALS;
