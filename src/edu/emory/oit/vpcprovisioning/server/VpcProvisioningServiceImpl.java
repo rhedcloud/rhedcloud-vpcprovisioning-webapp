@@ -627,11 +627,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (serialNumber == null) {
 				serialNumber = (String) request.getAttribute("serialNumber");
 			}
-			
 			if (eppn != null) {
 				info("found eppn in Shibboleth attributes.  "
 					+ "eppn is: '" + eppn + "'" 
 					+ "serialNumber/PPID is: '" + serialNumber + "'");
+				info("[getUserLoggedin] serialNumber from shibboleth is: " + serialNumber);
 				if (eppn.trim().length() == 0) {
 					info("found shibboleth eppn attribute but value is blank.  This is an error.");
 					throw new RpcException("There appears to be a problem with " +
