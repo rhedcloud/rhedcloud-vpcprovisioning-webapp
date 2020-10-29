@@ -690,6 +690,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							"established a session yet but they have " +
 							"authenticated with Shibboleth.  Creating local session.");
 					this.createSession(eppn);
+					info("[shib] caching user: " + user);
 					Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 				}
 				else {
@@ -697,6 +698,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						info("[shib] user ' " + user.getEppn() + 
 								" still has a valid session.  Processing can continue.");
 						this.createSession(eppn);
+						info("[shib] caching user: " + user);
 						Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 					}
 					else {
@@ -1102,6 +1104,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("[getRoleForUser_netiq] ppid is NOT null, getting exact match");
 				dp_filter.setSearchString(null);
 				dp_filter.setKey(user.getPublicId());
+			}
+			else {
+				info("[getRoleForUser_netiq] ppid IS null, getting fuzzy match");
 			}
 			dp_filter.setUserLoggedIn(user);
 			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
