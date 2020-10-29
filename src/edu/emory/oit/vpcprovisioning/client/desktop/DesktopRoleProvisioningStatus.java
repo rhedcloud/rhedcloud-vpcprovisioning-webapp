@@ -25,7 +25,9 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -228,27 +230,7 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 
 	@Override
 	public void startTimer(int delayMs) {
-		GWT.log("[VIEW] starting timer...");
-//		startTimer = true;
-//		Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {			
-//			@Override
-//			public boolean execute() {
-//				if (presenter.getRoleProvisioningSummary().isProvision()) {
-//					presenter.refreshProvisioningStatusForId(presenter.getRoleProvisioning().getProvisioningId());
-//					if (presenter.getRoleProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-//						startTimer = false;
-//					}
-//					return startTimer;
-//				}
-//				else {
-//					presenter.refreshProvisioningStatusForId(presenter.getRoleDeprovisioning().getProvisioningId());
-//					if (presenter.getRoleDeprovisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-//						startTimer = false;
-//					}
-//					return startTimer;
-//				}
-//			}
-//		}, delayMs);
+		GWT.log("[RoleProvisioningStatus VIEW] starting timer...");
 		
 		startTimer = true;
 		timer = new Timer() {
@@ -258,6 +240,21 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 					presenter.refreshProvisioningStatusForId(presenter.getRoleProvisioning().getProvisioningId());
 					if (presenter.getRoleProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
 						stopTimer();
+
+						// TODO: if the provisioning run was successful and 
+						// there is an assignee in the summary object, do a 
+						// RoleAssignment.Generate?
+						// IDEALLY, this will all happen as part of the provisioning
+						// process.  So, I think it will be better to try and 
+						// handle that there instead of here.
+//						if (presenter.getRoleProvisioning().isSuccessful() && 
+//							presenter.getRoleProvisioningSummary().getAssignee() != null) {
+//							
+//							DirectoryPersonPojo roleAssignee = presenter.getRoleProvisioningSummary().getAssignee();
+//							AccountPojo account = presenter.getRoleProvisioningSummary().getAccount();
+//							String customRoleName = presenter.getRoleProvisioningSummary().getProvisioning().getRequisition().getCustomRoleName();
+//							presenter.addDirectoryPersonInRoleToAccount(roleAssignee, account, customRoleName);
+//						}
 					}
 				}
 				else {
@@ -466,7 +463,7 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 
 	private void setProvisioningProgress() {
 		if (presenter.getRoleProvisioningSummary().isProvision()) {
-	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getRoleProvisioning().getTotalStepCount(), presenter.getRoleProvisioning().getCompletedSuccessfulCount());
+	        SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(presenter.getRoleProvisioning().getTotalStepCount(), presenter.getRoleProvisioning().getCompletedSuccessfullCount());
 	        progressHTML.setHTML(sh);
 		}
 		else {

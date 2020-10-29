@@ -26,7 +26,7 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 	private RoleProvisioningPojo roleProvisioning;
 	private RoleProvisioningRequisitionPojo roleRequisition;
 	private UserAccountPojo userLoggedIn;
-	private DirectoryPersonPojo ownerDirectoryPerson;
+	private DirectoryPersonPojo assignee;
 	private AccountPojo account;
 
 	/**
@@ -40,7 +40,7 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 	 * For provisioning a Role
 	 */
 	public MaintainRoleProvisioningPresenter(ClientFactory clientFactory2,
-			RoleProvisioningRequisitionPojo vpncRequisition, AccountPojo account) {
+			RoleProvisioningRequisitionPojo vpncRequisition, DirectoryPersonPojo assignee, AccountPojo account) {
 
 		this.isEditing = false;
 		this.isRegen = false;
@@ -48,6 +48,7 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 		this.roleRequisition = vpncRequisition;
 		this.provisioningId = null;
 		this.account = account;
+		this.assignee = assignee;
 		this.clientFactory = clientFactory2;
 		getView().setPresenter(this);
 	}
@@ -255,6 +256,8 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 					RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
 					summary.setProvisioning(roleProvisioning);
 					summary.setAccount(getAccount());
+					summary.setAssignee(getAssignee());
+					
 					ActionEvent.fire(eventBus, ActionNames.ROLE_PROVISIONING_GENERATED, summary);
 				}
 				else {
@@ -323,13 +326,13 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 	}
 
 	@Override
-	public void setOwnerDirectoryPerson(DirectoryPersonPojo pojo) {
-		this.ownerDirectoryPerson = pojo;
+	public void setAssignee(DirectoryPersonPojo pojo) {
+		this.assignee = pojo;
 	}
 
 	@Override
-	public DirectoryPersonPojo getOwnerDirectoryPerson() {
-		return this.ownerDirectoryPerson;
+	public DirectoryPersonPojo getAssignee() {
+		return this.assignee;
 	}
 
 	@Override

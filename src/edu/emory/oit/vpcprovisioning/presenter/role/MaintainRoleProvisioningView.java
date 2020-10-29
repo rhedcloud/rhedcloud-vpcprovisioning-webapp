@@ -34,8 +34,8 @@ public interface MaintainRoleProvisioningView extends Editor<RoleProvisioningPoj
 		public EventBus getEventBus();
 		public ClientFactory getClientFactory();
 		public void logMessageOnServer(final String message);
-		public void setOwnerDirectoryPerson(DirectoryPersonPojo pojo);
-		public DirectoryPersonPojo getOwnerDirectoryPerson();
+		public void setAssignee(DirectoryPersonPojo pojo);
+		public DirectoryPersonPojo getAssignee();
 		public void setAccount(AccountPojo account);
 		public AccountPojo getAccount();
 	}

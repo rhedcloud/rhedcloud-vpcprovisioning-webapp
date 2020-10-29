@@ -36,6 +36,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpPojo;
@@ -143,6 +144,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private RoleProvisioningSummaryPojo roleProvisioningSummary;
 	private RoleProvisioningPojo roleProvisioning;
 	private RoleProvisioningRequisitionPojo roleProvisioningRequisition;
+	private DirectoryPersonPojo roleAssignee;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -223,6 +225,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, AccountPojo account) {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(account), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, DirectoryPersonPojo roleAssignee, AccountPojo account) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(roleAssignee, account), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, AWSServicePojo service) {
@@ -556,6 +563,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public ActionEvent(AccountPojo account) {
 		this.account = account;
+	}
+	
+	public ActionEvent(DirectoryPersonPojo roleAssignee, AccountPojo account) {
+		this.account = account;
+		this.roleAssignee = roleAssignee;
 	}
 	
 	public ActionEvent(ElasticIpPojo pojo) {
@@ -1318,6 +1330,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String generateRoleProvisioning, RoleProvisioningRequisitionPojo rprp) {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(rprp), generateRoleProvisioning);
+	}
+
+	public DirectoryPersonPojo getRoleAssignee() {
+		return roleAssignee;
+	}
+
+	public void setRoleAssignee(DirectoryPersonPojo roleAssignee) {
+		this.roleAssignee = roleAssignee;
 	}
 
 }

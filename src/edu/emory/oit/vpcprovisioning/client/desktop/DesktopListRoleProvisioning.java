@@ -595,7 +595,7 @@ public class DesktopListRoleProvisioning extends ViewImplBase implements ListRol
 			@Override
 			public SafeHtml getValue(RoleProvisioningSummaryPojo value) {
 				if (value.isProvision()) {
-					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getProvisioning().getTotalStepCount(), value.getProvisioning().getCompletedSuccessfulCount());
+					SafeHtml sh = HTMLUtils.getProgressBarSafeHtml(value.getProvisioning().getTotalStepCount(), value.getProvisioning().getCompletedSuccessfullCount());
 					return sh;
 				}
 				else {

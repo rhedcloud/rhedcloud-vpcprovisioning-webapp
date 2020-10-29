@@ -1932,7 +1932,7 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				GWT.log("Bootstrapper, GENERATE_ROLE_PROVISIONING.onAction");
-				placeController.goTo(MaintainRoleProvisioningPlace.createMaintainRoleProvisioningPlace(event.getAccount()));
+				placeController.goTo(MaintainRoleProvisioningPlace.createMaintainRoleProvisioningPlace(event.getRoleAssignee(), event.getAccount()));
 			}
 		});
 

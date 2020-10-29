@@ -2,6 +2,7 @@ package edu.emory.oit.vpcprovisioning.client.common;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -23,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 
 public class RoleSelectionPopup extends PopupPanel {
 	String selectedRoleName;
@@ -32,6 +34,7 @@ public class RoleSelectionPopup extends PopupPanel {
 	boolean generate = false;
 	AccountPojo account;
 	EventBus eventBus;
+	private DirectoryPersonPojo assignee;
 
 	public RoleSelectionPopup() {
 		this(false, false);
@@ -46,6 +49,7 @@ public class RoleSelectionPopup extends PopupPanel {
 	}
 	
 	public void initPanel() {
+		GWT.log("[RoleSelectionPopup.initPanel] DirectoryPerson is: " + getAssignee());
 	    this.getElement().getStyle().setBackgroundColor("#f1f1f1");
 	    
 		VerticalPanel mainPanel = new VerticalPanel();
@@ -141,7 +145,7 @@ public class RoleSelectionPopup extends PopupPanel {
 			public void onClick(ClickEvent event) {
 //				RoleProvisioningRequisitionPojo rprp = new RoleProvisioningRequisitionPojo();
 //				rprp.setAccountId(getAccount().getAccountId());
-				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAccount());
+				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAssignee(), getAccount());
 				setGenerate(true);
 				hide();
 			}
@@ -244,6 +248,14 @@ public class RoleSelectionPopup extends PopupPanel {
 
 	public void setAccount(AccountPojo account) {
 		this.account = account;
+	}
+
+	public DirectoryPersonPojo getAssignee() {
+		return assignee;
+	}
+
+	public void setAssignee(DirectoryPersonPojo directoryPerson) {
+		this.assignee = directoryPerson;
 	}
 
 }

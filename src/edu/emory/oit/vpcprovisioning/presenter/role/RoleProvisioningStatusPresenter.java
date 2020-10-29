@@ -10,7 +10,11 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningQueryFilterPojo;
@@ -305,5 +309,46 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 
 	public void setRoleProvisioningSummary(RoleProvisioningSummaryPojo roleProvisioningSummary) {
 		this.roleProvisioningSummary = roleProvisioningSummary;
+	}
+
+	@Override
+	public void addDirectoryPersonInRoleToAccount(DirectoryPersonPojo roleAssignee, AccountPojo account,
+			String roleName) {
+
+		AsyncCallback<RoleAssignmentPojo> raCallback = new AsyncCallback<RoleAssignmentPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+				getView().showMessageToUser("There was an exception on the " +
+						"server creating the role assignment.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(final RoleAssignmentPojo roleAssignment) {
+				
+				getView().hidePleaseWaitDialog();
+				getView().hidePleaseWaitPanel();
+
+				// for now, just go to the account maintenance page
+				ActionEvent.fire(getEventBus(), ActionNames.MAINTAIN_ACCOUNT, getRoleProvisioningSummary().getAccount());
+				
+				// TODO: may also go to the role provisioning list page
+				// when/if the provisioning type is a deprovision.
+				// that will just depend on where we initiate the deprovisioning
+				// process from
+//				if (getRoleProvisioningSummary().isProvision()) {
+//					ActionEvent.fire(getEventBus(), ActionNames.MAINTAIN_ACCOUNT, getRoleProvisioningSummary().getAccount());
+//				}
+//				else {
+//					// TODO: go to wherever we initiate deprovisioning from
+//				}
+				
+			}
+		};
+		// now, create the role assignment and add the role assignment to the account
+		getView().showPleaseWaitDialog("Creating Role Assignment with the IDM service...");
+		VpcProvisioningService.Util.getInstance().createRoleAssignmentForPersonInAccount(roleAssignee.getKey(), account.getAccountId(), roleName, raCallback);
 	}
 }

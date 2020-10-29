@@ -377,6 +377,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		rsp.setAccount(presenter.getAccount());
 		rsp.setEventBus(presenter.getEventBus());
 		rsp.setAssigneeName(directoryLookupSB.getText());
+		rsp.setAssignee(presenter.getDirectoryPerson());
 		rsp.initPanel();
 		rsp.showRelativeTo(addAdminButton);
 		rsp.addCloseHandler(new CloseHandler<PopupPanel>() {

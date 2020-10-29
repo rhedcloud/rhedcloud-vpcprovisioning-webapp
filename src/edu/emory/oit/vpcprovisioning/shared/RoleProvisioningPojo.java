@@ -36,7 +36,13 @@ public class RoleProvisioningPojo extends SharedObject implements IsSerializable
 		return provisioningSteps.size();
 	}
 	
-	public int getCompletedSuccessfulCount() {
+	public boolean isSuccessful() {
+		if (getTotalStepCount() == getCompletedSuccessfullCount()) {
+			return true;
+		}
+		return false;
+	}
+	public int getCompletedSuccessfullCount() {
 		// if status is 'complete' and stepResult is 'success' increment counter
 		int cnt = 0;
 		for (ProvisioningStepPojo step : provisioningSteps) {

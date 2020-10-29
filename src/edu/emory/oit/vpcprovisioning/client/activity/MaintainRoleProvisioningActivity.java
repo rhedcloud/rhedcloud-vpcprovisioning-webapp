@@ -79,7 +79,7 @@ public class MaintainRoleProvisioningActivity extends AbstractActivity {
 	}
 
 	private PresentsWidgets startCreate(RoleProvisioningRequisitionPojo vpncRequisition) {
-		PresentsWidgets rtn = new MaintainRoleProvisioningPresenter(clientFactory, vpncRequisition, place.getAccount());
+		PresentsWidgets rtn = new MaintainRoleProvisioningPresenter(clientFactory, vpncRequisition, place.getAssignee(), place.getAccount());
 		rtn.start(childEventBus);
 		return rtn;
 	}

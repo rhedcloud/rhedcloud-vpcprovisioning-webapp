@@ -5,6 +5,7 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningRequisitionPojo;
 
@@ -58,8 +59,8 @@ public class MaintainRoleProvisioningPlace extends Place {
 		return new MaintainRoleProvisioningPlace();
 	}
 
-	public static Place createMaintainRoleProvisioningPlace(AccountPojo account) {
-		return new MaintainRoleProvisioningPlace(account);
+	public static Place createMaintainRoleProvisioningPlace(DirectoryPersonPojo person, AccountPojo account) {
+		return new MaintainRoleProvisioningPlace(person, account);
 	}
 
 	/**
@@ -75,6 +76,7 @@ public class MaintainRoleProvisioningPlace extends Place {
 		return singleton;
 	}
 
+	private final DirectoryPersonPojo assignee;
 	private final AccountPojo account;
 	private final RoleProvisioningPojo roleProvisioningp;
 	private final RoleProvisioningRequisitionPojo roleProvisioningRequisition;
@@ -89,30 +91,34 @@ public class MaintainRoleProvisioningPlace extends Place {
 	 * @param mrn the ID of the caseRecord to edit
 	 * @param caseRecord the caseRecord to edit, or null if not available
 	 */
-	private MaintainRoleProvisioningPlace(AccountPojo account) {
+	private MaintainRoleProvisioningPlace(DirectoryPersonPojo directoryPerson, AccountPojo account) {
 		this.roleProvisioningRequisition = new RoleProvisioningRequisitionPojo();
 		this.roleProvisioningRequisition.setAccountId(account.getAccountId());
 		this.provisioningId = null;
 		this.roleProvisioningp = null;
 		this.account = account;
+		this.assignee = directoryPerson;
 	}
 	private MaintainRoleProvisioningPlace() {
 		this.roleProvisioningRequisition = null;
 		this.provisioningId = null;
 		this.roleProvisioningp = null;
 		this.account = null;
+		this.assignee = null;
 	}
 	private MaintainRoleProvisioningPlace(String provisioningId, RoleProvisioningPojo roleProvisioningp) {
 		this.roleProvisioningRequisition = null;
 		this.provisioningId = provisioningId;
 		this.roleProvisioningp = roleProvisioningp;
 		this.account = null;
+		this.assignee = null;
 	}
 	private MaintainRoleProvisioningPlace(RoleProvisioningRequisitionPojo requisition) {
 		this.roleProvisioningRequisition = requisition;
 		this.provisioningId = null;
 		this.roleProvisioningp = null;
 		this.account = null;
+		this.assignee = null;
 	}
 
 	/**
@@ -129,5 +135,9 @@ public class MaintainRoleProvisioningPlace extends Place {
 
 	public AccountPojo getAccount() {
 		return account;
+	}
+
+	public DirectoryPersonPojo getAssignee() {
+		return assignee;
 	}
 }

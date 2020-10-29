@@ -7,6 +7,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningSummaryPojo;
@@ -36,6 +38,7 @@ public interface RoleProvisioningStatusView extends Editor<RoleProvisioningPojo>
 		public void logMessageOnServer(final String message);
 		public boolean isFromGenerate();
 		public void setFromGenerate(boolean fromGenerate);
+		public void addDirectoryPersonInRoleToAccount(DirectoryPersonPojo roleAssignee, AccountPojo account, String roleName);
 	}
 
 	/**
