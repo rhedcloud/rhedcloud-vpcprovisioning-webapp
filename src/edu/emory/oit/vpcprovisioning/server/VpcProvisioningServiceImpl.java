@@ -646,7 +646,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
 				}
 				user.setEppn(eppn);
-//				user.setPublicId(serialNumber);
+				user.setPublicId(serialNumber);
 
 				if (useAuthzService) {
 					// get roles for the user
@@ -1093,10 +1093,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<AccountPojo> accounts = this.getAllAccounts().getResults();
 		info("[getRolesForUser_netiq] got " + accounts.size() + " accounts from getAllAccounts");
 		
-		if (user.getPublicId() == null) {
-//		if (user.getPersonalName() == null) {
+//		if (user.getPublicId() == null) {
+//		if ((user.getPersonalName() == null && user.getPublicId() != null) || user.getPublicId() == null) {
+		if (user.getPersonalName() == null && user.getPublicId() != null) {
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
+			if (user.getPublicId() != null) {
+				info("[getRoleForUser_netiq] ppid is NOT null, getting exact match");
+				dp_filter.setSearchString(null);
+				dp_filter.setKey(user.getPublicId());
+			}
 			dp_filter.setUserLoggedIn(user);
 			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
 			if (dp_result != null) {
