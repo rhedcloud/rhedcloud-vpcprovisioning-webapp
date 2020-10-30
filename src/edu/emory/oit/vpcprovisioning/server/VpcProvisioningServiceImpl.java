@@ -1093,9 +1093,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<AccountPojo> accounts = this.getAllAccounts().getResults();
 		info("[getRolesForUser_netiq] got " + accounts.size() + " accounts from getAllAccounts");
 		
-//		if (user.getPublicId() == null) {
-//		if ((user.getPersonalName() == null && user.getPublicId() != null) || user.getPublicId() == null) {
-		if (user.getPersonalName() == null && user.getPublicId() != null) {
+		if (user.getPersonalName() == null) {
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
 			if (user.getPublicId() != null) {
