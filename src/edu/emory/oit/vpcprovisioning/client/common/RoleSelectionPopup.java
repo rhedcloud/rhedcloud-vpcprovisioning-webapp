@@ -68,13 +68,14 @@ public class RoleSelectionPopup extends PopupPanel {
 		}
 		
 		// TEMP: hard coding some existing custom roles
-		List<String> existingCustomRoles = new java.util.ArrayList<String>();
-		for (int i=1; i<6; i++) {
-			existingCustomRoles.add(new String("ExistingCustomRoleAtFourtyThreeCharacters " + i));
-		}
+//		List<String> existingCustomRoles = new java.util.ArrayList<String>();
+//		for (int i=1; i<6; i++) {
+//			existingCustomRoles.add(new String("ExistingCustomRoleAtFourtyThreeCharacters " + i));
+//		}
 		// END TEMP
 		
-	    Grid rbGrid = new Grid(existingCustomRoles.size() + 2, 1);
+//	    Grid rbGrid = new Grid(existingCustomRoles.size() + 2, 1);
+	    Grid rbGrid = new Grid(2, 1);
 	    rbGrid.setCellSpacing(8);
 	    mainPanel.add(rbGrid);
 	    
@@ -90,16 +91,17 @@ public class RoleSelectionPopup extends PopupPanel {
 	    rbGrid.setWidget(1, 0, auditorRB);
 	    
 		// TEMP: hard coding some existing custom roles
-	    for (int i=0; i<existingCustomRoles.size(); i++) {
-		    final RadioButton customRB = new RadioButton("roles", existingCustomRoles.get(i));
-		    customRB.getElement().getStyle().setPadding(10, Unit.PX);
-		    customRB.getElement().getStyle().setFontSize(16, Unit.PX);
-		    
-		    rbGrid.setWidget(i+2, 0, customRB);
-	    }
+//	    for (int i=0; i<existingCustomRoles.size(); i++) {
+//		    final RadioButton customRB = new RadioButton("roles", existingCustomRoles.get(i));
+//		    customRB.getElement().getStyle().setPadding(10, Unit.PX);
+//		    customRB.getElement().getStyle().setFontSize(16, Unit.PX);
+//		    
+//		    rbGrid.setWidget(i+2, 0, customRB);
+//	    }
 		// END TEMP
 	    
-	    Grid buttonGrid = new Grid(1, 3);
+//	    Grid buttonGrid = new Grid(1, 3);
+	    Grid buttonGrid = new Grid(1, 2);
 	    buttonGrid.setCellSpacing(8);
 	    mainPanel.add(buttonGrid);
 	    mainPanel.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
@@ -138,22 +140,20 @@ public class RoleSelectionPopup extends PopupPanel {
 			}
 	    });
 
-	    Button generateButton = new Button("Generate");
-	    applyNormalButtonStyles(generateButton);
-	    generateButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-//				RoleProvisioningRequisitionPojo rprp = new RoleProvisioningRequisitionPojo();
-//				rprp.setAccountId(getAccount().getAccountId());
-				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAssignee(), getAccount());
-				setGenerate(true);
-				hide();
-			}
-	    });
+//	    Button generateButton = new Button("Generate");
+//	    applyNormalButtonStyles(generateButton);
+//	    generateButton.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAssignee(), getAccount());
+//				setGenerate(true);
+//				hide();
+//			}
+//	    });
 
 	    buttonGrid.setWidget(0, 0, okayButton);
 	    buttonGrid.setWidget(0, 1, cancelButton);
-	    buttonGrid.setWidget(0, 2, generateButton);
+//	    buttonGrid.setWidget(0, 2, generateButton);
 	}
 
 	private void applyNormalButtonStyles(Button b) {
