@@ -690,7 +690,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							"established a session yet but they have " +
 							"authenticated with Shibboleth.  Creating local session.");
 					this.createSession(eppn);
-					info("[shib] caching user: " + user);
 					Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 				}
 				else {
@@ -698,7 +697,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						info("[shib] user ' " + user.getEppn() + 
 								" still has a valid session.  Processing can continue.");
 						this.createSession(eppn);
-						info("[shib] caching user: " + user);
 						Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 					}
 					else {
@@ -1130,8 +1128,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			personalName.setFirstName(directoryPerson.getFirstMiddle());
 			personalName.setLastName(directoryPerson.getLastName());
 			user.setPersonalName(personalName);
-			
-			info("[getRolesForUser_netiq] User public id is: " + user.getPublicId());
 		}
 		else {
 			info("[getRolesForUser_netiq] no need to get full person object.");
