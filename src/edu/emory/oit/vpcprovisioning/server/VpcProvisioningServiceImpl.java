@@ -12891,6 +12891,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (!asc.getSpeedChart().getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
 					asc.setValid(false);
 				}
+				else {
+					asc.setValid(true);
+				}
 
 				pojos.add(asc);
 			}
