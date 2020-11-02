@@ -7,6 +7,7 @@ import com.google.gwt.view.client.ProvidesKey;
 public class AccountSpeedChartPojo extends SharedObject implements IsSerializable, Comparable<AccountSpeedChartPojo> {
 	private AccountPojo account;
 	private SpeedChartPojo speedChart;
+	private boolean valid;
 	
 
 	public static final ProvidesKey<AccountSpeedChartPojo> KEY_PROVIDER = new ProvidesKey<AccountSpeedChartPojo>() {
@@ -65,5 +66,13 @@ public class AccountSpeedChartPojo extends SharedObject implements IsSerializabl
 	}
 	public String getSpeedType() {
 		return account.getSpeedType();
+	}
+
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void setValid(boolean valid) {
+		this.valid = valid;
 	}
 }

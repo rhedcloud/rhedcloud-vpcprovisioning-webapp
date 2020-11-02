@@ -12888,6 +12888,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				AccountSpeedChartPojo asc = new AccountSpeedChartPojo();
 				asc.setAccount(account);
 				asc.setSpeedChart(scp);
+				if (!asc.getSpeedChart().getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
+					asc.setValid(false);
+				}
+
 				pojos.add(asc);
 			}
 			else {

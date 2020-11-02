@@ -455,13 +455,29 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 					public void onSuccess(List<AccountSpeedChartPojo> result) {
 						hidePleaseWaitDialog();
 						if (result != null && result.size() > 0) {
-							// TODO: when/if they have invalid speedtypes, they'll 
+							// when/if they have invalid speedtypes, they'll 
 							// go to a new page instead of the home page 
 							// they'll go to the ListUserFinancialAccountsView where they'll be able 
 							// to update/fix any accounts that are in bad standing
-							GWT.log("need to get List Financial Accounts Content.");
-							firstHomeContentWidget = true;			
-							ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn, true);
+							boolean hasInvalidSpeedCharts = false;
+							ascLoop: for (AccountSpeedChartPojo asc : result) {
+								if (asc.isValid() == false) {
+									// they have invalid speed charts associated to them
+									hasInvalidSpeedCharts = true;
+									break ascLoop;
+								}
+							}
+							if (hasInvalidSpeedCharts) {
+								GWT.log("[invalid speed charts] need to get List Financial Accounts Content.");
+								firstHomeContentWidget = true;			
+								ActionEvent.fire(eventBus, ActionNames.GO_HOME_FINANCIAL_ACCOUNTS, userLoggedIn, true);
+							}
+							else {
+								// just go home
+								GWT.log("[no invalid speed charts] home tab");
+								firstHomeContentWidget = true;			
+								ActionEvent.fire(eventBus, ActionNames.GO_HOME, userLoggedIn);
+							}
 						}
 						else {
 							GWT.log("[default] home tab");
