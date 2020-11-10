@@ -12876,6 +12876,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<AccountSpeedChartPojo> getFinancialAccountsForUser(UserAccountPojo user) throws RpcException {
 		List<AccountSpeedChartPojo> pojos = new java.util.ArrayList<AccountSpeedChartPojo>();
 		
+		String validateFinAccts = generalProps.getProperty("validateFinancialAccountNumbers", "true");
+		boolean isValidateFinAccts = Boolean.parseBoolean(validateFinAccts);
+		if (!isValidateFinAccts) {
+			return pojos;
+		}
+
 		AccountQueryFilterPojo acctFilter = new AccountQueryFilterPojo();
 		acctFilter.setUserLoggedIn(user);
 		AccountQueryResultPojo acctResult = this.getAccountsForFilter(acctFilter);
