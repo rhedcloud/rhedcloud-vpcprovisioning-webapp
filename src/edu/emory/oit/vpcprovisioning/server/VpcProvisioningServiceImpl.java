@@ -3840,15 +3840,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				DirectoryPerson actionable = (DirectoryPerson) getObject(Constants.MOA_DIRECTORY_PERSON);
 
 				queryObject.setKey(publicId);
-				info("[getDirectoryMetaDataForPublicId] query spec: " + queryObject.toXmlString());
+				info("[getDirectoryMetaDataForPublicId] query spec: " + queryObject.getKey());
 
 				@SuppressWarnings("unchecked")
 				List<DirectoryPerson>moas = actionable.query(queryObject, this.getDirectoryRequestService());
 				info("[getDirectoryMetaDataForPublicId] got " + moas.size() + " DirectoryPerson moas back from ESB for PublicID '" + publicId + "'");
 				DirectoryPerson moa = moas.get(0);
-				for (DirectoryPerson lmoa : moas) {
-					info("[getDirectoryMetaDataForPublicId] DirectoryPerson xml: " + lmoa.toXmlString());
-				}
+//				for (DirectoryPerson lmoa : moas) {
+//					debug("[getDirectoryMetaDataForPublicId] DirectoryPerson xml: " + lmoa.toXmlString());
+//				}
 
 				
 				dmd.setFirstName(moa.getFirstMiddle());
@@ -3877,10 +3877,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
-			catch (XmlEnterpriseObjectException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
 		}
 	}
 
@@ -4208,7 +4204,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// TODO if more than one returned, it's an error...
 			VpcpPojo vpcpPojo = new VpcpPojo();
 			for (VirtualPrivateCloudProvisioning vpcp : result) {
-				info("generated VPCP is: " + vpcp.toXmlString());
 				this.populateVpcpPojo(vpcp, vpcpPojo);
 			}
 			info("Vpcp.generate is complete...");
@@ -5808,12 +5803,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					this.getPeopleSoftRequestService());
 			info("got " + moas.size() + " speed chart objects back from ESB");
 			for (SPEEDCHART moa : moas) {
-				info("SPEEDCHART: " + moa.toXmlString());
 				SpeedChartPojo pojo = new SpeedChartPojo();
-//				SpeedChartPojo baseline = new SpeedChartPojo();
 				this.populateSpeedChartPojo(moa, pojo);
-//				this.populateSpeedChartPojo(moa, baseline);
-//				pojo.setBaseline(baseline);
 				pojos.add(pojo);
 			}
 
@@ -6078,7 +6069,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<FirewallRule> moas = actionable.query(queryObject,
 					this.getFirewallRequestService());
 			for (FirewallRule moa : moas) {
-				info("FirewallRule returned from ESB: " + moa.toXmlString());
 				FirewallRulePojo pojo = new FirewallRulePojo();
 				this.populateFirewallRulePojo(moa, pojo);
 				pojos.add(pojo);
@@ -6412,7 +6402,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("[service layer] got " + moas.size() + " DirectoryPerson objects back from ESB.");
 				for (DirectoryPerson moa : moas) {
 					DirectoryPersonPojo pojo = new DirectoryPersonPojo();
-					info("DirectoryPerson: " + moa.toXmlString());
 					this.populateDirectoryPersonPojo(moa, pojo);
 					pojos.add(pojo);
 				}
@@ -8662,7 +8651,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
             newData.setBaseline(baselineData);
 
             info("[updateSecurityAssessment] doing the update...");
-            info("[updateSecurityAssessment] assessment as xml: " + newData.toXmlString());
             doUpdate(newData, getAWSRequestService());
             info("[updateSecurityAssessment] update is complete...");
         } catch (Throwable t) {
@@ -8854,7 +8842,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					" objects from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (SecurityRiskDetection moa : moas) {
-				info("[getSecurityRiskDetectionsForFilter] moa is: " + moa.toXmlString());
 				SecurityRiskDetectionPojo pojo = new SecurityRiskDetectionPojo();
 				SecurityRiskDetectionPojo baseline = new SecurityRiskDetectionPojo();
 				this.populateSecurityRiskDetectionPojo(moa, pojo);
@@ -9053,7 +9040,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					" Provisioing Authorization objects from ESB service" + 
 					(filter != null ? " for filter: " + filter.toString() : ""));
 			for (AccountProvisioningAuthorization moa : moas) {
-				info("AccountProvisioningAuthorization: " + moa.toXmlString());
 				AccountProvisioningAuthorizationPojo pojo = new AccountProvisioningAuthorizationPojo();
 				pojo.setUserId(moa.getUserId());
 				pojo.setAuthorized(this.toBooleanFromString(moa.getIsAuthorized()));
@@ -9082,9 +9068,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throw new RpcException(e);
 		} 
 		catch (JMSException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		} 
@@ -9297,7 +9280,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// TODO if more than one returned, it's an error...
 			IncidentPojo pojo = new IncidentPojo();
 			for (Incident moa : result) {
-				info("generated Incident is: " + moa.toXmlString());
 				this.populateIncidentPojo(moa, pojo);
 			}
 			info("Incident.generate is complete...");
@@ -10492,7 +10474,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// TODO if more than one returned, it's an error...
 			VpnConnectionProfileAssignmentPojo pojo = new VpnConnectionProfileAssignmentPojo();
 			for (VpnConnectionProfileAssignment moa : result) {
-				info("generated VpnConnectionProfileAssignment is: " + moa.toXmlString());
 				this.populateVpnConnectionProfileAssignmentPojo(moa, pojo);
 			}
 			info("VpnConnectionProfileAssignment.generate is complete...");
@@ -10615,7 +10596,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<VpnConnectionProvisioning> result = actionable.generate(seed, reqSvc);
 			// TODO if more than one returned, it's an error...
 			for (VpnConnectionProvisioning moa : result) {
-				info("generated VpnConnectionProvisioning is: " + moa.toXmlString());
 				this.populateVpncpPojo(moa, pojo);
 			}
 			info("VpnConnectionProvisioning.generate is complete...");
@@ -10888,7 +10868,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// TODO if more than one returned, it's an error...
 			FirewallExceptionAddRequestPojo pojo = new FirewallExceptionAddRequestPojo();
 			for (FirewallExceptionAddRequest moa : result) {
-				info("generated FirewallExceptionAddRequest is: " + moa.toXmlString());
 				this.populateFirewallExceptionAddRequestPojo(moa, pojo);
 			}
 			info("FirewallExceptionAddRequest.generate is complete...");
@@ -11250,7 +11229,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// TODO if more than one returned, it's an error...
 			FirewallExceptionRemoveRequestPojo pojo = new FirewallExceptionRemoveRequestPojo();
 			for (FirewallExceptionRemoveRequest moa : result) {
-				info("generated FirewallExceptionRemoveRequest is: " + moa.toXmlString());
 				this.populateFirewallExceptionRemoveRequestPojo(moa, pojo);
 			}
 			info("FirewallExceptionRemoveRequest.generate is complete...");
@@ -11504,7 +11482,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			info("[getVpnConnectionsForFilter] got " + moas.size() + " VPN Connection objects back from the server.");
 			for (VpnConnection moa : moas) {
-				info("[getVpnConnectionsForFilter] VpnConnection:  " + moa.toXmlString());
 				VpnConnectionPojo pojo = new VpnConnectionPojo();
 				this.populateVpnConnectionPojo(moa, pojo);
 				pojos.add(pojo);
@@ -12047,7 +12024,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<VpnConnectionDeprovisioning> result = actionable.generate(seed, reqSvc);
 			VpnConnectionDeprovisioningPojo pojo = new VpnConnectionDeprovisioningPojo();
 			for (VpnConnectionDeprovisioning moa : result) {
-				info("generated VpnConnectionDeprovisioning is: " + moa.toXmlString());
 				this.populateVpnDeprovisioningPojo(moa, pojo);
 			}
 			info("VpnConnectionDeprovisioning.generate is complete...");
@@ -13185,7 +13161,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// if more than one returned, it's an error...
 			SecurityRiskDetectionPojo pojo = new SecurityRiskDetectionPojo();
 			for (SecurityRiskDetection moa : result) {
-				info("SRD as XML: " + moa.toXmlString());
 				this.populateSecurityRiskDetectionPojo(moa, pojo);
 			}
 
@@ -13452,7 +13427,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<AccountDeprovisioning> result = actionable.generate(seed, getAWSRequestService());
 			AccountDeprovisioningPojo deprovisionPojo = new AccountDeprovisioningPojo();
 			for (AccountDeprovisioning deprovision : result) {
-				info("generated AccountDeprovisioning is: " + deprovision.toXmlString());
 				this.populateAccountDeprovisioningPojo(deprovision, deprovisionPojo);
 				// set fromProvisioningList to be whatever was passed in the req
 				// so the client side will know where to go back to if the user
@@ -13752,7 +13726,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// TODO if more than one returned, it's an error...
 			RoleProvisioningPojo rpPojo = new RoleProvisioningPojo();
 			for (RoleProvisioning rp : result) {
-				info("generated RoleProvisioning is: " + rp.toXmlString());
 				this.populateRoleProvisioningPojo(rp, rpPojo);
 			}
 			info("RoleProvisioning.generate is complete...");

@@ -156,7 +156,7 @@ public class ListRoleProvisioningPresenter extends PresenterBase implements List
 	@Override
 	public void refreshListWithMaximumRoleProvisionings(UserAccountPojo user) {
         getView().hidePleaseWaitDialog();
-		getView().showPleaseWaitDialog("Retrieving the default maximum list of VPNP objects from the Network OPs service...");
+		getView().showPleaseWaitDialog("Retrieving the default maximum list of Role Provisioning objects from the AWS Account service...");
 
 		filter = new RoleProvisioningQueryFilterPojo();
 		filter.setAllObjects(false);
@@ -168,7 +168,7 @@ public class ListRoleProvisioningPresenter extends PresenterBase implements List
 	@Override
 	public void refreshListWithAllRoleProvisionings(UserAccountPojo user) {
         getView().hidePleaseWaitDialog();
-		getView().showPleaseWaitDialog("Retrieving ALL VPNP objects from the Network OPS service (this could take a while)...");
+		getView().showPleaseWaitDialog("Retrieving ALL Role Provisioning objects from the AWS Account service (this could take a while)...");
 
 		filter = new RoleProvisioningQueryFilterPojo();
 		filter.setAllObjects(true);
