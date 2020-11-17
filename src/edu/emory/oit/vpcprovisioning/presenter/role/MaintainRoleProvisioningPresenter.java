@@ -215,6 +215,7 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 
 	@Override
 	public void saveRoleProvisioning() {
+		getView().showPleaseWaitDialog("Generating a custom role...");
 		List<Widget> fields = getView().getMissingRequiredFields();
 		if (fields != null && fields.size() > 0) {
 			getView().applyStyleToMissingFields(fields);
@@ -226,13 +227,12 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 			getView().resetFieldStyles();
 		}
 
-		// TODO: check to make sure they're not using an existing custom role
+		// check to make sure they're not using an existing custom role
 		AsyncCallback<Boolean> cr_cb = new AsyncCallback<Boolean>() {
-
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
-				
+				getView().hidePleaseWaitDialog();
 			}
 
 			@Override

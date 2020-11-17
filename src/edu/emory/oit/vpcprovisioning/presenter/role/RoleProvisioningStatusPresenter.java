@@ -143,10 +143,6 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 				// refresh display with current status
 				refreshProvisioningStatusForId(provisioningId);
 				
-//				getView().refreshRoleProvisioningStatusInformation();
-//                getView().hidePleaseWaitPanel();
-//                getView().hidePleaseWaitDialog();
-				
 				// start the timer
 				getView().startTimer(5000);
 			}
@@ -288,7 +284,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 								String awsConsoleUrl = getAwsConsoleUrl();
 								String msg = "Your custom role has been "
 									+ "provisioned successfully.  Please visit the "
-									+ "<a href=\"" + awsConsoleUrl + "\" target=\"_blank\">AWS Console</a> "
+									+ "<a href=\"" + awsConsoleUrl + "\" style=\"color:blue\" target=\"_blank\">AWS Console</a> "
 									+ "to attach the appropriate policies and "
 									+ "permissions to this role.  Once you've "
 									+ "secured the role, you can assign users to this role.";
