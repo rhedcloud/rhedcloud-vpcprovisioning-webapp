@@ -3,6 +3,7 @@ package edu.emory.oit.vpcprovisioning.client.desktop;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -68,6 +69,7 @@ public class DesktopMaintainRoleProvisioning extends ViewImplBase implements Mai
 	public void initPage() {
 		accountNameTB.setText(presenter.getAccount().getAccountName());
 		accountIdTB.setText(presenter.getAccount().getAccountId());
+		roleNameTB.setText("");
 		roleNameTB.getElement().setPropertyString("placeholder", "role name (up to 43 characters)");
 	}
 
@@ -85,8 +87,11 @@ public class DesktopMaintainRoleProvisioning extends ViewImplBase implements Mai
 
 	@Override
 	public void setInitialFocus() {
-		// TODO Auto-generated method stub
-		
+		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
+	        public void execute () {
+        		roleNameTB.setFocus(true);
+	        }
+	    });
 	}
 
 	@Override

@@ -69,6 +69,7 @@ import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.Account;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountDeprovisioning;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountNotification;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.AccountProvisioningAuthorization;
+import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.CustomRole;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleDeprovisioning;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.RoleProvisioning;
 import com.amazon.aws.moa.jmsobjects.provisioning.v1_0.VirtualPrivateCloud;
@@ -86,14 +87,16 @@ import com.amazon.aws.moa.objects.resources.v1_0.AccountProvisioningAuthorizatio
 import com.amazon.aws.moa.objects.resources.v1_0.AccountQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.Annotation;
 import com.amazon.aws.moa.objects.resources.v1_0.BillQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.CustomRoleQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.DeprovisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.DetectedSecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.RemediationResult;
-import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRisk;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.SecurityRiskDetectionRequisition;
@@ -6619,9 +6622,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					this.getIDMRequestService());
 			info(tag + "got " + moas.size() + " RoleAssignments back from ESB service.");
 			for (RoleAssignment moa : moas) {
-				info(tag + "RoleAssignment.toXmlString: " + moa.toXmlString());
 				String roleDn = moa.getRoleDN();
 				if (roleDn != null) {
+					info(tag + "RoleAssignment.roleDn: " + roleDn);
 					if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
 						if (roleDn.indexOf("RGR_AWS") >= 0 || 
 							roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 ||
@@ -6923,7 +6926,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		try {
 			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
-				for (String roleName : Constants.ACCOUNT_ROLE_NAMES) {
+				CustomRoleQueryFilterPojo cr_filter = new CustomRoleQueryFilterPojo();
+				cr_filter.setAccountId(accountId);				
+				List<CustomRolePojo> customRoles = this.getCustomRolesForFilter(cr_filter).getResults();
+				
+				List<String> roleNamesToCheck = new java.util.ArrayList<String>();
+				roleNamesToCheck.add(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+				roleNamesToCheck.add(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+				
+				for (CustomRolePojo cr : customRoles) {
+					roleNamesToCheck.add(cr.getRoleName());
+				}
+				
+//				for (String roleName : Constants.ACCOUNT_ROLE_NAMES) {
+				for (String roleName : roleNamesToCheck) {
 					String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 					roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 					roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
@@ -13538,7 +13554,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					queryObject.setQueryLanguage(ql);
 				}
 				else {
-					queryObject.setProvisioningId(filter.getProvisioningId());
+					queryObject.setRoleProvisioningId(filter.getProvisioningId());
 					queryObject.setCreateUser(filter.getCreateUser());
 					queryObject.setLastUpdateUser(filter.getUpdateUser());
 					info("[getRoleProvisioningSummariesForFilter] getting VPNCPs for filter: " + queryObject.toXmlString());
@@ -13571,56 +13587,56 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// ******
 			// now get the role deprovisioning objects  (future maybe)
 			// ******
-			RoleDeprovisioningQuerySpecification deprov_queryObject = (RoleDeprovisioningQuerySpecification) getObject(Constants.MOA_ROLE_DEPROVISIONING_QUERY_SPEC);
-			RoleDeprovisioning deprov_actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
-
-			if (filter != null) {
-				if (filter.isDefaultMaxObjects()) {
-					info("[getRoleDeprovisioningSummariesForFilter] using 'maxRoleDeprovisionings' query language to get Role deprovisioning objecs");
-					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
-					ql.setName("maxRoleDeprovisionings");
-					ql.setType("hql");
-					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
-					deprov_queryObject.setQueryLanguage(ql);
-				}
-				else if (filter.isAllObjects()) {
-					info("[getRoleDeprovisioningSummariesForFilter] using 'allRoleDeprovisionings' query language to get Role Deprovisioning objects");
-					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
-					ql.setName("allRoleDeprovisionings");
-					ql.setType("hql");
-					deprov_queryObject.setQueryLanguage(ql);
-				}
-				else {
-					deprov_queryObject.setDeprovisioningId(filter.getDeprovisioningId());
-					deprov_queryObject.setType(filter.getType());
-					deprov_queryObject.setComplianceClass(filter.getComplianceClass());
-					deprov_queryObject.setCreateUser(filter.getCreateUser());
-					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
-					info("[getRoleProvisioningSummariesForFilter] getting Role Deprovisionings for filter: " + deprov_queryObject.toXmlString());
-				}
-			}
-			else {
-				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all Role Deprovisioning objects from the server");
-			}
-
-			info("RoleDeprovisioningQuerySpecification: " + deprov_queryObject.toXmlString());
-			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
-
-			@SuppressWarnings("unchecked")
-			List<RoleDeprovisioning> deprov_moas = 
-				deprov_actionable.query(deprov_queryObject, reqSvc);
-			
-			info("[getRoleProvisioningSummariesForFilter] got " + deprov_moas.size() + " Role Deprovisioning objects back from the server.");
-			for (RoleDeprovisioning moa : deprov_moas) {
-				RoleDeprovisioningPojo pojo = new RoleDeprovisioningPojo();
-				this.populateRoleDeprovisioningPojo(moa, pojo);
-				RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
-				summary.setDeprovisioning(pojo);
-//				RolePojo role = this.getAccountById(pojo.getRequisition().getAccountId());
-				RolePojo role = new RolePojo();
-				summary.setRole(role);
-				summaries.add(summary);
-			}
+//			RoleDeprovisioningQuerySpecification deprov_queryObject = (RoleDeprovisioningQuerySpecification) getObject(Constants.MOA_ROLE_DEPROVISIONING_QUERY_SPEC);
+//			RoleDeprovisioning deprov_actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
+//
+//			if (filter != null) {
+//				if (filter.isDefaultMaxObjects()) {
+//					info("[getRoleDeprovisioningSummariesForFilter] using 'maxRoleDeprovisionings' query language to get Role deprovisioning objecs");
+//					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+//					ql.setName("maxRoleDeprovisionings");
+//					ql.setType("hql");
+//					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+//					deprov_queryObject.setQueryLanguage(ql);
+//				}
+//				else if (filter.isAllObjects()) {
+//					info("[getRoleDeprovisioningSummariesForFilter] using 'allRoleDeprovisionings' query language to get Role Deprovisioning objects");
+//					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+//					ql.setName("allRoleDeprovisionings");
+//					ql.setType("hql");
+//					deprov_queryObject.setQueryLanguage(ql);
+//				}
+//				else {
+//					deprov_queryObject.setRoleDeprovisioningId(filter.getDeprovisioningId());
+//					deprov_queryObject.setType(filter.getType());
+//					deprov_queryObject.setComplianceClass(filter.getComplianceClass());
+//					deprov_queryObject.setCreateUser(filter.getCreateUser());
+//					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
+//					info("[getRoleProvisioningSummariesForFilter] getting Role Deprovisionings for filter: " + deprov_queryObject.toXmlString());
+//				}
+//			}
+//			else {
+//				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all Role Deprovisioning objects from the server");
+//			}
+//
+//			info("RoleDeprovisioningQuerySpecification: " + deprov_queryObject.toXmlString());
+//			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
+//
+//			@SuppressWarnings("unchecked")
+//			List<RoleDeprovisioning> deprov_moas = 
+//				deprov_actionable.query(deprov_queryObject, reqSvc);
+//			
+//			info("[getRoleProvisioningSummariesForFilter] got " + deprov_moas.size() + " Role Deprovisioning objects back from the server.");
+//			for (RoleDeprovisioning moa : deprov_moas) {
+//				RoleDeprovisioningPojo pojo = new RoleDeprovisioningPojo();
+//				this.populateRoleDeprovisioningPojo(moa, pojo);
+//				RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
+//				summary.setDeprovisioning(pojo);
+////				RolePojo role = this.getAccountById(pojo.getRequisition().getAccountId());
+//				RolePojo role = new RolePojo();
+//				summary.setRole(role);
+//				summaries.add(summary);
+//			}
 			// ******
 			// end role deprovisioning logic
 			// ******
@@ -13658,16 +13674,119 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		
 	}
 
-	private void populateRoleProvisioningPojo(RoleProvisioning moa, RoleProvisioningPojo pojo) {
-		// TODO Auto-generated method stub
+	@SuppressWarnings("unchecked")
+	private void populateRoleProvisioningPojo(RoleProvisioning moa, RoleProvisioningPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setProvisioningId(moa.getRoleProvisioningId());
+		pojo.setStatus(moa.getStatus());
+		pojo.setProvisioningResult(moa.getProvisioningResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getRoleProvisioningRequisition() != null) {
+			RoleProvisioningRequisitionPojo rprp = new RoleProvisioningRequisitionPojo();
+			this.populateRoleProvisioningRequisitionPojo(moa.getRoleProvisioningRequisition(), rprp);
+			pojo.setRequisition(rprp);
+		}
+
+		// provisioningsteps
+		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
+		for (RoleProvisioningStep ps : (List<RoleProvisioningStep>) moa.getRoleProvisioningStep()) {
+			ProvisioningStepPojo psp = new ProvisioningStepPojo();
+			this.populateRoleProvisioningStepPojo(ps, psp);
+			pspList.add(psp);
+		}
+		Collections.sort(pspList);
+		pojo.setProvisioningSteps(pspList);
+
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateRoleProvisioningStepPojo(RoleProvisioningStep moa, ProvisioningStepPojo pojo) {
+		pojo.setProvisioningId(moa.getRoleProvisioningId());
+		pojo.setProvisioningStepId(moa.getRoleProvisioningStepId());
+		pojo.setStepId(moa.getStepId());
+		pojo.setType(moa.getType());
+		pojo.setDescription(moa.getDescription());
+		pojo.setStatus(moa.getStatus());
+		pojo.setStepResult(moa.getStepResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getProperty() != null) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+				pojo.getProperties().put(stepProps.getKey(), stepProps.getValue());
+			}
+		}
+	}
+
+	private void populateRoleProvisioningRequisitionPojo(RoleProvisioningRequisition moa,
+			RoleProvisioningRequisitionPojo pojo) {
 		
+		pojo.setAccountId(moa.getAccountId());
+		pojo.setCustomRoleName(moa.getRoleName());
+//		pojo.setAssigneeUserId(moa.getRoleAssigneeUserId());
+
 	}
 
 	@Override
 	public RoleProvisioningPojo generateRoleProvisioning(RoleProvisioningRequisitionPojo requisition)
 			throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		try {
+			info("generating Custom Role on the server...");
+			RoleProvisioning actionable = (RoleProvisioning) getObject(Constants.MOA_ROLE_PROVISIONING);
+			RoleProvisioningRequisition seed = (RoleProvisioningRequisition) getObject(Constants.MOA_ROLE_PROVISIONING_REQUISITION);
+			info("populating moa");
+			seed.setRoleName(requisition.getCustomRoleName());
+			seed.setAccountId(requisition.getAccountId());
+//			seed.setRoleAssigneeUserId(requisition.getRoleAssigneeUserId);
+
+			
+			info("doing the RoleProvisioning.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("RoleProvisioning.generate seed data is: " + seed.toXmlString());
+			
+			@SuppressWarnings("unchecked")
+			List<RoleProvisioning> result = actionable.generate(seed, getAWSRequestService());
+			// TODO if more than one returned, it's an error...
+			RoleProvisioningPojo rpPojo = new RoleProvisioningPojo();
+			for (RoleProvisioning rp : result) {
+				info("generated RoleProvisioning is: " + rp.toXmlString());
+				this.populateRoleProvisioningPojo(rp, rpPojo);
+			}
+			info("RoleProvisioning.generate is complete...");
+
+			return rpPojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
@@ -13675,6 +13794,69 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public CustomRoleQueryResultPojo getCustomRolesForFilter(CustomRoleQueryFilterPojo filter) throws RpcException {
+		CustomRoleQueryResultPojo result = new CustomRoleQueryResultPojo();
+		List<CustomRolePojo> pojos = new java.util.ArrayList<CustomRolePojo>();
+
+		try {
+			CustomRoleQuerySpecification queryObject = 
+				(CustomRoleQuerySpecification) getObject(Constants.MOA_CUSTOM_ROLE_QUERY_SPEC);
+			CustomRole actionable = (CustomRole) getObject(Constants.MOA_CUSTOM_ROLE);
+	
+			if (filter != null) {
+				queryObject.setAccountId(filter.getAccountId());
+			}
+	
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getCustomRolesForFilter] AuthUserId is: " + 
+					actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<CustomRole> moas = actionable.query(queryObject,
+					this.getAWSRequestService());
+			info("[getCustomRolesForFilter] got " + moas.size() + 
+				" custom roles back from the server for account " + filter.getAccountId()); 
+			
+			for (CustomRole moa : moas) {
+				CustomRolePojo crp = new CustomRolePojo();
+				crp.setAccountId(moa.getAccountId());
+				crp.setCustomRoleId(moa.getCustomRoleId());
+				crp.setRoleName(moa.getRoleName());
+				crp.setIdmRoleName(moa.getIdmRoleName());
+				this.setPojoCreateInfo(crp, moa);
+				this.setPojoUpdateInfo(crp, moa);
+				pojos.add(crp);
+			}
+	
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
 	}
 
 }

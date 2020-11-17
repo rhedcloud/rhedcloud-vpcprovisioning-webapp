@@ -22,6 +22,9 @@ import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.CustomRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.CustomRoleQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.CustomRoleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
@@ -47,6 +50,7 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	private AccountNotificationQueryFilterPojo filter;
 	PropertyPojo selectedProperty;
 	private boolean isCimp=false;
+	private List<CustomRolePojo> existingCustomRoles = new java.util.ArrayList<CustomRolePojo>();
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -120,6 +124,28 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 				}
 			};
 			VpcProvisioningService.Util.getInstance().getAccountById(accountId, acct_cb);
+			
+			// get any custom roles for this account and save them off
+			AsyncCallback<CustomRoleQueryResultPojo> cb = new AsyncCallback<CustomRoleQueryResultPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onSuccess(CustomRoleQueryResultPojo result) {
+					GWT.log("[MaintainAccountPresenter] got " + 
+						result.getResults().size() + " custom roles from the server.");
+					existingCustomRoles = result.getResults();
+					getView().initializeCustomRoleTable();
+					getRoleAssignmentsForAccount();
+				}
+			};
+			CustomRoleQueryFilterPojo cr_filter = new CustomRoleQueryFilterPojo();
+			cr_filter.setAccountId(accountId);
+			VpcProvisioningService.Util.getInstance().getCustomRolesForFilter(cr_filter, cb);
+
 		}
 
 		// indicate whether or not this is a CIMP instance of the Console
@@ -247,9 +273,9 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 						getView().setFieldViolations(false);
 						getView().setInitialFocus();
 						
-						if (isEditing) {
-							getRoleAssignmentsForAccount();
-						}
+//						if (isEditing) {
+//							getRoleAssignmentsForAccount();
+//						}
 						
 						// apply authorization mask
 						if (user.isCentralAdmin()) {
@@ -646,9 +672,18 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 			roleName = Constants.STATIC_TEXT_AUDITOR;
 		}
 		else {
-			roleName = "Unknown";
+			roleName = getRoleNameFromExistingCustomRoles(roleDn);
 		}
 		return roleName;
+	}
+
+	private String getRoleNameFromExistingCustomRoles(String roleDn) {
+		for (CustomRolePojo crp : this.existingCustomRoles) {
+			if (roleDn.indexOf("-" + crp.getRoleName()) >= 0) {
+				return crp.getRoleName();
+			}
+		}
+		return roleDn;
 	}
 
 	@Override
@@ -818,5 +853,10 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	@Override
 	public AccountNotificationQueryFilterPojo getAccountNotificationFilter() {
 		return this.filter;
+	}
+
+	@Override
+	public List<CustomRolePojo> getExistingCustomRoles() {
+		return existingCustomRoles;
 	}
 }

@@ -13,6 +13,7 @@ import edu.emory.oit.vpcprovisioning.presenter.View;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
+import edu.emory.oit.vpcprovisioning.shared.CustomRolePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
@@ -68,6 +69,8 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public void setSelectedProperty(PropertyPojo prop);
 		public PropertyPojo getSelectedProperty();
 		public void updateProperty(PropertyPojo prop);
+		
+		public List<CustomRolePojo> getExistingCustomRoles();
 	}
 
 	/**
@@ -136,4 +139,5 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 
 	public void setCimpInstance(boolean isCimpInstance);
 	public void setFinancialAccountFieldLabel(String label);
+	public void initializeCustomRoleTable();
 }

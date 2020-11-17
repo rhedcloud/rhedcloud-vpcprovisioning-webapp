@@ -151,22 +151,49 @@
 			<!-- Users/Role -->
 			<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_TOP">
 				<g:VerticalPanel spacing="8">
-				<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="adminVP" height="100%">
-					<g:Label addStyleNames="{style.mediumLabel}">Add/remove Users/Roles:</g:Label>
-					<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-							<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
-						</g:cell>
-						<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-							<g:Button ui:field="addAdminButton" debugId="addAdminButton"
-								addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
-						</g:cell>
-					</g:HorizontalPanel>
-					<g:VerticalPanel spacing="8">
-						<g:Label ui:field="adminLabel" addStyleNames="{style.mediumLabel}">Users/Roles associated to this AWS Account:</g:Label>
-						<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
+					<g:VerticalPanel addStyleNames="{style.statusPanel}" spacing="8" ui:field="adminVP" height="100%">
+						<g:Label addStyleNames="{style.mediumLabel}">Add/remove Users/Roles:</g:Label>
+						<g:HorizontalPanel ui:field="addNetIdHP" spacing="16">
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:SuggestBox ui:field="directoryLookupSB" debugId="directoryLookupSB" addStyleNames="{style.field} {style.glowing-border}"/>
+							</g:cell>
+							<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+								<g:Button ui:field="addAdminButton" debugId="addAdminButton"
+									addStyleNames="{style.glowing-border} {style.actionButton}">Add</g:Button>
+							</g:cell>
+						</g:HorizontalPanel>
+						<g:VerticalPanel spacing="8">
+							<g:Label ui:field="adminLabel" addStyleNames="{style.mediumLabel}">Users/Roles associated to this AWS Account:</g:Label>
+							<g:FlexTable ui:field="adminTable" cellSpacing="3" cellPadding="3"/>
+						</g:VerticalPanel>
 					</g:VerticalPanel>
-				</g:VerticalPanel>
+					<g:VerticalPanel ui:field="customRoleListPanel" spacing="8" width="100%" addStyleNames="{style.statusPanel}" >
+						<g:Label addStyleNames="{style.mediumLabel}">Custom Roles Associated to this Account:</g:Label>
+						<g:Grid cellSpacing="8">
+							<g:row>
+								<g:customCell>
+									<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions you can perform on a selected item"/>
+								</g:customCell>
+								<g:customCell>
+									<g:PushButton ui:field="refreshCustomRolesButton" debugId="refreshCustomRolesButton" text="Refresh" 
+										addStyleNames="{style.refreshButton}"
+										title="Refresh table content"/>
+								</g:customCell>
+							</g:row>
+						</g:Grid>
+						<g:Grid>
+							<g:row>
+								<g:customCell>
+									<c:CellTable width="100%" ui:field="customRoleListTable" debugId="customRoleListTable" title="Existing Custom Roles associated to this account"/>
+								</g:customCell>
+							</g:row>
+							<g:row>
+								<g:customCell>
+									<c:SimplePager ui:field="customRoleListPager" debugId="customRoleListPager"/>
+								</g:customCell>
+							</g:row>
+						</g:Grid>
+					</g:VerticalPanel>
 				</g:VerticalPanel>
 			</g:cell>			
 		</g:HorizontalPanel>

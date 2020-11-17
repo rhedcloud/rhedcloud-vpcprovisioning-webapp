@@ -316,4 +316,7 @@ public interface VpcProvisioningService extends RemoteService {
 	RoleProvisioningQueryResultPojo getRoleProvisioningSummariesForFilter(RoleProvisioningQueryFilterPojo filter) throws RpcException;
 	RoleProvisioningPojo generateRoleProvisioning(RoleProvisioningRequisitionPojo requisition) throws RpcException;
 	RoleDeprovisioningPojo generateRoleDeprovisioning(RoleDeprovisioningRequisitionPojo requisition) throws RpcException;
+	
+	// CustomRoles
+	CustomRoleQueryResultPojo getCustomRolesForFilter(CustomRoleQueryFilterPojo filter) throws RpcException;
 }

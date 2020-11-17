@@ -30,6 +30,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 	private RoleDeprovisioningPojo roleDeprovisioning;
 	private RoleProvisioningSummaryPojo roleProvisioningSummary;
 	boolean fromGenerate;
+	private AccountPojo account;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -100,6 +101,8 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 		getView().resetFieldStyles();
 
 		setReleaseInfo(clientFactory);
+		GWT.log("RoleProvisioningStatusPresenter.start: summary account is: " + roleProvisioningSummary.getAccount());
+		account = roleProvisioningSummary.getAccount();
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -350,5 +353,10 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 		// now, create the role assignment and add the role assignment to the account
 		getView().showPleaseWaitDialog("Creating Role Assignment with the IDM service...");
 		VpcProvisioningService.Util.getInstance().createRoleAssignmentForPersonInAccount(roleAssignee.getKey(), account.getAccountId(), roleName, raCallback);
+	}
+
+	@Override
+	public AccountPojo getAccount() {
+		return account;
 	}
 }

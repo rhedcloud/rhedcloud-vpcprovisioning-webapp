@@ -294,5 +294,7 @@ public interface VpcProvisioningServiceAsync {
 	void getRoleProvisioningSummariesForFilter(RoleProvisioningQueryFilterPojo filter, AsyncCallback<RoleProvisioningQueryResultPojo> callback);
 	void generateRoleProvisioning(RoleProvisioningRequisitionPojo requisition, AsyncCallback<RoleProvisioningPojo> callback);
 	void generateRoleDeprovisioning(RoleDeprovisioningRequisitionPojo requisition, AsyncCallback<RoleDeprovisioningPojo> callback);
-	
+
+	// Custom roles
+	void getCustomRolesForFilter(CustomRoleQueryFilterPojo filter, AsyncCallback<CustomRoleQueryResultPojo> callback);
 }

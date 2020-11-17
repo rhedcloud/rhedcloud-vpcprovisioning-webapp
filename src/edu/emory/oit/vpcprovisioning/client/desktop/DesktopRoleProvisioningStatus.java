@@ -76,7 +76,8 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 				}
 				else {
 //					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ROLE_PROVISIONING);
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, presenter.getRoleProvisioningSummary().getAccount());
+					GWT.log("RoleProvisioningStatus: presenter's account is " + presenter.getAccount());
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, presenter.getAccount());
 				}
 			}
 		}, ClickEvent.getType());

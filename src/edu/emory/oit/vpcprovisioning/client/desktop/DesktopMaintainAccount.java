@@ -4,10 +4,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -20,6 +22,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -29,8 +32,10 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -47,6 +52,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
+import com.google.gwt.view.client.SingleSelectionModel;
 
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonRpcSuggestOracle;
 import edu.emory.oit.vpcprovisioning.client.common.DirectoryPersonSuggestion;
@@ -58,6 +64,7 @@ import edu.emory.oit.vpcprovisioning.presenter.account.MaintainAccountView;
 import edu.emory.oit.vpcprovisioning.shared.AccountNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.CustomRolePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryMetaDataPojo;
 import edu.emory.oit.vpcprovisioning.shared.EmailPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
@@ -95,6 +102,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField VerticalPanel notificationListPanel;
 	@UiField(provided=true) SimplePager listPager = new SimplePager(TextLocation.RIGHT, false, true);
 	@UiField(provided=true) CellTable<AccountNotificationPojo> listTable = new CellTable<AccountNotificationPojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+
+	@UiField VerticalPanel customRoleListPanel;
+	@UiField(provided=true) SimplePager customRoleListPager = new SimplePager(TextLocation.RIGHT, false, true);
+	@UiField(provided=true) CellTable<CustomRolePojo> customRoleListTable = new CellTable<CustomRolePojo>(10, (CellTable.Resources)GWT.create(MyCellTableResources.class));
+	private ListDataProvider<CustomRolePojo> customRoleDataProvider = new ListDataProvider<CustomRolePojo>();
+	private SingleSelectionModel<CustomRolePojo> customRoleSelectionModel;
 
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button billSummaryButton;
@@ -140,6 +153,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField FlexTable propertiesTable;
 	
 	@UiField Label speedTypeLabel;
+	@UiField PushButton refreshCustomRolesButton;
+    @UiField Button actionsButton;
 	
 	@UiHandler ("addPropertyButton")
 	void addElasticIpButtonClick(ClickEvent e) {
@@ -373,7 +388,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		}
 		// present a dialog where user must select a role
 		// then pass that role to the add method
-		final RoleSelectionPopup rsp = new RoleSelectionPopup();
+		final RoleSelectionPopup rsp = new RoleSelectionPopup(true);
+		rsp.setExistingCustomRoles(presenter.getExistingCustomRoles());
 		rsp.setAccount(presenter.getAccount());
 		rsp.setEventBus(presenter.getEventBus());
 		rsp.setAssigneeName(directoryLookupSB.getText());
@@ -467,6 +483,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	public DesktopMaintainAccount() {
 		initWidget(uiBinder.createAndBindUi(this));
 		setRefreshButtonImage(refreshButton);
+		setRefreshButtonImage(refreshCustomRolesButton);
 		GWT.log("maintain account view init...");
 		cancelButton.addDomHandler(new ClickHandler() {
 			@Override
@@ -1258,6 +1275,93 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	    updateTime.setCellStyleNames("tableAnchor");
 		listTable.addColumn(updateTime, "Update Time");
 	}
+	
+	private Widget initializeCustomRoleListTable() {
+		GWT.log("initializing custom role list table...");
+		customRoleListTable.setTableLayoutFixed(false);
+		customRoleListTable.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.DISABLED);
+		
+		// set range to display
+		customRoleListTable.setVisibleRange(0, 5);
+		
+		// create dataprovider
+		customRoleDataProvider = new ListDataProvider<CustomRolePojo>();
+		customRoleDataProvider.addDataDisplay(customRoleListTable);
+		customRoleDataProvider.getList().clear();
+		customRoleDataProvider.getList().addAll(presenter.getExistingCustomRoles());
+		
+		customRoleSelectionModel = 
+	    	new SingleSelectionModel<CustomRolePojo>(CustomRolePojo.KEY_PROVIDER);
+		customRoleListTable.setSelectionModel(customRoleSelectionModel);
+		
+	    ListHandler<CustomRolePojo> sortHandler = 
+	    	new ListHandler<CustomRolePojo>(customRoleDataProvider.getList());
+	    listTable.addColumnSortHandler(sortHandler);
+
+	    if (listTable.getColumnCount() == 0) {
+		    initCustomRoleListTableColumns(sortHandler);
+	    }
+		
+		return listTable;
+	}
+	
+	private void initCustomRoleListTableColumns(ListHandler<CustomRolePojo> sortHandler) {
+
+	    Column<CustomRolePojo, Boolean> checkColumn = new Column<CustomRolePojo, Boolean>(
+		        new CheckboxCell(true, false)) {
+		      @Override
+		      public Boolean getValue(CustomRolePojo object) {
+		        // Get the value from the selection model.
+		        return customRoleSelectionModel.isSelected(object);
+		      }
+	    };
+	    customRoleListTable.addColumn(checkColumn, SafeHtmlUtils.fromSafeConstant("<br/>"));
+	    customRoleListTable.setColumnWidth(checkColumn, 40, Unit.PX);
+
+		// role name column
+		Column<CustomRolePojo, String> nameColumn = 
+				new Column<CustomRolePojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(CustomRolePojo object) {
+				return object.getRoleName();
+			}
+		};
+		nameColumn.setSortable(true);
+		sortHandler.setComparator(nameColumn, new Comparator<CustomRolePojo>() {
+			public int compare(CustomRolePojo o1, CustomRolePojo o2) {
+				return o1.getRoleName().compareTo(o2.getRoleName());
+			}
+		});
+		nameColumn.setCellStyleNames("tableAnchor");
+		customRoleListTable.addColumn(nameColumn, "Role Name");
+		
+		Column<CustomRolePojo, String> createTime = 
+				new Column<CustomRolePojo, String> (new ClickableTextCell()) {
+
+			@Override
+			public String getValue(CustomRolePojo object) {
+				Date createTime = object.getCreateTime();
+				return createTime != null ? dateFormat.format(createTime) : "Unknown";
+			}
+		};
+		createTime.setSortable(true);
+		sortHandler.setComparator(createTime, new Comparator<CustomRolePojo>() {
+			public int compare(CustomRolePojo o1, CustomRolePojo o2) {
+				GWT.log("account notification create time sort handler...");
+				Date c1 = o1.getCreateTime();
+				Date c2 = o2.getCreateTime();
+				if (c1 == null || c2 == null) {
+					return 0;
+				}
+				return c1.compareTo(c2);
+			}
+		});
+	    createTime.setCellStyleNames("tableAnchor");
+		customRoleListTable.addColumn(createTime, "Create Time");
+	}
+	
+	
 	@Override
 	public void disableButtons() {
 		
@@ -1306,5 +1410,50 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@Override
 	public void setFinancialAccountFieldLabel(String label) {
 		speedTypeLabel.setText(label);
+	}
+
+	@Override
+	public void initializeCustomRoleTable() {
+		// initialized the custom roles table
+		initializeCustomRoleListTable();
+		customRoleListPager.setDisplay(customRoleListTable);
+
+	}
+
+	@UiHandler("actionsButton")
+	void actionsButtonClicked(ClickEvent e) {
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    Grid grid = new Grid(1, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+	    
+	    String anchorText = "De-Provision Custom Role";
+
+		Anchor maintainAnchor = new Anchor(anchorText);
+		maintainAnchor.addStyleName("productAnchor");
+		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		maintainAnchor.setTitle("De-provision the selected custom role");
+		maintainAnchor.ensureDebugId(anchorText);
+		maintainAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				CustomRolePojo m = customRoleSelectionModel.getSelectedObject();
+				if (m != null) {
+					showMessageToUser("De-Provision custom role (" + m.getRoleName() + "/" + m.getIdmRoleName() + ") Comming soon");
+//					getAppShell().addBreadCrumb("Maintain Account", ActionNames.MAINTAIN_ACCOUNT, m);
+//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, maintainAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
 	}
 }

@@ -24,6 +24,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
+import edu.emory.oit.vpcprovisioning.shared.CustomRolePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 
 public class RoleSelectionPopup extends PopupPanel {
@@ -35,6 +36,7 @@ public class RoleSelectionPopup extends PopupPanel {
 	AccountPojo account;
 	EventBus eventBus;
 	private DirectoryPersonPojo assignee;
+	private List<CustomRolePojo> existingCustomRoles = new java.util.ArrayList<CustomRolePojo>();
 
 	public RoleSelectionPopup() {
 		this(false, false);
@@ -67,15 +69,7 @@ public class RoleSelectionPopup extends PopupPanel {
 			mainPanel.add(h);
 		}
 		
-		// TEMP: hard coding some existing custom roles
-//		List<String> existingCustomRoles = new java.util.ArrayList<String>();
-//		for (int i=1; i<6; i++) {
-//			existingCustomRoles.add(new String("ExistingCustomRoleAtFourtyThreeCharacters " + i));
-//		}
-		// END TEMP
-		
-//	    Grid rbGrid = new Grid(existingCustomRoles.size() + 2, 1);
-	    Grid rbGrid = new Grid(2, 1);
+	    Grid rbGrid = new Grid(existingCustomRoles.size() + 2, 1);
 	    rbGrid.setCellSpacing(8);
 	    mainPanel.add(rbGrid);
 	    
@@ -90,18 +84,20 @@ public class RoleSelectionPopup extends PopupPanel {
 	    rbGrid.setWidget(0, 0, adminRB);
 	    rbGrid.setWidget(1, 0, auditorRB);
 	    
-		// TEMP: hard coding some existing custom roles
-//	    for (int i=0; i<existingCustomRoles.size(); i++) {
-//		    final RadioButton customRB = new RadioButton("roles", existingCustomRoles.get(i));
-//		    customRB.getElement().getStyle().setPadding(10, Unit.PX);
-//		    customRB.getElement().getStyle().setFontSize(16, Unit.PX);
-//		    
-//		    rbGrid.setWidget(i+2, 0, customRB);
-//	    }
-		// END TEMP
+		// add existing custom roles that were passed in when this popup was initialized
+	    GWT.log("RoleSelectionPopup: adding " + existingCustomRoles.size() 
+	    	+ " custom roles to the popup.");
+	    final List<RadioButton> customRoleRadioButtons = new java.util.ArrayList<RadioButton>();
+	    for (int i=0; i<existingCustomRoles.size(); i++) {
+		    final RadioButton customRB = new RadioButton("roles", existingCustomRoles.get(i).getRoleName());
+		    customRB.getElement().getStyle().setPadding(10, Unit.PX);
+		    customRB.getElement().getStyle().setFontSize(16, Unit.PX);
+		    
+		    rbGrid.setWidget(i+2, 0, customRB);
+		    customRoleRadioButtons.add(customRB);
+	    }
 	    
-//	    Grid buttonGrid = new Grid(1, 3);
-	    Grid buttonGrid = new Grid(1, 2);
+	    Grid buttonGrid = new Grid(1, 3);
 	    buttonGrid.setCellSpacing(8);
 	    mainPanel.add(buttonGrid);
 	    mainPanel.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
@@ -122,9 +118,26 @@ public class RoleSelectionPopup extends PopupPanel {
 				}
 				else {
 					// TODO: they may have selected an existing custom role
-					setRoleSelected(false);
-					VpcpAlert.alert("Missing Information", "Please select a role name");
-					return;
+					boolean isCustomRole = false;
+					rbLoop: for (RadioButton rb : customRoleRadioButtons) {
+						if (rb.getValue()) {
+							String roleName = rb.getText();
+							for (CustomRolePojo crp : existingCustomRoles) {
+								if (crp.getRoleName().equalsIgnoreCase(roleName)) {
+									GWT.log("IDM Role for " + roleName + " is: " + crp.getIdmRoleName());
+									setRoleSelected(true);
+									setSelectedRoleName(crp.getRoleName());
+									isCustomRole = true;
+									break rbLoop;
+								}
+							}
+						}
+					}
+					if (!isCustomRole) {
+						setRoleSelected(false);
+						VpcpAlert.alert("Missing Information", "Please select a role name");
+						return;
+					}
 				}
 				hide();
 			}
@@ -140,20 +153,21 @@ public class RoleSelectionPopup extends PopupPanel {
 			}
 	    });
 
-//	    Button generateButton = new Button("Generate");
-//	    applyNormalButtonStyles(generateButton);
-//	    generateButton.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
+	    Button generateButton = new Button("Generate");
+	    applyNormalButtonStyles(generateButton);
+	    generateButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
 //				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAssignee(), getAccount());
-//				setGenerate(true);
-//				hide();
-//			}
-//	    });
+				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAccount());
+				setGenerate(true);
+				hide();
+			}
+	    });
 
 	    buttonGrid.setWidget(0, 0, okayButton);
 	    buttonGrid.setWidget(0, 1, cancelButton);
-//	    buttonGrid.setWidget(0, 2, generateButton);
+	    buttonGrid.setWidget(0, 2, generateButton);
 	}
 
 	private void applyNormalButtonStyles(Button b) {
@@ -256,6 +270,14 @@ public class RoleSelectionPopup extends PopupPanel {
 
 	public void setAssignee(DirectoryPersonPojo directoryPerson) {
 		this.assignee = directoryPerson;
+	}
+
+	public List<CustomRolePojo> getExistingCustomRoles() {
+		return existingCustomRoles;
+	}
+
+	public void setExistingCustomRoles(List<CustomRolePojo> existingCustomRoles) {
+		this.existingCustomRoles = existingCustomRoles;
 	}
 
 }

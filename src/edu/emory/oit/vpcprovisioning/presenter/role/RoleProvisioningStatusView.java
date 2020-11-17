@@ -39,6 +39,7 @@ public interface RoleProvisioningStatusView extends Editor<RoleProvisioningPojo>
 		public boolean isFromGenerate();
 		public void setFromGenerate(boolean fromGenerate);
 		public void addDirectoryPersonInRoleToAccount(DirectoryPersonPojo roleAssignee, AccountPojo account, String roleName);
+		public AccountPojo getAccount();
 	}
 
 	/**
