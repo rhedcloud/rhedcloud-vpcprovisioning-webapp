@@ -141,14 +141,14 @@ public class DesktopListRoleProvisioning extends ViewImplBase implements ListRol
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(2, 1);
+		Grid grid = new Grid(1, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
 		Anchor assignAnchor = new Anchor("View Status");
 		assignAnchor.addStyleName("productAnchor");
 		assignAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		assignAnchor.setTitle("View status of selected VPCP");
+		assignAnchor.setTitle("View status of selected item");
 		assignAnchor.ensureDebugId(assignAnchor.getText());
 		assignAnchor.addClickHandler(new ClickHandler() {
 			@Override
@@ -182,35 +182,35 @@ public class DesktopListRoleProvisioning extends ViewImplBase implements ListRol
 //		});
 //		grid.setWidget(1, 0, generateRoleAnchor);
 
-		Anchor deprovisionAnchor = new Anchor("De-Provisiong Role");
-		deprovisionAnchor.addStyleName("productAnchor");
-		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deprovisionAnchor.setTitle("De-Provision selected item");
-		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
-		deprovisionAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				RoleProvisioningSummaryPojo m = selectionModel.getSelectedObject();
-				if (m != null) {
-					if (userLoggedIn.isCentralAdmin() || 
-						userLoggedIn.isAdminForAccount(m.getProvisioning().getRequisition().getAccountId())) {
-						if (!m.isProvision()) {
-							showMessageToUser("You cannot de-provision Role that is NOT in a provisioned status.");
-							return;
-						}
-						presenter.deprovisionRole(m.getProvisioning().getRequisition());
-					}
-					else {
-						showMessageToUser("You are not authorized to perform this action.");
-					}
-				} 
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
-			}
-		});
-		grid.setWidget(1, 0, deprovisionAnchor);
+//		Anchor deprovisionAnchor = new Anchor("De-Provisiong Role");
+//		deprovisionAnchor.addStyleName("productAnchor");
+//		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		deprovisionAnchor.setTitle("De-Provision selected item");
+//		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
+//		deprovisionAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				RoleProvisioningSummaryPojo m = selectionModel.getSelectedObject();
+//				if (m != null) {
+//					if (userLoggedIn.isCentralAdmin() || 
+//						userLoggedIn.isAdminForAccount(m.getProvisioning().getRequisition().getAccountId())) {
+//						if (!m.isProvision()) {
+//							showMessageToUser("You cannot de-provision Role that is NOT in a provisioned status.");
+//							return;
+//						}
+//						presenter.deprovisionRole(m.getProvisioning().getRequisition());
+//					}
+//					else {
+//						showMessageToUser("You are not authorized to perform this action.");
+//					}
+//				} 
+//				else {
+//					showMessageToUser("Please select an item from the list");
+//				}
+//			}
+//		});
+//		grid.setWidget(1, 0, deprovisionAnchor);
 		
 		actionsPopup.showRelativeTo(actionsButton);
 	}
