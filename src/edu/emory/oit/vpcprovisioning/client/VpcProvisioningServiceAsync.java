@@ -297,4 +297,6 @@ public interface VpcProvisioningServiceAsync {
 
 	// Custom roles
 	void getCustomRolesForFilter(CustomRoleQueryFilterPojo filter, AsyncCallback<CustomRoleQueryResultPojo> callback);
+	void getAwsConsoleURL(AsyncCallback<String> callback);
+	void isExistingCustomRoleInAccount(String accountId, String roleName, AsyncCallback<Boolean> callback);
 }

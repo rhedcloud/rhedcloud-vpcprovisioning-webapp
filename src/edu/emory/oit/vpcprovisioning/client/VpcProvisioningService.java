@@ -319,4 +319,7 @@ public interface VpcProvisioningService extends RemoteService {
 	
 	// CustomRoles
 	CustomRoleQueryResultPojo getCustomRolesForFilter(CustomRoleQueryFilterPojo filter) throws RpcException;
+	String getAwsConsoleURL() throws RpcException;
+	boolean isExistingCustomRoleInAccount(String accountId, String roleName) throws RpcException;
+
 }

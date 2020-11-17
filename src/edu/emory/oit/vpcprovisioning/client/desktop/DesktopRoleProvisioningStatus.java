@@ -240,6 +240,7 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 				if (presenter.getRoleProvisioningSummary().isProvision()) {
 					presenter.refreshProvisioningStatusForId(presenter.getRoleProvisioning().getProvisioningId());
 					if (presenter.getRoleProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+						GWT.log("[DesktopRoleProvisioningStatus.startTimer.run] provisioning is complete, time to stop the timer...");
 						stopTimer();
 
 						// TODO: if the provisioning run was successful and 
@@ -261,6 +262,7 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 				else {
 					presenter.refreshProvisioningStatusForId(presenter.getRoleDeprovisioning().getDeprovisioningId());
 					if (presenter.getRoleDeprovisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+						GWT.log("[DesktopRoleProvisioningStatus.startTimer.run] de-provisioning is complete, time to stop the timer...");
 						stopTimer();
 					}
 				}
@@ -273,6 +275,7 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 
 	@Override
 	public void stopTimer() {
+		GWT.log("[RoleProvisioningStatus VIEW] stopping timer...");
 		startTimer = false;
 		if (timer != null) {
 			timer.cancel();
@@ -287,7 +290,7 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 
 	@Override
 	public void refreshProvisioningStatusInformation() {
-		GWT.log("[DesktopVpcpStatus.refreshVpcpStatusInformation]");
+		GWT.log("[DesktopRolProvisioningStatus.refreshProvisioningStatusInformation]");
 
 		if (presenter.getRoleProvisioningSummary().isProvision()) {
 			provisioningIdLabel.setText(presenter.getRoleProvisioning().getProvisioningId());
@@ -365,8 +368,6 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 		HTML hDescription = new HTML(psp.getDescription());
 		HTML hStatus = new HTML(psp.getStatus());
 		HTML hResult = new HTML(psp.getStepResult());
-		GWT.log("PSP anticipated time is: " + psp.getAnticipatedTime());
-		GWT.log("PSP actual time is: " + psp.getActualTime());
 		HTML hAnticipatedTime = new HTML(formatMillisForDisplay(psp.getAnticipatedTime()));
 		HTML hActualTime = new HTML(formatMillisForDisplay(psp.getActualTime()));
 		stepsGrid.setWidget(gridRow, 0, hStepId);
@@ -435,17 +436,15 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 					}
 					if (startTime != 0) {
 						NumberFormat df2 = NumberFormat.getFormat("#00.##");
-						GWT.log("Start time formated: " + new java.util.Date(startTime));
 						String s_anticipatedTime = psp.getAnticipatedTime();
 						double anticipatedTime = Double.parseDouble(s_anticipatedTime);
 						double currentTime = System.currentTimeMillis();
-						GWT.log("Current time formated: " + new java.util.Date((long)currentTime));
 						double elapsedTime = currentTime - startTime;
 						StringBuffer s_elapsedHtml = new StringBuffer();
 						s_elapsedHtml.append(formatMillisForDisplay(Double.toString(elapsedTime)) + " ");
 						double raw = (elapsedTime / anticipatedTime);
 						double pctComplete = new Double(df2.format(raw)).doubleValue() * 100;
-						GWT.log("PCT Complete: " + pctComplete);
+						GWT.log("Step: " + psp.getStepId() + " PCT Complete: " + pctComplete);
 						s_elapsedHtml.append("(" + pctComplete + "%)");
 						HTML hElapsedTime = new HTML(s_elapsedHtml.toString());
 						stepsGrid.getColumnFormatter().setWidth(6, "200px");

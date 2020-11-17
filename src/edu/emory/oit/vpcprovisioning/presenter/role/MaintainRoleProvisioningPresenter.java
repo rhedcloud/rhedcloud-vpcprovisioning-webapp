@@ -225,56 +225,81 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 		else {
 			getView().resetFieldStyles();
 		}
-		
-		final AsyncCallback<RoleProvisioningPojo> roleProvisioningCallback = new AsyncCallback<RoleProvisioningPojo>() {
+
+		// TODO: check to make sure they're not using an existing custom role
+		AsyncCallback<Boolean> cr_cb = new AsyncCallback<Boolean>() {
+
 			@Override
 			public void onFailure(Throwable caught) {
-				getView().hidePleaseWaitDialog();
-				GWT.log("Exception generating the RoleProvisioning", caught);
-				getView().showMessageToUser("There was an exception on the " +
-						"server generating the RoleProvisioning.  Message " +
-						"from server is: " + caught.getMessage());
+				// TODO Auto-generated method stub
+				
 			}
 
 			@Override
-			public void onSuccess(RoleProvisioningPojo result) {
-				getView().hidePleaseWaitDialog();
-				// if it was a generate, we'll take them to the RoleProvisioning status view
-				// So we won't go directly back
-				// to the list just yet but instead, we'll show them an immediate 
-				// status and give them the opportunity to watch it for a bit
-				// before they go back.  So, we'll only fire the VPCP_SAVED event 
-				// when/if it's an update and not on the generate.  As of right now
-				// we don't think there will be a VPCP update so the update handling 
-				// stuff is just here to maintain consistency and if we ever decide
-				// a VPCP can be updated, we'll already have the flow here.
-				if (!isEditing) {
-					// show RoleProvisioning status page
-					roleProvisioning = result;
-					GWT.log("RoleProvisioning was generated on the server, showing status page.  "
-							+ "RoleProvisioning object is: " + roleProvisioning);
-					RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
-					summary.setProvisioning(roleProvisioning);
-					summary.setAccount(getAccount());
-					summary.setAssignee(getAssignee());
-					
-					ActionEvent.fire(eventBus, ActionNames.ROLE_PROVISIONING_GENERATED, summary);
+			public void onSuccess(Boolean result) {
+				if (result) {
+					getView().showMessageToUser("Please enter a role name that "
+						+ "does not already exist in this account.");
 				}
 				else {
-					// go back to the list VPCP page (this will likely never happen)
-					ActionEvent.fire(eventBus, ActionNames.ROLE_PROVISIONING_SAVED, roleProvisioning);
+					final AsyncCallback<RoleProvisioningPojo> roleProvisioningCallback = new AsyncCallback<RoleProvisioningPojo>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							getView().hidePleaseWaitDialog();
+							GWT.log("Exception generating the RoleProvisioning", caught);
+							getView().showMessageToUser("There was an exception on the " +
+									"server generating the RoleProvisioning.  Message " +
+									"from server is: " + caught.getMessage());
+						}
+
+						@Override
+						public void onSuccess(RoleProvisioningPojo result) {
+							getView().hidePleaseWaitDialog();
+							// if it was a generate, we'll take them to the RoleProvisioning status view
+							// So we won't go directly back
+							// to the list just yet but instead, we'll show them an immediate 
+							// status and give them the opportunity to watch it for a bit
+							// before they go back.  So, we'll only fire the VPCP_SAVED event 
+							// when/if it's an update and not on the generate.  As of right now
+							// we don't think there will be a VPCP update so the update handling 
+							// stuff is just here to maintain consistency and if we ever decide
+							// a VPCP can be updated, we'll already have the flow here.
+							if (!isEditing) {
+								// show RoleProvisioning status page
+								roleProvisioning = result;
+								GWT.log("RoleProvisioning was generated on the server, showing status page.  "
+										+ "RoleProvisioning object is: " + roleProvisioning);
+								RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
+								summary.setProvisioning(roleProvisioning);
+								summary.setAccount(getAccount());
+								summary.setAssignee(getAssignee());
+								
+								ActionEvent.fire(eventBus, ActionNames.ROLE_PROVISIONING_GENERATED, summary);
+							}
+							else {
+								// go back to the list VPCP page (this will likely never happen)
+								ActionEvent.fire(eventBus, ActionNames.ROLE_PROVISIONING_SAVED, roleProvisioning);
+							}
+						}
+					};
+
+					if (!isEditing) {
+						// it's a generate
+						VpcProvisioningService.Util.getInstance().generateRoleProvisioning(roleRequisition, roleProvisioningCallback);
+					}
+					else {
+						// it's an update
+//							VpcProvisioningService.Util.getInstance().updateVpncp(vpcp, callback);
+					}
 				}
 			}
 		};
-
-		if (!this.isEditing) {
-			// it's a generate
-			VpcProvisioningService.Util.getInstance().generateRoleProvisioning(roleRequisition, roleProvisioningCallback);
-		}
-		else {
-			// it's an update
-//				VpcProvisioningService.Util.getInstance().updateVpncp(vpcp, callback);
-		}
+		VpcProvisioningService.Util.getInstance().
+			isExistingCustomRoleInAccount(
+				getAccount().getAccountId(), 
+				getRoleProvisioningRequisition().getCustomRoleName(), 
+				cr_cb);
+		
 	}
 
 	@Override

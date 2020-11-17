@@ -13832,4 +13832,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		} 
 	}
 
+	@Override
+	public String getAwsConsoleURL() throws RpcException {
+		try {
+			Properties props = getAppConfig().getProperties(AWS_URL_PROPERTIES);
+			return props.getProperty("awsConsoleURL", "'awsConsoleURL' propery not found");
+		} catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	@Override
+	public boolean isExistingCustomRoleInAccount(String accountId, String roleName) throws RpcException {
+		CustomRoleQueryFilterPojo filter = new CustomRoleQueryFilterPojo();
+		filter.setAccountId(accountId);
+		CustomRoleQueryResultPojo result = this.getCustomRolesForFilter(filter);
+		
+		for (CustomRolePojo crp : result.getResults()) {
+			if (crp.getRoleName().equalsIgnoreCase(roleName.trim())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
 }

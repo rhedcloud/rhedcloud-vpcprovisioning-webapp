@@ -14,7 +14,6 @@ import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
-import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningQueryFilterPojo;
@@ -31,6 +30,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 	private RoleProvisioningSummaryPojo roleProvisioningSummary;
 	boolean fromGenerate;
 	private AccountPojo account;
+	private String awsConsoleUrl;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -103,6 +103,20 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 		setReleaseInfo(clientFactory);
 		GWT.log("RoleProvisioningStatusPresenter.start: summary account is: " + roleProvisioningSummary.getAccount());
 		account = roleProvisioningSummary.getAccount();
+		
+		AsyncCallback<String> url_cb = new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				awsConsoleUrl = result;
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAwsConsoleURL(url_cb);
 		
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 			@Override
@@ -266,6 +280,20 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 						setRoleProvisioning(result.getResults().get(0).getProvisioning());
 						if (roleProvisioning.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
 							getView().stopTimer();
+							
+							GWT.log("[RoleProvisioningStatusPresenter.refreshProvisioningStatusForId] role provisioning isSuccessful: " + roleProvisioning.isSuccessful());
+							if (roleProvisioning.isSuccessful()) {
+								// tell the user their role has been provisioned
+								// and they can go to the AWS console to attache policies now
+								String awsConsoleUrl = getAwsConsoleUrl();
+								String msg = "Your custom role has been "
+									+ "provisioned successfully.  Please visit the "
+									+ "<a href=\"" + awsConsoleUrl + "\" target=\"_blank\">AWS Console</a> "
+									+ "to attach the appropriate policies and "
+									+ "permissions to this role.  Once you've "
+									+ "secured the role, you can assign users to this role.";
+								getView().showMessageToUser(msg);
+							}
 						}
 					}
 					else {
@@ -358,5 +386,10 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 	@Override
 	public AccountPojo getAccount() {
 		return account;
+	}
+	
+	@Override
+	public String getAwsConsoleUrl() {
+		return awsConsoleUrl;
 	}
 }
