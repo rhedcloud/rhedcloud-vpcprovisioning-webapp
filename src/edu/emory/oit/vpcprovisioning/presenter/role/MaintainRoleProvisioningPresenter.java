@@ -238,6 +238,7 @@ public class MaintainRoleProvisioningPresenter extends PresenterBase implements 
 			@Override
 			public void onSuccess(Boolean result) {
 				if (result) {
+					getView().hidePleaseWaitDialog();
 					getView().showMessageToUser("Please enter a role name that "
 						+ "does not already exist in this account.");
 				}

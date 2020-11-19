@@ -68,17 +68,12 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 			@Override
 			public void onClick(ClickEvent event) {
 				stopTimer();
-				if (presenter.isFromGenerate()) {
-					// need to account for vpn connection deprovision generates here too
-					// if it's from a generate BUT is a deprovision, we'll want to go to GO_HOME_VPNCP
-					// because that's where VPNs are deprovisioned from
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_VPN_CONNECTION_PROFILE);
+				GWT.log("RoleProvisioningStatus: presenter's account is " + presenter.getAccount());
+				
+				if (!presenter.getRoleProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.CHECK_ROLE_PROVISIONING_STATUS, presenter.getRoleProvisioningSummary());
 				}
-				else {
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_ROLE_PROVISIONING);
-					GWT.log("RoleProvisioningStatus: presenter's account is " + presenter.getAccount());
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, presenter.getAccount());
-				}
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, presenter.getAccount());
 			}
 		}, ClickEvent.getType());
 		

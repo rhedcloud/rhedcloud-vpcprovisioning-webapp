@@ -222,4 +222,5 @@ public interface ActionNames {
 	final String ROLE_PROVISIONING_EDITING_CANCELED = "roleProvisioningEditingCanceled";
 //	final String ROLE_DEPROVISIONING_GENERATED_FROM_PROVISIONING_LIST = "accountDeprovisioningGeneratedFromProvisioningList";
 //	final String ROLE_PROVISIONING_GENERATED_FROM_PROVISIONING_LIST = "accountDeprovisioningGeneratedFromProvisioningList";
+	final String CHECK_ROLE_PROVISIONING_STATUS = "checkRoleProvisioningStatus";
 }

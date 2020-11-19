@@ -249,7 +249,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 					getView().stopTimer();
 	                getView().hidePleaseWaitPanel();
 	                getView().hidePleaseWaitDialog();
-					GWT.log("Something weird.  No VPN Connections found for provisioningId " + provisioningId);
+					GWT.log("Something weird.  No role provisioning objectsfound for provisioningId " + provisioningId);
 					getView().showMessageToUser("An unexpected situation has "
 							+ "occurred.  The server did not return a result "
 							+ "for the query specification used "
@@ -261,7 +261,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 					getView().stopTimer();
 	                getView().hidePleaseWaitPanel();
 	                getView().hidePleaseWaitDialog();
-					GWT.log("Something weird.  More than one VPN Connection found for provisioningId " + provisioningId);
+					GWT.log("Something weird.  More than one role provisioning object found for provisioningId " + provisioningId);
 					getView().showMessageToUser("An unexpected situation has "
 							+ "occurred.  The server returned more than one VPN Connection "
 							+ "for the query specification used "

@@ -11,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.place.shared.Place;
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -25,6 +26,7 @@ import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.UmbrellaException;
 
 import edu.emory.oit.vpcprovisioning.client.activity.AppPlaceHistoryMapper;
+import edu.emory.oit.vpcprovisioning.client.common.VpcpAlert;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.account.ListAccountPlace;
@@ -95,6 +97,10 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.MaintainVpnConnectionProvisio
 import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.ReleaseInfo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningQueryResultPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
 public class AppBootstrapper {
@@ -130,6 +136,9 @@ public class AppBootstrapper {
 	private final ClientFactory clientFactory;
 	
 	UserAccountPojo userLoggedIn;
+	boolean startTimer = true;
+	Timer timer;
+	private String awsConsoleUrl;
 
 	public AppBootstrapper( 
 			ClientFactory clientFactory,
@@ -182,6 +191,20 @@ public class AppBootstrapper {
 		vp.setCellVerticalAlignment(message, HasVerticalAlignment.ALIGN_MIDDLE);
 		
 		parentView.add(pleaseWaitPanel);
+		
+		AsyncCallback<String> url_cb = new AsyncCallback<String>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				awsConsoleUrl = result;
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAwsConsoleURL(url_cb);
+
 
 		shell.initializeAwsServiceMap();
 
@@ -1928,6 +1951,72 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.CHECK_ROLE_PROVISIONING_STATUS, new ActionEvent.Handler() {
+			@Override
+			public void onAction(final ActionEvent event) {
+				timer = new Timer() {
+		            @Override
+		            public void run() {
+		            	RoleProvisioningSummaryPojo rpsp = event.getRoleProvisioningSummary();
+		            	if (rpsp != null) {
+							if (rpsp.isProvision()) {
+								AsyncCallback<RoleProvisioningQueryResultPojo> callback = new AsyncCallback<RoleProvisioningQueryResultPojo>() {
+									@Override
+									public void onFailure(Throwable caught) {
+										stopTimer();
+									}
+
+									@Override
+									public void onSuccess(RoleProvisioningQueryResultPojo result) {
+										GWT.log("Got " + result.getResults().size() + 
+												" RoleProvisionings for the filter: " + result.getFilterUsed());
+
+										RoleProvisioningPojo rp = result.getResults().get(0).getProvisioning();
+										if (rp.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+											GWT.log("[DesktopRoleProvisioningStatus.startTimer.run] provisioning is complete, time to stop the timer...");
+											stopTimer();
+
+											GWT.log("[RoleProvisioningStatusPresenter.refreshProvisioningStatusForId] role provisioning isSuccessful: " + rp.isSuccessful());
+											if (rp.isSuccessful()) {
+												// tell the user their role has been provisioned
+												// and they can go to the AWS console to attache policies now
+												String msg = "Your custom role has been "
+													+ "provisioned successfully.  Please visit the "
+													+ "<a href=\"" + awsConsoleUrl + "\" style=\"color:blue\" target=\"_blank\">AWS Console</a> "
+													+ "to attach the appropriate policies and "
+													+ "permissions to this role.  Once you've "
+													+ "secured the role, you can assign users to this role.";
+												
+												VpcpAlert.alert("Alert", msg);
+											}
+										}
+									}
+								};
+								RoleProvisioningQueryFilterPojo filter = new RoleProvisioningQueryFilterPojo();
+								filter.setProvisioningId(rpsp.getProvisioning().getProvisioningId());
+								VpcProvisioningService.Util.getInstance().getRoleProvisioningSummariesForFilter(filter, callback);
+
+							}
+							else {
+								stopTimer();
+//								presenter.refreshProvisioningStatusForId(presenter.getRoleDeprovisioning().getDeprovisioningId());
+//								if (presenter.getRoleDeprovisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+//									GWT.log("[DesktopRoleProvisioningStatus.startTimer.run] de-provisioning is complete, time to stop the timer...");
+//									stopTimer();
+//								}
+							}
+		            	}
+		            	else {
+							stopTimer();
+		            	}
+		            }
+		        };
+
+		        // Schedule the timer to close the popup in 3 seconds.
+		        timer.scheduleRepeating(3000);
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {
@@ -2164,5 +2253,13 @@ public class AppBootstrapper {
 //				}
 //			});
 //		}
+	}
+
+	public void stopTimer() {
+		GWT.log("[RoleProvisioningStatus VIEW] stopping timer...");
+		startTimer = false;
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 }
