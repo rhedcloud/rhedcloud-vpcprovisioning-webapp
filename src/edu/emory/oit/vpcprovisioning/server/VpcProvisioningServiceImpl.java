@@ -1008,9 +1008,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// we'll externalize this eventually
 		String[] accountRoleNames = new String[] {
-				"c_admin",
-				"admin",
-				"auditor"
+				Constants.ROLE_NAME_GROUPER_CENTRAL_ADMIN,
+				Constants.ROLE_NAME_GROUPER_ADMIN,
+				Constants.ROLE_NAME_GROUPER_AUDITOR,
+				Constants.ROLE_NAME_GROUPER_NETWORK_ADMIN
 		};
 
 		for (String roleName : accountRoleNames) {
@@ -1028,7 +1029,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					info(tag + "roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
 					info(tag + "user.PublicId=" + user.getPublicId());
 					if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
-						if (roleName.equalsIgnoreCase("c_admin")) {
+						if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_GROUPER_CENTRAL_ADMIN)) {
 							// user is a central admin in this account
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
@@ -1046,7 +1047,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							// doesn't need to go any further
 							break accountLoop;
 						}
-						else if (roleName.equalsIgnoreCase("admin")) {
+						else if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_GROUPER_ADMIN)) {
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setAccountId(account.getAccountId());
 							arp.setAccountName(account.getAccountName());
@@ -1055,12 +1056,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							user.addAccountRole(arp);
 							break raLoop;
 						}
-						else if (roleName.equalsIgnoreCase("auditor")) {
+						else if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_GROUPER_AUDITOR)) {
 							// user is an auditor in this account
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setAccountId(account.getAccountId());
 							arp.setAccountName(account.getAccountName());
 							arp.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+							info(tag + "adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+							user.addAccountRole(arp);
+							break raLoop;
+						}
+						else if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_GROUPER_NETWORK_ADMIN)) {
+							// user is a network admin
+							AccountRolePojo arp = new AccountRolePojo();
+							arp.setAccountId(account.getAccountId());
+							arp.setAccountName(account.getAccountName());
+							arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
 							info(tag + "adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 							user.addAccountRole(arp);
 							break raLoop;
@@ -6046,6 +6057,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		FirewallRuleQueryResultPojo result = new FirewallRuleQueryResultPojo();
+		boolean firewallServiceEnabled = Boolean.parseBoolean(
+				generalProps.getProperty("firewallServiceEnabled", "true").
+				trim().toLowerCase());
+		if (!firewallServiceEnabled) {
+			return result;
+		}
+		
 		List<FirewallRulePojo> pojos = new java.util.ArrayList<FirewallRulePojo>();
 		try {
 			FirewallRuleQuerySpecification queryObject = (FirewallRuleQuerySpecification) getObject(Constants.MOA_FIREWALL_RULE_QUERY_SPEC);
@@ -6507,7 +6525,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						roleDns.addDistinguishedName(accountId + ":" + "admin");
 					}
 					else if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
-						roleDns.addDistinguishedName(accountId + ":" + "auditor");
+						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_AUDITOR);
 						
 					}
 					requisition.setRoleDNs(roleDns);
@@ -6526,10 +6544,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					
 					if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 						// change the roleDNs back to the common values
-						if (generated.getRoleDN().indexOf(":admin") >= 0) {
+						if (generated.getRoleDN().indexOf(":" + Constants.ROLE_NAME_GROUPER_ADMIN) >= 0) {
 							generated.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 						}
-						else if (generated.getRoleDN().indexOf(":auditor") >= 0) {
+						else if (generated.getRoleDN().indexOf(":" + Constants.ROLE_NAME_GROUPER_AUDITOR) >= 0) {
 							generated.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
 						}
 						info("RoleAssignment after Grouper specific mods: " + generated.toXmlString());
@@ -6688,7 +6706,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info(tag + "got " + accounts.size() + " accounts from getAllAccounts");
 
 		UserAccountPojo user = this.getUserLoggedIn(false);
-		String roleName = "c_admin";
+		String roleName = Constants.ROLE_NAME_GROUPER_CENTRAL_ADMIN;
 		List<String> idsAdded = new java.util.ArrayList<String>();
 		for (AccountPojo account : accounts) {
 			info(tag + "Processing " + roleName + " role assignments for account: " + account.getAccountId());
@@ -6993,9 +7011,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			else if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 				// we'll externalize this eventually
 				String[] accountRoleNames = new String[] {
-//						"c_admin",
-						"admin",
-						"auditor"
+						Constants.ROLE_NAME_GROUPER_ADMIN,
+						Constants.ROLE_NAME_GROUPER_AUDITOR
 				};
 				for (String roleName : accountRoleNames) {
 					info(tag + "Processing " + roleName + " role assignments for account: " + accountId);
@@ -7007,10 +7024,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (ra_result != null) {
 						if (ra_result.getResults().size() > 0) {
 							for (RoleAssignmentPojo ra : ra_result.getResults()) {
-								if (ra.getRoleDN().toLowerCase().indexOf(":admin") >= 0) {
+								if (ra.getRoleDN().toLowerCase().indexOf(":" + Constants.ROLE_NAME_GROUPER_ADMIN) >= 0) {
 									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 								}
-								else if (ra.getRoleDN().toLowerCase().indexOf(":auditor") >= 0) {
+								else if (ra.getRoleDN().toLowerCase().indexOf(":" + Constants.ROLE_NAME_GROUPER_AUDITOR) >= 0) {
 									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
 								}
 								// get directoryperson for publicid
@@ -7104,12 +7121,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 					RoleDNs roleDns = moa.newRoleDNs();
 					if (roleAssignment.getRoleDN().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
-						moa.setRoleDN(accountId + ":admin");
-						roleDns.addDistinguishedName(accountId + ":admin"); 
+						moa.setRoleDN(accountId + ":" + Constants.ROLE_NAME_GROUPER_ADMIN);
+						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_ADMIN); 
 					}
 					else if (roleAssignment.getRoleDN().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
-						moa.setRoleDN(accountId + ":auditor");
-						roleDns.addDistinguishedName(accountId + ":auditor"); 
+						moa.setRoleDN(accountId + ":" + Constants.ROLE_NAME_GROUPER_AUDITOR);
+						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_AUDITOR); 
 					}
 					moa.setRoleDNs(roleDns);
 				}
@@ -12231,7 +12248,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (user.isCentralAdmin()) {
 			try {
 				info("getConsoleFeaturesForFilter: central admin");
-				props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
+				props = getAppConfig().getProperties(
+						CONSOLE_FEATURES_PROPERTY_PREFIX + 
+						Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
 				
@@ -12240,7 +12259,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else if (user.isNetworkAdmin()) {
 			try {
 				info("getConsoleFeaturesForFilter: network admin");
-				props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
+				props = getAppConfig().getProperties(
+						CONSOLE_FEATURES_PROPERTY_PREFIX + 
+						Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
 				
@@ -12251,7 +12272,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// account admin and account auditor
 			try {
 				info("getConsoleFeaturesForFilter: account admin OR auditor");
-				props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+				props = getAppConfig().getProperties(
+						CONSOLE_FEATURES_PROPERTY_PREFIX + 
+						Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 			} 
 			catch (EnterpriseConfigurationObjectException e) {
 				
