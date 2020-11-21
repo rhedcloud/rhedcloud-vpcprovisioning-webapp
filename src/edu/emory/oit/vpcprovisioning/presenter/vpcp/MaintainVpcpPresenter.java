@@ -405,40 +405,49 @@ public class MaintainVpcpPresenter extends PresenterBase implements MaintainVpcp
 					getView().setFieldViolations(true);
 				}
 				else {
-//				    DateTimeFormat dateFormat = DateTimeFormat.getFormat("yyyy-MM-dd");
 					speedType = scp;
 					String deptId = scp.getDepartmentId();
-					String deptDesc = scp.getDepartmentDescription();
 					String desc = scp.getDescription();
-				    String euValidityDesc = scp.getEuValidityDescription();
-				    String statusDescString = euValidityDesc + "\n" + 
-				    		deptId + " | " + deptDesc + "\n" +
-				    		desc;
-				    String statusDescHTML = "<b>" + euValidityDesc + "<br>" + 
-				    		deptId + " | " + deptDesc + "<br>" +
-				    		desc + "<b>";
-					w.setTitle(statusDescString);
-					getView().setSpeedTypeStatus(statusDescHTML);
-					if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
-						getView().setSpeedTypeColor(Constants.COLOR_GREEN);
-						w.getElement().getStyle().setBackgroundColor(null);
-						getView().setFieldViolations(false);
-						if (confirmSpeedType) {
-							didConfirmSpeedType();
-						}
-					}
-					else if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_INVALID)) {
-						getView().setSpeedTypeColor(Constants.COLOR_RED);
-						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);
-						getView().setFieldViolations(true);
-					}
-					else {
+				    if (deptId == null) {
+				    	// un-validated
+						w.setTitle(desc);
+						getView().setSpeedTypeStatus(desc);
 						getView().setSpeedTypeColor(Constants.COLOR_ORANGE);
-						w.getElement().getStyle().setBackgroundColor(Constants.COLOR_FIELD_WARNING);
-						if (confirmSpeedType) {
-							didConfirmSpeedType();
+						// don't confirm the speedchart
+				    }
+				    else {
+						String deptDesc = scp.getDepartmentDescription();
+					    String euValidityDesc = scp.getEuValidityDescription();
+					    String statusDescString = euValidityDesc + "\n" + 
+					    		deptId + " | " + deptDesc + "\n" +
+					    		desc;
+					    String statusDescHTML = "<b>" + euValidityDesc + "<br>" + 
+					    		deptId + " | " + deptDesc + "<br>" +
+					    		desc + "<b>";
+						w.setTitle(statusDescString);
+						getView().setSpeedTypeStatus(statusDescHTML);
+
+						if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_VALID)) {
+							getView().setSpeedTypeColor(Constants.COLOR_GREEN);
+							w.getElement().getStyle().setBackgroundColor(null);
+							getView().setFieldViolations(false);
+							if (confirmSpeedType) {
+								didConfirmSpeedType();
+							}
 						}
-					}
+						else if (scp.getValidCode().equalsIgnoreCase(Constants.SPEED_TYPE_INVALID)) {
+							getView().setSpeedTypeColor(Constants.COLOR_RED);
+							w.getElement().getStyle().setBackgroundColor(Constants.COLOR_INVALID_FIELD);
+							getView().setFieldViolations(true);
+						}
+						else {
+							getView().setSpeedTypeColor(Constants.COLOR_ORANGE);
+							w.getElement().getStyle().setBackgroundColor(Constants.COLOR_FIELD_WARNING);
+							if (confirmSpeedType) {
+								didConfirmSpeedType();
+							}
+						}
+				    }
 				}
 			}
 		};

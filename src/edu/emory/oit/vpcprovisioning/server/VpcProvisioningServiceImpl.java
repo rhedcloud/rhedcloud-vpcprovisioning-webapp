@@ -283,7 +283,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	List<UserNotificationPojo> notificationList = new java.util.ArrayList<UserNotificationPojo>();
 	List<AWSServicePojo> serviceList = new java.util.ArrayList<AWSServicePojo>();
 
-
+	boolean validateFinancialAccounts = true;
+	boolean firewallServiceEnabled = true;
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -419,6 +421,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			applicationEnvironment = generalProps.getProperty("applicationEnvironment", "DEV");
 //			refreshMasterBillData();
+			
+			firewallServiceEnabled = Boolean.parseBoolean(
+					generalProps.getProperty("firewallServiceEnabled", "true").
+					trim().toLowerCase());
+			
+			validateFinancialAccounts = Boolean.parseBoolean(
+					generalProps.getProperty("validateFinancialAccounts", "true").
+					trim().toLowerCase());
 		} 
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
@@ -5782,7 +5792,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				SpeedChartCache.getCache().put(accountNumber, cachedScp);
 			}
 			else {
-				return null;
+				if (validateFinancialAccounts) {
+					return null;
+				}
+				else {
+					// return a speed chart but make it so they know
+					// there isn't any validation going on.
+					SpeedChartPojo scp = new SpeedChartPojo();
+					scp.setDepartmentId(null);
+					scp.setDescription("Validation Disabled");
+					return scp;
+				}
 			}
 		}
 		else {
@@ -5795,6 +5815,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public SpeedChartQueryResultPojo getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter) throws RpcException {
 		SpeedChartQueryResultPojo result = new SpeedChartQueryResultPojo();
 		List<SpeedChartPojo> pojos = new java.util.ArrayList<SpeedChartPojo>();
+		
+		if (!validateFinancialAccounts) {
+			result.setResults(pojos);
+			return result;
+		}
+
 		try {
 			SPEEDCHART_QUERY queryObject = (SPEEDCHART_QUERY) getObject(Constants.MOA_SPEEDCHART_QUERY_SPEC);
 			SPEEDCHART actionable = (SPEEDCHART) getObject(Constants.MOA_SPEEDCHART);
@@ -6057,14 +6083,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		FirewallRuleQueryResultPojo result = new FirewallRuleQueryResultPojo();
-		boolean firewallServiceEnabled = Boolean.parseBoolean(
-				generalProps.getProperty("firewallServiceEnabled", "true").
-				trim().toLowerCase());
+		List<FirewallRulePojo> pojos = new java.util.ArrayList<FirewallRulePojo>();
 		if (!firewallServiceEnabled) {
+			result.setResults(pojos);
 			return result;
 		}
 		
-		List<FirewallRulePojo> pojos = new java.util.ArrayList<FirewallRulePojo>();
 		try {
 			FirewallRuleQuerySpecification queryObject = (FirewallRuleQuerySpecification) getObject(Constants.MOA_FIREWALL_RULE_QUERY_SPEC);
 			FirewallRule actionable = (FirewallRule) getObject(Constants.MOA_FIREWALL_RULE);
