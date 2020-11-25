@@ -2032,6 +2032,13 @@ public class AppBootstrapper {
 			}
 		});
 
+		ActionEvent.register(eventBus, ActionNames.ROLE_DEPROVISIONING_GENERATED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(RoleProvisioningStatusPlace.createRoleProvisioningStatusPlace(event.getRoleProvisioningSummary()));
+			}
+		});
+
 		ActionEvent.register(eventBus, ActionNames.GENERATE_VPN_CONNECTION_PROVISIONING, new ActionEvent.Handler() {
 			@Override
 			public void onAction(ActionEvent event) {

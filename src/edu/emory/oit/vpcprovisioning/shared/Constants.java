@@ -243,6 +243,7 @@ public class Constants implements IsSerializable {
 	public static final String MOA_ROLE_PROVISIONING_REQUISITION = "RoleProvisioningRequisition.v1_0";
 	public static final String MOA_ROLE_DEPROVISIONING_QUERY_SPEC = "RoleDeprovisioningQuerySpecification.v1_0";
 	public static final String MOA_ROLE_DEPROVISIONING = "RoleDeprovisioning.v1_0";
+	public static final String MOA_ROLE_DEPROVISIONING_REQUISITION = "RoleDeprovisioningRequisition.v1_0";
 	public static final String LIST_ROLE_PROVISIONING = "listRoleProvisioning";
 	public static final String ROLE_PROVISIONING_STATUS = "roleProvisioningStatus";
 	public static final String MOA_CUSTOM_ROLE = "CustomRole.v1_0";

@@ -1443,9 +1443,10 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				actionsPopup.hide();
 				CustomRolePojo m = customRoleSelectionModel.getSelectedObject();
 				if (m != null) {
-					showMessageToUser("De-Provision custom role (" + m.getRoleName() + "/" + m.getIdmRoleName() + ") Comming soon");
-//					getAppShell().addBreadCrumb("Maintain Account", ActionNames.MAINTAIN_ACCOUNT, m);
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, m);
+					presenter.getRoleDeprovisioningRequisition().setAccountId(m.getAccountId());
+					presenter.getRoleDeprovisioningRequisition().setRequestorId(userLoggedIn.getPublicId());
+					presenter.getRoleDeprovisioningRequisition().setCustomRoleName(m.getRoleName());
+					presenter.deprovisionCustomRole();
 				}
 				else {
 					showMessageToUser("Please select an item from the list");

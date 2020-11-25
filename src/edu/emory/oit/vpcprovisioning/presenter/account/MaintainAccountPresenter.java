@@ -29,6 +29,10 @@ import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleDeprovisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleDeprovisioningRequisitionPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.SecurityRiskDetectionQueryResultPojo;
@@ -51,6 +55,8 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	PropertyPojo selectedProperty;
 	private boolean isCimp=false;
 	private List<CustomRolePojo> existingCustomRoles = new java.util.ArrayList<CustomRolePojo>();
+	private RoleDeprovisioningRequisitionPojo roleDeprovisioningRequisition;
+	private RoleDeprovisioningPojo roleDeprovisioning;
 
 	/**
 	 * Indicates whether the activity is editing an existing case record or creating a
@@ -858,5 +864,45 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 	@Override
 	public List<CustomRolePojo> getExistingCustomRoles() {
 		return existingCustomRoles;
+	}
+
+	@Override
+	public void deprovisionCustomRole() {
+		getView().showPleaseWaitPanel("Retrieving Role Provisioning status, please wait...");
+		final AsyncCallback<RoleDeprovisioningPojo> roleProvisioningCallback = new AsyncCallback<RoleDeprovisioningPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception generating the RoleDeprovisioning", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server generating the RoleDeprovisioning.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(RoleDeprovisioningPojo result) {
+				getView().hidePleaseWaitDialog();
+				// show RoleProvisioning status page
+				roleDeprovisioning = result;
+				GWT.log("RoleDeprovisioning was generated on the server, showing status page.  "
+						+ "RoleDeprovisioning object is: " + roleDeprovisioning.getDeprovisioningId());
+				RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
+				summary.setDeprovisioning(roleDeprovisioning);
+				summary.setAccount(getAccount());
+				
+				ActionEvent.fire(eventBus, ActionNames.ROLE_DEPROVISIONING_GENERATED, summary);
+			}
+		};
+
+		VpcProvisioningService.Util.getInstance().generateRoleDeprovisioning(roleDeprovisioningRequisition, roleProvisioningCallback);
+
+	}
+
+	@Override
+	public RoleDeprovisioningRequisitionPojo getRoleDeprovisioningRequisition() {
+		if (roleDeprovisioningRequisition == null) {
+			roleDeprovisioningRequisition = new RoleDeprovisioningRequisitionPojo();
+		}
+		return roleDeprovisioningRequisition;
 	}
 }

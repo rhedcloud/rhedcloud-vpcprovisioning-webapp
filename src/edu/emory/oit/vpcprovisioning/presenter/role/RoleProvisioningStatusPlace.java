@@ -46,12 +46,10 @@ public class RoleProvisioningStatusPlace extends Place {
 	 * @return the place
 	 */
 	public static RoleProvisioningStatusPlace createRoleProvisioningStatusPlace(RoleProvisioningSummaryPojo roleProvisioningSummary) {
-		// START:  TEMPORARY
 		if (roleProvisioningSummary.getProvisioning() == null) {
 			roleProvisioningSummary.setProvisioning(new RoleProvisioningPojo());
-			roleProvisioningSummary.getProvisioning().setProvisioningId("sample role provisioning id");
+			roleProvisioningSummary.getProvisioning().setProvisioningId(roleProvisioningSummary.getDeprovisioning().getDeprovisioningId());
 		}
-		// END:  TEMPORARY
 		if (roleProvisioningSummary.isProvision()) {
 			return new RoleProvisioningStatusPlace(roleProvisioningSummary.getProvisioning().getProvisioningId(), roleProvisioningSummary);
 		}

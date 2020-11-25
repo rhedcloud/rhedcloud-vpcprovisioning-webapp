@@ -69,9 +69,12 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 			public void onClick(ClickEvent event) {
 				stopTimer();
 				GWT.log("RoleProvisioningStatus: presenter's account is " + presenter.getAccount());
-				
-				if (!presenter.getRoleProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-					ActionEvent.fire(presenter.getEventBus(), ActionNames.CHECK_ROLE_PROVISIONING_STATUS, presenter.getRoleProvisioningSummary());
+				if (presenter.getRoleProvisioningSummary().isProvision()) {
+					if (!presenter.getRoleProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+						// this starts a timer that will keep checking the 
+						// status and show a dialog when/if it completes
+						ActionEvent.fire(presenter.getEventBus(), ActionNames.CHECK_ROLE_PROVISIONING_STATUS, presenter.getRoleProvisioningSummary());
+					}
 				}
 				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_ACCOUNT, presenter.getAccount());
 			}

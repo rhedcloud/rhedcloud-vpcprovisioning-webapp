@@ -17,6 +17,7 @@ import edu.emory.oit.vpcprovisioning.shared.CustomRolePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.RoleAssignmentSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.RoleDeprovisioningRequisitionPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
@@ -71,6 +72,8 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public void updateProperty(PropertyPojo prop);
 		
 		public List<CustomRolePojo> getExistingCustomRoles();
+		public void deprovisionCustomRole();
+		public RoleDeprovisioningRequisitionPojo getRoleDeprovisioningRequisition();
 	}
 
 	/**

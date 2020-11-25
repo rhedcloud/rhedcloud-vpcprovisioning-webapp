@@ -124,7 +124,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
                 getView().hidePleaseWaitPanel();
                 getView().hidePleaseWaitDialog();
                 getView().disableButtons();
-				GWT.log("Exception Retrieving Vpcs", caught);
+				GWT.log("Exception Retrieving UserLoggedIn", caught);
 				getView().showMessageToUser("There was an exception on the " +
 						"server retrieving the user logged in.  " +
 						"<p>Message from server is: " + caught.getMessage() + "</p>");
@@ -132,7 +132,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 
 			@Override
 			public void onSuccess(final UserAccountPojo user) {
-				clientFactory.getShell().setSubTitle("VPN Connection Status");
+				clientFactory.getShell().setSubTitle("Role Provisioning/Deprovisioning Status");
 				getView().enableButtons();
 				getView().setUserLoggedIn(user);
 				// TODO: depending on how the scheduler works, we may not need 
@@ -263,7 +263,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 	                getView().hidePleaseWaitDialog();
 					GWT.log("Something weird.  More than one role provisioning object found for provisioningId " + provisioningId);
 					getView().showMessageToUser("An unexpected situation has "
-							+ "occurred.  The server returned more than one VPN Connection "
+							+ "occurred.  The server returned Role Provisioning Summaries "
 							+ "for the query specification used "
 							+ "(provisioningId=" + provisioningId + ").  This "
 									+ "is an unexpected situation that may need "
@@ -306,8 +306,10 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 		};
 
 		GWT.log("[PRESENTER] refreshing RoleProvisioning object for provisioning id:  " + provisioningId);
-        getView().showPleaseWaitDialog("Retrieving VPNCP Summaries for the provisioning id: " + provisioningId);
+        getView().showPleaseWaitDialog("Retrieving Role Provisioning Summaries for the provisioning id: " + provisioningId);
 		RoleProvisioningQueryFilterPojo filter = new RoleProvisioningQueryFilterPojo();
+		filter.setAllObjects(false);
+		filter.setDefaultMaxObjects(false);
 		filter.setProvisioningId(provisioningId);
 		VpcProvisioningService.Util.getInstance().getRoleProvisioningSummariesForFilter(filter, callback);
 	}

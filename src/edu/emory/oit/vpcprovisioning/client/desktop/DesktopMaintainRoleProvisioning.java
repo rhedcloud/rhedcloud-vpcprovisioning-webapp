@@ -51,7 +51,7 @@ public class DesktopMaintainRoleProvisioning extends ViewImplBase implements Mai
 
 	@UiHandler ("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-		// TODO: populate requisition object
+		// populate requisition object
 		presenter.getRoleProvisioningRequisition().setAccountId(presenter.getAccount().getAccountId());
 		presenter.getRoleProvisioningRequisition().setRequestorId(userLoggedIn.getPublicId());
 		presenter.getRoleProvisioningRequisition().setCustomRoleName(roleNameTB.getText());

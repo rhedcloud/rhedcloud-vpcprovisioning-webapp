@@ -8,6 +8,7 @@ public class RoleDeprovisioningRequisitionPojo extends SharedObject implements I
 	String accountId;
 	String requestorId;
 	boolean fromProvisioningList;
+	String customRoleName;
 	
 	public RoleDeprovisioningRequisitionPojo() {
 		
@@ -35,6 +36,14 @@ public class RoleDeprovisioningRequisitionPojo extends SharedObject implements I
 
 	public String getRequestorId() {
 		return requestorId;
+	}
+
+	public void setCustomRoleName(String roleName) {
+		this.customRoleName = roleName;
+	}
+
+	public String getCustomRoleName() {
+		return customRoleName;
 	}
 
 }

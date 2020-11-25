@@ -36,6 +36,7 @@ import edu.emory.oit.vpcprovisioning.shared.CidrAssignmentSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrPojo;
 import edu.emory.oit.vpcprovisioning.shared.CidrSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.CounterMeasurePojo;
+import edu.emory.oit.vpcprovisioning.shared.CustomRolePojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentPojo;
 import edu.emory.oit.vpcprovisioning.shared.ElasticIpAssignmentSummaryPojo;
@@ -145,6 +146,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private RoleProvisioningPojo roleProvisioning;
 	private RoleProvisioningRequisitionPojo roleProvisioningRequisition;
 	private DirectoryPersonPojo roleAssignee;
+	private CustomRolePojo customRole;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -881,6 +883,10 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.roleProvisioningRequisition = rprp;
 	}
 
+	public ActionEvent(CustomRolePojo m) {
+		this.customRole = m;
+	}
+
 	@Override
 	public final Type<ActionEvent.Handler> getAssociatedType() {
 		return TYPE;
@@ -1338,6 +1344,19 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setRoleAssignee(DirectoryPersonPojo roleAssignee) {
 		this.roleAssignee = roleAssignee;
+	}
+
+	public static void fire(EventBus eventBus, String generateRoleDeprovisioning, CustomRolePojo m) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(m), generateRoleDeprovisioning);
+	}
+
+	public CustomRolePojo getCustomRole() {
+		return customRole;
+	}
+
+	public void setCustomRole(CustomRolePojo customRole) {
+		this.customRole = customRole;
 	}
 
 }

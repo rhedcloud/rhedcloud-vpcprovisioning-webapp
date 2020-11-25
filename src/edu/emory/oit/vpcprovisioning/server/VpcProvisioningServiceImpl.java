@@ -94,6 +94,9 @@ import com.amazon.aws.moa.objects.resources.v1_0.EmailAddress;
 import com.amazon.aws.moa.objects.resources.v1_0.LineItem;
 import com.amazon.aws.moa.objects.resources.v1_0.ProvisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.RemediationResult;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningQuerySpecification;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningRequisition;
+import com.amazon.aws.moa.objects.resources.v1_0.RoleDeprovisioningStep;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningQuerySpecification;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningRequisition;
 import com.amazon.aws.moa.objects.resources.v1_0.RoleProvisioningStep;
@@ -13576,13 +13579,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 				else {
 					queryObject.setRoleProvisioningId(filter.getProvisioningId());
-					queryObject.setCreateUser(filter.getCreateUser());
-					queryObject.setLastUpdateUser(filter.getUpdateUser());
-					info("[getRoleProvisioningSummariesForFilter] getting VPNCPs for filter: " + queryObject.toXmlString());
+					info("[getRoleProvisioningSummariesForFilter] getting RoleProvisioningSummaries for filter: " + queryObject.toXmlString());
 				}
 			}
 			else {
-				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all VPNCPs");
+				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all RoleProvisioningSummaries");
 			}
 
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -13608,56 +13609,49 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// ******
 			// now get the role deprovisioning objects  (future maybe)
 			// ******
-//			RoleDeprovisioningQuerySpecification deprov_queryObject = (RoleDeprovisioningQuerySpecification) getObject(Constants.MOA_ROLE_DEPROVISIONING_QUERY_SPEC);
-//			RoleDeprovisioning deprov_actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
-//
-//			if (filter != null) {
-//				if (filter.isDefaultMaxObjects()) {
-//					info("[getRoleDeprovisioningSummariesForFilter] using 'maxRoleDeprovisionings' query language to get Role deprovisioning objecs");
-//					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
-//					ql.setName("maxRoleDeprovisionings");
-//					ql.setType("hql");
-//					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
-//					deprov_queryObject.setQueryLanguage(ql);
-//				}
-//				else if (filter.isAllObjects()) {
-//					info("[getRoleDeprovisioningSummariesForFilter] using 'allRoleDeprovisionings' query language to get Role Deprovisioning objects");
-//					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
-//					ql.setName("allRoleDeprovisionings");
-//					ql.setType("hql");
-//					deprov_queryObject.setQueryLanguage(ql);
-//				}
-//				else {
-//					deprov_queryObject.setRoleDeprovisioningId(filter.getDeprovisioningId());
-//					deprov_queryObject.setType(filter.getType());
-//					deprov_queryObject.setComplianceClass(filter.getComplianceClass());
-//					deprov_queryObject.setCreateUser(filter.getCreateUser());
-//					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
-//					info("[getRoleProvisioningSummariesForFilter] getting Role Deprovisionings for filter: " + deprov_queryObject.toXmlString());
-//				}
-//			}
-//			else {
-//				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all Role Deprovisioning objects from the server");
-//			}
-//
-//			info("RoleDeprovisioningQuerySpecification: " + deprov_queryObject.toXmlString());
-//			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
-//
-//			@SuppressWarnings("unchecked")
-//			List<RoleDeprovisioning> deprov_moas = 
-//				deprov_actionable.query(deprov_queryObject, reqSvc);
-//			
-//			info("[getRoleProvisioningSummariesForFilter] got " + deprov_moas.size() + " Role Deprovisioning objects back from the server.");
-//			for (RoleDeprovisioning moa : deprov_moas) {
-//				RoleDeprovisioningPojo pojo = new RoleDeprovisioningPojo();
-//				this.populateRoleDeprovisioningPojo(moa, pojo);
-//				RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
-//				summary.setDeprovisioning(pojo);
-////				RolePojo role = this.getAccountById(pojo.getRequisition().getAccountId());
-//				RolePojo role = new RolePojo();
-//				summary.setRole(role);
-//				summaries.add(summary);
-//			}
+			RoleDeprovisioningQuerySpecification deprov_queryObject = (RoleDeprovisioningQuerySpecification) getObject(Constants.MOA_ROLE_DEPROVISIONING_QUERY_SPEC);
+			RoleDeprovisioning deprov_actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
+
+			if (filter != null) {
+				if (filter.isDefaultMaxObjects()) {
+					info("[getRoleDeprovisioningSummariesForFilter] using 'maxRoleDeprovisionings' query language to get Role deprovisioning objecs");
+					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+					ql.setName("maxRoleDeprovisionings");
+					ql.setType("hql");
+					ql.setMax(this.toStringFromInt(filter.getMaxRows()));
+					deprov_queryObject.setQueryLanguage(ql);
+				}
+				else if (filter.isAllObjects()) {
+					info("[getRoleDeprovisioningSummariesForFilter] using 'allRoleDeprovisionings' query language to get Role Deprovisioning objects");
+					QueryLanguage ql = deprov_queryObject.newQueryLanguage();
+					ql.setName("allRoleDeprovisionings");
+					ql.setType("hql");
+					deprov_queryObject.setQueryLanguage(ql);
+				}
+				else {
+					deprov_queryObject.setRoleDeprovisioningId(filter.getProvisioningId());
+					info("[getRoleProvisioningSummariesForFilter] getting Role Deprovisionings for filter: " + deprov_queryObject.toXmlString());
+				}
+			}
+			else {
+				info("[getRoleProvisioningSummariesForFilter] no filter passed in.  Getting all Role Deprovisioning objects from the server");
+			}
+
+			info("RoleDeprovisioningQuerySpecification: " + deprov_queryObject.toXmlString());
+			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
+
+			@SuppressWarnings("unchecked")
+			List<RoleDeprovisioning> deprov_moas = 
+				deprov_actionable.query(deprov_queryObject, reqSvc);
+			
+			info("[getRoleProvisioningSummariesForFilter] got " + deprov_moas.size() + " Role Deprovisioning objects back from the server.");
+			for (RoleDeprovisioning moa : deprov_moas) {
+				RoleDeprovisioningPojo pojo = new RoleDeprovisioningPojo();
+				this.populateRoleDeprovisioningPojo(moa, pojo);
+				RoleProvisioningSummaryPojo summary = new RoleProvisioningSummaryPojo();
+				summary.setDeprovisioning(pojo);
+				summaries.add(summary);
+			}
 			// ******
 			// end role deprovisioning logic
 			// ******
@@ -13690,9 +13684,50 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	private void populateRoleDeprovisioningPojo(RoleDeprovisioning moa, RoleDeprovisioningPojo pojo) {
-		// TODO Auto-generated method stub
-		
+	@SuppressWarnings("unchecked")
+	private void populateRoleDeprovisioningPojo(RoleDeprovisioning moa, RoleDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
+		pojo.setDeprovisioningId(moa.getRoleDeprovisioningId());
+		pojo.setStatus(moa.getStatus());
+		pojo.setDeprovisioningResult(moa.getDeprovisioningResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getRoleDeprovisioningRequisition() != null) {
+			RoleProvisioningRequisitionPojo rprp = new RoleProvisioningRequisitionPojo();
+			rprp.setAccountId(moa.getRoleDeprovisioningRequisition().getAccountId());
+			rprp.setCustomRoleName(moa.getRoleDeprovisioningRequisition().getRoleName());
+			pojo.setRequisition(rprp);
+		}
+
+		// provisioningsteps
+		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
+		for (RoleDeprovisioningStep ps : (List<RoleDeprovisioningStep>) moa.getRoleDeprovisioningStep()) {
+			ProvisioningStepPojo psp = new ProvisioningStepPojo();
+			this.populateRoleDeprovisioningStepPojo(ps, psp);
+			pspList.add(psp);
+		}
+		Collections.sort(pspList);
+		pojo.setDeprovisioningSteps(pspList);
+
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void populateRoleDeprovisioningStepPojo(RoleDeprovisioningStep moa, ProvisioningStepPojo pojo) {
+		pojo.setProvisioningId(moa.getRoleDeprovisioningId());
+		pojo.setProvisioningStepId(moa.getRoleDeprovisioningStepId());
+		pojo.setStepId(moa.getStepId());
+		pojo.setType(moa.getType());
+		pojo.setDescription(moa.getDescription());
+		pojo.setStatus(moa.getStatus());
+		pojo.setStepResult(moa.getStepResult());
+		pojo.setActualTime(moa.getActualTime());
+		pojo.setAnticipatedTime(moa.getAnticipatedTime());
+		if (moa.getProperty() != null) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+				pojo.getProperties().put(stepProps.getKey(), stepProps.getValue());
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -13812,8 +13847,62 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public RoleDeprovisioningPojo generateRoleDeprovisioning(RoleDeprovisioningRequisitionPojo requisition)
 			throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+
+		try {
+			info("generating Custom Role DEPROVISIONING on the server...");
+			RoleDeprovisioning actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
+			RoleDeprovisioningRequisition seed = (RoleDeprovisioningRequisition) getObject(Constants.MOA_ROLE_DEPROVISIONING_REQUISITION);
+			info("populating moa");
+			seed.setRoleName(requisition.getCustomRoleName());
+			seed.setAccountId(requisition.getAccountId());
+//			seed.setRoleAssigneeUserId(requisition.getRoleAssigneeUserId);
+
+			
+			info("doing the RoleDeprovisioning.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("RoleDeprovisioning.generate seed data is: " + seed.toXmlString());
+			
+			@SuppressWarnings("unchecked")
+			List<RoleDeprovisioning> result = actionable.generate(seed, getAWSRequestService());
+			// TODO if more than one returned, it's an error...
+			RoleDeprovisioningPojo rpPojo = new RoleDeprovisioningPojo();
+			for (RoleDeprovisioning rp : result) {
+				info("RoleDeprovisioning object generated is: " + rp.toXmlString());
+				this.populateRoleDeprovisioningPojo(rp, rpPojo);
+			}
+			info("RoleDeprovisioning.generate is complete...");
+
+			return rpPojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
