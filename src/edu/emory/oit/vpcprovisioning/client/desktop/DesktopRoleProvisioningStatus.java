@@ -25,9 +25,7 @@ import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.ui.HTMLUtils;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.role.RoleProvisioningStatusView;
-import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
-import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 import edu.emory.oit.vpcprovisioning.shared.ProvisioningStepPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 
@@ -240,21 +238,6 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 					if (presenter.getRoleProvisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
 						GWT.log("[DesktopRoleProvisioningStatus.startTimer.run] provisioning is complete, time to stop the timer...");
 						stopTimer();
-
-						// TODO: if the provisioning run was successful and 
-						// there is an assignee in the summary object, do a 
-						// RoleAssignment.Generate?
-						// IDEALLY, this will all happen as part of the provisioning
-						// process.  So, I think it will be better to try and 
-						// handle that there instead of here.
-//						if (presenter.getRoleProvisioning().isSuccessful() && 
-//							presenter.getRoleProvisioningSummary().getAssignee() != null) {
-//							
-//							DirectoryPersonPojo roleAssignee = presenter.getRoleProvisioningSummary().getAssignee();
-//							AccountPojo account = presenter.getRoleProvisioningSummary().getAccount();
-//							String customRoleName = presenter.getRoleProvisioningSummary().getProvisioning().getRequisition().getCustomRoleName();
-//							presenter.addDirectoryPersonInRoleToAccount(roleAssignee, account, customRoleName);
-//						}
 					}
 				}
 				else {
