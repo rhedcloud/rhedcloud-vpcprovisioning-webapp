@@ -7,7 +7,6 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 import com.google.gwt.place.shared.Prefix;
 
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.IncidentPojo;
 
 public class DeprovisionAccountPlace extends Place {
 	/**

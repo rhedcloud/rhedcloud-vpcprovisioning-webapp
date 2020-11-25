@@ -19,7 +19,6 @@ import edu.emory.oit.vpcprovisioning.shared.AccountQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.AccountQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
-import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
 public class ListAccountPresenter extends PresenterBase implements ListAccountView.Presenter {
 	private static final Logger log = Logger.getLogger(ListAccountPresenter.class.getName());
