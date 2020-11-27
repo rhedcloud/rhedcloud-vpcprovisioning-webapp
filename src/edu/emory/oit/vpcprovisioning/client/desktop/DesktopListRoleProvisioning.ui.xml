@@ -18,7 +18,7 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HTML addStyleNames="{style.mediumLabel}">VPN Connection Provisioning List</g:HTML>
+		<g:HTML addStyleNames="{style.mediumLabel}">Role Provisioning and Deprovisioning List</g:HTML>
 		<g:HTML addStyleNames="{style.body}">Below is a list of Role 
 		Provisioning runs and their status. These objects 
 		represent a Role Provisioning request that is either completed 
@@ -65,7 +65,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<c:CellTable width="100%" ui:field="listTable"  title="Existing VPN Connection Provisioning objects"/>
+						<c:CellTable width="100%" ui:field="listTable"  title="Existing Role Provisioning/Deprovisioning objects"/>
 					</g:customCell>
 				</g:row>
 				<g:row>

@@ -1954,66 +1954,7 @@ public class AppBootstrapper {
 		ActionEvent.register(eventBus, ActionNames.CHECK_ROLE_PROVISIONING_STATUS, new ActionEvent.Handler() {
 			@Override
 			public void onAction(final ActionEvent event) {
-				timer = new Timer() {
-		            @Override
-		            public void run() {
-		            	RoleProvisioningSummaryPojo rpsp = event.getRoleProvisioningSummary();
-		            	if (rpsp != null) {
-							if (rpsp.isProvision()) {
-								AsyncCallback<RoleProvisioningQueryResultPojo> callback = new AsyncCallback<RoleProvisioningQueryResultPojo>() {
-									@Override
-									public void onFailure(Throwable caught) {
-										stopTimer();
-									}
-
-									@Override
-									public void onSuccess(RoleProvisioningQueryResultPojo result) {
-										GWT.log("Got " + result.getResults().size() + 
-												" RoleProvisionings for the filter: " + result.getFilterUsed());
-
-										RoleProvisioningPojo rp = result.getResults().get(0).getProvisioning();
-										if (rp.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-											GWT.log("[DesktopRoleProvisioningStatus.startTimer.run] provisioning is complete, time to stop the timer...");
-											stopTimer();
-
-											GWT.log("[RoleProvisioningStatusPresenter.refreshProvisioningStatusForId] role provisioning isSuccessful: " + rp.isSuccessful());
-											if (rp.isSuccessful()) {
-												// tell the user their role has been provisioned
-												// and they can go to the AWS console to attache policies now
-												String msg = "Your custom role has been "
-													+ "provisioned successfully.  Please visit the "
-													+ "<a href=\"" + awsConsoleUrl + "\" style=\"color:blue\" target=\"_blank\">AWS Console</a> "
-													+ "to attach the appropriate policies and "
-													+ "permissions to this role.  Once you've "
-													+ "secured the role, you can assign users to this role.";
-												
-												VpcpAlert.alert("Alert", msg);
-											}
-										}
-									}
-								};
-								RoleProvisioningQueryFilterPojo filter = new RoleProvisioningQueryFilterPojo();
-								filter.setProvisioningId(rpsp.getProvisioning().getProvisioningId());
-								VpcProvisioningService.Util.getInstance().getRoleProvisioningSummariesForFilter(filter, callback);
-
-							}
-							else {
-								stopTimer();
-//								presenter.refreshProvisioningStatusForId(presenter.getRoleDeprovisioning().getDeprovisioningId());
-//								if (presenter.getRoleDeprovisioning().getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
-//									GWT.log("[DesktopRoleProvisioningStatus.startTimer.run] de-provisioning is complete, time to stop the timer...");
-//									stopTimer();
-//								}
-							}
-		            	}
-		            	else {
-							stopTimer();
-		            	}
-		            }
-		        };
-
-		        // Schedule the timer to close the popup in 3 seconds.
-		        timer.scheduleRepeating(3000);
+				startTimer(event.getRoleProvisioningSummary());
 			}
 		});
 
@@ -2262,8 +2203,65 @@ public class AppBootstrapper {
 //		}
 	}
 
-	public void stopTimer() {
-		GWT.log("[RoleProvisioningStatus VIEW] stopping timer...");
+	private void startTimer(final RoleProvisioningSummaryPojo rpsp) {
+		timer = new Timer() {
+            @Override
+            public void run() {
+            	if (rpsp != null) {
+					if (rpsp.isProvision()) {
+						AsyncCallback<RoleProvisioningQueryResultPojo> callback = new AsyncCallback<RoleProvisioningQueryResultPojo>() {
+							@Override
+							public void onFailure(Throwable caught) {
+								stopTimer();
+							}
+
+							@Override
+							public void onSuccess(RoleProvisioningQueryResultPojo result) {
+								GWT.log("[AppBootstrapper] Got " + result.getResults().size() + 
+										" RoleProvisionings for the filter: " + result.getFilterUsed());
+
+								RoleProvisioningPojo rp = result.getResults().get(0).getProvisioning();
+								if (rp.getStatus().equalsIgnoreCase(Constants.VPCP_STATUS_COMPLETED)) {
+									GWT.log("[AppBootstrapper.startTimer.run] provisioning is complete, time to stop the timer...");
+									stopTimer();
+
+									GWT.log("[AppBootstrapper.refreshProvisioningStatusForId] role provisioning isSuccessful: " + rp.isSuccessful());
+									if (rp.isSuccessful()) {
+										// tell the user their role has been provisioned
+										// and they can go to the AWS console to attache policies now
+										String msg = "Your custom role has been "
+											+ "provisioned successfully.  Please visit the "
+											+ "<a href=\"" + awsConsoleUrl + 
+											"\" style=\"color:blue\" target=\"_blank\">AWS Console</a> "
+											+ "to attach the appropriate policies and "
+											+ "permissions to this role.  Once you've "
+											+ "secured the role, you can assign users to this role.";
+										
+										VpcpAlert.alert("Alert", msg);
+									}
+								}
+							}
+						};
+						RoleProvisioningQueryFilterPojo filter = new RoleProvisioningQueryFilterPojo();
+						filter.setProvisioningId(rpsp.getProvisioning().getProvisioningId());
+						VpcProvisioningService.Util.getInstance().getRoleProvisioningSummariesForFilter(filter, callback);
+					}
+					else {
+						stopTimer();
+					}
+            	}
+            	else {
+					stopTimer();
+            	}
+            }
+        };
+
+        // Schedule the timer to close the popup in 3 seconds.
+        timer.scheduleRepeating(3000);
+	}
+	
+	private void stopTimer() {
+		GWT.log("[AppBootstrapper] stopping timer...");
 		startTimer = false;
 		if (timer != null) {
 			timer.cancel();
