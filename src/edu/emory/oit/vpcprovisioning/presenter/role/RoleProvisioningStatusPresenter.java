@@ -278,7 +278,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 							getView().stopTimer();
 							
 							GWT.log("[RoleProvisioningStatusPresenter.refreshProvisioningStatusForId] role provisioning isSuccessful: " + roleProvisioning.isSuccessful());
-							if (roleProvisioning.isSuccessful()) {
+							if (roleProvisioning.isSuccessful() && getAccount() != null) {
 								// tell the user their role has been provisioned
 								// and they can go to the AWS console to attache policies now
 								String awsConsoleUrl = getAwsConsoleUrl();

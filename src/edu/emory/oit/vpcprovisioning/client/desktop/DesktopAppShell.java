@@ -2169,9 +2169,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void addBreadCrumb(final String name, final String action, final SharedObject pojo) {
-//		if (true) {
-//			return;
-//		}
+		if (true) {
+			return;
+		}
 		final String nameWithCarrot = name + " > ";
 		GWT.log("adding breadcrumb: " + nameWithCarrot);
 		breadCrumbNames.add(nameWithCarrot);
@@ -2232,9 +2232,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void removeBreadCrumb(String name) {
-//		if (true) {
-//			return;
-//		}
+		if (true) {
+			return;
+		}
 		GWT.log("removing anchor: " + name);
 		for (Anchor a : breadCrumbAnchors) {
 			if (a.getText().equalsIgnoreCase(name)) {
@@ -2248,9 +2248,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 
 	@Override
 	public void clearBreadCrumbs() {
-//		if (true) {
-//			return;
-//		}
+		if (true) {
+			return;
+		}
 		breadCrumbPanel.clear();
 		breadCrumbNames.clear();
 		addBreadCrumb("Home", ActionNames.GO_HOME, null);
