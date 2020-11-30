@@ -11,6 +11,7 @@ import com.google.gwt.dom.client.Style.TextAlign;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
@@ -20,11 +21,14 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.web.bindery.event.shared.EventBus;
 
+import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.CustomRolePojo;
+import edu.emory.oit.vpcprovisioning.shared.CustomRoleQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.CustomRoleQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.DirectoryPersonPojo;
 
 public class RoleSelectionPopup extends PopupPanel {
@@ -52,122 +56,142 @@ public class RoleSelectionPopup extends PopupPanel {
 	
 	public void initPanel() {
 		GWT.log("[RoleSelectionPopup.initPanel] DirectoryPerson is: " + getAssignee());
-	    this.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    
-		VerticalPanel mainPanel = new VerticalPanel();
-		mainPanel.setSpacing(6);
-		this.add(mainPanel);
 		
-		if (assigneeName != null) {
-			HTML h = new HTML("<b>Select the role you would like to <br/>assign " + assigneeName + " to:</b>");
-		    h.getElement().getStyle().setFontSize(16, Unit.PX);
-			mainPanel.add(h);
-		}
-		else {
-			HTML h = new HTML("<b>Select the role you would like to <br/>assign this person to:</b>");
-		    h.getElement().getStyle().setFontSize(16, Unit.PX);
-			mainPanel.add(h);
-		}
-		
-	    Grid rbGrid = new Grid(existingCustomRoles.size() + 2, 1);
-	    rbGrid.setCellSpacing(8);
-	    mainPanel.add(rbGrid);
-	    
-	    final RadioButton adminRB = new RadioButton("roles", Constants.STATIC_TEXT_ADMINISTRATOR);
-	    adminRB.getElement().getStyle().setPadding(10, Unit.PX);
-	    adminRB.getElement().getStyle().setFontSize(16, Unit.PX);
-	    
-	    final RadioButton auditorRB = new RadioButton("roles", Constants.STATIC_TEXT_AUDITOR);
-	    auditorRB.getElement().getStyle().setPadding(10, Unit.PX);
-	    auditorRB.getElement().getStyle().setFontSize(16, Unit.PX);
-	    
-	    rbGrid.setWidget(0, 0, adminRB);
-	    rbGrid.setWidget(1, 0, auditorRB);
-	    
-		// add existing custom roles that were passed in when this popup was initialized
-	    GWT.log("RoleSelectionPopup: adding " + existingCustomRoles.size() 
-	    	+ " custom roles to the popup.");
-	    final List<RadioButton> customRoleRadioButtons = new java.util.ArrayList<RadioButton>();
-	    for (int i=0; i<existingCustomRoles.size(); i++) {
-		    final RadioButton customRB = new RadioButton("roles", existingCustomRoles.get(i).getRoleName());
-		    customRB.getElement().getStyle().setPadding(10, Unit.PX);
-		    customRB.getElement().getStyle().setFontSize(16, Unit.PX);
-		    
-		    rbGrid.setWidget(i+2, 0, customRB);
-		    customRoleRadioButtons.add(customRB);
-	    }
-	    
-	    Grid buttonGrid = new Grid(1, 3);
-	    buttonGrid.setCellSpacing(8);
-	    mainPanel.add(buttonGrid);
-	    mainPanel.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
-	    
-	    Button okayButton = new Button("Okay");
-	    applyNormalButtonStyles(okayButton);
-	    okayButton.addClickHandler(new ClickHandler() {
+		AsyncCallback<CustomRoleQueryResultPojo> cb = new AsyncCallback<CustomRoleQueryResultPojo>() {
 			@Override
-			public void onClick(ClickEvent event) {
-				setCanceled(false);
-				if (adminRB.getValue()) {
-					setRoleSelected(true);
-					setSelectedRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
-				}
-				else if (auditorRB.getValue()) {
-					setRoleSelected(true);
-					setSelectedRoleName(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onSuccess(CustomRoleQueryResultPojo result) {
+				GWT.log("[RoleSelectionPopup.initPanel] got " + 
+					result.getResults().size() + " custom roles from the server.");
+				existingCustomRoles = result.getResults();
+				
+			    getElement().getStyle().setBackgroundColor("#f1f1f1");
+			    
+				VerticalPanel mainPanel = new VerticalPanel();
+				mainPanel.setSpacing(6);
+				add(mainPanel);
+				
+				if (assigneeName != null) {
+					HTML h = new HTML("<b>Select the role you would like to <br/>assign " + assigneeName + " to:</b>");
+				    h.getElement().getStyle().setFontSize(16, Unit.PX);
+					mainPanel.add(h);
 				}
 				else {
-					// TODO: they may have selected an existing custom role
-					boolean isCustomRole = false;
-					rbLoop: for (RadioButton rb : customRoleRadioButtons) {
-						if (rb.getValue()) {
-							String roleName = rb.getText();
-							for (CustomRolePojo crp : existingCustomRoles) {
-								if (crp.getRoleName().equalsIgnoreCase(roleName)) {
-									GWT.log("IDM Role for " + roleName + " is: " + crp.getIdmRoleName());
-									setRoleSelected(true);
-									setSelectedRoleName(crp.getRoleName());
-									isCustomRole = true;
-									break rbLoop;
+					HTML h = new HTML("<b>Select the role you would like to <br/>assign this person to:</b>");
+				    h.getElement().getStyle().setFontSize(16, Unit.PX);
+					mainPanel.add(h);
+				}
+				
+			    Grid rbGrid = new Grid(existingCustomRoles.size() + 2, 1);
+			    rbGrid.setCellSpacing(8);
+			    mainPanel.add(rbGrid);
+			    
+			    final RadioButton adminRB = new RadioButton("roles", Constants.STATIC_TEXT_ADMINISTRATOR);
+			    adminRB.getElement().getStyle().setPadding(10, Unit.PX);
+			    adminRB.getElement().getStyle().setFontSize(16, Unit.PX);
+			    
+			    final RadioButton auditorRB = new RadioButton("roles", Constants.STATIC_TEXT_AUDITOR);
+			    auditorRB.getElement().getStyle().setPadding(10, Unit.PX);
+			    auditorRB.getElement().getStyle().setFontSize(16, Unit.PX);
+			    
+			    rbGrid.setWidget(0, 0, adminRB);
+			    rbGrid.setWidget(1, 0, auditorRB);
+			    
+				// add existing custom roles that were passed in when this popup was initialized
+			    GWT.log("RoleSelectionPopup: adding " + existingCustomRoles.size() 
+			    	+ " custom roles to the popup.");
+			    final List<RadioButton> customRoleRadioButtons = new java.util.ArrayList<RadioButton>();
+			    for (int i=0; i<existingCustomRoles.size(); i++) {
+				    final RadioButton customRB = new RadioButton("roles", existingCustomRoles.get(i).getRoleName());
+				    customRB.getElement().getStyle().setPadding(10, Unit.PX);
+				    customRB.getElement().getStyle().setFontSize(16, Unit.PX);
+				    
+				    rbGrid.setWidget(i+2, 0, customRB);
+				    customRoleRadioButtons.add(customRB);
+			    }
+			    
+			    Grid buttonGrid = new Grid(1, 3);
+			    buttonGrid.setCellSpacing(8);
+			    mainPanel.add(buttonGrid);
+			    mainPanel.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
+			    
+			    Button okayButton = new Button("Okay");
+			    applyNormalButtonStyles(okayButton);
+			    okayButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						setCanceled(false);
+						if (adminRB.getValue()) {
+							setRoleSelected(true);
+							setSelectedRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+						}
+						else if (auditorRB.getValue()) {
+							setRoleSelected(true);
+							setSelectedRoleName(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
+						}
+						else {
+							// they may have selected an existing custom role
+							boolean isCustomRole = false;
+							rbLoop: for (RadioButton rb : customRoleRadioButtons) {
+								if (rb.getValue()) {
+									String roleName = rb.getText();
+									for (CustomRolePojo crp : existingCustomRoles) {
+										if (crp.getRoleName().equalsIgnoreCase(roleName)) {
+											GWT.log("IDM Role for " + roleName + " is: " + crp.getIdmRoleName());
+											setRoleSelected(true);
+											setSelectedRoleName(crp.getRoleName());
+											isCustomRole = true;
+											break rbLoop;
+										}
+									}
 								}
 							}
+							if (!isCustomRole) {
+								setRoleSelected(false);
+								VpcpAlert.alert("Missing Information", "Please select a role name");
+								return;
+							}
 						}
+						hide();
 					}
-					if (!isCustomRole) {
+			    });
+			    Button cancelButton = new Button("Cancel");
+			    applyNormalButtonStyles(cancelButton);
+			    cancelButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
 						setRoleSelected(false);
-						VpcpAlert.alert("Missing Information", "Please select a role name");
-						return;
+						setCanceled(true);
+						hide();
 					}
-				}
-				hide();
-			}
-	    });
-	    Button cancelButton = new Button("Cancel");
-	    applyNormalButtonStyles(cancelButton);
-	    cancelButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				setRoleSelected(false);
-				setCanceled(true);
-				hide();
-			}
-	    });
+			    });
 
-	    Button generateButton = new Button("Generate");
-	    applyNormalButtonStyles(generateButton);
-	    generateButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-//				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAssignee(), getAccount());
-				ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAccount());
-				setGenerate(true);
-				hide();
-			}
-	    });
+			    Button generateButton = new Button("Generate");
+			    applyNormalButtonStyles(generateButton);
+			    generateButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+//						ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAssignee(), getAccount());
+						ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAccount());
+						setGenerate(true);
+						hide();
+					}
+			    });
 
-	    buttonGrid.setWidget(0, 0, okayButton);
-	    buttonGrid.setWidget(0, 1, cancelButton);
-	    buttonGrid.setWidget(0, 2, generateButton);
+			    buttonGrid.setWidget(0, 0, okayButton);
+			    buttonGrid.setWidget(0, 1, cancelButton);
+			    buttonGrid.setWidget(0, 2, generateButton);
+			}
+		};
+		CustomRoleQueryFilterPojo cr_filter = new CustomRoleQueryFilterPojo();
+		cr_filter.setAccountId(account.getAccountId());
+		VpcProvisioningService.Util.getInstance().getCustomRolesForFilter(cr_filter, cb);
+		
 	}
 
 	private void applyNormalButtonStyles(Button b) {

@@ -389,7 +389,8 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 		// present a dialog where user must select a role
 		// then pass that role to the add method
 		final RoleSelectionPopup rsp = new RoleSelectionPopup(true);
-		rsp.setExistingCustomRoles(presenter.getExistingCustomRoles());
+		// the popup will retrieve the custom roles itself
+//		rsp.setExistingCustomRoles(presenter.getExistingCustomRoles());
 		rsp.setAccount(presenter.getAccount());
 		rsp.setEventBus(presenter.getEventBus());
 		rsp.setAssigneeName(directoryLookupSB.getText());

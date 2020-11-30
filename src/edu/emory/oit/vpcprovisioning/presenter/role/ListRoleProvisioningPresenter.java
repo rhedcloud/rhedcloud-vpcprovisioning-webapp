@@ -91,7 +91,7 @@ public class ListRoleProvisioningPresenter extends PresenterBase implements List
 				getView().initPage();
 				getView().enableButtons();
 				clientFactory.getShell().setTitle("VPC Provisioning App");
-				clientFactory.getShell().setSubTitle("VPCPs");
+				clientFactory.getShell().setSubTitle("Role Provisioning Runs");
 
 				// Clear the Vpc list and display it.
 				if (clearList) {
