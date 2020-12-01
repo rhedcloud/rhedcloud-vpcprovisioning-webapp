@@ -12949,6 +12949,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// no speed chart found for that financial account number, this has to be bad
 				AccountSpeedChartPojo asc = new AccountSpeedChartPojo();
 				asc.setAccount(account);
+				
+				scp = new SpeedChartPojo();
+				scp.setSpeedChartKey(account.getSpeedType());
+				scp.setDepartmentId("Unknown department ID");
+				scp.setDepartmentDescription("Unknown department description");
+				scp.setDescription("Unknown description");
+				scp.setEuValidityDescription("Invalid Financial Account");
+				scp.setValidCode(Constants.SPEED_TYPE_INVALID);
+						
+				asc.setSpeedChart(scp);
 				pojos.add(asc);
 			}
 		}

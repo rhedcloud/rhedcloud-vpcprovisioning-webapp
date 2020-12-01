@@ -41,6 +41,14 @@ public class AccountSpeedChartPojo extends SharedObject implements IsSerializabl
 		// TODO: we want it to sort by:  Invalid, Warning and Valid
 		// o.getSpeedChart.getValidCode() vs. speedChart.getValidCode
 		
+		if (speedChart == null || o == null) {
+			return 0;
+		}
+		
+		if (o.getSpeedChart() == null) {
+			return 0;
+		}
+		
 		String vc1 = speedChart.getValidCode();
 		String vc2 = o.getSpeedChart().getValidCode();
 		
