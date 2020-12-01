@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -62,6 +64,14 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 
 	public DesktopRoleProvisioningStatus() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.addDomHandler(new BlurHandler() {
+			@Override
+			public void onBlur(BlurEvent event) {
+				GWT.log("[role provisioning status] blur...");
+			}
+		}, BlurEvent.getType());
+		
 		doneButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -236,7 +246,14 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 	public void startTimer(int delayMs) {
 		GWT.log("[RoleProvisioningStatus VIEW] starting timer...");
 		
-		startTimer = true;
+		if (startTimer) {
+			startTimer=false;
+		}
+		else {
+			// don't start the timer if it's already been started
+			return;
+		}
+//		startTimer = true;
 		timer = new Timer() {
             @Override
             public void run() {

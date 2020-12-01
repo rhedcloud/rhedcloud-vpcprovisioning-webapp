@@ -1001,7 +1001,7 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			homeContentContainer.animate(0);
 		}
 		else {
-			homeContentContainer.animate(500);
+			homeContentContainer.animate(0);
 		}
 		return;
 		// end 1/28/2020
