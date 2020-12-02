@@ -99,6 +99,7 @@ public class RoleProvisioningStatusPresenter extends PresenterBase implements Ro
 		getView().applyAWSAccountAuditorMask();
 		getView().setFieldViolations(false);
 		getView().resetFieldStyles();
+		getView().setStartTimer(true);
 
 		setReleaseInfo(clientFactory);
 		GWT.log("RoleProvisioningStatusPresenter.start: summary account is: " + roleProvisioningSummary.getAccount());

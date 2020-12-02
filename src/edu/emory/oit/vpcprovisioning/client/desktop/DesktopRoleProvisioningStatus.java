@@ -65,13 +65,6 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 	public DesktopRoleProvisioningStatus() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.addDomHandler(new BlurHandler() {
-			@Override
-			public void onBlur(BlurEvent event) {
-				GWT.log("[role provisioning status] blur...");
-			}
-		}, BlurEvent.getType());
-		
 		doneButton.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -487,6 +480,11 @@ public class DesktopRoleProvisioningStatus extends ViewImplBase implements RoleP
 		actualTimeLabel.setText("");
 		stepsPanel.clear();
 		setProvisioningProgress();
+	}
+
+	@Override
+	public void setStartTimer(boolean b) {
+		startTimer = true;
 	}
 
 }

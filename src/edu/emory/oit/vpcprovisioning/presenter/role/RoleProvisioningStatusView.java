@@ -76,4 +76,5 @@ public interface RoleProvisioningStatusView extends Editor<RoleProvisioningPojo>
 	void setReleaseInfo(String releaseInfoHTML);
 	void refreshProvisioningStatusInformation();
 	void clearProvisioningStatus();
+	void setStartTimer(boolean b);
 }
