@@ -1,5 +1,7 @@
 package edu.emory.oit.vpcprovisioning.shared;
 
+import java.util.Date;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.view.client.ProvidesKey;
 
@@ -23,8 +25,12 @@ public class CustomRolePojo extends SharedObject implements IsSerializable, Comp
 
 	@Override
 	public int compareTo(CustomRolePojo o) {
-		
-		return 0;
+		Date c1 = o.getCreateTime();
+		Date c2 = this.getCreateTime();
+		if (c1 == null || c2 == null) {
+			return 0;
+		}
+		return c1.compareTo(c2);
 	}
 
 	public String getRoleName() {
