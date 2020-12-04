@@ -74,6 +74,7 @@ public interface MaintainAccountView extends Editor<AccountPojo>, IsWidget, View
 		public List<CustomRolePojo> getExistingCustomRoles();
 		public void deprovisionCustomRole();
 		public RoleDeprovisioningRequisitionPojo getRoleDeprovisioningRequisition();
+		void refreshCustomRoleList(final UserAccountPojo user);
 	}
 
 	/**

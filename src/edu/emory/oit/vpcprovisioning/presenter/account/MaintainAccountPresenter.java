@@ -904,4 +904,28 @@ public class MaintainAccountPresenter extends PresenterBase implements MaintainA
 		}
 		return roleDeprovisioningRequisition;
 	}
+
+	@Override
+	public void refreshCustomRoleList(UserAccountPojo user) {
+		getView().showPleaseWaitDialog("Refreshing custom roles, please wait...");
+		AsyncCallback<CustomRoleQueryResultPojo> cb = new AsyncCallback<CustomRoleQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+				getView().hidePleaseWaitDialog();
+			}
+
+			@Override
+			public void onSuccess(CustomRoleQueryResultPojo result) {
+				GWT.log("[MaintainAccountPresenter] got " + 
+					result.getResults().size() + " custom roles from the server.");
+				existingCustomRoles = result.getResults();
+				getView().initializeCustomRoleTable();
+				getView().hidePleaseWaitDialog();
+			}
+		};
+		CustomRoleQueryFilterPojo cr_filter = new CustomRoleQueryFilterPojo();
+		cr_filter.setAccountId(accountId);
+		VpcProvisioningService.Util.getInstance().getCustomRolesForFilter(cr_filter, cb);
+	}
 }

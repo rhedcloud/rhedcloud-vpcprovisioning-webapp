@@ -151,8 +151,9 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiField TextBox propertyValueTF;
 	@UiField Button addPropertyButton;
 	@UiField FlexTable propertiesTable;
-	
 	@UiField Label speedTypeLabel;
+	
+	// custom roles associated to this account
 	@UiField PushButton refreshCustomRolesButton;
     @UiField Button actionsButton;
 	
@@ -317,6 +318,11 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
 		presenter.refreshAccountNotificationList(userLoggedIn);
+	}
+
+	@UiHandler("refreshCustomRolesButton")
+	void refreshCustomRolesButtonClicked(ClickEvent e) {
+		presenter.refreshCustomRoleList(userLoggedIn);
 	}
 
 	@UiHandler ("speedTypeTB")
@@ -1427,18 +1433,33 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	    actionsPopup.setAutoHideEnabled(true);
 	    actionsPopup.setAnimationEnabled(true);
 	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
-	    Grid grid = new Grid(1, 1);
+	    Grid grid = new Grid(2, 1);
 	    grid.setCellSpacing(8);
 	    actionsPopup.add(grid);
 	    
-	    String anchorText = "De-Provision Custom Role";
+	    String anchorText = "Provision Custom Role";
 
-		Anchor maintainAnchor = new Anchor(anchorText);
-		maintainAnchor.addStyleName("productAnchor");
-		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		maintainAnchor.setTitle("De-provision the selected custom role");
-		maintainAnchor.ensureDebugId(anchorText);
-		maintainAnchor.addClickHandler(new ClickHandler() {
+		Anchor provisionAnchor = new Anchor(anchorText);
+		provisionAnchor.addStyleName("productAnchor");
+		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		provisionAnchor.setTitle("Generate a custom role");
+		provisionAnchor.ensureDebugId(anchorText);
+		provisionAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_ROLE_PROVISIONING, presenter.getAccount());
+			}
+		});
+		grid.setWidget(0, 0, provisionAnchor);
+
+		anchorText = "De-Provision Custom Role";
+		Anchor deprovisionAnchor = new Anchor(anchorText);
+		deprovisionAnchor.addStyleName("productAnchor");
+		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deprovisionAnchor.setTitle("De-provision the selected custom role");
+		deprovisionAnchor.ensureDebugId(anchorText);
+		deprovisionAnchor.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				actionsPopup.hide();
@@ -1454,7 +1475,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 				}
 			}
 		});
-		grid.setWidget(0, 0, maintainAnchor);
+		grid.setWidget(1, 0, deprovisionAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}

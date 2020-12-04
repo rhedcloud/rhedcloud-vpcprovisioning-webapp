@@ -115,7 +115,7 @@ public class RoleSelectionPopup extends PopupPanel {
 				    customRoleRadioButtons.add(customRB);
 			    }
 			    
-			    Grid buttonGrid = new Grid(1, 3);
+			    Grid buttonGrid = new Grid(1, 2);
 			    buttonGrid.setCellSpacing(8);
 			    mainPanel.add(buttonGrid);
 			    mainPanel.setCellHorizontalAlignment(buttonGrid, HasHorizontalAlignment.ALIGN_CENTER);
@@ -171,21 +171,20 @@ public class RoleSelectionPopup extends PopupPanel {
 					}
 			    });
 
-			    Button generateButton = new Button("Generate");
-			    applyNormalButtonStyles(generateButton);
-			    generateButton.addClickHandler(new ClickHandler() {
-					@Override
-					public void onClick(ClickEvent event) {
-//						ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAssignee(), getAccount());
-						ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAccount());
-						setGenerate(true);
-						hide();
-					}
-			    });
+//			    Button generateButton = new Button("Generate");
+//			    applyNormalButtonStyles(generateButton);
+//			    generateButton.addClickHandler(new ClickHandler() {
+//					@Override
+//					public void onClick(ClickEvent event) {
+//						ActionEvent.fire(eventBus, ActionNames.GENERATE_ROLE_PROVISIONING, getAccount());
+//						setGenerate(true);
+//						hide();
+//					}
+//			    });
 
 			    buttonGrid.setWidget(0, 0, okayButton);
 			    buttonGrid.setWidget(0, 1, cancelButton);
-			    buttonGrid.setWidget(0, 2, generateButton);
+//			    buttonGrid.setWidget(0, 2, generateButton);
 			}
 		};
 		CustomRoleQueryFilterPojo cr_filter = new CustomRoleQueryFilterPojo();
