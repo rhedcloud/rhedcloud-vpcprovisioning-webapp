@@ -156,6 +156,7 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 	// custom roles associated to this account
 	@UiField PushButton refreshCustomRolesButton;
     @UiField Button actionsButton;
+    @UiField Button generateRoleButton;
 	
 	@UiHandler ("addPropertyButton")
 	void addElasticIpButtonClick(ClickEvent e) {
@@ -1427,6 +1428,12 @@ public class DesktopMaintainAccount extends ViewImplBase implements MaintainAcco
 
 	}
 
+	@UiHandler("generateRoleButton")
+	void generateRoleButtonClicked(ClickEvent e) {
+		actionsPopup.hide();
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_ROLE_PROVISIONING, presenter.getAccount());
+	}
+	
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
 		actionsPopup.clear();
