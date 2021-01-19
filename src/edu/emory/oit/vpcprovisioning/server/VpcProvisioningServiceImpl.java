@@ -3119,6 +3119,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
             info("doing the update...");
             doUpdate(newData, getAWSRequestService());
             info("update is complete...");
+            
+            // TJ:  01/15/2021:  update the cache with the new version of the account
+			Cache.getCache().put(Constants.ACCOUNT + account.getAccountId(), account);
+
         } catch (Throwable t) {
             t.printStackTrace();
             throw new RpcException(t);
