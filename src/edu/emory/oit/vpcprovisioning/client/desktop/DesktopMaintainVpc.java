@@ -125,6 +125,12 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 
 	public DesktopMaintainVpc() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		// 01/21/2021:  hide the elastic ip assignments tab
+		if (vpcTabPanel.getTabWidget(1) != null) {
+			vpcTabPanel.getTabWidget(1).setVisible(false);
+		}
+		
 		setRefreshButtonImage(refreshButton);
 		Image expandImg = new Image("images/expand.png");
 		expandImg.setWidth("30px");
@@ -434,6 +440,12 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void initPage() {
 		this.setFieldViolations(false);
+		
+		// 01/21/2021:  hide the elastic ip assignments tab
+		if (vpcTabPanel.getTabWidget(1) != null) {
+			vpcTabPanel.getTabWidget(1).setVisible(false);
+		}
+		
 		if (editing) {
 			GWT.log("maintain VPC view initPage.  editing");
 			
