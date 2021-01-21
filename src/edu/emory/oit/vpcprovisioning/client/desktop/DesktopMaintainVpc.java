@@ -129,6 +129,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		// 01/21/2021:  hide the elastic ip assignments tab
 		if (vpcTabPanel.getTabWidget(1) != null) {
 			vpcTabPanel.getTabWidget(1).setVisible(false);
+			vpcTabPanel.remove(1);
 		}
 		
 		setRefreshButtonImage(refreshButton);
@@ -444,6 +445,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		// 01/21/2021:  hide the elastic ip assignments tab
 		if (vpcTabPanel.getTabWidget(1) != null) {
 			vpcTabPanel.getTabWidget(1).setVisible(false);
+			vpcTabPanel.remove(1);
 		}
 		
 		if (editing) {
