@@ -2849,6 +2849,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS NOT a Central Admin.");
 					// iterate over all filter.AccountRoles and do a query for each account 
 					// in the list.  Then, need to add each account to the result 
+					java.util.List<String> accountIds = new java.util.ArrayList<String>();
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
 						if (arp.getAccountId() == null) {
 							continue;
@@ -2875,23 +2876,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						}
 						
 						if (cached_acct != null) {
-							// currently, they can only filter by account id so this
-							// should work for now.  May need to re-visit if we ever do 
-							// other types of filtering
 							if (filter.getAccountId() != null) {
 								if (cached_acct.getAccountId().equalsIgnoreCase(filter.getAccountId())) {
-									info("[getAccountsForFilter-withAccountIdFilter] adding account " + cached_acct.getAccountId() + 
-											" to list of accounts for the user logged in" );
-									pojos.add(cached_acct);
+									if (accountIds.contains(cached_acct.getAccountId()) == false) {
+										info("[getAccountsForFilter-withAccountIdFilter] adding account " + cached_acct.getAccountId() + 
+												" to list of accounts for the user logged in" );
+										accountIds.add(cached_acct.getAccountId());
+										pojos.add(cached_acct);
+									}
+									else {
+										info("[getAccountsForFilter-withAccountIdFilter] account " + cached_acct.getAccountId() + 
+												" has already been added, not adding duplicate" );
+									}
+									
 									if (!inCache) {
 										Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
 									}
 								}
 							}
 							else {
-								info("[getAccountsForFilter] adding account " + cached_acct.getAccountId() + 
-										" to list of accounts for the user logged in" );
-								pojos.add(cached_acct);
+								if (accountIds.contains(cached_acct.getAccountId()) == false) {
+									accountIds.add(cached_acct.getAccountId());
+									info("[getAccountsForFilter] adding account " + cached_acct.getAccountId() + 
+											" to list of accounts for the user logged in" );
+									pojos.add(cached_acct);
+								}
+								else {
+									info("[getAccountsForFilter] account " + cached_acct.getAccountId() + 
+											" has already been added, not adding duplicate" );
+								}
+								
 								if (!inCache) {
 									Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
 								}
