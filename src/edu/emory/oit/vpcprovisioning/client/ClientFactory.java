@@ -99,11 +99,8 @@ public interface ClientFactory {
 	MaintainAccountView getMaintainAccountView();
 	ListCidrView getListCidrView();
 	MaintainCidrView getMaintainCidrView();
-	//ViewCidrView getViewCidrView();
 	ListCidrAssignmentView getListCidrAssignmentView();
 	MaintainCidrAssignmentView getMaintainCidrAssignmentView();
-	//CreateCidrAssignmentView getCidrAssignmentView();
-	//ViewCidrAssignmentView getViewCidrAssignmentView();
 	BillSummaryView getBillSummaryView();
 	ListElasticIpView getListElasticIpView();
 	MaintainElasticIpView getMaintainElasticIpView();
