@@ -790,30 +790,30 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
-				if (object.getProfile() != null) {
-					return object.getProfile().getCreateUser();
+				if (object.getAssignment() != null) {
+					return object.getAssignment().getCreateUser() != null ? object.getAssignment().getCreateUser() : "Unknown";
 				} else {
-					return object.getAssignment().getCreateUser();
+					return object.getProfile().getCreateUser() != null ? object.getProfile().getCreateUser() : "Unknown";
 				}
 			}
 		};
 		createUserColumn.setSortable(true);
 		sortHandler.setComparator(createUserColumn, new Comparator<TransitGatewayConnectionProfileSummaryPojo>() {
 			public int compare(TransitGatewayConnectionProfileSummaryPojo o1, TransitGatewayConnectionProfileSummaryPojo o2) {
-				if (o1.getProfile() != null) {
-					return o1.getProfile().getCreateUser().compareTo(o2.getProfile().getCreateUser());
-				} else {
+				if (o1.getAssignment() != null) {
 					return o1.getAssignment().getCreateUser().compareTo(o2.getAssignment().getCreateUser());
+				} else {
+					return o1.getProfile().getCreateUser().compareTo(o2.getProfile().getCreateUser());
 				}
 			}
 		});
 		createUserColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
 	    	@Override
 	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
-				if (object.getProfile() != null) {
-					showDirectoryMetaDataForPublicId(object.getProfile().getCreateUser());
-				} else {
+				if (object.getAssignment() != null) {
 					showDirectoryMetaDataForPublicId(object.getAssignment().getCreateUser());
+				} else {
+					showDirectoryMetaDataForPublicId(object.getProfile().getCreateUser());
 				}
 	    	}
 	    });
@@ -826,11 +826,11 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
-				if (object.getProfile() != null) {
-					Date createTime = object.getProfile().getCreateTime();
+				if (object.getAssignment() != null) {
+					Date createTime = object.getAssignment().getCreateTime();
 					return createTime != null ? dateFormat.format(createTime) : "Unknown";
 				} else {
-					Date createTime = object.getAssignment().getCreateTime();
+					Date createTime = object.getProfile().getCreateTime();
 					return createTime != null ? dateFormat.format(createTime) : "Unknown";
 				}
 			}
@@ -838,16 +838,16 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 		createTimeColumn.setSortable(true);
 		sortHandler.setComparator(createTimeColumn, new Comparator<TransitGatewayConnectionProfileSummaryPojo>() {
 			public int compare(TransitGatewayConnectionProfileSummaryPojo o1, TransitGatewayConnectionProfileSummaryPojo o2) {
-				if (o1.getProfile() != null) {
-					Date c1 = o1.getProfile().getCreateTime();
-					Date c2 = o2.getProfile().getCreateTime();
+				if (o1.getAssignment() != null) {
+					Date c1 = o1.getAssignment().getCreateTime();
+					Date c2 = o2.getAssignment().getCreateTime();
 					if (c1 == null || c2 == null) {
 						return 0;
 					}
 					return c1.compareTo(c2);
 				} else {
-					Date c1 = o1.getAssignment().getCreateTime();
-					Date c2 = o2.getAssignment().getCreateTime();
+					Date c1 = o1.getProfile().getCreateTime();
+					Date c2 = o2.getProfile().getCreateTime();
 					if (c1 == null || c2 == null) {
 						return 0;
 					}
@@ -858,73 +858,73 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 		listTable.addColumn(createTimeColumn, "Create Time");
 
 		// last update user
-		Column<TransitGatewayConnectionProfileSummaryPojo, String> lastUpdateUserColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new ClickableTextCell()) {
-
-			@Override
-			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
-				if (object.getProfile() != null) {
-					return object.getProfile().getUpdateUser();
-				} else {
-					return object.getAssignment().getUpdateUser();
-				}
-			}
-		};
-		lastUpdateUserColumn.setSortable(true);
-		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<TransitGatewayConnectionProfileSummaryPojo>() {
-			public int compare(TransitGatewayConnectionProfileSummaryPojo o1, TransitGatewayConnectionProfileSummaryPojo o2) {
-				if (o1.getProfile() != null) {
-					return o1.getProfile().getUpdateUser().compareTo(o2.getProfile().getUpdateUser());
-				} else {
-					return o1.getAssignment().getUpdateUser().compareTo(o2.getAssignment().getUpdateUser());
-				}
-			}
-		});
-		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
-	    	@Override
-	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
-	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
-	    	}
-	    });
-		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
-		listTable.addColumn(lastUpdateUserColumn, "Update User");
+//		Column<TransitGatewayConnectionProfileSummaryPojo, String> lastUpdateUserColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
+//				new ClickableTextCell()) {
+//
+//			@Override
+//			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
+//				if (object.getAssignment() != null) {
+//					return object.getAssignment().getUpdateUser() != null ? object.getAssignment().getUpdateUser() : "Unknown";
+//				} else {
+//					return object.getProfile().getUpdateUser() != null ? object.getProfile().getUpdateUser() : "Unknown";
+//				}
+//			}
+//		};
+//		lastUpdateUserColumn.setSortable(true);
+//		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<TransitGatewayConnectionProfileSummaryPojo>() {
+//			public int compare(TransitGatewayConnectionProfileSummaryPojo o1, TransitGatewayConnectionProfileSummaryPojo o2) {
+//				if (o1.getAssignment() != null) {
+//					return o1.getAssignment().getUpdateUser().compareTo(o2.getAssignment().getUpdateUser());
+//				} else {
+//					return o1.getProfile().getUpdateUser().compareTo(o2.getProfile().getUpdateUser());
+//				}
+//			}
+//		});
+//		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
+//	    		showDirectoryMetaDataForPublicId(object.getCreateUser());
+//	    	}
+//	    });
+//		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
+//		listTable.addColumn(lastUpdateUserColumn, "Update User");
 
 		// update time
-		Column<TransitGatewayConnectionProfileSummaryPojo, String> updateTimeColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextCell()) {
-
-			@Override
-			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
-				if (object.getProfile() != null) {
-					Date createTime = object.getProfile().getUpdateTime();
-					return createTime != null ? dateFormat.format(createTime) : "Unknown";
-				} else {
-					Date createTime = object.getAssignment().getUpdateTime();
-					return createTime != null ? dateFormat.format(createTime) : "Unknown";
-				}
-			}
-		};
-		updateTimeColumn.setSortable(true);
-		sortHandler.setComparator(updateTimeColumn, new Comparator<TransitGatewayConnectionProfileSummaryPojo>() {
-			public int compare(TransitGatewayConnectionProfileSummaryPojo o1, TransitGatewayConnectionProfileSummaryPojo o2) {
-				if (o1.getProfile() != null) {
-					Date c1 = o1.getProfile().getUpdateTime();
-					Date c2 = o2.getProfile().getUpdateTime();
-					if (c1 == null || c2 == null) {
-						return 0;
-					}
-					return c1.compareTo(c2);
-				} else {
-					Date c1 = o1.getAssignment().getUpdateTime();
-					Date c2 = o2.getAssignment().getUpdateTime();
-					if (c1 == null || c2 == null) {
-						return 0;
-					}
-					return c1.compareTo(c2);
-				}
-			}
-		});
-		listTable.addColumn(updateTimeColumn, "Update Time");
+//		Column<TransitGatewayConnectionProfileSummaryPojo, String> updateTimeColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
+//				new TextCell()) {
+//
+//			@Override
+//			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
+//				if (object.getAssignment() != null) {
+//					Date createTime = object.getAssignment().getUpdateTime();
+//					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+//				} else {
+//					Date createTime = object.getProfile().getUpdateTime();
+//					return createTime != null ? dateFormat.format(createTime) : "Unknown";
+//				}
+//			}
+//		};
+//		updateTimeColumn.setSortable(true);
+//		sortHandler.setComparator(updateTimeColumn, new Comparator<TransitGatewayConnectionProfileSummaryPojo>() {
+//			public int compare(TransitGatewayConnectionProfileSummaryPojo o1, TransitGatewayConnectionProfileSummaryPojo o2) {
+//				if (o1.getProfile() != null) {
+//					Date c1 = o1.getProfile().getUpdateTime();
+//					Date c2 = o2.getProfile().getUpdateTime();
+//					if (c1 == null || c2 == null) {
+//						return 0;
+//					}
+//					return c1.compareTo(c2);
+//				} else {
+//					Date c1 = o1.getAssignment().getUpdateTime();
+//					Date c2 = o2.getAssignment().getUpdateTime();
+//					if (c1 == null || c2 == null) {
+//						return 0;
+//					}
+//					return c1.compareTo(c2);
+//				}
+//			}
+//		});
+//		listTable.addColumn(updateTimeColumn, "Update Time");
 	}
 
 	@Override

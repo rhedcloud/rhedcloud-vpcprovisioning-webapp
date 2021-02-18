@@ -381,100 +381,100 @@ public class DesktopListTransitGateway extends ViewImplBase implements ListTrans
 		transitGatewayListTable.addColumn(propRouteColumn, "Propagation Route Table ID(s)");
 
 		// create user
-		Column<TransitGatewayPojo, String> createUserColumn = new Column<TransitGatewayPojo, String>(
-				new ClickableTextCell()) {
-
-			@Override
-			public String getValue(TransitGatewayPojo object) {
-				return object.getCreateUser();
-			}
-		};
-		createUserColumn.setSortable(true);
-		sortHandler.setComparator(createUserColumn, new Comparator<TransitGatewayPojo>() {
-			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
-				return o1.getCreateUser().compareTo(o2.getCreateUser());
-			}
-		});
-		createUserColumn.setFieldUpdater(new FieldUpdater<TransitGatewayPojo, String>() {
-			@Override
-			public void update(int index, TransitGatewayPojo object, String value) {
-				showDirectoryMetaDataForPublicId(object.getCreateUser());
-			}
-		});
-		createUserColumn.setCellStyleNames("tableAnchor");
-		transitGatewayListTable.addColumn(createUserColumn, "Create User");
+//		Column<TransitGatewayPojo, String> createUserColumn = new Column<TransitGatewayPojo, String>(
+//				new ClickableTextCell()) {
+//
+//			@Override
+//			public String getValue(TransitGatewayPojo object) {
+//				return object.getCreateUser();
+//			}
+//		};
+//		createUserColumn.setSortable(true);
+//		sortHandler.setComparator(createUserColumn, new Comparator<TransitGatewayPojo>() {
+//			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
+//				return o1.getCreateUser().compareTo(o2.getCreateUser());
+//			}
+//		});
+//		createUserColumn.setFieldUpdater(new FieldUpdater<TransitGatewayPojo, String>() {
+//			@Override
+//			public void update(int index, TransitGatewayPojo object, String value) {
+//				showDirectoryMetaDataForPublicId(object.getCreateUser());
+//			}
+//		});
+//		createUserColumn.setCellStyleNames("tableAnchor");
+//		transitGatewayListTable.addColumn(createUserColumn, "Create User");
 
 		// create time
-		Column<TransitGatewayPojo, String> createTimeColumn = new Column<TransitGatewayPojo, String>(new TextCell()) {
-
-			@Override
-			public String getValue(TransitGatewayPojo object) {
-				if (object.getCreateTime() != null) {
-					return dateFormat.format(object.getCreateTime());
-				} else {
-					return "Unknown";
-				}
-			}
-		};
-		createTimeColumn.setSortable(true);
-		sortHandler.setComparator(createTimeColumn, new Comparator<TransitGatewayPojo>() {
-			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
-				if (o1.getCreateTime() != null && o2.getCreateTime() != null) {
-					return o1.getCreateTime().compareTo(o2.getCreateTime());
-				} else {
-					return 0;
-				}
-			}
-		});
-		transitGatewayListTable.addColumn(createTimeColumn, "Create Time");
+//		Column<TransitGatewayPojo, String> createTimeColumn = new Column<TransitGatewayPojo, String>(new TextCell()) {
+//
+//			@Override
+//			public String getValue(TransitGatewayPojo object) {
+//				if (object.getCreateTime() != null) {
+//					return dateFormat.format(object.getCreateTime());
+//				} else {
+//					return "Unknown";
+//				}
+//			}
+//		};
+//		createTimeColumn.setSortable(true);
+//		sortHandler.setComparator(createTimeColumn, new Comparator<TransitGatewayPojo>() {
+//			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
+//				if (o1.getCreateTime() != null && o2.getCreateTime() != null) {
+//					return o1.getCreateTime().compareTo(o2.getCreateTime());
+//				} else {
+//					return 0;
+//				}
+//			}
+//		});
+//		transitGatewayListTable.addColumn(createTimeColumn, "Create Time");
 
 		// last update user
-		Column<TransitGatewayPojo, String> lastUpdateUserColumn = new Column<TransitGatewayPojo, String>(
-				new ClickableTextCell()) {
-
-			@Override
-			public String getValue(TransitGatewayPojo object) {
-				return object.getUpdateUser();
-			}
-		};
-		lastUpdateUserColumn.setSortable(true);
-		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<TransitGatewayPojo>() {
-			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
-				return o1.getUpdateUser().compareTo(o2.getUpdateUser());
-			}
-		});
-		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<TransitGatewayPojo, String>() {
-			@Override
-			public void update(int index, TransitGatewayPojo object, String value) {
-				showDirectoryMetaDataForPublicId(object.getUpdateUser());
-			}
-		});
-		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
-		transitGatewayListTable.addColumn(lastUpdateUserColumn, "Update User");
+//		Column<TransitGatewayPojo, String> lastUpdateUserColumn = new Column<TransitGatewayPojo, String>(
+//				new ClickableTextCell()) {
+//
+//			@Override
+//			public String getValue(TransitGatewayPojo object) {
+//				return object.getUpdateUser();
+//			}
+//		};
+//		lastUpdateUserColumn.setSortable(true);
+//		sortHandler.setComparator(lastUpdateUserColumn, new Comparator<TransitGatewayPojo>() {
+//			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
+//				return o1.getUpdateUser().compareTo(o2.getUpdateUser());
+//			}
+//		});
+//		lastUpdateUserColumn.setFieldUpdater(new FieldUpdater<TransitGatewayPojo, String>() {
+//			@Override
+//			public void update(int index, TransitGatewayPojo object, String value) {
+//				showDirectoryMetaDataForPublicId(object.getUpdateUser());
+//			}
+//		});
+//		lastUpdateUserColumn.setCellStyleNames("tableAnchor");
+//		transitGatewayListTable.addColumn(lastUpdateUserColumn, "Update User");
 
 		// update time
-		Column<TransitGatewayPojo, String> updateTimeColumn = new Column<TransitGatewayPojo, String>(new TextCell()) {
-
-			@Override
-			public String getValue(TransitGatewayPojo object) {
-				if (object.getUpdateTime() != null) {
-					return dateFormat.format(object.getUpdateTime());
-				} else {
-					return "Unknown";
-				}
-			}
-		};
-		updateTimeColumn.setSortable(true);
-		sortHandler.setComparator(updateTimeColumn, new Comparator<TransitGatewayPojo>() {
-			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
-				if (o1.getUpdateTime() != null && o2.getUpdateTime() != null) {
-					return o1.getUpdateTime().compareTo(o2.getUpdateTime());
-				} else {
-					return 0;
-				}
-			}
-		});
-		transitGatewayListTable.addColumn(updateTimeColumn, "Update Time");
+//		Column<TransitGatewayPojo, String> updateTimeColumn = new Column<TransitGatewayPojo, String>(new TextCell()) {
+//
+//			@Override
+//			public String getValue(TransitGatewayPojo object) {
+//				if (object.getUpdateTime() != null) {
+//					return dateFormat.format(object.getUpdateTime());
+//				} else {
+//					return "Unknown";
+//				}
+//			}
+//		};
+//		updateTimeColumn.setSortable(true);
+//		sortHandler.setComparator(updateTimeColumn, new Comparator<TransitGatewayPojo>() {
+//			public int compare(TransitGatewayPojo o1, TransitGatewayPojo o2) {
+//				if (o1.getUpdateTime() != null && o2.getUpdateTime() != null) {
+//					return o1.getUpdateTime().compareTo(o2.getUpdateTime());
+//				} else {
+//					return 0;
+//				}
+//			}
+//		});
+//		transitGatewayListTable.addColumn(updateTimeColumn, "Update Time");
 	}
 
 	@Override

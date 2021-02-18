@@ -14316,6 +14316,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setRegion(moa.getRegion());
 		pojo.setTransitGatewayId(moa.getTransitGatewayId());
 		pojo.setCidrRange(moa.getCidrRange());
+		
 	}
 
 	private void populateTransitGatewayConnectionProfileMoa(TransitGatewayConnectionProfilePojo pojo,
