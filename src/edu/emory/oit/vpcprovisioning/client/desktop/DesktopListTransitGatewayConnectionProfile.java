@@ -139,7 +139,7 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 		actionsPopup.setAnimationEnabled(true);
 		actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
 
-		Grid grid = new Grid(6, 1);
+		Grid grid = new Grid(4, 1);
 		grid.setCellSpacing(8);
 		actionsPopup.add(grid);
 
@@ -228,94 +228,94 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 		});
 		grid.setWidget(1, 0, deleteAnchor);
 
-		Anchor provisionAnchor = new Anchor("Provision Transit Gateway Connection");
-		provisionAnchor.addStyleName("productAnchor");
-		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		provisionAnchor.setTitle("Provision selected profile");
-		provisionAnchor.ensureDebugId(provisionAnchor.getText());
-		provisionAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				if (selectionModel.getSelectedSet().size() == 0) {
-					showMessageToUser("Please select an item from the list");
-					return;
-				}
-				if (selectionModel.getSelectedSet().size() > 1) {
-					showMessageToUser("Please select one Profile to provision");
-					return;
-				}
-				Iterator<TransitGatewayConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-				
-				TransitGatewayConnectionProfileSummaryPojo m = nIter.next();
-				if (m != null) {
-					if (userLoggedIn.isNetworkAdmin()) {
-						showMessageToUser("Coming soon");
-						if (m.getAssignment() != null) {
-							// (re-provision) if it's already assigned, just do a TransitGatewayConnectionProfileAssignment.Generate 
-							// again using that assignment.  i.e., don't create a VpnConnectionProfileAssignment
-							
-							// TODO: just add a method to the presenter instead of linking off to provisioning status?
-//							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT, m);
-						}
-						else {
-							// (initial provision) create the assignment and then generate the provisioning request
+//		Anchor provisionAnchor = new Anchor("Provision Transit Gateway Connection");
+//		provisionAnchor.addStyleName("productAnchor");
+//		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		provisionAnchor.setTitle("Provision selected profile");
+//		provisionAnchor.ensureDebugId(provisionAnchor.getText());
+//		provisionAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				if (selectionModel.getSelectedSet().size() == 0) {
+//					showMessageToUser("Please select an item from the list");
+//					return;
+//				}
+//				if (selectionModel.getSelectedSet().size() > 1) {
+//					showMessageToUser("Please select one Profile to provision");
+//					return;
+//				}
+//				Iterator<TransitGatewayConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+//				
+//				TransitGatewayConnectionProfileSummaryPojo m = nIter.next();
+//				if (m != null) {
+//					if (userLoggedIn.isNetworkAdmin()) {
+//						showMessageToUser("Coming soon");
+//						if (m.getAssignment() != null) {
+//							// (re-provision) if it's already assigned, just do a TransitGatewayConnectionProfileAssignment.Generate 
+//							// again using that assignment.  i.e., don't create a VpnConnectionProfileAssignment
+//							
+//							// TODO: just add a method to the presenter instead of linking off to provisioning status?
+////							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT, m);
+//						}
+//						else {
+//							// (initial provision) create the assignment and then generate the provisioning request
+//
+//							// TODO: just add a method to the presenter instead of linking off to provisioning status?
+////							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT, m.getProfile());
+//						}
+//					}
+//					else {
+//						showMessageToUser("You are not authorized to perform this action.");
+//					}
+//				}
+//				else {
+//					showMessageToUser("Please select an item from the list");
+//				}
+//			}
+//		});
+//		grid.setWidget(2, 0, provisionAnchor);
 
-							// TODO: just add a method to the presenter instead of linking off to provisioning status?
-//							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT, m.getProfile());
-						}
-					}
-					else {
-						showMessageToUser("You are not authorized to perform this action.");
-					}
-				}
-				else {
-					showMessageToUser("Please select an item from the list");
-				}
-			}
-		});
-		grid.setWidget(2, 0, provisionAnchor);
-
-		Anchor deprovisionAnchor = new Anchor("De-Provisiong Transit Gateway Connection");
-		deprovisionAnchor.addStyleName("productAnchor");
-		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
-		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
-		deprovisionAnchor.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				actionsPopup.hide();
-				if (selectionModel.getSelectedSet().size() == 0) {
-					showMessageToUser("Please select one or more item(s) from the list");
-					return;
-				}
-
-				Iterator<TransitGatewayConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-				while (nIter.hasNext()) {
-					TransitGatewayConnectionProfileSummaryPojo m = nIter.next();
-					if (m != null) {
-						if (userLoggedIn.isNetworkAdmin()) {
-							if (m.getAssignment() == null) {
-								showMessageToUser("It does not appear that this profile is currently "
-									+ "assigned to a VPC.  In order to de-provision a Transit Gateway connection, the profile "
-									+ "must be assigned to a VPC.  Please select a profile that is "
-									+ "assigned to a VPC and try again.");
-								return;
-							}
-
-							presenter.deprovisionTransitGatewayConnectionForAssignment(m.getAssignment());
-						}
-						else {
-							showMessageToUser("You are not authorized to perform this action.");
-						}
-					} 
-					else {
-						showMessageToUser("Please select one or more item(s) from the list");
-					}
-				}
-			}
-		});
-		grid.setWidget(3, 0, deprovisionAnchor);
+//		Anchor deprovisionAnchor = new Anchor("De-Provisiong Transit Gateway Connection");
+//		deprovisionAnchor.addStyleName("productAnchor");
+//		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+//		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
+//		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
+//		deprovisionAnchor.addClickHandler(new ClickHandler() {
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				actionsPopup.hide();
+//				if (selectionModel.getSelectedSet().size() == 0) {
+//					showMessageToUser("Please select one or more item(s) from the list");
+//					return;
+//				}
+//
+//				Iterator<TransitGatewayConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
+//				while (nIter.hasNext()) {
+//					TransitGatewayConnectionProfileSummaryPojo m = nIter.next();
+//					if (m != null) {
+//						if (userLoggedIn.isNetworkAdmin()) {
+//							if (m.getAssignment() == null) {
+//								showMessageToUser("It does not appear that this profile is currently "
+//									+ "assigned to a VPC.  In order to de-provision a Transit Gateway connection, the profile "
+//									+ "must be assigned to a VPC.  Please select a profile that is "
+//									+ "assigned to a VPC and try again.");
+//								return;
+//							}
+//
+//							presenter.deprovisionTransitGatewayConnectionForAssignment(m.getAssignment());
+//						}
+//						else {
+//							showMessageToUser("You are not authorized to perform this action.");
+//						}
+//					} 
+//					else {
+//						showMessageToUser("Please select one or more item(s) from the list");
+//					}
+//				}
+//			}
+//		});
+//		grid.setWidget(3, 0, deprovisionAnchor);
 		
 		Anchor deleteAssignmentAnchor = new Anchor("Delete Profile Assignment");
 		deleteAssignmentAnchor.addStyleName("productAnchor");
@@ -376,7 +376,7 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				}
 			}
 		});
-		grid.setWidget(4, 0, deleteAssignmentAnchor);
+		grid.setWidget(2, 0, deleteAssignmentAnchor);
 		
 		Anchor vpnStatusAnchor = new Anchor("Show Transit Gateway Connection Status");
 		vpnStatusAnchor.addStyleName("productAnchor");
@@ -417,7 +417,7 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				}
 			}
 		});
-		grid.setWidget(5, 0, vpnStatusAnchor);
+		grid.setWidget(3, 0, vpnStatusAnchor);
 
 		actionsPopup.showRelativeTo(actionsButton);
 	}
