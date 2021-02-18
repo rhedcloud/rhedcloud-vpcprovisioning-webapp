@@ -164,7 +164,8 @@ public class Constants implements IsSerializable {
 	public static final String LIST_VPN_CONNECTION = "listVpnConnection";
 	public static final String LIST_VPN_CONNECTION_PROFILE = "listVpnConnectionProfile";
 	public static final String LIST_TRANSIT_GATEWAY = "listTransitGateway";
-	public static final String LIST_TRANSIT_GATEWAY_PROFILE = "listTransitGatewayProfile";
+	public static final String LIST_TRANSIT_GATEWAY_CONNECTION_PROFILE = "listTransitGatewayConnectionProfile";
+	public static final String LIST_TRANSIT_GATEWAY_PROFILE_ASSIGNMENT = "listTransitGatewayProfileAssignment";
 	public static final String MOA_VPN_CONNECTION_QUERY_SPEC = "VpnConnectionQuerySpecification.v1_0";
 	public static final String MOA_VPN_CONNECTION = "VpnConnection.v1_0";
 	public static final String MOA_VPN_CONNECTION_PROFILE_QUERY_SPEC = "VpnConnectionProfileQuerySpecification.v1_0";
@@ -248,4 +249,12 @@ public class Constants implements IsSerializable {
 	public static final String ROLE_PROVISIONING_STATUS = "roleProvisioningStatus";
 	public static final String MOA_CUSTOM_ROLE = "CustomRole.v1_0";
 	public static final String MOA_CUSTOM_ROLE_QUERY_SPEC = "CustomRoleQuerySpecification.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY_QUERY_SPEC = "TransitGatewayQuerySpecification.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY = "TransitGateway.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_QUERY_SPEC = "TransitGatewayConnectionProfileQuerySpecification.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE = "TransitGatewayConnectionProfile.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC = "TransitGatewayConnectionProfileAssignmentQuerySpecification.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT = "TransitGatewayConnectionProfileAssignment.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_GENERATE = "TransitGatewayConnectionProfileAssignment.Generate.v1_0";
+	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION = "TransitGatewayConnectionProfileAssignmentRequisition.v1_0";
 }

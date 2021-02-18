@@ -82,6 +82,8 @@ import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPlace;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -496,6 +498,21 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				GWT.log("Bootstrapper, GO_HOME_RTP.onAction");
 				placeController.goTo(new ListResourceTaggingProfilePlace(false));
+			}
+		});
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_TRANSIT_GATEWAY, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_TRANSIT_GATEWAY.onAction");
+				placeController.goTo(new ListTransitGatewayPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.GO_HOME_TRANSIT_GATEWAY_CONNECTION_PROFILE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				GWT.log("Bootstrapper, GO_HOME_TRANSIT_GATEWAY_CONNECTION_PROFILE.onAction");
+				placeController.goTo(new ListTransitGatewayConnectionProfilePlace(false));
 			}
 		});
 

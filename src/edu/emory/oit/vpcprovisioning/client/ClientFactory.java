@@ -47,6 +47,8 @@ import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -145,4 +147,6 @@ public interface ClientFactory {
 	ListRoleProvisioningView getListRoleProvisioningView();
 	RoleProvisioningStatusView getRoleProvisioningStatusView();
 	MaintainRoleProvisioningView getMaintainRoleProvisioningView();
+	ListTransitGatewayView getListTransitGatewayView();
+	ListTransitGatewayConnectionProfileView getListTransitGatewayConnectionProfileView();
 }

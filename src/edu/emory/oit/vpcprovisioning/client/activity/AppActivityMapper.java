@@ -68,6 +68,10 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioni
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusPlace;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPlace;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfilePlace;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfilePresenter;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPlace;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -358,6 +362,30 @@ public class AppActivityMapper implements ActivityMapper {
 				@Override
 				public void start(AcceptsOneWidget panel, EventBus eventBus) {
 					ListRoleProvisioningPresenter presenter = new ListRoleProvisioningPresenter(clientFactory, (ListRoleProvisioningPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
+		if (place instanceof ListTransitGatewayPlace) {
+			// The list of role provisioning runs
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListTransitGatewayPresenter presenter = new ListTransitGatewayPresenter(clientFactory, (ListTransitGatewayPlace) place);
+					presenter.start(eventBus);
+					panel.setWidget(presenter);
+				}
+			};
+		}
+
+		if (place instanceof ListTransitGatewayConnectionProfilePlace) {
+			// The list of role provisioning runs
+			return new AbstractActivity() {
+				@Override
+				public void start(AcceptsOneWidget panel, EventBus eventBus) {
+					ListTransitGatewayConnectionProfilePresenter presenter = new ListTransitGatewayConnectionProfilePresenter(clientFactory, (ListTransitGatewayConnectionProfilePlace) place);
 					presenter.start(eventBus);
 					panel.setWidget(presenter);
 				}

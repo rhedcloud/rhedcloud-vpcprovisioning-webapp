@@ -245,15 +245,12 @@ public interface VpcProvisioningServiceAsync {
 	void getVpncpSummariesForFilter(VpnConnectionProvisioningQueryFilterPojo filter, AsyncCallback<VpnConnectionProvisioningQueryResultPojo> callback);
 	void generateVpncp(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionProvisioningPojo> callback);
 	void updateVpnConnectionProvisioning(VpnConnectionProvisioningPojo pojo, AsyncCallback<VpnConnectionProvisioningPojo> callback);
-//	void generateVpnConnectionDeprovisioning(VpnConnectionRequisitionPojo requisition, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
-//	void generateVpnConnectionDeprovisioning(VpnConnectionPojo vpnConnection, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
 	void generateVpnConnectionDeprovisioning(VpnConnectionProfileAssignmentPojo assignment, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
 	void updateVpnConnectionDeprovisioning(VpnConnectionDeprovisioningPojo pojo, AsyncCallback<VpnConnectionDeprovisioningPojo> callback);
 	void generateVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentRequisitionPojo requisition, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 	void createVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentPojo profileAssignment, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 	void deleteVpnConnectionProfileAssignment(VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment, AsyncCallback<VpnConnectionProfileAssignmentPojo> callback);
 
-//	void getTkiClientS3AccessWrapper(AsyncCallback<AmazonS3AccessWrapperPojo> callback);
 	void getAwsRegionItems(AsyncCallback<List<AWSRegionPojo>> callback);
 
 	// console services
@@ -299,4 +296,19 @@ public interface VpcProvisioningServiceAsync {
 	void getCustomRolesForFilter(CustomRoleQueryFilterPojo filter, AsyncCallback<CustomRoleQueryResultPojo> callback);
 	void getAwsConsoleURL(AsyncCallback<String> callback);
 	void isExistingCustomRoleInAccount(String accountId, String roleName, AsyncCallback<Boolean> callback);
+
+	// Transit Gateway
+	void getTransitGatewaysForFilter(TransitGatewayQueryFilterPojo filter, AsyncCallback<TransitGatewayQueryResultPojo> callback);
+	void createTransitGateway(TransitGatewayPojo transitGateway, AsyncCallback<TransitGatewayPojo> callback);
+	void updateTransitGateway(TransitGatewayPojo transitGateway, AsyncCallback<TransitGatewayPojo> callback);
+	void deleteTransitGateway(TransitGatewayPojo transitGateway, AsyncCallback<TransitGatewayPojo> callback);
+	
+	void getTransitGatewayConnectionProfilesForFilter(TransitGatewayConnectionProfileQueryFilterPojo filter, AsyncCallback<TransitGatewayConnectionProfileQueryResultPojo> callback);
+	void createTransitGatewayConnectionProfile(TransitGatewayConnectionProfilePojo profile, AsyncCallback<TransitGatewayConnectionProfilePojo> callback);
+	void updateTransitGatewayConnectionProfile(TransitGatewayConnectionProfilePojo profile, AsyncCallback<TransitGatewayConnectionProfilePojo> callback);
+	void deleteTransitGatewayConnectionProfile(TransitGatewayConnectionProfilePojo profile, AsyncCallback<TransitGatewayConnectionProfilePojo> callback);
+
+	void getTransitGatewayProfileAssignmentsForFilter(TransitGatewayConnectionProfileAssignmentQueryFilterPojo filter, AsyncCallback<TransitGatewayConnectionProfileAssignmentQueryResultPojo> callback);
+	void generateTransitGatewayConnectionProfileAssignment(TransitGatewayConnectionProfileAssignmentRequisitionPojo requisition, AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> callback);
+	void deleteTransitGatewayConnectionProfileAssignment(TransitGatewayConnectionProfileAssignmentPojo transitGatewayConnectionProfileAssignment, AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> callback);
 }

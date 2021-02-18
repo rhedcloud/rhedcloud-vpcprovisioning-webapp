@@ -159,6 +159,9 @@ import edu.emory.moa.jmsobjects.network.v1_0.ElasticIp;
 import edu.emory.moa.jmsobjects.network.v1_0.ElasticIpAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.StaticNatProvisioning;
+import edu.emory.moa.jmsobjects.network.v1_0.TransitGateway;
+import edu.emory.moa.jmsobjects.network.v1_0.TransitGatewayConnectionProfile;
+import edu.emory.moa.jmsobjects.network.v1_0.TransitGatewayConnectionProfileAssignment;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnection;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
@@ -189,6 +192,11 @@ import edu.emory.moa.objects.resources.v1_0.RoleAssignmentRequisition;
 import edu.emory.moa.objects.resources.v1_0.RoleDNs;
 import edu.emory.moa.objects.resources.v1_0.StaticNatDeprovisioningQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.StaticNatProvisioningQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.TransitGatewayConnectionProfileAssignmentQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.TransitGatewayConnectionProfileAssignmentRequisition;
+import edu.emory.moa.objects.resources.v1_0.TransitGatewayConnectionProfileQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.TransitGatewayProfile;
+import edu.emory.moa.objects.resources.v1_0.TransitGatewayQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.TunnelInterface;
 import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpecification;
@@ -1098,6 +1106,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		java.util.Date endTime = new java.util.Date();
 		long elapsedTime = endTime.getTime() - startTime.getTime();
 		info(tag + "elaspsed time: " + formatMillisForDisplay(elapsedTime));
+		
+		// START bootstrapping logic
+		if (user.getAccountRoles().size() == 0) {
+			info("user doesn't have any roles, checking for bootstrapping logic");
+			boolean bootstrap = false;
+			try {
+				Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+				String s_bootstrap = props.getProperty("bootstrap", "false");
+				bootstrap = Boolean.parseBoolean(s_bootstrap);
+			} catch (EnterpriseConfigurationObjectException e) {
+				e.printStackTrace();
+			}
+
+			if (bootstrap) {
+				info("bootstrapping.  adding central admin role to user");
+
+				AccountRolePojo arp = new AccountRolePojo();
+				arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
+				info(tag + "adding AccountRolePojo " + 
+						arp.toString() + " to UserAccount logged in.");
+				user.addAccountRole(arp);
+				
+				AccountRolePojo arp2 = new AccountRolePojo();
+				arp2.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
+				info(tag + "adding AccountRolePojo " + 
+						arp2.toString() + " to UserAccount logged in.");
+				user.addAccountRole(arp);
+			}
+		}
+		// END bootstrapping
 	}
 	
 	protected void getRolesForUser_netiq(UserAccountPojo user) throws RpcException {
@@ -1530,6 +1568,48 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
+	private void populateTransitGatewayMoa(TransitGatewayPojo pojo, TransitGateway moa) throws EnterpriseFieldException {
+		moa.setTransitGatewayId(pojo.getTransitGatewayId());
+		moa.setEnvironment(pojo.getEnvironment());
+		moa.setRegion(pojo.getRegion());
+		moa.setAccountId(pojo.getAccountId());
+		for (TransitGatewayProfilePojo tgpp : pojo.getProfiles()) {
+			TransitGatewayProfile tgpm = moa.newTransitGatewayProfile();
+			populateTransitGatewayProfileMoa(tgpp, tgpm);
+			moa.addTransitGatewayProfile(tgpm);
+		}
+	}
+	@SuppressWarnings("unchecked")
+	private void populateTransitGatewayPojo(TransitGateway moa, TransitGatewayPojo pojo) {
+		pojo.setTransitGatewayId(moa.getTransitGatewayId());
+		pojo.setEnvironment(moa.getEnvironment());
+		pojo.setRegion(moa.getRegion());
+		pojo.setAccountId(moa.getAccountId());
+		for (TransitGatewayProfile tgpm : (List<TransitGatewayProfile>) moa.getTransitGatewayProfile()) {
+			TransitGatewayProfilePojo tgpp = new TransitGatewayProfilePojo();
+			populateTransitGatewayProfilePojo(tgpm, tgpp);
+			pojo.getProfiles().add(tgpp);
+		}
+	}
+	private void populateTransitGatewayProfileMoa(TransitGatewayProfilePojo pojo, TransitGatewayProfile moa) throws EnterpriseFieldException {
+		moa.setTransitGatewayProfileId(pojo.getTgwProfileId());
+		moa.setTransitGatewayId(pojo.getTransitGatewayId());
+		moa.setAssociationRouteTableId(pojo.getAssociationRouteTableId());
+		for (String prt : pojo.getPropagationRouteTableIds()) {
+			moa.addPropagationRouteTableId(prt);
+		}
+		
+	}
+	@SuppressWarnings("unchecked")
+	private void populateTransitGatewayProfilePojo(TransitGatewayProfile moa, TransitGatewayProfilePojo pojo) {
+		pojo.setTgwProfileId(moa.getTransitGatewayProfileId());
+		pojo.setTransitGatewayId(moa.getTransitGatewayId());
+		pojo.setAssociationRouteTableId(moa.getAssociationRouteTableId());
+		for (String prt : (List<String>) moa.getPropagationRouteTableId()) {
+			pojo.getPropagationRouteTableIds().add(prt);
+		}
+	}
+	
 	private void populateAccountMoa(AccountPojo pojo,
 			Account moa) throws EnterpriseFieldException,
 			IllegalArgumentException, SecurityException,
@@ -14020,6 +14100,417 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		
 		return false;
+	}
+
+	@Override
+	public TransitGatewayQueryResultPojo getTransitGatewaysForFilter(TransitGatewayQueryFilterPojo filter)
+			throws RpcException {
+		
+		TransitGatewayQueryResultPojo result = new TransitGatewayQueryResultPojo();
+		List<TransitGatewayPojo> pojos = new java.util.ArrayList<TransitGatewayPojo>();
+		
+		try {
+			TransitGatewayQuerySpecification queryObject = (TransitGatewayQuerySpecification) getObject(Constants.MOA_TRANSIT_GATEWAY_QUERY_SPEC);
+			TransitGateway actionable = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
+
+			if (filter != null) {
+				queryObject.setEnvironment(filter.getEnvironment());
+				queryObject.setRegion(filter.getRegion());
+				info("[getTransitGatewaysForFilter] getting items for filter: " + queryObject.toXmlString());
+			}
+			else {
+				info("[getTransitGatewaysForFilter] no filter passed in.  Getting all StaticNat Provisioning objects");
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getTransitGatewaysForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("transitGatewayListTimeoutMillis", "300000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getNetworkOpsRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc)
+				.setRequestTimeoutInterval(interval);
+
+			info("[getTransitGatewaysForFilter] query spec: " + queryObject.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<TransitGateway> moas = 
+				actionable.query(queryObject, reqSvc);
+			
+			info("[getTransitGatewaysForFilter] got " + moas.size() + " Transit Gateway objects back from the server.");
+			for (TransitGateway moa : moas) {
+				TransitGatewayPojo pojo = new TransitGatewayPojo();
+				this.populateTransitGatewayPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@Override
+	public TransitGatewayPojo createTransitGateway(TransitGatewayPojo transitGateway) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TransitGatewayPojo deleteTransitGateway(TransitGatewayPojo transitGateway) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TransitGatewayPojo updateTransitGateway(TransitGatewayPojo transitGateway) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public TransitGatewayConnectionProfileQueryResultPojo getTransitGatewayConnectionProfilesForFilter(
+			TransitGatewayConnectionProfileQueryFilterPojo filter) throws RpcException {
+		
+		TransitGatewayConnectionProfileQueryResultPojo result = new TransitGatewayConnectionProfileQueryResultPojo();
+		List<TransitGatewayConnectionProfileSummaryPojo> summaries = new java.util.ArrayList<TransitGatewayConnectionProfileSummaryPojo>();
+		
+		// get ALL VpnConnectionProfileAssignments and go through them in memory
+		// instead of doing an individual query by profile id.
+		// this speeds things up significantly but could potentially lead to other resource issues down the road
+		TransitGatewayConnectionProfileAssignmentQueryFilterPojo eia_filter = new TransitGatewayConnectionProfileAssignmentQueryFilterPojo();
+		TransitGatewayConnectionProfileAssignmentQueryResultPojo eia_result = this.getTransitGatewayProfileAssignmentsForFilter(eia_filter);
+		
+		// check the cache for cached VpnConnectionProfiles (by current session id)
+		// if they've already been cached, just get them from there
+		// and pull back any assignments for those
+		List<TransitGatewayConnectionProfilePojo> cached_profiles = new java.util.ArrayList<TransitGatewayConnectionProfilePojo>();
+		if (cached_profiles != null && cached_profiles.size() > 0) {
+			info("[getTransitGatewayConnectionProfilesForFilter] using cached TransitGatewayConnectionProfile objects");
+			for (TransitGatewayConnectionProfilePojo profile : cached_profiles) {
+				TransitGatewayConnectionProfileSummaryPojo summary = new TransitGatewayConnectionProfileSummaryPojo();
+				summary.setProfile(profile);
+				assignmentLoop: for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+					if (assignment.getTransitGatewayConnectionProfileId().equals(profile.getTransitGatewayConnectionProfileId())) {
+						profile.setAssigned(true);
+						// go through the tunnel profiles in the profile and remove the "(AVAILABLE)" string?
+//						for (TunnelProfilePojo tunnel : profile.getTunnelProfiles()) {
+//							String newDesc = tunnel.getTunnelDescription().replaceAll(Constants.TUNNEL_AVAILABLE, assignment.getOwnerId());
+//							tunnel.setTunnelDescription(newDesc);
+//						}
+						summary.setAssignment(assignment);
+						// TODO: remove assignment from eia_result.getResults()??
+						break assignmentLoop;
+					}
+				}
+				summaries.add(summary);
+			}
+			Collections.sort(summaries);
+			result.setResults(summaries);
+			result.setFilterUsed(filter);
+			return result;
+		}
+		else {
+			info("[getTransitGatewayConnectionProfilesForFilter] getting TransitGatewayConnectionProfile objects from the service");
+		}
+		
+		try {
+			TransitGatewayConnectionProfileQuerySpecification queryObject = (TransitGatewayConnectionProfileQuerySpecification) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_QUERY_SPEC);
+			TransitGatewayConnectionProfile actionable = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+
+			if (filter != null) {
+				// TODO: query language probably
+
+				queryObject.setTransitGatewayConnectionProfileId(filter.getTransitGatewayConnectionProfileId());
+				queryObject.setRegion(filter.getRegion());
+				queryObject.setTransitGatewayId(filter.getTransitGatewayId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getTransitGatewayConnectionProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			List<TransitGatewayConnectionProfile> moas = actionable.query(queryObject,
+					this.getNetworkOpsRequestService());
+			info("[getTransitGatewayConnectionProfilesForFilter] got " + moas.size() + " Transit Gateway Connection profiles back from the ESB.");
+			
+			List<TransitGatewayConnectionProfilePojo> profiles_to_cache = new java.util.ArrayList<TransitGatewayConnectionProfilePojo>();
+			
+			for (TransitGatewayConnectionProfile moa : moas) {
+				TransitGatewayConnectionProfileSummaryPojo summary = new TransitGatewayConnectionProfileSummaryPojo();
+				
+				TransitGatewayConnectionProfilePojo pojo = new TransitGatewayConnectionProfilePojo();
+				TransitGatewayConnectionProfilePojo baseline = new TransitGatewayConnectionProfilePojo();
+				this.populateTransitGatewayConnectionProfilePojo(moa, pojo);
+				this.populateTransitGatewayConnectionProfilePojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				summary.setProfile(pojo);
+				profiles_to_cache.add(pojo);
+				
+				assignmentLoop: for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+					if (assignment.getTransitGatewayConnectionProfileId().equals(pojo.getTransitGatewayConnectionProfileId())) {
+						summary.setAssignment(assignment);
+						// TODO: remove assignment from eia_result.getResults()??
+						break assignmentLoop;
+					}
+				}
+				summaries.add(summary);
+			}
+			// cache the profiles for later since they don't change often
+			// they'll be cached for this session only
+//			Cache.getCache().put(Constants.TRANSIT_GATEWAY_CONNECTION_PROFILES + getCurrentSessionId(), profiles_to_cache);
+
+			Collections.sort(summaries);
+			result.setResults(summaries);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	private void populateTransitGatewayConnectionProfilePojo(TransitGatewayConnectionProfile moa,
+			TransitGatewayConnectionProfilePojo pojo) {
+		
+		pojo.setTransitGatewayConnectionProfileId(moa.getTransitGatewayConnectionProfileId());
+		pojo.setCidrId(moa.getCidrId());
+		pojo.setRegion(moa.getRegion());
+		pojo.setTransitGatewayId(moa.getTransitGatewayId());
+		pojo.setCidrRange(moa.getCidrRange());
+	}
+
+	private void populateTransitGatewayConnectionProfileMoa(TransitGatewayConnectionProfilePojo pojo,
+			TransitGatewayConnectionProfile moa) throws EnterpriseFieldException {
+		
+		moa.setTransitGatewayConnectionProfileId(pojo.getTransitGatewayConnectionProfileId());
+		moa.setCidrId(pojo.getCidrId());
+		moa.setRegion(pojo.getRegion());
+		moa.setTransitGatewayId(pojo.getTransitGatewayId());
+		moa.setCidrRange(pojo.getCidrRange());
+	}
+
+	@Override
+	public TransitGatewayConnectionProfilePojo createTransitGatewayConnectionProfile(
+			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TransitGatewayConnectionProfilePojo deleteTransitGatewayConnectionProfile(
+			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TransitGatewayConnectionProfilePojo updateTransitGatewayConnectionProfile(
+			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TransitGatewayConnectionProfileAssignmentQueryResultPojo getTransitGatewayProfileAssignmentsForFilter(
+			TransitGatewayConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException {
+
+
+		TransitGatewayConnectionProfileAssignmentQueryResultPojo result = new TransitGatewayConnectionProfileAssignmentQueryResultPojo();
+		List<TransitGatewayConnectionProfileAssignmentPojo> pojos = new java.util.ArrayList<TransitGatewayConnectionProfileAssignmentPojo>();
+		try {
+			TransitGatewayConnectionProfileAssignmentQuerySpecification queryObject = (TransitGatewayConnectionProfileAssignmentQuerySpecification) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC);
+			TransitGatewayConnectionProfileAssignment actionable = (TransitGatewayConnectionProfileAssignment) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT);
+
+			if (filter != null) {
+				// TODO: query language probably
+
+				queryObject.setTransitGatewayConnectionProfileAssignmentId(filter.getTransitGatewayConnectionProfileAssignmentId());
+				queryObject.setOwnerId(filter.getOwnerId());
+				queryObject.setTransitGatewayConnectionProfileId(filter.getTransitGatewayConnectionProfileId());
+			}
+
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			info("[getTransitGatewayConnectionProfileAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			
+			@SuppressWarnings("unchecked")
+			List<TransitGatewayConnectionProfileAssignment> moas = actionable.query(queryObject,
+					this.getNetworkOpsRequestService());
+			info("[getTransitGatewayConnectionProfileAssignmentsForFilter] got " + 
+				moas.size() + " Transit Gateway Connection profile assignments back from the ESB.");
+			
+			for (TransitGatewayConnectionProfileAssignment moa : moas) {
+				TransitGatewayConnectionProfileAssignmentPojo pojo = new TransitGatewayConnectionProfileAssignmentPojo();
+				TransitGatewayConnectionProfileAssignmentPojo baseline = new TransitGatewayConnectionProfileAssignmentPojo();
+				this.populateTransitGatewayConnectionProfileAssignmentPojo(moa, pojo);
+				this.populateTransitGatewayConnectionProfileAssignmentPojo(moa, baseline);
+				pojo.setBaseline(baseline);
+				
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	private void populateTransitGatewayConnectionProfileAssignmentPojo(TransitGatewayConnectionProfileAssignment moa,
+			TransitGatewayConnectionProfileAssignmentPojo pojo) throws XmlEnterpriseObjectException {
+		
+		/*
+		<!ELEMENT TransitGatewayConnectionProfileAssignment (
+			TransitGatewayConnectionProfileAssignmentId?, 
+			TransitGatewayConnectionProfileId, 
+			OwnerId, 
+			CreateUser, 
+			CreateDatetime, 
+			LastUpdateUser?, 
+			LastUpdateDatetime?)>
+		*/
+		pojo.setTransitGatewayConnectionProfileAssignmentId(moa.getTransitGatewayConnectionProfileAssignmentId());
+		pojo.setTransitGatewayConnectionProfileId(moa.getTransitGatewayConnectionProfileId());
+		pojo.setOwnerId(moa.getOwnerId());
+		
+		this.setPojoCreateInfo(pojo, moa);
+		this.setPojoUpdateInfo(pojo, moa);
+	}
+
+	private void populateTransitGatewayConnectionProfileAssignmentMoa(TransitGatewayConnectionProfileAssignmentPojo pojo,
+			TransitGatewayConnectionProfileAssignment moa) throws XmlEnterpriseObjectException, EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+		
+		moa.setTransitGatewayConnectionProfileAssignmentId(pojo.getTransitGatewayConnectionProfileAssignmentId());
+		moa.setTransitGatewayConnectionProfileId(pojo.getTransitGatewayConnectionProfileId());
+		moa.setOwnerId(pojo.getOwnerId());
+		
+		this.setMoaCreateInfo(moa, pojo);
+		this.setMoaUpdateInfo(moa, pojo);
+	}
+
+	@Override
+	public TransitGatewayConnectionProfileAssignmentPojo generateTransitGatewayConnectionProfileAssignment(
+			TransitGatewayConnectionProfileAssignmentRequisitionPojo requisition) throws RpcException {
+
+		try {
+			info("generating TransitGatewayConnectionProfileAssignment on the server...");
+			TransitGatewayConnectionProfileAssignment actionable = (TransitGatewayConnectionProfileAssignment) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_GENERATE);
+			TransitGatewayConnectionProfileAssignmentRequisition seed = (TransitGatewayConnectionProfileAssignmentRequisition) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION);
+			info("populating moa");
+			seed.setOwnerId(requisition.getOwnerId());
+			seed.setOwnerId(requisition.getRegion());
+			seed.setTransitGatewayId(requisition.getTransitGatewayId());
+			
+			info("doing the TransitGatewayConnectionProfileAssignment.generate...");
+			String authUserId = this.getAuthUserIdForHALS();
+			actionable.getAuthentication().setAuthUserId(authUserId);
+			
+			info("TransitGatewayConnectionProfileAssignment.generate seed data is: " + seed.toXmlString());
+			
+			@SuppressWarnings("unchecked")
+			List<TransitGatewayConnectionProfileAssignment> result = actionable.generate(seed, this.getNetworkOpsRequestService());
+			// TODO if more than one returned, it's an error...
+			TransitGatewayConnectionProfileAssignmentPojo pojo = new TransitGatewayConnectionProfileAssignmentPojo();
+			for (TransitGatewayConnectionProfileAssignment moa : result) {
+				this.populateTransitGatewayConnectionProfileAssignmentPojo(moa, pojo);
+			}
+			info("TransitGatewayConnectionProfileAssignment.generate is complete...");
+
+			return pojo;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseObjectGenerateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+	}
+
+	@Override
+	public TransitGatewayConnectionProfileAssignmentPojo deleteTransitGatewayConnectionProfileAssignment(
+			TransitGatewayConnectionProfileAssignmentPojo vpnConnectionProfileAssignment) throws RpcException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

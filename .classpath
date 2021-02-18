@@ -55,7 +55,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/spring-test-3.0.7.RELEASE.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/validation-api-1.1.0.Final.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-emory-moas-master-6.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-moas-master-50.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-anyopeneaienterprise-moas-master-8.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-paloaltonetworks-moas-master-3.jar"/>
@@ -65,5 +64,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aws-java-sdk-core-1.11.406.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/aws-java-sdk-s3-1.11.406.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-aws-moas-master-25.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/rhedcloud-emory-moas-master-15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

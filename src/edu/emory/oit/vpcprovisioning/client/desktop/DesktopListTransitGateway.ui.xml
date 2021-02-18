@@ -1,0 +1,63 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:ScrollPanel width="99%" height="99%">	
+	<g:VerticalPanel width="100%" spacing="20">
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:HTML addStyleNames="{style.mediumLabel}">Transit Gateway</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of Transit Gateway objects and their current status.<br/><br/>
+		These objects represent an Transit Gateway that is either in 
+		progress or completed.  To see more details regarding the status of a 
+		particular request, click the 'View' button associated to the request 
+		you wish to view.<br/><br/>
+		Click the 'Create' button to go to the Transit Gateway maintenance 
+		page where you can request the provisioning of a new Transit Gateway.</g:HTML>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="8">
+				<g:row>
+					<g:customCell>
+						<g:Button ui:field="createTransitGatewayButton" debugId="createTransitGatewayButton" text="Create new Transit Gateway" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create a new Transit Gateway"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Actions"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="topListPager" debugId="topListPager"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:CellTable width="100%" ui:field="transitGatewayListTable"  title="Existing Transit Gateway metadata"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="transitGatewayListPager" debugId="transitGatewayListPager"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 

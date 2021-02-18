@@ -57,6 +57,8 @@ import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -134,6 +136,8 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ListRoleProvisioningView listRoleProvisioningView;
 	private RoleProvisioningStatusView roleProvisioningStatusView;
 	private MaintainRoleProvisioningView maintainRoleProvisioningView;
+	private ListTransitGatewayView listTransitGatewayView;
+	private ListTransitGatewayConnectionProfileView listTransitGatewayConnectionProfileView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -471,6 +475,16 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainRoleProvisioningView getMaintainRoleProvisioningView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListTransitGatewayView getListTransitGatewayView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public ListTransitGatewayConnectionProfileView getListTransitGatewayConnectionProfileView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

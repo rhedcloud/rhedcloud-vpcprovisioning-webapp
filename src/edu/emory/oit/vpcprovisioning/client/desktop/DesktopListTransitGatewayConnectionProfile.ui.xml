@@ -1,0 +1,99 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" 
+	xmlns:c="urn:import:com.google.gwt.user.cellview.client">
+	<ui:style src="DesktopStyles.css" />
+	<ui:style field="otherStyles">
+	</ui:style>
+	<g:ScrollPanel width="99%" height="99%">	
+	<g:VerticalPanel width="100%" spacing="10">
+		<!-- 
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Button ui:field="homeButton" debugId="homeButton" text="Home" addStyleNames="{style.glowing-border} {style.normalButton}" title="Return to the Home page"/>
+		</g:cell>
+		 -->
+		<g:HorizontalPanel ui:field="pleaseWaitPanel" width="100%" visible="false">
+			<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+				<g:VerticalPanel spacing="8">
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:Image url="images/ajax-loader.gif"/>
+					</g:cell>
+					<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+						<g:HTML ui:field="pleaseWaitHTML" addStyleNames="{style.body}"/>
+					</g:cell>
+				</g:VerticalPanel>
+			</g:cell>
+		</g:HorizontalPanel>
+		<g:HTML addStyleNames="{style.mediumLabel}">Transit Gateway Connection Profile List</g:HTML>
+		<g:HTML addStyleNames="{style.body}">Below is a list of Transit Gateway Connection Profile objects.<br/><br/>
+		To see more details regarding a 
+		particular profile, select a row below, click the 'Actions' 
+		button and select 'View/Maintain Profile' from the menu.  If a profile is already 
+		assigned, you can follow that assignment's link from the list and see the assignment details too.<br/><br/>
+		Click the 'Create' button to create a new Transit Gateway Connection Profile.<br/><br/>
+		Use the 'Provision Transit Gateway Connection' action to provision a new Transit Gateway connection for the selected Transit Gateway Profile.</g:HTML>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="8">
+				<g:row>
+					<g:customCell>
+						<g:Button ui:field="createButton" debugId="createButton" text="Create new profile" addStyleNames="{style.glowing-border} {style.actionButton}" title="Create a new profile"/>
+					</g:customCell>
+					<!-- 
+					<g:customCell>
+						<g:Button ui:field="assignButton" debugId="assignButton" text="Assign existing VPN Connection Profile" addStyleNames="{style.glowing-border} {style.actionButton}" title="Assign an existing (next available) VPN Connection Profile"/>
+					</g:customCell>
+					 -->
+					 <!-- 
+					<g:customCell>
+						<g:Button ui:field="provisionButton" debugId="provisionButton" text="Provision VPN Connection" addStyleNames="{style.glowing-border} {style.actionButton}" title="Provision a new VPN Connection"/>
+					</g:customCell>
+					  -->
+					<g:customCell>
+						<g:Button ui:field="actionsButton" debugId="actionsButton" text="Actions" addStyleNames="{style.glowing-border} {style.normalButton}" title="Allowcate a new IP address"/>
+					</g:customCell>
+			    	<g:customCell>
+						<g:TextBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="filterTB" debugId="filterTB" title="Enter a provisioning id to filter by."/>
+			    	</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="filterButton" debugId="filterButton" text="Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+					</g:customCell>
+					<g:customCell>
+						<g:Button ui:field="clearFilterButton" debugId="clearFilterButton" text="Clear Filter" addStyleNames="{style.glowing-border} {style.normalButton}" title="Filter by account id"/>
+					</g:customCell>
+					<g:customCell>
+						<g:PushButton ui:field="refreshButton" debugId="refreshButton" text="Refresh" 
+							addStyleNames="{style.refreshButton}"
+							title="Refresh table content"/>
+					</g:customCell>
+					<g:customCell>
+						<g:HTML ui:field="filteredHTML" visible="false" addStyleNames="{style.body}"><i>* Filtered</i></g:HTML>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:HTML ui:field="profileSummaryHTML" addStyleNames="{style.body}"/>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">
+			<g:Grid cellSpacing="12">
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="topListPager" debugId="topListPager"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:CellTable width="100%" ui:field="listTable"  title="Existing profiles"/>
+					</g:customCell>
+				</g:row>
+				<g:row>
+					<g:customCell>
+						<c:SimplePager ui:field="listPager" debugId="listPager"/>
+					</g:customCell>
+				</g:row>
+			</g:Grid>
+		</g:cell>
+	</g:VerticalPanel>
+	</g:ScrollPanel>
+</ui:UiBinder> 

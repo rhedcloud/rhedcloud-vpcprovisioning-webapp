@@ -93,6 +93,8 @@ import edu.emory.oit.vpcprovisioning.presenter.service.MaintainServiceView;
 import edu.emory.oit.vpcprovisioning.presenter.service.ServiceAssessmentReportView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
@@ -316,6 +318,21 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		homeContentContainer.add(listRoleProvisioningView);
 		homeContentContainer.add(maintainRoleProvisioningView);
 		homeContentContainer.add(roleProvisioningStatusView);
+		
+		// 2/17/2021 - Sprint 5 - Transit Gateway
+		ListTransitGatewayView listTransitGatewayView = clientFactory.getListTransitGatewayView();
+		listTransitGatewayView.setAppShell(this);
+		ListTransitGatewayConnectionProfileView listTransitGatewayConnectionProfileView = clientFactory.getListTransitGatewayConnectionProfileView();
+		listTransitGatewayConnectionProfileView.setAppShell(this);
+//		MaintainTransitGatewayView maintainTgwView = clientFactory.getMaintainTransitGatewayView();
+//		maintainTgwView.setAppShell(this);
+//		MaintainTransitGatewayConnectionProfileView maintainTgwcpView = clientFactory.getMaintainTransitGatewayConnectionProfileView();
+//		maintainTgwcpView.setAppShell(this);
+		
+		homeContentContainer.add(listTransitGatewayView);
+		homeContentContainer.add(listTransitGatewayConnectionProfileView);
+//		homeContentContainer.add(maintainTgwView);
+//		homeContentContainer.add(maintainTgwcpView);
 
 
 		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
@@ -437,6 +454,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			}
 			else if (hash.trim().indexOf(("#" + Constants.ROLE_PROVISIONING_STATUS + ":")) >= 0) {
 				GWT.log("Need to go to Role Provisioning tab (status)");
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_TRANSIT_GATEWAY + ":")) {
+				GWT.log("Need to go to transit gateway tab");
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_TRANSIT_GATEWAY);
+			}
+			else if (hash.trim().equals("#" + Constants.LIST_TRANSIT_GATEWAY_CONNECTION_PROFILE + ":")) {
+				GWT.log("Need to go to transit gateway connection profile tab");
+				ActionEvent.fire(eventBus, ActionNames.GO_HOME_TRANSIT_GATEWAY_CONNECTION_PROFILE);
 			}
 			else {
 				// when/if they have invalid speedtypes, they'll... 

@@ -46,6 +46,10 @@ public interface ActionNames {
 	final String MAINTAIN_ELASTIC_IP_ASSIGNMENT = "maintainElasticIpAssignment";
 	final String CREATE_RTP = "createRtp";
 	final String MAINTAIN_RTP = "maintainRtp";
+	final String CREATE_TRANSIT_GATEWAY = "createTransitGateway";
+	final String MAINTAIN_TRANSIT_GATEWAY = "maintainTransitGateway";
+	final String CREATE_TRANSIT_GATEWAY_CONNECTION_PROFILE = "createTransitGatewayConnectionProfile";
+	final String MAINTAIN_TRANSIT_GATEWAY_CONNECTION_PROFILE = "maintainTransitGatewayConnectionProfile";
 
 	final String FIREWALL_EXCEPTION_REQUEST_EDITING_CANCELED = "firewallExceptionRequestEditingCanceled";
 	final String VPC_EDITING_CANCELED = "vpcEditingCanceled";
@@ -59,6 +63,8 @@ public interface ActionNames {
 	final String SERVICE_EDITING_CANCELED = "svcEditingCanceled";
 	final String NOTIFICATION_EDITING_CANCELED = "notificationEditingCanceled";
 	final String RTP_EDITING_CANCELED = "rtpEditingCanceled";
+	final String TRANSIT_GATEWAY_EDITING_CANCELED = "transitGatewayEditingCanceled";
+	final String TRANSIT_GATEWAY_CONNECTION_PROFILE_EDITING_CANCELED = "transitGatewayConnectionProfileEditingCanceled";
 
 	final String GO_HOME = "goHome";
 	final String GO_HOME_FIREWALL_RULE = "goHomeFirewallRule";
@@ -83,6 +89,8 @@ public interface ActionNames {
 	final String GO_HOME_NOTIFICATION = "goHomeNotification";
 	final String GO_HOME_RTP = "goHomeResourceTagging";
 	final String GO_HOME_FINANCIAL_ACCOUNTS = "goHomeFinancialAccounts";
+	final String GO_HOME_TRANSIT_GATEWAY = "goHomeTransitGateway";
+	final String GO_HOME_TRANSIT_GATEWAY_CONNECTION_PROFILE = "goHomeTransitGatewayConnectionProfile";
 
 	final String VPC_CACHED = "vpcCached";
 	final String ACCOUNT_CACHED = "accountCached";
@@ -91,6 +99,8 @@ public interface ActionNames {
 	final String ELASTIC_IP_CACHED = "elasticIpCached";
 	final String ELASTIC_IP_ASSIGNMENT_CACHED = "elasticIpAssignmentCached";
 	final String RTP_CACHED = "rtpCached";
+	final String TRANSIT_GATEWAY_CACHED = "transitGatewayCached";
+	final String TRANSIT_GATEWAY_CONNECTION_PROFILE_CACHED = "transitGatewayConnectionProfileCached";
 	
 	final String FIREWALL_EXCEPTION_REQUEST_DELETED = "firewallExceptionRequestDeleted";
 	final String VPC_DELETED = "vpcDeleted";
@@ -100,6 +110,8 @@ public interface ActionNames {
 	final String ELASTIC_IP_DELETED = "elasticIpDeleted";
 	final String ELASTIC_IP_ASSIGNMENT_DELETED = "elasticIpAssignmentDeleted";
 	final String RTP_DELETED = "rtpDeleted";
+	final String TRANSIT_GATEWAY_DELETED = "transitGatewayDeleted";
+	final String TRANSIT_GATEWAY_CONNECTION_PROFILE_DELETED = "transitGatewayConnectionProfileDeleted";
 	
 	final String FIREWALL_EXCEPTION_REQUEST_SAVED = "firewallExceptionRequestSaved";
 	final String VPCP_GENERATED = "vpcpGenerated";
@@ -114,6 +126,8 @@ public interface ActionNames {
 	final String SERVICE_SAVED = "svcSaved";
 	final String NOTIFICATION_SAVED = "notificationSaved";
 	final String RTP_SAVED = "rtpSaved";
+	final String TRANSIT_GATEWAY_SAVED = "transitGatewaySaved";
+	final String TRANSIT_GATEWAY_CONNECTION_PROFILE_SAVED = "transitGatewayConnectionProfileSaved";
 
 	final String INAUTHENTIC_CLIENT = "inauthenticClient";
 

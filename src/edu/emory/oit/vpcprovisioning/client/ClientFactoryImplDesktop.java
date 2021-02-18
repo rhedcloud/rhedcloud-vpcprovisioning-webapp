@@ -33,6 +33,8 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListService;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceControl;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListServiceGuideline;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListStaticNatProvisioningSummary;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListTransitGateway;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListTransitGatewayConnectionProfile;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopListVpnConnectionProfile;
@@ -111,6 +113,8 @@ import edu.emory.oit.vpcprovisioning.presenter.srd.MaintainSrdView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioningSummaryView;
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -194,6 +198,8 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private ListRoleProvisioningView listRoleProvisioningView;
 	private RoleProvisioningStatusView roleProvisioningStatusView;
 	private MaintainRoleProvisioningView maintainRoleProvisioningView;
+	private ListTransitGatewayView listTransitGatewayView;
+	private ListTransitGatewayConnectionProfileView listTransitGatewayConnectionProfileView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -824,5 +830,25 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	private MaintainRoleProvisioningView createMaintainRoleProvisioningView() {
 		return new DesktopMaintainRoleProvisioning();
+	}
+	@Override
+	public ListTransitGatewayView getListTransitGatewayView() {
+        if (listTransitGatewayView == null) {
+        	listTransitGatewayView = createListTransitGatewayView();
+        }
+        return listTransitGatewayView;
+	}
+	private ListTransitGatewayView createListTransitGatewayView() {
+		return new DesktopListTransitGateway();
+	}
+	@Override
+	public ListTransitGatewayConnectionProfileView getListTransitGatewayConnectionProfileView() {
+        if (listTransitGatewayConnectionProfileView == null) {
+        	listTransitGatewayConnectionProfileView = createListTransitGatewayConnectionProfileView();
+        }
+        return listTransitGatewayConnectionProfileView;
+	}
+	private ListTransitGatewayConnectionProfileView createListTransitGatewayConnectionProfileView() {
+		return new DesktopListTransitGatewayConnectionProfile();
 	}
 }
