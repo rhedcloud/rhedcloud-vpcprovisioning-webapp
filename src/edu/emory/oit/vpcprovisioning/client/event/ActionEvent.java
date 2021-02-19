@@ -61,6 +61,7 @@ import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -147,6 +148,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private RoleProvisioningRequisitionPojo roleProvisioningRequisition;
 	private DirectoryPersonPojo roleAssignee;
 	private CustomRolePojo customRole;
+	private TransitGatewayPojo transitGateway;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -227,6 +229,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, AccountPojo account) {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(account), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, TransitGatewayPojo transitGateway) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(transitGateway), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, DirectoryPersonPojo roleAssignee, AccountPojo account) {
@@ -567,6 +574,9 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.account = account;
 	}
 	
+	public ActionEvent(TransitGatewayPojo transitGateway) {
+		this.transitGateway = transitGateway;
+	}
 	public ActionEvent(DirectoryPersonPojo roleAssignee, AccountPojo account) {
 		this.account = account;
 		this.roleAssignee = roleAssignee;
@@ -1357,6 +1367,14 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 
 	public void setCustomRole(CustomRolePojo customRole) {
 		this.customRole = customRole;
+	}
+
+	public TransitGatewayPojo getTransitGateway() {
+		return transitGateway;
+	}
+
+	public void setTransitGateway(TransitGatewayPojo transitGateway) {
+		this.transitGateway = transitGateway;
 	}
 
 }

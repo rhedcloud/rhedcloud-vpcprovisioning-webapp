@@ -11,6 +11,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.OnlyToBeUsedInGeneratedCodeStringBlessedAsSafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -24,7 +25,9 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.SimplePager.TextLocation;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -32,8 +35,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SingleSelectionModel;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
+import edu.emory.oit.vpcprovisioning.shared.AccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -78,9 +84,74 @@ public class DesktopListTransitGateway extends ViewImplBase implements ListTrans
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 
+	@UiHandler("createTransitGatewayButton")
+	void createButtonClicked(ClickEvent e) {
+		hidePleaseWaitDialog();
+		hidePleaseWaitPanel();
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_TRANSIT_GATEWAY);
+	}
+	
 	@UiHandler("actionsButton")
 	void actionsButtonClicked(ClickEvent e) {
-		showMessageToUser("Comming soon");
+		actionsPopup.clear();
+	    actionsPopup.setAutoHideEnabled(true);
+	    actionsPopup.setAnimationEnabled(true);
+	    actionsPopup.getElement().getStyle().setBackgroundColor("#f1f1f1");
+	    Grid grid = new Grid(2, 1);
+	    grid.setCellSpacing(8);
+	    actionsPopup.add(grid);
+	    
+	    String anchorText = "View/Maintain Transit Gateway";
+
+		Anchor maintainAnchor = new Anchor(anchorText);
+		maintainAnchor.addStyleName("productAnchor");
+		maintainAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		maintainAnchor.setTitle("View/Maintain selected Transit Gateway");
+		maintainAnchor.ensureDebugId(anchorText);
+		maintainAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				TransitGatewayPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					getAppShell().addBreadCrumb("Maintain Transit Gateway", ActionNames.MAINTAIN_TRANSIT_GATEWAY, m);
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_TRANSIT_GATEWAY, m);
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(0, 0, maintainAnchor);
+
+		Anchor deleteAnchor = new Anchor("Delete Transit Gateway Metadata");
+		deleteAnchor.addStyleName("productAnchor");
+		deleteAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		deleteAnchor.setTitle("Delete the metadata for the selected transit gateway.  NOTE:  this does NOT remove the transit gateway from AWS.");
+		deleteAnchor.ensureDebugId(deleteAnchor.getText());
+		deleteAnchor.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				actionsPopup.hide();
+				TransitGatewayPojo m = selectionModel.getSelectedObject();
+				if (m != null) {
+					if (userLoggedIn.isNetworkAdmin()) {
+						List<TransitGatewayPojo> pojos = new java.util.ArrayList<TransitGatewayPojo>();
+						pojos.add(m);
+						presenter.deleteTransitGateways(pojos);
+					}
+					else {
+						showMessageToUser("You are not authorized to perform this function for this account.");
+					}
+				}
+				else {
+					showMessageToUser("Please select an item from the list");
+				}
+			}
+		});
+		grid.setWidget(1, 0, deleteAnchor);
+
+		actionsPopup.showRelativeTo(actionsButton);
 	}
 
 	@Override

@@ -23,6 +23,7 @@ public class TransitGatewayPojo extends SharedObject implements IsSerializable, 
 	String region;
 	String accountId;
 	List<TransitGatewayProfilePojo> profiles = new java.util.ArrayList<TransitGatewayProfilePojo>();
+	TransitGatewayPojo baseline;
 	
 	@Override
 	public int compareTo(TransitGatewayPojo o) {
@@ -73,6 +74,14 @@ public class TransitGatewayPojo extends SharedObject implements IsSerializable, 
 
 	public void setProfiles(List<TransitGatewayProfilePojo> profiles) {
 		this.profiles = profiles;
+	}
+
+	public TransitGatewayPojo getBaseline() {
+		return baseline;
+	}
+
+	public void setBaseline(TransitGatewayPojo baseline) {
+		this.baseline = baseline;
 	}
 
 }

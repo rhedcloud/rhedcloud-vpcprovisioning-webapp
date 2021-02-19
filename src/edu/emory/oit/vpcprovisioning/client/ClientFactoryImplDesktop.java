@@ -58,6 +58,7 @@ import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceGuidel
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainServiceTestPlan;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainSrd;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainTermsOfUseAgreement;
+import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainTransitGateway;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpc;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpcp;
 import edu.emory.oit.vpcprovisioning.client.desktop.DesktopMaintainVpnConnectionProfile;
@@ -115,6 +116,7 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningSt
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.RegisterVpcView;
@@ -200,6 +202,7 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	private MaintainRoleProvisioningView maintainRoleProvisioningView;
 	private ListTransitGatewayView listTransitGatewayView;
 	private ListTransitGatewayConnectionProfileView listTransitGatewayConnectionProfileView;
+	private MaintainTransitGatewayView maintainTransitGatewayView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -850,5 +853,15 @@ public class ClientFactoryImplDesktop implements ClientFactory {
 	}
 	private ListTransitGatewayConnectionProfileView createListTransitGatewayConnectionProfileView() {
 		return new DesktopListTransitGatewayConnectionProfile();
+	}
+	@Override
+	public MaintainTransitGatewayView getMaintainTransitGatewayView() {
+        if (maintainTransitGatewayView == null) {
+        	maintainTransitGatewayView = createMaintainTransitGatewayView();
+        }
+        return maintainTransitGatewayView;
+	}
+	private MaintainTransitGatewayView createMaintainTransitGatewayView() {
+		return new DesktopMaintainTransitGateway();
 	}
 }

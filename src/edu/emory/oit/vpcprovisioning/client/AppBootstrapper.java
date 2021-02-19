@@ -84,6 +84,7 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningSt
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPlace;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -513,6 +514,34 @@ public class AppBootstrapper {
 			public void onAction(ActionEvent event) {
 				GWT.log("Bootstrapper, GO_HOME_TRANSIT_GATEWAY_CONNECTION_PROFILE.onAction");
 				placeController.goTo(new ListTransitGatewayConnectionProfilePlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_TRANSIT_GATEWAY, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainTransitGatewayPlace.getMaintainTransitGatewayPlace());
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_TRANSIT_GATEWAY, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainTransitGatewayPlace.createMaintainTransitGatewayPlace(event.getTransitGateway()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.TRANSIT_GATEWAY_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListTransitGatewayPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.TRANSIT_GATEWAY_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListTransitGatewayPlace(false));
 			}
 		});
 

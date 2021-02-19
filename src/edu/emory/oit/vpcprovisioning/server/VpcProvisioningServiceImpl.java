@@ -14116,6 +14116,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filter != null) {
 				queryObject.setEnvironment(filter.getEnvironment());
 				queryObject.setRegion(filter.getRegion());
+				queryObject.setTransitGatewayId(filter.getTransitGatewayId());
 				info("[getTransitGatewaysForFilter] getting items for filter: " + queryObject.toXmlString());
 			}
 			else {
@@ -14143,7 +14144,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getTransitGatewaysForFilter] got " + moas.size() + " Transit Gateway objects back from the server.");
 			for (TransitGateway moa : moas) {
 				TransitGatewayPojo pojo = new TransitGatewayPojo();
+				TransitGatewayPojo baseline = new TransitGatewayPojo();
 				this.populateTransitGatewayPojo(moa, pojo);
+				this.populateTransitGatewayPojo(moa, baseline);
+				pojo.setBaseline(baseline);
 				pojos.add(pojo);
 			}
 
@@ -14176,20 +14180,103 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public TransitGatewayPojo createTransitGateway(TransitGatewayPojo transitGateway) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			info("creating TransitGateay on the server...");
+			TransitGateway moa = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
+			info("populating moa");
+			this.populateTransitGatewayMoa(transitGateway, moa);
+
+			
+			info("doing the TransitGateway.create...");
+			info("creating transit gateway: " + moa.toXmlString());
+//			this.doCreate(moa, getNetworkOpsRequestService());
+			info("TransitGateway.create is complete...");
+
+			return transitGateway;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
 	public TransitGatewayPojo deleteTransitGateway(TransitGatewayPojo transitGateway) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			info("deleting TransitGateway record on the server...");
+			TransitGateway moa = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
+			info("populating moa");
+			this.populateTransitGatewayMoa(transitGateway, moa);
+
+			
+			info("doing the TransitGateway.delete...");
+			info("deleting transit gateway: " + moa.toXmlString());
+//			this.doDelete(moa, getNetworkOpsRequestService());
+			info("TransitGateway.delete is complete...");
+
+			return transitGateway;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
 	public TransitGatewayPojo updateTransitGateway(TransitGatewayPojo transitGateway) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+        try {
+            info("updating TransitGateway on the server...");
+            TransitGateway newData = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
+            TransitGateway baselineData = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
+
+            info("populating newData...");
+            populateTransitGatewayMoa(transitGateway, newData);
+
+            info("populating baselineData...");
+            populateTransitGatewayMoa(transitGateway.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+			info("deleting transit gateway: " + newData.toXmlString());
+//            doUpdate(newData, getNetworkOpsRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return transitGateway;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -14218,13 +14305,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				assignmentLoop: for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
 					if (assignment.getTransitGatewayConnectionProfileId().equals(profile.getTransitGatewayConnectionProfileId())) {
 						profile.setAssigned(true);
-						// go through the tunnel profiles in the profile and remove the "(AVAILABLE)" string?
-//						for (TunnelProfilePojo tunnel : profile.getTunnelProfiles()) {
-//							String newDesc = tunnel.getTunnelDescription().replaceAll(Constants.TUNNEL_AVAILABLE, assignment.getOwnerId());
-//							tunnel.setTunnelDescription(newDesc);
-//						}
 						summary.setAssignment(assignment);
-						// TODO: remove assignment from eia_result.getResults()??
 						break assignmentLoop;
 					}
 				}
@@ -14281,9 +14362,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 				summaries.add(summary);
 			}
-			// cache the profiles for later since they don't change often
-			// they'll be cached for this session only
-//			Cache.getCache().put(Constants.TRANSIT_GATEWAY_CONNECTION_PROFILES + getCurrentSessionId(), profiles_to_cache);
 
 			Collections.sort(summaries);
 			result.setResults(summaries);

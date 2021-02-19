@@ -257,4 +257,5 @@ public class Constants implements IsSerializable {
 	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT = "TransitGatewayConnectionProfileAssignment.v1_0";
 	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_GENERATE = "TransitGatewayConnectionProfileAssignment.Generate.v1_0";
 	public static final String MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION = "TransitGatewayConnectionProfileAssignmentRequisition.v1_0";
+	public static final String MAINTAIN_TRANSIT_GATEWAY = "maintainTransitGateway";
 }

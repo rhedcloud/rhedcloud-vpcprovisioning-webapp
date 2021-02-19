@@ -53,4 +53,26 @@ public class TransitGatewayProfilePojo extends SharedObject implements IsSeriali
 		this.propagationRouteTableIds = propagationRouteTableIds;
 	}
 
+	public void removePropagationRouteTableId(String propRouteId) {
+		idLoop: for (String pri : propagationRouteTableIds) {
+			if (pri.equalsIgnoreCase(propRouteId)) {
+				propagationRouteTableIds.remove(pri);
+				break idLoop;
+			}
+		}
+	}
+
+	public void updatePropagationRouteTableId(String oldPropRouteId, String newPropRouteId) {
+		idLoop: for (String pri : propagationRouteTableIds) {
+			if (pri.equalsIgnoreCase(oldPropRouteId)) {
+				removePropagationRouteTableId(oldPropRouteId);
+				break idLoop;
+			}
+		}
+		propagationRouteTableIds.add(newPropRouteId);
+	}
+
+	public void addPropagationRouteTableId(String id) {
+		propagationRouteTableIds.add(id);
+	}
 }

@@ -95,6 +95,7 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioni
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpcp.ListVpcpView;
@@ -324,14 +325,14 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		listTransitGatewayView.setAppShell(this);
 		ListTransitGatewayConnectionProfileView listTransitGatewayConnectionProfileView = clientFactory.getListTransitGatewayConnectionProfileView();
 		listTransitGatewayConnectionProfileView.setAppShell(this);
-//		MaintainTransitGatewayView maintainTgwView = clientFactory.getMaintainTransitGatewayView();
-//		maintainTgwView.setAppShell(this);
+		MaintainTransitGatewayView maintainTgwView = clientFactory.getMaintainTransitGatewayView();
+		maintainTgwView.setAppShell(this);
 //		MaintainTransitGatewayConnectionProfileView maintainTgwcpView = clientFactory.getMaintainTransitGatewayConnectionProfileView();
 //		maintainTgwcpView.setAppShell(this);
 		
 		homeContentContainer.add(listTransitGatewayView);
 		homeContentContainer.add(listTransitGatewayConnectionProfileView);
-//		homeContentContainer.add(maintainTgwView);
+		homeContentContainer.add(maintainTgwView);
 //		homeContentContainer.add(maintainTgwcpView);
 
 
@@ -458,6 +459,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			else if (hash.trim().equals("#" + Constants.LIST_TRANSIT_GATEWAY + ":")) {
 				GWT.log("Need to go to transit gateway tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_TRANSIT_GATEWAY);
+			}
+			else if (hash.trim().equals("#" + Constants.MAINTAIN_TRANSIT_GATEWAY + ":")) {
+				GWT.log("Need to go to maintain transit gateway tab");
 			}
 			else if (hash.trim().equals("#" + Constants.LIST_TRANSIT_GATEWAY_CONNECTION_PROFILE + ":")) {
 				GWT.log("Need to go to transit gateway connection profile tab");
