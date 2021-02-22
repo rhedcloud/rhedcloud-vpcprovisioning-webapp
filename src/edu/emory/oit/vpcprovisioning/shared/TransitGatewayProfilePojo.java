@@ -70,6 +70,12 @@ public class TransitGatewayProfilePojo extends SharedObject implements IsSeriali
 			}
 		}
 		propagationRouteTableIds.add(newPropRouteId);
+		// remove any blank values
+		for (String pri : propagationRouteTableIds) {
+			if (pri == null || pri.length() == 0) {
+				removePropagationRouteTableId(pri);
+			}
+		}
 	}
 
 	public void addPropagationRouteTableId(String id) {

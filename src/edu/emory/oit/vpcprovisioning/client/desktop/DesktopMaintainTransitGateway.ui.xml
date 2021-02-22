@@ -67,10 +67,10 @@
 		</g:HorizontalPanel>
 		<g:VerticalPanel ui:field="tgwProfilePanel" spacing="8">
 			<g:HorizontalPanel width="100%">
-				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP">
+				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:Label addStyleNames="{style.mediumLabel}">Profiles associated to this Transit Gateway:</g:Label>
 				</g:cell>
-				<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_TOP">
+				<g:cell horizontalAlignment="ALIGN_RIGHT" verticalAlignment="ALIGN_MIDDLE">
 					<g:PushButton ui:field="addProfileButton" debugId="addProfileButton" text="Add Profile"
 						title="Add profile"/>
 				</g:cell>

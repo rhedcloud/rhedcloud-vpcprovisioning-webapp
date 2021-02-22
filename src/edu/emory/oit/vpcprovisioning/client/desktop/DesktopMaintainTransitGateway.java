@@ -40,6 +40,8 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	Presenter presenter;
 	UserAccountPojo userLoggedIn;
 	boolean editing;
+	List<TextBox> associatedRouteTableTbs = new java.util.ArrayList<TextBox>();
+	List<TextBox> propagationRouteTableTbs = new java.util.ArrayList<TextBox>();
 
 	private static DesktopMaintainTransitGatewayUiBinder uiBinder = GWT
 			.create(DesktopMaintainTransitGatewayUiBinder.class);
@@ -67,11 +69,46 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 
 	@UiHandler("addProfileButton")
 	void addProfileButtonClicked(ClickEvent e) {
-		// TODO: add blank profile to panel (the next new profile)
+		// if it's a create, we will prevent them from adding
+		// a new profile until they've entered all the TGW data first
+		resetFieldStyles();
+		String env = environmentSB.getText();
+		String region = regionSB.getText();
+		String acct = accountIdSB.getText();
+		String tgw = transitGatewayIdTB.getText();
+		List<Widget> fields = new java.util.ArrayList<Widget>();
+		if (env == null || env.length() == 0) {
+			fields.add(environmentSB);
+		}
+		if (region == null || region.length() == 0) {
+			fields.add(regionSB);
+		}
+		if (acct == null || acct.length() == 0) {
+			fields.add(accountIdSB);
+		}
+		if (tgw == null || tgw.length() == 0) {
+			fields.add(transitGatewayIdTB);
+		}
+		if (fields != null && fields.size() > 0) {
+			setFieldViolations(true);
+			applyStyleToMissingFields(fields);
+			hidePleaseWaitDialog();
+			hidePleaseWaitPanel();
+			showMessageToUser("Please provide all of the Transit Gateway "
+				+ "metadata before adding a profile.");
+			return;
+		}
+		
+		// add blank profile to panel (the next new profile)
 		TransitGatewayProfilePojo blankProfile = new TransitGatewayProfilePojo();
-		blankProfile.setTransitGatewayId(presenter.getTransitGateway().getTransitGatewayId());
-		blankProfile.addPropagationRouteTableId("");
-		blankProfile.addPropagationRouteTableId("");
+		if (presenter.getTransitGateway().getTransitGatewayId() == null || 
+			presenter.getTransitGateway().getTransitGatewayId().length() == 0) {
+			// need to use the value they've specified on the page because it's a create
+			blankProfile.setTransitGatewayId(transitGatewayIdTB.getText());
+		}
+		else {
+			blankProfile.setTransitGatewayId(presenter.getTransitGateway().getTransitGatewayId());
+		}
 		presenter.getTransitGateway().getProfiles().add(blankProfile);
 		
 		int numRows = profilesTable.getRowCount();
@@ -178,6 +215,19 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 		if (tgw.getTransitGatewayId() == null || tgw.getTransitGatewayId().length() == 0) {
 			fields.add(transitGatewayIdTB);
 		}
+		for (TextBox tb : associatedRouteTableTbs) {
+			if (tb.getText() == null || tb.getText().length() == 0) {
+				fields.add(tb);
+			}
+		}
+		for (int i=0; i<propagationRouteTableTbs.size(); i++) {
+			if (i<propagationRouteTableTbs.size() - 1 || i==0) {
+				TextBox tb = propagationRouteTableTbs.get(i);
+				if (tb.getText() == null || tb.getText().length() == 0) {
+					fields.add(tb);
+				}
+			}
+		}
 		return fields;
 	}
 
@@ -188,6 +238,12 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 		fields.add(environmentSB);
 		fields.add(regionSB);
 		fields.add(transitGatewayIdTB);
+		for (TextBox tb : associatedRouteTableTbs) {
+			fields.add(tb);
+		}
+		for (TextBox tb : propagationRouteTableTbs) {
+			fields.add(tb);
+		}
 		this.resetFieldStyles(fields);
 	}
 
@@ -290,6 +346,8 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	}
 
 	private void initializeProfilesPanel() {
+		associatedRouteTableTbs = new java.util.ArrayList<TextBox>();
+		propagationRouteTableTbs = new java.util.ArrayList<TextBox>();
 //		addTagButton.setText("Add");
 //		tagNameTB.setEnabled(true);
 		profilesTable.removeAllRows();
@@ -349,6 +407,7 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 		profileHP.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		
 		final TextBox asscRouteTableIdTB = new TextBox();
+		associatedRouteTableTbs.add(asscRouteTableIdTB);
 		asscRouteTableIdTB.setText(profile.getAssociationRouteTableId());
 		asscRouteTableIdTB.addStyleName("glowing-border");
 		asscRouteTableIdTB.addStyleName("field");
@@ -399,15 +458,20 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 		final VerticalPanel propRoutesVP) {
 		
 		final TextBox propRouteTableIdTB = new TextBox();
+		propagationRouteTableTbs.add(propRouteTableIdTB);
+
 		propRouteTableIdTB.setText(propRouteId);
 		if (propRouteId == null || propRouteId.length() == 0) {
 			// TODO: when they type a letter, create a new empty row
 			propRouteTableIdTB.addKeyPressHandler(new KeyPressHandler() {
 				@Override
 				public void onKeyPress(KeyPressEvent event) {
-					Grid propRoutesGrid = new Grid(1, 2);
-					propRoutesVP.add(propRoutesGrid);
-					addPropRouteToPropRoutesGrid(propRoutesGrid, "", profile, propRoutesVP);
+					if (propRouteTableIdTB.getText() != null && 
+						propRouteTableIdTB.getText().length() == 1) {
+						Grid propRoutesGrid = new Grid(1, 2);
+						propRoutesVP.add(propRoutesGrid);
+						addPropRouteToPropRoutesGrid(propRoutesGrid, "", profile, propRoutesVP);
+					}
 				}
 			});
 		}
@@ -417,33 +481,37 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 		propRouteTableIdTB.addBlurHandler(new BlurHandler() {
 			@Override
 			public void onBlur(BlurEvent event) {
+				GWT.log("updating prop route id from " + propRouteId + " to " + propRouteTableIdTB.getText());
 				profile.updatePropagationRouteTableId(propRouteId, propRouteTableIdTB.getText());
 			}
 		});
 		propRoutesGrid.setWidget(0, 0, propRouteTableIdTB);
 		
-		Image deleteImage2 = new Image("images/delete_icon.png");
-		deleteImage2.setWidth("20px");
-		deleteImage2.setHeight("20px");
+		if (propRoutesVP.getWidgetCount() > 1) {
+			Image deleteImage2 = new Image("images/delete_icon.png");
+			deleteImage2.setWidth("20px");
+			deleteImage2.setHeight("20px");
 
-		final PushButton removePropRouteButton = new PushButton();
-		removePropRouteButton.setTitle("Remove this propagation route table id.");
-		removePropRouteButton.getUpFace().setImage(deleteImage2);
-		// disable buttons if userLoggedIn is NOT a central admin
-		if (this.userLoggedIn.isNetworkAdmin()) {
-			removePropRouteButton.setEnabled(true);
-		}
-		else {
-			removePropRouteButton.setEnabled(false);
-		}
-		removePropRouteButton.addStyleName("glowing-border");
-		removePropRouteButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				profile.removePropagationRouteTableId(propRouteId);
-				propRoutesVP.remove(propRoutesGrid);
+			final PushButton removePropRouteButton = new PushButton();
+			removePropRouteButton.setTitle("Remove this propagation route table id.");
+			removePropRouteButton.getUpFace().setImage(deleteImage2);
+			// disable buttons if userLoggedIn is NOT a central admin
+			if (this.userLoggedIn.isNetworkAdmin()) {
+				removePropRouteButton.setEnabled(true);
 			}
-		});
-		propRoutesGrid.setWidget(0, 1, removePropRouteButton);
+			else {
+				removePropRouteButton.setEnabled(false);
+			}
+			removePropRouteButton.addStyleName("glowing-border");
+			removePropRouteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					profile.removePropagationRouteTableId(propRouteId);
+					propRoutesVP.remove(propRoutesGrid);
+					propagationRouteTableTbs.remove(propRouteTableIdTB);
+				}
+			});
+			propRoutesGrid.setWidget(0, 1, removePropRouteButton);
+		}
 	}
 }
