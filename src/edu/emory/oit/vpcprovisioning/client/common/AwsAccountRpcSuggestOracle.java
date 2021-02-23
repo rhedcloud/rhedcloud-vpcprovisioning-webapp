@@ -16,6 +16,10 @@ public class AwsAccountRpcSuggestOracle extends SuggestOracle {
 	String type=null;
 	UserAccountPojo user;
 
+	public AwsAccountRpcSuggestOracle(String type) {
+		this.type = type;
+	}
+	
 	public AwsAccountRpcSuggestOracle(UserAccountPojo user, String type) {
 		this.user = user;
 		this.type = type;
@@ -26,7 +30,7 @@ public class AwsAccountRpcSuggestOracle extends SuggestOracle {
 		AsyncCallback<AccountQueryResultPojo> acct_callback = new AsyncCallback<AccountQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
-				GWT.log("problem getting services..." + caught.getMessage());
+				GWT.log("problem getting accounts..." + caught.getMessage());
 				List<MultiWordRpcSuggestion> descList = new java.util.ArrayList<MultiWordRpcSuggestion>();
 				descList.add(new MultiWordRpcSuggestion("An Error Occurred: " + caught.getMessage(), "", null));
 				Response resp =

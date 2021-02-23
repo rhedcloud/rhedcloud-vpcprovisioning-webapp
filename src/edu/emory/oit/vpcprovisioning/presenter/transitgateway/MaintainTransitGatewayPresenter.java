@@ -12,6 +12,7 @@ import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -76,6 +77,30 @@ public class MaintainTransitGatewayPresenter extends PresenterBase implements Ma
 			clientFactory.getShell().setSubTitle("Edit Transit Gateway");
 			startEdit();
 		}
+
+		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(List<AWSRegionPojo> result) {
+				getView().setAwsRegionItems(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getAwsRegionItems(regionCB);
+
+		AsyncCallback<List<String>> envCB = new AsyncCallback<List<String>>() {
+			@Override
+			public void onFailure(Throwable caught) {
+			}
+
+			@Override
+			public void onSuccess(List<String> result) {
+				getView().setEnvironmentItems(result);
+			}
+		};
+		VpcProvisioningService.Util.getInstance().getEnvironmentItems(envCB);
 
 		AsyncCallback<UserAccountPojo> userCallback = new AsyncCallback<UserAccountPojo>() {
 

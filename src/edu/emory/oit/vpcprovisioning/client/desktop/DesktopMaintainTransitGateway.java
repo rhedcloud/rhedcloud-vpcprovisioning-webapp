@@ -11,6 +11,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -22,16 +24,22 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SuggestBox;
+import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import edu.emory.oit.vpcprovisioning.client.common.AwsAccountRpcSuggestOracle;
+import edu.emory.oit.vpcprovisioning.client.common.AwsAccountSuggestion;
 import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
 import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayView;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
+import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -42,6 +50,9 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	boolean editing;
 	List<TextBox> associatedRouteTableTbs = new java.util.ArrayList<TextBox>();
 	List<TextBox> propagationRouteTableTbs = new java.util.ArrayList<TextBox>();
+	private final AwsAccountRpcSuggestOracle accountSuggestions = new AwsAccountRpcSuggestOracle(Constants.SUGGESTION_TYPE_DIRECTORY_PERSON_NAME);
+	List<String> environments = new java.util.ArrayList<String>();
+	List<AWSRegionPojo> regions = new java.util.ArrayList<AWSRegionPojo>();
 
 	private static DesktopMaintainTransitGatewayUiBinder uiBinder = GWT
 			.create(DesktopMaintainTransitGatewayUiBinder.class);
@@ -57,10 +68,9 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button okayButton;
 	@UiField Button cancelButton;
-//	@UiField(provided=true) SuggestBox directoryLookupSB = new SuggestBox(personSuggestions, new TextBox());
-	@UiField SuggestBox environmentSB;
-	@UiField SuggestBox regionSB;
-	@UiField SuggestBox accountIdSB;
+	@UiField ListBox environmentLB;
+	@UiField ListBox regionLB;
+	@UiField(provided=true) SuggestBox accountIdSB = new SuggestBox(accountSuggestions, new TextBox());
 	@UiField TextBox transitGatewayIdTB;
 	@UiField FlexTable profilesTable;
 	@UiField VerticalPanel tgwProfilePanel;
@@ -72,16 +82,16 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 		// if it's a create, we will prevent them from adding
 		// a new profile until they've entered all the TGW data first
 		resetFieldStyles();
-		String env = environmentSB.getText();
-		String region = regionSB.getText();
+		String env = environmentLB.getSelectedValue();
+		String region = regionLB.getSelectedValue();
 		String acct = accountIdSB.getText();
 		String tgw = transitGatewayIdTB.getText();
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		if (env == null || env.length() == 0) {
-			fields.add(environmentSB);
+			fields.add(environmentLB);
 		}
 		if (region == null || region.length() == 0) {
-			fields.add(regionSB);
+			fields.add(regionLB);
 		}
 		if (acct == null || acct.length() == 0) {
 			fields.add(accountIdSB);
@@ -125,9 +135,8 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	
 	@UiHandler("okayButton")
 	void okayButtonClicked(ClickEvent e) {
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_TRANSIT_GATEWAY);
-		presenter.getTransitGateway().setEnvironment(environmentSB.getText());
-		presenter.getTransitGateway().setRegion(regionSB.getText());
+		presenter.getTransitGateway().setEnvironment(environmentLB.getSelectedValue());
+		presenter.getTransitGateway().setRegion(regionLB.getSelectedValue());
 		presenter.getTransitGateway().setAccountId(accountIdSB.getText());
 		presenter.getTransitGateway().setTransitGatewayId(transitGatewayIdTB.getText());
 		// profile info should be there already
@@ -159,7 +168,7 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	public void setInitialFocus() {
 		Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand () {
 	        public void execute () {
-				environmentSB.setFocus(true);
+				environmentLB.setFocus(true);
 	        }
 	    });
 	}
@@ -207,10 +216,10 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 			fields.add(accountIdSB);
 		}
 		if (tgw.getEnvironment() == null || tgw.getEnvironment().length() == 0) {
-			fields.add(environmentSB);
+			fields.add(environmentLB);
 		}
 		if (tgw.getRegion() == null || tgw.getRegion().length() == 0) {
-			fields.add(regionSB);
+			fields.add(regionLB);
 		}
 		if (tgw.getTransitGatewayId() == null || tgw.getTransitGatewayId().length() == 0) {
 			fields.add(transitGatewayIdTB);
@@ -235,8 +244,8 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	public void resetFieldStyles() {
 		List<Widget> fields = new java.util.ArrayList<Widget>();
 		fields.add(accountIdSB);
-		fields.add(environmentSB);
-		fields.add(regionSB);
+		fields.add(environmentLB);
+		fields.add(regionLB);
 		fields.add(transitGatewayIdTB);
 		for (TextBox tb : associatedRouteTableTbs) {
 			fields.add(tb);
@@ -311,20 +320,24 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 
 	@Override
 	public void initPage() {
-		environmentSB.setText("");
-		regionSB.setText("");
 		accountIdSB.setText("");
 		transitGatewayIdTB.setText("");
+		accountIdSB.addSelectionHandler(new SelectionHandler<Suggestion>() {
+			@Override
+			public void onSelection(SelectionEvent<Suggestion> event) {
+				AwsAccountSuggestion suggestion = (AwsAccountSuggestion)event.getSelectedItem();
+				if (suggestion.getAccount() != null) {
+//					presenter.getTransitGateway().setAccountId(suggestion.getAccount().getAccountId());
+					accountIdSB.setText(suggestion.getAccount().getAccountId());
+				}
+			}
+		});
 		
 		if (!editing) {
-			environmentSB.getElement().setPropertyString("placeholder", "enter environment");
-			regionSB.getElement().setPropertyString("placeholder", "enter region");
 			accountIdSB.getElement().setPropertyString("placeholder", "enter account id or name");
 			transitGatewayIdTB.getElement().setPropertyString("placeholder", "enter transit gateway id");
 		}
 		else {
-			environmentSB.setText(presenter.getTransitGateway().getEnvironment());
-			regionSB.setText(presenter.getTransitGateway().getRegion());
 			accountIdSB.setText(presenter.getTransitGateway().getAccountId());
 			transitGatewayIdTB.setText(presenter.getTransitGateway().getTransitGatewayId());
 		}
@@ -348,8 +361,6 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	private void initializeProfilesPanel() {
 		associatedRouteTableTbs = new java.util.ArrayList<TextBox>();
 		propagationRouteTableTbs = new java.util.ArrayList<TextBox>();
-//		addTagButton.setText("Add");
-//		tagNameTB.setEnabled(true);
 		profilesTable.removeAllRows();
 		GWT.log("there are " + presenter.getTransitGateway().getProfiles().size() + " profiles in this transit gateway");
 		boolean isEven=false;
@@ -512,6 +523,58 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 				}
 			});
 			propRoutesGrid.setWidget(0, 1, removePropRouteButton);
+		}
+	}
+
+	@Override
+	public void setAwsRegionItems(List<AWSRegionPojo> regionTypes) {
+		this.regions = regionTypes;
+
+		regionLB.clear();
+		if (regionTypes != null) {
+			int i=0;
+			if (presenter.getTransitGateway().getRegion() == null) {
+				regionLB.addItem("-- Select --", "");
+				i = 1;
+			}
+			
+			for (AWSRegionPojo region : regionTypes) {
+				regionLB.addItem(region.getValue(), region.getCode());
+				if (presenter.getTransitGateway() != null) {
+					if (presenter.getTransitGateway().getRegion() != null) {
+						if (presenter.getTransitGateway().getRegion().equals(region.getCode())) {
+							regionLB.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
+		}
+	}
+
+	@Override
+	public void setEnvironmentItems(List<String> environments) {
+		this.environments = environments;
+
+		environmentLB.clear();
+		if (environments != null) {
+			int i=0;
+			if (presenter.getTransitGateway().getEnvironment() == null) {
+				environmentLB.addItem("-- Select --", "");
+				i = 1;
+			}
+			
+			for (String environment : environments) {
+				environmentLB.addItem(environment, environment);
+				if (presenter.getTransitGateway() != null) {
+					if (presenter.getTransitGateway().getEnvironment() != null) {
+						if (presenter.getTransitGateway().getEnvironment().equals(environment)) {
+							environmentLB.setSelectedIndex(i);
+						}
+					}
+				}
+				i++;
+			}
 		}
 	}
 }

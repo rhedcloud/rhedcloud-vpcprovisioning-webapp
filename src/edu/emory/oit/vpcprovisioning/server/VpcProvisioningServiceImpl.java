@@ -221,6 +221,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private static final String SITE_SPECIFIC_TEXT_PROPERTIES = "SiteSpecificTextProperties";
 	
 	private static final String RISK_CALCULATION_PROPERTIES = "RiskCalculationProperties";
+	private static final String ENVIRONMENT_PROPERTIES = "EnvironmentProperties";
 	private static final String MENU_PROPERTIES = "MenuProperties";
 	private static final String RTP_SERVICE_NAME = "ResourceTaggingProfileRequestService";
 	private static final String ELASTIC_IP_SERVICE_NAME = "ElasticIpRequestService";
@@ -14189,7 +14190,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			info("doing the TransitGateway.create...");
 			info("creating transit gateway: " + moa.toXmlString());
-//			this.doCreate(moa, getNetworkOpsRequestService());
+			this.doCreate(moa, getNetworkOpsRequestService());
 			info("TransitGateway.create is complete...");
 
 			return transitGateway;
@@ -14213,6 +14214,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
+		} catch (EnterpriseObjectCreateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
 		}
 	}
 
@@ -14227,7 +14234,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			
 			info("doing the TransitGateway.delete...");
 			info("deleting transit gateway: " + moa.toXmlString());
-//			this.doDelete(moa, getNetworkOpsRequestService());
+			this.doDelete(moa, getNetworkOpsRequestService());
 			info("TransitGateway.delete is complete...");
 
 			return transitGateway;
@@ -14251,6 +14258,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
+		} catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
 		}
 	}
 
@@ -14270,7 +14283,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
             info("doing the update...");
 			info("deleting transit gateway: " + newData.toXmlString());
-//            doUpdate(newData, getNetworkOpsRequestService());
+            doUpdate(newData, getNetworkOpsRequestService());
             info("update is complete...");
         } catch (Throwable t) {
             t.printStackTrace();
@@ -14590,6 +14603,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			TransitGatewayConnectionProfileAssignmentPojo vpnConnectionProfileAssignment) throws RpcException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public List<String> getEnvironmentItems() {
+		List<String> results = new java.util.ArrayList<String>();
+		try {
+			Properties regionProps = getAppConfig().getProperties(ENVIRONMENT_PROPERTIES);
+			Iterator<Object> keys = regionProps.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String)keys.next();
+				String value = (String)regionProps.get(key);
+				results.add(value);
+			}
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+
+		Collections.sort(results);
+		return results;
 	}
 
 }

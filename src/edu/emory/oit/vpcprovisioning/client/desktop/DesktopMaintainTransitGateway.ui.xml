@@ -31,8 +31,8 @@
 						<g:Label ui:field="environmentLabel" addStyleNames="{style.label}">Environment:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:SuggestBox addStyleNames="{style.field} {style.glowing-border}"
-							ui:field="environmentSB" debugId="environmentSB" />
+						<g:ListBox addStyleNames="{style.field} {style.glowing-border}"
+							ui:field="environmentLB" debugId="environmentLB" />
 			    	</g:customCell>
 		    	</g:row>
 				<g:row>
@@ -40,7 +40,7 @@
 						<g:Label ui:field="regionLabel" addStyleNames="{style.label}">Region:</g:Label>
 			    	</g:customCell>
 			    	<g:customCell>
-						<g:SuggestBox ui:field="regionSB" debugId="regionSB" 
+						<g:ListBox ui:field="regionLB" debugId="regionLB" 
 							addStyleNames="{style.field} {style.glowing-border}"/>
 			    	</g:customCell>
 		    	</g:row>

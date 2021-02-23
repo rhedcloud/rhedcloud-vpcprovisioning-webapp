@@ -1,11 +1,14 @@
 package edu.emory.oit.vpcprovisioning.presenter.transitgateway;
 
+import java.util.List;
+
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.presenter.View;
+import edu.emory.oit.vpcprovisioning.shared.AWSRegionPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
 import edu.emory.oit.vpcprovisioning.ui.client.PresentsWidgets;
 
@@ -30,6 +33,7 @@ public interface MaintainTransitGatewayView extends Editor<TransitGatewayPojo>, 
 	
 	void initPage();
 	void setReleaseInfo(String releaseInfoHTML);
-
+	void setAwsRegionItems(List<AWSRegionPojo> regionTypes);
+	void setEnvironmentItems(List<String> environments);
 
 }
