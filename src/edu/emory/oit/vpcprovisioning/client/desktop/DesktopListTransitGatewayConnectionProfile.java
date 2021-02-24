@@ -9,6 +9,7 @@ import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ClickableTextCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -39,6 +40,8 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.presenter.ViewImplBase;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfilePojo;
@@ -129,7 +132,10 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 
 	@UiHandler("createButton")
 	void createButtonClicked(ClickEvent e) {
-//		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+		hidePleaseWaitDialog();
+		hidePleaseWaitPanel();
+		ActionEvent.fire(presenter.getEventBus(), ActionNames.CREATE_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+//		presenter.addEmptySummaryToList();
 	}
 
 	@UiHandler("actionsButton")
@@ -164,10 +170,8 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				
 				TransitGatewayConnectionProfileSummaryPojo m = nIter.next();
 				if (m != null) {
-					// TODO: implement maintenance page(s)
-//					getAppShell().addBreadCrumb("Maintain Transit Gatway Profile", ActionNames.MAINTAIN_TRANSIT_GATEWAY_CONNECTION_PROFILE, m.getProfile());
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_TRANSIT_GATEWAY_CONNECTION_PROFILE, m.getProfile());
-					showMessageToUser("Coming soon");
+					getAppShell().addBreadCrumb("Maintain Transit Gatway Profile", ActionNames.MAINTAIN_TRANSIT_GATEWAY_CONNECTION_PROFILE, m.getProfile());
+					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_TRANSIT_GATEWAY_CONNECTION_PROFILE, m.getProfile());
 				}
 				else {
 					showMessageToUser("Please select an item from the list");
@@ -228,95 +232,6 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 		});
 		grid.setWidget(1, 0, deleteAnchor);
 
-//		Anchor provisionAnchor = new Anchor("Provision Transit Gateway Connection");
-//		provisionAnchor.addStyleName("productAnchor");
-//		provisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		provisionAnchor.setTitle("Provision selected profile");
-//		provisionAnchor.ensureDebugId(provisionAnchor.getText());
-//		provisionAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				actionsPopup.hide();
-//				if (selectionModel.getSelectedSet().size() == 0) {
-//					showMessageToUser("Please select an item from the list");
-//					return;
-//				}
-//				if (selectionModel.getSelectedSet().size() > 1) {
-//					showMessageToUser("Please select one Profile to provision");
-//					return;
-//				}
-//				Iterator<TransitGatewayConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-//				
-//				TransitGatewayConnectionProfileSummaryPojo m = nIter.next();
-//				if (m != null) {
-//					if (userLoggedIn.isNetworkAdmin()) {
-//						showMessageToUser("Coming soon");
-//						if (m.getAssignment() != null) {
-//							// (re-provision) if it's already assigned, just do a TransitGatewayConnectionProfileAssignment.Generate 
-//							// again using that assignment.  i.e., don't create a VpnConnectionProfileAssignment
-//							
-//							// TODO: just add a method to the presenter instead of linking off to provisioning status?
-////							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT, m);
-//						}
-//						else {
-//							// (initial provision) create the assignment and then generate the provisioning request
-//
-//							// TODO: just add a method to the presenter instead of linking off to provisioning status?
-////							ActionEvent.fire(presenter.getEventBus(), ActionNames.GENERATE_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT, m.getProfile());
-//						}
-//					}
-//					else {
-//						showMessageToUser("You are not authorized to perform this action.");
-//					}
-//				}
-//				else {
-//					showMessageToUser("Please select an item from the list");
-//				}
-//			}
-//		});
-//		grid.setWidget(2, 0, provisionAnchor);
-
-//		Anchor deprovisionAnchor = new Anchor("De-Provisiong Transit Gateway Connection");
-//		deprovisionAnchor.addStyleName("productAnchor");
-//		deprovisionAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
-//		deprovisionAnchor.setTitle("De-Provision selected profile(es)");
-//		deprovisionAnchor.ensureDebugId(deprovisionAnchor.getText());
-//		deprovisionAnchor.addClickHandler(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				actionsPopup.hide();
-//				if (selectionModel.getSelectedSet().size() == 0) {
-//					showMessageToUser("Please select one or more item(s) from the list");
-//					return;
-//				}
-//
-//				Iterator<TransitGatewayConnectionProfileSummaryPojo> nIter = selectionModel.getSelectedSet().iterator();
-//				while (nIter.hasNext()) {
-//					TransitGatewayConnectionProfileSummaryPojo m = nIter.next();
-//					if (m != null) {
-//						if (userLoggedIn.isNetworkAdmin()) {
-//							if (m.getAssignment() == null) {
-//								showMessageToUser("It does not appear that this profile is currently "
-//									+ "assigned to a VPC.  In order to de-provision a Transit Gateway connection, the profile "
-//									+ "must be assigned to a VPC.  Please select a profile that is "
-//									+ "assigned to a VPC and try again.");
-//								return;
-//							}
-//
-//							presenter.deprovisionTransitGatewayConnectionForAssignment(m.getAssignment());
-//						}
-//						else {
-//							showMessageToUser("You are not authorized to perform this action.");
-//						}
-//					} 
-//					else {
-//						showMessageToUser("Please select one or more item(s) from the list");
-//					}
-//				}
-//			}
-//		});
-//		grid.setWidget(3, 0, deprovisionAnchor);
-		
 		Anchor deleteAssignmentAnchor = new Anchor("Delete Profile Assignment");
 		deleteAssignmentAnchor.addStyleName("productAnchor");
 		deleteAssignmentAnchor.getElement().getStyle().setBackgroundColor("#f1f1f1");
@@ -667,7 +582,7 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 
 		// CIDR id column
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> cidrIdColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextCell()) {
+				new TextInputCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
@@ -680,11 +595,18 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				return o1.getProfile().getCidrId().compareTo(o2.getProfile().getCidrId());
 			}
 		});
+//		cidrIdColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
+//	    		object.getProfile().setCidrId(value);
+//	    		presenter.saveProfile(object.getProfile());
+//	    	}
+//	    });
 		listTable.addColumn(cidrIdColumn, "CIDR ID");
 
 		// region column
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> regionColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextCell()) {
+				new TextInputCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
@@ -697,11 +619,18 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				return o1.getProfile().getRegion().compareTo(o2.getProfile().getRegion());
 			}
 		});
+//		regionColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
+//	    		object.getProfile().setRegion(value);
+//	    		presenter.saveProfile(object.getProfile());
+//	    	}
+//	    });
 		listTable.addColumn(regionColumn, "Region");
 
 		// transit gateway id column (link)
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> transitGatewayIdColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new ClickableTextCell()) {
+				new TextInputCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
@@ -714,19 +643,18 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				return o1.getProfile().getTransitGatewayId().compareTo(o2.getProfile().getTransitGatewayId());
 			}
 		});
-		transitGatewayIdColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
-	    	@Override
-	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
-    			// TODO: go to transit gateway maintenance page for this id
-//				ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT, object);
-	    	}
-	    });
-		transitGatewayIdColumn.setCellStyleNames("tableAnchor");
+//		transitGatewayIdColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
+//	    		object.getProfile().setTransitGatewayId(value);
+//	    		presenter.saveProfile(object.getProfile());
+//	    	}
+//	    });
 		listTable.addColumn(transitGatewayIdColumn, "Transit Gateway ID");
 
 		// CIDR Range column
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> cidrRangeColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextCell()) {
+				new TextInputCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
@@ -739,6 +667,13 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				return o1.getProfile().getCidrRange().compareTo(o2.getProfile().getCidrRange());
 			}
 		});
+//		transitGatewayIdColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
+//	    		object.getProfile().setCidrRange(value);
+//	    		presenter.saveProfile(object.getProfile());
+//	    	}
+//	    });
 		listTable.addColumn(cidrRangeColumn, "CIDR Range");
 
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> assignmentStatusColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
@@ -769,18 +704,18 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 				return -1;
 			}
 		});
-		assignmentStatusColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
-	    	@Override
-	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
-	    		if (object.getAssignment() != null) {
-	    			// TODO: show some assignment details???
-//					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT, object);
-	    		}
-	    		else {
-	    			showMessageToUser("No assignment to view.");
-	    		}
-	    	}
-	    });
+//		assignmentStatusColumn.setFieldUpdater(new FieldUpdater<TransitGatewayConnectionProfileSummaryPojo, String>() {
+//	    	@Override
+//	    	public void update(int index, TransitGatewayConnectionProfileSummaryPojo object, String value) {
+//	    		if (object.getAssignment() != null) {
+//	    			// TODO: show some assignment details???
+////					ActionEvent.fire(presenter.getEventBus(), ActionNames.MAINTAIN_VPN_CONNECTION_PROFILE_ASSIGNMENT, object);
+//	    		}
+//	    		else {
+//	    			showMessageToUser("No assignment to view.");
+//	    		}
+//	    	}
+//	    });
 		assignmentStatusColumn.setCellStyleNames("tableAnchor");
 		listTable.addColumn(assignmentStatusColumn, "Assignment Status");
 

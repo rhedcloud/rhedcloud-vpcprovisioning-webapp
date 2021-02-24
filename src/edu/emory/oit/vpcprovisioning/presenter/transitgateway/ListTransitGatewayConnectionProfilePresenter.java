@@ -11,6 +11,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
+import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
+import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.TransitGatewayConnectionProfileListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -20,6 +22,7 @@ import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -49,18 +52,21 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 	TransitGatewayConnectionProfileAssignmentRequisitionPojo selectedRequisition;
 	String selectedVpcId;
 	UserAccountPojo userLoggedIn;
+	List<TransitGatewayConnectionProfileSummaryPojo> profileSummaryList = new java.util.ArrayList<TransitGatewayConnectionProfileSummaryPojo>();
 
 	boolean showStatus = false;
 	boolean startTimer = true;
 	int deletedCount;
 	int totalToDelete;
 	StringBuffer deleteErrors;
+	private boolean editing = false;
 
 	public ListTransitGatewayConnectionProfilePresenter(ClientFactory clientFactory, boolean clearList, TransitGatewayConnectionProfileQueryFilterPojo filter) {
 		this.clientFactory = clientFactory;
 		this.clearList = clearList;
 		this.filter = filter;
 		clientFactory.getListTransitGatewayConnectionProfileView().setPresenter(this);
+		this.editing = false;
 	}
 
 	/**
@@ -199,7 +205,8 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 			@Override
 			public void onSuccess(TransitGatewayConnectionProfileQueryResultPojo result) {
 				GWT.log("Got " + result.getResults().size() + " Transit Gateway Connection Profiles for " + result.getFilterUsed());
-				setTransitGatewayConnectionProfileSummaryList(result.getResults());
+				profileSummaryList = result.getResults();
+				setTransitGatewayConnectionProfileSummaryList(profileSummaryList);
 				
 				int totalProfiles = result.getResults().size();
 				int assignedProfiles = 0;
@@ -749,5 +756,59 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 //		TransitGatewayConnectionQueryFilterPojo vpn_filter = new TransitGatewayConnectionQueryFilterPojo();
 //		vpn_filter.setVpcId(vpcId);
 //		VpcProvisioningService.Util.getInstance().getTransitGatewayConnectionsForFilter(vpn_filter, vpn_cb);
+	}
+
+	@Override
+	public void addEmptySummaryToList() {
+		this.editing = false;
+		TransitGatewayConnectionProfileSummaryPojo summary = new TransitGatewayConnectionProfileSummaryPojo();
+		TransitGatewayConnectionProfilePojo profile = new TransitGatewayConnectionProfilePojo();
+		int nextProfileId = profileSummaryList.size() + 1;
+		profile.setTransitGatewayConnectionProfileId(Integer.toString(nextProfileId));
+		summary.setProfile(profile);
+		profileSummaryList.add(0, summary);
+		setTransitGatewayConnectionProfileSummaryList(profileSummaryList);
+	}
+
+	@Override
+	public void saveProfile(TransitGatewayConnectionProfilePojo profile) {
+		getView().showPleaseWaitDialog("Saving Transit Gateway info...");
+//		if (!isFormValid()) {
+//			return;
+//		}
+		AsyncCallback<TransitGatewayConnectionProfilePojo> callback = new AsyncCallback<TransitGatewayConnectionProfilePojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hidePleaseWaitDialog();
+				GWT.log("Exception saving the TransitGatewayConnectionProfilePojo", caught);
+				getView().showMessageToUser("There was an exception on the " +
+						"server saving the TransitGatewayConnectionProfilePojo.  Message " +
+						"from server is: " + caught.getMessage());
+			}
+
+			@Override
+			public void onSuccess(TransitGatewayConnectionProfilePojo result) {
+				getView().hidePleaseWaitDialog();
+//				ActionEvent.fire(eventBus, ActionNames.TRANSIT_GATEWAY_SAVED, result);
+			}
+		};
+		if (!isEditing()) {
+			// it's a create
+			VpcProvisioningService.Util.getInstance().createTransitGatewayConnectionProfile(profile, callback);
+		}
+		else {
+			// it's an update
+			VpcProvisioningService.Util.getInstance().updateTransitGatewayConnectionProfile(profile, callback);
+		}
+	}
+
+	@Override
+	public void setEditing(boolean editing) {
+		this.editing = editing;
+	}
+
+	@Override
+	public boolean isEditing() {
+		return editing;
 	}
 }

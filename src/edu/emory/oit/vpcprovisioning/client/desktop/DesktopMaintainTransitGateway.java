@@ -145,6 +145,8 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	
 	@UiHandler("cancelButton")
 	void cancelButtonClicked(ClickEvent e) {
+		hidePleaseWaitDialog();
+		hidePleaseWaitPanel();
 		ActionEvent.fire(presenter.getEventBus(), ActionNames.GO_HOME_TRANSIT_GATEWAY);
 	}
 	
@@ -292,14 +294,12 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 
 	@Override
 	public void disableButtons() {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(false);
 	}
 
 	@Override
 	public void enableButtons() {
-		// TODO Auto-generated method stub
-		
+		okayButton.setEnabled(true);
 	}
 
 	@Override

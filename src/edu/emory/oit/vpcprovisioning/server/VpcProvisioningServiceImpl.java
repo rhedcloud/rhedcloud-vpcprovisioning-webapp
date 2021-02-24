@@ -14423,22 +14423,124 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public TransitGatewayConnectionProfilePojo createTransitGatewayConnectionProfile(
 			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		
+		try {
+			info("creating TransitGatewayConnectionProfile on the server...");
+			TransitGatewayConnectionProfile moa = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+			info("populating moa");
+			this.populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile, moa);
+
+			
+			info("doing the TransitGatewayConnectionProfile.create...");
+			info("creating transit gateway: " + moa.toXmlString());
+//			this.doCreate(moa, getNetworkOpsRequestService());
+			info("TransitGatewayConnectionProfile.create is complete...");
+
+			return transitGatewayConnectionProfile;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+//		catch (EnterpriseObjectCreateException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (JMSException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		}
 	}
 
 	@Override
 	public TransitGatewayConnectionProfilePojo deleteTransitGatewayConnectionProfile(
 			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+
+		try {
+			info("deleting TransitGatewayConnectionProfile record on the server...");
+			TransitGatewayConnectionProfile moa = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+			info("populating moa");
+			this.populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile, moa);
+
+			
+			info("doing the TransitGatewayConnectionProfile.delete...");
+			info("deleting transit gateway connection profile: " + moa.toXmlString());
+//			this.doDelete(moa, getNetworkOpsRequestService());
+			info("TransitGatewayConnectionProfile.delete is complete...");
+
+			return transitGatewayConnectionProfile;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+//		catch (EnterpriseObjectDeleteException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (JMSException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		}
 	}
 
 	@Override
 	public TransitGatewayConnectionProfilePojo updateTransitGatewayConnectionProfile(
 			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+		
+        try {
+            info("updating TransitGatewayConnectionProfile on the server...");
+            TransitGatewayConnectionProfile newData = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+            TransitGatewayConnectionProfile baselineData = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+
+            info("populating newData...");
+            populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile, newData);
+
+            info("populating baselineData...");
+            populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile.getBaseline(), baselineData);
+            newData.setBaseline(baselineData);
+
+            info("doing the update...");
+			info("updating transit gateway connection profile: " + newData.toXmlString());
+//            doUpdate(newData, getNetworkOpsRequestService());
+            info("update is complete...");
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new RpcException(t);
+        }
+		return transitGatewayConnectionProfile;
 	}
 
 	@Override
@@ -14600,9 +14702,62 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public TransitGatewayConnectionProfileAssignmentPojo deleteTransitGatewayConnectionProfileAssignment(
-			TransitGatewayConnectionProfileAssignmentPojo vpnConnectionProfileAssignment) throws RpcException {
-		// TODO Auto-generated method stub
-		return null;
+			TransitGatewayConnectionProfileAssignmentPojo transitGatewayConnectionProfileAssignment) throws RpcException {
+
+		try {
+			info("deleting TransitGatewayConnectionProfileAssignment record on the server...");
+			TransitGatewayConnectionProfileAssignment moa = (TransitGatewayConnectionProfileAssignment) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT);
+			info("populating moa");
+			this.populateTransitGatewayConnectionProfileAssignmentMoa(transitGatewayConnectionProfileAssignment, moa);
+
+			
+			info("doing the TransitGatewayConnectionProfileAssignment.delete...");
+			info("deleting transit gateway connection profile Assignment: " + moa.toXmlString());
+//			this.doDelete(moa, getNetworkOpsRequestService());
+			info("TransitGatewayConnectionProfileAssignment.delete is complete...");
+
+			return transitGatewayConnectionProfileAssignment;
+		} 
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+//		catch (EnterpriseObjectDeleteException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		} 
+//		catch (JMSException e) {
+//			e.printStackTrace();
+//			throw new RpcException(e);
+//		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (InvocationTargetException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override

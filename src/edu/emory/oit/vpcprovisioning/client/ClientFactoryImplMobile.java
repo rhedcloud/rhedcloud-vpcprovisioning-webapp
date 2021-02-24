@@ -59,6 +59,7 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningSt
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -140,6 +141,7 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	private ListTransitGatewayView listTransitGatewayView;
 	private ListTransitGatewayConnectionProfileView listTransitGatewayConnectionProfileView;
 	private MaintainTransitGatewayView maintainTransitGatewayView;
+	private MaintainTransitGatewayConnectionProfileView maintainTransitGatewayConnectionProfileView;
 
     protected ActivityManager getActivityManager() {
         if (activityManager == null) {
@@ -492,6 +494,11 @@ public class ClientFactoryImplMobile implements ClientFactory {
 	}
 	@Override
 	public MaintainTransitGatewayView getMaintainTransitGatewayView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MaintainTransitGatewayConnectionProfileView getMaintainTransitGatewayConnectionProfileView() {
 		// TODO Auto-generated method stub
 		return null;
 	}

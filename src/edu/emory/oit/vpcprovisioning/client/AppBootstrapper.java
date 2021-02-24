@@ -84,6 +84,7 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningSt
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPresenter;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPlace;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -542,6 +543,34 @@ public class AppBootstrapper {
 			@Override
 			public void onAction(ActionEvent event) {
 				placeController.goTo(new ListTransitGatewayPlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.CREATE_TRANSIT_GATEWAY_CONNECTION_PROFILE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainTransitGatewayConnectionProfilePlace.getMaintainTransitGatewayConnectionProfilePlace());
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.MAINTAIN_TRANSIT_GATEWAY_CONNECTION_PROFILE, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(MaintainTransitGatewayConnectionProfilePlace.createMaintainTransitGatewayConnectionProfilePlace(event.getTransitGatewayConnectionProfile()));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.TRANSIT_GATEWAY_CONNECTION_PROFILE_EDITING_CANCELED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListTransitGatewayConnectionProfilePlace(false));
+			}
+		});
+
+		ActionEvent.register(eventBus, ActionNames.TRANSIT_GATEWAY_CONNECTION_PROFILE_SAVED, new ActionEvent.Handler() {
+			@Override
+			public void onAction(ActionEvent event) {
+				placeController.goTo(new ListTransitGatewayConnectionProfilePlace(false));
 			}
 		});
 

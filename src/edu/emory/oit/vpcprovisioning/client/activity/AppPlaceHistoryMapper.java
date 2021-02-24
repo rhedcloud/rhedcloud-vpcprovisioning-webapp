@@ -48,6 +48,7 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningSt
 import edu.emory.oit.vpcprovisioning.presenter.tou.MaintainTermsOfUseAgreementPlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPlace;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcPlace;
@@ -119,7 +120,8 @@ import edu.emory.oit.vpcprovisioning.presenter.vpn.VpncpStatusPlace;
 				 MaintainRoleProvisioningPlace.Tokenizer.class,
 				 ListTransitGatewayPlace.Tokenizer.class,
 				 ListTransitGatewayConnectionProfilePlace.Tokenizer.class,
-				 MaintainTransitGatewayPlace.Tokenizer.class})
+				 MaintainTransitGatewayPlace.Tokenizer.class,
+				 MaintainTransitGatewayConnectionProfilePlace.Tokenizer.class})
 public interface AppPlaceHistoryMapper extends PlaceHistoryMapper {
 
 }

@@ -48,6 +48,12 @@ public interface ListTransitGatewayConnectionProfileView extends IsWidget, View 
 		void setSelectedAssignment(TransitGatewayConnectionProfileAssignmentPojo assignment);
 		void deleteTransitGatewayConnectionProfileAssignment(int rowNumber, TransitGatewayConnectionProfileSummaryPojo summary);
 		void getTransitGatewayStatusForVpc(String vpcId);
+		
+		// seeing if we can maintain profiles right from this page
+		void addEmptySummaryToList();
+		void saveProfile(TransitGatewayConnectionProfilePojo profile);
+		void setEditing(boolean editing);
+		boolean isEditing();
 	}
 
 	/**

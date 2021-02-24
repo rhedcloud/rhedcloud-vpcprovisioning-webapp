@@ -95,6 +95,7 @@ import edu.emory.oit.vpcprovisioning.presenter.staticnat.ListStaticNatProvisioni
 import edu.emory.oit.vpcprovisioning.presenter.staticnat.StaticNatProvisioningStatusView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayView;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayConnectionProfileView;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcView;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.MaintainVpcView;
@@ -327,13 +328,13 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 		listTransitGatewayConnectionProfileView.setAppShell(this);
 		MaintainTransitGatewayView maintainTgwView = clientFactory.getMaintainTransitGatewayView();
 		maintainTgwView.setAppShell(this);
-//		MaintainTransitGatewayConnectionProfileView maintainTgwcpView = clientFactory.getMaintainTransitGatewayConnectionProfileView();
-//		maintainTgwcpView.setAppShell(this);
+		MaintainTransitGatewayConnectionProfileView maintainTgwcpView = clientFactory.getMaintainTransitGatewayConnectionProfileView();
+		maintainTgwcpView.setAppShell(this);
 		
 		homeContentContainer.add(listTransitGatewayView);
 		homeContentContainer.add(listTransitGatewayConnectionProfileView);
 		homeContentContainer.add(maintainTgwView);
-//		homeContentContainer.add(maintainTgwcpView);
+		homeContentContainer.add(maintainTgwcpView);
 
 
 		GWT.log("[DesktopAppShell] UserLoggedIn is: " + userLoggedIn);
@@ -466,6 +467,9 @@ public class DesktopAppShell extends ResizeComposite implements AppShell {
 			else if (hash.trim().equals("#" + Constants.LIST_TRANSIT_GATEWAY_CONNECTION_PROFILE + ":")) {
 				GWT.log("Need to go to transit gateway connection profile tab");
 				ActionEvent.fire(eventBus, ActionNames.GO_HOME_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+			}
+			else if (hash.trim().equals("#" + Constants.MAINTAIN_TRANSIT_GATEWAY_CONNECTION_PROFILE + ":")) {
+				GWT.log("Need to go to maintain transit gateway connection profile tab");
 			}
 			else {
 				// when/if they have invalid speedtypes, they'll... 

@@ -72,6 +72,7 @@ import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGateway
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayConnectionProfilePresenter;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.ListTransitGatewayPresenter;
+import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayConnectionProfilePlace;
 import edu.emory.oit.vpcprovisioning.presenter.transitgateway.MaintainTransitGatewayPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPlace;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -552,6 +553,10 @@ public class AppActivityMapper implements ActivityMapper {
 
 		if (place instanceof MaintainTransitGatewayPlace) {
 			return new MaintainTransitGatewayActivity(clientFactory, (MaintainTransitGatewayPlace) place);
+		}
+
+		if (place instanceof MaintainTransitGatewayConnectionProfilePlace) {
+			return new MaintainTransitGatewayConnectionProfileActivity(clientFactory, (MaintainTransitGatewayConnectionProfilePlace) place);
 		}
 
 		return null;

@@ -61,6 +61,7 @@ import edu.emory.oit.vpcprovisioning.shared.StaticNatDeprovisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningPojo;
 import edu.emory.oit.vpcprovisioning.shared.StaticNatProvisioningSummaryPojo;
 import edu.emory.oit.vpcprovisioning.shared.TermsOfUseAgreementPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserNotificationPojo;
@@ -149,6 +150,7 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	private DirectoryPersonPojo roleAssignee;
 	private CustomRolePojo customRole;
 	private TransitGatewayPojo transitGateway;
+	private TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile;
 
 	public ResourceTaggingProfilePojo getResourceTaggingProfile() {
 		return resourceTaggingProfile;
@@ -234,6 +236,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public static void fire(EventBus eventBus, String sourceName, TransitGatewayPojo transitGateway) {
 		if (eventBus == null) return;
 		eventBus.fireEventFromSource(new ActionEvent(transitGateway), sourceName);
+	}
+
+	public static void fire(EventBus eventBus, String sourceName, TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) {
+		if (eventBus == null) return;
+		eventBus.fireEventFromSource(new ActionEvent(transitGatewayConnectionProfile), sourceName);
 	}
 
 	public static void fire(EventBus eventBus, String sourceName, DirectoryPersonPojo roleAssignee, AccountPojo account) {
@@ -577,6 +584,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 	public ActionEvent(TransitGatewayPojo transitGateway) {
 		this.transitGateway = transitGateway;
 	}
+	
+	public ActionEvent(TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) {
+		this.transitGatewayConnectionProfile = transitGatewayConnectionProfile;
+	}
+
 	public ActionEvent(DirectoryPersonPojo roleAssignee, AccountPojo account) {
 		this.account = account;
 		this.roleAssignee = roleAssignee;
@@ -1377,4 +1389,11 @@ public class ActionEvent extends Event<ActionEvent.Handler> {
 		this.transitGateway = transitGateway;
 	}
 
+	public TransitGatewayConnectionProfilePojo getTransitGatewayConnectionProfile() {
+		return transitGatewayConnectionProfile;
+	}
+
+	public void setTransitGatewayConnectionProfile(TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) {
+		this.transitGatewayConnectionProfile = transitGatewayConnectionProfile;
+	}
 }
