@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.dom.client.Style.BorderStyle;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -375,6 +377,9 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 	private void addProfileToPanel(boolean isEven, int profileCounter, final TransitGatewayProfilePojo profile) {
 		final HorizontalPanel profileHP = new HorizontalPanel();
 		profileHP.setWidth("100%");
+		profileHP.getElement().getStyle().setColor("grey");
+		profileHP.getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+		profileHP.getElement().getStyle().setBorderWidth(1, Unit.PX);
 		
 		Image deleteImage1 = new Image("images/delete_icon.png");
 		deleteImage1.setWidth("20px");
@@ -498,7 +503,7 @@ public class DesktopMaintainTransitGateway extends ViewImplBase implements Maint
 		});
 		propRoutesGrid.setWidget(0, 0, propRouteTableIdTB);
 		
-		if (propRoutesVP.getWidgetCount() > 1) {
+		if (propRoutesVP.getWidgetCount() >= 1) {
 			Image deleteImage2 = new Image("images/delete_icon.png");
 			deleteImage2.setWidth("20px");
 			deleteImage2.setHeight("20px");

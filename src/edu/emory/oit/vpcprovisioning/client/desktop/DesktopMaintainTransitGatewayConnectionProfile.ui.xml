@@ -18,14 +18,19 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel ui:field="tgwMainPanel">
+		<g:VerticalPanel spacing="12" ui:field="tgwMainPanel">
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
+			<g:Label ui:field="maintainTgwcpLabel" addStyleNames="{style.mediumLabel}">Maintain Transit Gateway Connection Profile Metadata</g:Label>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
+				<!-- 
 				<g:row>
 			    	<g:customCell>
 						<g:Label ui:field="maintainTgwcpLabel" addStyleNames="{style.mediumLabel}">Maintain Transit Gateway Connection Profile Metadata</g:Label>
 			    	</g:customCell>
 				</g:row>
+				 -->
 				<g:row>
 			    	<g:customCell>
 						<g:Label ui:field="cidrIdLabel" addStyleNames="{style.label}">CIDR ID:</g:Label>
@@ -64,7 +69,7 @@
 		    	</g:row>
 			</g:Grid>
 		</g:cell>
-		</g:HorizontalPanel>
+		</g:VerticalPanel>
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_TOP" width="100%">
 			<g:HorizontalPanel>
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE" width="100%">

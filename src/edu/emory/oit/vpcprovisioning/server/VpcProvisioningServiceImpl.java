@@ -215,11 +215,11 @@ import edu.emory.oit.vpcprovisioning.shared.*;
 @SuppressWarnings("serial")
 public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements VpcProvisioningService {
 	// for supporting data queries and authorization
-	
+
 	private static final String IDM_SYSTEM_NETIQ = "netiq";
 	private static final String IDM_SYSTEM_GROUPER = "grouper";
 	private static final String SITE_SPECIFIC_TEXT_PROPERTIES = "SiteSpecificTextProperties";
-	
+
 	private static final String RISK_CALCULATION_PROPERTIES = "RiskCalculationProperties";
 	private static final String ENVIRONMENT_PROPERTIES = "EnvironmentProperties";
 	private static final String MENU_PROPERTIES = "MenuProperties";
@@ -272,19 +272,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private ProducerPool networkOpsProducerPool = null;
 	private ProducerPool rtpProducerPool = null;
 	private Object lock = new Object();
-	static SimpleDateFormat dateFormatter = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	private boolean initializing = false;
 	private int defaultRequestTimeoutInterval = 20000;
 	// default, 8 hours in prod
 	private int sessionTimeoutIntervalSeconds = 28800;
-	private int userCnt=0;
-	private boolean manageSessionLocally=false;
-	private String applicationEnvironment=null;
-	
+	private int userCnt = 0;
+	private boolean manageSessionLocally = false;
+	private String applicationEnvironment = null;
+
 	boolean fakeVpcpGen = false;
 	HashMap<String, VpcpPojo> vpcpMap = new HashMap<String, VpcpPojo>();
-	
+
 	private List<BillPojo> masterBills = new java.util.ArrayList<BillPojo>();
 	// Key is account id, List is a list of Bills for that account id
 	private HashMap<String, List<BillPojo>> billsByAccount = new HashMap<String, List<BillPojo>>();
@@ -297,7 +296,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	boolean validateFinancialAccounts = true;
 	boolean firewallServiceEnabled = true;
-	
+
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -311,6 +310,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private void debug(String msg) {
 		log.log(java.util.logging.Level.FINEST, msg);
 	}
+
 	private void info(String msg) {
 		log.info(msg);
 	}
@@ -321,14 +321,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (initializing) {
 				System.out.println("initialization is already underway...");
 				return;
-			} else {
+			}
+			else {
 				initializing = true;
 			}
 		}
 
 		try {
-			String s = this.getServletConfig()
-					.getInitParameter("useEsbService");
+			String s = this.getServletConfig().getInitParameter("useEsbService");
 			if (s == null) {
 				s = "true";
 			}
@@ -339,8 +339,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				configDocPath = System.getenv("configDocPath");
 			}
 			if (configDocPath == null) {
-				configDocPath = this.getServletConfig().getInitParameter(
-						"configDocPath");
+				configDocPath = this.getServletConfig().getInitParameter("configDocPath");
 			}
 			if (configDocPath == null) {
 				configDocPath = "Unknown configDocPath";
@@ -360,7 +359,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("useEsbService is: " + useEsbService);
 			info("configDocPath is: " + configDocPath);
 			info("appId is: " + appId);
-		} 
+		}
 		catch (Throwable e) {
 			e.printStackTrace();
 			throw new ServletException(e);
@@ -381,71 +380,59 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			AppConfigFactory acf = new SimpleAppConfigFactory();
 			setAppConfig(acf.makeAppConfig(configDocPath, appId));
 			info("AppConfig initialized...");
-			peopleSoftProducerPool = (ProducerPool) getAppConfig().getObject(
-					PEOPLE_SOFT_SERVICE_NAME);
+			peopleSoftProducerPool = (ProducerPool) getAppConfig().getObject(PEOPLE_SOFT_SERVICE_NAME);
 //			identityServiceProducerPool = (ProducerPool) getAppConfig().getObject(
 //					IDENTITY_SERVICE_NAME);
-			awsProducerPool = (ProducerPool) getAppConfig().getObject(
-					AWS_SERVICE_NAME);
-			firewallProducerPool = (ProducerPool) getAppConfig().getObject(
-					FIREWALL_SERVICE_NAME);
-			serviceNowProducerPool = (ProducerPool) getAppConfig().getObject(
-					SERVICE_NOW_SERVICE_NAME);
-			directoryProducerPool = (ProducerPool) getAppConfig().getObject(
-					DIRECTORY_SERVICE_NAME);
-			idmProducerPool = (ProducerPool) getAppConfig().getObject(
-					IDM_SERVICE_NAME);
-			elasticIpProducerPool = (ProducerPool) getAppConfig().getObject(
-					ELASTIC_IP_SERVICE_NAME);
-			srdProducerPool = (ProducerPool) getAppConfig().getObject(
-					SRD_SERVICE_NAME);
-			networkOpsProducerPool = (ProducerPool) getAppConfig().getObject(
-					NETWORK_OPS_SERVICE_NAME);
+			awsProducerPool = (ProducerPool) getAppConfig().getObject(AWS_SERVICE_NAME);
+			firewallProducerPool = (ProducerPool) getAppConfig().getObject(FIREWALL_SERVICE_NAME);
+			serviceNowProducerPool = (ProducerPool) getAppConfig().getObject(SERVICE_NOW_SERVICE_NAME);
+			directoryProducerPool = (ProducerPool) getAppConfig().getObject(DIRECTORY_SERVICE_NAME);
+			idmProducerPool = (ProducerPool) getAppConfig().getObject(IDM_SERVICE_NAME);
+			elasticIpProducerPool = (ProducerPool) getAppConfig().getObject(ELASTIC_IP_SERVICE_NAME);
+			srdProducerPool = (ProducerPool) getAppConfig().getObject(SRD_SERVICE_NAME);
+			networkOpsProducerPool = (ProducerPool) getAppConfig().getObject(NETWORK_OPS_SERVICE_NAME);
 			if (this.isRtpManagementEnabled()) {
 				info("Resource Tagging Management IS enabled...");
-				rtpProducerPool = (ProducerPool) getAppConfig().getObject(
-						RTP_SERVICE_NAME);
+				rtpProducerPool = (ProducerPool) getAppConfig().getObject(RTP_SERVICE_NAME);
 			}
 			else {
 				info("Resource Tagging Management IS NOT enabled...");
 			}
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 //			roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
-			
+
 			try {
 				this.getAWSServiceMap();
 			}
 			catch (RpcException e) {
 				e.printStackTrace();
 				info("Could not load the AWS Service map during initialization but "
-					+ "will allow the web app to initialize.");
+						+ "will allow the web app to initialize.");
 			}
-			
+
 			String redirect = generalProps.getProperty("manageSessionLocally", "false");
 			manageSessionLocally = Boolean.parseBoolean(redirect);
-			
+
 			String shib = generalProps.getProperty("useShibboleth", "true");
 			useShibboleth = Boolean.parseBoolean(shib);
 
 			String authz = generalProps.getProperty("useAuthzService", "true");
 			useAuthzService = Boolean.parseBoolean(authz);
 			info("useAuthzService is: " + useAuthzService);
-			
+
 			applicationEnvironment = generalProps.getProperty("applicationEnvironment", "DEV");
 //			refreshMasterBillData();
-			
-			firewallServiceEnabled = Boolean.parseBoolean(
-					generalProps.getProperty("firewallServiceEnabled", "true").
-					trim().toLowerCase());
-			
-			validateFinancialAccounts = Boolean.parseBoolean(
-					generalProps.getProperty("validateFinancialAccounts", "true").
-					trim().toLowerCase());
-		} 
+
+			firewallServiceEnabled = Boolean
+					.parseBoolean(generalProps.getProperty("firewallServiceEnabled", "true").trim().toLowerCase());
+
+			validateFinancialAccounts = Boolean
+					.parseBoolean(generalProps.getProperty("validateFinancialAccounts", "true").trim().toLowerCase());
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new ServletException(e);
-		} 
+		}
 		catch (AppConfigFactoryException e) {
 			e.printStackTrace();
 			throw new ServletException(e);
@@ -456,11 +443,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private boolean isRtpManagementEnabled() {
 		try {
-			Properties props = 	getAppConfig().getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
+			Properties props = getAppConfig()
+					.getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				if (((String)key).indexOf(ActionNames.GO_HOME_RTP) >= 0) {
+				if (((String) key).indexOf(ActionNames.GO_HOME_RTP) >= 0) {
 					return true;
 				}
 			}
@@ -469,22 +457,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 		return false;
 	}
-	
+
 	public int getDefaultRequestTimeoutInterval() {
 		return defaultRequestTimeoutInterval;
 	}
 
-	public void setDefaultRequestTimeoutInterval(
-			int defaultRequestTimeoutInterval) {
+	public void setDefaultRequestTimeoutInterval(int defaultRequestTimeoutInterval) {
 		this.defaultRequestTimeoutInterval = defaultRequestTimeoutInterval;
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ActionableEnterpriseObject> doGenerate(ActionableEnterpriseObject aeo, XmlEnterpriseObject seedXeo, RequestService reqSvc) throws JMSException,
-	EnterpriseObjectGenerateException, RpcException {
+	private List<ActionableEnterpriseObject> doGenerate(ActionableEnterpriseObject aeo, XmlEnterpriseObject seedXeo,
+			RequestService reqSvc) throws JMSException, EnterpriseObjectGenerateException, RpcException {
 
 		String authUserId = this.getAuthUserIdForHALS();
 		aeo.getAuthentication().setAuthUserId(authUserId);
@@ -493,55 +480,62 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<ActionableEnterpriseObject> result = aeo.generate(seedXeo, reqSvc);
 		return result;
 	}
-	private void doCreate(ActionableEnterpriseObject aeo, RequestService reqSvc) throws JMSException,
-			EnterpriseObjectCreateException, RpcException {
-		
+
+	private void doCreate(ActionableEnterpriseObject aeo, RequestService reqSvc)
+			throws JMSException, EnterpriseObjectCreateException, RpcException {
+
 		String authUserId = this.getAuthUserIdForHALS();
 		aeo.getAuthentication().setAuthUserId(authUserId);
 		info("[doCreate] AuthUserId is: " + aeo.getAuthentication().getAuthUserId());
-		
+
 		aeo.create(reqSvc);
 	}
-    private void doUpdate(ActionableEnterpriseObject aeo, RequestService reqSvc) throws JMSException, EnterpriseObjectUpdateException {
+
+	private void doUpdate(ActionableEnterpriseObject aeo, RequestService reqSvc)
+			throws JMSException, EnterpriseObjectUpdateException {
 		String authUserId = this.getAuthUserIdForHALS();
 		if (authUserId != null) {
 			aeo.getAuthentication().setAuthUserId(authUserId);
 		}
 		info("[doUpdate] AuthUserId is: " + aeo.getAuthentication().getAuthUserId());
-        aeo.update(reqSvc);
-    }
-    private void doDelete(ActionableEnterpriseObject aeo, RequestService reqSvc) throws JMSException, EnterpriseObjectDeleteException {
+		aeo.update(reqSvc);
+	}
+
+	private void doDelete(ActionableEnterpriseObject aeo, RequestService reqSvc)
+			throws JMSException, EnterpriseObjectDeleteException {
 		String authUserId = this.getAuthUserIdForHALS();
 		if (authUserId != null) {
 			aeo.getAuthentication().setAuthUserId(authUserId);
 		}
 		info("[doDelete] AuthUserId is: " + aeo.getAuthentication().getAuthUserId());
-        aeo.delete("purge", reqSvc);
-    }
+		aeo.delete("purge", reqSvc);
+	}
 
 	private String getAuthUserIdForHALS(UserAccountPojo userLoggedIn) throws RpcException {
 		HttpServletRequest request = this.getThreadLocalRequest();
 		String clientIp = request.getRemoteAddr();
 		return userLoggedIn.getEppn() + "/" + clientIp;
 	}
+
 	private String getAuthUserIdForHALS() throws RpcException {
 		try {
-			UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-					Constants.USER_ACCOUNT + getCurrentSessionId());
+			UserAccountPojo user = (UserAccountPojo) Cache.getCache()
+					.get(Constants.USER_ACCOUNT + getCurrentSessionId());
 			if (user == null) {
 				// we have a session related issue...
 				info("[getAuthUserIdForHALS] Couldn't retrieve user from the current session, "
-					+ "trying to determine the user logged in again fresh.");
-				// try to get the user from the shibboleth info again but don't refresh the roles
+						+ "trying to determine the user logged in again fresh.");
+				// try to get the user from the shibboleth info again but don't refresh the
+				// roles
 				user = this.getUserLoggedIn(false);
 				if (user == null) {
 					// we're really screwed now
 					throw new RpcException("Could not determine the user logged in after two attempts.  "
-						+ "Please close all browsers and restart with a fresh session.  If the problem "
-						+ "persists, please contact the Help Desk.");
+							+ "Please close all browsers and restart with a fresh session.  If the problem "
+							+ "persists, please contact the Help Desk.");
 				}
 			}
-			return this.getAuthUserIdForHALS(user); 
+			return this.getAuthUserIdForHALS(user);
 		}
 		catch (RpcException e) {
 			if (e.getMessage().equals(Constants.SESSION_TIMEOUT)) {
@@ -557,22 +551,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public UserAccountPojo getUserLoggedIn(boolean refreshRoles) throws RpcException {
 		// if the user account has been cached, we'll use it
 		info("checking cache for existing user...refreshRoles=" + refreshRoles);
-		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
-		
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(Constants.USER_ACCOUNT + getCurrentSessionId());
+
 		HttpServletRequest request = this.getThreadLocalRequest();
-        String referrer = request.getHeader("Referer");
-        boolean isGenerateVpcp=false;
-        if (referrer.indexOf("?generateVpcp=true") >= 0) {
-        	info("[getUserLoggedIn] it's a generateVpcp request from potentially un-authorized user.");
-        	isGenerateVpcp=true;
-        }
+		String referrer = request.getHeader("Referer");
+		boolean isGenerateVpcp = false;
+		if (referrer.indexOf("?generateVpcp=true") >= 0) {
+			info("[getUserLoggedIn] it's a generateVpcp request from potentially un-authorized user.");
+			isGenerateVpcp = true;
+		}
 
 		if (user != null) {
 			if (isGenerateVpcp) {
 				user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
 			}
-			if (this.isSessionValidForUser(user)) { 
+			if (this.isSessionValidForUser(user)) {
 				info("[found user in cache] user logged in is: " + user.getEppn());
 				if (useAuthzService) {
 					// get roles assigned to this user
@@ -582,33 +575,33 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (user.getAccountRoles().size() == 0) {
 						if (!refreshRoles) {
 							// we'll go ahead and refresh the roles here just in case the user closed
-							// their browser and they still have a shib session but no session in the app server
+							// their browser and they still have a shib session but no session in the app
+							// server
 							this.getRolesForUser(user);
 						}
 						if (user.getAccountRoles().size() == 0) {
 							if (user.isGenerateVpcFromUnauthorizedUser()) {
-								// user doesn't have any role assignments but 
+								// user doesn't have any role assignments but
 								// they've been dumped into the app to provision a VPC
 								info("[cached] user " + user.getEppn() + " is not authorized to use this application "
-									+ "BUT they're being dumped into the app to provision a VPC.  "
-									+ "Processing will continue.");
+										+ "BUT they're being dumped into the app to provision a VPC.  "
+										+ "Processing will continue.");
 							}
 							else {
 								// ERROR, user does not have any required permissions to use
 								// this app
 								info("user " + user.getEppn() + " is not authorized to use this application.");
-								throw new RpcException("[cached] The user id being used to log " +
-									"in is not authorized to use this application.  " +
-									"Please contact your support representative to " +
-									"gain access to this application.");
+								throw new RpcException("[cached] The user id being used to log "
+										+ "in is not authorized to use this application.  "
+										+ "Please contact your support representative to "
+										+ "gain access to this application.");
 							}
 						}
 					}
 				}
 				else {
 					info("not configured to use authorization service, anyone "
-							+ "who can authenticate will be allowed to use the "
-							+ "app.");
+							+ "who can authenticate will be allowed to use the " + "app.");
 				}
 
 				this.createSession(user.getEppn());
@@ -617,28 +610,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			else {
 				if (manageSessionLocally) {
-					info("[found user in cache] user " + user.getEppn() + 
-							" does not have a valid session any more.  Need to " +
-							"re-authenticate here.");
-					
+					info("[found user in cache] user " + user.getEppn()
+							+ " does not have a valid session any more.  Need to " + "re-authenticate here.");
+
 					getThreadLocalRequest().getSession().setMaxInactiveInterval(0);
 					getThreadLocalRequest().getSession().invalidate();
-					
+
 					// tell client to do redirect
 					throw new RpcException(Constants.SESSION_TIMEOUT);
 				}
 				else {
 					// TEMPORARY UNTIL LAZY SESSION IS TURNED ON:
 					// ONCE LAZY SESSIONS ARE TURNED ON, WE'LL RE-DIRECT HERE
-					info("[found user in cache] user " + user.getEppn() + 
-							" does not have a valid session any more (locally).  " +
-							"Temporarily creating a new session until lazy " +
-							"sessions is active.");
+					info("[found user in cache] user " + user.getEppn()
+							+ " does not have a valid session any more (locally).  "
+							+ "Temporarily creating a new session until lazy " + "sessions is active.");
 					this.createSession(user.getEppn());
 					Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 					return user;
 				}
-				
+
 			}
 		}
 		else {
@@ -653,18 +644,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				serialNumber = (String) request.getAttribute("serialNumber");
 			}
 			if (eppn != null) {
-				info("found eppn in Shibboleth attributes.  "
-					+ "eppn is: '" + eppn + "'" 
-					+ "serialNumber/PPID is: '" + serialNumber + "'");
+				info("found eppn in Shibboleth attributes.  " + "eppn is: '" + eppn + "'" + "serialNumber/PPID is: '"
+						+ serialNumber + "'");
 				info("[getUserLoggedin] serialNumber from shibboleth is: " + serialNumber);
 				if (eppn.trim().length() == 0) {
 					info("found shibboleth eppn attribute but value is blank.  This is an error.");
-					throw new RpcException("There appears to be a problem with " +
-						"your shibboleth session.  The required attribute " +
-						"(eduPersonPrincipalName) was found in the session " +
-						"information but the value is blank.  This is an error " +
-						"and application use cannot proceed at this time.  " +
-						"If this issue persists, please contact your application support team.");
+					throw new RpcException(
+							"There appears to be a problem with " + "your shibboleth session.  The required attribute "
+									+ "(eduPersonPrincipalName) was found in the session "
+									+ "information but the value is blank.  This is an error "
+									+ "and application use cannot proceed at this time.  "
+									+ "If this issue persists, please contact your application support team.");
 				}
 				user = new UserAccountPojo();
 				if (isGenerateVpcp) {
@@ -681,65 +671,63 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (user.getAccountRoles().size() == 0) {
 						if (!refreshRoles) {
 							// we'll go ahead and refresh the roles here just in case the user closed
-							// their browser and they still have a shib session but no session in the app server
+							// their browser and they still have a shib session but no session in the app
+							// server
 							this.getRolesForUser(user);
 						}
 						if (user.getAccountRoles().size() == 0) {
 							if (user.isGenerateVpcFromUnauthorizedUser()) {
-								// user doesn't have any role assignments but 
+								// user doesn't have any role assignments but
 								// they've been dumped into the app to provision a VPC
 								info("[shib] user " + user.getEppn() + " is not authorized to use this application "
-									+ "BUT they're being dumped into the app to provision a VPC.  "
-									+ "Processing will continue.");
+										+ "BUT they're being dumped into the app to provision a VPC.  "
+										+ "Processing will continue.");
 							}
 							else {
 								// ERROR, user does not have any required permissions to use
 								// this app
 								info("user " + user.getEppn() + " is not authorized to use this application.");
-								throw new RpcException("[shib] The user id being used to log " +
-									"in is not authorized to use this application.  " +
-									"Please contact your support representative to " +
-									"gain access to this application.");
+								throw new RpcException("[shib] The user id being used to log "
+										+ "in is not authorized to use this application.  "
+										+ "Please contact your support representative to "
+										+ "gain access to this application.");
 							}
 						}
 					}
 				}
 				else {
 					info("not configured to use authorization service, anyone "
-							+ "who can authenticate will be allowed to use the "
-							+ "app.");
+							+ "who can authenticate will be allowed to use the " + "app.");
 				}
-				
+
 				if (!this.hasSession(user.getEppn())) {
-					info("[shib] user " + user.getEppn() + " has not " +
-							"established a session yet but they have " +
-							"authenticated with Shibboleth.  Creating local session.");
+					info("[shib] user " + user.getEppn() + " has not " + "established a session yet but they have "
+							+ "authenticated with Shibboleth.  Creating local session.");
 					this.createSession(eppn);
 					Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 				}
 				else {
-					if (this.isSessionValidForUser(user)) { 
-						info("[shib] user ' " + user.getEppn() + 
-								" still has a valid session.  Processing can continue.");
+					if (this.isSessionValidForUser(user)) {
+						info("[shib] user ' " + user.getEppn()
+								+ " still has a valid session.  Processing can continue.");
 						this.createSession(eppn);
 						Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 					}
 					else {
 						if (manageSessionLocally) {
-							info("[shib] user " + user.getEppn() + 
-								" does not have a valid session any more.  " +
-								"Need to re-direct here.");
-							
+							info("[shib] user " + user.getEppn() + " does not have a valid session any more.  "
+									+ "Need to re-direct here.");
+
 							// tell client to do redirect
 							throw new RpcException(Constants.SESSION_TIMEOUT);
 						}
 						else {
-							info("[shib] user " + user.getEppn() + 
-									" does not have a valid session any more (locally).  " +
-									"Temporarily creating the session " +
-									"until lazy sessions are turned on.  Once lazy " +
-									"sessions are active, we'll re-direct here.");
-								
+							info("[shib] user " + user.getEppn()
+									+ " does not have a valid session any more (locally).  "
+									+ "Temporarily creating the session "
+									+ "until lazy sessions are turned on.  Once lazy "
+									+ "sessions are active, we'll re-direct here.");
+
 							// TEMPORARY UNTIL LAZY SESSION IS TURNED ON:
 							// ONCE LAZY SESSIONS ARE TURNED ON, WE'LL RE-DIRECT HERE
 							this.createSession(eppn);
@@ -747,15 +735,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						}
 					}
 				}
-			} 
+			}
 			else {
 				info("no eppn found in Shibboleth attributes");
-				Properties props=null;
+				Properties props = null;
 				try {
 					// do this here so config doc property changes are
 					// reflected automatically
 					props = getAppConfig().getProperties(GENERAL_PROPERTIES);
-				} catch (EnterpriseConfigurationObjectException e) {
+				}
+				catch (EnterpriseConfigurationObjectException e) {
 					e.printStackTrace();
 				}
 				String shib = props.getProperty("useShibboleth", "true");
@@ -766,15 +755,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (useShibboleth) {
 					// error condition, somehow they've got to the app
 					// without going through Shibboleth
-					info("application is configured to use Shibboleth " +
-						"but no eppn attribute was found, this is an error");
-					throw new RpcException(
-							"No valid user logged in.  Please login.");
-				} 
+					info("application is configured to use Shibboleth "
+							+ "but no eppn attribute was found, this is an error");
+					throw new RpcException("No valid user logged in.  Please login.");
+				}
 				else {
-					// LOCAL TESTING:  create a dummy user account
-					info("application is NOT configured to use Shibboleth.  " +
-						"Using testUserEppn for development purposes");
+					// LOCAL TESTING: create a dummy user account
+					info("application is NOT configured to use Shibboleth.  "
+							+ "Using testUserEppn for development purposes");
 					user = new UserAccountPojo();
 					if (isGenerateVpcp) {
 						user.setGenerateVpcFromUnauthorizedUser(isGenerateVpcp);
@@ -797,49 +785,50 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						user.setSuperUser(true);
 					}
 
-
 					boolean forceError = false;
 					if (forceError) {
 						info("[forceError] user " + user.getEppn() + " is not authorized to use this application.");
-						throw new RpcException("The user id being used to log " +
-								"in is not authorized to use this application.  " +
-								"Please contact your support representative to " +
-								"gain access to this application.");
+						throw new RpcException(
+								"The user id being used to log " + "in is not authorized to use this application.  "
+										+ "Please contact your support representative to "
+										+ "gain access to this application.");
 					}
 					else {
 						if (user.getAccountRoles().size() == 0) {
 							if (user.isGenerateVpcFromUnauthorizedUser()) {
-								// user doesn't have any role assignments but 
+								// user doesn't have any role assignments but
 								// they've been dumped into the app to provision a VPC
 								info("[local] user " + user.getEppn() + " is not authorized to use this application "
-									+ "BUT they're being dumped into the app to provision a VPC.  "
-									+ "Processing will continue.");
+										+ "BUT they're being dumped into the app to provision a VPC.  "
+										+ "Processing will continue.");
 							}
 							else {
 								// we'll go ahead and refresh the roles here just in case the user closed
-								// their browser and they still have a shib session but no session in the app server
+								// their browser and they still have a shib session but no session in the app
+								// server
 								this.getRolesForUser(user);
 
 								if (user.getAccountRoles().size() == 0) {
 									// ERROR, user does not have any required permissions to use
 									// this app
-									info("[local] user " + user.getEppn() + " is not authorized to use this application.");
-									throw new RpcException("[local] The user id being used to log " +
-										"in is not authorized to use this application.  " +
-										"Please contact your support representative to " +
-										"gain access to this application.");
+									info("[local] user " + user.getEppn()
+											+ " is not authorized to use this application.");
+									throw new RpcException("[local] The user id being used to log "
+											+ "in is not authorized to use this application.  "
+											+ "Please contact your support representative to "
+											+ "gain access to this application.");
 								}
 							}
 						}
 					}
-					
+
 					if (userCnt == 0) {
 						this.createSession(user.getEppn());
 						Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 						userCnt++;
 					}
 					else {
-						if (this.isSessionValidForUser(user)) { 
+						if (this.isSessionValidForUser(user)) {
 							info("[no-shib-testing] user ' " + user.getEppn() + " still has a valid session.");
 							this.createSession(eppn);
 							Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
@@ -848,17 +837,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						else {
 							if (manageSessionLocally) {
 								// tell client to do redirect
-								info("[no-shib-testing] user " + user.getEppn() + 
-									" does not have a valid session any more.  Need " +
-									"to re-authenticate here.");
+								info("[no-shib-testing] user " + user.getEppn()
+										+ " does not have a valid session any more.  Need "
+										+ "to re-authenticate here.");
 								throw new RpcException(Constants.SESSION_TIMEOUT);
 							}
 							else {
-								info("[no-shib-testing] user " + user.getEppn() + 
-										" does not have a valid session any more.  Need " +
-										"to re-authenticate here.  Processing will " +
-										"continue since this section of code is just " +
-										"for local testing.");
+								info("[no-shib-testing] user " + user.getEppn()
+										+ " does not have a valid session any more.  Need "
+										+ "to re-authenticate here.  Processing will "
+										+ "continue since this section of code is just " + "for local testing.");
 								this.createSession(eppn);
 								Cache.getCache().put(Constants.USER_ACCOUNT + getCurrentSessionId(), user);
 							}
@@ -870,6 +858,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		return user;
 	}
+
 	@Override
 	public UserAccountPojo getUserLoggedIn() throws RpcException {
 		return this.getUserLoggedIn(true);
@@ -881,10 +870,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// check to see if the session has expired
 			long currentTime = new java.util.Date().getTime();
 			if (this.hasSession(user.getEppn())) {
-				if (currentTime > 
-					getThreadLocalRequest().getSession().getLastAccessedTime() + 
-					(sessionTimeoutIntervalSeconds * 1000)) {
-			
+				if (currentTime > getThreadLocalRequest().getSession().getLastAccessedTime()
+						+ (sessionTimeoutIntervalSeconds * 1000)) {
+
 					info(user.getEppn() + " 's session has expired.");
 					return false;
 				}
@@ -913,7 +901,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			else {
 				return UUID.uuid();
 			}
-		} 
+		}
 		else {
 			// this may happen if createUser is called outside of an HTTP
 			// request
@@ -927,27 +915,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //			" with an expiration time of " + sessionTimeoutIntervalSeconds + 
 //			" seconds.");
 //		getThreadLocalRequest().getSession().setMaxInactiveInterval(sessionTimeoutIntervalSeconds);
-		
+
 		// never expires
-		info("Creating session for user " + userId + 
-				" with an expiration time of -1 (never expires)");
+		info("Creating session for user " + userId + " with an expiration time of -1 (never expires)");
 		getThreadLocalRequest().getSession().setMaxInactiveInterval(-1);
 		getThreadLocalRequest().getSession().setAttribute("UserID", userId);
 	}
 
 	boolean hasSession(String Username) {
-		// TODO: does this need to check the value of the UserID attribute and 
+		// TODO: does this need to check the value of the UserID attribute and
 		// make sure it matches the Username passed in??
 		if (getThreadLocalRequest().getSession().getAttribute("UserID") != null) {
 			info(Username + " 's session does exist.");
 			return true;
-		} 
+		}
 		else {
 			info(Username + "'s session does not exist.");
 			return false;
 		}
 	}
-	
+
 	@Override
 	public void invalidateSessionForUser(String userId) {
 		Cache.getCache().remove(userId);
@@ -955,13 +942,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		getThreadLocalRequest().getSession().removeAttribute("UserID");
 		getThreadLocalRequest().getSession().invalidate();
 	}
-	
+
 	private String getIdmSystemName() {
-		String idmSystemName=null;
+		String idmSystemName = null;
 		try {
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			idmSystemName = props.getProperty("idmSystemName", "netiq");
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 		}
 		return idmSystemName;
@@ -976,10 +964,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			this.getRolesForUser_grouper(user);
 		}
 	}
-	
+
 	protected void getRolesForUser_grouper(UserAccountPojo user) throws RpcException {
 		String tag = "[getRolesForUser_grouper] ";
-		// TODO: 
+		// TODO:
 		// - get all accounts
 		// - for each account
 
@@ -987,15 +975,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info(tag + "getting accounts...");
 		List<AccountPojo> accounts = this.getAllAccounts().getResults();
 		info(tag + "got " + accounts.size() + " accounts from getAllAccounts");
-		
+
 		if (user.getPublicId() == null) {
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
-			
+
 			// RICE-SPECIFIC - only do this if we're using Grouper (Rice)
 			dp_filter.setKey(user.getPrincipal());
 			// END RICE-SPECIFIC
-			
+
 			dp_filter.setUserLoggedIn(user);
 			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
 			if (dp_result != null) {
@@ -1004,8 +992,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					info(tag + "Empty DirectoryPersonQueryResultPojo.  This is bad.");
 					throw new RpcException("No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
 				}
-				info(tag + "got " + dp_result.getResults().size() + 
-					" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
+				info(tag + "got " + dp_result.getResults().size() + " DirectoryPerson objects back for net id: "
+						+ dp_filter.getSearchString());
 			}
 			else {
 				// error
@@ -1018,7 +1006,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			personalName.setFirstName(directoryPerson.getFirstMiddle());
 			personalName.setLastName(directoryPerson.getLastName());
 			user.setPersonalName(personalName);
-			
+
 			info(tag + "User public id is: " + user.getPublicId());
 		}
 		else {
@@ -1029,25 +1017,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		user.setAccountRoles(new java.util.ArrayList<AccountRolePojo>());
 
 		// we'll externalize this eventually
-		String[] accountRoleNames = new String[] {
-				Constants.ROLE_NAME_GROUPER_CENTRAL_ADMIN,
-				Constants.ROLE_NAME_GROUPER_ADMIN,
-				Constants.ROLE_NAME_GROUPER_AUDITOR,
-				Constants.ROLE_NAME_GROUPER_NETWORK_ADMIN
-		};
+		String[] accountRoleNames = new String[] { Constants.ROLE_NAME_GROUPER_CENTRAL_ADMIN,
+				Constants.ROLE_NAME_GROUPER_ADMIN, Constants.ROLE_NAME_GROUPER_AUDITOR,
+				Constants.ROLE_NAME_GROUPER_NETWORK_ADMIN };
 
 		for (String roleName : accountRoleNames) {
 			info(tag + "Processing " + roleName + " role assignments for " + accounts.size() + " accounts.");
-			accountLoop: for (AccountPojo account : accounts) {
+			accountLoop:
+			for (AccountPojo account : accounts) {
 				info(tag + "Processing " + roleName + " role assignments for account: " + account.getAccountId());
 				RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 				ra_filter.setRoleDN(account.getAccountId() + ":" + roleName);
 				ra_filter.setUserLoggedIn(user);
 
 				RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-				info(tag + "got " + ra_result.getResults().size() + " role assignments back from getRoleAssignmentsForFilter");
+				info(tag + "got " + ra_result.getResults().size()
+						+ " role assignments back from getRoleAssignmentsForFilter");
 
-				raLoop: for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
+				raLoop:
+				for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 					info(tag + "roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
 					info(tag + "user.PublicId=" + user.getPublicId());
 					if (roleAssignment.getIdentityDN().equalsIgnoreCase(user.getPublicId())) {
@@ -1055,17 +1043,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							// user is a central admin in this account
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-							info(tag + "adding AccountRolePojo " + 
-									arp.toString() + " to UserAccount logged in.");
+							info(tag + "adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 							user.addAccountRole(arp);
-							
+
 							AccountRolePojo arp2 = new AccountRolePojo();
 							arp2.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
-							info(tag + "adding AccountRolePojo " + 
-									arp2.toString() + " to UserAccount logged in.");
+							info(tag + "adding AccountRolePojo " + arp2.toString() + " to UserAccount logged in.");
 							user.addAccountRole(arp);
-							
-							// if they're a central admin, the accountLoop here really 
+
+							// if they're a central admin, the accountLoop here really
 							// doesn't need to go any further
 							break accountLoop;
 						}
@@ -1107,7 +1093,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		java.util.Date endTime = new java.util.Date();
 		long elapsedTime = endTime.getTime() - startTime.getTime();
 		info(tag + "elaspsed time: " + formatMillisForDisplay(elapsedTime));
-		
+
 		// START bootstrapping logic
 		if (user.getAccountRoles().size() == 0) {
 			info("user doesn't have any roles, checking for bootstrapping logic");
@@ -1116,7 +1102,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 				String s_bootstrap = props.getProperty("bootstrap", "false");
 				bootstrap = Boolean.parseBoolean(s_bootstrap);
-			} catch (EnterpriseConfigurationObjectException e) {
+			}
+			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 			}
 
@@ -1125,40 +1112,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 				AccountRolePojo arp = new AccountRolePojo();
 				arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-				info(tag + "adding AccountRolePojo " + 
-						arp.toString() + " to UserAccount logged in.");
+				info(tag + "adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
 				user.addAccountRole(arp);
-				
+
 				AccountRolePojo arp2 = new AccountRolePojo();
 				arp2.setRoleName(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
-				info(tag + "adding AccountRolePojo " + 
-						arp2.toString() + " to UserAccount logged in.");
+				info(tag + "adding AccountRolePojo " + arp2.toString() + " to UserAccount logged in.");
 				user.addAccountRole(arp);
 			}
 		}
 		// END bootstrapping
 	}
-	
+
 	protected void getRolesForUser_netiq(UserAccountPojo user) throws RpcException {
-		
+
 		// TODO: this will need to be re-worked to support other IDM systems
 		// like grouper etc.
-		
+
 		// get the fullperson object for the user.principal
 		// set the user's publicId
 		// get the roleassignments for the user.publicId
 		// for each roleassignment:
-		//	- get the aws account id
-		//  - verify the account exists in this series (environment)
-		//	- get the role name associated to that account for this user
-		//	- create a new AccountRolePojo, populate it with account id and role name
-		//	- add the AccountRolePojo to the user passed in
-		
+		// - get the aws account id
+		// - verify the account exists in this series (environment)
+		// - get the role name associated to that account for this user
+		// - create a new AccountRolePojo, populate it with account id and role name
+		// - add the AccountRolePojo to the user passed in
+
 		java.util.Date startTime = new java.util.Date();
 		info("[getRolesForUser_netiq] getting accounts...");
 		List<AccountPojo> accounts = this.getAllAccounts().getResults();
 		info("[getRolesForUser_netiq] got " + accounts.size() + " accounts from getAllAccounts");
-		
+
 		if (user.getPersonalName() == null) {
 			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 			dp_filter.setSearchString(user.getPrincipal());
@@ -1178,8 +1163,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					info("[getRolesForUser_netiq] Empty DirectoryPersonQueryResultPojo.  This is bad.");
 					throw new RpcException("No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
 				}
-				info("[getRolesForUser_netiq] got " + dp_result.getResults().size() + 
-					" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
+				info("[getRolesForUser_netiq] got " + dp_result.getResults().size()
+						+ " DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
 			}
 			else {
 				// error
@@ -1196,11 +1181,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			info("[getRolesForUser_netiq] no need to get full person object.");
 		}
-		
+
 		try {
 			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
-			
+
 			String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
 			idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, user.getPublicId());
 			ra_filter.setUserDN(idDn);
@@ -1218,14 +1203,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
 						AccountRolePojo arp = new AccountRolePojo();
 						arp.setRoleName(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
-						info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString()
+								+ " to UserAccount logged in.");
 						user.addAccountRole(arp);
 						continue;
 					}
 					if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
 						AccountRolePojo arp = new AccountRolePojo();
 						arp.setRoleName(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
-						info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+						info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString()
+								+ " to UserAccount logged in.");
 						user.addAccountRole(arp);
 						continue;
 					}
@@ -1238,25 +1225,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						}
 						String acctId = idRoles[1];
 						String roleName = idRoles[2];
-						
+
 						AccountPojo verifiedAcct = this.getAccountByIdFromList(acctId, accounts);
-						
+
 						if (acctId != null && verifiedAcct != null) {
 							// this gets account admins and auditors
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setAccountId(acctId);
 							arp.setAccountName(verifiedAcct.getAccountName());
 							arp.setRoleName(roleName);
-							info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+							info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString()
+									+ " to UserAccount logged in.");
 							user.addAccountRole(arp);
 						}
-						else if (acctId == null && 
-								(roleName.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 || 
-								 roleName.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN) >= 0)) {
-							
+						else if (acctId == null && (roleName.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0
+								|| roleName.indexOf(Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN) >= 0)) {
+
 							AccountRolePojo arp = new AccountRolePojo();
 							arp.setRoleName(roleName);
-							info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString() + " to UserAccount logged in.");
+							info("[getRolesForUser_netiq] adding AccountRolePojo " + arp.toString()
+									+ " to UserAccount logged in.");
 							user.addAccountRole(arp);
 						}
 						else {
@@ -1265,18 +1253,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 				}
 			}
-			
+
 			info("[getRolesForUser_netiq] added " + user.getAccountRoles().size() + " AccountRoles to User");
 			java.util.Date endTime = new java.util.Date();
 			long elapsedTime = endTime.getTime() - startTime.getTime();
 			info("[getRolesForUser_netiq] elaspsed time: " + formatMillisForDisplay(elapsedTime));
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
-	
+
 	private AccountPojo getAccountByIdFromList(String acctId, List<AccountPojo> accounts) {
 		if (acctId == null) {
 			info("[getAccountByIdFromList] null account id passed in");
@@ -1293,44 +1281,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private String formatMillisForDisplay(long millis) {
 		String formatted = "";
-		
+
 		if (millis < Constants.MILLIS_PER_SECOND) {
 			return "<1s";
 		}
 		if (millis < Constants.MILLIS_PER_MINUTE) {
 			// less than a minute
-			int seconds = (int) (millis / 1000) % 60 ;
+			int seconds = (int) (millis / 1000) % 60;
 			formatted = seconds + "s";
 		}
 		else if (millis >= Constants.MILLIS_PER_MINUTE && millis < Constants.MILLIS_PER_HR) {
 			// mm ss
-			int seconds = (int) (millis / 1000) % 60 ;
-			int minutes = (int) ((millis / (1000*60)) % 60);
+			int seconds = (int) (millis / 1000) % 60;
+			int minutes = (int) ((millis / (1000 * 60)) % 60);
 			return minutes + "m, " + seconds + "s";
 		}
 		else {
 			// h mm ss
-			int seconds = (int) (millis / 1000) % 60 ;
-			int minutes = (int) ((millis / (1000*60)) % 60);
-			int hours   = (int) ((millis / (1000*60*60)) % 24);
+			int seconds = (int) (millis / 1000) % 60;
+			int minutes = (int) ((millis / (1000 * 60)) % 60);
+			int hours = (int) ((millis / (1000 * 60 * 60)) % 24);
 			return hours + "h, " + minutes + "m, " + seconds + "s";
 		}
 		return formatted;
 	}
 
 	@SuppressWarnings("unused")
-	private void populateBillMoa(BillPojo pojo, Bill moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+	private void populateBillMoa(BillPojo pojo, Bill moa) throws EnterpriseFieldException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 		/*
-		<!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+, 
-		CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+		 * <!ELEMENT Bill (BillId?, PayerAccountId, BillDate, Type, LineItem+,
+		 * CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
 		 */
 		moa.setBillId(pojo.getBillId());
 		moa.setPayerAccountId(pojo.getPayerAccountId());
-		
+
 		org.openeai.moa.objects.resources.Date billDate = moa.newBillDate();
 		this.populateDate(billDate, pojo.getBillDate());
 		moa.setBillDate(billDate);
-		
+
 		moa.setType(pojo.getType());
 
 		for (LineItemPojo pojoLi : pojo.getLineItems()) {
@@ -1341,13 +1330,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
+
 	@SuppressWarnings("unchecked")
 	private void populateBillPojo(Bill moa, BillPojo pojo) throws XmlEnterpriseObjectException {
 		pojo.setBillId(moa.getBillId());
 		pojo.setPayerAccountId(moa.getPayerAccountId());
-		
+
 		pojo.setBillDate(this.toDateFromDate(moa.getBillDate()));
-		
+
 		pojo.setType(pojo.getType());
 
 		for (LineItem moaLi : (List<LineItem>) moa.getLineItem()) {
@@ -1358,35 +1348,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
+
 	private void populateLineItemMoa(LineItemPojo pojo, LineItem moa) throws EnterpriseFieldException {
 		/*
-		<!ELEMENT LineItem (InvoiceId, PayerAccountId, LinkedAccountId?, RecordType, 
-			RecordId, BillingPeriodStartDatetime, BillingPeriodEndDatetime, 
-			InvoiceDatetime, PayerAccountName, LinkedAccountName?, TaxationAddress, 
-			PayerPONumber?, ProductCode, ProductName, SellerOfRecord, UsageType, 
-			Operation, RateId, ItemDescription, UsageStartDatetime, UsageEndDatetime, 
-			UsageQuantity, BlendedRate?, CurrencyCode, CostBeforeTax, Credits, 
-			TaxAmount, TaxType, TotalCost)>
+		 * <!ELEMENT LineItem (InvoiceId, PayerAccountId, LinkedAccountId?, RecordType,
+		 * RecordId, BillingPeriodStartDatetime, BillingPeriodEndDatetime,
+		 * InvoiceDatetime, PayerAccountName, LinkedAccountName?, TaxationAddress,
+		 * PayerPONumber?, ProductCode, ProductName, SellerOfRecord, UsageType,
+		 * Operation, RateId, ItemDescription, UsageStartDatetime, UsageEndDatetime,
+		 * UsageQuantity, BlendedRate?, CurrencyCode, CostBeforeTax, Credits, TaxAmount,
+		 * TaxType, TotalCost)>
 		 */
-		
+
 		moa.setInvoiceId(pojo.getInvoiceId());
 		moa.setPayerAccountId(pojo.getPayerAccountId());
 		moa.setLinkedAccountId(pojo.getLinkedAccountId());
 		moa.setRecordType(pojo.getRecordType());
 		moa.setRecordId(pojo.getRecordId());
-		
+
 		Datetime billingPeriodStartDatetime = moa.newBillingPeriodStartDatetime();
 		this.populateDatetime(billingPeriodStartDatetime, pojo.getBillingPeriodStartDatetime());
 		moa.setBillingPeriodStartDatetime(billingPeriodStartDatetime);
-		
+
 		Datetime billingPeriodEndDatetime = moa.newBillingPeriodEndDatetime();
 		this.populateDatetime(billingPeriodEndDatetime, pojo.getBillingPeriodEndDatetime());
 		moa.setBillingPeriodEndDatetime(billingPeriodEndDatetime);
-		
+
 		Datetime invoiceDatetime = moa.newInvoiceDatetime();
 		this.populateDatetime(invoiceDatetime, pojo.getInvoiceDatetime());
 		moa.setInvoiceDatetime(invoiceDatetime);
-		
+
 		moa.setPayerAccountName(pojo.getPayerAccountName());
 		moa.setLinkedAccountName(pojo.getLinkedAccountName());
 		moa.setTaxationAddress(pojo.getTaxationAddress());
@@ -1398,7 +1389,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setOperation(pojo.getOperation());
 		moa.setRateId(pojo.getRateId());
 		moa.setItemDescription(pojo.getItemDescription());
-		
+
 		Datetime usageStartDatetime = moa.newUsageStartDatetime();
 		this.populateDatetime(usageStartDatetime, pojo.getUsageStartDatetime());
 		moa.setUsageStartDatetime(usageStartDatetime);
@@ -1416,17 +1407,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setTaxType(pojo.getTaxType());
 		moa.setTotalCost(this.toStringFromDouble(pojo.getTotalCost()));
 	}
+
 	private void populateLineItemPojo(LineItem moa, LineItemPojo pojo) {
 		pojo.setInvoiceId(moa.getInvoiceId());
 		pojo.setPayerAccountId(moa.getPayerAccountId());
 		pojo.setLinkedAccountId(moa.getLinkedAccountId());
 		pojo.setRecordType(moa.getRecordType());
 		pojo.setRecordId(moa.getRecordId());
-		
-		pojo.setBillingPeriodStartDatetime(this.toDateFromDatetime(moa.getBillingPeriodStartDatetime()));		
+
+		pojo.setBillingPeriodStartDatetime(this.toDateFromDatetime(moa.getBillingPeriodStartDatetime()));
 		pojo.setBillingPeriodEndDatetime(this.toDateFromDatetime(moa.getBillingPeriodEndDatetime()));
 		pojo.setInvoiceDatetime(this.toDateFromDatetime(moa.getInvoiceDatetime()));
-		
+
 		pojo.setPayerAccountName(moa.getPayerAccountName());
 		pojo.setLinkedAccountName(moa.getLinkedAccountName());
 		pojo.setTaxationAddress(moa.getTaxationAddress());
@@ -1438,7 +1430,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setOperation(moa.getOperation());
 		pojo.setRateId(moa.getRateId());
 		pojo.setItemDescription(moa.getItemDescription());
-		
+
 		pojo.setUsageStartDatetime(this.toDateFromDatetime(moa.getUsageStartDatetime()));
 		pojo.setUsageEndDatetime(this.toDateFromDatetime(moa.getUsageEndDatetime()));
 
@@ -1451,12 +1443,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setTaxType(moa.getTaxType());
 		pojo.setTotalCost(this.toDoubleFromString(moa.getTotalCost()));
 	}
-	
-	private void populateVpcMoa(VpcPojo pojo,
-			VirtualPrivateCloud moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+	private void populateVpcMoa(VpcPojo pojo, VirtualPrivateCloud moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getAccountId() != null) {
 			moa.setAccountId(pojo.getAccountId());
@@ -1470,12 +1460,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setType(pojo.getType());
 
-        for (PropertyPojo p : pojo.getProperties()) {
-        	com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
-        	mp.setKey(p.getName());
-        	mp.setValue(p.getValue());
-        	moa.addProperty(mp);
-        }
+		for (PropertyPojo p : pojo.getProperties()) {
+			com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
+			mp.setKey(p.getName());
+			mp.setValue(p.getValue());
+			moa.addProperty(mp);
+		}
 
 		moa.setRegion(pojo.getRegion());
 		moa.setCidr(pojo.getCidr());
@@ -1486,10 +1476,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateVpcPojo(VirtualPrivateCloud moa,
-			VpcPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateVpcPojo(VirtualPrivateCloud moa, VpcPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setAccountId(moa.getAccountId());
 		AccountPojo account = this.getAccountById(pojo.getAccountId());
 		if (account != null) {
@@ -1504,24 +1493,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setCidr(moa.getCidr());
 		pojo.setVpnConnectionProfileId(moa.getVpnConnectionProfileId());
 		pojo.setPurpose(moa.getPurpose());
-		
-		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+
+		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
+				.getProperty()) {
 			PropertyPojo p = new PropertyPojo();
 			p.setName(mp.getKey());
 			p.setValue(mp.getValue());
 			pojo.getProperties().add(p);
 		}
-		
+
 		pojo.setCidr(moa.getCidr());
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateVpcRequisitionMoa(VpcRequisitionPojo pojo,
-			VirtualPrivateCloudRequisition moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateVpcRequisitionMoa(VpcRequisitionPojo pojo, VirtualPrivateCloudRequisition moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getAccountId() != null) {
 			moa.setAccountId(pojo.getAccountId());
@@ -1531,22 +1519,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setType(pojo.getType());
 		// admin user ids
-        for (String p : pojo.getCustomerAdminUserIdList()) {
-            moa.addCustomerAdminUserId(p);
-        }
-        moa.setAuthenticatedRequestorUserId(pojo.getAuthenticatedRequestorUserId());
-        moa.setComplianceClass(pojo.getComplianceClass());
-        moa.setNotifyAdmins(this.toStringFromBoolean(pojo.isNotifyAdmins()));
-        moa.setPurpose(pojo.getPurpose());
-        for (String s : pojo.getSensitiveDataList()) {
-        	moa.addSensitiveDataType(s);
-        }
+		for (String p : pojo.getCustomerAdminUserIdList()) {
+			moa.addCustomerAdminUserId(p);
+		}
+		moa.setAuthenticatedRequestorUserId(pojo.getAuthenticatedRequestorUserId());
+		moa.setComplianceClass(pojo.getComplianceClass());
+		moa.setNotifyAdmins(this.toStringFromBoolean(pojo.isNotifyAdmins()));
+		moa.setPurpose(pojo.getPurpose());
+		for (String s : pojo.getSensitiveDataList()) {
+			moa.addSensitiveDataType(s);
+		}
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private void populateVpcRequisitionPojo(VirtualPrivateCloudRequisition moa,
-			VpcRequisitionPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
+	private void populateVpcRequisitionPojo(VirtualPrivateCloudRequisition moa, VpcRequisitionPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
 
 		pojo.setRegion(moa.getRegion());
 		pojo.setAccountId(moa.getAccountId());
@@ -1569,7 +1556,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	private void populateTransitGatewayMoa(TransitGatewayPojo pojo, TransitGateway moa) throws EnterpriseFieldException {
+	private void populateTransitGatewayMoa(TransitGatewayPojo pojo, TransitGateway moa)
+			throws EnterpriseFieldException {
 		moa.setTransitGatewayId(pojo.getTransitGatewayId());
 		moa.setEnvironment(pojo.getEnvironment());
 		moa.setRegion(pojo.getRegion());
@@ -1580,6 +1568,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.addTransitGatewayProfile(tgpm);
 		}
 	}
+
 	@SuppressWarnings("unchecked")
 	private void populateTransitGatewayPojo(TransitGateway moa, TransitGatewayPojo pojo) {
 		pojo.setTransitGatewayId(moa.getTransitGatewayId());
@@ -1592,15 +1581,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			pojo.getProfiles().add(tgpp);
 		}
 	}
-	private void populateTransitGatewayProfileMoa(TransitGatewayProfilePojo pojo, TransitGatewayProfile moa) throws EnterpriseFieldException {
+
+	private void populateTransitGatewayProfileMoa(TransitGatewayProfilePojo pojo, TransitGatewayProfile moa)
+			throws EnterpriseFieldException {
 		moa.setTransitGatewayProfileId(pojo.getTgwProfileId());
 		moa.setTransitGatewayId(pojo.getTransitGatewayId());
 		moa.setAssociationRouteTableId(pojo.getAssociationRouteTableId());
 		for (String prt : pojo.getPropagationRouteTableIds()) {
 			moa.addPropagationRouteTableId(prt);
 		}
-		
+
 	}
+
 	@SuppressWarnings("unchecked")
 	private void populateTransitGatewayProfilePojo(TransitGatewayProfile moa, TransitGatewayProfilePojo pojo) {
 		pojo.setTgwProfileId(moa.getTransitGatewayProfileId());
@@ -1610,12 +1602,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			pojo.getPropagationRouteTableIds().add(prt);
 		}
 	}
-	
-	private void populateAccountMoa(AccountPojo pojo,
-			Account moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+	private void populateAccountMoa(AccountPojo pojo, Account moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getAccountId() != null) {
 			moa.setAccountId(pojo.getAccountId());
@@ -1627,36 +1617,35 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setFinancialAccountNumber(pojo.getSpeedType());
 		moa.setComplianceClass(pojo.getComplianceClass());
 		// email
-        for (EmailPojo p : pojo.getEmailList()) {
-            EmailAddress email = moa.newEmailAddress();
-            email.setType(p.getType());
-            email.setEmail(p.getEmailAddress());
-            moa.addEmailAddress(email);
-        }
-        
-        for (PropertyPojo p : pojo.getProperties()) {
-        	com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
-        	mp.setKey(p.getName());
-        	mp.setValue(p.getValue());
-        	moa.addProperty(mp);
-        }
-        this.setMoaCreateInfo(moa, pojo);
+		for (EmailPojo p : pojo.getEmailList()) {
+			EmailAddress email = moa.newEmailAddress();
+			email.setType(p.getType());
+			email.setEmail(p.getEmailAddress());
+			moa.addEmailAddress(email);
+		}
+
+		for (PropertyPojo p : pojo.getProperties()) {
+			com.amazon.aws.moa.objects.resources.v1_0.Property mp = moa.newProperty();
+			mp.setKey(p.getName());
+			mp.setValue(p.getValue());
+			moa.addProperty(mp);
+		}
+		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateAccountPojo(Account moa,
-			AccountPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateAccountPojo(Account moa, AccountPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setAccountName(moa.getAccountName());
 		pojo.setAlternateName(moa.getAlternateName());
-		
+
 		// need a clean meta data object because if we use the one from the cache
 		// we'll run into issues when we go to do an update later (baseline missmatch)
-		// so we'll use the data from the cache (if present) but just populate 
-		// a clean meta data object with that data so we don't end up with a 
+		// so we'll use the data from the cache (if present) but just populate
+		// a clean meta data object with that data so we don't end up with a
 		// reference to the cached object which would lead to issues during update
 		DirectoryMetaDataPojo ownerDmdp = new DirectoryMetaDataPojo();
 		DirectoryMetaDataPojo cachedDmdp = this.getDirectoryMetaDataForPublicId(moa.getAccountOwnerId());
@@ -1682,23 +1671,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			emp.setEmailAddress(email.getEmail());
 			pojo.getEmailList().add(emp);
 		}
-		
-		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+
+		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
+				.getProperty()) {
 			PropertyPojo p = new PropertyPojo();
 			p.setName(mp.getKey());
 			p.setValue(mp.getValue());
 			pojo.getProperties().add(p);
 		}
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateElasticIpMoa(ElasticIpPojo pojo,
-			ElasticIp moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateElasticIpMoa(ElasticIpPojo pojo, ElasticIp moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getElasticIpId() != null) {
 			moa.setElasticIpId(pojo.getElasticIpId());
@@ -1710,23 +1698,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
-	private void populateElasticIpPojo(ElasticIp moa,
-			ElasticIpPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateElasticIpPojo(ElasticIp moa, ElasticIpPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setElasticIpId(moa.getElasticIpId());
 		pojo.setElasticIpAddress(moa.getElasticIpAddress());
 		pojo.setAssociatedIpAddress(moa.getAssociatedIpAddress());
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateElasticIpAssignmentMoa(ElasticIpAssignmentPojo pojo,
-			ElasticIpAssignment moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateElasticIpAssignmentMoa(ElasticIpAssignmentPojo pojo, ElasticIpAssignment moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getAssignmentId() != null) {
 			moa.setElasticIpAssignmentId(pojo.getAssignmentId());
@@ -1748,10 +1733,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
-	private void populateElasticIpAssignmentPojo(ElasticIpAssignment moa,
-			ElasticIpAssignmentPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateElasticIpAssignmentPojo(ElasticIpAssignment moa, ElasticIpAssignmentPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setAssignmentId(moa.getElasticIpAssignmentId());
 		pojo.setOwnerId(moa.getOwnerId());
 		pojo.setDescription(moa.getDecription());
@@ -1761,16 +1745,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			this.populateElasticIpPojo(moa.getElasticIp(), eip);
 			pojo.setElasticIp(eip);
 		}
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateCidrMoa(CidrPojo pojo,
-			Cidr moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateCidrMoa(CidrPojo pojo, Cidr moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getCidrId() != null) {
 			moa.setCidrId(pojo.getCidrId());
@@ -1781,7 +1763,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		moa.setNetwork(pojo.getNetwork());
 		moa.setBits(pojo.getBits());
-		
+
 		if (pojo.getAssociatedCidrs() != null && pojo.getAssociatedCidrs().size() > 0) {
 			for (AssociatedCidrPojo acp : pojo.getAssociatedCidrs()) {
 				AssociatedCidr ac = moa.newAssociatedCidr();
@@ -1805,15 +1787,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateCidrPojo(Cidr moa,
-			CidrPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateCidrPojo(Cidr moa, CidrPojo pojo) throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setCidrId(moa.getCidrId());
 		pojo.setNetwork(moa.getNetwork());
 		pojo.setBits(moa.getBits());
 		if (moa.getAssociatedCidr() != null && moa.getAssociatedCidrLength() > 0) {
-			for (AssociatedCidr ac : (List<AssociatedCidr>)moa.getAssociatedCidr()) {
+			for (AssociatedCidr ac : (List<AssociatedCidr>) moa.getAssociatedCidr()) {
 				AssociatedCidrPojo acp = new AssociatedCidrPojo();
 				acp.setType(ac.getType());
 				acp.setBits(ac.getBits());
@@ -1822,22 +1802,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 		if (moa.getProperty() != null && moa.getPropertyLength() > 0) {
-			for (Property p : (List<Property>)moa.getProperty()) {
+			for (Property p : (List<Property>) moa.getProperty()) {
 				PropertyPojo pp = new PropertyPojo();
 				pp.setName(p.getPropertyName());
 				pp.setValue(p.getPropertyValue());
 			}
 		}
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateCidrAssignmentMoa(CidrAssignmentPojo pojo,
-			CidrAssignment moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateCidrAssignmentMoa(CidrAssignmentPojo pojo, CidrAssignment moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getCidrAssignmentId() != null) {
 			moa.setCidrAssignmentId(pojo.getCidrAssignmentId());
@@ -1858,10 +1836,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
-	private void populateCidrAssignmentPojo(CidrAssignment moa,
-			CidrAssignmentPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateCidrAssignmentPojo(CidrAssignment moa, CidrAssignmentPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setCidrAssignmentId(moa.getCidrAssignmentId());
 		pojo.setOwnerId(moa.getOwnerId());
 		pojo.setDescription(moa.getDecription());
@@ -1871,23 +1848,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			this.populateCidrPojo(moa.getCidr(), cidr);
 			pojo.setCidr(cidr);
 		}
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@Override
 	public String getClientInfoForUser(UserAccountPojo user) {
-        String clientIp = this.getThreadLocalRequest().getRemoteAddr();
-        java.util.Date now = new java.util.Date();
-        String userInfo = user.getEppn() + "/" + clientIp + " @ " + now;
-        return userInfo;
+		String clientIp = this.getThreadLocalRequest().getRemoteAddr();
+		java.util.Date now = new java.util.Date();
+		String userInfo = user.getEppn() + "/" + clientIp + " @ " + now;
+		return userInfo;
 	}
 
 	@Override
 	public String getClientInfo() {
-        UserAccountPojo user = this.getUserLoggedIn(false);
-        return this.getClientInfoForUser(user);
+		UserAccountPojo user = this.getUserLoggedIn(false);
+		return this.getClientInfoForUser(user);
 	}
 
 	@Override
@@ -1909,11 +1886,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getCidrsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			info("[getCidrsForFilter] query spec is: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<Cidr> moas = actionable.query(queryObject,
-					this.getCidrRequestService());
+			List<Cidr> moas = actionable.query(queryObject, this.getCidrRequestService());
 			info("[getCidrsForFilter] got " + moas.size() + " CIDRs back from ESB");
 			for (Cidr moa : moas) {
 				CidrSummaryPojo summary = new CidrSummaryPojo();
@@ -1930,27 +1906,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -1969,7 +1945,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		if (!useEsbService) {
 //			return mockService.getMtpCaseRecordsForPhysician(physicianUserId);
-		} 
+		}
 		else {
 			List<CidrPojo> pojos = new java.util.ArrayList<CidrPojo>();
 			try {
@@ -1981,10 +1957,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				String authUserId = this.getAuthUserIdForHALS();
 				actionable.getAuthentication().setAuthUserId(authUserId);
 				info("[getCidrsForUserLoggedIn] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-				
+
 				@SuppressWarnings("unchecked")
-				List<Cidr> moas = actionable.query(queryObject,
-						this.getCidrRequestService());
+				List<Cidr> moas = actionable.query(queryObject, this.getCidrRequestService());
 				for (Cidr moa : moas) {
 					CidrPojo pojo = new CidrPojo();
 					CidrPojo baseline = new CidrPojo();
@@ -1996,27 +1971,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 				Collections.sort(pojos);
 				return pojos;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectQueryException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (ParseException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -2028,13 +2003,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public CidrPojo createCidr(CidrPojo cidr) throws RpcException {
-		
-		cidr.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
+
+		cidr.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
 				info("creating CIDR record on the server...");
@@ -2042,46 +2016,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateCidrMoa(cidr, moa);
 
-				
 				info("doing the Cidr.create...");
 				this.doCreate(moa, getCidrRequestService());
 				info("Cidr.create is complete...");
 
 //				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return cidr;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectCreateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -2093,7 +2066,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public CidrPojo storeCidrInCacheForUser(String eppn, CidrPojo cidr) {
 		info("Storing Cidr in cache for " + eppn);
 		Cache.getCache().put(Constants.CIDR + eppn, cidr);
-		
+
 		return cidr;
 	}
 
@@ -2115,22 +2088,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		if (!useEsbService) {
 //			return mockService.getMtpCaseRecordsForPhysician(physicianUserId);
-		} 
+		}
 		else {
 			List<CidrAssignmentPojo> pojos = new java.util.ArrayList<CidrAssignmentPojo>();
 			try {
-				CidrAssignmentQuerySpecification queryObject = (CidrAssignmentQuerySpecification) getObject(Constants.MOA_CIDR_ASSIGNMENT_QUERY_SPEC);
+				CidrAssignmentQuerySpecification queryObject = (CidrAssignmentQuerySpecification) getObject(
+						Constants.MOA_CIDR_ASSIGNMENT_QUERY_SPEC);
 				CidrAssignment actionable = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
 
 				queryObject.setOwnerId(user.getEppn().substring(0, user.getEppn().indexOf("@")));
 
 				String authUserId = this.getAuthUserIdForHALS();
 				actionable.getAuthentication().setAuthUserId(authUserId);
-				info("[getCidrAssignmentsForUserLoggedIn] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-				
+				info("[getCidrAssignmentsForUserLoggedIn] AuthUserId is: "
+						+ actionable.getAuthentication().getAuthUserId());
+
 				@SuppressWarnings("unchecked")
-				List<CidrAssignment> moas = actionable.query(queryObject,
-						this.getCidrRequestService());
+				List<CidrAssignment> moas = actionable.query(queryObject, this.getCidrRequestService());
 				for (CidrAssignment moa : moas) {
 					CidrAssignmentPojo pojo = new CidrAssignmentPojo();
 					this.populateCidrAssignmentPojo(moa, pojo);
@@ -2139,27 +2113,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 				Collections.sort(pojos);
 				return pojos;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectQueryException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (ParseException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -2171,13 +2145,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public CidrAssignmentPojo createCidrAssignment(CidrAssignmentPojo cidrAssignment) throws RpcException {
-		
-		cidrAssignment.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
+
+		cidrAssignment.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
 				info("creating CIDR Assignment record on the server...");
@@ -2185,46 +2158,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateCidrAssignmentMoa(cidrAssignment, moa);
 
-				
 				info("doing the CidrAssignment.create...");
 				this.doCreate(moa, getCidrRequestService());
 				info("CidrAssignment.create is complete...");
 
 //				Cache.getCache().remove(Constants.CIDR_ASSIGNMENT + this.getUserLoggedIn().getEppn());
 				return cidrAssignment;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectCreateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -2236,7 +2208,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public CidrAssignmentPojo storeCidrAssignmentInCacheForUser(String eppn, CidrAssignmentPojo cidrAssignment) {
 		info("Storing CidrAssignment in cache for " + eppn);
 		Cache.getCache().put(Constants.CIDR_ASSIGNMENT + eppn, cidrAssignment);
-		
+
 		return cidrAssignment;
 	}
 
@@ -2360,22 +2332,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private RequestService getNetworkOpsRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) networkOpsProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getSrdRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) srdProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getElasticIpRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) elasticIpProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 //	private RequestService getIdentityServiceRequestService() throws JMSException {
 //		RequestService reqSvc = (RequestService) identityServiceProducerPool.getProducer();
 //		((PointToPointProducer) reqSvc)
@@ -2384,22 +2356,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //	}
 	private RequestService getPeopleSoftRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) peopleSoftProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getAWSRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) awsProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getCidrRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) cidrProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 //	private RequestService getAuthzRequestService() throws JMSException {
 //		RequestService reqSvc = (RequestService) authzProducerPool.getProducer();
 //		((PointToPointProducer) reqSvc)
@@ -2408,49 +2380,47 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //	}
 	private RequestService getFirewallRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) firewallProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getServiceNowRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) serviceNowProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getDirectoryRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) directoryProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getIDMRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) idmProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
+
 	private RequestService getRtpRequestService() throws JMSException {
 		RequestService reqSvc = (RequestService) rtpProducerPool.getProducer();
-		((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
+		((PointToPointProducer) reqSvc).setRequestTimeoutInterval(getDefaultRequestTimeoutInterval());
 		return reqSvc;
 	}
 
-    private java.util.Date toDateFromDate(org.openeai.moa.objects.resources.Date moa) {
-        if (moa == null) {
-            return null;
-        }
+	private java.util.Date toDateFromDate(org.openeai.moa.objects.resources.Date moa) {
+		if (moa == null) {
+			return null;
+		}
 
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MONTH, Integer.parseInt(moa.getMonth()) - 1);
-        c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(moa.getDay()));
-        c.set(Calendar.YEAR, Integer.parseInt(moa.getYear()));
-        return c.getTime();
-    }
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.MONTH, Integer.parseInt(moa.getMonth()) - 1);
+		c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(moa.getDay()));
+		c.set(Calendar.YEAR, Integer.parseInt(moa.getYear()));
+		return c.getTime();
+	}
 
-    private java.util.Date toDateFromDatetime(
-			org.openeai.moa.objects.resources.Datetime moa) {
+	private java.util.Date toDateFromDatetime(org.openeai.moa.objects.resources.Datetime moa) {
 		if (moa == null) {
 			return null;
 		}
@@ -2468,30 +2438,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		return c.getTime();
 	}
 
-	private void setMoaCreateInfo(XmlEnterpriseObject xeo, SharedObject pojo)
-			throws IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException, SecurityException, NoSuchMethodException {
-		Method createUserSetter = xeo.getClass().getMethod("setCreateUser",
-				new Class[] { String.class });
+	private void setMoaCreateInfo(XmlEnterpriseObject xeo, SharedObject pojo) throws IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+		Method createUserSetter = xeo.getClass().getMethod("setCreateUser", new Class[] { String.class });
 		createUserSetter.invoke(xeo, new Object[] { pojo.getCreateUser() });
 
 		Datetime dt = new Datetime("CreateDatetime");
 		populateDatetime(dt, pojo.getCreateTime());
-		Method createDatetimeSetter = xeo
-				.getClass()
-				.getMethod(
-						"setCreateDatetime",
-						new Class[] { org.openeai.moa.objects.resources.Datetime.class });
+		Method createDatetimeSetter = xeo.getClass().getMethod("setCreateDatetime",
+				new Class[] { org.openeai.moa.objects.resources.Datetime.class });
 		createDatetimeSetter.invoke(xeo, new Object[] { dt });
 	}
 
-	private void setMoaUpdateInfo(XmlEnterpriseObject xeo, SharedObject pojo)
-			throws SecurityException, NoSuchMethodException,
-			IllegalArgumentException, IllegalAccessException,
-			InvocationTargetException {
-		
-		Method updateUserSetter = xeo.getClass().getMethod("setLastUpdateUser",
-				new Class[] { String.class });
+	private void setMoaUpdateInfo(XmlEnterpriseObject xeo, SharedObject pojo) throws SecurityException,
+			NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+
+		Method updateUserSetter = xeo.getClass().getMethod("setLastUpdateUser", new Class[] { String.class });
 		updateUserSetter.invoke(xeo, new Object[] { pojo.getUpdateUser() });
 
 		Datetime dt = new Datetime("LastUpdateDatetime");
@@ -2499,32 +2461,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 											// time to the moa even when
 											// pojo.getUpdateTime()==null
 			populateDatetime(dt, pojo.getUpdateTime());
-			Method createDatetimeSetter = xeo
-					.getClass()
-					.getMethod(
-							"setLastUpdateDatetime",
-							new Class[] { org.openeai.moa.objects.resources.Datetime.class });
+			Method createDatetimeSetter = xeo.getClass().getMethod("setLastUpdateDatetime",
+					new Class[] { org.openeai.moa.objects.resources.Datetime.class });
 			createDatetimeSetter.invoke(xeo, new Object[] { dt });
 		}
 	}
 
-    private void populateDate(org.openeai.moa.objects.resources.Date moaDate, java.util.Date javaDate)
-            throws EnterpriseFieldException {
-        if (javaDate == null) {
-            return;
-        }
-        Calendar c = Calendar.getInstance();
-        c.setTime(javaDate);
-        c.get(Calendar.DAY_OF_MONTH);
-        moaDate.setMonth(new Integer(c.get(Calendar.MONTH) + 1).toString());
-        moaDate.setDay(new Integer(c.get(Calendar.DAY_OF_MONTH)).toString());
-        moaDate.setYear(new Integer(c.get(Calendar.YEAR)).toString());
-    }
+	private void populateDate(org.openeai.moa.objects.resources.Date moaDate, java.util.Date javaDate)
+			throws EnterpriseFieldException {
+		if (javaDate == null) {
+			return;
+		}
+		Calendar c = Calendar.getInstance();
+		c.setTime(javaDate);
+		c.get(Calendar.DAY_OF_MONTH);
+		moaDate.setMonth(new Integer(c.get(Calendar.MONTH) + 1).toString());
+		moaDate.setDay(new Integer(c.get(Calendar.DAY_OF_MONTH)).toString());
+		moaDate.setYear(new Integer(c.get(Calendar.YEAR)).toString());
+	}
 
-    private void populateDatetime(
-			org.openeai.moa.objects.resources.Datetime moaDateTime,
-			java.util.Date javaDate) {
-		
+	private void populateDatetime(org.openeai.moa.objects.resources.Datetime moaDateTime, java.util.Date javaDate) {
+
 		if (javaDate == null) {
 			return;
 		}
@@ -2535,38 +2492,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		c.setTimeZone(TimeZone.getTimeZone("America/New_York"));
 		// c.setTimeZone(TimeZone.getTimeZone(TimeZone.getDefault().getID()));
 		moaDateTime.setMonth(new Integer(c.get(Calendar.MONTH) + 1).toString());
-		moaDateTime
-				.setDay(new Integer(c.get(Calendar.DAY_OF_MONTH)).toString());
+		moaDateTime.setDay(new Integer(c.get(Calendar.DAY_OF_MONTH)).toString());
 		moaDateTime.setYear(new Integer(c.get(Calendar.YEAR)).toString());
-		moaDateTime
-				.setHour(new Integer(c.get(Calendar.HOUR_OF_DAY)).toString());
+		moaDateTime.setHour(new Integer(c.get(Calendar.HOUR_OF_DAY)).toString());
 		moaDateTime.setMinute(new Integer(c.get(Calendar.MINUTE)).toString());
 		moaDateTime.setSecond(new Integer(c.get(Calendar.SECOND)).toString());
-		moaDateTime.setSubSecond(new Integer(c.get(Calendar.MILLISECOND))
-				.toString());
+		moaDateTime.setSubSecond(new Integer(c.get(Calendar.MILLISECOND)).toString());
 		moaDateTime.setTimezone(c.getTimeZone().getID());
 		// moaDateTime.setTimezone(TimeZone.getDefault().getID());
 	}
 
-	private void setPojoCreateInfo(SharedObject pojo, XmlEnterpriseObject xeo)
-			throws XmlEnterpriseObjectException {
-		
-		java.util.Date d = toDateFromDatetime(((org.openeai.moa.objects.resources.Datetime) xeo
-				.getValueFromObject("CreateDatetime")));
+	private void setPojoCreateInfo(SharedObject pojo, XmlEnterpriseObject xeo) throws XmlEnterpriseObjectException {
+
+		java.util.Date d = toDateFromDatetime(
+				((org.openeai.moa.objects.resources.Datetime) xeo.getValueFromObject("CreateDatetime")));
 		pojo.setCreateInfo((String) xeo.getValueFromObject("CreateUser"), d);
 	}
 
-	private void setPojoUpdateInfo(SharedObject pojo, XmlEnterpriseObject xeo)
-			throws XmlEnterpriseObjectException {
-		
-		java.util.Date d = toDateFromDatetime(((org.openeai.moa.objects.resources.Datetime) xeo
-				.getValueFromObject("LastUpdateDatetime")));
+	private void setPojoUpdateInfo(SharedObject pojo, XmlEnterpriseObject xeo) throws XmlEnterpriseObjectException {
+
+		java.util.Date d = toDateFromDatetime(
+				((org.openeai.moa.objects.resources.Datetime) xeo.getValueFromObject("LastUpdateDatetime")));
 		pojo.setUpdateInfo((String) xeo.getValueFromObject("LastUpdateUser"), d);
 	}
 
-	private Object getObject(String objectName)
-			throws EnterpriseConfigurationObjectException {
-		
+	private Object getObject(String objectName) throws EnterpriseConfigurationObjectException {
+
 		return getAppConfig().getObject(objectName);
 	}
 
@@ -2598,7 +2549,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private double toDoubleFromString(String s) {
 		if (s == null) {
 			return 0;
-		} 
+		}
 		else {
 			return Double.parseDouble(s);
 		}
@@ -2608,7 +2559,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private float toFloatFromString(String s) {
 		if (s == null) {
 			return 0;
-		} 
+		}
 		else {
 			return Float.parseFloat(s);
 		}
@@ -2618,7 +2569,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private int toIntFromString(String s) {
 		if (s == null) {
 			return 0;
-		} 
+		}
 		else {
 			return Integer.parseInt(s);
 		}
@@ -2628,7 +2579,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private long toLongFromString(String s) {
 		if (s == null) {
 			return 0;
-		} 
+		}
 		else {
 			return Long.parseLong(s);
 		}
@@ -2647,55 +2598,56 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteCidrSummary(CidrSummaryPojo cidrSummary) throws RpcException {
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
-				// TODO: need to see if there are any assignments in this summary and if so, delete those too
+				// TODO: need to see if there are any assignments in this summary and if so,
+				// delete those too
 				info("deleting CIDR record on the server...");
 				Cidr moa = (Cidr) getObject(Constants.MOA_CIDR);
 				info("populating moa");
 				this.populateCidrMoa(cidrSummary.getCidr(), moa);
 
-				
 				info("doing the Cidr.delete...");
 				this.doDelete(moa, getCidrRequestService());
 				info("Cidr.delete is complete...");
 
 //				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -2705,50 +2657,52 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public CidrPojo updateCidr(CidrPojo cidr) throws RpcException {
 		cidr.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating Cidr on the server...");
-            Cidr newData = (Cidr) getObject(Constants.MOA_CIDR);
-            Cidr baselineData = (Cidr) getObject(Constants.MOA_CIDR);
+		try {
+			info("updating Cidr on the server...");
+			Cidr newData = (Cidr) getObject(Constants.MOA_CIDR);
+			Cidr baselineData = (Cidr) getObject(Constants.MOA_CIDR);
 
-            info("populating newData...");
-            populateCidrMoa(cidr, newData);
+			info("populating newData...");
+			populateCidrMoa(cidr, newData);
 
-            info("populating baselineData...");
-            populateCidrMoa(cidr.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateCidrMoa(cidr.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getCidrRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getCidrRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return cidr;
 	}
 
 	@Override
 	public CidrAssignmentPojo updateCidrAssignment(CidrAssignmentPojo cidrAssignment) throws RpcException {
 		cidrAssignment.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating CidrAssignment on the server...");
-            CidrAssignment newData = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
-            CidrAssignment baselineData = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
+		try {
+			info("updating CidrAssignment on the server...");
+			CidrAssignment newData = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
+			CidrAssignment baselineData = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
 
-            info("populating newData...");
-            populateCidrAssignmentMoa(cidrAssignment, newData);
+			info("populating newData...");
+			populateCidrAssignmentMoa(cidrAssignment, newData);
 
-            info("populating baselineData...");
-            populateCidrAssignmentMoa(cidrAssignment.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateCidrAssignmentMoa(cidrAssignment.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getCidrRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getCidrRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return cidrAssignment;
 	}
 
@@ -2756,53 +2710,54 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteCidrAssignment(CidrAssignmentPojo cidrAssignment) throws RpcException {
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
 				info("deleting CIDR Assignment record on the server...");
 				CidrAssignment moa = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
 				info("populating moa");
 				this.populateCidrAssignmentMoa(cidrAssignment, moa);
-				
+
 				info("doing the CidrAssignment.delete...");
 				this.doDelete(moa, getCidrRequestService());
 				info("CidrAssignment.delete is complete...");
 
 //				Cache.getCache().remove(Constants.CIDR_ASSIGNMENT + this.getUserLoggedIn().getEppn());
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -2816,28 +2771,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AccountPojo getAccountById(String accountId) throws RpcException {
-		
+
 		if (accountId == null) {
 			info("[getAccountById] null account Id passed in...");
 			return null;
 		}
 		try {
-			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
+			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(
+					Constants.MOA_ACCOUNT_QUERY_SPEC);
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
-	
+
 			queryObject.setAccountId(accountId);
 			info("[getAccountById] querying for account: " + accountId);
 			@SuppressWarnings("unchecked")
-			List<Account> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			
+			List<Account> moas = actionable.query(queryObject, this.getAWSRequestService());
+
 			info("[getAccountById] got " + moas.size() + " accounts from ESB service for account id: " + accountId);
 			// there should only ever be one returned
 			if (moas.size() != 1) {
 				// error
 				String errorMsg = "[getAccountById] got " + moas.size() + " accounts from ESB service, "
-						+ "for account: " + accountId
-						+ " expected exactly 1.  This MAY an issue."; 
+						+ "for account: " + accountId + " expected exactly 1.  This MAY an issue.";
 				info(errorMsg);
 				return null;
 			}
@@ -2851,44 +2805,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					return pojo;
 				}
 			}
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseFieldException e) {
+		}
+		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 		return null;
 	}
-	
+
 	private AccountQueryResultPojo getAllAccounts() {
 		AccountQueryResultPojo result = new AccountQueryResultPojo();
 		List<AccountPojo> pojos = new java.util.ArrayList<AccountPojo>();
-		
+
 		try {
-			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
+			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(
+					Constants.MOA_ACCOUNT_QUERY_SPEC);
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
-			
+
 			@SuppressWarnings("unchecked")
-			List<Account> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+			List<Account> moas = actionable.query(queryObject, this.getAWSRequestService());
 			info("[getAllAccounts] got " + moas.size() + " accounts from ESB service");
 			for (Account moa : moas) {
 				AccountPojo pojo = new AccountPojo();
@@ -2898,28 +2853,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Collections.sort(pojos);
 			result.setResults(pojos);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
+
 	@Override
 	public AccountQueryResultPojo getAccountsForFilter(AccountQueryFilterPojo filter) throws RpcException {
 		AccountQueryResultPojo result = new AccountQueryResultPojo();
@@ -2928,8 +2884,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filter.getUserLoggedIn() != null) {
 				if (!filter.getUserLoggedIn().isCentralAdmin()) {
 					info("[getAccountsForFilter] " + filter.getUserLoggedIn().getEppn() + " IS NOT a Central Admin.");
-					// iterate over all filter.AccountRoles and do a query for each account 
-					// in the list.  Then, need to add each account to the result 
+					// iterate over all filter.AccountRoles and do a query for each account
+					// in the list. Then, need to add each account to the result
 					java.util.List<String> accountIds = new java.util.ArrayList<String>();
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
 						if (arp.getAccountId() == null) {
@@ -2939,8 +2895,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						// otherwise, get it from the account service and store it in the cache
 						info("[getAccountsForFilter] getting account: " + arp.getAccountId());
 						boolean inCache = false;
-						AccountPojo cached_acct = (AccountPojo) Cache.getCache().get(
-								Constants.ACCOUNT + arp.getAccountId());
+						AccountPojo cached_acct = (AccountPojo) Cache.getCache()
+								.get(Constants.ACCOUNT + arp.getAccountId());
 						if (cached_acct == null) {
 							cached_acct = this.getAccountById(arp.getAccountId());
 							if (cached_acct == null) {
@@ -2955,52 +2911,56 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							info("[getAccountsForFilter] got account from cache...");
 							inCache = true;
 						}
-						
+
 						if (cached_acct != null) {
 							if (filter.getAccountId() != null) {
 								if (cached_acct.getAccountId().equalsIgnoreCase(filter.getAccountId())) {
 									if (accountIds.contains(cached_acct.getAccountId()) == false) {
-										info("[getAccountsForFilter-withAccountIdFilter] adding account " + cached_acct.getAccountId() + 
-												" to list of accounts for the user logged in" );
+										info("[getAccountsForFilter-withAccountIdFilter] adding account "
+												+ cached_acct.getAccountId()
+												+ " to list of accounts for the user logged in");
 										accountIds.add(cached_acct.getAccountId());
 										pojos.add(cached_acct);
 									}
 									else {
-										info("[getAccountsForFilter-withAccountIdFilter] account " + cached_acct.getAccountId() + 
-												" has already been added, not adding duplicate" );
+										info("[getAccountsForFilter-withAccountIdFilter] account "
+												+ cached_acct.getAccountId()
+												+ " has already been added, not adding duplicate");
 									}
-									
+
 									if (!inCache) {
-										Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
+										Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(),
+												cached_acct);
 									}
 								}
 							}
 							else {
 								if (accountIds.contains(cached_acct.getAccountId()) == false) {
 									accountIds.add(cached_acct.getAccountId());
-									info("[getAccountsForFilter] adding account " + cached_acct.getAccountId() + 
-											" to list of accounts for the user logged in" );
+									info("[getAccountsForFilter] adding account " + cached_acct.getAccountId()
+											+ " to list of accounts for the user logged in");
 									pojos.add(cached_acct);
 								}
 								else {
-									info("[getAccountsForFilter] account " + cached_acct.getAccountId() + 
-											" has already been added, not adding duplicate" );
+									info("[getAccountsForFilter] account " + cached_acct.getAccountId()
+											+ " has already been added, not adding duplicate");
 								}
-								
+
 								if (!inCache) {
 									Cache.getCache().put(Constants.ACCOUNT + cached_acct.getAccountId(), cached_acct);
 								}
 							}
 						}
 					}
-					
+
 					// if filter.isFuzzyFilter(), go through the list of pojos (Accounts)
 					// and filter out the ones that don't "fuzzy match" the account name passed in
 					List<AccountPojo> filteredPojos = new java.util.ArrayList<AccountPojo>();
 					if (filter != null && filter.isFuzzyFilter()) {
 						for (AccountPojo acct : pojos) {
 							if (filter.getAccountName() != null && filter.getAccountName().length() > 0) {
-								if (acct.getAccountName().toLowerCase().indexOf(filter.getAccountName().toLowerCase()) >= 0) {
+								if (acct.getAccountName().toLowerCase()
+										.indexOf(filter.getAccountName().toLowerCase()) >= 0) {
 									filteredPojos.add(acct);
 								}
 							}
@@ -3009,12 +2969,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					if (filteredPojos.size() > 0) {
 						Collections.sort(filteredPojos);
 						result.setResults(filteredPojos);
-						info("[getAccountsForFilter] returning " + filteredPojos.size() + " accounts for the user logged in" );
+						info("[getAccountsForFilter] returning " + filteredPojos.size()
+								+ " accounts for the user logged in");
 					}
 					else {
 						Collections.sort(pojos);
 						result.setResults(pojos);
-						info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
+						info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in");
 					}
 					result.setFilterUsed(filter);
 					return result;
@@ -3027,10 +2988,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("[getAccountsForFilter] filter.userLoggedIn is null");
 			}
 		}
-		
-		// if filter.userLoggedIn isn't null and the user isn't a Central Admin, we won't get this far
+
+		// if filter.userLoggedIn isn't null and the user isn't a Central Admin, we
+		// won't get this far
 		try {
-			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
+			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(
+					Constants.MOA_ACCOUNT_QUERY_SPEC);
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
 
 			if (filter != null) {
@@ -3058,10 +3021,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getAccountsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			@SuppressWarnings("unchecked")
-			List<Account> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+			List<Account> moas = actionable.query(queryObject, this.getAWSRequestService());
 			info("[getAccountsForFilter] got " + moas.size() + " accounts from ESB service");
 			for (Account moa : moas) {
 				AccountPojo pojo = new AccountPojo();
@@ -3073,7 +3035,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 
 			// if filter.isFuzzyFilter(), go through the list of pojos (Accounts)
-			// and filter out the ones that don't "fuzzy match" the account id, name or 
+			// and filter out the ones that don't "fuzzy match" the account id, name or
 			// alternate name passed in
 			List<AccountPojo> filteredPojos = new java.util.ArrayList<AccountPojo>();
 			if (filter != null && filter.isFuzzyFilter()) {
@@ -3089,7 +3051,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						}
 					}
 					if (filter.getAlternateAccountName() != null && filter.getAlternateAccountName().length() > 0) {
-						if (acct.getAlternateName().toLowerCase().indexOf(filter.getAlternateAccountName().toLowerCase()) >= 0) {
+						if (acct.getAlternateName().toLowerCase()
+								.indexOf(filter.getAlternateAccountName().toLowerCase()) >= 0) {
 							filteredPojos.add(acct);
 						}
 					}
@@ -3098,36 +3061,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filteredPojos.size() > 0) {
 				Collections.sort(filteredPojos);
 				result.setResults(filteredPojos);
-				info("[getAccountsForFilter] returning " + filteredPojos.size() + " accounts for the user logged in" );
+				info("[getAccountsForFilter] returning " + filteredPojos.size() + " accounts for the user logged in");
 			}
 			else {
 				Collections.sort(pojos);
 				result.setResults(pojos);
-				info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in" );
+				info("[getAccountsForFilter] returning " + pojos.size() + " accounts for the user logged in");
 			}
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -3136,12 +3099,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AccountPojo createAccount(AccountPojo account) throws RpcException {
-		account.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
+		account.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
 				info("creating Account on the server...");
@@ -3149,46 +3111,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateAccountMoa(account, moa);
 
-				
 				info("doing the Account.create...");
 				this.doCreate(moa, getAWSRequestService());
 				info("Account.create is complete...");
 
 //				Cache.getCache().remove(Constants.ACCOUNT + this.getUserLoggedIn().getEppn());
 				return account;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectCreateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -3199,29 +3160,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AccountPojo updateAccount(AccountPojo account) throws RpcException {
 		account.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating Account on the server...");
-            Account newData = (Account) getObject(Constants.MOA_ACCOUNT);
-            Account baselineData = (Account) getObject(Constants.MOA_ACCOUNT);
+		try {
+			info("updating Account on the server...");
+			Account newData = (Account) getObject(Constants.MOA_ACCOUNT);
+			Account baselineData = (Account) getObject(Constants.MOA_ACCOUNT);
 
-            info("populating newData...");
-            populateAccountMoa(account, newData);
+			info("populating newData...");
+			populateAccountMoa(account, newData);
 
-            info("populating baselineData...");
-            populateAccountMoa(account.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateAccountMoa(account.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getAWSRequestService());
-            info("update is complete...");
-            
-            // TJ:  01/15/2021:  update the cache with the new version of the account
+			info("doing the update...");
+			doUpdate(newData, getAWSRequestService());
+			info("update is complete...");
+
+			// TJ: 01/15/2021: update the cache with the new version of the account
 			Cache.getCache().put(Constants.ACCOUNT + account.getAccountId(), account);
 
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return account;
 	}
 
@@ -3229,7 +3191,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteAccount(AccountPojo account) throws RpcException {
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
 				info("deleting CIDR record on the server...");
@@ -3237,46 +3199,46 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateAccountMoa(account, moa);
 
-				
 				info("doing the Account.delete...");
 				this.doDelete(moa, getAWSRequestService());
 				info("Account.delete is complete...");
 
 //				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -3292,15 +3254,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<VpcPojo> pojos = new java.util.ArrayList<VpcPojo>();
 
 		try {
-			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(Constants.MOA_VPC_QUERY_SPEC);
+			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(
+					Constants.MOA_VPC_QUERY_SPEC);
 			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
-	
+
 			queryObject.setAccountId(accountId);
-			
+
 			@SuppressWarnings("unchecked")
-			List<VirtualPrivateCloud> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			
+			List<VirtualPrivateCloud> moas = actionable.query(queryObject, this.getAWSRequestService());
+
 			info("[getVpcForAccountId] got " + moas.size() + " VPCs from ESB service");
 			for (VirtualPrivateCloud moa : moas) {
 				VpcPojo pojo = new VpcPojo();
@@ -3310,43 +3272,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.setBaseline(baseline);
 				pojos.add(pojo);
 			}
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseFieldException e) {
+		}
+		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 		return pojos;
 	}
+
 	@Override
 	public VpcQueryResultPojo getVpcsForFilter(VpcQueryFilterPojo filter) throws RpcException {
 		VpcQueryResultPojo result = new VpcQueryResultPojo();
 		List<VpcPojo> pojos = new java.util.ArrayList<VpcPojo>();
-		
+
 		if (filter != null) {
 			if (filter.getUserLoggedIn() != null) {
 				if (!filter.getUserLoggedIn().isCentralAdmin()) {
 					// if the user isn't a central admin
-					// iterate over all filter.AccountRoles and do a query for each account 
-					// in the list.  Then, need to add each vpc to the result 
+					// iterate over all filter.AccountRoles and do a query for each account
+					// in the list. Then, need to add each vpc to the result
 					// fuzzy filter
 					for (AccountRolePojo arp : filter.getUserLoggedIn().getAccountRoles()) {
 						List<VpcPojo> vpcs = this.getVpcsForAccountId(arp.getAccountId());
@@ -3371,7 +3335,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					Collections.sort(pojos);
 					result.setResults(pojos);
 					result.setFilterUsed(filter);
-					info("[getVpcsForFilter] returning " + pojos.size() + " VPCs for the user logged in" );
+					info("[getVpcsForFilter] returning " + pojos.size() + " VPCs for the user logged in");
 					return result;
 				}
 			}
@@ -3386,7 +3350,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 
 		try {
-			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(Constants.MOA_VPC_QUERY_SPEC);
+			VirtualPrivateCloudQuerySpecification queryObject = (VirtualPrivateCloudQuerySpecification) getObject(
+					Constants.MOA_VPC_QUERY_SPEC);
 			VirtualPrivateCloud actionable = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
 
 			if (filter != null) {
@@ -3401,10 +3366,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpcsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			@SuppressWarnings("unchecked")
-			List<VirtualPrivateCloud> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+			List<VirtualPrivateCloud> moas = actionable.query(queryObject, this.getAWSRequestService());
 			for (VirtualPrivateCloud moa : moas) {
 				// fuzzy filter match
 				// doing this here so the VPC (pojo) will have the account name in it fuzzy
@@ -3412,12 +3376,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (filter != null && filter.isFuzzyFilter()) {
 					VpcPojo pojo = new VpcPojo();
 					this.populateVpcPojo(moa, pojo);
-					
+
 					if (vpcHasFuzzyMatch(pojo, filter)) {
 						boolean isAssigned = false;
 						if (eia_result.getResults().size() > 0) {
 							// weed out any VPCs that have already been used in a profile assignment
-							assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+							assignmentLoop:
+							for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
 								if (assignment.getOwnerId().equalsIgnoreCase(pojo.getVpcId())) {
 									isAssigned = true;
 									break assignmentLoop;
@@ -3442,7 +3407,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					boolean isAssigned = false;
 					if (eia_result.getResults().size() > 0) {
 						// weed out any VPCs that have already been used in a profile assignment
-						assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+						assignmentLoop:
+						for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
 							if (assignment.getOwnerId().equalsIgnoreCase(pojo.getVpcId())) {
 								isAssigned = true;
 								break assignmentLoop;
@@ -3465,27 +3431,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -3511,15 +3477,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		return false;
 	}
-	
+
 	@Override
 	public VpcPojo registerVpc(VpcPojo vpc) throws RpcException {
-		vpc.setCreateInfo(this.getUserLoggedIn(false).getEppn(),
-				new java.util.Date());
+		vpc.setCreateInfo(this.getUserLoggedIn(false).getEppn(), new java.util.Date());
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
 				info("creating vpc record on the server...");
@@ -3527,46 +3492,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateVpcMoa(vpc, moa);
 
-				
 				info("doing the Vpc.create...");
 				this.doCreate(moa, getAWSRequestService());
 				info("Vpc.create is complete...");
 
 //				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return vpc;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectCreateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -3577,25 +3541,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public VpcPojo updateVpc(VpcPojo vpc) throws RpcException {
 		vpc.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating Vpc on the server...");
-            VirtualPrivateCloud newData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
-            VirtualPrivateCloud baselineData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
+		try {
+			info("updating Vpc on the server...");
+			VirtualPrivateCloud newData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
+			VirtualPrivateCloud baselineData = (VirtualPrivateCloud) getObject(Constants.MOA_VPC);
 
-            info("populating newData...");
-            populateVpcMoa(vpc, newData);
+			info("populating newData...");
+			populateVpcMoa(vpc, newData);
 
-            info("populating baselineData...");
-            populateVpcMoa(vpc.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateVpcMoa(vpc.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getAWSRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getAWSRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return vpc;
 	}
 
@@ -3603,7 +3568,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteVpc(VpcPojo vpc) throws RpcException {
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
 				info("deleting VPC record on the server...");
@@ -3611,44 +3576,44 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateVpcMoa(vpc, moa);
 
-				
 				info("doing the Vpc.delete...");
 				this.doDelete(moa, getAWSRequestService());
 				info("Vpc.delete is complete...");
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -3657,19 +3622,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<String> getEmailTypeItems() {
-		//primary, billing, security or operations
-		
+		// primary, billing, security or operations
+
 		List<String> l = new java.util.ArrayList<String>();
 		try {
-			Properties props = 	getAppConfig().getProperties(EMAIL_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(EMAIL_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -3680,15 +3646,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<String> getVpcTypeItems() throws RpcException {
 		List<String> l = new java.util.ArrayList<String>();
 		try {
-			Properties props = 	getAppConfig().getProperties(VPC_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(VPC_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -3703,7 +3670,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		CidrAssignmentQueryResultPojo result = new CidrAssignmentQueryResultPojo();
 		List<CidrAssignmentPojo> pojos = new java.util.ArrayList<CidrAssignmentPojo>();
 		try {
-			CidrAssignmentQuerySpecification queryObject = (CidrAssignmentQuerySpecification) getObject(Constants.MOA_CIDR_ASSIGNMENT_QUERY_SPEC);
+			CidrAssignmentQuerySpecification queryObject = (CidrAssignmentQuerySpecification) getObject(
+					Constants.MOA_CIDR_ASSIGNMENT_QUERY_SPEC);
 			CidrAssignment actionable = (CidrAssignment) getObject(Constants.MOA_CIDR_ASSIGNMENT);
 
 			if (filter != null) {
@@ -3714,10 +3682,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getCidrsAssignmentForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			@SuppressWarnings("unchecked")
-			List<CidrAssignment> moas = actionable.query(queryObject,
-					this.getCidrRequestService());
+			List<CidrAssignment> moas = actionable.query(queryObject, this.getCidrRequestService());
 			for (CidrAssignment moa : moas) {
 				CidrAssignmentPojo pojo = new CidrAssignmentPojo();
 				CidrAssignmentPojo baseline = new CidrAssignmentPojo();
@@ -3731,34 +3698,35 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
 
-	public CidrAssignmentSummaryQueryResultPojo getCidrAssignmentSummaryForCidr(CidrAssignmentSummaryQueryFilterPojo filter) {
+	public CidrAssignmentSummaryQueryResultPojo getCidrAssignmentSummaryForCidr(
+			CidrAssignmentSummaryQueryFilterPojo filter) {
 		CidrAssignmentSummaryQueryResultPojo result = new CidrAssignmentSummaryQueryResultPojo();
 		result.setFilterUsed(filter);
 		result.setResults(new java.util.ArrayList<CidrAssignmentSummaryPojo>());
@@ -3773,32 +3741,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
 		}
-		info("getCidrAssignmentSummaryForCidr: There were " + cidrAssignmentResult.getResults().size() + " CidrAssignments returned from the ESB service.");
+		info("getCidrAssignmentSummaryForCidr: There were " + cidrAssignmentResult.getResults().size()
+				+ " CidrAssignments returned from the ESB service.");
 
 		for (CidrAssignmentPojo cidrAssignment : cidrAssignmentResult.getResults()) {
-			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(filter.getCidr().getNetwork()) && 
-					cidrAssignment.getCidr().getBits().equalsIgnoreCase(filter.getCidr().getBits())) {
-				
+			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(filter.getCidr().getNetwork())
+					&& cidrAssignment.getCidr().getBits().equalsIgnoreCase(filter.getCidr().getBits())) {
+
 				CidrAssignmentSummaryPojo casp = new CidrAssignmentSummaryPojo();
 				casp.setCidrAssignment(cidrAssignment);
-				
+
 				VpcQueryFilterPojo vpcFilter = new VpcQueryFilterPojo();
 				vpcFilter.setVpcId(cidrAssignment.getOwnerId());
 				// should only be one
 				VpcQueryResultPojo vpcResult = this.getVpcsForFilter(vpcFilter);
 				info("getCidrAssignmentSummaryForCidr: There were " + vpcResult.getResults().size() + " VPCs returned "
-						+ "from the ESB service for CidrAssignemtn.ownerId:  '" + 
-						cidrAssignment.getOwnerId() + "'");
+						+ "from the ESB service for CidrAssignemtn.ownerId:  '" + cidrAssignment.getOwnerId() + "'");
 				for (VpcPojo vpc : vpcResult.getResults()) {
 					casp.setVpc(vpc);
-					
+
 					AccountQueryFilterPojo acctFilter = new AccountQueryFilterPojo();
 					acctFilter.setAccountId(vpc.getAccountId());
 					// should only be one
 					AccountQueryResultPojo acctResult = this.getAccountsForFilter(acctFilter);
-					info("getCidrAssignmentSummaryForCidr: There were " + acctResult.getResults().size() + " Accounts returned "
-							+ "from the ESB service for VPC.accountId:  '" + 
-							cidrAssignment.getOwnerId() + "'");
+					info("getCidrAssignmentSummaryForCidr: There were " + acctResult.getResults().size()
+							+ " Accounts returned " + "from the ESB service for VPC.accountId:  '"
+							+ cidrAssignment.getOwnerId() + "'");
 					for (AccountPojo acct : acctResult.getResults()) {
 						casp.setAccount(acct);
 					}
@@ -3806,17 +3774,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				result.getResults().add(casp);
 			}
 		}
-		info("getCidrAssignmentSummaryForCidr: Returning " + result.getResults().size() + " CidrAssignmentSummary objects.");
+		info("getCidrAssignmentSummaryForCidr: Returning " + result.getResults().size()
+				+ " CidrAssignmentSummary objects.");
 		return result;
 	}
+
 	@Override
 	public CidrAssignmentSummaryQueryResultPojo getCidrAssignmentSummariesForFilter(
 			CidrAssignmentSummaryQueryFilterPojo filter) throws RpcException {
-		
+
 		CidrAssignmentSummaryQueryResultPojo result = new CidrAssignmentSummaryQueryResultPojo();
 		result.setFilterUsed(filter);
 		result.setResults(new java.util.ArrayList<CidrAssignmentSummaryPojo>());
-		
+
 		CidrAssignmentQueryResultPojo cidrAssignmentResult;
 		if (filter != null) {
 			CidrAssignmentQueryFilterPojo cidrAssignmentFilter = new CidrAssignmentQueryFilterPojo();
@@ -3827,36 +3797,37 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
 		}
-		info("getCidrAssignmentSummariesForFilter: There were " + cidrAssignmentResult.getResults().size() + " CidrAssignments returned from the ESB service.");
-		
+		info("getCidrAssignmentSummariesForFilter: There were " + cidrAssignmentResult.getResults().size()
+				+ " CidrAssignments returned from the ESB service.");
+
 		for (CidrAssignmentPojo cidrAssignment : cidrAssignmentResult.getResults()) {
 			CidrAssignmentSummaryPojo casp = new CidrAssignmentSummaryPojo();
 			casp.setCidrAssignment(cidrAssignment);
-			
+
 			VpcQueryFilterPojo vpcFilter = new VpcQueryFilterPojo();
 			vpcFilter.setVpcId(cidrAssignment.getOwnerId());
 			// should only be one
 			VpcQueryResultPojo vpcResult = this.getVpcsForFilter(vpcFilter);
 			info("getCidrAssignmentSummariesForFilter: There were " + vpcResult.getResults().size() + " VPCs returned "
-					+ "from the ESB service for CidrAssignemtn.ownerId:  '" + 
-					cidrAssignment.getOwnerId() + "'");
+					+ "from the ESB service for CidrAssignemtn.ownerId:  '" + cidrAssignment.getOwnerId() + "'");
 			for (VpcPojo vpc : vpcResult.getResults()) {
 				casp.setVpc(vpc);
-				
+
 				AccountQueryFilterPojo acctFilter = new AccountQueryFilterPojo();
 				acctFilter.setAccountId(vpc.getAccountId());
 				// should only be one
 				AccountQueryResultPojo acctResult = this.getAccountsForFilter(acctFilter);
-				info("getCidrAssignmentSummariesForFilter: There were " + acctResult.getResults().size() + " Accounts returned "
-						+ "from the ESB service for VPC.accountId:  '" + 
-						cidrAssignment.getOwnerId() + "'");
+				info("getCidrAssignmentSummariesForFilter: There were " + acctResult.getResults().size()
+						+ " Accounts returned " + "from the ESB service for VPC.accountId:  '"
+						+ cidrAssignment.getOwnerId() + "'");
 				for (AccountPojo acct : acctResult.getResults()) {
 					casp.setAccount(acct);
 				}
 			}
 			result.getResults().add(casp);
 		}
-		info("getCidrAssignmentSummariesForFilter: Returning " + result.getResults().size() + " CidrAssignmentSummary objects.");
+		info("getCidrAssignmentSummariesForFilter: Returning " + result.getResults().size()
+				+ " CidrAssignmentSummary objects.");
 		info(result.getResults().toString());
 		return result;
 	}
@@ -3868,7 +3839,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			return generalProps.getProperty("refreshableProperty", "'refreshableProperty' propery not found");
 //			return "Static content";
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -3878,7 +3850,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<VpcPojo> getVpcsForAccount(String accountId) throws RpcException {
 		VpcQueryFilterPojo filter = new VpcQueryFilterPojo();
 		filter.setAccountId(accountId);
-		VpcQueryResultPojo results = this.getVpcsForFilter(filter); 
+		VpcQueryResultPojo results = this.getVpcsForFilter(filter);
 		return results.getResults();
 	}
 
@@ -3887,7 +3859,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<CidrPojo> unassignedCidrs = new java.util.ArrayList<CidrPojo>();
 		CidrQueryResultPojo cidrResult = this.getCidrsForFilter(null);
 //		CidrAssignmentQueryResultPojo cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
-		
+
 		for (CidrSummaryPojo cidrSummary : cidrResult.getResults()) {
 			if (cidrSummary.getCidr() != null) {
 //				if (!hasAssignment(cidr, cidrAssignmentResult.getResults())) {
@@ -3901,16 +3873,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private boolean hasAssignment(CidrPojo cidr, List<CidrAssignmentPojo> cidrAssignments) {
 		for (CidrAssignmentPojo cidrAssignment : cidrAssignments) {
-			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(cidr.getNetwork()) && 
-					cidrAssignment.getCidr().getBits().equalsIgnoreCase(cidr.getBits())) {
-				
+			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(cidr.getNetwork())
+					&& cidrAssignment.getCidr().getBits().equalsIgnoreCase(cidr.getBits())) {
+
 				return true;
 			}
 //			if (cidrAssignment.getCidr().getCidrId().equalsIgnoreCase(cidr.getCidrId())) {
 //				return true;
 //			}
 		}
-		
+
 		return false;
 	}
 
@@ -3926,24 +3898,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public DirectoryMetaDataPojo getDirectoryMetaDataForPublicId(String publicId) throws RpcException {
 		// - check cache
 		// - if cache exists
-		// 	- return DirectoryMetaDataPojo from cache
+		// - return DirectoryMetaDataPojo from cache
 		// - else:
-		// 	- do a FullPerson.Query passing netid in a FullPersonQuerySpecification
-		// 	- populate DirectoryMetaDataPojo with FullPerson data
-		//  - add DirectoryMetaDataPojo to cache
-		//  - return pojo
-		DirectoryMetaDataPojo dmd = (DirectoryMetaDataPojo) Cache.getCache().get(
-				Constants.NET_ID + publicId);
-		if (dmd!= null) {
+		// - do a FullPerson.Query passing netid in a FullPersonQuerySpecification
+		// - populate DirectoryMetaDataPojo with FullPerson data
+		// - add DirectoryMetaDataPojo to cache
+		// - return pojo
+		DirectoryMetaDataPojo dmd = (DirectoryMetaDataPojo) Cache.getCache().get(Constants.NET_ID + publicId);
+		if (dmd != null) {
 			return dmd;
 		}
 		else {
 			dmd = new DirectoryMetaDataPojo();
 			try {
-				// doing this here so it doesn't get into a loop with the hals auth user id that is
+				// doing this here so it doesn't get into a loop with the hals auth user id that
+				// is
 				// set during getFullPersonsForFilter method
 				// TODO: use DirectoryPerson here instead of FullPerson if possible
-				
+
 //				FullPersonQuerySpecification queryObject = (FullPersonQuerySpecification) getObject(Constants.MOA_FULL_PERSON_QUERY_SPEC);
 //				FullPerson actionable = (FullPerson) getObject(Constants.MOA_FULL_PERSON);
 //
@@ -3958,44 +3930,44 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				FullPerson moa = moas.get(0);
 //				info("[getDirectoryMetaDataForPublicId] FullPerson xml: " + moa.toXmlString());
 
-				
-				DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
+				DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(
+						Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
 				DirectoryPerson actionable = (DirectoryPerson) getObject(Constants.MOA_DIRECTORY_PERSON);
 
 				queryObject.setKey(publicId);
 				info("[getDirectoryMetaDataForPublicId] query spec: " + queryObject.getKey());
 
 				@SuppressWarnings("unchecked")
-				List<DirectoryPerson>moas = actionable.query(queryObject, this.getDirectoryRequestService());
-				info("[getDirectoryMetaDataForPublicId] got " + moas.size() + " DirectoryPerson moas back from ESB for PublicID '" + publicId + "'");
+				List<DirectoryPerson> moas = actionable.query(queryObject, this.getDirectoryRequestService());
+				info("[getDirectoryMetaDataForPublicId] got " + moas.size()
+						+ " DirectoryPerson moas back from ESB for PublicID '" + publicId + "'");
 				DirectoryPerson moa = moas.get(0);
 //				for (DirectoryPerson lmoa : moas) {
 //					debug("[getDirectoryMetaDataForPublicId] DirectoryPerson xml: " + lmoa.toXmlString());
 //				}
 
-				
 				dmd.setFirstName(moa.getFirstMiddle());
 				dmd.setLastName(moa.getLastName());
 				dmd.setPublicId(moa.getKey());
 
 				Cache.getCache().put(Constants.NET_ID + publicId, dmd);
 				return dmd;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectQueryException e) {
 				if (e.getMessage().toLowerCase().indexOf("no match".toString()) >= 0) {
 					return dmd;
 				}
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -4018,8 +3990,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		CidrAssignmentQueryResultPojo cidrAssignmentResult = this.getCidrAssignmentsForFilter(null);
 		for (CidrAssignmentPojo cidrAssignment : cidrAssignmentResult.getResults()) {
-			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(cidr.getNetwork()) && 
-					cidrAssignment.getCidr().getBits().equalsIgnoreCase(cidr.getBits())) {
+			if (cidrAssignment.getCidr().getNetwork().equalsIgnoreCase(cidr.getNetwork())
+					&& cidrAssignment.getCidr().getBits().equalsIgnoreCase(cidr.getBits())) {
 
 				cas.setAssigned(true);
 				cas.setCidrAssignment(cidrAssignment);
@@ -4034,7 +4006,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		try {
 			Properties props = getAppConfig().getProperties(AWS_URL_PROPERTIES);
 			return props.getProperty("awsAccountsURL", "'awsAccountsURL' propery not found");
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -4045,7 +4018,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		try {
 			Properties props = getAppConfig().getProperties(AWS_URL_PROPERTIES);
 			return props.getProperty("awsBillingManagementURL", "'awsBillingManagementURL' propery not found");
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -4055,7 +4029,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public VpcpQueryResultPojo getVpcpSummariesForFilter(VpcpQueryFilterPojo filter) throws RpcException {
 		VpcpQueryResultPojo result = new VpcpQueryResultPojo();
 		List<VpcpSummaryPojo> summaries = new java.util.ArrayList<VpcpSummaryPojo>();
-		
+
 		// First, get the VPCPs (provisioning runs) and add them to the summaries list
 		List<VpcpPojo> vpcps = new java.util.ArrayList<VpcpPojo>();
 		if (fakeVpcpGen) {
@@ -4081,10 +4055,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setFilterUsed(filter);
 			return result;
 		}
-		
+
 		try {
-			VirtualPrivateCloudProvisioningQuerySpecification queryObject = (VirtualPrivateCloudProvisioningQuerySpecification) getObject(Constants.MOA_VPCP_QUERY_SPEC);
-			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP);
+			VirtualPrivateCloudProvisioningQuerySpecification queryObject = (VirtualPrivateCloudProvisioningQuerySpecification) getObject(
+					Constants.MOA_VPCP_QUERY_SPEC);
+			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(
+					Constants.MOA_VPCP);
 
 			if (filter != null) {
 				if (filter.isDefaultMaxVpcps()) {
@@ -4118,21 +4094,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpcpsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("vpcpListTimeoutMillis", "30000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getAWSRequestService();
 			info("[getVpcpsForFilter] setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			info("VpcpProvisonningQuerySpec: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<VirtualPrivateCloudProvisioning> moas = 
-				actionable.query(queryObject, reqSvc);
-			
+			List<VirtualPrivateCloudProvisioning> moas = actionable.query(queryObject, reqSvc);
+
 			info("[getVpcpsForFilter] got " + moas.size() + " VPCPs back from the server.");
 			for (VirtualPrivateCloudProvisioning moa : moas) {
 				VpcpPojo pojo = new VpcpPojo();
@@ -4140,7 +4114,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateVpcpPojo(moa, pojo);
 				this.populateVpcpPojo(moa, baseline);
 				pojo.setBaseline(baseline);
-				
+
 				VpcpSummaryPojo summary = new VpcpSummaryPojo();
 				summary.setProvisioning(pojo);
 				summaries.add(summary);
@@ -4150,42 +4124,42 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
-		
+
 		// TODO: Now, get the VPCP Deprovisioning items
 	}
 
 	@Override
 	public void deleteVpcp(VpcpPojo vpc) throws RpcException {
-		
-		
+
 	}
 
-	private void populateProvisioningStepMoa(ProvisioningStepPojo pojo, ProvisioningStep moa) throws EnterpriseFieldException {
+	private void populateProvisioningStepMoa(ProvisioningStepPojo pojo, ProvisioningStep moa)
+			throws EnterpriseFieldException {
 		moa.setProvisioningId(pojo.getProvisioningId());
 		moa.setProvisioningStepId(pojo.getProvisioningStepId());
 		moa.setStepId(pojo.getStepId());
@@ -4197,14 +4171,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setAnticipatedTime(pojo.getAnticipatedTime());
 		if (pojo.getProperties() != null) {
 			Iterator<String> keys = pojo.getProperties().keySet().iterator();
-	        while (keys.hasNext()) {
-	        	com.amazon.aws.moa.objects.resources.v1_0.Property stepProps = moa.newProperty();
-	        	stepProps.setKey(keys.next());
-	        	stepProps.setValue((String) pojo.getProperties().get(stepProps.getKey()));
-	        	moa.addProperty(stepProps);
-	        }
+			while (keys.hasNext()) {
+				com.amazon.aws.moa.objects.resources.v1_0.Property stepProps = moa.newProperty();
+				stepProps.setKey(keys.next());
+				stepProps.setValue((String) pojo.getProperties().get(stepProps.getKey()));
+				moa.addProperty(stepProps);
+			}
 		}
 	}
+
 	@SuppressWarnings("unchecked")
 	private void populateProvisioningStepPojo(ProvisioningStep moa, ProvisioningStepPojo pojo) {
 		pojo.setProvisioningId(moa.getProvisioningId());
@@ -4217,18 +4192,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setActualTime(moa.getActualTime());
 		pojo.setAnticipatedTime(moa.getAnticipatedTime());
 		if (moa.getProperty() != null) {
-			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
+					.getProperty()) {
 				pojo.getProperties().put(stepProps.getKey(), stepProps.getValue());
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("unused")
-	private void populateVpcpMoa(VpcpPojo pojo,
-			VirtualPrivateCloudProvisioning moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateVpcpMoa(VpcpPojo pojo, VirtualPrivateCloudProvisioning moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getProvisioningId() != null) {
 			moa.setProvisioningId(pojo.getProvisioningId());
@@ -4243,21 +4217,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setVirtualPrivateCloudRequisition(vpcr);
 		}
 
-        // provisioningsteps
+		// provisioningsteps
 		for (ProvisioningStepPojo psp : pojo.getProvisioningSteps()) {
 			ProvisioningStep ps = moa.newProvisioningStep();
 			this.populateProvisioningStepMoa(psp, ps);
 			moa.addProvisioningStep(ps);
 		}
-		
+
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateVpcpPojo(VirtualPrivateCloudProvisioning moa,
-			VpcpPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
+	private void populateVpcpPojo(VirtualPrivateCloudProvisioning moa, VpcpPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
 
 		pojo.setProvisioningId(moa.getProvisioningId());
 		pojo.setStatus(moa.getStatus());
@@ -4295,10 +4268,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("VPC Type is: " + vpcpPojo.getVpcRequisition().getType());
 				vpcpPojo.setStatus(Constants.VPCP_STATUS_PENDING);
 				vpcpPojo.setProvisioningResult(Constants.VPCP_RESULT_FAILURE);
-				for (int i=1; i<21; i++) {
+				for (int i = 1; i < 21; i++) {
 					ProvisioningStepPojo psp = new ProvisioningStepPojo();
 					psp.setStepId(this.toStringFromInt(i));
-					if (i==1) {
+					if (i == 1) {
 						psp.setStatus(Constants.PROVISIONING_STEP_STATUS_COMPLETED);
 						psp.setStepResult(Constants.VPCP_STEP_RESULT_SUCCESS);
 					}
@@ -4312,12 +4285,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				return vpcpPojo;
 			}
 			info("generating Vpcp on the server...");
-			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(Constants.MOA_VPCP);
-			VirtualPrivateCloudRequisition seed = (VirtualPrivateCloudRequisition) getObject(Constants.MOA_VPC_REQUISITION);
+			VirtualPrivateCloudProvisioning actionable = (VirtualPrivateCloudProvisioning) getObject(
+					Constants.MOA_VPCP);
+			VirtualPrivateCloudRequisition seed = (VirtualPrivateCloudRequisition) getObject(
+					Constants.MOA_VPC_REQUISITION);
 			info("populating moa");
 			this.populateVpcRequisitionMoa(vpcRequisition, seed);
 
-			
 			info("doing the Vpcp.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -4332,45 +4306,48 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("Vpcp.generate is complete...");
 
 			return vpcpPojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectGenerateException e) {
+		}
+		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
+		}
+		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (ParseException e) {
+		}
+		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -4378,7 +4355,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public VpcpPojo updateVpcp(VpcpPojo vpc) throws RpcException {
-		
+
 		vpc.setUpdateInfo(this.getCachedUser().getPublicId());
 		return null;
 	}
@@ -4387,15 +4364,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<String> getComplianceClassItems() throws RpcException {
 		List<String> l = new java.util.ArrayList<String>();
 		try {
-			Properties props = 	getAppConfig().getProperties(COMPLIANCE_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(COMPLIANCE_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -4413,7 +4391,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			if (filter != null) {
 				queryObject.setPayerAccountId(filter.getPayerAccountId());
 				queryObject.setType(filter.getType());
-				
+
 				org.openeai.moa.objects.resources.Date billDate = queryObject.newBillDate();
 				this.populateDate(billDate, filter.getBillDate());
 				queryObject.setBillDate(billDate);
@@ -4425,7 +4403,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				org.openeai.moa.objects.resources.Date endDate = queryObject.newEndDate();
 				this.populateDate(endDate, filter.getEndDate());
 				queryObject.setEndDate(endDate);
-				
+
 				info("[getBillsForFilter] getting Billss for filter: " + queryObject.toXmlString());
 			}
 			else {
@@ -4435,10 +4413,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getBillsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			@SuppressWarnings("unchecked")
-			List<Bill> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
+			List<Bill> moas = actionable.query(queryObject, this.getAWSRequestService());
 			info("[getBillsForFilter] got " + moas.size() + " Bills back from the server.");
 			for (Bill moa : moas) {
 				BillPojo pojo = new BillPojo();
@@ -4453,27 +4430,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
@@ -4482,9 +4459,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			defaultRequestTimeoutInterval = 200000;
 			ThreadPool tPool = (ThreadPool) getAppConfig().getObject("VPCPThreadPool");
 			tPool.addJob(new BillLoadingThread());
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
-		} catch (ThreadPoolException e) {
+		}
+		catch (ThreadPoolException e) {
 			e.printStackTrace();
 		}
 	}
@@ -4500,19 +4479,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	private void refreshBillsByAccountMap() {
-    	// potential things we might need:
-    	// - bills by accounts (including all line items).  create bills
-    	// 	 for each linked account and only include the line items for 
-    	// 	 that linked account.  so, basically, break the overall bill
-    	//   into multiple bills, one for each linked account included 
-    	//   in the master bill
+		// potential things we might need:
+		// - bills by accounts (including all line items). create bills
+		// for each linked account and only include the line items for
+		// that linked account. so, basically, break the overall bill
+		// into multiple bills, one for each linked account included
+		// in the master bill
 		billsByAccount.clear();
 		for (BillPojo masterBill : masterBills) {
 			for (LineItemPojo masterLineItem : masterBill.getLineItems()) {
 				String accountIdKey = null;
-				if (masterLineItem.getLinkedAccountId() != null && 
-					masterLineItem.getRecordType().equalsIgnoreCase(Constants.LINEITEM_RECORD_TYPE_LINKED)) {
-					
+				if (masterLineItem.getLinkedAccountId() != null
+						&& masterLineItem.getRecordType().equalsIgnoreCase(Constants.LINEITEM_RECORD_TYPE_LINKED)) {
+
 					// it's a linked account line item
 					accountIdKey = masterLineItem.getLinkedAccountId();
 				}
@@ -4520,7 +4499,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					// it's a payer account line item
 					accountIdKey = masterLineItem.getPayerAccountId();
 				}
-				
+
 				if (accountIdKey != null) {
 					List<BillPojo> linkedBills = billsByAccount.get(accountIdKey);
 					if (linkedBills == null) {
@@ -4540,7 +4519,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					else {
 						// find a bill in the list that has a matching bill date
 						boolean foundBill = false;
-						billLoop: for (BillPojo bill : linkedBills) {
+						billLoop:
+						for (BillPojo bill : linkedBills) {
 							if (bill.getBillId().equals(masterBill.getBillId())) {
 								foundBill = true;
 								bill.getLineItems().add(masterLineItem);
@@ -4575,28 +4555,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 	}
-	
-    private class BillLoadingThread implements java.lang.Runnable {
-        public BillLoadingThread() {
-        }
 
-        public void run() {
-        	info("Refreshing all master bill data...");
-        	retrieveAllMasterBillData();
-        	info("Done refreshing all master bill data...");
+	private class BillLoadingThread implements java.lang.Runnable {
+		public BillLoadingThread() {
+		}
 
-        	// TODO: this is where we could cache LineItem info as well.
-        	// this would make the user interface more responsive since it's 
-        	// static data and won't change unless/until we refresh the actual
-        	// master bill data.  we just don't know yet what structures we really need
-        	// so it's something we'll likely do once we understand what the user
-        	// interfaces need to do a bit more.
-        	info("Refreshing bills by account map...");
-        	refreshBillsByAccountMap();
-        	defaultRequestTimeoutInterval = 20000;
-        	info("Done refreshing bills by account map.");
-        }
-    }
+		public void run() {
+			info("Refreshing all master bill data...");
+			retrieveAllMasterBillData();
+			info("Done refreshing all master bill data...");
+
+			// TODO: this is where we could cache LineItem info as well.
+			// this would make the user interface more responsive since it's
+			// static data and won't change unless/until we refresh the actual
+			// master bill data. we just don't know yet what structures we really need
+			// so it's something we'll likely do once we understand what the user
+			// interfaces need to do a bit more.
+			info("Refreshing bills by account map...");
+			refreshBillsByAccountMap();
+			defaultRequestTimeoutInterval = 20000;
+			info("Done refreshing bills by account map.");
+		}
+	}
 
 	@Override
 	public List<BillPojo> getCachedBillsForAccount(String accountId) throws RpcException {
@@ -4609,13 +4589,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		ElasticIpQueryResultPojo result = new ElasticIpQueryResultPojo();
 		List<ElasticIpSummaryPojo> summaries = new java.util.ArrayList<ElasticIpSummaryPojo>();
 		try {
-			
-			// get ALL assignments first and process them in memory instead 
+
+			// get ALL assignments first and process them in memory instead
 			// of doing individual queries by elastic ip id.
 			ElasticIpAssignmentQueryFilterPojo eia_filter = new ElasticIpAssignmentQueryFilterPojo();
 			ElasticIpAssignmentQueryResultPojo eia_result = this.getElasticIpAssignmentsForFilter(eia_filter);
-			
-			ElasticIpQuerySpecification queryObject = (ElasticIpQuerySpecification) getObject(Constants.MOA_ELASTIC_IP_QUERY_SPEC);
+
+			ElasticIpQuerySpecification queryObject = (ElasticIpQuerySpecification) getObject(
+					Constants.MOA_ELASTIC_IP_QUERY_SPEC);
 			ElasticIp actionable = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
 
 			if (filter != null) {
@@ -4627,22 +4608,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getElasticIpsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			@SuppressWarnings("unchecked")
-			List<ElasticIp> moas = actionable.query(queryObject,
-					this.getElasticIpRequestService());
+			List<ElasticIp> moas = actionable.query(queryObject, this.getElasticIpRequestService());
 			for (ElasticIp moa : moas) {
 				ElasticIpSummaryPojo summary = new ElasticIpSummaryPojo();
-				
+
 				ElasticIpPojo pojo = new ElasticIpPojo();
 				ElasticIpPojo baseline = new ElasticIpPojo();
 				this.populateElasticIpPojo(moa, pojo);
 				this.populateElasticIpPojo(moa, baseline);
 				pojo.setBaseline(baseline);
 				summary.setElasticIp(pojo);
-				
+
 				// just go through the internal list here instead of doing an individual query
-				assignmentLoop: for (ElasticIpAssignmentPojo assignment : eia_result.getResults()) {
+				assignmentLoop:
+				for (ElasticIpAssignmentPojo assignment : eia_result.getResults()) {
 					if (assignment.getElasticIp().getElasticIpId().equals(pojo.getElasticIpId())) {
 						summary.setElasticIpAssignment(assignment);
 						// TODO: remove assignment from eia_result.getResults()??
@@ -4656,27 +4637,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -4685,12 +4666,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public ElasticIpPojo createElasticIp(ElasticIpPojo elasticIp) throws RpcException {
-		elasticIp.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
+		elasticIp.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
 				info("creating ElasticIp record on the server...");
@@ -4698,49 +4678,50 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateElasticIpMoa(elasticIp, moa);
 				info("Creating ElasticIP: " + moa.toXmlString());
-				
+
 				info("doing the ElasticIp.create...");
 				this.doCreate(moa, getElasticIpRequestService());
 				info("ElasticIp.create is complete...");
 
 				return elasticIp;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectCreateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (XmlEnterpriseObjectException e) {
+			}
+			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -4751,54 +4732,55 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ElasticIpPojo deleteElasticIp(ElasticIpPojo elasticIp) throws RpcException {
 		if (!useEsbService) {
 			return elasticIp;
-		} 
+		}
 		else {
 			try {
-				// TODO: need to see if there are any assignments in this summary and if so, delete those too
+				// TODO: need to see if there are any assignments in this summary and if so,
+				// delete those too
 				info("deleting ElasticIp record on the server...");
 				ElasticIp moa = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
 				info("populating moa");
 				this.populateElasticIpMoa(elasticIp, moa);
 
-				
 				info("doing the ElasticIp.delete...");
 				this.doDelete(moa, getElasticIpRequestService());
 				info("ElasticIp.delete is complete...");
 
 				return elasticIp;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -4808,44 +4790,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ElasticIpPojo updateElasticIp(ElasticIpPojo elasticIp) throws RpcException {
 		elasticIp.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating elasticIp on the server...");
-            ElasticIp newData = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
-            ElasticIp baselineData = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
+		try {
+			info("updating elasticIp on the server...");
+			ElasticIp newData = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
+			ElasticIp baselineData = (ElasticIp) getObject(Constants.MOA_ELASTIC_IP);
 
-            info("populating newData...");
-            populateElasticIpMoa(elasticIp, newData);
+			info("populating newData...");
+			populateElasticIpMoa(elasticIp, newData);
 
-            info("populating baselineData...");
-            populateElasticIpMoa(elasticIp.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateElasticIpMoa(elasticIp.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getElasticIpRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getElasticIpRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return elasticIp;
 	}
 
 	@Override
 	public boolean isElasticIpAssigned(ElasticIpPojo elasticIp) throws RpcException {
-		
+
 		return false;
 	}
 
 	@Override
 	public ElasticIpAssignmentStatusPojo getElasticIpAssignmentStatusForElasticIp(ElasticIpPojo elasticIp)
 			throws RpcException {
-		
+
 		return null;
 	}
 
 	@Override
 	public List<ElasticIpAssignmentPojo> getElasticIpAssignmentsForUserLoggedIn() throws RpcException {
-		
+
 		return null;
 	}
 
@@ -4856,7 +4839,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		ElasticIpAssignmentQueryResultPojo result = new ElasticIpAssignmentQueryResultPojo();
 		List<ElasticIpAssignmentPojo> pojos = new java.util.ArrayList<ElasticIpAssignmentPojo>();
 		try {
-			ElasticIpAssignmentQuerySpecification queryObject = (ElasticIpAssignmentQuerySpecification) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT_QUERY_SPEC);
+			ElasticIpAssignmentQuerySpecification queryObject = (ElasticIpAssignmentQuerySpecification) getObject(
+					Constants.MOA_ELASTIC_IP_ASSIGNMENT_QUERY_SPEC);
 			ElasticIpAssignment actionable = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
 
 			if (filter != null) {
@@ -4869,10 +4853,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getElasticIpAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			@SuppressWarnings("unchecked")
-			List<ElasticIpAssignment> moas = actionable.query(queryObject,
-					this.getElasticIpRequestService());
+			List<ElasticIpAssignment> moas = actionable.query(queryObject, this.getElasticIpRequestService());
 			for (ElasticIpAssignment moa : moas) {
 				ElasticIpAssignmentPojo pojo = new ElasticIpAssignmentPojo();
 				ElasticIpAssignmentPojo baseline = new ElasticIpAssignmentPojo();
@@ -4886,27 +4869,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -4919,23 +4902,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
-				ElasticIpRequisition requisition = (ElasticIpRequisition) getObject(Constants.MOA_ELASTIC_IP_REQUISITION);
+				ElasticIpRequisition requisition = (ElasticIpRequisition) getObject(
+						Constants.MOA_ELASTIC_IP_REQUISITION);
 				requisition.setOwnerId(req.getOwnerId());
 
 				ElasticIpAssignment moa = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
 
 				info("generating elastic ip Assignment record on the server:  " + requisition.toXmlString());
-				List<ActionableEnterpriseObject> results = this.doGenerate(moa, requisition, getElasticIpRequestService());
+				List<ActionableEnterpriseObject> results = this.doGenerate(moa, requisition,
+						getElasticIpRequestService());
 				if (results.size() != 1) {
 					// error
-					String msg = "Incorrect number of ElasticIpAssignments generated.  Expected 1, got " + results.size();
+					String msg = "Incorrect number of ElasticIpAssignments generated.  Expected 1, got "
+							+ results.size();
 					throw new RpcException(msg);
 				}
 				else {
-					ElasticIpAssignment generated = (ElasticIpAssignment)results.get(0);
+					ElasticIpAssignment generated = (ElasticIpAssignment) results.get(0);
 					info("ElasticIpAssignment returned from the generate: " + generated.toXmlString());
 					ElasticIpAssignmentPojo eipAssignment = new ElasticIpAssignmentPojo();
 					info("populating pojo");
@@ -4944,33 +4930,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 					return eipAssignment;
 				}
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectGenerateException e) {
+			}
+			catch (EnterpriseObjectGenerateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (XmlEnterpriseObjectException e) {
+			}
+			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (ParseException e) {
+			}
+			catch (ParseException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -4980,20 +4969,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ElasticIpAssignmentPojo updateElasticIpAssignment(ElasticIpAssignmentPojo elasticIpAssignment)
 			throws RpcException {
-		
+
 		elasticIpAssignment.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating ElasticIpAssignment on the server...");
-            ElasticIpAssignment newData = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
-            ElasticIpAssignment baselineData = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
+		try {
+			info("updating ElasticIpAssignment on the server...");
+			ElasticIpAssignment newData = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
+			ElasticIpAssignment baselineData = (ElasticIpAssignment) getObject(Constants.MOA_ELASTIC_IP_ASSIGNMENT);
 
-            info("populating newData...");
-            populateElasticIpAssignmentMoa(elasticIpAssignment, newData);
-            info("[updateElasticIpAssignment] moa's associated private ip is: " + newData.getElasticIp().getAssociatedIpAddress());
+			info("populating newData...");
+			populateElasticIpAssignmentMoa(elasticIpAssignment, newData);
+			info("[updateElasticIpAssignment] moa's associated private ip is: "
+					+ newData.getElasticIp().getAssociatedIpAddress());
 
-            info("populating baselineData...");
-            populateElasticIpAssignmentMoa(elasticIpAssignment.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateElasticIpAssignmentMoa(elasticIpAssignment.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("vpcpListTimeoutMillis", "30000");
@@ -5001,16 +4991,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			RequestService reqSvc = this.getElasticIpRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
-            info("doing the update...");
-            doUpdate(newData, reqSvc);
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, reqSvc);
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return elasticIpAssignment;
 	}
 
@@ -5018,7 +5008,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteElasticIpAssignment(ElasticIpAssignmentPojo eiaAssignment) throws RpcException {
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
 				info("deleting ElasticIpAssignment record on the server...");
@@ -5026,45 +5016,45 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateElasticIpAssignmentMoa(eiaAssignment, moa);
 
-				
 				info("doing the ElasticIpAssignment.delete...");
 				this.doDelete(moa, getElasticIpRequestService());
 				info("ElasticIpAssignment.delete is complete...");
 
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -5073,26 +5063,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public List<ElasticIpPojo> getUnassignedElasticIps() throws RpcException {
-		
+
 		return null;
 	}
 
 	@Override
 	public ElasticIpAssignmentSummaryQueryResultPojo getElasticIpAssignmentSummariesForFilter(
 			ElasticIpAssignmentSummaryQueryFilterPojo filter) throws RpcException {
-		
+
 		return null;
 	}
 
 	@Override
 	public AWSServiceSummaryPojo getAWSServiceMap() throws RpcException {
 		info("[getAWSServiceMap] checking cache for existing service summary...");
-		AWSServiceSummaryPojo serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
-				Constants.SERVICE_SUMMARY + getCurrentSessionId());
+		AWSServiceSummaryPojo serviceSummary = (AWSServiceSummaryPojo) Cache.getCache()
+				.get(Constants.SERVICE_SUMMARY + getCurrentSessionId());
 
 		if (serviceSummary == null) {
 			info("[getAWSServiceMap] no service summary found in cache, building service summary.");
-		    serviceSummary = new AWSServiceSummaryPojo();
+			serviceSummary = new AWSServiceSummaryPojo();
 		}
 		else {
 			// check how long it's been there and refresh if it's "stale"
@@ -5102,8 +5092,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// if it's less than one minute, don't refresh
 				if (millisSinceUpdated <= 60000) {
 					info("[getAWSServiceMap] service summary found in cache and it's NOT stale, returning cached service summary");
-				    int statCount = serviceSummary.getAwsServiceStatistics().size() + serviceSummary.getSiteServiceStatistics().size();
-				    info("[getAWSServiceMap] there are " + statCount + " service stats in the cached summary.");
+					int statCount = serviceSummary.getAwsServiceStatistics().size()
+							+ serviceSummary.getSiteServiceStatistics().size();
+					info("[getAWSServiceMap] there are " + statCount + " service stats in the cached summary.");
 					return serviceSummary;
 				}
 				info("[getAWSServiceMap] service summary was found in cached but it's stale, refreshing service summary");
@@ -5114,24 +5105,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		int svcCnt = 0;
 
 		AWSServiceQueryResultPojo servicesResult = this.getServicesForFilter(null);
-		
+
 		// key is category
-		HashMap<String, List<AWSServicePojo>> awsServicesMap = 
-			new HashMap<String, List<AWSServicePojo>>();
-		
+		HashMap<String, List<AWSServicePojo>> awsServicesMap = new HashMap<String, List<AWSServicePojo>>();
+
 		svcCnt = servicesResult.getResults().size();
 		for (AWSServicePojo service : servicesResult.getResults()) {
-	    	// see if this category is already in the awsServicesMap
-			if (service.getConsoleCategories() != null && 
-				service.getConsoleCategories().size() > 0) {
-				
+			// see if this category is already in the awsServicesMap
+			if (service.getConsoleCategories() != null && service.getConsoleCategories().size() > 0) {
+
 				for (String l_category : service.getConsoleCategories()) {
 					this.addServiceToCategory(l_category, service, awsServicesMap);
 				}
 			}
-			else if (service.getAwsCategories() != null && 
-					service.getAwsCategories().size() > 0) {
-				
+			else if (service.getAwsCategories() != null && service.getAwsCategories().size() > 0) {
+
 				// have to check all the categories they're in...not just the fist one
 				for (String l_category : service.getAwsCategories()) {
 					this.addServiceToCategory(l_category, service, awsServicesMap);
@@ -5141,21 +5129,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// add service to the unknown category
 			}
 		}
-	    info("[getAWSServiceMap] returning " + svcCnt +" services in " + awsServicesMap.size() + " categories of services.");
-	    serviceSummary.setServiceList(servicesResult.getResults());
-	    serviceSummary.setServiceMap(awsServicesMap);
-	    
-	    PropertiesPojo siteProperties = this.getSiteSpecificTextProperties();
+		info("[getAWSServiceMap] returning " + svcCnt + " services in " + awsServicesMap.size()
+				+ " categories of services.");
+		serviceSummary.setServiceList(servicesResult.getResults());
+		serviceSummary.setServiceMap(awsServicesMap);
+
+		PropertiesPojo siteProperties = this.getSiteSpecificTextProperties();
 		String siteName = siteProperties.getProperty("siteName", "Emory");
 		serviceSummary.setSiteName(siteName);
 
-	    serviceSummary.initializeStatistics();
-	    serviceSummary.setUpdateTime(new java.util.Date());
+		serviceSummary.initializeStatistics();
+		serviceSummary.setUpdateTime(new java.util.Date());
 		Cache.getCache().put(Constants.SERVICE_SUMMARY + getCurrentSessionId(), serviceSummary);
 		return serviceSummary;
 	}
-	
-	private void addServiceToCategory(String category, AWSServicePojo service, HashMap<String, List<AWSServicePojo>> awsServicesMap) {
+
+	private void addServiceToCategory(String category, AWSServicePojo service,
+			HashMap<String, List<AWSServicePojo>> awsServicesMap) {
 		List<AWSServicePojo> servicesForCat = awsServicesMap.get(category);
 		if (servicesForCat == null) {
 			servicesForCat = new java.util.ArrayList<AWSServicePojo>();
@@ -5163,30 +5153,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			awsServicesMap.put(category, servicesForCat);
 		}
 		else {
-			// need to see if a service by this combined name, alternate name, aws name 
+			// need to see if a service by this combined name, alternate name, aws name
 			// exists and if it does, don't add it
 			boolean doAdd = true;
-			svcLoop: for (AWSServicePojo existingSvc : servicesForCat) {
-				if (existingSvc.getCombinedServiceName() != null && 
-   					existingSvc.getCombinedServiceName().length() > 0 &&
-					existingSvc.getCombinedServiceName().equalsIgnoreCase(service.getCombinedServiceName())) {
+			svcLoop:
+			for (AWSServicePojo existingSvc : servicesForCat) {
+				if (existingSvc.getCombinedServiceName() != null && existingSvc.getCombinedServiceName().length() > 0
+						&& existingSvc.getCombinedServiceName().equalsIgnoreCase(service.getCombinedServiceName())) {
 					doAdd = false;
 					break svcLoop;
 				}
-				else if (existingSvc.getAlternateServiceName() != null && 
-   					existingSvc.getAlternateServiceName().length() > 0 &&
-   					existingSvc.getAlternateServiceName().equalsIgnoreCase(service.getAlternateServiceName())) {
+				else if (existingSvc.getAlternateServiceName() != null
+						&& existingSvc.getAlternateServiceName().length() > 0
+						&& existingSvc.getAlternateServiceName().equalsIgnoreCase(service.getAlternateServiceName())) {
 					doAdd = false;
 					break svcLoop;
-    			}
+				}
 			}
 			if (doAdd) {
-    			servicesForCat.add(service);
+				servicesForCat.add(service);
 			}
 		}
 	}
 
-	private void populateAWSServiceMoa(AWSServicePojo pojo, com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException, EnterpriseFieldException {
+	private void populateAWSServiceMoa(AWSServicePojo pojo, com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException,
+			NoSuchMethodException, EnterpriseFieldException {
 		moa.setServiceId(pojo.getServiceId());
 		moa.setAwsServiceCode(pojo.getAwsServiceCode());
 		moa.setAwsServiceName(pojo.getAwsServiceName());
@@ -5199,7 +5191,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setDescription(pojo.getDescription());
 		moa.setAwsHipaaEligible(this.toStringFromBoolean(pojo.isAwsHipaaEligible()));
 		moa.setSiteHipaaEligible(this.toStringFromBoolean(pojo.isSiteHipaaEligible()));
-		
+
 		if (pojo.getConsoleCategories().size() > 0) {
 			for (String consoleCat : pojo.getConsoleCategories()) {
 				moa.addConsoleCategory(consoleCat);
@@ -5219,13 +5211,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				moa.addTag(moaTag);
 			}
 		}
-		
-        this.setMoaCreateInfo(moa, pojo);
+
+		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void populateAWSServicePojo(com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa, AWSServicePojo pojo) throws XmlEnterpriseObjectException {
+	private void populateAWSServicePojo(com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa, AWSServicePojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setServiceId(moa.getServiceId());
 		pojo.setAwsServiceCode(moa.getAwsServiceCode());
 		pojo.setAwsServiceName(moa.getAwsServiceName());
@@ -5239,19 +5232,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setAwsHipaaEligible(moa.getAwsHipaaEligible());
 		pojo.setSiteHipaaEligible(moa.getSiteHipaaEligible());
 		if (moa.getConsoleCategoryLength() > 0) {
-			for (String consoleCat : (List<String>)moa.getConsoleCategory()) {
+			for (String consoleCat : (List<String>) moa.getConsoleCategory()) {
 				pojo.getConsoleCategories().add(consoleCat);
 			}
 		}
 		if (moa.getCategoryLength() > 0) {
-			for (String cat : (List<String>)moa.getCategory()) {
+			for (String cat : (List<String>) moa.getCategory()) {
 				pojo.getAwsCategories().add(cat);
 			}
 		}
 		if (moa.getTagLength() > 0) {
-			for (com.amazon.aws.moa.objects.resources.v1_0.Tag tag : 
-				(List<com.amazon.aws.moa.objects.resources.v1_0.Tag>)moa.getTag()) {
-				
+			for (com.amazon.aws.moa.objects.resources.v1_0.Tag tag : (List<com.amazon.aws.moa.objects.resources.v1_0.Tag>) moa
+					.getTag()) {
+
 				AWSTagPojo ptag = new AWSTagPojo();
 				ptag.setKey(tag.getKey());
 				ptag.setValue(tag.getValue());
@@ -5262,23 +5255,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		try {
 			PropertiesPojo propsPojo = new PropertiesPojo();
 			if (siteServiceStatusProps == null) {
-				siteServiceStatusProps = getAppConfig().getProperties(SITE_SERVICE_STATUS_PROPERTIES); 
+				siteServiceStatusProps = getAppConfig().getProperties(SITE_SERVICE_STATUS_PROPERTIES);
 			}
 			Iterator<Object> keys = siteServiceStatusProps.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = siteServiceStatusProps.getProperty((String)key);
-				propsPojo.setProperty((String)key, value);
+				String value = siteServiceStatusProps.getProperty((String) key);
+				propsPojo.setProperty((String) key, value);
 			}
 			pojo.setSiteServiceStatusProperties(propsPojo);
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			info("Exception getting " + SITE_SERVICE_STATUS_PROPERTIES + " from AppConfig.  Processing will continue.");
 		}
 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public AWSServiceQueryResultPojo getServicesForFilter(AWSServiceQueryFilterPojo filter) throws RpcException {
@@ -5286,8 +5280,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		AWSServiceSummaryPojo serviceSummary = null;
 		if (filter == null || filter.isEmpty()) {
 			info("[getServicesForFilter] checking cache for existing service summary...");
-			serviceSummary = (AWSServiceSummaryPojo) Cache.getCache().get(
-					Constants.SERVICE_SUMMARY + getCurrentSessionId());
+			serviceSummary = (AWSServiceSummaryPojo) Cache.getCache()
+					.get(Constants.SERVICE_SUMMARY + getCurrentSessionId());
 
 			if (serviceSummary == null) {
 				info("[getServicesForFilter] no service summary found in cache, building fresh service list.");
@@ -5316,10 +5310,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<AWSServicePojo> pojos = new java.util.ArrayList<AWSServicePojo>();
 
 		try {
-			com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = 
-					(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
-			ServiceQuerySpecification queryObject = (ServiceQuerySpecification) getObject(Constants.MOA_SERVICE_QUERY_SPEC);
-			
+			com.amazon.aws.moa.jmsobjects.services.v1_0.Service actionable = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(
+					Constants.MOA_SERVICE);
+			ServiceQuerySpecification queryObject = (ServiceQuerySpecification) getObject(
+					Constants.MOA_SERVICE_QUERY_SPEC);
+
 			if (filter != null) {
 				if (!filter.isFuzzyFilter()) {
 					queryObject.setServiceId(filter.getServiceId());
@@ -5347,25 +5342,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getAWSRequestService();
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			info("[getServicesForFilter] query object is: " + queryObject.toXmlString());
-			List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> moas = actionable.query(queryObject,
-					reqSvc);
+			List<com.amazon.aws.moa.jmsobjects.services.v1_0.Service> moas = actionable.query(queryObject, reqSvc);
 			info("[getServicessForFilter] got " + moas.size() + " services from ESB service");
 
 			for (com.amazon.aws.moa.jmsobjects.services.v1_0.Service service : moas) {
 				if (filter != null && filter.isFuzzyFilter()) {
-					boolean includeInList=false;
+					boolean includeInList = false;
 					if (filter.getAwsServiceName() != null && filter.getAwsServiceName().length() > 0) {
-						if (service.getAwsServiceName().toLowerCase().indexOf(filter.getAwsServiceName().toLowerCase()) >= 0) {
+						if (service.getAwsServiceName().toLowerCase()
+								.indexOf(filter.getAwsServiceName().toLowerCase()) >= 0) {
 							includeInList = true;
 						}
 					}
 					else if (filter.getConsoleCategories().size() > 0) {
 						String filterCat = filter.getConsoleCategories().get(0);
-						for (String consoleCat : (List<String>)service.getConsoleCategory()) {
+						for (String consoleCat : (List<String>) service.getConsoleCategory()) {
 							if (consoleCat.toLowerCase().indexOf(filterCat.toLowerCase()) >= 0) {
 								includeInList = true;
 							}
@@ -5391,29 +5385,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					pojos.add(pojo);
 				}
 			}
-			
+
 			Collections.sort(pojos);
 			long endTime = System.currentTimeMillis();
 			long elapsedTime = endTime - startTime;
 			info("[getServicessForFilter] elapsed time (ms): " + elapsedTime);
 			result.setResults(pojos);
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -5422,9 +5416,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("returning " + result.getResults().size() + " services.");
 		if (serviceSummary != null) {
 			serviceSummary.setServiceList(result.getResults());
-		    serviceSummary.setUpdateTime(new java.util.Date());
-		    
-		    PropertiesPojo siteProperties = this.getSiteSpecificTextProperties();
+			serviceSummary.setUpdateTime(new java.util.Date());
+
+			PropertiesPojo siteProperties = this.getSiteSpecificTextProperties();
 			String siteName = siteProperties.getProperty("siteName", "Emory");
 			serviceSummary.setSiteName(siteName);
 
@@ -5435,23 +5429,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public AWSServicePojo createService(AWSServicePojo service) throws RpcException {
-		service.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-        try {
-            info("creating AWS Service on the server...");
-            com.amazon.aws.moa.jmsobjects.services.v1_0.Service newData = 
-            	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+		service.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
+		try {
+			info("creating AWS Service on the server...");
+			com.amazon.aws.moa.jmsobjects.services.v1_0.Service newData = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(
+					Constants.MOA_SERVICE);
 
-            info("populating newData...");
-            populateAWSServiceMoa(service, newData);
+			info("populating newData...");
+			populateAWSServiceMoa(service, newData);
 
-            info("doing the update...");
-            doCreate(newData, getAWSRequestService());
-            info("create is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doCreate(newData, getAWSRequestService());
+			info("create is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return service;
 
 		// TEMPORARY
@@ -5465,27 +5459,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AWSServicePojo updateService(AWSServicePojo service) throws RpcException {
 		service.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating UserNotification on the server...");
-            com.amazon.aws.moa.jmsobjects.services.v1_0.Service newData = 
-            	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
-            com.amazon.aws.moa.jmsobjects.services.v1_0.Service baselineData = 
-            	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+		try {
+			info("updating UserNotification on the server...");
+			com.amazon.aws.moa.jmsobjects.services.v1_0.Service newData = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(
+					Constants.MOA_SERVICE);
+			com.amazon.aws.moa.jmsobjects.services.v1_0.Service baselineData = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(
+					Constants.MOA_SERVICE);
 
-            info("populating newData...");
-            populateAWSServiceMoa(service, newData);
+			info("populating newData...");
+			populateAWSServiceMoa(service, newData);
 
-            info("populating baselineData...");
-            populateAWSServiceMoa(service.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateAWSServiceMoa(service.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getAWSRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getAWSRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return service;
 	}
 
@@ -5493,49 +5488,50 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteService(AWSServicePojo service) throws RpcException {
 		try {
 			info("deleting AWS Service on the server...");
-            com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa = 
-                	(com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(Constants.MOA_SERVICE);
+			com.amazon.aws.moa.jmsobjects.services.v1_0.Service moa = (com.amazon.aws.moa.jmsobjects.services.v1_0.Service) getObject(
+					Constants.MOA_SERVICE);
 			info("populating moa");
 			this.populateAWSServiceMoa(service, moa);
-			
+
 			info("doing the Service.delete...");
 			this.doDelete(moa, getAWSRequestService());
 			info("Service.delete is complete...");
 
 			return;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
+		}
+		catch (EnterpriseObjectDeleteException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -5545,15 +5541,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<String> getAwsServiceStatusItems() {
 		List<String> statusItems = new java.util.ArrayList<String>();
 		try {
-			Properties props = 	getAppConfig().getProperties(AWS_SERVICE_STATUS_PROPERTIES);
+			Properties props = getAppConfig().getProperties(AWS_SERVICE_STATUS_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				statusItems.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -5564,17 +5561,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public List<String> getSiteServiceStatusItems() {
 		List<String> statusItems = new java.util.ArrayList<String>();
-		
+
 		try {
-			Properties props = 	getAppConfig().getProperties(SITE_SERVICE_STATUS_PROPERTIES);
+			Properties props = getAppConfig().getProperties(SITE_SERVICE_STATUS_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				statusItems.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -5588,7 +5586,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		UserNotificationQueryResultPojo result = new UserNotificationQueryResultPojo();
 		List<UserNotificationPojo> pojos = new java.util.ArrayList<UserNotificationPojo>();
 		try {
-			UserNotificationQuerySpecification queryObject = (UserNotificationQuerySpecification) getObject(Constants.MOA_USER_NOTIFICATION_QUERY_SPEC);
+			UserNotificationQuerySpecification queryObject = (UserNotificationQuerySpecification) getObject(
+					Constants.MOA_USER_NOTIFICATION_QUERY_SPEC);
 			UserNotification actionable = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
 
 			if (filter != null) {
@@ -5637,7 +5636,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				authUserId = this.getAuthUserIdForHALS(filter.getUserLoggedIn());
 			}
 			else {
-				authUserId = this.getAuthUserIdForHALS();	
+				authUserId = this.getAuthUserIdForHALS();
 			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 
@@ -5645,19 +5644,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("userNotificationTimeoutMillis", "1000000");
 			int interval = Integer.parseInt(s_interval);
-			((PointToPointProducer) reqSvc)
-			.setRequestTimeoutInterval(interval);
-			
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
+
 			@SuppressWarnings("unchecked")
-			List<UserNotification> moas = actionable.query(queryObject,
-					reqSvc);
+			List<UserNotification> moas = actionable.query(queryObject, reqSvc);
 			for (UserNotification moa : moas) {
 				UserNotificationPojo pojo = new UserNotificationPojo();
 				UserNotificationPojo baseline = new UserNotificationPojo();
 
 				if (filter.getUserNotificationId() != null && filter.getUserNotificationId().length() > 0) {
-					if (moa.getUserNotificationId() != null && 
-						moa.getUserNotificationId().toLowerCase().indexOf(filter.getUserNotificationId().toLowerCase()) >= 0) {
+					if (moa.getUserNotificationId() != null && moa.getUserNotificationId().toLowerCase()
+							.indexOf(filter.getUserNotificationId().toLowerCase()) >= 0) {
 						this.populateUserNotificationPojo(moa, pojo);
 						this.populateUserNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
@@ -5665,8 +5662,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 				}
 				else if (filter.getSubject() != null && filter.getSubject().length() > 0) {
-					if (moa.getSubject() != null && 
-						moa.getSubject().toLowerCase().indexOf(filter.getSubject().toLowerCase()) >= 0) {
+					if (moa.getSubject() != null
+							&& moa.getSubject().toLowerCase().indexOf(filter.getSubject().toLowerCase()) >= 0) {
 						this.populateUserNotificationPojo(moa, pojo);
 						this.populateUserNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
@@ -5674,17 +5671,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 				}
 				else if (filter.getText() != null && filter.getText().length() > 0) {
-					if (moa.getText() != null && 
-						moa.getText().toLowerCase().indexOf(filter.getText().toLowerCase()) >= 0) {
+					if (moa.getText() != null
+							&& moa.getText().toLowerCase().indexOf(filter.getText().toLowerCase()) >= 0) {
 						this.populateUserNotificationPojo(moa, pojo);
 						this.populateUserNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
 						pojos.add(pojo);
-					}				
+					}
 				}
 				else if (filter.getReferenceId() != null && filter.getReferenceId().length() > 0) {
-					if (moa.getReferenceId() != null && 
-						moa.getReferenceId().toLowerCase().indexOf(filter.getReferenceId().toLowerCase()) >= 0) {
+					if (moa.getReferenceId() != null
+							&& moa.getReferenceId().toLowerCase().indexOf(filter.getReferenceId().toLowerCase()) >= 0) {
 						this.populateUserNotificationPojo(moa, pojo);
 						this.populateUserNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
@@ -5704,31 +5701,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
-		
+		}
+
 	}
 
-	private void populateUserNotificationPojo(UserNotification moa, UserNotificationPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateUserNotificationPojo(UserNotification moa, UserNotificationPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setUserNotificationId(moa.getUserNotificationId());
 		pojo.setReferenceId(moa.getReferenceId());
 		pojo.setAccountNotificationId(moa.getAccountNotificationId());
@@ -5742,12 +5740,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (moa.getReadDatetime() != null) {
 			pojo.setReadDateTime(this.toDateFromDatetime(moa.getReadDatetime()));
 		}
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateUserNotificationMoa(UserNotificationPojo pojo, UserNotification moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+	private void populateUserNotificationMoa(UserNotificationPojo pojo, UserNotification moa)
+			throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, SecurityException, NoSuchMethodException {
 		moa.setUserNotificationId(pojo.getUserNotificationId());
 		moa.setReferenceId(pojo.getReferenceId());
 		moa.setAccountNotificationId(pojo.getAccountNotificationId());
@@ -5763,63 +5763,64 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			populateDatetime(dt, pojo.getReadDateTime());
 			moa.setReadDatetime(dt);
 		}
-		
+
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@Override
 	public UserNotificationPojo createUserNotification(UserNotificationPojo notification) throws RpcException {
-		notification.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-        try {
-            info("updating UserNotification on the server...");
-            UserNotification newData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+		notification.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
+		try {
+			info("updating UserNotification on the server...");
+			UserNotification newData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
 
-            info("populating newData...");
-            populateUserNotificationMoa(notification, newData);
+			info("populating newData...");
+			populateUserNotificationMoa(notification, newData);
 
-            info("doing the create...");
-            doCreate(newData, getAWSRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the create...");
+			doCreate(newData, getAWSRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return notification;
 	}
 
 	@Override
 	public UserNotificationPojo updateUserNotification(UserNotificationPojo notification) throws RpcException {
 		notification.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating UserNotification on the server...");
-            UserNotification newData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
-            UserNotification baselineData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+		try {
+			info("updating UserNotification on the server...");
+			UserNotification newData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
+			UserNotification baselineData = (UserNotification) getObject(Constants.MOA_USER_NOTIFICATION);
 
-            info("populating newData...");
-            populateUserNotificationMoa(notification, newData);
+			info("populating newData...");
+			populateUserNotificationMoa(notification, newData);
 
-            info("populating baselineData...");
-            populateUserNotificationMoa(notification.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateUserNotificationMoa(notification.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getAWSRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getAWSRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return notification;
 	}
 
 	@Override
 	public void deleteUserNotification(UserNotificationPojo notification) throws RpcException {
-		
+
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
 				info("deleting UserNotification record on the server...");
@@ -5827,46 +5828,46 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateUserNotificationMoa(notification, moa);
 
-				
 				info("doing the UserNotification.delete...");
 				this.doDelete(moa, getAWSRequestService());
 				info("UserNotification.delete is complete...");
 
 //				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -5917,7 +5918,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public SpeedChartQueryResultPojo getSpeedChartsForFilter(SpeedChartQueryFilterPojo filter) throws RpcException {
 		SpeedChartQueryResultPojo result = new SpeedChartQueryResultPojo();
 		List<SpeedChartPojo> pojos = new java.util.ArrayList<SpeedChartPojo>();
-		
+
 		if (!validateFinancialAccounts) {
 			result.setResults(pojos);
 			return result;
@@ -5938,8 +5939,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getSpeedChartsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
 			@SuppressWarnings("unchecked")
-			List<SPEEDCHART> moas = actionable.query(queryObject,
-					this.getPeopleSoftRequestService());
+			List<SPEEDCHART> moas = actionable.query(queryObject, this.getPeopleSoftRequestService());
 			info("got " + moas.size() + " speed chart objects back from ESB");
 			for (SPEEDCHART moa : moas) {
 				SpeedChartPojo pojo = new SpeedChartPojo();
@@ -5951,35 +5951,33 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
-	
+
 	@SuppressWarnings("unused")
-	private void populateSpeedChartMoa(SpeedChartPojo pojo,
-			SPEEDCHART moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateSpeedChartMoa(SpeedChartPojo pojo, SPEEDCHART moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		if (pojo.getSpeedChartKey() != null) {
 			moa.setSPEEDCHART_KEY(pojo.getSpeedChartKey());
@@ -5993,15 +5991,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		this.setMoaUpdateInfo(moa, pojo);
 	}
 
-	private void populateSpeedChartPojo(SPEEDCHART moa,
-			SpeedChartPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateSpeedChartPojo(SPEEDCHART moa, SpeedChartPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		/*
-		<!ELEMENT SPEEDCHART (SPEEDCHART_KEY, DESCR?, VALID_CODE?, EU_VALIDITY_DESCR?, BUSINESS_UNIT_GL?, 
-		BU_DESCR?, OPERATING_UNIT?, OPER_UNIT_DESCR?, FUND_CODE?, DEPTID?, DEPT_DESCR?, BUSINESS_UNIT_PC?, 
-		PROJECT_ID?, PROJECT_ID_DESCR?, EFF_STATUS?, EU_PROJ_END_DT?, EU_PC_ACT_STAT_END?, 
-		EU_PC_ACT_STAT_CLS?, EU_PC_ACT_STAT_FIN?)>
+		 * <!ELEMENT SPEEDCHART (SPEEDCHART_KEY, DESCR?, VALID_CODE?,
+		 * EU_VALIDITY_DESCR?, BUSINESS_UNIT_GL?, BU_DESCR?, OPERATING_UNIT?,
+		 * OPER_UNIT_DESCR?, FUND_CODE?, DEPTID?, DEPT_DESCR?, BUSINESS_UNIT_PC?,
+		 * PROJECT_ID?, PROJECT_ID_DESCR?, EFF_STATUS?, EU_PROJ_END_DT?,
+		 * EU_PC_ACT_STAT_END?, EU_PC_ACT_STAT_CLS?, EU_PC_ACT_STAT_FIN?)>
 		 */
 		pojo.setSpeedChartKey(moa.getSPEEDCHART_KEY());
 		pojo.setDescription(moa.getDESCR());
@@ -6028,17 +6026,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setEuPcActStatEnd(moa.getEU_PC_ACT_STAT_END());
 		pojo.setEuPcActStatClose(moa.getEU_PC_ACT_STAT_CLS());
 		pojo.setEuPcActStatFin(moa.getEU_PC_ACT_STAT_FIN());
-		
+
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@SuppressWarnings("unused")
-	private void populateFirewallRuleMoa(FirewallRulePojo pojo,
-			FirewallRule moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateFirewallRuleMoa(FirewallRulePojo pojo, FirewallRule moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setName(pojo.getName());
 		moa.setVsys(pojo.getVsys());
@@ -6106,16 +6102,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				container.addMember(member);
 			}
 		}
-		
+
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateFirewallRulePojo(FirewallRule moa,
-			FirewallRulePojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-	
+	private void populateFirewallRulePojo(FirewallRule moa, FirewallRulePojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setName(moa.getName());
 		pojo.setVsys(moa.getVsys());
 		pojo.setAction(moa.getAction());
@@ -6123,63 +6118,63 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setLogSetting(moa.getLogSetting());
 		if (moa.getProfileSetting() != null) {
 			if (moa.getProfileSetting().getGroup() != null) {
-				for (String member : (List<String>)moa.getProfileSetting().getGroup().getMember()) {
+				for (String member : (List<String>) moa.getProfileSetting().getGroup().getMember()) {
 					pojo.getProfileSettings().add(member);
 				}
 			}
 		}
 		if (moa.getTo() != null) {
-			for (String member : (List<String>)moa.getTo().getMember()) {
+			for (String member : (List<String>) moa.getTo().getMember()) {
 				pojo.getTos().add(member);
 			}
 		}
 		if (moa.getFrom() != null) {
-			for (String member : (List<String>)moa.getFrom().getMember()) {
+			for (String member : (List<String>) moa.getFrom().getMember()) {
 				pojo.getFroms().add(member);
 			}
 		}
 		if (moa.getSource() != null) {
-			for (String member : (List<String>)moa.getSource().getMember()) {
+			for (String member : (List<String>) moa.getSource().getMember()) {
 				pojo.getSources().add(member);
 			}
 		}
 		if (moa.getDestination() != null) {
-			for (String member : (List<String>)moa.getDestination().getMember()) {
+			for (String member : (List<String>) moa.getDestination().getMember()) {
 				pojo.getDestinations().add(member);
 			}
 		}
 		if (moa.getSourceUser() != null) {
-			for (String member : (List<String>)moa.getSourceUser().getMember()) {
+			for (String member : (List<String>) moa.getSourceUser().getMember()) {
 				pojo.getSourceUsers().add(member);
 			}
 		}
 		if (moa.getCategory() != null) {
-			for (String member : (List<String>)moa.getCategory().getMember()) {
+			for (String member : (List<String>) moa.getCategory().getMember()) {
 				pojo.getCategories().add(member);
 			}
 		}
 		if (moa.getApplication() != null) {
-			for (String member : (List<String>)moa.getApplication().getMember()) {
+			for (String member : (List<String>) moa.getApplication().getMember()) {
 				pojo.getApplications().add(member);
 			}
 		}
 		if (moa.getService() != null) {
-			for (String member : (List<String>)moa.getService().getMember()) {
+			for (String member : (List<String>) moa.getService().getMember()) {
 				pojo.getServices().add(member);
 			}
 		}
 		if (moa.getHipProfiles() != null) {
-			for (String member : (List<String>)moa.getHipProfiles().getMember()) {
+			for (String member : (List<String>) moa.getHipProfiles().getMember()) {
 				pojo.getHipProfiles().add(member);
 			}
 		}
 		if (moa.getTag() != null) {
-			for (String member : (List<String>)moa.getTag().getMember()) {
+			for (String member : (List<String>) moa.getTag().getMember()) {
 				pojo.getTags().add(member);
 			}
 		}
 	}
-	
+
 	@Override
 	public FirewallRuleQueryResultPojo getFirewallRulesForFilter(FirewallRuleQueryFilterPojo filter)
 			throws RpcException {
@@ -6190,9 +6185,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			return result;
 		}
-		
+
 		try {
-			FirewallRuleQuerySpecification queryObject = (FirewallRuleQuerySpecification) getObject(Constants.MOA_FIREWALL_RULE_QUERY_SPEC);
+			FirewallRuleQuerySpecification queryObject = (FirewallRuleQuerySpecification) getObject(
+					Constants.MOA_FIREWALL_RULE_QUERY_SPEC);
 			FirewallRule actionable = (FirewallRule) getObject(Constants.MOA_FIREWALL_RULE);
 
 			if (filter != null) {
@@ -6208,10 +6204,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getAccountsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			@SuppressWarnings("unchecked")
-			List<FirewallRule> moas = actionable.query(queryObject,
-					this.getFirewallRequestService());
+			List<FirewallRule> moas = actionable.query(queryObject, this.getFirewallRequestService());
 			for (FirewallRule moa : moas) {
 				FirewallRulePojo pojo = new FirewallRulePojo();
 				this.populateFirewallRulePojo(moa, pojo);
@@ -6222,23 +6217,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -6247,16 +6242,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public FirewallRulePojo createFirewallRule(FirewallRulePojo rule) throws RpcException {
-		
-		
+
 		// this will be a FirewallExceptionRequest request sent to service now
 		return null;
 	}
 
 	@Override
 	public FirewallRulePojo updateFirewallRule(FirewallRulePojo rule) throws RpcException {
-		
-		
+
 		// this will be a request sent to service now
 		return null;
 	}
@@ -6267,24 +6260,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //		FirewallExceptionRemoveRequestRequisitionPojo pojo_req = new FirewallExceptionRemoveRequestRequisitionPojo();
 		// populate the fer with stuff from the rule passed in.
 		/*
-			<!ELEMENT FirewallExceptionRequest (
-				UserNetID, 
-				ApplicationName, 
-				SourceOutsideEmory, 
-				TimeRule, 
-				SourceIpAddresses, 
-				DestinationIpAddresses, 
-				Ports, 
-				BusinessReason, 
-				Patched, 
-				DefaultPasswdChanged, 
-				AppConsoleACLed, 
-				Hardened, 
-				PatchingPlan, 
-				SensitiveDataDesc, 
-				LocalFirewallRules, 
-				DefaultDenyZone, 
-				Tag+, 
+		 * <!ELEMENT FirewallExceptionRequest ( UserNetID, ApplicationName,
+		 * SourceOutsideEmory, TimeRule, SourceIpAddresses, DestinationIpAddresses,
+		 * Ports, BusinessReason, Patched, DefaultPasswdChanged, AppConsoleACLed,
+		 * Hardened, PatchingPlan, SensitiveDataDesc, LocalFirewallRules,
+		 * DefaultDenyZone, Tag+,
 		 */
 //		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
 //				Constants.USER_ACCOUNT + getCurrentSessionId());
@@ -6294,21 +6274,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //			FirewallExceptionRemoveRequestPojo pojo = this.generateFirewallExceptionRemoveRequest(pojo_req);
 
 			return;
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
 	public void logMessage(String message) throws RpcException {
-		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(Constants.USER_ACCOUNT + getCurrentSessionId());
 		if (user != null) {
 			info("[FromClient] for user: " + user.toString() + ": " + message);
 		}
@@ -6318,48 +6297,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings("unused")
-	private void populateRoleMoa(RolePojo pojo,
-			Role moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
-
+	private void populateRoleMoa(RolePojo pojo, Role moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@SuppressWarnings("unused")
-	private void populateRolePojo(Role moa,
-			RolePojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
-		
+	private void populateRolePojo(Role moa, RolePojo pojo) throws XmlEnterpriseObjectException, ParseException {
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateRoleAssignmentMoa(RoleAssignmentPojo pojo,
-			RoleAssignment moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
-		
-		/*
-		<!ELEMENT RoleAssignment (RoleAssignmentActionType?, RoleAssignmentType?, 
-			CorrelationId?, CauseIdentities?, EffectiveDatetime?, ExpirationDatetime?,
-			IdentityDN?,OriginatorDN?,Reason?,RoleDNs?,SodJustification*,
-			ExplicitIdentityDNs?, RoleDN?)>
+	private void populateRoleAssignmentMoa(RoleAssignmentPojo pojo, RoleAssignment moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
-		<RoleAssignment>
-			<RoleAssignmentActionType>grant</RoleAssignmentActionType>
-			<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
-			<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
-			<Reason>For Testing</Reason>
-			<RoleDNs>
-				<DistinguishedName>cn=RGR_AWS-158058157672-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
-			</RoleDNs>
-		</RoleAssignment>
+		/*
+		 * <!ELEMENT RoleAssignment (RoleAssignmentActionType?, RoleAssignmentType?,
+		 * CorrelationId?, CauseIdentities?, EffectiveDatetime?, ExpirationDatetime?,
+		 * IdentityDN?,OriginatorDN?,Reason?,RoleDNs?,SodJustification*,
+		 * ExplicitIdentityDNs?, RoleDN?)>
+		 * 
+		 * <RoleAssignment> <RoleAssignmentActionType>grant</RoleAssignmentActionType>
+		 * <RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+		 * <IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN> <Reason>For
+		 * Testing</Reason> <RoleDNs>
+		 * <DistinguishedName>cn=RGR_AWS-158058157672-Administrator,cn=Level10,cn=
+		 * RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=
+		 * Servers,o=EmoryDev</DistinguishedName> </RoleDNs> </RoleAssignment>
 		 */
 
 		moa.setRoleAssignmentActionType(pojo.getActionType());
@@ -6381,40 +6350,39 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa.setExplicitIdentityDNs(eid);
 		}
 		moa.setRoleDN(pojo.getRoleDN());
-		
+
 		Datetime expirationDatetime = moa.newExpirationDatetime();
 		this.populateDatetime(expirationDatetime, pojo.getExpirationDate());
 		moa.setExpirationDatetime(expirationDatetime);
-		
+
 		Datetime effectiveDatetime = moa.newEffectiveDatetime();
 		this.populateDatetime(effectiveDatetime, pojo.getEffectiveDate());
 		moa.setEffectiveDatetime(effectiveDatetime);
-		
+
 //		this.setMoaCreateInfo(moa, pojo);
 //		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateRoleAssignmentPojo(RoleAssignment moa,
-			RoleAssignmentPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateRoleAssignmentPojo(RoleAssignment moa, RoleAssignmentPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setActionType(moa.getRoleAssignmentActionType());
 		pojo.setType(moa.getRoleAssignmentType());
 		pojo.setIdentityDN(moa.getIdentityDN());
 		pojo.setReason(moa.getReason());
 		RoleDNsPojo rdns = new RoleDNsPojo();
 		if (moa.getRoleDNs() != null) {
-			for (String dn : (List<String>)moa.getRoleDNs().getDistinguishedName()) {
+			for (String dn : (List<String>) moa.getRoleDNs().getDistinguishedName()) {
 				rdns.getDistinguishedNames().add(dn);
 			}
 			pojo.setRoleDNs(rdns);
 		}
 		pojo.setRoleDN(moa.getRoleDN());
-		
+
 		if (moa.getExplicitIdentityDNs() != null) {
 			pojo.setExplicityIdentitiyDNs(new ExplicitIdentityDNsPojo());
-			for (String moa_dn : (List<String>)moa.getExplicitIdentityDNs().getDistinguishedName()) {
+			for (String moa_dn : (List<String>) moa.getExplicitIdentityDNs().getDistinguishedName()) {
 				pojo.getExplicityIdentitiyDNs().getDistinguishedNames().add(moa_dn);
 			}
 		}
@@ -6423,15 +6391,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings("unused")
-	private void populateDirectoryPersonMoa(DirectoryPersonPojo pojo,
-			DirectoryPerson moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateDirectoryPersonMoa(DirectoryPersonPojo pojo, DirectoryPerson moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
-
-		//DepartmentName?, Email?, Fax?, FirstMiddle?, FullName, Key, LastName?, DirectoryLocation?, 
-		// MailStop?, DirectoryPhone?, SchoolDivision?, StudentPhone?, Suffix?, Title?, Type)>
+		// DepartmentName?, Email?, Fax?, FirstMiddle?, FullName, Key, LastName?,
+		// DirectoryLocation?,
+		// MailStop?, DirectoryPhone?, SchoolDivision?, StudentPhone?, Suffix?, Title?,
+		// Type)>
 		moa.setDepartmentName(pojo.getDepartmentName());
 		if (pojo.getEmail() != null) {
 			Email email = moa.newEmail();
@@ -6456,10 +6423,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
-	private void populateDirectoryPersonPojo(DirectoryPerson moa,
-			DirectoryPersonPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-		
+	private void populateDirectoryPersonPojo(DirectoryPerson moa, DirectoryPersonPojo pojo)
+			throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setDepartmentName(moa.getDepartmentName());
 		if (moa.getEmail() != null) {
 			EmailPojo emailPojo = new EmailPojo();
@@ -6492,7 +6458,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<DirectoryPersonPojo> pojos = new java.util.ArrayList<DirectoryPersonPojo>();
 		String authUserId = null;
 		try {
-			DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
+			DirectoryPersonQuerySpecification queryObject = (DirectoryPersonQuerySpecification) getObject(
+					Constants.MOA_DIRECTORY_PERSON_QUERY_SPEC);
 			DirectoryPerson actionable = (DirectoryPerson) getObject(Constants.MOA_DIRECTORY_PERSON);
 
 			if (filter != null) {
@@ -6504,17 +6471,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 
 			}
-			
+
 			// TEMPORARY (MAYBE) - RICE Specific
-			// because rice doesn't have a ppid and when search string is passed (without key)
-			// it causes a massive directory scan, we're going to look for that situation 
+			// because rice doesn't have a ppid and when search string is passed (without
+			// key)
+			// it causes a massive directory scan, we're going to look for that situation
 			// and set the key to whatever is passed in the search string to see if
-			// we can get the directory person oracles to work without timing out all the time
+			// we can get the directory person oracles to work without timing out all the
+			// time
 			if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
-				if (queryObject.getKey() == null || 
-					queryObject.getKey().length() == 0 && 
-					queryObject.getSearchString() != null) {
-					
+				if (queryObject.getKey() == null
+						|| queryObject.getKey().length() == 0 && queryObject.getSearchString() != null) {
+
 					queryObject.setKey(queryObject.getSearchString());
 				}
 			}
@@ -6524,21 +6492,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getDirectoryPersonsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("directoryPersonTimeoutMillis", "180000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getDirectoryRequestService();
 			info("[getVpcpsForFilter] setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			List<DirectoryPerson> moas = null;
 			try {
 				info("Query spec is: " + queryObject.toXmlString());
 				moas = actionable.query(queryObject, reqSvc);
-			} catch (EnterpriseObjectQueryException e) {
+			}
+			catch (EnterpriseObjectQueryException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -6555,29 +6523,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
-			// TODO: if it's a timeout exception AND 'key' field is null 
+			// TODO: if it's a timeout exception AND 'key' field is null
 			// but 'searchString' has data
 			// we may need to do something here.
 			if (e.getMessage().toLowerCase().indexOf("timed out waiting") >= 0) {
-				
+
 			}
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -6588,53 +6556,56 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public FullPersonQueryResultPojo getFullPersonsForFilter(FullPersonQueryFilterPojo filter) throws RpcException {
 		FullPersonQueryResultPojo result = new FullPersonQueryResultPojo();
 		List<FullPersonPojo> pojos = new java.util.ArrayList<FullPersonPojo>();
-			
-			DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
-			if (filter != null) {
-				dp_filter.setKey(filter.getPublicId());
-				dp_filter.setSearchString(filter.getNetId());
-			}
-			DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
-			if (dp_result.getResults().size() > 0) {
-				DirectoryPersonPojo dp = dp_result.getResults().get(0);
-				FullPersonPojo fp = new FullPersonPojo();
-				fp.setPublicId(dp.getKey());
-				PersonPojo person = new PersonPojo();
-				fp.setPerson(person);
-				PersonalNamePojo pnp = new PersonalNamePojo();
-				pnp.setFirstName(dp.getFirstMiddle());
-				pnp.setLastName(dp.getLastName());
-				fp.getPerson().setPersonalName(pnp);
-				pojos.add(fp);
-			}
 
-			result.setResults(pojos);
-			result.setFilterUsed(filter);
-			return result;
+		DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
+		if (filter != null) {
+			dp_filter.setKey(filter.getPublicId());
+			dp_filter.setSearchString(filter.getNetId());
+		}
+		DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+		if (dp_result.getResults().size() > 0) {
+			DirectoryPersonPojo dp = dp_result.getResults().get(0);
+			FullPersonPojo fp = new FullPersonPojo();
+			fp.setPublicId(dp.getKey());
+			PersonPojo person = new PersonPojo();
+			fp.setPerson(person);
+			PersonalNamePojo pnp = new PersonalNamePojo();
+			pnp.setFirstName(dp.getFirstMiddle());
+			pnp.setLastName(dp.getLastName());
+			fp.getPerson().setPersonalName(pnp);
+			pojos.add(fp);
+		}
+
+		result.setResults(pojos);
+		result.setFilterUsed(filter);
+		return result;
 	}
 
 	@Override
-	public RoleAssignmentPojo createRoleAssignmentForPersonInAccount(String publicId, 
-			String accountId, String roleName) throws RpcException {
+	public RoleAssignmentPojo createRoleAssignmentForPersonInAccount(String publicId, String accountId, String roleName)
+			throws RpcException {
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
 				Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
-				RoleAssignmentRequisition requisition = (RoleAssignmentRequisition) getObject(Constants.MOA_ROLE_ASSIGNMENT_REQUISITION);
+				RoleAssignmentRequisition requisition = (RoleAssignmentRequisition) getObject(
+						Constants.MOA_ROLE_ASSIGNMENT_REQUISITION);
 				RoleAssignment moa = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
 				if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
 					requisition.setRoleAssignmentActionType("grant");
 					requisition.setRoleAssignmentType("USER_TO_ROLE");
-					requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() +")");
-					
-					String idDn = roleAssignmentProps.getProperty("IdentityDN", "cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
+					requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() + ")");
+
+					String idDn = roleAssignmentProps.getProperty("IdentityDN",
+							"cn=PUBLIC_ID,ou=Users,ou=Data,o=EmoryDev");
 					idDn = idDn.replaceAll(Constants.REPLACEMENT_VAR_PUBLIC_ID, publicId);
 					requisition.setIdentityDN(idDn);
-					
-					String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+
+					String distName = roleAssignmentProps.getProperty("RoleDNDistinguishedName",
+							"cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 					distName = distName.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 					distName = distName.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
 					RoleDNs roleDns = requisition.newRoleDNs();
@@ -6644,7 +6615,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				else if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 					requisition.setRoleAssignmentActionType("grant");
 					requisition.setRoleAssignmentType("USER_TO_ROLE");
-					requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() +")");
+					requisition.setReason("Added using VPCP by (" + getUserLoggedIn(false).getEppn() + ")");
 					requisition.setIdentityDN(publicId);
 					RoleDNs roleDns = requisition.newRoleDNs();
 					if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
@@ -6652,7 +6623,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 					else if (roleName.equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
 						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_AUDITOR);
-						
+
 					}
 					requisition.setRoleDNs(roleDns);
 				}
@@ -6665,9 +6636,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					throw new RpcException(msg);
 				}
 				else {
-					RoleAssignment generated = (RoleAssignment)results.get(0);
+					RoleAssignment generated = (RoleAssignment) results.get(0);
 					info("RoleAssignment returned from the generate: " + generated.toXmlString());
-					
+
 					if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 						// change the roleDNs back to the common values
 						if (generated.getRoleDN().indexOf(":" + Constants.ROLE_NAME_GROUPER_ADMIN) >= 0) {
@@ -6678,7 +6649,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						}
 						info("RoleAssignment after Grouper specific mods: " + generated.toXmlString());
 					}
-					
+
 					RoleAssignmentPojo roleAssignment = new RoleAssignmentPojo();
 					info("populating pojo");
 					this.populateRoleAssignmentPojo(generated, roleAssignment);
@@ -6687,33 +6658,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					return roleAssignment;
 				}
 
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectGenerateException e) {
+			}
+			catch (EnterpriseObjectGenerateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (XmlEnterpriseObjectException e) {
+			}
+			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (ParseException e) {
+			}
+			catch (ParseException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -6728,16 +6702,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		RoleAssignmentQueryResultPojo result = new RoleAssignmentQueryResultPojo();
 		List<RoleAssignmentPojo> pojos = new java.util.ArrayList<RoleAssignmentPojo>();
 		try {
-			RoleAssignmentQuerySpecification queryObject = (RoleAssignmentQuerySpecification) getObject(Constants.MOA_ROLE_ASSIGNMENT_QUERY_SPEC);
+			RoleAssignmentQuerySpecification queryObject = (RoleAssignmentQuerySpecification) getObject(
+					Constants.MOA_ROLE_ASSIGNMENT_QUERY_SPEC);
 			RoleAssignment actionable = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
 			String authUserId = null;
-			
+
 			if (filter != null) {
 				queryObject.setRoleDN(filter.getRoleDN());
 				queryObject.setIdentityType(filter.getIdentityType());
 				queryObject.setDirectAssignOnly(this.toStringFromBoolean(filter.isDirectAssignOnly()));
 				queryObject.setUserDN(filter.getUserDN());
-				
+
 				if (filter.getUserLoggedIn() != null) {
 					authUserId = this.getAuthUserIdForHALS(filter.getUserLoggedIn());
 				}
@@ -6748,21 +6723,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info(tag + "AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			info(tag + "QuerySpec is: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<RoleAssignment> moas = actionable.query(queryObject,
-					this.getIDMRequestService());
+			List<RoleAssignment> moas = actionable.query(queryObject, this.getIDMRequestService());
 			info(tag + "got " + moas.size() + " RoleAssignments back from ESB service.");
 			for (RoleAssignment moa : moas) {
 				String roleDn = moa.getRoleDN();
 				if (roleDn != null) {
 					info(tag + "RoleAssignment.roleDn: " + roleDn);
 					if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
-						if (roleDn.indexOf("RGR_AWS") >= 0 || 
-							roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0 ||
-							roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >=0) {
-								
+						if (roleDn.indexOf("RGR_AWS") >= 0
+								|| roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0
+								|| roleDn.indexOf(Constants.ROLE_NAME_EMORY_NETWORK_ADMINS) >= 0) {
+
 							RoleAssignmentPojo pojo = new RoleAssignmentPojo();
 							this.populateRoleAssignmentPojo(moa, pojo);
 							pojos.add(pojo);
@@ -6782,27 +6756,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setFilterUsed(filter);
 			info(tag + "returning " + result.getResults().size() + " RoleAssignmentPojos to caller.");
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -6824,7 +6798,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	// grouper-specific
 	private List<RoleAssignmentSummaryPojo> getCentralAdmins_grouper() throws RpcException {
 		String tag = "[getCentralAdmins_grouper] ";
-		
+
 		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
 
 		info(tag + "getting accounts...");
@@ -6841,7 +6815,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ra_filter.setUserLoggedIn(user);
 
 			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-			info(tag + "got " + ra_result.getResults().size() + " role assignments back from getRoleAssignmentsForFilter");
+			info(tag + "got " + ra_result.getResults().size()
+					+ " role assignments back from getRoleAssignmentsForFilter");
 
 			for (RoleAssignmentPojo roleAssignment : ra_result.getResults()) {
 				if (idsAdded.contains(roleAssignment.getIdentityDN())) {
@@ -6856,25 +6831,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					continue;
 				}
 				info(tag + "roleAssignment.IdentityDN=" + roleAssignment.getIdentityDN());
-				
+
 				// get the DirectoryPerson for the roleAssignment.identityDN
 				DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 				dp_filter.setSearchString(roleAssignment.getIdentityDN());
-				
+
 				// RICE-SPECIFIC - only do this if we're using Grouper (Rice)
 				dp_filter.setKey(roleAssignment.getIdentityDN());
 				// END RICE-SPECIFIC
-				
+
 				dp_filter.setUserLoggedIn(user);
 				DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
 				if (dp_result != null) {
 					if (dp_result.getResults().size() == 0) {
 						// match not found in directory, bad...
 						info(tag + "Empty DirectoryPersonQueryResultPojo.  This is bad.");
-						throw new RpcException("No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
+						throw new RpcException(
+								"No DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
 					}
-					info(tag + "got " + dp_result.getResults().size() + 
-						" DirectoryPerson objects back for net id: " + dp_filter.getSearchString());
+					info(tag + "got " + dp_result.getResults().size() + " DirectoryPerson objects back for net id: "
+							+ dp_filter.getSearchString());
 				}
 				else {
 					// error
@@ -6882,7 +6858,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					throw new RpcException("Null DirectoryPerson returned from ESB for NetId: " + user.getPrincipal());
 				}
 				DirectoryPersonPojo directoryPerson = dp_result.getResults().get(0);
-				
+
 				// create RoleAssignmentSummaryPojo and add it to the results
 				RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
 				ra_summary.setDirectoryPerson(directoryPerson);
@@ -6893,7 +6869,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		return results;
 	}
-	
+
 	// netiq specific
 	private List<RoleAssignmentSummaryPojo> getCentralAdmins_netiq() throws RpcException {
 		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
@@ -6901,22 +6877,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		try {
 			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
-			String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+			String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName",
+					"cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 			roleDN = roleDN.replaceAll("RGR_AWS", "");
 			roleDN = roleDN.replaceAll("-" + Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, "");
-			roleDN = roleDN.replaceAll("-" + Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
+			roleDN = roleDN.replaceAll("-" + Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME,
+					Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS);
 			RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
 			info("[getCentralAdmins] filter.roleDN: " + roleDN);
 			filter.setRoleDN(roleDN);
 			filter.setIdentityType("USER");
 			filter.setDirectAssignOnly(true);
-			
+
 //			RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(filter);
 			RoleAssignmentQueryResultPojo ra_result = new RoleAssignmentQueryResultPojo();
 			try {
-				RoleAssignmentQuerySpecification queryObject = (RoleAssignmentQuerySpecification) getObject(Constants.MOA_ROLE_ASSIGNMENT_QUERY_SPEC);
+				RoleAssignmentQuerySpecification queryObject = (RoleAssignmentQuerySpecification) getObject(
+						Constants.MOA_ROLE_ASSIGNMENT_QUERY_SPEC);
 				RoleAssignment actionable = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
-	
+
 				if (filter != null) {
 					queryObject.setRoleDN(filter.getRoleDN());
 					queryObject.setIdentityType(filter.getIdentityType());
@@ -6924,53 +6903,52 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					queryObject.setUserDN(filter.getUserDN());
 					info("[getCentralAdmins] query spec: " + queryObject.toXmlString());
 				}
-	
+
 				@SuppressWarnings("unchecked")
-				List<RoleAssignment> moas = actionable.query(queryObject,
-						this.getIDMRequestService());
+				List<RoleAssignment> moas = actionable.query(queryObject, this.getIDMRequestService());
 				info("[getCentralAdmins] got " + moas.size() + " RoleAssignments back from ESB service.");
-				
+
 				for (RoleAssignment moa : moas) {
 					String roleDn = moa.getRoleDN();
 					if (roleDn != null) {
 						if (roleDn.indexOf(Constants.ROLE_NAME_EMORY_AWS_CENTRAL_ADMINS) >= 0) {
-							
+
 							RoleAssignmentPojo pojo = new RoleAssignmentPojo();
 							this.populateRoleAssignmentPojo(moa, pojo);
 							pojos.add(pojo);
 						}
 					}
 				}
-	
+
 				Collections.sort(pojos);
 				ra_result.setResults(pojos);
 				ra_result.setFilterUsed(filter);
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectQueryException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (ParseException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
-			
+
 			if (ra_result.getResults().size() > 0) {
 				for (RoleAssignmentPojo ra : ra_result.getResults()) {
 					if (ra.getExplicityIdentitiyDNs() != null) {
@@ -6978,33 +6956,36 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							String[] cns = dn.split(",");
 							String publicIdCn = cns[0];
 							String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
-							
+
 							// get directoryperson for publicid
 							// check cache to see if the DirectoryPerson is already in the cache
 							// if not, go get it.
-							DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache().get(
-									Constants.DIRECTORY_PERSON + publicId);
+							DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache()
+									.get(Constants.DIRECTORY_PERSON + publicId);
 							if (cached_dp == null) {
 								DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 								dp_filter.setKey(publicId);
 								try {
-									DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+									DirectoryPersonQueryResultPojo dp_result = this
+											.getDirectoryPersonsForFilter(dp_filter);
 									if (dp_result.getResults().size() > 0) {
 										cached_dp = dp_result.getResults().get(0);
 										// add to cache
 										Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
 									}
 									else {
-										throw new RpcException("Could not find a DirectoryPerson for the public id: " + publicId);
+										throw new RpcException(
+												"Could not find a DirectoryPerson for the public id: " + publicId);
 									}
 								}
 								catch (RpcException e) {
-									info("Error retrieving directory information for " + publicId + " processing will continue without it.");
+									info("Error retrieving directory information for " + publicId
+											+ " processing will continue without it.");
 									cached_dp = new DirectoryPersonPojo();
 									cached_dp.setKey(publicId);
 								}
 							}
-							
+
 							// create RoleAssignmentSummaryPojo and add it to the results
 							RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
 							ra_summary.setDirectoryPerson(cached_dp);
@@ -7018,7 +6999,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// error
 				info("[getCentralAdmins] Could not find a RoleAssignment for the filter: " + filter.toString());
 			}
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -7026,7 +7007,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		return results;
 	}
-
 
 	@Override
 	public List<RoleAssignmentSummaryPojo> getRoleAssignmentsForAccounts(List<String> accountIds) throws RpcException {
@@ -7046,12 +7026,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// get admin role assignments for this account
 		// for each role assignment
-		//	- get the public id from the ExplicitIdentitiesDN/distinguishedname
-		//	- get directoryperson for the public id
-		//	- create a RoleAssignmentSummaryPojo using the roleassignment and directory person
-		//	- add that to the results list
+		// - get the public id from the ExplicitIdentitiesDN/distinguishedname
+		// - get directoryperson for the public id
+		// - create a RoleAssignmentSummaryPojo using the roleassignment and directory
+		// person
+		// - add that to the results list
 
-		String tag = "[getRoleAssignmentsForAccount "; 
+		String tag = "[getRoleAssignmentsForAccount ";
 		List<RoleAssignmentSummaryPojo> results = new java.util.ArrayList<RoleAssignmentSummaryPojo>();
 		if (accountId == null) {
 			return results;
@@ -7060,20 +7041,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties roleAssignmentProps = getAppConfig().getProperties(ROLE_ASSIGNMENT_PROPERTIES);
 			if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_NETIQ)) {
 				CustomRoleQueryFilterPojo cr_filter = new CustomRoleQueryFilterPojo();
-				cr_filter.setAccountId(accountId);				
+				cr_filter.setAccountId(accountId);
 				List<CustomRolePojo> customRoles = this.getCustomRolesForFilter(cr_filter).getResults();
-				
+
 				List<String> roleNamesToCheck = new java.util.ArrayList<String>();
 				roleNamesToCheck.add(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 				roleNamesToCheck.add(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
-				
+
 				for (CustomRolePojo cr : customRoles) {
 					roleNamesToCheck.add(cr.getRoleName());
 				}
-				
+
 //				for (String roleName : Constants.ACCOUNT_ROLE_NAMES) {
 				for (String roleName : roleNamesToCheck) {
-					String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName", "cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
+					String roleDN = roleAssignmentProps.getProperty("RoleDNDistinguishedName",
+							"cn=RGR_AWS-AWS_ACCOUNT_NUMBER-EMORY_ROLE_NAME,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev");
 					roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_AWS_ACCOUNT_NUMBER, accountId);
 					roleDN = roleDN.replaceAll(Constants.REPLACEMENT_VAR_EMORY_ROLE_NAME, roleName);
 					RoleAssignmentQueryFilterPojo filter = new RoleAssignmentQueryFilterPojo();
@@ -7089,34 +7071,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 										String[] cns = dn.split(",");
 										String publicIdCn = cns[0];
 										String publicId = publicIdCn.substring(publicIdCn.indexOf("=") + 1);
-										
+
 										// get directoryperson for publicid
 										// check cache to see if the DirectoryPerson is already in the cache
 										// if not, go get it.
-										DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache().get(
-												Constants.DIRECTORY_PERSON + publicId);
+										DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache()
+												.get(Constants.DIRECTORY_PERSON + publicId);
 										if (cached_dp == null) {
 											DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 											dp_filter.setKey(publicId);
-											DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+											DirectoryPersonQueryResultPojo dp_result = this
+													.getDirectoryPersonsForFilter(dp_filter);
 											if (dp_result.getResults().size() > 0) {
 												cached_dp = dp_result.getResults().get(0);
 												// add to cache
 												Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
 											}
 											else {
-												throw new RpcException("Could not find a DirectoryPerson for the public id: " + publicId);
+												throw new RpcException(
+														"Could not find a DirectoryPerson for the public id: "
+																+ publicId);
 											}
 										}
 										else {
 //											info("[getAdminRoleAssignmentsForAccount] got DirectoryPerson (" + publicId + ") from cache.");
 										}
-										
+
 										// create RoleAssignmentSummaryPojo and add it to the results
 										RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
 										ra_summary.setDirectoryPerson(cached_dp);
 										ra_summary.setRoleAssignment(ra);
-										info("[getRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
+										info("[getRoleAssignmentsForAccount] adding RoleAssignmentSummary: "
+												+ ra_summary.toString());
 										results.add(ra_summary);
 									}
 								}
@@ -7136,24 +7122,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			else if (this.getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 				// we'll externalize this eventually
-				String[] accountRoleNames = new String[] {
-						Constants.ROLE_NAME_GROUPER_ADMIN,
-						Constants.ROLE_NAME_GROUPER_AUDITOR
-				};
+				String[] accountRoleNames = new String[] { Constants.ROLE_NAME_GROUPER_ADMIN,
+						Constants.ROLE_NAME_GROUPER_AUDITOR };
 				for (String roleName : accountRoleNames) {
 					info(tag + "Processing " + roleName + " role assignments for account: " + accountId);
 					RoleAssignmentQueryFilterPojo ra_filter = new RoleAssignmentQueryFilterPojo();
 					ra_filter.setRoleDN(accountId + ":" + roleName);
 
 					RoleAssignmentQueryResultPojo ra_result = this.getRoleAssignmentsForFilter(ra_filter);
-					info(tag + "got " + ra_result.getResults().size() + " role assignments back from getRoleAssignmentsForFilter");
+					info(tag + "got " + ra_result.getResults().size()
+							+ " role assignments back from getRoleAssignmentsForFilter");
 					if (ra_result != null) {
 						if (ra_result.getResults().size() > 0) {
 							for (RoleAssignmentPojo ra : ra_result.getResults()) {
-								if (ra.getRoleDN().toLowerCase().indexOf(":" + Constants.ROLE_NAME_GROUPER_ADMIN) >= 0) {
+								if (ra.getRoleDN().toLowerCase()
+										.indexOf(":" + Constants.ROLE_NAME_GROUPER_ADMIN) >= 0) {
 									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
 								}
-								else if (ra.getRoleDN().toLowerCase().indexOf(":" + Constants.ROLE_NAME_GROUPER_AUDITOR) >= 0) {
+								else if (ra.getRoleDN().toLowerCase()
+										.indexOf(":" + Constants.ROLE_NAME_GROUPER_AUDITOR) >= 0) {
 									ra.setRoleDN(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR);
 								}
 								// get directoryperson for publicid
@@ -7161,33 +7148,37 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 								// if not, go get it.
 								// NOTE: this is rice specific
 								String publicId = ra.getIdentityDN();
-								DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache().get(
-										Constants.DIRECTORY_PERSON + publicId);
+								DirectoryPersonPojo cached_dp = (DirectoryPersonPojo) Cache.getCache()
+										.get(Constants.DIRECTORY_PERSON + publicId);
 								if (cached_dp == null) {
 									if (publicId.length() > 10) {
-										info(tag + " skipping public id: " + publicId + " it doesn't appear to be valid");
+										info(tag + " skipping public id: " + publicId
+												+ " it doesn't appear to be valid");
 										continue;
 									}
 									else {
 										DirectoryPersonQueryFilterPojo dp_filter = new DirectoryPersonQueryFilterPojo();
 										dp_filter.setKey(publicId);
-										DirectoryPersonQueryResultPojo dp_result = this.getDirectoryPersonsForFilter(dp_filter);
+										DirectoryPersonQueryResultPojo dp_result = this
+												.getDirectoryPersonsForFilter(dp_filter);
 										if (dp_result.getResults().size() > 0) {
 											cached_dp = dp_result.getResults().get(0);
 											// add to cache
 											Cache.getCache().put(Constants.DIRECTORY_PERSON + publicId, cached_dp);
 										}
 										else {
-											throw new RpcException("Could not find a DirectoryPerson for the public id: " + publicId);
+											throw new RpcException(
+													"Could not find a DirectoryPerson for the public id: " + publicId);
 										}
 									}
 								}
-								
+
 								// create RoleAssignmentSummaryPojo and add it to the results
 								RoleAssignmentSummaryPojo ra_summary = new RoleAssignmentSummaryPojo();
 								ra_summary.setDirectoryPerson(cached_dp);
 								ra_summary.setRoleAssignment(ra);
-								info("[getRoleAssignmentsForAccount] adding RoleAssignmentSummary: " + ra_summary.toString());
+								info("[getRoleAssignmentsForAccount] adding RoleAssignmentSummary: "
+										+ ra_summary.toString());
 								results.add(ra_summary);
 							}
 						}
@@ -7203,7 +7194,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //					}
 				}
 			}
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -7219,40 +7210,37 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
 				info("deleting ROLE Assignment record on the server...");
 				RoleAssignment moa = (RoleAssignment) getObject(Constants.MOA_ROLE_ASSIGNMENT);
 				info("populating moa");
 				this.populateRoleAssignmentMoa(roleAssignment, moa);
-				
+
 				/*
-				<DeleteData>
-					<DeleteAction type="Delete"/>
-					<RoleAssignment>
-						<RoleAssignmentActionType>revoke</RoleAssignmentActionType>
-						<RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
-						<IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN>
-						<Reason>For Testing</Reason>
-						<RoleDNs>
-							<DistinguishedName>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=Servers,o=EmoryDev</DistinguishedName>
-						</RoleDNs>
-					</RoleAssignment>
-				</DeleteData>
+				 * <DeleteData> <DeleteAction type="Delete"/> <RoleAssignment>
+				 * <RoleAssignmentActionType>revoke</RoleAssignmentActionType>
+				 * <RoleAssignmentType>USER_TO_ROLE</RoleAssignmentType>
+				 * <IdentityDN>cn=P4877359,ou=Users,ou=Data,o=EmoryDev</IdentityDN> <Reason>For
+				 * Testing</Reason> <RoleDNs>
+				 * <DistinguishedName>cn=RGR_AWS-308833937534-Administrator,cn=Level10,cn=
+				 * RoleDefs,cn=RoleConfig,cn=AppConfig,cn=UserApplication,cn=DRIVERSET01,ou=
+				 * Servers,o=EmoryDev</DistinguishedName> </RoleDNs> </RoleAssignment>
+				 * </DeleteData>
 				 */
 				moa.setRoleAssignmentActionType("revoke");
-				moa.setReason("Removed using VPCP App by (" + getUserLoggedIn(false).getEppn() +")");
-				
+				moa.setReason("Removed using VPCP App by (" + getUserLoggedIn(false).getEppn() + ")");
+
 				if (getIdmSystemName().equalsIgnoreCase(IDM_SYSTEM_GROUPER)) {
 					RoleDNs roleDns = moa.newRoleDNs();
 					if (roleAssignment.getRoleDN().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN)) {
 						moa.setRoleDN(accountId + ":" + Constants.ROLE_NAME_GROUPER_ADMIN);
-						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_ADMIN); 
+						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_ADMIN);
 					}
 					else if (roleAssignment.getRoleDN().equalsIgnoreCase(Constants.ROLE_NAME_RHEDCLOUD_AUDITOR)) {
 						moa.setRoleDN(accountId + ":" + Constants.ROLE_NAME_GROUPER_AUDITOR);
-						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_AUDITOR); 
+						roleDns.addDistinguishedName(accountId + ":" + Constants.ROLE_NAME_GROUPER_AUDITOR);
 					}
 					moa.setRoleDNs(roleDns);
 				}
@@ -7262,42 +7250,44 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("RoleAssignment.delete is complete...");
 
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
+			}
+			catch (EnterpriseObjectDeleteException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} catch (XmlEnterpriseObjectException e) {
+			}
+			catch (XmlEnterpriseObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
@@ -7305,345 +7295,230 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	/*
-	private void populateFirewallExceptionRequestMoa(FirewallExceptionRequestPojo pojo,
-			FirewallExceptionRequest moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	 * private void populateFirewallExceptionRequestMoa(FirewallExceptionRequestPojo
+	 * pojo, FirewallExceptionRequest moa) throws EnterpriseFieldException,
+	 * IllegalArgumentException, SecurityException, IllegalAccessException,
+	 * InvocationTargetException, NoSuchMethodException,
+	 * EnterpriseConfigurationObjectException {
+	 * 
+	 * moa.setSystemId(pojo.getSystemId()); moa.setUserNetID(pojo.getUserNetId());
+	 * moa.setApplicationName(pojo.getApplicationName());
+	 * moa.setSourceOutsideEmory(pojo.getIsSourceOutsideEmory());
+	 * moa.setTimeRule(pojo.getTimeRule()); if (pojo.getValidUntilDate() != null) {
+	 * org.openeai.moa.objects.resources.Date validUntilDate =
+	 * moa.newValidUntilDate(); this.populateDate(validUntilDate,
+	 * pojo.getValidUntilDate()); moa.setValidUntilDate(validUntilDate); }
+	 * moa.setSourceIpAddresses(pojo.getSourceIp());
+	 * moa.setDestinationIpAddresses(pojo.getDestinationIp());
+	 * moa.setPorts(pojo.getPorts());
+	 * moa.setBusinessReason(pojo.getBusinessReason());
+	 * moa.setPatched(pojo.getIsPatched());
+	 * moa.setDefaultPasswdChanged(pojo.getIsDefaultPasswdChanged());
+	 * moa.setAppConsoleACLed(pojo.getIsAppConsoleACLed());
+	 * moa.setHardened(pojo.getIsHardened());
+	 * moa.setPatchingPlan(pojo.getPatchingPlan()); if (pojo.getCompliance().size()
+	 * > 0) { for (String compliance : pojo.getCompliance()) {
+	 * moa.addCompliance(compliance); } }
+	 * moa.setOtherCompliance(pojo.getOtherCompliance());
+	 * moa.setSensitiveDataDesc(pojo.getSensitiveDataDesc());
+	 * moa.setLocalFirewallRules(pojo.getLocalFirewallRules());
+	 * moa.setDefaultDenyZone(pojo.getIsDefaultDenyZone()); for (String tag :
+	 * pojo.getTags()) { moa.addTag(tag); }
+	 * moa.setRequestNumber(pojo.getRequestNumber());
+	 * moa.setRequestState(pojo.getRequestState());
+	 * moa.setRequestItemNumber(pojo.getRequestItemNumber());
+	 * moa.setRequestItemState(pojo.getRequestItemState());
+	 * moa.setTechContact(pojo.getTechnicalContact()); // this.setMoaCreateInfo(moa,
+	 * pojo); // this.setMoaUpdateInfo(moa, pojo); }
+	 * 
+	 * @SuppressWarnings("unchecked") private void
+	 * populateFirewallExceptionRequestPojo(FirewallExceptionRequest moa,
+	 * FirewallExceptionRequestPojo pojo) throws XmlEnterpriseObjectException,
+	 * ParseException {
+	 * 
+	 * pojo.setSystemId(moa.getSystemId()); pojo.setUserNetId(moa.getUserNetID());
+	 * pojo.setApplicationName(moa.getApplicationName());
+	 * pojo.setIsSourceOutsideEmory(moa.getSourceOutsideEmory());
+	 * pojo.setTimeRule(moa.getTimeRule()); if (moa.getValidUntilDate() != null) {
+	 * pojo.setValidUntilDate(this.toDateFromDate(moa.getValidUntilDate())); }
+	 * pojo.setSourceIp(moa.getSourceIpAddresses());
+	 * pojo.setDestinationIp(moa.getDestinationIpAddresses());
+	 * pojo.setPorts(moa.getPorts());
+	 * pojo.setBusinessReason(moa.getBusinessReason());
+	 * pojo.setIsPatched(moa.getPatched());
+	 * pojo.setIsDefaultPasswdChanged(moa.getDefaultPasswdChanged());
+	 * pojo.setIsAppConsoleACLed(moa.getAppConsoleACLed());
+	 * pojo.setIsHardened(moa.getHardened());
+	 * pojo.setPatchingPlan(moa.getPatchingPlan()); for (String compliance :
+	 * (List<String>) moa.getCompliance()) { pojo.getCompliance().add(compliance); }
+	 * pojo.setOtherCompliance(moa.getOtherCompliance());
+	 * pojo.setSensitiveDataDesc(moa.getSensitiveDataDesc());
+	 * pojo.setLocalFirewallRules(moa.getLocalFirewallRules());
+	 * pojo.setIsDefaultDenyZone(moa.getDefaultDenyZone()); for (String tag :
+	 * (List<String>) moa.getTag()) { pojo.getTags().add(tag); }
+	 * pojo.setRequestNumber(moa.getRequestNumber());
+	 * pojo.setRequestState(moa.getRequestState());
+	 * pojo.setRequestItemNumber(moa.getRequestItemNumber());
+	 * pojo.setRequestItemState(moa.getRequestItemState());
+	 * pojo.setTechnicalContact(moa.getTechContact()); }
+	 * 
+	 * @Override public FirewallExceptionRequestQueryResultPojo
+	 * getFirewallExceptionRequestsForFilter(
+	 * FirewallExceptionRequestQueryFilterPojo filter) throws RpcException {
+	 * 
+	 * FirewallExceptionRequestQueryResultPojo result = new
+	 * FirewallExceptionRequestQueryResultPojo(); List<FirewallExceptionRequestPojo>
+	 * pojos = new java.util.ArrayList<FirewallExceptionRequestPojo>(); try {
+	 * FirewallExceptionRequestQuerySpecification queryObject =
+	 * (FirewallExceptionRequestQuerySpecification)
+	 * getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST_QUERY_SPEC);
+	 * FirewallExceptionRequest actionable = (FirewallExceptionRequest)
+	 * getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+	 * 
+	 * if (filter != null) { queryObject.setSystemId(filter.getSystemId());
+	 * queryObject.setUserNetID(filter.getUserNetId());
+	 * queryObject.setApplicationName(filter.getApplicationName());
+	 * queryObject.setSourceOutsideEmory(filter.getIsSourceOutsideEmory());
+	 * queryObject.setTimeRule(filter.getTimeRule()); if (filter.getValidUntilDate()
+	 * != null) { org.openeai.moa.objects.resources.Date validUntilDate =
+	 * queryObject.newValidUntilDate(); this.populateDate(validUntilDate,
+	 * filter.getValidUntilDate()); queryObject.setValidUntilDate(validUntilDate); }
+	 * queryObject.setSourceIpAddresses(filter.getSourceIp());
+	 * queryObject.setDestinationIpAddresses(filter.getDestinationIp());
+	 * queryObject.setPorts(filter.getPorts());
+	 * queryObject.setBusinessReason(filter.getBusinessReason());
+	 * queryObject.setPatched(filter.getIsPatched());
+	 * queryObject.setDefaultPasswdChanged(filter.getIsDefaultPasswdChanged());
+	 * queryObject.setAppConsoleACLed(filter.getIsAppConsoleACLed());
+	 * queryObject.setHardened(filter.getIsHardened());
+	 * queryObject.setPatchingPlan(filter.getPatchingPlan()); if
+	 * (filter.getCompliance().size() > 0) { for (String compliance :
+	 * filter.getCompliance()) { queryObject.addCompliance(compliance); } }
+	 * queryObject.setOtherCompliance(filter.getOtherCompliance());
+	 * queryObject.setSensitiveDataDesc(filter.getSensitiveDataDesc());
+	 * queryObject.setLocalFirewallRules(filter.getLocalFirewallRules());
+	 * queryObject.setDefaultDenyZone(filter.getIsDefaultDenyZone()); for (String
+	 * tag : filter.getTags()) { queryObject.addTag(tag); }
+	 * queryObject.setRequestNumber(filter.getRequestNumber());
+	 * queryObject.setRequestState(filter.getRequestState());
+	 * queryObject.setRequestItemNumber(filter.getRequestItemNumber());
+	 * queryObject.setRequestItemState(filter.getRequestItemState());
+	 * queryObject.setTechContact(filter.getTechnicalContact()); }
+	 * 
+	 * String authUserId = this.getAuthUserIdForHALS();
+	 * actionable.getAuthentication().setAuthUserId(authUserId);
+	 * info("[getFirewallExceptionRequestsForFilter] AuthUserId is: " +
+	 * actionable.getAuthentication().getAuthUserId());
+	 * 
+	 * info("[getFirewallExceptionRequestsForFilter] query spec is: " +
+	 * queryObject.toXmlString());
+	 * 
+	 * @SuppressWarnings("unchecked") List<FirewallExceptionRequest> moas =
+	 * actionable.query(queryObject, this.getServiceNowRequestService()); if (moas
+	 * != null) { info("[getFirewallExceptionRequestsForFilter] got " + moas.size()
+	 * + " FirewallExceptionRequest objects back from ESB."); } for
+	 * (FirewallExceptionRequest moa : moas) { FirewallExceptionRequestPojo pojo =
+	 * new FirewallExceptionRequestPojo(); FirewallExceptionRequestPojo baseline =
+	 * new FirewallExceptionRequestPojo();
+	 * this.populateFirewallExceptionRequestPojo(moa, pojo);
+	 * this.populateFirewallExceptionRequestPojo(moa, baseline);
+	 * pojo.setBaseline(baseline); pojos.add(pojo); }
+	 * 
+	 * Collections.sort(pojos); result.setResults(pojos);
+	 * result.setFilterUsed(filter); return result; } catch
+	 * (EnterpriseConfigurationObjectException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } catch (EnterpriseFieldException e) { e.printStackTrace();
+	 * throw new RpcException(e); } catch (EnterpriseObjectQueryException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } catch (JMSException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } catch
+	 * (XmlEnterpriseObjectException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } catch (ParseException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } }
+	 * 
+	 * @Override public FirewallExceptionRequestPojo
+	 * createFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws
+	 * RpcException {
+	 * 
+	 * rule.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
+	 * 
+	 * if (!useEsbService) { return null; } else { try {
+	 * info("creating FirewallExceptionRequest record on the server...");
+	 * FirewallExceptionRequest moa = (FirewallExceptionRequest)
+	 * getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST); info("populating moa");
+	 * this.populateFirewallExceptionRequestMoa(rule, moa);
+	 * 
+	 * 
+	 * info("doing the FirewallExceptionRequest.create...");
+	 * info("FirewallRuleException moa is: " + moa.toXmlString());
+	 * this.doCreate(moa, getServiceNowRequestService());
+	 * info("FirewallExceptionRequest.create is complete...");
+	 * 
+	 * // Cache.getCache().remove(Constants.CIDR +
+	 * this.getUserLoggedIn().getEppn()); return rule; } catch
+	 * (EnterpriseConfigurationObjectException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } catch (EnterpriseFieldException e) { e.printStackTrace();
+	 * throw new RpcException(e); } catch (IllegalArgumentException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } catch (SecurityException e)
+	 * { e.printStackTrace(); throw new RpcException(e); } catch
+	 * (IllegalAccessException e) { e.printStackTrace(); throw new RpcException(e);
+	 * } catch (InvocationTargetException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } catch (NoSuchMethodException e) { e.printStackTrace();
+	 * throw new RpcException(e); } catch (EnterpriseObjectCreateException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } catch (JMSException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } catch
+	 * (XmlEnterpriseObjectException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } } }
+	 * 
+	 * @Override public FirewallExceptionRequestPojo
+	 * updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws
+	 * RpcException {
+	 * 
+	 * rule.setUpdateInfo(this.getCachedUser().getPublicId()); try {
+	 * info("updating FirewallExceptionRequest on the server...");
+	 * FirewallExceptionRequest newData = (FirewallExceptionRequest)
+	 * getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST); FirewallExceptionRequest
+	 * baselineData = (FirewallExceptionRequest)
+	 * getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
+	 * 
+	 * info("populating newData..."); populateFirewallExceptionRequestMoa(rule,
+	 * newData);
+	 * 
+	 * info("populating baselineData...");
+	 * populateFirewallExceptionRequestMoa(rule.getBaseline(), baselineData);
+	 * newData.setBaseline(baselineData);
+	 * 
+	 * info("doing the update..."); doUpdate(newData,
+	 * getServiceNowRequestService()); info("update is complete..."); } catch
+	 * (Throwable t) { t.printStackTrace(); throw new RpcException(t); } return
+	 * rule; }
+	 * 
+	 * @Override public void
+	 * deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws
+	 * RpcException { if (!useEsbService) { return; } else { try {
+	 * info("deleting FirewallExceptionRequest record on the server...");
+	 * FirewallExceptionRequest moa = (FirewallExceptionRequest)
+	 * getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST); info("populating moa");
+	 * this.populateFirewallExceptionRequestMoa(rule, moa);
+	 * 
+	 * 
+	 * info("doing the FirewallExceptionRequest.delete..."); this.doDelete(moa,
+	 * getServiceNowRequestService());
+	 * info("FirewallExceptionRequest.delete is complete...");
+	 * 
+	 * return; } catch (EnterpriseConfigurationObjectException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } catch
+	 * (EnterpriseFieldException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } catch (IllegalArgumentException e) { e.printStackTrace();
+	 * throw new RpcException(e); } catch (SecurityException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } catch
+	 * (IllegalAccessException e) { e.printStackTrace(); throw new RpcException(e);
+	 * } catch (InvocationTargetException e) { e.printStackTrace(); throw new
+	 * RpcException(e); } catch (NoSuchMethodException e) { e.printStackTrace();
+	 * throw new RpcException(e); } catch (JMSException e) { e.printStackTrace();
+	 * throw new RpcException(e); } catch (EnterpriseObjectDeleteException e) {
+	 * e.printStackTrace(); throw new RpcException(e); } } }
+	 */
 
-		moa.setSystemId(pojo.getSystemId());
-		moa.setUserNetID(pojo.getUserNetId());
-		moa.setApplicationName(pojo.getApplicationName());
-		moa.setSourceOutsideEmory(pojo.getIsSourceOutsideEmory());
-		moa.setTimeRule(pojo.getTimeRule());
-		if (pojo.getValidUntilDate() != null) {
-			org.openeai.moa.objects.resources.Date validUntilDate = moa.newValidUntilDate();
-			this.populateDate(validUntilDate, pojo.getValidUntilDate());
-			moa.setValidUntilDate(validUntilDate);
-		}
-		moa.setSourceIpAddresses(pojo.getSourceIp());
-		moa.setDestinationIpAddresses(pojo.getDestinationIp());
-		moa.setPorts(pojo.getPorts());
-		moa.setBusinessReason(pojo.getBusinessReason());
-		moa.setPatched(pojo.getIsPatched());
-		moa.setDefaultPasswdChanged(pojo.getIsDefaultPasswdChanged());
-		moa.setAppConsoleACLed(pojo.getIsAppConsoleACLed());
-		moa.setHardened(pojo.getIsHardened());
-		moa.setPatchingPlan(pojo.getPatchingPlan());
-		if (pojo.getCompliance().size() > 0) {
-			for (String compliance : pojo.getCompliance()) {
-				moa.addCompliance(compliance);
-			}
-		}
-		moa.setOtherCompliance(pojo.getOtherCompliance());
-		moa.setSensitiveDataDesc(pojo.getSensitiveDataDesc());
-		moa.setLocalFirewallRules(pojo.getLocalFirewallRules());
-		moa.setDefaultDenyZone(pojo.getIsDefaultDenyZone());
-		for (String tag : pojo.getTags()) {
-			moa.addTag(tag);
-		}
-		moa.setRequestNumber(pojo.getRequestNumber());
-		moa.setRequestState(pojo.getRequestState());
-		moa.setRequestItemNumber(pojo.getRequestItemNumber());
-		moa.setRequestItemState(pojo.getRequestItemState());
-		moa.setTechContact(pojo.getTechnicalContact());
-//		this.setMoaCreateInfo(moa, pojo);
-//		this.setMoaUpdateInfo(moa, pojo);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void populateFirewallExceptionRequestPojo(FirewallExceptionRequest moa,
-			FirewallExceptionRequestPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-	
-		pojo.setSystemId(moa.getSystemId());
-		pojo.setUserNetId(moa.getUserNetID());
-		pojo.setApplicationName(moa.getApplicationName());
-		pojo.setIsSourceOutsideEmory(moa.getSourceOutsideEmory());
-		pojo.setTimeRule(moa.getTimeRule());
-		if (moa.getValidUntilDate() != null) {
-			pojo.setValidUntilDate(this.toDateFromDate(moa.getValidUntilDate()));
-		}
-		pojo.setSourceIp(moa.getSourceIpAddresses());
-		pojo.setDestinationIp(moa.getDestinationIpAddresses());
-		pojo.setPorts(moa.getPorts());
-		pojo.setBusinessReason(moa.getBusinessReason());
-		pojo.setIsPatched(moa.getPatched());
-		pojo.setIsDefaultPasswdChanged(moa.getDefaultPasswdChanged());
-		pojo.setIsAppConsoleACLed(moa.getAppConsoleACLed());
-		pojo.setIsHardened(moa.getHardened());
-		pojo.setPatchingPlan(moa.getPatchingPlan());
-		for (String compliance : (List<String>) moa.getCompliance()) {
-			pojo.getCompliance().add(compliance);
-		}
-		pojo.setOtherCompliance(moa.getOtherCompliance());
-		pojo.setSensitiveDataDesc(moa.getSensitiveDataDesc());
-		pojo.setLocalFirewallRules(moa.getLocalFirewallRules());
-		pojo.setIsDefaultDenyZone(moa.getDefaultDenyZone());
-		for (String tag : (List<String>) moa.getTag()) {
-			pojo.getTags().add(tag);
-		}
-		pojo.setRequestNumber(moa.getRequestNumber());
-		pojo.setRequestState(moa.getRequestState());
-		pojo.setRequestItemNumber(moa.getRequestItemNumber());
-		pojo.setRequestItemState(moa.getRequestItemState());
-		pojo.setTechnicalContact(moa.getTechContact());
-	}
-
-	@Override
-	public FirewallExceptionRequestQueryResultPojo getFirewallExceptionRequestsForFilter(
-			FirewallExceptionRequestQueryFilterPojo filter) throws RpcException {
-
-		FirewallExceptionRequestQueryResultPojo result = new FirewallExceptionRequestQueryResultPojo();
-		List<FirewallExceptionRequestPojo> pojos = new java.util.ArrayList<FirewallExceptionRequestPojo>();
-		try {
-			FirewallExceptionRequestQuerySpecification queryObject = (FirewallExceptionRequestQuerySpecification) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST_QUERY_SPEC);
-			FirewallExceptionRequest actionable = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
-
-			if (filter != null) {
-				queryObject.setSystemId(filter.getSystemId());
-				queryObject.setUserNetID(filter.getUserNetId());
-				queryObject.setApplicationName(filter.getApplicationName());
-				queryObject.setSourceOutsideEmory(filter.getIsSourceOutsideEmory());
-				queryObject.setTimeRule(filter.getTimeRule());
-				if (filter.getValidUntilDate() != null) {
-					org.openeai.moa.objects.resources.Date validUntilDate = queryObject.newValidUntilDate();
-					this.populateDate(validUntilDate, filter.getValidUntilDate());
-					queryObject.setValidUntilDate(validUntilDate);
-				}
-				queryObject.setSourceIpAddresses(filter.getSourceIp());
-				queryObject.setDestinationIpAddresses(filter.getDestinationIp());
-				queryObject.setPorts(filter.getPorts());
-				queryObject.setBusinessReason(filter.getBusinessReason());
-				queryObject.setPatched(filter.getIsPatched());
-				queryObject.setDefaultPasswdChanged(filter.getIsDefaultPasswdChanged());
-				queryObject.setAppConsoleACLed(filter.getIsAppConsoleACLed());
-				queryObject.setHardened(filter.getIsHardened());
-				queryObject.setPatchingPlan(filter.getPatchingPlan());
-				if (filter.getCompliance().size() > 0) {
-					for (String compliance : filter.getCompliance()) {
-						queryObject.addCompliance(compliance);
-					}
-				}
-				queryObject.setOtherCompliance(filter.getOtherCompliance());
-				queryObject.setSensitiveDataDesc(filter.getSensitiveDataDesc());
-				queryObject.setLocalFirewallRules(filter.getLocalFirewallRules());
-				queryObject.setDefaultDenyZone(filter.getIsDefaultDenyZone());
-				for (String tag : filter.getTags()) {
-					queryObject.addTag(tag);
-				}
-				queryObject.setRequestNumber(filter.getRequestNumber());
-				queryObject.setRequestState(filter.getRequestState());
-				queryObject.setRequestItemNumber(filter.getRequestItemNumber());
-				queryObject.setRequestItemState(filter.getRequestItemState());
-				queryObject.setTechContact(filter.getTechnicalContact());
-			}
-
-			String authUserId = this.getAuthUserIdForHALS();
-			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getFirewallExceptionRequestsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
-			info("[getFirewallExceptionRequestsForFilter] query spec is: " + queryObject.toXmlString());
-			
-			@SuppressWarnings("unchecked")
-			List<FirewallExceptionRequest> moas = actionable.query(queryObject,
-					this.getServiceNowRequestService());
-			if (moas != null) {
-				info("[getFirewallExceptionRequestsForFilter] got " + moas.size() + " FirewallExceptionRequest objects back from ESB.");
-			}
-			for (FirewallExceptionRequest moa : moas) {
-				FirewallExceptionRequestPojo pojo = new FirewallExceptionRequestPojo();
-				FirewallExceptionRequestPojo baseline = new FirewallExceptionRequestPojo();
-				this.populateFirewallExceptionRequestPojo(moa, pojo);
-				this.populateFirewallExceptionRequestPojo(moa, baseline);
-				pojo.setBaseline(baseline);
-				pojos.add(pojo);
-			}
-
-			Collections.sort(pojos);
-			result.setResults(pojos);
-			result.setFilterUsed(filter);
-			return result;
-		} 
-		catch (EnterpriseConfigurationObjectException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (EnterpriseFieldException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (EnterpriseObjectQueryException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (JMSException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (XmlEnterpriseObjectException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		} 
-		catch (ParseException e) {
-			e.printStackTrace();
-			throw new RpcException(e);
-		}
-	}
-
-	@Override
-	public FirewallExceptionRequestPojo createFirewallExceptionRequest(FirewallExceptionRequestPojo rule)
-			throws RpcException {
-
-		rule.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-
-		if (!useEsbService) {
-			return null;
-		} 
-		else {
-			try {
-				info("creating FirewallExceptionRequest record on the server...");
-				FirewallExceptionRequest moa = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
-				info("populating moa");
-				this.populateFirewallExceptionRequestMoa(rule, moa);
-
-				
-				info("doing the FirewallExceptionRequest.create...");
-				info("FirewallRuleException moa is: " + moa.toXmlString());
-				this.doCreate(moa, getServiceNowRequestService());
-				info("FirewallExceptionRequest.create is complete...");
-
-//				Cache.getCache().remove(Constants.CIDR + this.getUserLoggedIn().getEppn());
-				return rule;
-			} 
-			catch (EnterpriseConfigurationObjectException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (EnterpriseFieldException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (SecurityException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (IllegalAccessException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (InvocationTargetException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (EnterpriseObjectCreateException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (JMSException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} catch (XmlEnterpriseObjectException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			}
-		}
-	}
-
-	@Override
-	public FirewallExceptionRequestPojo updateFirewallExceptionRequest(FirewallExceptionRequestPojo rule)
-			throws RpcException {
-
-		rule.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating FirewallExceptionRequest on the server...");
-            FirewallExceptionRequest newData = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
-            FirewallExceptionRequest baselineData = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
-
-            info("populating newData...");
-            populateFirewallExceptionRequestMoa(rule, newData);
-
-            info("populating baselineData...");
-            populateFirewallExceptionRequestMoa(rule.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
-
-            info("doing the update...");
-            doUpdate(newData, getServiceNowRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
-		return rule;
-	}
-
-	@Override
-	public void deleteFirewallExceptionRequest(FirewallExceptionRequestPojo rule) throws RpcException {
-		if (!useEsbService) {
-			return;
-		} 
-		else {
-			try {
-				info("deleting FirewallExceptionRequest record on the server...");
-				FirewallExceptionRequest moa = (FirewallExceptionRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REQUEST);
-				info("populating moa");
-				this.populateFirewallExceptionRequestMoa(rule, moa);
-
-				
-				info("doing the FirewallExceptionRequest.delete...");
-				this.doDelete(moa, getServiceNowRequestService());
-				info("FirewallExceptionRequest.delete is complete...");
-
-				return;
-			} 
-			catch (EnterpriseConfigurationObjectException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (EnterpriseFieldException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (SecurityException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (IllegalAccessException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (InvocationTargetException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} 
-			catch (JMSException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			} catch (EnterpriseObjectDeleteException e) {
-				e.printStackTrace();
-				throw new RpcException(e);
-			}
-		}
-	}
-	*/
-	
 	@Override
 	public ReleaseInfo getReleaseInfo() throws RpcException {
 		ReleaseInfo ri = new ReleaseInfo();
@@ -7656,15 +7531,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //	public String ping() {
 //		return "VpcpServiceImpl-PING";
 //	}
-	
+
 	@GET
 //	@Path("/check")
 	public String getVpcpHealthCheck() {
 		info("getVpcpHealthCheck...");
-		
+
 		try {
 			generalProps = getAppConfig().getProperties(GENERAL_PROPERTIES);
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException("Error");
 		}
@@ -7675,36 +7551,34 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		info("AWS service map: " + svcSummary.getServiceMap());
 		info("appConfig is: " + appConfig);
 		info("AppConfig stats: " + this.getAppConfig().dumpStats());
-		
 
 		try {
-			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(Constants.MOA_ACCOUNT_QUERY_SPEC);
+			AccountQuerySpecification queryObject = (AccountQuerySpecification) getObject(
+					Constants.MOA_ACCOUNT_QUERY_SPEC);
 			Account actionable = (Account) getObject(Constants.MOA_ACCOUNT);
-			ProducerPool l_awsProducerPool = (ProducerPool) getAppConfig().getObject(
-					AWS_SERVICE_NAME);
+			ProducerPool l_awsProducerPool = (ProducerPool) getAppConfig().getObject(AWS_SERVICE_NAME);
 			RequestService reqSvc = (RequestService) l_awsProducerPool.getProducer();
 			@SuppressWarnings("unchecked")
-			List<Account> moas = actionable.query(queryObject,reqSvc);
+			List<Account> moas = actionable.query(queryObject, reqSvc);
 			info("[getVpcpHealthCheck] got " + moas.size() + " accounts from ESB service");
-			
-			if (applicationEnvironment != null && 
-					svcSummary.getServiceMap() != null && 
-					svcSummary.getServiceMap().size() > 0) {
-			
-					return "GOOD";
-				}
-				else {
-					throw new RpcException("Error");
-				}
-		} 
+
+			if (applicationEnvironment != null && svcSummary.getServiceMap() != null
+					&& svcSummary.getServiceMap().size() > 0) {
+
+				return "GOOD";
+			}
+			else {
+				throw new RpcException("Error");
+			}
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -7717,10 +7591,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String esbServiceStatusURL = props.getProperty("esbServiceStatusURL", null);
 			if (esbServiceStatusURL == null) {
-				throw new RpcException("Null 'esbServiceStatusURL' property.  This application is not configured correctly.");
+				throw new RpcException(
+						"Null 'esbServiceStatusURL' property.  This application is not configured correctly.");
 			}
 			return esbServiceStatusURL;
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -7732,7 +7608,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String l_awsConsoleInfoText = props.getProperty("awsConsoleInfoText", "Unknown");
 			return l_awsConsoleInfoText;
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -7744,7 +7621,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String myNetIdURL = props.getProperty("myNetIdURL", "https://dev.mynetid.emory.edu/");
 			return myNetIdURL;
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -7753,11 +7631,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AccountNotificationQueryResultPojo getAccountNotificationsForFilter(
 			AccountNotificationQueryFilterPojo filter) throws RpcException {
-		
+
 		AccountNotificationQueryResultPojo result = new AccountNotificationQueryResultPojo();
 		List<AccountNotificationPojo> pojos = new java.util.ArrayList<AccountNotificationPojo>();
 		try {
-			AccountNotificationQuerySpecification queryObject = (AccountNotificationQuerySpecification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION_QUERY_SPEC);
+			AccountNotificationQuerySpecification queryObject = (AccountNotificationQuerySpecification) getObject(
+					Constants.MOA_ACCOUNT_NOTIFICATION_QUERY_SPEC);
 			AccountNotification actionable = (AccountNotification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION);
 
 			if (filter != null) {
@@ -7767,7 +7646,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						QueryLanguage ql = queryObject.newQueryLanguage();
 						ql.setName("allByAccountId");
 						ql.setType("hql");
-						info("[getAccountNotificationForFilter] getting ALL account notifications for account " + filter.getAccountId());
+						info("[getAccountNotificationForFilter] getting ALL account notifications for account "
+								+ filter.getAccountId());
 
 						Parameter accountId = ql.newParameter();
 						accountId.setValue(filter.getAccountId());
@@ -7780,7 +7660,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						QueryLanguage ql = queryObject.newQueryLanguage();
 						ql.setName("maxByAccountId");
 						ql.setType("hql");
-						info("[getAccountNotificationForFilter] getting max (200) account notifications for account " + filter.getAccountId());
+						info("[getAccountNotificationForFilter] getting max (200) account notifications for account "
+								+ filter.getAccountId());
 						ql.setMax(this.toStringFromInt(filter.getMaxRows()));
 
 						Parameter accountId = ql.newParameter();
@@ -7800,9 +7681,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getAccountNotificationForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			RequestService reqSvc = this.getAWSRequestService();
-			// if they're asking for ALL notifications, we'll have to bump 
+			// if they're asking for ALL notifications, we'll have to bump
 			// the timeout interval WAY up
 //			if (filter != null && filter.isFuzzyFilter()) {
 //				Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
@@ -7814,22 +7695,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("accountNotificationTimeoutMillis", "1000000");
 			int interval = Integer.parseInt(s_interval);
-			((PointToPointProducer) reqSvc)
-			.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			@SuppressWarnings("unchecked")
-			List<AccountNotification> moas = actionable.query(queryObject,
-					reqSvc);
-			info("[getAccountNotificationsForFilter] got " + moas.size() + 
-					" AccountNotifications from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
+			List<AccountNotification> moas = actionable.query(queryObject, reqSvc);
+			info("[getAccountNotificationsForFilter] got " + moas.size() + " AccountNotifications from ESB service"
+					+ (filter != null ? " for filter: " + filter.toString() : ""));
 			for (AccountNotification moa : moas) {
 				AccountNotificationPojo pojo = new AccountNotificationPojo();
 				AccountNotificationPojo baseline = new AccountNotificationPojo();
-				
+
 				if (filter.getSubject() != null && filter.getSubject().length() > 0) {
-					if (moa.getSubject() != null && 
-						moa.getSubject().toLowerCase().indexOf(filter.getSubject().toLowerCase()) >= 0) {
+					if (moa.getSubject() != null
+							&& moa.getSubject().toLowerCase().indexOf(filter.getSubject().toLowerCase()) >= 0) {
 						this.populateAccountNotificationPojo(moa, pojo);
 						this.populateAccountNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
@@ -7837,8 +7715,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 				}
 				else if (filter.getReferenceId() != null && filter.getReferenceId().length() > 0) {
-					if (moa.getReferenceId() != null && 
-						moa.getReferenceId().toLowerCase().indexOf(filter.getReferenceId().toLowerCase()) >= 0) {
+					if (moa.getReferenceId() != null
+							&& moa.getReferenceId().toLowerCase().indexOf(filter.getReferenceId().toLowerCase()) >= 0) {
 						this.populateAccountNotificationPojo(moa, pojo);
 						this.populateAccountNotificationPojo(moa, baseline);
 						pojo.setBaseline(baseline);
@@ -7858,31 +7736,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateAccountNotificationPojo(AccountNotification moa, AccountNotificationPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateAccountNotificationPojo(AccountNotification moa, AccountNotificationPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setAccountNotificationId(moa.getAccountNotificationId());
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setType(moa.getType());
@@ -7897,12 +7776,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.getAnnotations().add(ap);
 			}
 		}
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateAccountNotificationMoa(AccountNotificationPojo pojo, AccountNotification moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+	private void populateAccountNotificationMoa(AccountNotificationPojo pojo, AccountNotification moa)
+			throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, SecurityException, NoSuchMethodException {
 		moa.setAccountNotificationId(pojo.getAccountNotificationId());
 		moa.setAccountId(pojo.getAccountId());
 		moa.setType(pojo.getType());
@@ -7915,27 +7796,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			ap.setText(annotation.getText());
 			moa.addAnnotation(ap);
 		}
-		
-        this.setMoaCreateInfo(moa, pojo);
+
+		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	@Override
 	public AccountNotificationPojo createAccountNotification(AccountNotificationPojo notification) throws RpcException {
-        try {
-            info("create AccountNotification on the server...");
-            AccountNotification newData = (AccountNotification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION);
+		try {
+			info("create AccountNotification on the server...");
+			AccountNotification newData = (AccountNotification) getObject(Constants.MOA_ACCOUNT_NOTIFICATION);
 
-            info("populating newData...");
-            populateAccountNotificationMoa(notification, newData);
+			info("populating newData...");
+			populateAccountNotificationMoa(notification, newData);
 
-            info("doing the create...");
-            doCreate(newData, getAWSRequestService());
-            info("create is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the create...");
+			doCreate(newData, getAWSRequestService());
+			info("create is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return notification;
 	}
 
@@ -7948,17 +7830,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public void deleteAccountNotification(AccountNotificationPojo notification) throws RpcException {
-		
-		
+
 	}
 
 	@SuppressWarnings("unused")
-	private void populateUserProfileMoa(UserProfilePojo pojo,
-			UserProfile moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
-
+	private void populateUserProfileMoa(UserProfilePojo pojo, UserProfile moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setUserId(pojo.getUserId());
 		Datetime dt = new Datetime("LastLoginDatetime");
@@ -7976,16 +7854,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	private void populateUserProfilePojo(UserProfile moa,
-			UserProfilePojo pojo) throws XmlEnterpriseObjectException,
-			ParseException, EnterpriseConfigurationObjectException {
-		
+	private void populateUserProfilePojo(UserProfile moa, UserProfilePojo pojo)
+			throws XmlEnterpriseObjectException, ParseException, EnterpriseConfigurationObjectException {
+
 		pojo.setUserId(moa.getUserId());
 		if (moa.getLastLoginDatetime() != null) {
 			pojo.setLastLoginTime(this.toDateFromDatetime(moa.getLastLoginDatetime()));
 		}
 		if (moa.getProperty() != null) {
-			for (com.amazon.aws.moa.objects.resources.v1_0.Property m_prop : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property m_prop : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
+					.getProperty()) {
 				PropertyPojo prop = new PropertyPojo();
 				prop.setName(m_prop.getKey());
 				prop.setValue(m_prop.getValue());
@@ -7995,7 +7873,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				if (prettyName == null) {
 					Iterator<Object> keys = props.keySet().iterator();
 					while (keys.hasNext()) {
-						String key = (String)keys.next();
+						String key = (String) keys.next();
 						if (key.indexOf(prop.getName()) == 0) {
 							prettyName = props.getProperty(key, null);
 						}
@@ -8020,7 +7898,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		UserProfileQueryResultPojo result = new UserProfileQueryResultPojo();
 		List<UserProfilePojo> pojos = new java.util.ArrayList<UserProfilePojo>();
 		try {
-			UserProfileQuerySpecification queryObject = (UserProfileQuerySpecification) getObject(Constants.MOA_USER_PROFILE_QUERY_SPEC);
+			UserProfileQuerySpecification queryObject = (UserProfileQuerySpecification) getObject(
+					Constants.MOA_USER_PROFILE_QUERY_SPEC);
 			UserProfile actionable = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
 
 			if (filter != null) {
@@ -8038,18 +7917,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getUserProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
 
 			@SuppressWarnings("unchecked")
-			List<UserProfile> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			info("[getUserProfilesForFilter] got " + moas.size() + 
-					" UserProfiles from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
+			List<UserProfile> moas = actionable.query(queryObject, this.getAWSRequestService());
+			info("[getUserProfilesForFilter] got " + moas.size() + " UserProfiles from ESB service"
+					+ (filter != null ? " for filter: " + filter.toString() : ""));
 			for (UserProfile moa : moas) {
 				UserProfilePojo pojo = new UserProfilePojo();
 				UserProfilePojo baseline = new UserProfilePojo();
 				this.populateUserProfilePojo(moa, pojo);
 				this.populateUserProfilePojo(moa, baseline);
 				pojo.setBaseline(baseline);
-				
+
 				// now see if they have any of the new properties
 				List<PropertyPojo> userProfileProps = this.getUserProfileProperties();
 				for (PropertyPojo prop : userProfileProps) {
@@ -8071,50 +7948,51 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (ParseException e) {
+		}
+		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
 	public UserProfilePojo createUserProfile(UserProfilePojo profile) throws RpcException {
-		profile.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-        try {
-            info("creating UserProfile on the server...");
-            UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
+		profile.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
+		try {
+			info("creating UserProfile on the server...");
+			UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
 
-            info("populating newData...");
-            populateUserProfileMoa(profile, newData);
+			info("populating newData...");
+			populateUserProfileMoa(profile, newData);
 
-            info("doing the update...");
-            doCreate(newData, getAWSRequestService());
-            info("create is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doCreate(newData, getAWSRequestService());
+			info("create is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return profile;
 	}
 
@@ -8126,71 +8004,69 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			profile.setUpdateInfo(profile.getUserId());
 		}
-        try {
-            info("updating UserProfile on the server...");
-            UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
-            UserProfile baselineData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
+		try {
+			info("updating UserProfile on the server...");
+			UserProfile newData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
+			UserProfile baselineData = (UserProfile) getObject(Constants.MOA_USER_PROFILE);
 
-            info("populating newData...");
-            populateUserProfileMoa(profile, newData);
+			info("populating newData...");
+			populateUserProfileMoa(profile, newData);
 
-            info("populating baselineData...");
-            populateUserProfileMoa(profile.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateUserProfileMoa(profile.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getAWSRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getAWSRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return profile;
 	}
 
 	@Override
 	public void deleteUserProfile(UserProfilePojo notification) throws RpcException {
-		
-		
+
 	}
 
 	@Override
 	public UserActionQueryResultPojo getUserActionsForFilter(UserActionQueryFilterPojo filter) throws RpcException {
-		
+
 		return null;
 	}
 
 	@Override
 	public UserActionPojo createUserAction(UserActionPojo ua) throws RpcException {
-		ua.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-		
-        try {
-            info("creating UserAction on the server...");
-            UserAction newData = (UserAction) getObject(Constants.MOA_USER_ACTION);
+		ua.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
-            info("populating newData...");
-            populateUserActionMoa(ua, newData);
+		try {
+			info("creating UserAction on the server...");
+			UserAction newData = (UserAction) getObject(Constants.MOA_USER_ACTION);
+
+			info("populating newData...");
+			populateUserActionMoa(ua, newData);
 
 //            info("doing the create...");
-            // TODO: UserAction that is imported is NOT actionable so this won't work 
-            // as the aws-moa stands right now.
-            // The MOA will need to be updated and then I can support this function.
+			// TODO: UserAction that is imported is NOT actionable so this won't work
+			// as the aws-moa stands right now.
+			// The MOA will need to be updated and then I can support this function.
 //            doCreate(newData, getAWSRequestService());
 //            info("create is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return ua;
 	}
 
 	@SuppressWarnings("unused")
-	private void populateUserActionMoa(UserActionPojo pojo,
-			UserAction moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateUserActionMoa(UserActionPojo pojo, UserAction moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setUserId(pojo.getUserId());
 		moa.setAction(pojo.getAction());
@@ -8206,7 +8082,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		result.setFilterUsed(filter);
 		List<TermsOfUsePojo> pojos = new java.util.ArrayList<TermsOfUsePojo>();
 		try {
-			TermsOfUseQuerySpecification queryObject = (TermsOfUseQuerySpecification) getObject(Constants.MOA_TERMS_OF_USE_QUERY_SPECIFICATION);
+			TermsOfUseQuerySpecification queryObject = (TermsOfUseQuerySpecification) getObject(
+					Constants.MOA_TERMS_OF_USE_QUERY_SPECIFICATION);
 			TermsOfUse actionable = (TermsOfUse) getObject(Constants.MOA_TERMS_OF_USE);
 
 			if (filter != null) {
@@ -8252,11 +8129,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 
 			@SuppressWarnings("unchecked")
-			List<TermsOfUse> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			info("[getTermsOfUseForFilter] got " + moas.size() + 
-					" Terms of Use objects from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
+			List<TermsOfUse> moas = actionable.query(queryObject, this.getAWSRequestService());
+			info("[getTermsOfUseForFilter] got " + moas.size() + " Terms of Use objects from ESB service"
+					+ (filter != null ? " for filter: " + filter.toString() : ""));
 			for (TermsOfUse moa : moas) {
 				TermsOfUsePojo pojo = new TermsOfUsePojo();
 //				TermsOfUsePojo baseline = new TermsOfUsePojo();
@@ -8269,27 +8144,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	private void populateTermsOfUsePojo(TermsOfUse moa, TermsOfUsePojo pojo) throws XmlEnterpriseObjectException {
@@ -8310,7 +8185,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		result.setFilterUsed(filter);
 		List<TermsOfUseAgreementPojo> pojos = new java.util.ArrayList<TermsOfUseAgreementPojo>();
 		try {
-			TermsOfUseAgreementQuerySpecification queryObject = (TermsOfUseAgreementQuerySpecification) getObject(Constants.MOA_TERMS_OF_USE_AGREEMENT_QUERY_SPECIFICATION);
+			TermsOfUseAgreementQuerySpecification queryObject = (TermsOfUseAgreementQuerySpecification) getObject(
+					Constants.MOA_TERMS_OF_USE_AGREEMENT_QUERY_SPECIFICATION);
 			TermsOfUseAgreement actionable = (TermsOfUseAgreement) getObject(Constants.MOA_TERMS_OF_USE_AGREEMENT);
 
 			if (filter != null) {
@@ -8329,11 +8205,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			actionable.getAuthentication().setAuthUserId(authUserId);
 
 			@SuppressWarnings("unchecked")
-			List<TermsOfUseAgreement> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			info("[getTermsOfUseAgreementForFilter] got " + moas.size() + 
-					" Terms of Use Agreement objects from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
+			List<TermsOfUseAgreement> moas = actionable.query(queryObject, this.getAWSRequestService());
+			info("[getTermsOfUseAgreementForFilter] got " + moas.size()
+					+ " Terms of Use Agreement objects from ESB service"
+					+ (filter != null ? " for filter: " + filter.toString() : ""));
 			for (TermsOfUseAgreement moa : moas) {
 				TermsOfUseAgreementPojo pojo = new TermsOfUseAgreementPojo();
 				TermsOfUseAgreementPojo baseline = new TermsOfUseAgreementPojo();
@@ -8346,30 +8221,31 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
-	private void populateTermsOfUseAgreementPojo(TermsOfUseAgreement moa, TermsOfUseAgreementPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateTermsOfUseAgreementPojo(TermsOfUseAgreement moa, TermsOfUseAgreementPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setTermsOfUseAgreementId(moa.getTermsOfUseAgreementId());
 		pojo.setTermsOfUseId(moa.getTermsOfUseId());
 		pojo.setUserId(moa.getUserId());
@@ -8382,40 +8258,42 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public TermsOfUseAgreementPojo createTermsOfUseAgreement(TermsOfUseAgreementPojo toua) throws RpcException {
-		toua.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-		
-        try {
-            info("creating TermsOfUseAgreement on the server...");
-            TermsOfUseAgreement newData = (TermsOfUseAgreement) getObject(Constants.MOA_TERMS_OF_USE_AGREEMENT);
+		toua.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
-            info("populating newData...");
-            populateTermsOfUseAgreementMoa(toua, newData);
+		try {
+			info("creating TermsOfUseAgreement on the server...");
+			TermsOfUseAgreement newData = (TermsOfUseAgreement) getObject(Constants.MOA_TERMS_OF_USE_AGREEMENT);
 
-            info("doing the create...");
-            doCreate(newData, getAWSRequestService());
-            info("create is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("populating newData...");
+			populateTermsOfUseAgreementMoa(toua, newData);
+
+			info("doing the create...");
+			doCreate(newData, getAWSRequestService());
+			info("create is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return toua;
 	}
 
-	private void populateTermsOfUseAgreementMoa(TermsOfUseAgreementPojo pojo, TermsOfUseAgreement moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+	private void populateTermsOfUseAgreementMoa(TermsOfUseAgreementPojo pojo, TermsOfUseAgreement moa)
+			throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, SecurityException, NoSuchMethodException {
 		moa.setTermsOfUseAgreementId(pojo.getTermsOfUseAgreementId());
 		moa.setTermsOfUseId(pojo.getTermsOfUseId());
 		moa.setUserId(pojo.getUserId());
 		moa.setStatus(pojo.getStatus());
-		
+
 		org.openeai.moa.objects.resources.Datetime presentedDT = moa.newPresentedDatetime();
 		this.populateDatetime(presentedDT, pojo.getPresentedDate());
 		moa.setPresentedDatetime(presentedDT);
-		
+
 		org.openeai.moa.objects.resources.Datetime agreedDT = moa.newAgreedDatetime();
 		this.populateDatetime(agreedDT, pojo.getAgreedDate());
 		moa.setAgreedDatetime(agreedDT);
-		
+
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
@@ -8423,13 +8301,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ServiceSecurityAssessmentQueryResultPojo getSecurityAssessmentsForFilter(
 			ServiceSecurityAssessmentQueryFilterPojo filter) throws RpcException {
-		
+
 		ServiceSecurityAssessmentQueryResultPojo result = new ServiceSecurityAssessmentQueryResultPojo();
 		result.setFilterUsed(filter);
 		List<ServiceSecurityAssessmentPojo> pojos = new java.util.ArrayList<ServiceSecurityAssessmentPojo>();
 		try {
-			ServiceSecurityAssessmentQuerySpecification queryObject = (ServiceSecurityAssessmentQuerySpecification) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT_QUERY_SPEC);
-			ServiceSecurityAssessment actionable = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+			ServiceSecurityAssessmentQuerySpecification queryObject = (ServiceSecurityAssessmentQuerySpecification) getObject(
+					Constants.MOA_SVC_SECURITY_ASSESSMENT_QUERY_SPEC);
+			ServiceSecurityAssessment actionable = (ServiceSecurityAssessment) getObject(
+					Constants.MOA_SVC_SECURITY_ASSESSMENT);
 
 			if (filter != null) {
 				queryObject.setServiceId(filter.getServiceId());
@@ -8441,29 +8321,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getSecurityAssessmentsForFilter] query object is: " + queryObject.toXmlString());
 
 			@SuppressWarnings("unchecked")
-			List<ServiceSecurityAssessment> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			info("[getSecurityAssessmentsForFilter] got " + moas.size() + 
-					" Security Assessments from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
+			List<ServiceSecurityAssessment> moas = actionable.query(queryObject, this.getAWSRequestService());
+			info("[getSecurityAssessmentsForFilter] got " + moas.size() + " Security Assessments from ESB service"
+					+ (filter != null ? " for filter: " + filter.toString() : ""));
 			for (ServiceSecurityAssessment moa : moas) {
 				ServiceSecurityAssessmentPojo pojo = new ServiceSecurityAssessmentPojo();
 				this.populateSecurityAssessmentPojo(moa, pojo);
-				
+
 				// sort the child lists in the assessment (new data only):
-				// 	risks
+				// risks
 				Collections.sort(pojo.getSecurityRisks());
-				//	controls
+				// controls
 //				Collections.sort(pojo.getServiceControls());
-				//	guidelines
+				// guidelines
 //				Collections.sort(pojo.getServiceGuidelines());
-				//	testplan.requirements
+				// testplan.requirements
 				if (pojo.getServiceTestPlan() != null) {
 					Collections.sort(pojo.getServiceTestPlan().getServiceTestRequirements());
-					//	testplan.requirements.tests
+					// testplan.requirements.tests
 					for (ServiceTestRequirementPojo str : pojo.getServiceTestPlan().getServiceTestRequirements()) {
 						Collections.sort(str.getServiceTests());
-						// 	testplan.requirements.tests.teststeps
+						// testplan.requirements.tests.teststeps
 						for (ServiceTestPojo st : str.getServiceTests()) {
 							Collections.sort(st.getServiceTestSteps());
 						}
@@ -8480,40 +8358,41 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateSecurityAssessmentPojo(ServiceSecurityAssessment moa, ServiceSecurityAssessmentPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateSecurityAssessmentPojo(ServiceSecurityAssessment moa, ServiceSecurityAssessmentPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setServiceSecurityAssessmentId(moa.getServiceSecurityAssessmentId());
 		pojo.setStatus(moa.getStatus());
 		if (moa.getServiceId() != null) {
-			for (String svcid : (List<String>)moa.getServiceId()) {
+			for (String svcid : (List<String>) moa.getServiceId()) {
 				pojo.getServiceIds().add(svcid);
 			}
 		}
 		if (moa.getSecurityRisk() != null) {
-			for (SecurityRisk risk : (List<SecurityRisk>)moa.getSecurityRisk()) {
+			for (SecurityRisk risk : (List<SecurityRisk>) moa.getSecurityRisk()) {
 				SecurityRiskPojo rp = new SecurityRiskPojo();
 				rp.setSecurityRiskId(risk.getSecurityRiskId());
 				rp.setServiceId(risk.getServiceId());
@@ -8524,7 +8403,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				rp.setAssessorId(risk.getAssessorId());
 				rp.setAssessmentDate(this.toDateFromDatetime(risk.getAssessmentDatetime()));
 				if (risk.getServiceControl() != null) {
-					for (ServiceControl sc : (List<ServiceControl>)risk.getServiceControl()) {
+					for (ServiceControl sc : (List<ServiceControl>) risk.getServiceControl()) {
 						ServiceControlPojo scp = new ServiceControlPojo();
 						scp.setServiceId(sc.getServiceId());
 						scp.setServiceControlId(sc.getServiceControlId());
@@ -8537,7 +8416,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						scp.setImplementationType(sc.getImplementationType());
 						scp.setControlType(sc.getControlType());
 						if (sc.getDocumentationUrl() != null) {
-							for (String docUrl : (List<String>)sc.getDocumentationUrl()) {
+							for (String docUrl : (List<String>) sc.getDocumentationUrl()) {
 								scp.getDocumentationUrls().add(docUrl);
 							}
 						}
@@ -8586,20 +8465,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			stpp.setServiceId(stpm.getServiceId());
 			// test plan requirement list
 			if (stpm.getServiceTestRequirement() != null) {
-				for (ServiceTestRequirement strm : (List<ServiceTestRequirement>)stpm.getServiceTestRequirement()) {
+				for (ServiceTestRequirement strm : (List<ServiceTestRequirement>) stpm.getServiceTestRequirement()) {
 					ServiceTestRequirementPojo strp = new ServiceTestRequirementPojo();
 					strp.setServiceTestRequirementId(strm.getServiceTestRequirementId());
 					strp.setSequenceNumber(this.toIntFromString(strm.getSequenceNumber()));
 					strp.setDescription(strm.getDescription());
 					if (strm.getServiceTest() != null) {
-						for (ServiceTest stm : (List<ServiceTest>)strm.getServiceTest()) {
+						for (ServiceTest stm : (List<ServiceTest>) strm.getServiceTest()) {
 							ServiceTestPojo stp = new ServiceTestPojo();
 							stp.setServiceTestId(stm.getServiceTestId());
 							stp.setSequenceNumber(this.toIntFromString(stm.getSequenceNumber()));
 							stp.setDescription(stm.getDescription());
 							stp.setServiceTestExpectedResult(stm.getServiceTestExpectedResult());
 							if (stm.getServiceTestStep() != null) {
-								for (ServiceTestStep stsm : (List<ServiceTestStep>)stm.getServiceTestStep()) {
+								for (ServiceTestStep stsm : (List<ServiceTestStep>) stm.getServiceTestStep()) {
 									ServiceTestStepPojo stsp = new ServiceTestStepPojo();
 									stsp.setServiceTestStepId(stsm.getServiceTestStepId());
 									stsp.setSequenceNumber(this.toIntFromString(stsm.getSequenceNumber()));
@@ -8617,9 +8496,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	private void populateSecurityAssessmentMoa(ServiceSecurityAssessmentPojo pojo,
-			ServiceSecurityAssessment moa) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException, EnterpriseFieldException {
-		
+	private void populateSecurityAssessmentMoa(ServiceSecurityAssessmentPojo pojo, ServiceSecurityAssessment moa)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException,
+			NoSuchMethodException, EnterpriseFieldException {
+
 		moa.setServiceSecurityAssessmentId(pojo.getServiceSecurityAssessmentId());
 		moa.setStatus(pojo.getStatus());
 		for (String svcid : pojo.getServiceIds()) {
@@ -8634,11 +8514,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			moa_risk.setRiskLevel(risk.getRiskLevel());
 			moa_risk.setDescription(risk.getDescription());
 			moa_risk.setAssessorId(risk.getAssessorId());
-			
+
 			org.openeai.moa.objects.resources.Datetime assessDT = moa_risk.newAssessmentDatetime();
 			this.populateDatetime(assessDT, risk.getAssessmentDate());
 			moa_risk.setAssessmentDatetime(assessDT);
-			
+
 //			for (CounterMeasurePojo cm : risk.getServiceControls()) {
 //				Countermeasure moa_cm = moa_risk.newCountermeasure();
 //				moa_cm.setSecurityRiskId(cm.getSecurityRiskId());
@@ -8652,7 +8532,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				
 //				moa_risk.addCountermeasure(moa_cm);
 //			}
-			
+
 			for (ServiceControlPojo sc : risk.getServiceControls()) {
 				ServiceControl moa_scp = moa_risk.newServiceControl();
 				moa_scp.setServiceId(sc.getServiceId());
@@ -8661,19 +8541,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				moa_scp.setServiceControlName(sc.getServiceControlName());
 				moa_scp.setDescription(sc.getDescription());
 				moa_scp.setAssessorId(sc.getAssessorId());
-				
+
 				org.openeai.moa.objects.resources.Datetime sc_assessDT = moa_scp.newAssessmentDatetime();
 				this.populateDatetime(sc_assessDT, sc.getAssessmentDate());
 				moa_scp.setAssessmentDatetime(sc_assessDT);
-				
+
 				moa_scp.setVerifier(sc.getVerifier());
-				
+
 				if (sc.getVerificationDate() != null) {
 					org.openeai.moa.objects.resources.Datetime verifyDT = moa_scp.newVerificationDatetime();
 					this.populateDatetime(verifyDT, sc.getVerificationDate());
 					moa_scp.setVerificationDatetime(verifyDT);
 				}
-				
+
 				moa_scp.setControlType(sc.getControlType());
 				moa_scp.setImplementationType(sc.getImplementationType());
 				for (String url : sc.getDocumentationUrls()) {
@@ -8683,7 +8563,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			moa.addSecurityRisk(moa_risk);
 		}
-		
+
 //		for (ServiceControlPojo sc : pojo.getServiceControls()) {
 //			ServiceControl moa_scp = moa.newServiceControl();
 //			moa_scp.setServiceId(sc.getServiceId());
@@ -8722,7 +8602,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //
 //			moa.addServiceGuideline(moa_sg);
 //		}
-			
+
 		if (pojo.getServiceTestPlan() != null) {
 			ServiceTestPlanPojo stpp = pojo.getServiceTestPlan();
 			ServiceTestPlan moa_stp = moa.newServiceTestPlan();
@@ -8757,23 +8637,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ServiceSecurityAssessmentPojo createSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
 			throws RpcException {
-		assessment.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-		
-        try {
-            info("creating UserNotification on the server...");
-            ServiceSecurityAssessment newData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+		assessment.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
-            info("populating newData...");
-            populateSecurityAssessmentMoa(assessment, newData);
+		try {
+			info("creating UserNotification on the server...");
+			ServiceSecurityAssessment newData = (ServiceSecurityAssessment) getObject(
+					Constants.MOA_SVC_SECURITY_ASSESSMENT);
 
-            info("doing the update...");
-            doCreate(newData, getAWSRequestService());
-            info("create is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("populating newData...");
+			populateSecurityAssessmentMoa(assessment, newData);
+
+			info("doing the update...");
+			doCreate(newData, getAWSRequestService());
+			info("create is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return assessment;
 	}
 
@@ -8781,25 +8662,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ServiceSecurityAssessmentPojo updateSecurityAssessment(ServiceSecurityAssessmentPojo assessment)
 			throws RpcException {
 		assessment.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("[updateSecurityAssessment] updating ServiceSecurityAssessment on the server...");
-            ServiceSecurityAssessment newData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
-            ServiceSecurityAssessment baselineData = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+		try {
+			info("[updateSecurityAssessment] updating ServiceSecurityAssessment on the server...");
+			ServiceSecurityAssessment newData = (ServiceSecurityAssessment) getObject(
+					Constants.MOA_SVC_SECURITY_ASSESSMENT);
+			ServiceSecurityAssessment baselineData = (ServiceSecurityAssessment) getObject(
+					Constants.MOA_SVC_SECURITY_ASSESSMENT);
 
-            info("[updateSecurityAssessment] populating newData...");
-            populateSecurityAssessmentMoa(assessment, newData);
+			info("[updateSecurityAssessment] populating newData...");
+			populateSecurityAssessmentMoa(assessment, newData);
 
-            info("[updateSecurityAssessment] populating baselineData...");
-            populateSecurityAssessmentMoa(assessment.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("[updateSecurityAssessment] populating baselineData...");
+			populateSecurityAssessmentMoa(assessment.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("[updateSecurityAssessment] doing the update...");
-            doUpdate(newData, getAWSRequestService());
-            info("[updateSecurityAssessment] update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("[updateSecurityAssessment] doing the update...");
+			doUpdate(newData, getAWSRequestService());
+			info("[updateSecurityAssessment] update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return assessment;
 	}
 
@@ -8807,49 +8691,50 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteSecurityAssessment(ServiceSecurityAssessmentPojo service) throws RpcException {
 		try {
 			info("deleting Security Assessment record on the server...");
-			ServiceSecurityAssessment moa = (ServiceSecurityAssessment) getObject(Constants.MOA_SVC_SECURITY_ASSESSMENT);
+			ServiceSecurityAssessment moa = (ServiceSecurityAssessment) getObject(
+					Constants.MOA_SVC_SECURITY_ASSESSMENT);
 			info("populating moa");
 			this.populateSecurityAssessmentMoa(service, moa);
 
-			
 			info("doing the SecurityAssessment.delete...");
 			this.doDelete(moa, getAWSRequestService());
 			info("SecurityAssessment.delete is complete...");
 
 			return;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
+		}
+		catch (EnterpriseObjectDeleteException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -8860,15 +8745,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<String> l = new java.util.ArrayList<String>();
 
 		try {
-			Properties props = 	getAppConfig().getProperties(ASSESSMENT_STATUS_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(ASSESSMENT_STATUS_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -8880,8 +8766,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (user == null) {
 			return false;
 		}
-		UserAccountPojo cachedUser = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
+		UserAccountPojo cachedUser = (UserAccountPojo) Cache.getCache()
+				.get(Constants.USER_ACCOUNT + getCurrentSessionId());
 		if (cachedUser == null) {
 			return false;
 		}
@@ -8895,8 +8781,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		filter.setUserLoggedIn(user);
 		UserNotificationQueryResultPojo result = this.getUserNotificationsForFilter(filter);
 		if (result.getResults().size() > 0) {
-			info("User " + user.getPublicId() + " has " + 
-					" un-read User Notifications");
+			info("User " + user.getPublicId() + " has " + " un-read User Notifications");
 			return true;
 		}
 		return false;
@@ -8909,7 +8794,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String s_interval = props.getProperty("notificationCheckIntervalMillis", "10000");
 			int interval = Integer.parseInt(s_interval);
 			return interval;
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -8920,15 +8806,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<String> l = new java.util.ArrayList<String>();
 
 		try {
-			Properties props = 	getAppConfig().getProperties(RISK_LEVEL_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(RISK_LEVEL_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -8945,11 +8832,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		l.add("Complete");
 		return l;
 	}
-	
+
 	private UserAccountPojo getCachedUser() {
-		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(
-				Constants.USER_ACCOUNT + getCurrentSessionId());
-		
+		UserAccountPojo user = (UserAccountPojo) Cache.getCache().get(Constants.USER_ACCOUNT + getCurrentSessionId());
+
 		if (user == null) {
 			user = this.getUserLoggedIn(false);
 		}
@@ -8964,7 +8850,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		result.setFilterUsed(filter);
 		List<SecurityRiskDetectionPojo> pojos = new java.util.ArrayList<SecurityRiskDetectionPojo>();
 		try {
-			SecurityRiskDetectionQuerySpecification queryObject = (SecurityRiskDetectionQuerySpecification) getObject(Constants.MOA_SECURITY_RISK_DETECTION_QUERY_SPEC);
+			SecurityRiskDetectionQuerySpecification queryObject = (SecurityRiskDetectionQuerySpecification) getObject(
+					Constants.MOA_SECURITY_RISK_DETECTION_QUERY_SPEC);
 			SecurityRiskDetection actionable = (SecurityRiskDetection) getObject(Constants.MOA_SECURITY_RISK_DETECTION);
 
 			if (filter != null) {
@@ -8976,14 +8863,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getSecurityRiskDetectionsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			info("[getSecurityRiskDetectionsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
 
 			@SuppressWarnings("unchecked")
-			List<SecurityRiskDetection> moas = actionable.query(queryObject,
-					this.getSrdRequestService());
-			info("[getSecurityRiskDetectionsForFilter] got " + moas.size() + 
-					" objects from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
+			List<SecurityRiskDetection> moas = actionable.query(queryObject, this.getSrdRequestService());
+			info("[getSecurityRiskDetectionsForFilter] got " + moas.size() + " objects from ESB service"
+					+ (filter != null ? " for filter: " + filter.toString() : ""));
 			for (SecurityRiskDetection moa : moas) {
 				SecurityRiskDetectionPojo pojo = new SecurityRiskDetectionPojo();
 				SecurityRiskDetectionPojo baseline = new SecurityRiskDetectionPojo();
@@ -8997,40 +8883,42 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
+		}
+		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateSecurityRiskDetectionPojo(SecurityRiskDetection moa, SecurityRiskDetectionPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateSecurityRiskDetectionPojo(SecurityRiskDetection moa, SecurityRiskDetectionPojo pojo)
+			throws XmlEnterpriseObjectException {
 		/*
-		<!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId, SecurityRiskDetector, 
-		SecurityRiskRemediator, DetectedSecurityRisk*, CreateUser, CreateDatetime, 
-		LastUpdateUser?, LastUpdateDatetime?)>
-			 */
+		 * <!ELEMENT SecurityRiskDetection (SecurityRiskDetectionId, AccountId,
+		 * SecurityRiskDetector, SecurityRiskRemediator, DetectedSecurityRisk*,
+		 * CreateUser, CreateDatetime, LastUpdateUser?, LastUpdateDatetime?)>
+		 */
 		if (moa.getDetectionResult() != null) {
 			DetectionResultPojo drp = new DetectionResultPojo();
 			drp.setStatus(moa.getDetectionResult().getStatus());
 			drp.setType(moa.getDetectionResult().getType());
-			for (String error : (List<String>)moa.getDetectionResult().getError()) {
+			for (String error : (List<String>) moa.getDetectionResult().getError()) {
 //				ErrorPojo ep = new ErrorPojo();
 //				ep.setErrorNumber(error.getErrorNumber());
 //				ep.setDescription(error.getErrorDescription());
@@ -9044,7 +8932,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setSecurityRiskRemediator(moa.getSecurityRiskRemediator());
 		pojo.setAccountId(moa.getAccountId());
 		if (moa.getDetectedSecurityRisk() != null) {
-			for (DetectedSecurityRisk risk : (List<DetectedSecurityRisk>)moa.getDetectedSecurityRisk()) {
+			for (DetectedSecurityRisk risk : (List<DetectedSecurityRisk>) moa.getDetectedSecurityRisk()) {
 				DetectedSecurityRiskPojo dsr = new DetectedSecurityRiskPojo();
 				dsr.setType(risk.getType());
 				dsr.setAmazonResourceName(risk.getAmazonResourceName());
@@ -9054,7 +8942,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					rrp.setStatus(rrm.getStatus());
 					rrp.setDescription(rrm.getDescription());
 					if (rrm.getError() != null) {
-						for (String error : (List<String>)rrm.getError()) {
+						for (String error : (List<String>) rrm.getError()) {
 							ErrorPojo ep = new ErrorPojo();
 //							ep.setErrorNumber(error.getErrorNumber());
 							ep.setType("SRD");
@@ -9086,11 +8974,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		filter.setReadStr("false");
 		filter.setRead(false);
 		filter.setUserId(user.getPublicId());
-		info("[markAllUnreadNotificationsForUserAsRead] getting all un-read "
-				+ "notifications for user " + user.getPublicId());
+		info("[markAllUnreadNotificationsForUserAsRead] getting all un-read " + "notifications for user "
+				+ user.getPublicId());
 		boolean keepChecking = true;
 		int totalUpdates = 0;
-		notificationLoop: while (keepChecking) {
+		notificationLoop:
+		while (keepChecking) {
 			UserNotificationQueryResultPojo result = this.getUserNotificationsForFilter(filter);
 			if (result.getResults().size() == 0) {
 				keepChecking = false;
@@ -9099,49 +8988,46 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			else {
 				totalUpdates += result.getResults().size();
 			}
-			info("[markAllUnreadNotificationsForUserAsRead] marking " + 
-					result.getResults().size() + " unread UserNotifications for user " + 
-					user.getPublicId() + " to 'read'");
+			info("[markAllUnreadNotificationsForUserAsRead] marking " + result.getResults().size()
+					+ " unread UserNotifications for user " + user.getPublicId() + " to 'read'");
 			for (UserNotificationPojo unp : result.getResults()) {
 				unp.setRead(true);
 				unp.setReadDateTime(new Date());
 				this.updateUserNotification(unp);
 			}
-			info("[markAllUnreadNotificationsForUserAsRead] " + totalUpdates + 
-					" total updates so far...");
+			info("[markAllUnreadNotificationsForUserAsRead] " + totalUpdates + " total updates so far...");
 		}
-		info("[markAllUnreadNotificationsForUserAsRead] DONE marking " + totalUpdates + 
-				" unread UserNotifications for user " + 
-				user.getPublicId() + " to 'read'");
+		info("[markAllUnreadNotificationsForUserAsRead] DONE marking " + totalUpdates
+				+ " unread UserNotifications for user " + user.getPublicId() + " to 'read'");
 	}
 
 	@Override
 	public TermsOfUseSummaryPojo getTermsOfUseSummaryForUser(UserAccountPojo user) throws RpcException {
 		TermsOfUseSummaryPojo summary = new TermsOfUseSummaryPojo();
 		summary.setHasValidTermsOfUseAgreement(false);
-		
+
 		// TEMPORARY:
 //		summary.setHasValidTermsOfUseAgreement(true);
 //		if (true) {
 //			return summary;
 //		}
 		// END TEMPORARY
-		
+
 		TermsOfUseQueryFilterPojo tou_filter = new TermsOfUseQueryFilterPojo();
 		tou_filter.setEffectiveTerms(true);
 		tou_filter.setUserAccount(user);
 		TermsOfUseQueryResultPojo tou_result = this.getTermsOfUseForFilter(tou_filter);
-		
+
 		TermsOfUseAgreementQueryFilterPojo toua_filter = new TermsOfUseAgreementQueryFilterPojo();
 		toua_filter.setUserId(user.getPublicId());
 		toua_filter.setUserAccount(user);
 		TermsOfUseAgreementQueryResultPojo toua_result = this.getTermsOfUseAgreementsForFilter(toua_filter);
-		
+
 		if (tou_result.getResults().size() == 1) {
 			summary.setLatestTerms(tou_result.getResults().get(0));
-			info("[getTermsOfUseSummaryForUser] got one effective terms of use.  "
-					+ "TermsOfUseId is: " + summary.getLatestTerms().getTermsOfUseId() 
-					+ "  Revision is: " + summary.getLatestTerms().getRevision());  
+			info("[getTermsOfUseSummaryForUser] got one effective terms of use.  " + "TermsOfUseId is: "
+					+ summary.getLatestTerms().getTermsOfUseId() + "  Revision is: "
+					+ summary.getLatestTerms().getRevision());
 			for (TermsOfUseAgreementPojo toua : toua_result.getResults()) {
 				summary.getTermsOfUseAgreements().add(toua);
 				if (toua.getTermsOfUseId().equals(summary.getLatestTerms().getTermsOfUseId())) {
@@ -9151,8 +9037,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		else {
 			// error, unexpected number of effective TermsOfUse objects.
-			info("[getTermsOfUseSummaryForUser] we got " + tou_result.getResults().size() 
-				+ " effective terms of use from the server.  This is a problem.");
+			info("[getTermsOfUseSummaryForUser] we got " + tou_result.getResults().size()
+					+ " effective terms of use from the server.  This is a problem.");
 		}
 		return summary;
 	}
@@ -9166,8 +9052,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		result.setFilterUsed(filter);
 		List<AccountProvisioningAuthorizationPojo> pojos = new java.util.ArrayList<AccountProvisioningAuthorizationPojo>();
 		try {
-			AccountProvisioningAuthorizationQuerySpecification queryObject = (AccountProvisioningAuthorizationQuerySpecification) getObject(Constants.MOA_ACCOUNT_PROVISIONING_AUTHORIZATION_QUERY_SPECIFICATION);
-			AccountProvisioningAuthorization actionable = (AccountProvisioningAuthorization) getObject(Constants.MOA_ACCOUNT_PROVISIONING_AUTHORIZATION);
+			AccountProvisioningAuthorizationQuerySpecification queryObject = (AccountProvisioningAuthorizationQuerySpecification) getObject(
+					Constants.MOA_ACCOUNT_PROVISIONING_AUTHORIZATION_QUERY_SPECIFICATION);
+			AccountProvisioningAuthorization actionable = (AccountProvisioningAuthorization) getObject(
+					Constants.MOA_ACCOUNT_PROVISIONING_AUTHORIZATION);
 
 			if (filter != null) {
 				queryObject.setUserId(filter.getUserId());
@@ -9175,19 +9063,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getAccountProvisioningAuthorizationsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			info("[getAccountProvisioningAuthorizationsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
 
-			List<AccountProvisioningAuthorization> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			info("[getAccountProvisioningAuthorizationsForFilter] got " + moas.size() + 
-					" Provisioing Authorization objects from ESB service" + 
-					(filter != null ? " for filter: " + filter.toString() : ""));
+			List<AccountProvisioningAuthorization> moas = actionable.query(queryObject, this.getAWSRequestService());
+			info("[getAccountProvisioningAuthorizationsForFilter] got " + moas.size()
+					+ " Provisioing Authorization objects from ESB service"
+					+ (filter != null ? " for filter: " + filter.toString() : ""));
 			for (AccountProvisioningAuthorization moa : moas) {
 				AccountProvisioningAuthorizationPojo pojo = new AccountProvisioningAuthorizationPojo();
 				pojo.setUserId(moa.getUserId());
 				pojo.setAuthorized(this.toBooleanFromString(moa.getIsAuthorized()));
 				pojo.setAuthorizedUserDescription(moa.getAuthorizedUserDescription());
-				for (String desc : (List<String>)moa.getUnauthorizedReason()) {
+				for (String desc : (List<String>) moa.getUnauthorizedReason()) {
 					pojo.getUnauthorizedReasons().add(desc);
 				}
 				pojos.add(pojo);
@@ -9197,43 +9085,44 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
 	public PersonInfoSummaryPojo getPersonInfoSummaryForPublicId(String publicId) throws RpcException {
 		PersonInfoSummaryPojo summary = new PersonInfoSummaryPojo();
-		
+
 		FullPersonQueryFilterPojo fp_filter = new FullPersonQueryFilterPojo();
 		fp_filter.setPublicId(publicId);
 		FullPersonQueryResultPojo fp_result = this.getFullPersonsForFilter(fp_filter);
 		if (fp_result.getResults().size() >= 0) {
 			summary.setFullPerson(fp_result.getResults().get(0));
 		}
-		
+
 		AccountProvisioningAuthorizationQueryFilterPojo apa_filter = new AccountProvisioningAuthorizationQueryFilterPojo();
 		apa_filter.setUserId(publicId);
-		AccountProvisioningAuthorizationQueryResultPojo apa_result = this.getAccountProvisioningAuthorizationsForFilter(apa_filter);
+		AccountProvisioningAuthorizationQueryResultPojo apa_result = this
+				.getAccountProvisioningAuthorizationsForFilter(apa_filter);
 		if (apa_result.getResults().size() >= 0) {
 			summary.setAccountProvisioningAuthorization(apa_result.getResults().get(0));
 		}
-		
+
 		return summary;
 	}
 
@@ -9242,7 +9131,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		IncidentQueryResultPojo result = new IncidentQueryResultPojo();
 		List<IncidentPojo> pojos = new java.util.ArrayList<IncidentPojo>();
 		try {
-			IncidentQuerySpecification queryObject = (IncidentQuerySpecification) getObject(Constants.MOA_INCIDENT_QUERY_SPEC);
+			IncidentQuerySpecification queryObject = (IncidentQuerySpecification) getObject(
+					Constants.MOA_INCIDENT_QUERY_SPEC);
 			Incident actionable = (Incident) getObject(Constants.MOA_INCIDENT);
 
 			if (filter != null) {
@@ -9266,9 +9156,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						so.setPublicId(filter.getConfigurationItem().getServiceOwner().getPublicId());
 						if (filter.getConfigurationItem().getServiceOwner().getPersonalName() != null) {
 							PersonalName pn = so.newPersonalName();
-							pn.setFirstName(filter.getConfigurationItem().getServiceOwner().getPersonalName().getFirstName());
-							pn.setLastName(filter.getConfigurationItem().getServiceOwner().getPersonalName().getLastName());
-							pn.setMiddleName(filter.getConfigurationItem().getServiceOwner().getPersonalName().getMiddleName());
+							pn.setFirstName(
+									filter.getConfigurationItem().getServiceOwner().getPersonalName().getFirstName());
+							pn.setLastName(
+									filter.getConfigurationItem().getServiceOwner().getPersonalName().getLastName());
+							pn.setMiddleName(
+									filter.getConfigurationItem().getServiceOwner().getPersonalName().getMiddleName());
 							so.setPersonalName(pn);
 						}
 						ci.setServiceOwner(so);
@@ -9288,13 +9181,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getIncidentssForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			RequestService reqSvc = this.getServiceNowRequestService();
 
 			@SuppressWarnings("unchecked")
-			List<Incident> moas = 
-				actionable.query(queryObject, reqSvc);
-			
+			List<Incident> moas = actionable.query(queryObject, reqSvc);
+
 			info("[getIncidentssForFilter] got " + moas.size() + " Incidents back from the server.");
 			for (Incident moa : moas) {
 				IncidentPojo pojo = new IncidentPojo();
@@ -9309,37 +9201,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void populateIncidentPojo(Incident moa, IncidentPojo pojo) throws XmlEnterpriseObjectException {
 		/*
-		<!ELEMENT Incident (Number?, ConfigurationItem?, AssignmentGroup?, AssignedTo?, NocAlarmId?, 
-			ShortDescription?, Description?, WorkNotes*, Urgency?, Priority?, Impact?, BusinessService?, 
-			Category?, SubCategory?, RecordType?, ContactType?, CallerId?, FunctionalEscalation?,CmdbCi?,
-			SystemId?,IncidentState?)>
-			 */
+		 * <!ELEMENT Incident (Number?, ConfigurationItem?, AssignmentGroup?,
+		 * AssignedTo?, NocAlarmId?, ShortDescription?, Description?, WorkNotes*,
+		 * Urgency?, Priority?, Impact?, BusinessService?, Category?, SubCategory?,
+		 * RecordType?, ContactType?, CallerId?, FunctionalEscalation?,CmdbCi?,
+		 * SystemId?,IncidentState?)>
+		 */
 		pojo.setNumber(moa.getNumber());
 		if (moa.getConfigurationItem() != null) {
 			ConfigurationItemPojo cip = new ConfigurationItemPojo();
@@ -9393,15 +9286,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setCmdbCi(moa.getCmdbCi());
 		pojo.setSystemId(moa.getSystemId());
 		pojo.setIncidentState(moa.getIncidentState());
-		
+
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@Override
 	public void deleteIncident(IncidentPojo incident) throws RpcException {
-		
-		
+
 	}
 
 	@Override
@@ -9413,7 +9305,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("populating moa");
 			this.populateIncidentRequisitionMoa(incidentRequisition, seed);
 
-			
 			info("doing the Incident.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -9428,38 +9319,39 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("Incident.generate is complete...");
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
 
-	private void populateIncidentRequisitionMoa(IncidentRequisitionPojo pojo, IncidentRequisition moa) throws EnterpriseFieldException {
+	private void populateIncidentRequisitionMoa(IncidentRequisitionPojo pojo, IncidentRequisition moa)
+			throws EnterpriseFieldException {
 		if (pojo.getConfigurationItem() != null) {
 			ConfigurationItem cip = moa.newConfigurationItem();
 			cip.setAmcomEventId(pojo.getConfigurationItem().getAmcomEventId());
@@ -9508,21 +9400,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		moa.setCallerId(pojo.getCallerId());
 		moa.setFunctionalEscalation(pojo.getFunctionalEscalation());
 		moa.setCmdbCi(pojo.getCmdbCi());
-		
+
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
 
 	@Override
 	public IncidentPojo updateIncident(IncidentPojo indident) throws RpcException {
-		
+
 		return null;
 	}
 
 	@Override
 	public StaticNatProvisioningSummaryQueryResultPojo getStaticNatProvisioningSummariesForFilter(
 			StaticNatProvisioningSummaryQueryFilterPojo filter) throws RpcException {
-		
+
 		StaticNatProvisioningSummaryQueryResultPojo result = new StaticNatProvisioningSummaryQueryResultPojo();
 		if (filter != null) {
 			result.setProvisionedFilterUsed(filter.getProvisionedFilter());
@@ -9530,23 +9422,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 
 		List<StaticNatProvisioningSummaryPojo> pojos = new java.util.ArrayList<StaticNatProvisioningSummaryPojo>();
-		
-		StaticNatProvisioningQueryResultPojo p_result = 
-			this.getStaticNatProvisioningsForFilter(filter == null ? null : filter.getProvisionedFilter());
+
+		StaticNatProvisioningQueryResultPojo p_result = this
+				.getStaticNatProvisioningsForFilter(filter == null ? null : filter.getProvisionedFilter());
 		for (StaticNatProvisioningPojo snp : p_result.getResults()) {
 			StaticNatProvisioningSummaryPojo snps = new StaticNatProvisioningSummaryPojo();
 			snps.setProvisioned(snp);
 			pojos.add(snps);
 		}
-		
-		StaticNatDeprovisioningQueryResultPojo dp_result = 
-			this.getStaticNatDeprovisioningsForFilter(filter == null ? null : filter.getDeProvisionedFilter());
+
+		StaticNatDeprovisioningQueryResultPojo dp_result = this
+				.getStaticNatDeprovisioningsForFilter(filter == null ? null : filter.getDeProvisionedFilter());
 		for (StaticNatDeprovisioningPojo snd : dp_result.getResults()) {
 			StaticNatProvisioningSummaryPojo snps = new StaticNatProvisioningSummaryPojo();
 			snps.setDeprovisioned(snd);
 			pojos.add(snps);
 		}
-		
+
 		Collections.sort(pojos);
 		result.setResults(pojos);
 		return result;
@@ -9559,7 +9451,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		StaticNatProvisioningQueryResultPojo result = new StaticNatProvisioningQueryResultPojo();
 		List<StaticNatProvisioningPojo> pojos = new java.util.ArrayList<StaticNatProvisioningPojo>();
 		try {
-			StaticNatProvisioningQuerySpecification queryObject = (StaticNatProvisioningQuerySpecification) getObject(Constants.MOA_STATIC_NAT_PROVISIONING_QUERY_SPEC);
+			StaticNatProvisioningQuerySpecification queryObject = (StaticNatProvisioningQuerySpecification) getObject(
+					Constants.MOA_STATIC_NAT_PROVISIONING_QUERY_SPEC);
 			StaticNatProvisioning actionable = (StaticNatProvisioning) getObject(Constants.MOA_STATIC_NAT_PROVISIONING);
 
 			if (filter != null) {
@@ -9575,22 +9468,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getStaticNatProvisioningsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getStaticNatProvisioningsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			@SuppressWarnings("unchecked")
-			List<StaticNatProvisioning> moas = 
-				actionable.query(queryObject, reqSvc);
-			
-			info("[getStaticNatProvisioningsForFilter] got " + moas.size() + " Static Nat Provisioning objects back from the server.");
+			List<StaticNatProvisioning> moas = actionable.query(queryObject, reqSvc);
+
+			info("[getStaticNatProvisioningsForFilter] got " + moas.size()
+					+ " Static Nat Provisioning objects back from the server.");
 			for (StaticNatProvisioning moa : moas) {
 				StaticNatProvisioningPojo pojo = new StaticNatProvisioningPojo();
 				this.populateStaticNatProvisioningPojo(moa, pojo);
@@ -9601,31 +9494,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateStaticNatProvisioningPojo(StaticNatProvisioning moa, StaticNatProvisioningPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateStaticNatProvisioningPojo(StaticNatProvisioning moa, StaticNatProvisioningPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setProvisioningId(moa.getProvisioningId());
 		pojo.setStatus(moa.getStatus());
 		pojo.setProvisioningResult(moa.getProvisioningResult());
@@ -9640,7 +9534,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// provisioningsteps
 		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
-		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa.getProvisioningStep()) {
+		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa
+				.getProvisioningStep()) {
 			ProvisioningStepPojo psp = new ProvisioningStepPojo();
 			this.populateProvisioningStepPojoFromEmoryMoa(ps, psp);
 			pspList.add(psp);
@@ -9655,7 +9550,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@SuppressWarnings("unchecked")
 	private void populateProvisioningStepPojoFromEmoryMoa(edu.emory.moa.objects.resources.v1_0.ProvisioningStep moa,
 			ProvisioningStepPojo pojo) {
-		
+
 		pojo.setProvisioningId(moa.getProvisioningId());
 		pojo.setProvisioningStepId(moa.getProvisioningStepId());
 		pojo.setStepId(moa.getStepId());
@@ -9666,7 +9561,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setActualTime(moa.getActualTime());
 		pojo.setAnticipatedTime(moa.getAnticipatedTime());
 		if (moa.getProperty() != null) {
-			for (edu.emory.moa.objects.resources.v1_0.Property stepProps : (List<edu.emory.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			for (edu.emory.moa.objects.resources.v1_0.Property stepProps : (List<edu.emory.moa.objects.resources.v1_0.Property>) moa
+					.getProperty()) {
 				pojo.getProperties().put(stepProps.getPropertyName(), stepProps.getPropertyValue());
 			}
 		}
@@ -9679,8 +9575,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		StaticNatDeprovisioningQueryResultPojo result = new StaticNatDeprovisioningQueryResultPojo();
 		List<StaticNatDeprovisioningPojo> pojos = new java.util.ArrayList<StaticNatDeprovisioningPojo>();
 		try {
-			StaticNatDeprovisioningQuerySpecification queryObject = (StaticNatDeprovisioningQuerySpecification) getObject(Constants.MOA_STATIC_NAT_DEPROVISIONING_QUERY_SPEC);
-			StaticNatDeprovisioning actionable = (StaticNatDeprovisioning) getObject(Constants.MOA_STATIC_NAT_DEPROVISIONING);
+			StaticNatDeprovisioningQuerySpecification queryObject = (StaticNatDeprovisioningQuerySpecification) getObject(
+					Constants.MOA_STATIC_NAT_DEPROVISIONING_QUERY_SPEC);
+			StaticNatDeprovisioning actionable = (StaticNatDeprovisioning) getObject(
+					Constants.MOA_STATIC_NAT_DEPROVISIONING);
 
 			if (filter != null) {
 				queryObject.setProvisioningId(filter.getProvisioningId());
@@ -9695,22 +9593,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getStaticNatDeprovisioningsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getStaticNatDeprovisioningsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			@SuppressWarnings("unchecked")
-			List<StaticNatDeprovisioning> moas = 
-				actionable.query(queryObject, reqSvc);
-			
-			info("[getStaticNatDeprovisioningsForFilter] got " + moas.size() + " Static Nat Provisioning objects back from the server.");
+			List<StaticNatDeprovisioning> moas = actionable.query(queryObject, reqSvc);
+
+			info("[getStaticNatDeprovisioningsForFilter] got " + moas.size()
+					+ " Static Nat Provisioning objects back from the server.");
 			for (StaticNatDeprovisioning moa : moas) {
 				StaticNatDeprovisioningPojo pojo = new StaticNatDeprovisioningPojo();
 				this.populateStaticNatDeprovisioningPojo(moa, pojo);
@@ -9721,31 +9619,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateStaticNatDeprovisioningPojo(StaticNatDeprovisioning moa, StaticNatDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateStaticNatDeprovisioningPojo(StaticNatDeprovisioning moa, StaticNatDeprovisioningPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setProvisioningId(moa.getProvisioningId());
 		pojo.setStatus(moa.getStatus());
 		pojo.setProvisioningResult(moa.getProvisioningResult());
@@ -9760,7 +9659,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// provisioningsteps
 		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
-		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa.getProvisioningStep()) {
+		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa
+				.getProvisioningStep()) {
 			ProvisioningStepPojo psp = new ProvisioningStepPojo();
 			this.populateProvisioningStepPojoFromEmoryMoa(ps, psp);
 			pspList.add(psp);
@@ -9776,16 +9676,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public VpnConnectionProfileQueryResultPojo getVpnConnectionProfilesForFilter(
 			VpnConnectionProfileQueryFilterPojo filter) throws RpcException {
-		
+
 		VpnConnectionProfileQueryResultPojo result = new VpnConnectionProfileQueryResultPojo();
 		List<VpnConnectionProfileSummaryPojo> summaries = new java.util.ArrayList<VpnConnectionProfileSummaryPojo>();
-		
+
 		// get ALL VpnConnectionProfileAssignments and go through them in memory
 		// instead of doing an individual query by profile id.
-		// this speeds things up significantly but could potentially lead to other resource issues down the road
+		// this speeds things up significantly but could potentially lead to other
+		// resource issues down the road
 		VpnConnectionProfileAssignmentQueryFilterPojo eia_filter = new VpnConnectionProfileAssignmentQueryFilterPojo();
-		VpnConnectionProfileAssignmentQueryResultPojo eia_result = this.getVpnConnectionProfileAssignmentsForFilter(eia_filter);
-		
+		VpnConnectionProfileAssignmentQueryResultPojo eia_result = this
+				.getVpnConnectionProfileAssignmentsForFilter(eia_filter);
+
 		// check the cache for cached VpnConnectionProfiles (by current session id)
 		// if they've already been cached, just get them from there
 		// and pull back any assignments for those
@@ -9797,12 +9699,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			for (VpnConnectionProfilePojo profile : cached_profiles) {
 				VpnConnectionProfileSummaryPojo summary = new VpnConnectionProfileSummaryPojo();
 				summary.setProfile(profile);
-				assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+				assignmentLoop:
+				for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
 					if (assignment.getVpnConnectionProfileId().equals(profile.getVpnConnectionProfileId())) {
 						profile.setAssigned(true);
-						// go through the tunnel profiles in the profile and remove the "(AVAILABLE)" string?
+						// go through the tunnel profiles in the profile and remove the "(AVAILABLE)"
+						// string?
 						for (TunnelProfilePojo tunnel : profile.getTunnelProfiles()) {
-							String newDesc = tunnel.getTunnelDescription().replaceAll(Constants.TUNNEL_AVAILABLE, assignment.getOwnerId());
+							String newDesc = tunnel.getTunnelDescription().replaceAll(Constants.TUNNEL_AVAILABLE,
+									assignment.getOwnerId());
 							tunnel.setTunnelDescription(newDesc);
 						}
 						summary.setAssignment(assignment);
@@ -9820,9 +9725,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			info("[getVpnConnectionProfilesForFilter] getting VpnConnectionProfile objects from the service");
 		}
-		
+
 		try {
-			VpnConnectionProfileQuerySpecification queryObject = (VpnConnectionProfileQuerySpecification) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_QUERY_SPEC);
+			VpnConnectionProfileQuerySpecification queryObject = (VpnConnectionProfileQuerySpecification) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_QUERY_SPEC);
 			VpnConnectionProfile actionable = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
 
 			if (filter != null) {
@@ -9834,17 +9740,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getVpnConnectionProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
-			List<VpnConnectionProfile> moas = actionable.query(queryObject,
-					this.getNetworkOpsRequestService());
-			info("[getVpnConnectionProfilesForFilter] got " + moas.size() + " VPN COnnection profiles back from the ESB.");
-			
+			info("[getVpnConnectionProfilesForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
+			List<VpnConnectionProfile> moas = actionable.query(queryObject, this.getNetworkOpsRequestService());
+			info("[getVpnConnectionProfilesForFilter] got " + moas.size()
+					+ " VPN COnnection profiles back from the ESB.");
+
 			List<VpnConnectionProfilePojo> profiles_to_cache = new java.util.ArrayList<VpnConnectionProfilePojo>();
-			
+
 			for (VpnConnectionProfile moa : moas) {
 				VpnConnectionProfileSummaryPojo summary = new VpnConnectionProfileSummaryPojo();
-				
+
 				VpnConnectionProfilePojo pojo = new VpnConnectionProfilePojo();
 				VpnConnectionProfilePojo baseline = new VpnConnectionProfilePojo();
 				this.populateVpnConnectionProfilePojo(moa, pojo);
@@ -9852,8 +9759,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.setBaseline(baseline);
 				summary.setProfile(pojo);
 				profiles_to_cache.add(pojo);
-				
-				assignmentLoop: for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+
+				assignmentLoop:
+				for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
 					if (assignment.getVpnConnectionProfileId().equals(pojo.getVpnConnectionProfileId())) {
 						summary.setAssignment(assignment);
 						// TODO: remove assignment from eia_result.getResults()??
@@ -9870,30 +9778,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
+		}
+		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateVpnConnectionProfilePojo(VpnConnectionProfile moa, VpnConnectionProfilePojo pojo) throws XmlEnterpriseObjectException {
+	private void populateVpnConnectionProfilePojo(VpnConnectionProfile moa, VpnConnectionProfilePojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setVpnConnectionProfileId(moa.getVpnConnectionProfileId());
 		pojo.setVpcNetwork(moa.getVpcNetwork());
 		for (TunnelProfile tp_moa : (List<TunnelProfile>) moa.getTunnelProfile()) {
@@ -9907,10 +9817,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			tp_pojo.setCustomerGatewayIp(tp_moa.getCustomerGatewayIp());
 			tp_pojo.setVpnInsideIpCidr1(tp_moa.getVpnInsideIpCidr1());
 			tp_pojo.setVpnInsideIpCidr2(tp_moa.getVpnInsideIpCidr2());
-			
+
 			pojo.getTunnelProfiles().add(tp_pojo);
 		}
-		
+
 //		this.setPojoCreateInfo(pojo, moa);
 //		this.setPojoUpdateInfo(pojo, moa);
 	}
@@ -9918,8 +9828,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public VpnConnectionProfilePojo createVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile)
 			throws RpcException {
-		vpnConnectionProfile.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
+		vpnConnectionProfile.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 
 		try {
 			info("creating VpnConnectionProfile record on the server...");
@@ -9927,54 +9836,59 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("populating moa");
 			this.populateVpnConnectionProfileMoa(vpnConnectionProfile, moa);
 			info("Creating VpnConnectionProfile: " + moa.toXmlString());
-			
+
 			info("doing the VpnConnectionProfile.create...");
 			this.doCreate(moa, getNetworkOpsRequestService());
 			info("VpnConnectionProfile.create is complete...");
 
 			return vpnConnectionProfile;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectCreateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
+		}
+		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (IllegalAccessException e) {
+		}
+		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (InvocationTargetException e) {
+		}
+		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (NoSuchMethodException e) {
+		}
+		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
 
-	private void populateVpnConnectionProfileMoa(VpnConnectionProfilePojo pojo,
-			VpnConnectionProfile moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
-		
+	private void populateVpnConnectionProfileMoa(VpnConnectionProfilePojo pojo, VpnConnectionProfile moa)
+			throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, SecurityException, NoSuchMethodException {
+
 		moa.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
 		moa.setVpcNetwork(pojo.getVpcNetwork());
 		for (TunnelProfilePojo tp_pojo : pojo.getTunnelProfiles()) {
@@ -9988,59 +9902,61 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			tp_moa.setCustomerGatewayIp(tp_pojo.getCustomerGatewayIp());
 			tp_moa.setVpnInsideIpCidr1(tp_pojo.getVpnInsideIpCidr1());
 			tp_moa.setVpnInsideIpCidr2(tp_pojo.getVpnInsideIpCidr2());
-			
+
 			moa.addTunnelProfile(tp_moa);
 		}
 	}
 
 	@Override
-	public VpnConnectionProfilePojo deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile) throws RpcException {
+	public VpnConnectionProfilePojo deleteVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile)
+			throws RpcException {
 		try {
-			// TODO: need to see if there are any assignments to this profile and if so, delete those too
+			// TODO: need to see if there are any assignments to this profile and if so,
+			// delete those too
 			info("deleting VpnConnectionProfile record on the server...");
 			VpnConnectionProfile moa = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
 			info("populating moa");
 			this.populateVpnConnectionProfileMoa(vpnConnectionProfile, moa);
 
-			
 			info("doing the VpnConnectionProfilePojo.delete...");
 			this.doDelete(moa, getNetworkOpsRequestService());
 			info("VpnConnectionProfilePojo.delete is complete...");
 
 			return vpnConnectionProfile;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
+		}
+		catch (EnterpriseObjectDeleteException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -10050,37 +9966,40 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public VpnConnectionProfilePojo updateVpnConnectionProfile(VpnConnectionProfilePojo vpnConnectionProfile)
 			throws RpcException {
 
-        try {
-            info("updating VpnConnectionProfile on the server...");
-            VpnConnectionProfile newData = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
-            VpnConnectionProfile baselineData = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
+		try {
+			info("updating VpnConnectionProfile on the server...");
+			VpnConnectionProfile newData = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
+			VpnConnectionProfile baselineData = (VpnConnectionProfile) getObject(Constants.MOA_VPN_CONNECTION_PROFILE);
 
-            info("populating newData...");
-            populateVpnConnectionProfileMoa(vpnConnectionProfile, newData);
+			info("populating newData...");
+			populateVpnConnectionProfileMoa(vpnConnectionProfile, newData);
 
-            info("populating baselineData...");
-            populateVpnConnectionProfileMoa(vpnConnectionProfile.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateVpnConnectionProfileMoa(vpnConnectionProfile.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getNetworkOpsRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getNetworkOpsRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return vpnConnectionProfile;
 	}
 
 	@Override
 	public VpnConnectionProfileAssignmentQueryResultPojo getVpnConnectionProfileAssignmentsForFilter(
 			VpnConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException {
-		
+
 		VpnConnectionProfileAssignmentQueryResultPojo result = new VpnConnectionProfileAssignmentQueryResultPojo();
 		List<VpnConnectionProfileAssignmentPojo> pojos = new java.util.ArrayList<VpnConnectionProfileAssignmentPojo>();
 		try {
-			VpnConnectionProfileAssignmentQuerySpecification queryObject = (VpnConnectionProfileAssignmentQuerySpecification) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC);
-			VpnConnectionProfileAssignment actionable = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
+			VpnConnectionProfileAssignmentQuerySpecification queryObject = (VpnConnectionProfileAssignmentQuerySpecification) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC);
+			VpnConnectionProfileAssignment actionable = (VpnConnectionProfileAssignment) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
 
 			if (filter != null) {
 				// TODO: query language probably
@@ -10092,20 +10011,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getVpnConnectionProfileAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getVpnConnectionProfileAssignmentsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			@SuppressWarnings("unchecked")
 			List<VpnConnectionProfileAssignment> moas = actionable.query(queryObject,
 					this.getNetworkOpsRequestService());
-			info("[getVpnConnectionProfileAssignmentsForFilter] got " + moas.size() + " VPN Connection profile assignments back from the ESB.");
-			
+			info("[getVpnConnectionProfileAssignmentsForFilter] got " + moas.size()
+					+ " VPN Connection profile assignments back from the ESB.");
+
 			for (VpnConnectionProfileAssignment moa : moas) {
 				VpnConnectionProfileAssignmentPojo pojo = new VpnConnectionProfileAssignmentPojo();
 				VpnConnectionProfileAssignmentPojo baseline = new VpnConnectionProfileAssignmentPojo();
 				this.populateVpnConnectionProfileAssignmentPojo(moa, pojo);
 				this.populateVpnConnectionProfileAssignmentPojo(moa, baseline);
 				pojo.setBaseline(baseline);
-				
+
 				pojos.add(pojo);
 			}
 
@@ -10113,30 +10034,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
+		}
+		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	private void populateVpnConnectionProfileAssignmentMoa(VpnConnectionProfileAssignmentPojo pojo,
-			VpnConnectionProfileAssignment moa) throws EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+			VpnConnectionProfileAssignment moa) throws EnterpriseFieldException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 
 		moa.setVpnConnectionProfileAssignmentId(pojo.getVpnConnectionProfileAssignmentId());
 		moa.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
@@ -10149,10 +10072,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			populateDatetime(dt, pojo.getDeleteTime());
 			moa.setDeleteDatetime(dt);
 		}
-		
+
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
+
 	private void populateVpnConnectionProfileAssignmentPojo(VpnConnectionProfileAssignment moa,
 			VpnConnectionProfileAssignmentPojo pojo) throws XmlEnterpriseObjectException {
 
@@ -10170,13 +10094,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public VpnConnectionProvisioningQueryResultPojo getVpncpSummariesForFilter(VpnConnectionProvisioningQueryFilterPojo filter)
-			throws RpcException {
+	public VpnConnectionProvisioningQueryResultPojo getVpncpSummariesForFilter(
+			VpnConnectionProvisioningQueryFilterPojo filter) throws RpcException {
 
 		VpnConnectionProvisioningQueryResultPojo result = new VpnConnectionProvisioningQueryResultPojo();
 		List<VpnConnectionProvisioningSummaryPojo> summaries = new java.util.ArrayList<VpnConnectionProvisioningSummaryPojo>();
 		try {
-			VpnConnectionProvisioningQuerySpecification queryObject = (VpnConnectionProvisioningQuerySpecification) getObject(Constants.MOA_VPNCP_QUERY_SPEC);
+			VpnConnectionProvisioningQuerySpecification queryObject = (VpnConnectionProvisioningQuerySpecification) getObject(
+					Constants.MOA_VPNCP_QUERY_SPEC);
 			VpnConnectionProvisioning actionable = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
 
 			if (filter != null) {
@@ -10210,21 +10135,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpncpSummariesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("vpcpListTimeoutMillis", "30000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			info("VpnConnectionProvisioningQuerySpec: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<VpnConnectionProvisioning> moas = 
-				actionable.query(queryObject, reqSvc);
-			
+			List<VpnConnectionProvisioning> moas = actionable.query(queryObject, reqSvc);
+
 			info("[getVpncpSummariesForFilter] got " + moas.size() + " VPNCPs back from the server.");
 			for (VpnConnectionProvisioning moa : moas) {
 				VpnConnectionProvisioningPojo pojo = new VpnConnectionProvisioningPojo();
@@ -10237,10 +10160,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				summaries.add(summary);
 //				pojos.add(pojo);
 			}
-			
+
 			// now get the VPNCDPs (deprovisioning objects)
-			VpnConnectionDeprovisioningQuerySpecification deprov_queryObject = (VpnConnectionDeprovisioningQuerySpecification) getObject(Constants.MOA_VPNC_DEPROVISIONING_QUERY_SPEC);
-			VpnConnectionDeprovisioning deprov_actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
+			VpnConnectionDeprovisioningQuerySpecification deprov_queryObject = (VpnConnectionDeprovisioningQuerySpecification) getObject(
+					Constants.MOA_VPNC_DEPROVISIONING_QUERY_SPEC);
+			VpnConnectionDeprovisioning deprov_actionable = (VpnConnectionDeprovisioning) getObject(
+					Constants.MOA_VPNC_DEPROVISIONING);
 
 			if (filter != null) {
 				if (filter.isDefaultMaxVpncps()) {
@@ -10263,7 +10188,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					deprov_queryObject.setType(filter.getType());
 					deprov_queryObject.setCreateUser(filter.getCreateUser());
 					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
-					info("[getVpncpSummariesForFilter] getting VPNCDPs for filter: " + deprov_queryObject.toXmlString());
+					info("[getVpncpSummariesForFilter] getting VPNCDPs for filter: "
+							+ deprov_queryObject.toXmlString());
 				}
 			}
 			else {
@@ -10272,9 +10198,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			info("VpnConnectionDeprovisioningQuerySpec: " + deprov_queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<VpnConnectionDeprovisioning> deprov_moas = 
-				deprov_actionable.query(deprov_queryObject, reqSvc);
-			
+			List<VpnConnectionDeprovisioning> deprov_moas = deprov_actionable.query(deprov_queryObject, reqSvc);
+
 			info("[getVpncpSummariesForFilter] got " + deprov_moas.size() + " VPNCDPs back from the server.");
 			for (VpnConnectionDeprovisioning moa : deprov_moas) {
 				VpnConnectionDeprovisioningPojo pojo = new VpnConnectionDeprovisioningPojo();
@@ -10291,27 +10216,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 //	@Override
@@ -10442,7 +10367,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //	}
 
 	@SuppressWarnings("unchecked")
-	private void populateVpnDeprovisioningPojo(VpnConnectionDeprovisioning moa, VpnConnectionDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateVpnDeprovisioningPojo(VpnConnectionDeprovisioning moa, VpnConnectionDeprovisioningPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setProvisioningId(moa.getProvisioningId());
 		pojo.setStatus(moa.getStatus());
 		pojo.setProvisioningResult(moa.getProvisioningResult());
@@ -10466,7 +10392,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// provisioningsteps
 		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
-		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa.getProvisioningStep()) {
+		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa
+				.getProvisioningStep()) {
 			ProvisioningStepPojo psp = new ProvisioningStepPojo();
 			this.populateProvisioningStepPojoFromEmoryMoa(ps, psp);
 			pspList.add(psp);
@@ -10478,9 +10405,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateVpnDeprovisioningMoa(VpnConnectionDeprovisioningPojo pojo,
-			VpnConnectionDeprovisioning moa) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, EnterpriseFieldException, XmlEnterpriseObjectException {
-		
+	private void populateVpnDeprovisioningMoa(VpnConnectionDeprovisioningPojo pojo, VpnConnectionDeprovisioning moa)
+			throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
+			InvocationTargetException, EnterpriseFieldException, XmlEnterpriseObjectException {
+
 		moa.setProvisioningId(pojo.getProvisioningId());
 		moa.setStatus(pojo.getStatus());
 		moa.setProvisioningResult(pojo.getProvisioningResult());
@@ -10508,14 +10436,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			this.populateProvisioningStepMoaFromEmoryPojo(ps, psp);
 			moa.addProvisioningStep(psp);
 		}
-		
+
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
 	private void populateProvisioningStepMoaFromEmoryPojo(ProvisioningStepPojo pojo,
 			edu.emory.moa.objects.resources.v1_0.ProvisioningStep moa) throws EnterpriseFieldException {
-		
+
 		moa.setProvisioningId(pojo.getProvisioningId());
 		moa.setProvisioningStepId(pojo.getProvisioningStepId());
 		moa.setStepId(pojo.getStepId());
@@ -10539,57 +10467,57 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public VpnConnectionProfileAssignmentPojo createVpnConnectionProfileAssignment(
 			VpnConnectionProfileAssignmentPojo profileAssignment) throws RpcException {
 
-		profileAssignment.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
+		profileAssignment.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
 		try {
 			info("creating VpnConnectionProfileAssignment on the server...");
-			VpnConnectionProfileAssignment moa = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
+			VpnConnectionProfileAssignment moa = (VpnConnectionProfileAssignment) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
 			info("populating moa");
 			this.populateVpnConnectionProfileAssignmentMoa(profileAssignment, moa);
 			info("Creating VpnConnectionProfileAssignment: " + moa.toXmlString());
-			
+
 			info("doing the VpnConnectionProfileAssignment.create...");
 			this.doCreate(moa, getNetworkOpsRequestService());
 			info("VpnConnectionProfileAssignment.create is complete...");
 
 			return profileAssignment;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectCreateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -10602,12 +10530,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		try {
 			info("generating VpnConnectionProfileAssignment on the server...");
-			VpnConnectionProfileAssignment actionable = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_GENERATE);
-			VpnConnectionProfileAssignmentRequisition seed = (VpnConnectionProfileAssignmentRequisition) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION);
+			VpnConnectionProfileAssignment actionable = (VpnConnectionProfileAssignment) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_GENERATE);
+			VpnConnectionProfileAssignmentRequisition seed = (VpnConnectionProfileAssignmentRequisition) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION);
 			info("populating moa");
 			seed.setOwnerId(requisition.getOwnerId());
 
-			
 			info("doing the VpnConnectionProfileAssignment.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -10622,86 +10551,87 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("VpnConnectionProfileAssignment.generate is complete...");
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
 	public VpnConnectionProfileAssignmentPojo deleteVpnConnectionProfileAssignment(
 			VpnConnectionProfileAssignmentPojo vpnConnectionProfileAssignment) throws RpcException {
-		
+
 		try {
 			info("deleting VpnConnectionProfileAssignment record on the server...");
-			VpnConnectionProfileAssignment moa = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
+			VpnConnectionProfileAssignment moa = (VpnConnectionProfileAssignment) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
 			info("populating moa");
 			this.populateVpnConnectionProfileAssignmentMoa(vpnConnectionProfileAssignment, moa);
 
-			
 			info("doing the VpnConnectionProfileAssignmentPojo.delete...");
 			this.doDelete(moa, getNetworkOpsRequestService());
 			info("VpnConnectionProfileAssignmentPojo.delete is complete...");
 
 			return vpnConnectionProfileAssignment;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
+		}
+		catch (EnterpriseObjectDeleteException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -10710,30 +10640,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public VpnConnectionProvisioningPojo generateVpncp(VpnConnectionRequisitionPojo vpncpRequisition)
 			throws RpcException {
-		
+
 		try {
 			info("generating VpnConnectionProvisioning on the server...");
 			VpnConnectionProvisioning actionable = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
-			VpnConnectionRequisition seed = (VpnConnectionRequisition) getObject(Constants.MOA_VPN_CONNECTION_REQUISITION);
+			VpnConnectionRequisition seed = (VpnConnectionRequisition) getObject(
+					Constants.MOA_VPN_CONNECTION_REQUISITION);
 			info("populating moa");
 			this.populateVpncpRequisitionMoa(vpncpRequisition, seed);
 
-			
 			info("doing the VpnConnectionProvisioning.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("VpnConnectionProvisioning.generate seed data is: " + seed.toXmlString());
-			
+
 			VpnConnectionProvisioningPojo pojo = new VpnConnectionProvisioningPojo();
-			
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("vpnpGenerateTimeoutMillis", "1000000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
 			info("setting NetworOps RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			@SuppressWarnings("unchecked")
 			List<VpnConnectionProvisioning> result = actionable.generate(seed, reqSvc);
@@ -10744,43 +10673,43 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("VpnConnectionProvisioning.generate is complete...");
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -10788,7 +10717,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateVpncpPojo(VpnConnectionProvisioning moa, VpnConnectionProvisioningPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateVpncpPojo(VpnConnectionProvisioning moa, VpnConnectionProvisioningPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setProvisioningId(moa.getProvisioningId());
 		pojo.setStatus(moa.getStatus());
 		pojo.setProvisioningResult(moa.getProvisioningResult());
@@ -10802,7 +10732,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		// provisioningsteps
 		List<ProvisioningStepPojo> pspList = new java.util.ArrayList<ProvisioningStepPojo>();
-		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa.getProvisioningStep()) {
+		for (edu.emory.moa.objects.resources.v1_0.ProvisioningStep ps : (List<edu.emory.moa.objects.resources.v1_0.ProvisioningStep>) moa
+				.getProvisioningStep()) {
 			ProvisioningStepPojo psp = new ProvisioningStepPojo();
 			this.populateProvisioningStepPojoFromEmoryMoa(ps, psp);
 			pspList.add(psp);
@@ -10813,8 +10744,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
-	private void populateVpncpMoa(VpnConnectionProvisioningPojo pojo, VpnConnectionProvisioning moa) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException, EnterpriseFieldException, XmlEnterpriseObjectException {
-		
+
+	private void populateVpncpMoa(VpnConnectionProvisioningPojo pojo, VpnConnectionProvisioning moa)
+			throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException,
+			NoSuchMethodException, EnterpriseFieldException, XmlEnterpriseObjectException {
+
 		moa.setProvisioningId(pojo.getProvisioningId());
 		moa.setStatus(pojo.getStatus());
 		moa.setProvisioningResult(pojo.getProvisioningResult());
@@ -10837,10 +10771,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		this.setMoaUpdateInfo(moa, pojo);
 	}
 
-
 	@SuppressWarnings("unchecked")
-	private void populateVpncpRequisitionPojo(VpnConnectionRequisition moa,
-			VpnConnectionRequisitionPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateVpncpRequisitionPojo(VpnConnectionRequisition moa, VpnConnectionRequisitionPojo pojo)
+			throws XmlEnterpriseObjectException {
 
 		pojo.setOwnerId(moa.getOwnerId());
 		for (RemoteVpnConnectionInfo rvci : (List<RemoteVpnConnectionInfo>) moa.getRemoteVpnConnectionInfo()) {
@@ -10864,8 +10797,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	private void populateVpncpRequisitionMoa(VpnConnectionRequisitionPojo pojo,
-			VpnConnectionRequisition moa) throws XmlEnterpriseObjectException, EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+	private void populateVpncpRequisitionMoa(VpnConnectionRequisitionPojo pojo, VpnConnectionRequisition moa)
+			throws XmlEnterpriseObjectException, EnterpriseFieldException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
 
 		moa.setOwnerId(pojo.getOwnerId());
 		for (RemoteVpnConnectionInfoPojo rvci : pojo.getRemoteVpnConnectionInfo()) {
@@ -10895,8 +10829,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		FirewallExceptionAddRequestQueryResultPojo result = new FirewallExceptionAddRequestQueryResultPojo();
 		List<FirewallExceptionAddRequestPojo> pojos = new java.util.ArrayList<FirewallExceptionAddRequestPojo>();
 		try {
-			FirewallExceptionAddRequestQuerySpecification queryObject = (FirewallExceptionAddRequestQuerySpecification) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST_QUERY_SPEC);
-			FirewallExceptionAddRequest actionable = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+			FirewallExceptionAddRequestQuerySpecification queryObject = (FirewallExceptionAddRequestQuerySpecification) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST_QUERY_SPEC);
+			FirewallExceptionAddRequest actionable = (FirewallExceptionAddRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
 
 			if (filter != null) {
 				queryObject.setSystemId(filter.getSystemId());
@@ -10940,15 +10876,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getFirewallExceptionRequestsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getFirewallExceptionRequestsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			info("[getFirewallExceptionRequestsForFilter] query spec is: " + queryObject.toXmlString());
-			
+
 			@SuppressWarnings("unchecked")
-			List<FirewallExceptionAddRequest> moas = actionable.query(queryObject,
-					this.getServiceNowRequestService());
+			List<FirewallExceptionAddRequest> moas = actionable.query(queryObject, this.getServiceNowRequestService());
 			if (moas != null) {
-				info("[getFirewallExceptionAddRequestsForFilter] got " + moas.size() + " FirewallExceptionAddRequest objects back from ESB.");
+				info("[getFirewallExceptionAddRequestsForFilter] got " + moas.size()
+						+ " FirewallExceptionAddRequest objects back from ESB.");
 			}
 			for (FirewallExceptionAddRequest moa : moas) {
 				FirewallExceptionAddRequestPojo pojo = new FirewallExceptionAddRequestPojo();
@@ -10963,27 +10900,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -10991,17 +10928,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public FirewallExceptionAddRequestPojo generateFirewallExceptionAddRequest(FirewallExceptionAddRequestRequisitionPojo pojo_req)
-			throws RpcException {
-		
+	public FirewallExceptionAddRequestPojo generateFirewallExceptionAddRequest(
+			FirewallExceptionAddRequestRequisitionPojo pojo_req) throws RpcException {
+
 		try {
 			info("generating FirewallExceptionAddRequest on the server...");
-			FirewallExceptionAddRequest actionable = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
-			FirewallExceptionAddRequestRequisition seed = (FirewallExceptionAddRequestRequisition) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST_REQUISITION);
+			FirewallExceptionAddRequest actionable = (FirewallExceptionAddRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+			FirewallExceptionAddRequestRequisition seed = (FirewallExceptionAddRequestRequisition) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST_REQUISITION);
 			info("populating moa");
 			this.populateFirewallExceptionAddRequestRequisitionMoa(pojo_req, seed);
 
-			
 			info("doing the FirewallExceptionAddRequest.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -11016,44 +10954,48 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("FirewallExceptionAddRequest.generate is complete...");
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (IllegalAccessException e) {
+		}
+		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (InvocationTargetException e) {
+		}
+		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (NoSuchMethodException e) {
+		}
+		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (ParseException e) {
+		}
+		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -11064,26 +11006,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			throws RpcException {
 
 		rule.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating FirewallExceptionAddRequest on the server...");
-            FirewallExceptionAddRequest newData = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
-            FirewallExceptionAddRequest baselineData = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+		try {
+			info("updating FirewallExceptionAddRequest on the server...");
+			FirewallExceptionAddRequest newData = (FirewallExceptionAddRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+			FirewallExceptionAddRequest baselineData = (FirewallExceptionAddRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
 
-            info("populating newData...");
-            populateFirewallExceptionAddRequestMoa(rule, newData);
+			info("populating newData...");
+			populateFirewallExceptionAddRequestMoa(rule, newData);
 
-            info("populating baselineData...");
-            populateFirewallExceptionAddRequestMoa(rule.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateFirewallExceptionAddRequestMoa(rule.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the FirewallExceptionAddRequest.update...");
-            doUpdate(newData, getServiceNowRequestService());
-            info("update is FirewallExceptionAddRequest.update complete...");
-        } 
-        catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the FirewallExceptionAddRequest.update...");
+			doUpdate(newData, getServiceNowRequestService());
+			info("update is FirewallExceptionAddRequest.update complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return rule;
 	}
 
@@ -11091,59 +11035,59 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteFirewallExceptionAddRequest(FirewallExceptionAddRequestPojo rule) throws RpcException {
 		try {
 			info("deleting FirewallExceptionAddRequest record on the server...");
-			FirewallExceptionAddRequest moa = (FirewallExceptionAddRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
+			FirewallExceptionAddRequest moa = (FirewallExceptionAddRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_ADD_REQUEST);
 			info("populating moa");
 			this.populateFirewallExceptionAddRequestMoa(rule, moa);
 
-			
 			info("doing the FirewallExceptionAddRequest.delete...");
 			this.doDelete(moa, getServiceNowRequestService());
 			info("FirewallExceptionAddRequest.delete is complete...");
 
 			return;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
+		}
+		catch (EnterpriseObjectDeleteException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
-	
+
 	private void populateFirewallExceptionAddRequestMoa(FirewallExceptionAddRequestPojo pojo,
-			FirewallExceptionAddRequest moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+			FirewallExceptionAddRequest moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setSystemId(pojo.getSystemId());
 		moa.setUserNetID(pojo.getUserNetId());
@@ -11190,9 +11134,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@SuppressWarnings("unchecked")
 	private void populateFirewallExceptionAddRequestPojo(FirewallExceptionAddRequest moa,
-			FirewallExceptionAddRequestPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-	
+			FirewallExceptionAddRequestPojo pojo) throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setSystemId(moa.getSystemId());
 		pojo.setUserNetId(moa.getUserNetID());
 		pojo.setApplicationName(moa.getApplicationName());
@@ -11233,10 +11176,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	private void populateFirewallExceptionAddRequestRequisitionMoa(FirewallExceptionAddRequestRequisitionPojo pojo,
-			FirewallExceptionAddRequestRequisition moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+			FirewallExceptionAddRequestRequisition moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setUserNetID(pojo.getUserNetId());
 		moa.setApplicationName(pojo.getApplicationName());
@@ -11280,12 +11222,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public FirewallExceptionRemoveRequestQueryResultPojo getFirewallExceptionRemoveRequestsForFilter(
 			FirewallExceptionRemoveRequestQueryFilterPojo filter) throws RpcException {
-		
+
 		FirewallExceptionRemoveRequestQueryResultPojo result = new FirewallExceptionRemoveRequestQueryResultPojo();
 		List<FirewallExceptionRemoveRequestPojo> pojos = new java.util.ArrayList<FirewallExceptionRemoveRequestPojo>();
 		try {
-			FirewallExceptionRemoveRequestQuerySpecification queryObject = (FirewallExceptionRemoveRequestQuerySpecification) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_QUERY_SPEC);
-			FirewallExceptionRemoveRequest actionable = (FirewallExceptionRemoveRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
+			FirewallExceptionRemoveRequestQuerySpecification queryObject = (FirewallExceptionRemoveRequestQuerySpecification) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_QUERY_SPEC);
+			FirewallExceptionRemoveRequest actionable = (FirewallExceptionRemoveRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
 
 			if (filter != null) {
 				queryObject.setSystemId(filter.getSystemId());
@@ -11301,15 +11245,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getFirewallExceptionRemoveRequestsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getFirewallExceptionRemoveRequestsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			info("[getFirewallExceptionRemoveRequestsForFilter] query spec is: " + queryObject.toXmlString());
-			
+
 			@SuppressWarnings("unchecked")
 			List<FirewallExceptionRemoveRequest> moas = actionable.query(queryObject,
 					this.getServiceNowRequestService());
 			if (moas != null) {
-				info("[getFirewallExceptionRemoveRequestsForFilter] got " + moas.size() + " FirewallExceptionRemoveRequest objects back from ESB.");
+				info("[getFirewallExceptionRemoveRequestsForFilter] got " + moas.size()
+						+ " FirewallExceptionRemoveRequest objects back from ESB.");
 			}
 			for (FirewallExceptionRemoveRequest moa : moas) {
 				FirewallExceptionRemoveRequestPojo pojo = new FirewallExceptionRemoveRequestPojo();
@@ -11324,27 +11270,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -11354,15 +11300,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public FirewallExceptionRemoveRequestPojo generateFirewallExceptionRemoveRequest(
 			FirewallExceptionRemoveRequestRequisitionPojo pojo_req) throws RpcException {
-		
+
 		try {
 			info("generating FirewallExceptionRemoveRequest on the server...");
-			FirewallExceptionRemoveRequest actionable = (FirewallExceptionRemoveRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
-			FirewallExceptionRemoveRequestRequisition seed = (FirewallExceptionRemoveRequestRequisition) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_REQUISITION);
+			FirewallExceptionRemoveRequest actionable = (FirewallExceptionRemoveRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
+			FirewallExceptionRemoveRequestRequisition seed = (FirewallExceptionRemoveRequestRequisition) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST_REQUISITION);
 			info("populating moa");
 			this.populateFirewallExceptionRemoveRequestRequisitionMoa(pojo_req, seed);
 
-			
 			info("doing the FirewallExceptionRemoveRequest.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -11377,44 +11324,48 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("FirewallExceptionRemoveRequest.generate is complete...");
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (IllegalAccessException e) {
+		}
+		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (InvocationTargetException e) {
+		}
+		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (NoSuchMethodException e) {
+		}
+		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (ParseException e) {
+		}
+		catch (ParseException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -11430,59 +11381,59 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public void deleteFirewallExceptionRemoveRequest(FirewallExceptionRemoveRequestPojo rule) throws RpcException {
 		try {
 			info("deleting FirewallExceptionRemoveRequest record on the server...");
-			FirewallExceptionRemoveRequest moa = (FirewallExceptionRemoveRequest) getObject(Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
+			FirewallExceptionRemoveRequest moa = (FirewallExceptionRemoveRequest) getObject(
+					Constants.MOA_FIREWALL_EXCEPTION_REMOVE_REQUEST);
 			info("populating moa");
 			this.populateFirewallExceptionRemoveRequestMoa(rule, moa);
 
-			
 			info("doing the FirewallExceptionRemoveRequest.delete...");
 			this.doDelete(moa, getServiceNowRequestService());
 			info("FirewallExceptionRemoveRequest.delete is complete...");
 
 			return;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
+		}
+		catch (EnterpriseObjectDeleteException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
 	}
 
 	private void populateFirewallExceptionRemoveRequestMoa(FirewallExceptionRemoveRequestPojo pojo,
-			FirewallExceptionRemoveRequest moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+			FirewallExceptionRemoveRequest moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setSystemId(pojo.getSystemId());
 		moa.setUserNetID(pojo.getUserNetId());
@@ -11497,9 +11448,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@SuppressWarnings("unchecked")
 	private void populateFirewallExceptionRemoveRequestPojo(FirewallExceptionRemoveRequest moa,
-			FirewallExceptionRemoveRequestPojo pojo) throws XmlEnterpriseObjectException,
-			ParseException {
-	
+			FirewallExceptionRemoveRequestPojo pojo) throws XmlEnterpriseObjectException, ParseException {
+
 		pojo.setSystemId(moa.getSystemId());
 		pojo.setUserNetId(moa.getUserNetID());
 		pojo.setRequestState(moa.getRequestState());
@@ -11511,11 +11461,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	private void populateFirewallExceptionRemoveRequestRequisitionMoa(FirewallExceptionRemoveRequestRequisitionPojo pojo,
-			FirewallExceptionRemoveRequestRequisition moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+	private void populateFirewallExceptionRemoveRequestRequisitionMoa(
+			FirewallExceptionRemoveRequestRequisitionPojo pojo, FirewallExceptionRemoveRequestRequisition moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setUserNetID(pojo.getUserNetId());
 		moa.setRequestDetails(pojo.getRequestDetails());
@@ -11533,30 +11482,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			filter.setAddRequestFilter(new FirewallExceptionAddRequestQueryFilterPojo());
 			filter.getAddRequestFilter().getTags().add(filter.getVpcId());
 			result.setAddRequestFilterUsed(filter.getAddRequestFilter());
-			
+
 			filter.setRemoveRequestFilter(new FirewallExceptionRemoveRequestQueryFilterPojo());
 			filter.getRemoveRequestFilter().getTags().add(filter.getVpcId());
 			result.setRemoveRequestFilterUsed(filter.getRemoveRequestFilter());
 		}
 
 		List<FirewallExceptionRequestSummaryPojo> pojos = new java.util.ArrayList<FirewallExceptionRequestSummaryPojo>();
-		
-		FirewallExceptionAddRequestQueryResultPojo p_result = 
-			this.getFirewallExceptionAddRequestsForFilter(filter == null ? null : filter.getAddRequestFilter());
+
+		FirewallExceptionAddRequestQueryResultPojo p_result = this
+				.getFirewallExceptionAddRequestsForFilter(filter == null ? null : filter.getAddRequestFilter());
 		for (FirewallExceptionAddRequestPojo snp : p_result.getResults()) {
 			FirewallExceptionRequestSummaryPojo snps = new FirewallExceptionRequestSummaryPojo();
 			snps.setAddRequest(snp);
 			pojos.add(snps);
 		}
-		
-		FirewallExceptionRemoveRequestQueryResultPojo dp_result = 
-			this.getFirewallExceptionRemoveRequestsForFilter(filter == null ? null : filter.getRemoveRequestFilter());
+
+		FirewallExceptionRemoveRequestQueryResultPojo dp_result = this
+				.getFirewallExceptionRemoveRequestsForFilter(filter == null ? null : filter.getRemoveRequestFilter());
 		for (FirewallExceptionRemoveRequestPojo snd : dp_result.getResults()) {
 			FirewallExceptionRequestSummaryPojo snps = new FirewallExceptionRequestSummaryPojo();
 			snps.setRemoveRequest(snd);
 			pojos.add(snps);
 		}
-		
+
 		Collections.sort(pojos);
 		result.setResults(pojos);
 		return result;
@@ -11569,14 +11518,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties regionProps = getAppConfig().getProperties(AWS_REGION_PROPERTIES);
 			Iterator<Object> keys = regionProps.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
-				String value = (String)regionProps.get(key);
+				String key = (String) keys.next();
+				String value = (String) regionProps.get(key);
 				AWSRegionPojo region = new AWSRegionPojo();
 				region.setCode(key);
 				region.setValue(value);
 				results.add(region);
 			}
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -11590,10 +11539,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public VpnConnectionQueryResultPojo getVpnConnectionsForFilter(VpnConnectionQueryFilterPojo filter)
 			throws RpcException {
 
-		VpnConnectionQueryResultPojo result = new VpnConnectionQueryResultPojo();		
+		VpnConnectionQueryResultPojo result = new VpnConnectionQueryResultPojo();
 		List<VpnConnectionPojo> pojos = new java.util.ArrayList<VpnConnectionPojo>();
 		try {
-			VpnConnectionQuerySpecification queryObject = (VpnConnectionQuerySpecification) getObject(Constants.MOA_VPN_CONNECTION_QUERY_SPEC);
+			VpnConnectionQuerySpecification queryObject = (VpnConnectionQuerySpecification) getObject(
+					Constants.MOA_VPN_CONNECTION_QUERY_SPEC);
 			VpnConnection actionable = (VpnConnection) getObject(Constants.MOA_VPN_CONNECTION);
 
 			if (filter != null) {
@@ -11608,21 +11558,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getVpnConnectionsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("staticNatProvisioningListTimeoutMillis", "300000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			info("[getVpnConnectionsForFilter] query spec: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<VpnConnection> moas = 
-				actionable.query(queryObject, reqSvc);
-			
+			List<VpnConnection> moas = actionable.query(queryObject, reqSvc);
+
 			info("[getVpnConnectionsForFilter] got " + moas.size() + " VPN Connection objects back from the server.");
 			for (VpnConnection moa : moas) {
 				VpnConnectionPojo pojo = new VpnConnectionPojo();
@@ -11634,40 +11582,34 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private void populateVpnConnectionPojo(VpnConnection moa, VpnConnectionPojo pojo) {
 		/*
-		<!ELEMENT VpnConnection (
-			VpnId, 
-			VpcId, 
-			CryptoKeyring, 
-			CryptoIsakmpProfile, 
-			CryptoIpsecTransformSet, 
-			CryptoIpsecProfile, 
-			TunnelInterface+)>
+		 * <!ELEMENT VpnConnection ( VpnId, VpcId, CryptoKeyring, CryptoIsakmpProfile,
+		 * CryptoIpsecTransformSet, CryptoIpsecProfile, TunnelInterface+)>
 		 */
 
 		pojo.setVpnId(moa.getVpnId());
@@ -11675,15 +11617,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		CryptoKeyringPojo ck = new CryptoKeyringPojo();
 		populateCryptoKeyringPojo(moa.getCryptoKeyring(), ck);
 		pojo.setCryptoKeyring(ck);
-		
+
 		CryptoIsakmpProfilePojo cip = new CryptoIsakmpProfilePojo();
 		populateCryptoIsakmpProfilePojo(moa.getCryptoIsakmpProfile(), cip);
 		pojo.setCryptoIsakmpProfile(cip);
-		
+
 		CryptoIpsecTransformSetPojo cit = new CryptoIpsecTransformSetPojo();
 		populateCryptoIpsecTransformSetPojo(moa.getCryptoIpsecTransformSet(), cit);
 		pojo.setCryptoIpsedTransformSet(cit);
-		
+
 		CryptoIpsecProfilePojo cipsec = new CryptoIpsecProfilePojo();
 		poplateCryptoIpsecProfilePojo(moa.getCryptoIpsecProfile(), cipsec);
 		pojo.setCryptoIpsecProfile(cipsec);
@@ -11697,7 +11639,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		pojo.setTunnelInterfaces(tiList);
 	}
-	
+
 	private void populateVpnConnectionMoa(VpnConnectionPojo pojo, VpnConnection moa) throws EnterpriseFieldException {
 		moa.setVpnId(pojo.getVpnId());
 		moa.setVpcId(pojo.getVpcId());
@@ -11712,13 +11654,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			populateCryptoIsakmpProfileMoa(pojo.getCryptoIsakmpProfile(), cip);
 			moa.setCryptoIsakmpProfile(cip);
 		}
-		
+
 		if (pojo.getCryptoIpsedTransformSet() != null) {
 			CryptoIpsecTransformSet cit = moa.newCryptoIpsecTransformSet();
 			populateCryptoIpsecTransformSetMoa(pojo.getCryptoIpsedTransformSet(), cit);
 			moa.setCryptoIpsecTransformSet(cit);
 		}
-		
+
 		if (pojo.getCryptoIpsecProfile() != null) {
 			CryptoIpsecProfile cipsec = moa.newCryptoIpsecProfile();
 			poplateCryptoIpsecProfileMoa(pojo.getCryptoIpsecProfile(), cipsec);
@@ -11733,9 +11675,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 	}
 
-	private void populateTunnelInterfaceMoa(TunnelInterfacePojo pojo, TunnelInterface moa) throws EnterpriseFieldException {
+	private void populateTunnelInterfaceMoa(TunnelInterfacePojo pojo, TunnelInterface moa)
+			throws EnterpriseFieldException {
 		moa.setAdministrativeState(pojo.getAdministrativeState());
-		
+
 		if (pojo.getBgpPrefixes() != null) {
 			BgpPrefixes bgpp = moa.newBgpPrefixes();
 			bgpp.setSent(pojo.getBgpPrefixes().getSent());
@@ -11750,11 +11693,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			bgpState.setUptime(pojo.getBgpState().getUptime());
 			moa.setBgpState(bgpState);
 		}
-		
+
 		CryptoIpsecProfile cipsec = moa.newCryptoIpsecProfile();
 		poplateCryptoIpsecProfileMoa(pojo.getCryptoIpsecProfile(), cipsec);
 		moa.setCryptoIpsecProfile(cipsec);
-		
+
 		moa.setDescription(pojo.getDescription());
 		moa.setIpAddress(pojo.getIpAddress());
 		moa.setName(pojo.getName());
@@ -11770,7 +11713,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private void populateTunnelInterfacePojo(TunnelInterface moa, TunnelInterfacePojo pojo) {
 		pojo.setAdministrativeState(moa.getAdministrativeState());
-		
+
 		if (moa.getBgpPrefixes() != null) {
 			BgpPrefixesPojo bgpp = new BgpPrefixesPojo();
 			bgpp.setSent(moa.getBgpPrefixes().getSent());
@@ -11785,11 +11728,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			bgpState.setUptime(moa.getBgpState().getUptime());
 			pojo.setBgpState(bgpState);
 		}
-		
+
 		CryptoIpsecProfilePojo cipsec = new CryptoIpsecProfilePojo();
 		poplateCryptoIpsecProfilePojo(moa.getCryptoIpsecProfile(), cipsec);
 		pojo.setCryptoIpsecProfile(cipsec);
-		
+
 		pojo.setDescription(moa.getDescription());
 		pojo.setIpAddress(moa.getIpAddress());
 		pojo.setName(moa.getName());
@@ -11802,7 +11745,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setNetMask(moa.getNetmask());
 		pojo.setIpVirtualReassembly(moa.getIpVirtualReassembly());
 	}
-	
+
 	private void poplateCryptoIpsecProfilePojo(CryptoIpsecProfile moa, CryptoIpsecProfilePojo pojo) {
 		if (moa == null) {
 			return;
@@ -11810,20 +11753,21 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		CryptoIpsecTransformSetPojo cit = new CryptoIpsecTransformSetPojo();
 		populateCryptoIpsecTransformSetPojo(moa.getCryptoIpsecTransformSet(), cit);
 		pojo.setCryptoIpsecTransformSet(cit);
-		
+
 		pojo.setDescription(moa.getDescription());
 		pojo.setName(moa.getName());
 		pojo.setPerfectForwardSecrecy(moa.getPerfectForwardSecrecy());
 	}
-	
-	private void poplateCryptoIpsecProfileMoa(CryptoIpsecProfilePojo pojo, CryptoIpsecProfile moa) throws EnterpriseFieldException {
+
+	private void poplateCryptoIpsecProfileMoa(CryptoIpsecProfilePojo pojo, CryptoIpsecProfile moa)
+			throws EnterpriseFieldException {
 		if (pojo == null) {
 			return;
 		}
 		CryptoIpsecTransformSet cit = moa.newCryptoIpsecTransformSet();
 		populateCryptoIpsecTransformSetMoa(pojo.getCryptoIpsecTransformSet(), cit);
 		moa.setCryptoIpsecTransformSet(cit);
-		
+
 		moa.setDescription(pojo.getDescription());
 		moa.setName(pojo.getName());
 		moa.setPerfectForwardSecrecy(pojo.getPerfectForwardSecrecy());
@@ -11838,9 +11782,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setMode(moa.getMode());
 		pojo.setName(moa.getName());
 	}
-	
-	private void populateCryptoIpsecTransformSetMoa(CryptoIpsecTransformSetPojo pojo,
-			CryptoIpsecTransformSet moa) throws EnterpriseFieldException {
+
+	private void populateCryptoIpsecTransformSetMoa(CryptoIpsecTransformSetPojo pojo, CryptoIpsecTransformSet moa)
+			throws EnterpriseFieldException {
 
 		if (pojo == null) {
 			return;
@@ -11872,8 +11816,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setName(moa.getName());
 		pojo.setVirtualRouteForwarding(moa.getVirtualRouteForwarding());
 	}
-	
-	private void populateCryptoIsakmpProfileMoa(CryptoIsakmpProfilePojo pojo, CryptoIsakmpProfile moa) throws EnterpriseFieldException {
+
+	private void populateCryptoIsakmpProfileMoa(CryptoIsakmpProfilePojo pojo, CryptoIsakmpProfile moa)
+			throws EnterpriseFieldException {
 		if (pojo == null) {
 			return;
 		}
@@ -11920,7 +11865,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setName(moa.getName());
 		pojo.setPresharedKey(moa.getPresharedKey());
 	}
-	
+
 	private void populateCryptoKeyringMoa(CryptoKeyringPojo pojo, CryptoKeyring moa) throws EnterpriseFieldException {
 		if (pojo == null) {
 			return;
@@ -11949,7 +11894,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public long getCurrentSystemTime() {
 		return System.currentTimeMillis();
 	}
-	
+
 	@Override
 	public String getFullNameForPublicId(String ppid) {
 		String name = ppidToNameMap.get(ppid);
@@ -11965,10 +11910,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	private void dereferencePublicIdsForAssessment(ServiceSecurityAssessmentPojo assessment) {
-		// de-reference ppid on all assessor/verifier fields (getDirectoryMetaDataForPublicId)
+		// de-reference ppid on all assessor/verifier fields
+		// (getDirectoryMetaDataForPublicId)
 		// store ppid/name map local to this method so we don't have to go get it
 		// from the service each time.
-		
+
 		for (SecurityRiskPojo risk : assessment.getSecurityRisks()) {
 			// - risk.assessorid
 			if (risk.getAssessorId() != null) {
@@ -11977,10 +11923,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					risk.setAssessorId(assessorName);
 				}
 				else {
-					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for risk assessor " + risk.getAssessorId());
+					info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for risk assessor "
+							+ risk.getAssessorId());
 				}
 			}
-			
+
 			// - risk.servicecontrol.verifierid
 			for (ServiceControlPojo control : risk.getServiceControls()) {
 				if (control.getAssessorId() != null) {
@@ -11989,7 +11936,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						control.setAssessorId(sc_assessorName);
 					}
 					else {
-						info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor " + control.getAssessorId());
+						info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control assessor "
+								+ control.getAssessorId());
 					}
 				}
 
@@ -11999,27 +11947,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 						control.setVerifier(verifierName);
 					}
 					else {
-						info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier " + control.getVerifier());
+						info("[getSecurityAssessmentSummariesForFilter] couldn't find a name for control verifier "
+								+ control.getVerifier());
 					}
 				}
 			}
 		}
 	}
-	
+
 	@Override
 	public SecurityAssessmentSummaryQueryResultPojo getSecurityAssessmentSummariesForFilter(
 			SecurityAssessmentSummaryQueryFilterPojo filter) throws RpcException {
 
 		AWSServiceSummaryPojo serviceSummary = this.getAWSServiceMap();
-		
+
 		SecurityAssessmentSummaryQueryResultPojo result = new SecurityAssessmentSummaryQueryResultPojo();
 		result.setServiceSummary(serviceSummary);
-		
+
 		if (serviceSummary != null && filter.getServiceIds().size() == serviceSummary.getServiceList().size()) {
 			for (AWSServicePojo svc : serviceSummary.getServiceList()) {
 				SecurityAssessmentSummaryPojo sas = new SecurityAssessmentSummaryPojo();
 				sas.setService(svc);
-				
+
 				ServiceSecurityAssessmentQueryFilterPojo ssa_filter = new ServiceSecurityAssessmentQueryFilterPojo();
 				ssa_filter.setServiceId(svc.getServiceId());
 				ServiceSecurityAssessmentQueryResultPojo ssa_result = this.getSecurityAssessmentsForFilter(ssa_filter);
@@ -12027,8 +11976,9 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					ServiceSecurityAssessmentPojo assessment = ssa_result.getResults().get(0);
 					dereferencePublicIdsForAssessment(assessment);
 
-					// Phase2:Sprint4:  if the assessment has multiple services associated to it, we need to get
-					// the service names for those as well and store it in the assessment so it 
+					// Phase2:Sprint4: if the assessment has multiple services associated to it, we
+					// need to get
+					// the service names for those as well and store it in the assessment so it
 					// can be used by the report
 					if (assessment.getServiceIds().size() > 1) {
 						for (String assessmentSvcId : assessment.getServiceIds()) {
@@ -12054,16 +12004,17 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				svc_filter.setServiceId(svcId);
 				AWSServicePojo svc = this.getServicesForFilter(svc_filter).getResults().get(0);
 				sas.setService(svc);
-				
+
 				ServiceSecurityAssessmentQueryFilterPojo ssa_filter = new ServiceSecurityAssessmentQueryFilterPojo();
 				ssa_filter.setServiceId(svcId);
 				ServiceSecurityAssessmentQueryResultPojo ssa_result = this.getSecurityAssessmentsForFilter(ssa_filter);
 				if (ssa_result.getResults().size() > 0) {
 					ServiceSecurityAssessmentPojo assessment = ssa_result.getResults().get(0);
 					dereferencePublicIdsForAssessment(assessment);
-					
-					// Phase2:Sprint4:  if the assessment has multiple services associated to it, we need to get
-					// the service names for those as well and store it in the assessment so it 
+
+					// Phase2:Sprint4: if the assessment has multiple services associated to it, we
+					// need to get
+					// the service names for those as well and store it in the assessment so it
 					// can be used by the report
 					if (assessment.getServiceIds().size() > 1) {
 						for (String assessmentSvcId : assessment.getServiceIds()) {
@@ -12076,7 +12027,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 							}
 						}
 					}
-					
+
 					sas.setAssessment(assessment);
 				}
 				result.getResults().add(sas);
@@ -12089,25 +12040,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public VpnConnectionProvisioningPojo updateVpnConnectionProvisioning(VpnConnectionProvisioningPojo pojo)
 			throws RpcException {
 
-        try {
-            info("updating VpnConnectionProvisioningPojo on the server...");
-            VpnConnectionProvisioning newData = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
-            VpnConnectionProvisioning baselineData = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
+		try {
+			info("updating VpnConnectionProvisioningPojo on the server...");
+			VpnConnectionProvisioning newData = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
+			VpnConnectionProvisioning baselineData = (VpnConnectionProvisioning) getObject(Constants.MOA_VPNCP);
 
-            info("populating newData...");
-            populateVpncpMoa(pojo, newData);
+			info("populating newData...");
+			populateVpncpMoa(pojo, newData);
 
-            info("populating baselineData...");
-            populateVpncpMoa(pojo.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateVpncpMoa(pojo.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getNetworkOpsRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getNetworkOpsRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return pojo;
 	}
 
@@ -12115,25 +12067,28 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public VpnConnectionDeprovisioningPojo updateVpnConnectionDeprovisioning(VpnConnectionDeprovisioningPojo pojo)
 			throws RpcException {
 
-        try {
-            info("updating VpnConnectionProvisioningPojo on the server...");
-            VpnConnectionDeprovisioning newData = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
-            VpnConnectionDeprovisioning baselineData = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
+		try {
+			info("updating VpnConnectionProvisioningPojo on the server...");
+			VpnConnectionDeprovisioning newData = (VpnConnectionDeprovisioning) getObject(
+					Constants.MOA_VPNC_DEPROVISIONING);
+			VpnConnectionDeprovisioning baselineData = (VpnConnectionDeprovisioning) getObject(
+					Constants.MOA_VPNC_DEPROVISIONING);
 
-            info("populating newData...");
-            populateVpnDeprovisioningMoa(pojo, newData);
+			info("populating newData...");
+			populateVpnDeprovisioningMoa(pojo, newData);
 
-            info("populating baselineData...");
-            populateVpnDeprovisioningMoa(pojo.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateVpnDeprovisioningMoa(pojo.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getNetworkOpsRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getNetworkOpsRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return pojo;
 	}
 
@@ -12143,12 +12098,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		try {
 			info("generating VpnConnectionDeprovisioning on the server...");
-			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(Constants.MOA_VPNC_DEPROVISIONING);
-			VpnConnectionProfileAssignment seed = (VpnConnectionProfileAssignment) getObject(Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
+			VpnConnectionDeprovisioning actionable = (VpnConnectionDeprovisioning) getObject(
+					Constants.MOA_VPNC_DEPROVISIONING);
+			VpnConnectionProfileAssignment seed = (VpnConnectionProfileAssignment) getObject(
+					Constants.MOA_VPN_CONNECTION_PROFILE_ASSIGNMENT);
 			info("populating moa");
 			this.populateVpnConnectionProfileAssignmentMoa(assignment, seed);
 
-			
 			info("doing the VpnConnectionDeprovisioning.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -12160,8 +12116,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
 			info("setting NetworOps RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			@SuppressWarnings("unchecked")
 			List<VpnConnectionDeprovisioning> result = actionable.generate(seed, reqSvc);
@@ -12172,44 +12127,47 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("VpnConnectionDeprovisioning.generate is complete...");
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (IllegalAccessException e) {
+		}
+		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (InvocationTargetException e) {
+		}
+		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (NoSuchMethodException e) {
+		}
+		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
@@ -12225,7 +12183,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					pp.setProperty(key, props.getProperty(key));
 				}
 				return pp;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -12242,12 +12200,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					pp.setProperty(key, props.getProperty(key));
 				}
 				return pp;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
 			}
-		} 
+		}
 		return null;
 	}
 
@@ -12256,15 +12214,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<String> l = new java.util.ArrayList<String>();
 
 		try {
-			Properties props = 	getAppConfig().getProperties(SERVICE_CONTROL_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(SERVICE_CONTROL_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -12275,15 +12234,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<String> getServiceControlImplementationTypeItems() {
 		List<String> l = new java.util.ArrayList<String>();
 		try {
-			Properties props = 	getAppConfig().getProperties(SERVICE_CONTROL_IMPLEMENTATION_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(SERVICE_CONTROL_IMPLEMENTATION_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} catch (EnterpriseConfigurationObjectException e) {
+
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -12296,14 +12256,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public boolean isCimpInstance() throws RpcException {
 		try {
-			Properties props = 	getAppConfig().getProperties(EMORY_CIMP_PROPERTIES);
+			Properties props = getAppConfig().getProperties(EMORY_CIMP_PROPERTIES);
 			if (props == null) {
 				return false;
 			}
 			String isCimp = props.getProperty("isCimp", "false");
 			return Boolean.parseBoolean(isCimp);
 
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			info("Error retrieving '" + EMORY_CIMP_PROPERTIES + "' to determine if we're running an "
 					+ "Emory CIMP instance of the console.  This could be okay but it could be a "
@@ -12314,22 +12274,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public String getFinancialAccountFieldLabel() throws RpcException {
-		String defaultLabel = "10-Digit SpeedType"; 
+		String defaultLabel = "10-Digit SpeedType";
 		try {
-			Properties props = 	getAppConfig().getProperties(EMORY_CIMP_PROPERTIES);
+			Properties props = getAppConfig().getProperties(EMORY_CIMP_PROPERTIES);
 			if (props == null) {
 				return defaultLabel;
 			}
 			String finAccountLabel = props.getProperty("FINANCIAL_ACCOUNT_FIELD_LABEL", defaultLabel);
 			return finAccountLabel;
 
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			info("Error retrieving " + EMORY_CIMP_PROPERTIES + "' to determine the financial account "
 					+ "field label name.  This could be okay but it could be a "
 					+ "configuration issue.  Returning default label name (" + defaultLabel + ")");
 			return defaultLabel;
 		}
 	}
+
 	/**
 	 * End Emore CIMP Specific Methods
 	 */
@@ -12338,15 +12300,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public List<String> getFirewallExceptionRequestComplianceClassItems() throws RpcException {
 		List<String> l = new java.util.ArrayList<String>();
 		try {
-			Properties props = 	getAppConfig().getProperties(FIREWALL_EXCEPTION_REQUEST_COMPLIANCE_TYPE_PROPERTIES);
+			Properties props = getAppConfig().getProperties(FIREWALL_EXCEPTION_REQUEST_COMPLIANCE_TYPE_PROPERTIES);
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				String value = props.getProperty((String)key);
+				String value = props.getProperty((String) key);
 				l.add(value);
 			}
-			
-		} 
+
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			List<String> complianceClassTypes = new java.util.ArrayList<String>();
 			complianceClassTypes.add("ePHI");
@@ -12367,7 +12329,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ConsoleFeatureQueryResultPojo getConsoleFeaturesForFilter(ConsoleFeatureQueryFilterPojo filter)
 			throws RpcException {
-		
+
 		ConsoleFeatureQueryResultPojo result = new ConsoleFeatureQueryResultPojo();
 		UserAccountPojo user = this.getUserLoggedIn(false);
 		Properties props = null;
@@ -12375,22 +12337,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			try {
 				info("getConsoleFeaturesForFilter: central admin");
 				props = getAppConfig().getProperties(
-						CONSOLE_FEATURES_PROPERTY_PREFIX + 
-						Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
-			} 
+						CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_CENTRAL_ADMIN);
+			}
 			catch (EnterpriseConfigurationObjectException e) {
-				
+
 			}
 		}
 		else if (user.isNetworkAdmin()) {
 			try {
 				info("getConsoleFeaturesForFilter: network admin");
-				props = getAppConfig().getProperties(
-						CONSOLE_FEATURES_PROPERTY_PREFIX + 
-						Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
-			} 
+				props = getAppConfig()
+						.getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_EMORY_NETWORK_ADMINS);
+			}
 			catch (EnterpriseConfigurationObjectException e) {
-				
+
 			}
 		}
 		// TODO: incident response
@@ -12398,27 +12358,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// account admin and account auditor
 			try {
 				info("getConsoleFeaturesForFilter: account admin OR auditor");
-				props = getAppConfig().getProperties(
-						CONSOLE_FEATURES_PROPERTY_PREFIX + 
-						Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
-			} 
+				props = getAppConfig()
+						.getProperties(CONSOLE_FEATURES_PROPERTY_PREFIX + Constants.ROLE_NAME_RHEDCLOUD_AWS_ADMIN);
+			}
 			catch (EnterpriseConfigurationObjectException e) {
-				
+
 			}
 		}
 		Iterator<Object> keys = props.keySet().iterator();
 		List<String> featureNames = new java.util.ArrayList<String>();
 		while (keys.hasNext()) {
 			Object key = keys.next();
-			featureNames.add((String)key);
+			featureNames.add((String) key);
 		}
 		Collections.sort(featureNames);
 		for (String featureName : featureNames) {
 			ConsoleFeaturePojo csp = new ConsoleFeaturePojo();
-			String actionName=null;
-			String sPopular="false";
+			String actionName = null;
+			String sPopular = "false";
 			if (featureName.indexOf("popular:") >= 0) {
-				actionName = featureName.substring(featureName.indexOf("actionName:") + 11, featureName.indexOf("popular:")).trim();
+				actionName = featureName
+						.substring(featureName.indexOf("actionName:") + 11, featureName.indexOf("popular:")).trim();
 				sPopular = featureName.substring(featureName.indexOf("popular:") + 8).trim();
 				if (sPopular != null) {
 					boolean popular = Boolean.parseBoolean(sPopular);
@@ -12431,15 +12391,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			else {
 				actionName = featureName.substring(featureName.indexOf("actionName:") + 11);
 			}
-			String description = props.getProperty((String)featureName);
+			String description = props.getProperty((String) featureName);
 			featureName = featureName.substring(0, featureName.indexOf("actionName:")).trim();
 			csp.setName(featureName);
 			csp.setActionName(actionName);
 			csp.setDescription(description);
-			info("CSP: name=" + featureName + " actionName=" + actionName + " description=" + description + " popular=" + sPopular);
+			info("CSP: name=" + featureName + " actionName=" + actionName + " description=" + description + " popular="
+					+ sPopular);
 			result.getResults().add(csp);
 		}
-		
+
 		return result;
 	}
 
@@ -12452,7 +12413,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 		}
 		Collections.sort(popularFeatures);
-		info("getPopularConsoleFeatures: returning " + popularFeatures.size() + " popular features for the user logged in.");
+		info("getPopularConsoleFeatures: returning " + popularFeatures.size()
+				+ " popular features for the user logged in.");
 		return popularFeatures;
 	}
 
@@ -12464,17 +12426,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public ConsoleFeatureQueryResultPojo getCachedConsoleFeaturesForUserLoggedIn() throws RpcException {
 		ConsoleFeatureQueryResultPojo result = new ConsoleFeatureQueryResultPojo();
 		UserAccountPojo user = this.getUserLoggedIn(false);
 		String key = user.getPublicId() + "-" + Constants.FEATURE_CACHE;
-		List<ConsoleFeaturePojo> l = (List<ConsoleFeaturePojo>)Cache.getCache().get(key);
+		List<ConsoleFeaturePojo> l = (List<ConsoleFeaturePojo>) Cache.getCache().get(key);
 		List<ConsoleFeaturePojo> popularFeatures = getPopularConsoleFeatures();
 		if (l != null) {
-			info("getCachedConsoleFeaturesForUserLoggedIn: found " + l.size() + " recently used services in cache for user " + user.getPublicId());
+			info("getCachedConsoleFeaturesForUserLoggedIn: found " + l.size()
+					+ " recently used services in cache for user " + user.getPublicId());
 			// add any popular features that aren't already in the user's cache to the list
 			for (ConsoleFeaturePojo cfp : popularFeatures) {
 				if (!isFeatureInList(cfp, l)) {
@@ -12485,7 +12448,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(l);
 		}
 		else {
-			info("getCachedConsoleFeaturesForUserLoggedIn: cache for user " + user.getPublicId() + " is null.  Returning popular features");
+			info("getCachedConsoleFeaturesForUserLoggedIn: cache for user " + user.getPublicId()
+					+ " is null.  Returning popular features");
 			l = new java.util.ArrayList<ConsoleFeaturePojo>();
 			l.addAll(popularFeatures);
 			result.setResults(l);
@@ -12497,10 +12461,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public void saveConsoleFeatureInCacheForUser(ConsoleFeaturePojo service, UserAccountPojo user) throws RpcException {
 		String key = user.getPublicId() + "-" + Constants.FEATURE_CACHE;
-		List<ConsoleFeaturePojo> l = (List<ConsoleFeaturePojo>)Cache.getCache().get(key);
+		List<ConsoleFeaturePojo> l = (List<ConsoleFeaturePojo>) Cache.getCache().get(key);
 		boolean foundIt = false;
 		if (l != null) {
-			serviceLoop:for (ConsoleFeaturePojo csp : l) {
+			serviceLoop:
+			for (ConsoleFeaturePojo csp : l) {
 				if (csp.getName().equalsIgnoreCase(service.getName())) {
 					foundIt = true;
 					break serviceLoop;
@@ -12513,7 +12478,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		if (!foundIt) {
 			l.add(service);
 		}
-		info("saveConsoleFeatureInCacheForUser: saving " + l.size() + " services in recently used cache for user " + user.getPublicId());
+		info("saveConsoleFeatureInCacheForUser: saving " + l.size() + " services in recently used cache for user "
+				+ user.getPublicId());
 		Cache.getCache().put(key, l);
 	}
 
@@ -12522,20 +12488,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ResourceTaggingProfileQueryResultPojo getResourceTaggingProfilesForFilter(
 			ResourceTaggingProfileQueryFilterPojo filter) throws RpcException {
 
-		ResourceTaggingProfileQueryResultPojo result = new ResourceTaggingProfileQueryResultPojo();		
+		ResourceTaggingProfileQueryResultPojo result = new ResourceTaggingProfileQueryResultPojo();
 		List<ResourceTaggingProfilePojo> pojos = new java.util.ArrayList<ResourceTaggingProfilePojo>();
 		try {
-			ResourceTaggingProfileQuerySpecification queryObject = (ResourceTaggingProfileQuerySpecification) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE_QUERY_SPEC);
-			ResourceTaggingProfile actionable = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+			ResourceTaggingProfileQuerySpecification queryObject = (ResourceTaggingProfileQuerySpecification) getObject(
+					Constants.MOA_RESOURCE_TAGGING_PROFILE_QUERY_SPEC);
+			ResourceTaggingProfile actionable = (ResourceTaggingProfile) getObject(
+					Constants.MOA_RESOURCE_TAGGING_PROFILE);
 
 			if (filter != null) {
 				if (!filter.isFuzzyFilter()) {
-					// if the filter is using a fuzzy filter, we'll just get them all and do the comparisons below
+					// if the filter is using a fuzzy filter, we'll just get them all and do the
+					// comparisons below
 					queryObject.setNamespace(filter.getNamespace());
 					queryObject.setRevision(filter.getRevision());
 					queryObject.setProfileName(filter.getProfileName());
 					queryObject.setProfileId(filter.getProfileId());
-					info("[getResourceTaggingProfilesForFilter] getting items for filter: " + queryObject.toXmlString());
+					info("[getResourceTaggingProfilesForFilter] getting items for filter: "
+							+ queryObject.toXmlString());
 				}
 			}
 			else {
@@ -12544,23 +12514,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getResourceTaggingProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getResourceTaggingProfilesForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			RequestService reqSvc = this.getRtpRequestService();
 
-			List<ResourceTaggingProfile> moas = 
-				actionable.query(queryObject, reqSvc);
-			
-			info("[getResourceTaggingProfilesForFilter] got " + moas.size() + " Resource Tagging Profile objects back from the server.");
+			List<ResourceTaggingProfile> moas = actionable.query(queryObject, reqSvc);
+
+			info("[getResourceTaggingProfilesForFilter] got " + moas.size()
+					+ " Resource Tagging Profile objects back from the server.");
 			for (ResourceTaggingProfile moa : moas) {
 				String namespace = moa.getNamespace().toLowerCase();
 				String profileName = moa.getProfileName().toLowerCase();
 				if (filter != null && filter.isFuzzyFilter()) {
 					if (filter.getNamespace() != null && filter.getProfileName() != null) {
 						// namespace and profile name that match (fuzzy)
-						if ((namespace.indexOf(filter.getNamespace()) >= 0) &&
-							(profileName.indexOf(filter.getProfileName()) >= 0)) {
-							
+						if ((namespace.indexOf(filter.getNamespace()) >= 0)
+								&& (profileName.indexOf(filter.getProfileName()) >= 0)) {
+
 							ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
 							this.populateResourceTaggingProfilePojo(moa, pojo);
 							pojos.add(pojo);
@@ -12584,12 +12555,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 					else if (filter.getManagedTagName() != null && filter.getManagedTagValue() != null) {
 						// managed tag name/value
-						for (ManagedTag tag : (List<ManagedTag>)moa.getManagedTag()) {
+						for (ManagedTag tag : (List<ManagedTag>) moa.getManagedTag()) {
 							String tagName = tag.getTagName().toLowerCase();
 							String tagValue = tag.getTagValue().toLowerCase();
-							if ((tagName.indexOf(filter.getManagedTagName()) >= 0) &&
-								(tagValue.indexOf(filter.getManagedTagValue()) >= 0)) {
-								
+							if ((tagName.indexOf(filter.getManagedTagName()) >= 0)
+									&& (tagValue.indexOf(filter.getManagedTagValue()) >= 0)) {
+
 								ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
 								this.populateResourceTaggingProfilePojo(moa, pojo);
 								pojos.add(pojo);
@@ -12598,7 +12569,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 					else if (filter.getManagedTagName() != null) {
 						// managed tag name only
-						for (ManagedTag tag : (List<ManagedTag>)moa.getManagedTag()) {
+						for (ManagedTag tag : (List<ManagedTag>) moa.getManagedTag()) {
 							String tagName = tag.getTagName().toLowerCase();
 							if (tagName.indexOf(filter.getManagedTagName()) >= 0) {
 								ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
@@ -12609,10 +12580,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					}
 					else if (filter.getManagedTagValue() != null) {
 						// manged tag value only
-						for (ManagedTag tag : (List<ManagedTag>)moa.getManagedTag()) {
+						for (ManagedTag tag : (List<ManagedTag>) moa.getManagedTag()) {
 							String tagValue = tag.getTagValue().toLowerCase();
 							if (tagValue.indexOf(filter.getManagedTagValue()) >= 0) {
-								
+
 								ResourceTaggingProfilePojo pojo = new ResourceTaggingProfilePojo();
 								this.populateResourceTaggingProfilePojo(moa, pojo);
 								pojos.add(pojo);
@@ -12643,27 +12614,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -12704,11 +12675,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			pojo.getManagedTags().add(ptag);
 		}
 	}
-	private void populateResourceTaggingProfileMoa(ResourceTaggingProfilePojo pojo,
-			ResourceTaggingProfile moa) throws EnterpriseFieldException,
-			IllegalArgumentException, SecurityException,
-			IllegalAccessException, InvocationTargetException,
-			NoSuchMethodException, EnterpriseConfigurationObjectException {
+
+	private void populateResourceTaggingProfileMoa(ResourceTaggingProfilePojo pojo, ResourceTaggingProfile moa)
+			throws EnterpriseFieldException, IllegalArgumentException, SecurityException, IllegalAccessException,
+			InvocationTargetException, NoSuchMethodException, EnterpriseConfigurationObjectException {
 
 		moa.setProfileId(pojo.getProfileId());
 		moa.setNamespace(pojo.getNamespace());
@@ -12746,25 +12716,25 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public ResourceTaggingProfilePojo createResourceTaggingProfile(ResourceTaggingProfilePojo pojo)
 			throws RpcException {
 
-		pojo.setCreateInfo(this.getCachedUser().getPublicId(),
-				new java.util.Date());
-		
-		// make sure profile id is blank otherwise the service will treat it like an update
-		// instead of a create.  There may be a profileId in the pojo passed in because 
-		// when a profile is updated, it's generally doing that from an existing profile 
+		pojo.setCreateInfo(this.getCachedUser().getPublicId(), new java.util.Date());
+
+		// make sure profile id is blank otherwise the service will treat it like an
+		// update
+		// instead of a create. There may be a profileId in the pojo passed in because
+		// when a profile is updated, it's generally doing that from an existing profile
 		// that has a profile id.
 		pojo.setProfileId(null);
 		for (ManagedTagPojo tag : pojo.getManagedTags()) {
 			tag.setManagedTagId(null);
 		}
-		
-		// if the profile coming in is active, we need to query for all other profiles 
+
+		// if the profile coming in is active, we need to query for all other profiles
 		// in this namespace and set and of them that are currently active to inactive
 		ResourceTaggingProfileQueryFilterPojo filter = new ResourceTaggingProfileQueryFilterPojo();
 		filter.setNamespace(pojo.getNamespace());
 		filter.setProfileName(pojo.getProfileName());
 		ResourceTaggingProfileQueryResultPojo result = this.getResourceTaggingProfilesForFilter(filter);
-		
+
 		pojo.setRevision(Integer.toString(result.getResults().size() + 1));
 		if (pojo.isActive()) {
 			for (ResourceTaggingProfilePojo profile : result.getResults()) {
@@ -12778,7 +12748,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		if (!useEsbService) {
 			return null;
-		} 
+		}
 		else {
 			try {
 				info("creating ResourceTaggingProfile on the server...");
@@ -12786,45 +12756,44 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				info("populating moa");
 				this.populateResourceTaggingProfileMoa(pojo, moa);
 
-				
 				info("doing the ResourceTaggingProfile.create..." + moa.toXmlString());
 				this.doCreate(moa, this.getRtpRequestService());
 				info("ResourceTaggingProfile.create is complete...");
 
 				return pojo;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseObjectCreateException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -12839,35 +12808,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public ResourceTaggingProfilePojo updateResourceTaggingProfile(ResourceTaggingProfilePojo pojo)
 			throws RpcException {
-		
+
 		pojo.setUpdateInfo(this.getCachedUser().getPublicId());
-        try {
-            info("updating ResourceTaggingProfile on the server...");
-            ResourceTaggingProfile newData = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
-            ResourceTaggingProfile baselineData = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+		try {
+			info("updating ResourceTaggingProfile on the server...");
+			ResourceTaggingProfile newData = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+			ResourceTaggingProfile baselineData = (ResourceTaggingProfile) getObject(
+					Constants.MOA_RESOURCE_TAGGING_PROFILE);
 
-            info("populating newData...");
-            populateResourceTaggingProfileMoa(pojo, newData);
+			info("populating newData...");
+			populateResourceTaggingProfileMoa(pojo, newData);
 
-            info("populating baselineData...");
-            populateResourceTaggingProfileMoa(pojo.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateResourceTaggingProfileMoa(pojo.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
-            doUpdate(newData, getRtpRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("doing the update...");
+			doUpdate(newData, getRtpRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return pojo;
 	}
 
 	@Override
-	public void deleteResourceTaggingProfile(boolean deleteAllMatchingProfiles, ResourceTaggingProfilePojo pojo) throws RpcException {
+	public void deleteResourceTaggingProfile(boolean deleteAllMatchingProfiles, ResourceTaggingProfilePojo pojo)
+			throws RpcException {
 		if (!useEsbService) {
 			return;
-		} 
+		}
 		else {
 			try {
 				if (deleteAllMatchingProfiles) {
@@ -12875,60 +12847,63 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					filter.setNamespace(pojo.getNamespace());
 					filter.setProfileName(pojo.getProfileName());
 					ResourceTaggingProfileQueryResultPojo result = this.getResourceTaggingProfilesForFilter(filter);
-					info("deleting all ResourceTaggingProfiles for " + pojo.getNamespace() + "/" + pojo.getProfileName());
-					int deleteCnt=0;
+					info("deleting all ResourceTaggingProfiles for " + pojo.getNamespace() + "/"
+							+ pojo.getProfileName());
+					int deleteCnt = 0;
 					for (ResourceTaggingProfilePojo profile : result.getResults()) {
-						ResourceTaggingProfile moa = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+						ResourceTaggingProfile moa = (ResourceTaggingProfile) getObject(
+								Constants.MOA_RESOURCE_TAGGING_PROFILE);
 						this.populateResourceTaggingProfileMoa(profile, moa);
-						
+
 						info("doing the ResourceTaggingProfile.delete...");
 						this.doDelete(moa, this.getRtpRequestService());
 						deleteCnt++;
 						info("ResourceTaggingProfile.delete is complete...");
 					}
-					info("Deleted " + deleteCnt + " profiles in the '" + pojo.getNamespace() + 
-						"' namespace with a profile name of '" + pojo.getProfileName() + "'");
+					info("Deleted " + deleteCnt + " profiles in the '" + pojo.getNamespace()
+							+ "' namespace with a profile name of '" + pojo.getProfileName() + "'");
 				}
 				else {
 					info("deleting ResourceTaggingProfile on the server...");
-					ResourceTaggingProfile moa = (ResourceTaggingProfile) getObject(Constants.MOA_RESOURCE_TAGGING_PROFILE);
+					ResourceTaggingProfile moa = (ResourceTaggingProfile) getObject(
+							Constants.MOA_RESOURCE_TAGGING_PROFILE);
 					this.populateResourceTaggingProfileMoa(pojo, moa);
-					
+
 					info("doing the ResourceTaggingProfile.delete...");
 					this.doDelete(moa, this.getRtpRequestService());
 					info("ResourceTaggingProfile.delete is complete...");
 				}
 
 				return;
-			} 
+			}
 			catch (EnterpriseConfigurationObjectException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (EnterpriseFieldException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalArgumentException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (SecurityException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (IllegalAccessException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
-			} 
+			}
 			catch (JMSException e) {
 				e.printStackTrace();
 				throw new RpcException(e);
@@ -12955,12 +12930,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			PropertiesPojo p = new PropertiesPojo();
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
+				String key = (String) keys.next();
 				String value = props.getProperty(key);
 				p.setProperty(key, value);
 			}
 			return p;
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -12975,12 +12951,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			List<String> propertyNames = new java.util.ArrayList<String>();
 			while (keys.hasNext()) {
 				Object key = keys.next();
-				propertyNames.add((String)key);
+				propertyNames.add((String) key);
 			}
 			Collections.sort(propertyNames);
 			for (String propertyName : propertyNames) {
 				PropertyPojo prop = new PropertyPojo();
-				String sEditable="false";
+				String sEditable = "false";
 				if (propertyName.indexOf("editable:") >= 0) {
 					sEditable = propertyName.substring(propertyName.indexOf("editable:") + 9).trim();
 					if (sEditable != null) {
@@ -12994,7 +12970,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				else {
 					prop.setEditable(true);
 				}
-				String prettyName = props.getProperty((String)propertyName);
+				String prettyName = props.getProperty((String) propertyName);
 				if (propertyName.indexOf("editable:") >= 0) {
 					propertyName = propertyName.substring(0, propertyName.indexOf("editable:")).trim();
 				}
@@ -13002,7 +12978,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// default value
 				prop.setValue("true");
 				prop.setPrettyName(prettyName);
-				info("PropertyPojo: name=" + propertyName + " prettyName=" + prettyName + " editable=" + prop.isEditable());
+				info("PropertyPojo: name=" + propertyName + " prettyName=" + prettyName + " editable="
+						+ prop.isEditable());
 				results.add(prop);
 			}
 		}
@@ -13016,7 +12993,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public List<AccountSpeedChartPojo> getFinancialAccountsForUser(UserAccountPojo user) throws RpcException {
 		List<AccountSpeedChartPojo> pojos = new java.util.ArrayList<AccountSpeedChartPojo>();
-		
+
 		String validateFinAccts = generalProps.getProperty("validateFinancialAccountNumbers", "true");
 		boolean isValidateFinAccts = Boolean.parseBoolean(validateFinAccts);
 		if (!isValidateFinAccts) {
@@ -13028,7 +13005,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		AccountQueryResultPojo acctResult = this.getAccountsForFilter(acctFilter);
 		for (AccountPojo account : acctResult.getResults()) {
 			SpeedChartPojo scp = this.getSpeedChartForFinancialAccountNumber(account.getSpeedType());
-			
+
 			if (scp != null) {
 				// speed chart is either invalid or it's in a warning state
 				// user should be notified about these
@@ -13048,7 +13025,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				// no speed chart found for that financial account number, this has to be bad
 				AccountSpeedChartPojo asc = new AccountSpeedChartPojo();
 				asc.setAccount(account);
-				
+
 				scp = new SpeedChartPojo();
 				scp.setSpeedChartKey(account.getSpeedType());
 				scp.setDepartmentId("Unknown department ID");
@@ -13056,7 +13033,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				scp.setDescription("Unknown description");
 				scp.setEuValidityDescription("Invalid Financial Account");
 				scp.setValidCode(Constants.SPEED_TYPE_INVALID);
-						
+
 				asc.setSpeedChart(scp);
 				pojos.add(asc);
 			}
@@ -13076,7 +13053,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					// user should be notified about these
 					return true;
 				}
-				
+
 			}
 		}
 		return false;
@@ -13089,10 +13066,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-" + calculationName);
 			String questionText = props.getProperty("questionText");
 			rcp.setQuestionText(questionText);
-			
+
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
+				String key = (String) keys.next();
 				if (key.toLowerCase().indexOf("answer-") >= 0) {
 					// it's an answer
 					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
@@ -13105,7 +13082,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			Collections.sort(rcp.getAnswers());
 			return rcp;
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -13122,10 +13100,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			rcp.setQuestionNumber(1);
 			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
 			rcp.setStepName("Step " + rcp.getStepNumber());
-			
+
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
+				String key = (String) keys.next();
 				if (key.toLowerCase().indexOf("answer-") >= 0) {
 					// it's an answer
 					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
@@ -13138,11 +13116,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			Collections.sort(rcp.getAnswers());
 			rcps.add(rcp);
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
-			
+
 		try {
 			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
 			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-AttackFrequency");
@@ -13151,10 +13130,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			rcp.setQuestionNumber(2);
 			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
 			rcp.setStepName("Step " + rcp.getStepNumber());
-			
+
 			Iterator<Object> keys1 = props.keySet().iterator();
 			while (keys1.hasNext()) {
-				String key = (String)keys1.next();
+				String key = (String) keys1.next();
 				if (key.toLowerCase().indexOf("answer-") >= 0) {
 					// it's an answer
 					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
@@ -13167,11 +13146,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			Collections.sort(rcp.getAnswers());
 			rcps.add(rcp);
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
-			
+
 		try {
 			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
 			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-LikelihoodOfDamage");
@@ -13183,7 +13163,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
+				String key = (String) keys.next();
 				if (key.toLowerCase().indexOf("answer-") >= 0) {
 					// it's an answer
 					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
@@ -13196,11 +13176,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			Collections.sort(rcp.getAnswers());
 			rcps.add(rcp);
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
-		
+
 		// TODO: Step 3, Table G-5
 		try {
 			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
@@ -13209,7 +13190,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "3")));
 			rcp.setStepName("Step " + rcp.getStepNumber());
 			rcp.setTableHeading(props.getProperty("tableHeading", "Unknown"));
-			
+
 //			Iterator<Object> keys = props.keySet().iterator();
 //			while (keys.hasNext()) {
 //				String key = (String)keys.next();
@@ -13225,11 +13206,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //			}
 //			Collections.sort(rcp.getAnswers());
 			rcps.add(rcp);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
-		
+
 		try {
 			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
 			Properties props = getAppConfig().getProperties(RISK_CALCULATION_PROPERTIES + "-ImpactOfDamage");
@@ -13238,10 +13220,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			rcp.setQuestionNumber(4);
 			rcp.setStepNumber(Integer.parseInt(props.getProperty("stepNumber", "5")));
 			rcp.setStepName("Step " + rcp.getStepNumber());
-			
+
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
+				String key = (String) keys.next();
 				if (key.toLowerCase().indexOf("answer-") >= 0) {
 					// it's an answer
 					RiskCalculationAnswerPojo rca = new RiskCalculationAnswerPojo();
@@ -13254,11 +13236,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 			Collections.sort(rcp.getAnswers());
 			rcps.add(rcp);
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
-		
+
 		// TODO: Step 5, Table I-5
 		try {
 			RiskCalculationPropertiesPojo rcp = new RiskCalculationPropertiesPojo();
@@ -13268,7 +13251,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			rcp.setStepName("Step " + rcp.getStepNumber());
 			rcp.setTableHeading(props.getProperty("tableHeading", "Unknown"));
 			rcp.setTableSubHeading(props.getProperty("tableSubHeading", "Unknown"));
-			
+
 //			Iterator<Object> keys = props.keySet().iterator();
 //			while (keys.hasNext()) {
 //				String key = (String)keys.next();
@@ -13284,7 +13267,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //			}
 //			Collections.sort(rcp.getAnswers());
 			rcps.add(rcp);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -13293,12 +13277,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public SecurityRiskDetectionPojo generateSrd(SecurityRiskDetectionRequisitionPojo srdRequisition) throws RpcException {
+	public SecurityRiskDetectionPojo generateSrd(SecurityRiskDetectionRequisitionPojo srdRequisition)
+			throws RpcException {
 		try {
 			info("generating SecurityRiskDetection on the server...");
 			SecurityRiskDetection actionable = (SecurityRiskDetection) getObject(Constants.MOA_SECURITY_RISK_DETECTION);
-			SecurityRiskDetectionRequisition seed = (SecurityRiskDetectionRequisition) getObject(Constants.MOA_SECURITY_RISK_DETECTION_REQUISITION);
-			
+			SecurityRiskDetectionRequisition seed = (SecurityRiskDetectionRequisition) getObject(
+					Constants.MOA_SECURITY_RISK_DETECTION_REQUISITION);
+
 			seed.setAccountId(srdRequisition.getAccountId());
 			seed.setSecurityRiskDetector(srdRequisition.getSecurityRiskDetector());
 			seed.setSecurityRiskRemediator(srdRequisition.getSecurityRiskRemediator());
@@ -13310,7 +13296,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("doing the SecurityRiskDetection.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			
+
 			@SuppressWarnings("unchecked")
 			List<SecurityRiskDetection> result = actionable.generate(seed, this.getSrdRequestService());
 			info("SecurityRiskDetection.generate is complete...");
@@ -13324,27 +13310,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -13352,13 +13338,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
 	public List<SecurityRiskDetectionPojo> generateSrds(List<SecurityRiskDetectionRequisitionPojo> srdRequisitions)
 			throws RpcException {
-		
+
 		List<SecurityRiskDetectionPojo> srds = new java.util.ArrayList<SecurityRiskDetectionPojo>();
 		for (SecurityRiskDetectionRequisitionPojo srdr : srdRequisitions) {
 			SecurityRiskDetectionPojo srd = this.generateSrd(srdr);
@@ -13373,7 +13359,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		AccountProvisioningQueryResultPojo result = new AccountProvisioningQueryResultPojo();
 		List<AccountProvisioningSummaryPojo> summaries = new java.util.ArrayList<AccountProvisioningSummaryPojo>();
-		
+
 		try {
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("accountProvisioningListTimeoutMillis", "30000");
@@ -13381,8 +13367,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			RequestService reqSvc = this.getAWSRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			// get any provisioning objects (future maybe)
 //			AccountProvisioningQuerySpecification queryObject = (AccountProvisioningQuerySpecification) getObject(Constants.MOA_ACCOUNT_PROVISIONING_QUERY_SPEC);
@@ -13427,10 +13412,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 //				summary.setProvisioning(pojo);
 //				summaries.add(summary);
 //			}
-			
+
 			// now get the account deprovisioning objects
-			AccountDeprovisioningQuerySpecification deprov_queryObject = (AccountDeprovisioningQuerySpecification) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING_QUERY_SPEC);
-			AccountDeprovisioning deprov_actionable = (AccountDeprovisioning) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING);
+			AccountDeprovisioningQuerySpecification deprov_queryObject = (AccountDeprovisioningQuerySpecification) getObject(
+					Constants.MOA_ACCOUNT_DEPROVISIONING_QUERY_SPEC);
+			AccountDeprovisioning deprov_actionable = (AccountDeprovisioning) getObject(
+					Constants.MOA_ACCOUNT_DEPROVISIONING);
 
 			if (filter != null) {
 				if (filter.isDefaultMaxObjects()) {
@@ -13454,7 +13441,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 					deprov_queryObject.setComplianceClass(filter.getComplianceClass());
 					deprov_queryObject.setCreateUser(filter.getCreateUser());
 					deprov_queryObject.setLastUpdateUser(filter.getUpdateUser());
-					info("[getAccountProvisioningSummariesForFilter] getting Account Deprovisionings for filter: " + deprov_queryObject.toXmlString());
+					info("[getAccountProvisioningSummariesForFilter] getting Account Deprovisionings for filter: "
+							+ deprov_queryObject.toXmlString());
 				}
 			}
 			else {
@@ -13466,10 +13454,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
 
 			@SuppressWarnings("unchecked")
-			List<AccountDeprovisioning> deprov_moas = 
-				deprov_actionable.query(deprov_queryObject, reqSvc);
-			
-			info("[getAccountProvisioningSummariesForFilter] got " + deprov_moas.size() + " Account Deprovisioning objects back from the server.");
+			List<AccountDeprovisioning> deprov_moas = deprov_actionable.query(deprov_queryObject, reqSvc);
+
+			info("[getAccountProvisioningSummariesForFilter] got " + deprov_moas.size()
+					+ " Account Deprovisioning objects back from the server.");
 			for (AccountDeprovisioning moa : deprov_moas) {
 				AccountDeprovisioningPojo pojo = new AccountDeprovisioningPojo();
 				AccountDeprovisioningPojo baseline = new AccountDeprovisioningPojo();
@@ -13487,31 +13475,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateAccountDeprovisioningPojo(AccountDeprovisioning moa, AccountDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateAccountDeprovisioningPojo(AccountDeprovisioning moa, AccountDeprovisioningPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setDeprovisioningId(moa.getDeprovisioningId());
 		pojo.setStatus(moa.getStatus());
 		pojo.setDeprovisioningResult(moa.getDeprovisioningResult());
@@ -13549,14 +13538,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setActualTime(moa.getActualTime());
 		pojo.setAnticipatedTime(moa.getAnticipatedTime());
 		if (moa.getProperty() != null) {
-			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
+					.getProperty()) {
 				pojo.getProperties().put(stepProps.getKey(), stepProps.getValue());
 			}
 		}
 	}
 
-	private void populateAccountDeprovisioningRequisitionPojo(
-			AccountDeprovisioningRequisition moa,
+	private void populateAccountDeprovisioningRequisitionPojo(AccountDeprovisioningRequisition moa,
 			AccountDeprovisioningRequisitionPojo pojo) {
 
 		pojo.setAccountId(moa.getAccountId());
@@ -13566,18 +13555,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public AccountDeprovisioningPojo generateAccountDeprovisioning(AccountDeprovisioningRequisitionPojo requisition)
 			throws RpcException {
-		
+
 		info("[generateAccountDeprovisioning] preparing an AccountDeprovisioning.Generate-Request");
-		
+
 		try {
 			info("generating AccountDeprovisioning on the server...");
 			AccountDeprovisioning actionable = (AccountDeprovisioning) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING);
-			AccountDeprovisioningRequisition seed = (AccountDeprovisioningRequisition) getObject(Constants.MOA_ACCOUNT_DEPROVISIONING_REQUISITION);
+			AccountDeprovisioningRequisition seed = (AccountDeprovisioningRequisition) getObject(
+					Constants.MOA_ACCOUNT_DEPROVISIONING_REQUISITION);
 			info("populating moa");
 			seed.setAccountId(requisition.getAccountId());
 			seed.setAuthenticatedRequestorUserId(requisition.getRequestorId());
 
-			
 			info("doing the AccountDeprovisioning.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
@@ -13595,35 +13584,35 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("AccountDeprovisioning.generate is complete...");
 
 			return deprovisionPojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
@@ -13633,12 +13622,13 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			PropertiesPojo p = new PropertiesPojo();
 			Iterator<Object> keys = props.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
+				String key = (String) keys.next();
 				String value = props.getProperty(key);
 				p.setProperty(key, value);
 			}
 			return p;
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e.getMessage());
 		}
@@ -13650,7 +13640,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		RoleProvisioningQueryResultPojo result = new RoleProvisioningQueryResultPojo();
 		List<RoleProvisioningSummaryPojo> summaries = new java.util.ArrayList<RoleProvisioningSummaryPojo>();
-		
+
 		try {
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("accountProvisioningListTimeoutMillis", "30000");
@@ -13658,15 +13648,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			RequestService reqSvc = this.getAWSRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			String authUserId = this.getAuthUserIdForHALS();
 
 			// ******
 			// role provisioning logic
 			// ******
-			RoleProvisioningQuerySpecification queryObject = (RoleProvisioningQuerySpecification) getObject(Constants.MOA_ROLE_PROVISIONING_QUERY_SPEC);
+			RoleProvisioningQuerySpecification queryObject = (RoleProvisioningQuerySpecification) getObject(
+					Constants.MOA_ROLE_PROVISIONING_QUERY_SPEC);
 			RoleProvisioning actionable = (RoleProvisioning) getObject(Constants.MOA_ROLE_PROVISIONING);
 
 			if (filter != null) {
@@ -13688,7 +13678,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 				else {
 					queryObject.setRoleProvisioningId(filter.getProvisioningId());
-					info("[getRoleProvisioningSummariesForFilter] getting RoleProvisioningSummaries for filter: " + queryObject.toXmlString());
+					info("[getRoleProvisioningSummariesForFilter] getting RoleProvisioningSummaries for filter: "
+							+ queryObject.toXmlString());
 				}
 			}
 			else {
@@ -13696,14 +13687,15 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			}
 
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getRoleProvisioningSummariesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+			info("[getRoleProvisioningSummariesForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
 
 			info("RoleProvisioningQuerySpecification: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<RoleProvisioning> moas = 
-				actionable.query(queryObject, reqSvc);
-			
-			info("[getRoleProvisioningSummariesForFilter] got " + moas.size() + " Role Provisioning objects back from the server.");
+			List<RoleProvisioning> moas = actionable.query(queryObject, reqSvc);
+
+			info("[getRoleProvisioningSummariesForFilter] got " + moas.size()
+					+ " Role Provisioning objects back from the server.");
 			for (RoleProvisioning moa : moas) {
 				RoleProvisioningPojo pojo = new RoleProvisioningPojo();
 				this.populateRoleProvisioningPojo(moa, pojo);
@@ -13716,9 +13708,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// ******
 
 			// ******
-			// now get the role deprovisioning objects  (future maybe)
+			// now get the role deprovisioning objects (future maybe)
 			// ******
-			RoleDeprovisioningQuerySpecification deprov_queryObject = (RoleDeprovisioningQuerySpecification) getObject(Constants.MOA_ROLE_DEPROVISIONING_QUERY_SPEC);
+			RoleDeprovisioningQuerySpecification deprov_queryObject = (RoleDeprovisioningQuerySpecification) getObject(
+					Constants.MOA_ROLE_DEPROVISIONING_QUERY_SPEC);
 			RoleDeprovisioning deprov_actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
 
 			if (filter != null) {
@@ -13739,7 +13732,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 				else {
 					deprov_queryObject.setRoleDeprovisioningId(filter.getProvisioningId());
-					info("[getRoleProvisioningSummariesForFilter] getting Role Deprovisionings for filter: " + deprov_queryObject.toXmlString());
+					info("[getRoleProvisioningSummariesForFilter] getting Role Deprovisionings for filter: "
+							+ deprov_queryObject.toXmlString());
 				}
 			}
 			else {
@@ -13750,10 +13744,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			deprov_actionable.getAuthentication().setAuthUserId(authUserId);
 
 			@SuppressWarnings("unchecked")
-			List<RoleDeprovisioning> deprov_moas = 
-				deprov_actionable.query(deprov_queryObject, reqSvc);
-			
-			info("[getRoleProvisioningSummariesForFilter] got " + deprov_moas.size() + " Role Deprovisioning objects back from the server.");
+			List<RoleDeprovisioning> deprov_moas = deprov_actionable.query(deprov_queryObject, reqSvc);
+
+			info("[getRoleProvisioningSummariesForFilter] got " + deprov_moas.size()
+					+ " Role Deprovisioning objects back from the server.");
 			for (RoleDeprovisioning moa : deprov_moas) {
 				RoleDeprovisioningPojo pojo = new RoleDeprovisioningPojo();
 				this.populateRoleDeprovisioningPojo(moa, pojo);
@@ -13764,29 +13758,29 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			// ******
 			// end role deprovisioning logic
 			// ******
-			
+
 			Collections.sort(summaries);
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		
-		} 
+
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -13794,7 +13788,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateRoleDeprovisioningPojo(RoleDeprovisioning moa, RoleDeprovisioningPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateRoleDeprovisioningPojo(RoleDeprovisioning moa, RoleDeprovisioningPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setDeprovisioningId(moa.getRoleDeprovisioningId());
 		pojo.setStatus(moa.getStatus());
 		pojo.setDeprovisioningResult(moa.getDeprovisioningResult());
@@ -13833,14 +13828,16 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setActualTime(moa.getActualTime());
 		pojo.setAnticipatedTime(moa.getAnticipatedTime());
 		if (moa.getProperty() != null) {
-			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
+					.getProperty()) {
 				pojo.getProperties().put(stepProps.getKey(), stepProps.getValue());
 			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void populateRoleProvisioningPojo(RoleProvisioning moa, RoleProvisioningPojo pojo) throws XmlEnterpriseObjectException {
+	private void populateRoleProvisioningPojo(RoleProvisioning moa, RoleProvisioningPojo pojo)
+			throws XmlEnterpriseObjectException {
 		pojo.setProvisioningId(moa.getRoleProvisioningId());
 		pojo.setStatus(moa.getStatus());
 		pojo.setProvisioningResult(moa.getProvisioningResult());
@@ -13878,7 +13875,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setActualTime(moa.getActualTime());
 		pojo.setAnticipatedTime(moa.getAnticipatedTime());
 		if (moa.getProperty() != null) {
-			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa.getProperty()) {
+			for (com.amazon.aws.moa.objects.resources.v1_0.Property stepProps : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
+					.getProperty()) {
 				pojo.getProperties().put(stepProps.getKey(), stepProps.getValue());
 			}
 		}
@@ -13886,7 +13884,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	private void populateRoleProvisioningRequisitionPojo(RoleProvisioningRequisition moa,
 			RoleProvisioningRequisitionPojo pojo) {
-		
+
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setCustomRoleName(moa.getRoleName());
 //		pojo.setAssigneeUserId(moa.getRoleAssigneeUserId());
@@ -13896,22 +13894,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public RoleProvisioningPojo generateRoleProvisioning(RoleProvisioningRequisitionPojo requisition)
 			throws RpcException {
-		
+
 		try {
 			info("generating Custom Role on the server...");
 			RoleProvisioning actionable = (RoleProvisioning) getObject(Constants.MOA_ROLE_PROVISIONING);
-			RoleProvisioningRequisition seed = (RoleProvisioningRequisition) getObject(Constants.MOA_ROLE_PROVISIONING_REQUISITION);
+			RoleProvisioningRequisition seed = (RoleProvisioningRequisition) getObject(
+					Constants.MOA_ROLE_PROVISIONING_REQUISITION);
 			info("populating moa");
 			seed.setRoleName(requisition.getCustomRoleName());
 			seed.setAccountId(requisition.getAccountId());
 //			seed.setRoleAssigneeUserId(requisition.getRoleAssigneeUserId);
 
-			
 			info("doing the RoleProvisioning.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("RoleProvisioning.generate seed data is: " + seed.toXmlString());
-			
+
 			@SuppressWarnings("unchecked")
 			List<RoleProvisioning> result = actionable.generate(seed, getAWSRequestService());
 			// TODO if more than one returned, it's an error...
@@ -13922,31 +13920,31 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("RoleProvisioning.generate is complete...");
 
 			return rpPojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -13960,18 +13958,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		try {
 			info("generating Custom Role DEPROVISIONING on the server...");
 			RoleDeprovisioning actionable = (RoleDeprovisioning) getObject(Constants.MOA_ROLE_DEPROVISIONING);
-			RoleDeprovisioningRequisition seed = (RoleDeprovisioningRequisition) getObject(Constants.MOA_ROLE_DEPROVISIONING_REQUISITION);
+			RoleDeprovisioningRequisition seed = (RoleDeprovisioningRequisition) getObject(
+					Constants.MOA_ROLE_DEPROVISIONING_REQUISITION);
 			info("populating moa");
 			seed.setRoleName(requisition.getCustomRoleName());
 			seed.setAccountId(requisition.getAccountId());
 //			seed.setRoleAssigneeUserId(requisition.getRoleAssigneeUserId);
 
-			
 			info("doing the RoleDeprovisioning.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("RoleDeprovisioning.generate seed data is: " + seed.toXmlString());
-			
+
 			@SuppressWarnings("unchecked")
 			List<RoleDeprovisioning> result = actionable.generate(seed, getAWSRequestService());
 			// TODO if more than one returned, it's an error...
@@ -13983,31 +13981,31 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("RoleDeprovisioning.generate is complete...");
 
 			return rpPojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -14020,25 +14018,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		List<CustomRolePojo> pojos = new java.util.ArrayList<CustomRolePojo>();
 
 		try {
-			CustomRoleQuerySpecification queryObject = 
-				(CustomRoleQuerySpecification) getObject(Constants.MOA_CUSTOM_ROLE_QUERY_SPEC);
+			CustomRoleQuerySpecification queryObject = (CustomRoleQuerySpecification) getObject(
+					Constants.MOA_CUSTOM_ROLE_QUERY_SPEC);
 			CustomRole actionable = (CustomRole) getObject(Constants.MOA_CUSTOM_ROLE);
-	
+
 			if (filter != null) {
 				queryObject.setAccountId(filter.getAccountId());
 			}
-	
+
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getCustomRolesForFilter] AuthUserId is: " + 
-					actionable.getAuthentication().getAuthUserId());
-			
+			info("[getCustomRolesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
+
 			@SuppressWarnings("unchecked")
-			List<CustomRole> moas = actionable.query(queryObject,
-					this.getAWSRequestService());
-			info("[getCustomRolesForFilter] got " + moas.size() + 
-				" custom roles back from the server for account " + filter.getAccountId()); 
-			
+			List<CustomRole> moas = actionable.query(queryObject, this.getAWSRequestService());
+			info("[getCustomRolesForFilter] got " + moas.size() + " custom roles back from the server for account "
+					+ filter.getAccountId());
+
 			for (CustomRole moa : moas) {
 				CustomRolePojo crp = new CustomRolePojo();
 				crp.setAccountId(moa.getAccountId());
@@ -14049,32 +14045,32 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.setPojoUpdateInfo(crp, moa);
 				pojos.add(crp);
 			}
-	
+
 			Collections.sort(pojos);
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
@@ -14082,7 +14078,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		try {
 			Properties props = getAppConfig().getProperties(AWS_URL_PROPERTIES);
 			return props.getProperty("awsConsoleURL", "'awsConsoleURL' propery not found");
-		} catch (EnterpriseConfigurationObjectException e) {
+		}
+		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -14093,25 +14090,26 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		CustomRoleQueryFilterPojo filter = new CustomRoleQueryFilterPojo();
 		filter.setAccountId(accountId);
 		CustomRoleQueryResultPojo result = this.getCustomRolesForFilter(filter);
-		
+
 		for (CustomRolePojo crp : result.getResults()) {
 			if (crp.getRoleName().equalsIgnoreCase(roleName.trim())) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
 	@Override
 	public TransitGatewayQueryResultPojo getTransitGatewaysForFilter(TransitGatewayQueryFilterPojo filter)
 			throws RpcException {
-		
+
 		TransitGatewayQueryResultPojo result = new TransitGatewayQueryResultPojo();
 		List<TransitGatewayPojo> pojos = new java.util.ArrayList<TransitGatewayPojo>();
-		
+
 		try {
-			TransitGatewayQuerySpecification queryObject = (TransitGatewayQuerySpecification) getObject(Constants.MOA_TRANSIT_GATEWAY_QUERY_SPEC);
+			TransitGatewayQuerySpecification queryObject = (TransitGatewayQuerySpecification) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_QUERY_SPEC);
 			TransitGateway actionable = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
 
 			if (filter != null) {
@@ -14127,21 +14125,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
 			info("[getTransitGatewaysForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+
 			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
 			String s_interval = props.getProperty("transitGatewayListTimeoutMillis", "300000");
 			int interval = Integer.parseInt(s_interval);
 
 			RequestService reqSvc = this.getNetworkOpsRequestService();
 			info("setting RequestService's timeout to: " + interval + " milliseconds");
-			((PointToPointProducer) reqSvc)
-				.setRequestTimeoutInterval(interval);
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
 
 			info("[getTransitGatewaysForFilter] query spec: " + queryObject.toXmlString());
 			@SuppressWarnings("unchecked")
-			List<TransitGateway> moas = 
-				actionable.query(queryObject, reqSvc);
-			
+			List<TransitGateway> moas = actionable.query(queryObject, reqSvc);
+
 			info("[getTransitGatewaysForFilter] got " + moas.size() + " Transit Gateway objects back from the server.");
 			for (TransitGateway moa : moas) {
 				TransitGatewayPojo pojo = new TransitGatewayPojo();
@@ -14156,27 +14152,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
@@ -14187,37 +14183,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("populating moa");
 			this.populateTransitGatewayMoa(transitGateway, moa);
 
-			
 			info("doing the TransitGateway.create...");
 			info("creating transit gateway: " + moa.toXmlString());
 			this.doCreate(moa, getNetworkOpsRequestService());
 			info("TransitGateway.create is complete...");
 
 			return transitGateway;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectCreateException e) {
+		}
+		catch (EnterpriseObjectCreateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (JMSException e) {
+		}
+		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -14231,37 +14228,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("populating moa");
 			this.populateTransitGatewayMoa(transitGateway, moa);
 
-			
 			info("doing the TransitGateway.delete...");
 			info("deleting transit gateway: " + moa.toXmlString());
 			this.doDelete(moa, getNetworkOpsRequestService());
 			info("TransitGateway.delete is complete...");
 
 			return transitGateway;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (EnterpriseObjectDeleteException e) {
+		}
+		catch (EnterpriseObjectDeleteException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (JMSException e) {
+		}
+		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
@@ -14269,26 +14267,27 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 	@Override
 	public TransitGatewayPojo updateTransitGateway(TransitGatewayPojo transitGateway) throws RpcException {
-        try {
-            info("updating TransitGateway on the server...");
-            TransitGateway newData = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
-            TransitGateway baselineData = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
+		try {
+			info("updating TransitGateway on the server...");
+			TransitGateway newData = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
+			TransitGateway baselineData = (TransitGateway) getObject(Constants.MOA_TRANSIT_GATEWAY);
 
-            info("populating newData...");
-            populateTransitGatewayMoa(transitGateway, newData);
+			info("populating newData...");
+			populateTransitGatewayMoa(transitGateway, newData);
 
-            info("populating baselineData...");
-            populateTransitGatewayMoa(transitGateway.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating baselineData...");
+			populateTransitGatewayMoa(transitGateway.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
 
-            info("doing the update...");
+			info("doing the update...");
 			info("deleting transit gateway: " + newData.toXmlString());
-            doUpdate(newData, getNetworkOpsRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			doUpdate(newData, getNetworkOpsRequestService());
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return transitGateway;
 	}
 
@@ -14296,16 +14295,18 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public TransitGatewayConnectionProfileQueryResultPojo getTransitGatewayConnectionProfilesForFilter(
 			TransitGatewayConnectionProfileQueryFilterPojo filter) throws RpcException {
-		
+
 		TransitGatewayConnectionProfileQueryResultPojo result = new TransitGatewayConnectionProfileQueryResultPojo();
 		List<TransitGatewayConnectionProfileSummaryPojo> summaries = new java.util.ArrayList<TransitGatewayConnectionProfileSummaryPojo>();
-		
+
 		// get ALL VpnConnectionProfileAssignments and go through them in memory
 		// instead of doing an individual query by profile id.
-		// this speeds things up significantly but could potentially lead to other resource issues down the road
+		// this speeds things up significantly but could potentially lead to other
+		// resource issues down the road
 		TransitGatewayConnectionProfileAssignmentQueryFilterPojo eia_filter = new TransitGatewayConnectionProfileAssignmentQueryFilterPojo();
-		TransitGatewayConnectionProfileAssignmentQueryResultPojo eia_result = this.getTransitGatewayProfileAssignmentsForFilter(eia_filter);
-		
+		TransitGatewayConnectionProfileAssignmentQueryResultPojo eia_result = this
+				.getTransitGatewayProfileAssignmentsForFilter(eia_filter);
+
 		// check the cache for cached VpnConnectionProfiles (by current session id)
 		// if they've already been cached, just get them from there
 		// and pull back any assignments for those
@@ -14315,8 +14316,10 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			for (TransitGatewayConnectionProfilePojo profile : cached_profiles) {
 				TransitGatewayConnectionProfileSummaryPojo summary = new TransitGatewayConnectionProfileSummaryPojo();
 				summary.setProfile(profile);
-				assignmentLoop: for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
-					if (assignment.getTransitGatewayConnectionProfileId().equals(profile.getTransitGatewayConnectionProfileId())) {
+				assignmentLoop:
+				for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+					if (assignment.getTransitGatewayConnectionProfileId()
+							.equals(profile.getTransitGatewayConnectionProfileId())) {
 						profile.setAssigned(true);
 						summary.setAssignment(assignment);
 						break assignmentLoop;
@@ -14332,10 +14335,12 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		else {
 			info("[getTransitGatewayConnectionProfilesForFilter] getting TransitGatewayConnectionProfile objects from the service");
 		}
-		
+
 		try {
-			TransitGatewayConnectionProfileQuerySpecification queryObject = (TransitGatewayConnectionProfileQuerySpecification) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_QUERY_SPEC);
-			TransitGatewayConnectionProfile actionable = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+			TransitGatewayConnectionProfileQuerySpecification queryObject = (TransitGatewayConnectionProfileQuerySpecification) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_QUERY_SPEC);
+			TransitGatewayConnectionProfile actionable = (TransitGatewayConnectionProfile) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
 
 			if (filter != null) {
 				// TODO: query language probably
@@ -14347,17 +14352,19 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getTransitGatewayConnectionProfilesForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getTransitGatewayConnectionProfilesForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			List<TransitGatewayConnectionProfile> moas = actionable.query(queryObject,
 					this.getNetworkOpsRequestService());
-			info("[getTransitGatewayConnectionProfilesForFilter] got " + moas.size() + " Transit Gateway Connection profiles back from the ESB.");
-			
+			info("[getTransitGatewayConnectionProfilesForFilter] got " + moas.size()
+					+ " Transit Gateway Connection profiles back from the ESB.");
+
 			List<TransitGatewayConnectionProfilePojo> profiles_to_cache = new java.util.ArrayList<TransitGatewayConnectionProfilePojo>();
-			
+
 			for (TransitGatewayConnectionProfile moa : moas) {
 				TransitGatewayConnectionProfileSummaryPojo summary = new TransitGatewayConnectionProfileSummaryPojo();
-				
+
 				TransitGatewayConnectionProfilePojo pojo = new TransitGatewayConnectionProfilePojo();
 				TransitGatewayConnectionProfilePojo baseline = new TransitGatewayConnectionProfilePojo();
 				this.populateTransitGatewayConnectionProfilePojo(moa, pojo);
@@ -14365,9 +14372,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				pojo.setBaseline(baseline);
 				summary.setProfile(pojo);
 				profiles_to_cache.add(pojo);
-				
-				assignmentLoop: for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
-					if (assignment.getTransitGatewayConnectionProfileId().equals(pojo.getTransitGatewayConnectionProfileId())) {
+
+				assignmentLoop:
+				for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
+					if (assignment.getTransitGatewayConnectionProfileId()
+							.equals(pojo.getTransitGatewayConnectionProfileId())) {
 						summary.setAssignment(assignment);
 						// TODO: remove assignment from eia_result.getResults()??
 						break assignmentLoop;
@@ -14380,39 +14389,39 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(summaries);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	private void populateTransitGatewayConnectionProfilePojo(TransitGatewayConnectionProfile moa,
 			TransitGatewayConnectionProfilePojo pojo) {
-		
+
 		pojo.setTransitGatewayConnectionProfileId(moa.getTransitGatewayConnectionProfileId());
 		pojo.setCidrId(moa.getCidrId());
 		pojo.setRegion(moa.getRegion());
 		pojo.setTransitGatewayId(moa.getTransitGatewayId());
 		pojo.setCidrRange(moa.getCidrRange());
-		
+
 	}
 
 	private void populateTransitGatewayConnectionProfileMoa(TransitGatewayConnectionProfilePojo pojo,
 			TransitGatewayConnectionProfile moa) throws EnterpriseFieldException {
-		
+
 		moa.setTransitGatewayConnectionProfileId(pojo.getTransitGatewayConnectionProfileId());
 		moa.setCidrId(pojo.getCidrId());
 		moa.setRegion(pojo.getRegion());
@@ -14423,41 +14432,41 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public TransitGatewayConnectionProfilePojo createTransitGatewayConnectionProfile(
 			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
-		
+
 		try {
 			info("creating TransitGatewayConnectionProfile on the server...");
-			TransitGatewayConnectionProfile moa = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+			TransitGatewayConnectionProfile moa = (TransitGatewayConnectionProfile) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
 			info("populating moa");
 			this.populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile, moa);
 
-			
 			info("doing the TransitGatewayConnectionProfile.create...");
 			info("creating transit gateway: " + moa.toXmlString());
 //			this.doCreate(moa, getNetworkOpsRequestService());
 			info("TransitGatewayConnectionProfile.create is complete...");
 
 			return transitGatewayConnectionProfile;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 //		catch (EnterpriseObjectCreateException e) {
 //			e.printStackTrace();
 //			throw new RpcException(e);
@@ -14474,38 +14483,38 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		try {
 			info("deleting TransitGatewayConnectionProfile record on the server...");
-			TransitGatewayConnectionProfile moa = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+			TransitGatewayConnectionProfile moa = (TransitGatewayConnectionProfile) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
 			info("populating moa");
 			this.populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile, moa);
 
-			
 			info("doing the TransitGatewayConnectionProfile.delete...");
 			info("deleting transit gateway connection profile: " + moa.toXmlString());
 //			this.doDelete(moa, getNetworkOpsRequestService());
 			info("TransitGatewayConnectionProfile.delete is complete...");
 
 			return transitGatewayConnectionProfile;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 //		catch (EnterpriseObjectDeleteException e) {
 //			e.printStackTrace();
 //			throw new RpcException(e);
@@ -14519,27 +14528,30 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public TransitGatewayConnectionProfilePojo updateTransitGatewayConnectionProfile(
 			TransitGatewayConnectionProfilePojo transitGatewayConnectionProfile) throws RpcException {
-		
-        try {
-            info("updating TransitGatewayConnectionProfile on the server...");
-            TransitGatewayConnectionProfile newData = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
-            TransitGatewayConnectionProfile baselineData = (TransitGatewayConnectionProfile) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
 
-            info("populating newData...");
-            populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile, newData);
+		try {
+			info("updating TransitGatewayConnectionProfile on the server...");
+			TransitGatewayConnectionProfile newData = (TransitGatewayConnectionProfile) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
+			TransitGatewayConnectionProfile baselineData = (TransitGatewayConnectionProfile) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE);
 
-            info("populating baselineData...");
-            populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile.getBaseline(), baselineData);
-            newData.setBaseline(baselineData);
+			info("populating newData...");
+			populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile, newData);
 
-            info("doing the update...");
+			info("populating baselineData...");
+			populateTransitGatewayConnectionProfileMoa(transitGatewayConnectionProfile.getBaseline(), baselineData);
+			newData.setBaseline(baselineData);
+
+			info("doing the update...");
 			info("updating transit gateway connection profile: " + newData.toXmlString());
 //            doUpdate(newData, getNetworkOpsRequestService());
-            info("update is complete...");
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new RpcException(t);
-        }
+			info("update is complete...");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+			throw new RpcException(t);
+		}
 		return transitGatewayConnectionProfile;
 	}
 
@@ -14547,38 +14559,41 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	public TransitGatewayConnectionProfileAssignmentQueryResultPojo getTransitGatewayProfileAssignmentsForFilter(
 			TransitGatewayConnectionProfileAssignmentQueryFilterPojo filter) throws RpcException {
 
-
 		TransitGatewayConnectionProfileAssignmentQueryResultPojo result = new TransitGatewayConnectionProfileAssignmentQueryResultPojo();
 		List<TransitGatewayConnectionProfileAssignmentPojo> pojos = new java.util.ArrayList<TransitGatewayConnectionProfileAssignmentPojo>();
 		try {
-			TransitGatewayConnectionProfileAssignmentQuerySpecification queryObject = (TransitGatewayConnectionProfileAssignmentQuerySpecification) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC);
-			TransitGatewayConnectionProfileAssignment actionable = (TransitGatewayConnectionProfileAssignment) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT);
+			TransitGatewayConnectionProfileAssignmentQuerySpecification queryObject = (TransitGatewayConnectionProfileAssignmentQuerySpecification) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_QUERY_SPEC);
+			TransitGatewayConnectionProfileAssignment actionable = (TransitGatewayConnectionProfileAssignment) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT);
 
 			if (filter != null) {
 				// TODO: query language probably
 
-				queryObject.setTransitGatewayConnectionProfileAssignmentId(filter.getTransitGatewayConnectionProfileAssignmentId());
+				queryObject.setTransitGatewayConnectionProfileAssignmentId(
+						filter.getTransitGatewayConnectionProfileAssignmentId());
 				queryObject.setOwnerId(filter.getOwnerId());
 				queryObject.setTransitGatewayConnectionProfileId(filter.getTransitGatewayConnectionProfileId());
 			}
 
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			info("[getTransitGatewayConnectionProfileAssignmentsForFilter] AuthUserId is: " + actionable.getAuthentication().getAuthUserId());
-			
+			info("[getTransitGatewayConnectionProfileAssignmentsForFilter] AuthUserId is: "
+					+ actionable.getAuthentication().getAuthUserId());
+
 			@SuppressWarnings("unchecked")
 			List<TransitGatewayConnectionProfileAssignment> moas = actionable.query(queryObject,
 					this.getNetworkOpsRequestService());
-			info("[getTransitGatewayConnectionProfileAssignmentsForFilter] got " + 
-				moas.size() + " Transit Gateway Connection profile assignments back from the ESB.");
-			
+			info("[getTransitGatewayConnectionProfileAssignmentsForFilter] got " + moas.size()
+					+ " Transit Gateway Connection profile assignments back from the ESB.");
+
 			for (TransitGatewayConnectionProfileAssignment moa : moas) {
 				TransitGatewayConnectionProfileAssignmentPojo pojo = new TransitGatewayConnectionProfileAssignmentPojo();
 				TransitGatewayConnectionProfileAssignmentPojo baseline = new TransitGatewayConnectionProfileAssignmentPojo();
 				this.populateTransitGatewayConnectionProfileAssignmentPojo(moa, pojo);
 				this.populateTransitGatewayConnectionProfileAssignmentPojo(moa, baseline);
 				pojo.setBaseline(baseline);
-				
+
 				pojos.add(pojo);
 			}
 
@@ -14586,56 +14601,55 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			result.setResults(pojos);
 			result.setFilterUsed(filter);
 			return result;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectQueryException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} catch (XmlEnterpriseObjectException e) {
+		}
+		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	private void populateTransitGatewayConnectionProfileAssignmentPojo(TransitGatewayConnectionProfileAssignment moa,
 			TransitGatewayConnectionProfileAssignmentPojo pojo) throws XmlEnterpriseObjectException {
-		
+
 		/*
-		<!ELEMENT TransitGatewayConnectionProfileAssignment (
-			TransitGatewayConnectionProfileAssignmentId?, 
-			TransitGatewayConnectionProfileId, 
-			OwnerId, 
-			CreateUser, 
-			CreateDatetime, 
-			LastUpdateUser?, 
-			LastUpdateDatetime?)>
-		*/
+		 * <!ELEMENT TransitGatewayConnectionProfileAssignment (
+		 * TransitGatewayConnectionProfileAssignmentId?,
+		 * TransitGatewayConnectionProfileId, OwnerId, CreateUser, CreateDatetime,
+		 * LastUpdateUser?, LastUpdateDatetime?)>
+		 */
 		pojo.setTransitGatewayConnectionProfileAssignmentId(moa.getTransitGatewayConnectionProfileAssignmentId());
 		pojo.setTransitGatewayConnectionProfileId(moa.getTransitGatewayConnectionProfileId());
 		pojo.setOwnerId(moa.getOwnerId());
-		
+
 		this.setPojoCreateInfo(pojo, moa);
 		this.setPojoUpdateInfo(pojo, moa);
 	}
 
-	private void populateTransitGatewayConnectionProfileAssignmentMoa(TransitGatewayConnectionProfileAssignmentPojo pojo,
-			TransitGatewayConnectionProfileAssignment moa) throws XmlEnterpriseObjectException, EnterpriseFieldException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
-		
+	private void populateTransitGatewayConnectionProfileAssignmentMoa(
+			TransitGatewayConnectionProfileAssignmentPojo pojo, TransitGatewayConnectionProfileAssignment moa)
+			throws XmlEnterpriseObjectException, EnterpriseFieldException, IllegalArgumentException,
+			IllegalAccessException, InvocationTargetException, SecurityException, NoSuchMethodException {
+
 		moa.setTransitGatewayConnectionProfileAssignmentId(pojo.getTransitGatewayConnectionProfileAssignmentId());
 		moa.setTransitGatewayConnectionProfileId(pojo.getTransitGatewayConnectionProfileId());
 		moa.setOwnerId(pojo.getOwnerId());
-		
+
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
 	}
@@ -14646,21 +14660,24 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		try {
 			info("generating TransitGatewayConnectionProfileAssignment on the server...");
-			TransitGatewayConnectionProfileAssignment actionable = (TransitGatewayConnectionProfileAssignment) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_GENERATE);
-			TransitGatewayConnectionProfileAssignmentRequisition seed = (TransitGatewayConnectionProfileAssignmentRequisition) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION);
+			TransitGatewayConnectionProfileAssignment actionable = (TransitGatewayConnectionProfileAssignment) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_GENERATE);
+			TransitGatewayConnectionProfileAssignmentRequisition seed = (TransitGatewayConnectionProfileAssignmentRequisition) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT_REQUISITION);
 			info("populating moa");
 			seed.setOwnerId(requisition.getOwnerId());
 			seed.setOwnerId(requisition.getRegion());
 			seed.setTransitGatewayId(requisition.getTransitGatewayId());
-			
+
 			info("doing the TransitGatewayConnectionProfileAssignment.generate...");
 			String authUserId = this.getAuthUserIdForHALS();
 			actionable.getAuthentication().setAuthUserId(authUserId);
-			
+
 			info("TransitGatewayConnectionProfileAssignment.generate seed data is: " + seed.toXmlString());
-			
+
 			@SuppressWarnings("unchecked")
-			List<TransitGatewayConnectionProfileAssignment> result = actionable.generate(seed, this.getNetworkOpsRequestService());
+			List<TransitGatewayConnectionProfileAssignment> result = actionable.generate(seed,
+					this.getNetworkOpsRequestService());
 			// TODO if more than one returned, it's an error...
 			TransitGatewayConnectionProfileAssignmentPojo pojo = new TransitGatewayConnectionProfileAssignmentPojo();
 			for (TransitGatewayConnectionProfileAssignment moa : result) {
@@ -14669,75 +14686,76 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("TransitGatewayConnectionProfileAssignment.generate is complete...");
 
 			return pojo;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (JMSException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseObjectGenerateException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 	}
 
 	@Override
 	public TransitGatewayConnectionProfileAssignmentPojo deleteTransitGatewayConnectionProfileAssignment(
-			TransitGatewayConnectionProfileAssignmentPojo transitGatewayConnectionProfileAssignment) throws RpcException {
+			TransitGatewayConnectionProfileAssignmentPojo transitGatewayConnectionProfileAssignment)
+			throws RpcException {
 
 		try {
 			info("deleting TransitGatewayConnectionProfileAssignment record on the server...");
-			TransitGatewayConnectionProfileAssignment moa = (TransitGatewayConnectionProfileAssignment) getObject(Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT);
+			TransitGatewayConnectionProfileAssignment moa = (TransitGatewayConnectionProfileAssignment) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_CONNECTION_PROFILE_ASSIGNMENT);
 			info("populating moa");
 			this.populateTransitGatewayConnectionProfileAssignmentMoa(transitGatewayConnectionProfileAssignment, moa);
 
-			
 			info("doing the TransitGatewayConnectionProfileAssignment.delete...");
 			info("deleting transit gateway connection profile Assignment: " + moa.toXmlString());
 //			this.doDelete(moa, getNetworkOpsRequestService());
 			info("TransitGatewayConnectionProfileAssignment.delete is complete...");
 
 			return transitGatewayConnectionProfileAssignment;
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (EnterpriseFieldException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (XmlEnterpriseObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 //		catch (EnterpriseObjectDeleteException e) {
 //			e.printStackTrace();
 //			throw new RpcException(e);
@@ -14749,11 +14767,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (InvocationTargetException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
-		} 
+		}
 		catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
@@ -14767,11 +14785,11 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			Properties regionProps = getAppConfig().getProperties(ENVIRONMENT_PROPERTIES);
 			Iterator<Object> keys = regionProps.keySet().iterator();
 			while (keys.hasNext()) {
-				String key = (String)keys.next();
-				String value = (String)regionProps.get(key);
+				String key = (String) keys.next();
+				String value = (String) regionProps.get(key);
 				results.add(value);
 			}
-		} 
+		}
 		catch (EnterpriseConfigurationObjectException e) {
 			e.printStackTrace();
 			throw new RpcException(e);

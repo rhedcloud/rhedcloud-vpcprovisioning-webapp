@@ -18,14 +18,19 @@
 				</g:VerticalPanel>
 			</g:cell>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel ui:field="tgwMainPanel">
+		<g:VerticalPanel spacing="12"  ui:field="tgwMainPanel">
 		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
-			<g:Grid cellSpacing="8">
+			<g:Label ui:field="maintainTgwLabel" addStyleNames="{style.mediumLabel}">Maintain Transit Gateway Metadata</g:Label>
+		</g:cell>
+		<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
+			<g:Grid addStyleNames="{style.statusPanel}" cellSpacing="8">
+				<!-- 
 				<g:row>
 			    	<g:customCell>
 						<g:Label ui:field="maintainTgwLabel" addStyleNames="{style.mediumLabel}">Maintain Transit Gateway Metadata</g:Label>
 			    	</g:customCell>
 				</g:row>
+				 -->
 				<g:row>
 			    	<g:customCell>
 						<g:Label ui:field="environmentLabel" addStyleNames="{style.label}">Environment:</g:Label>
@@ -64,8 +69,8 @@
 		    	</g:row>
 			</g:Grid>
 		</g:cell>
-		</g:HorizontalPanel>
-		<g:VerticalPanel ui:field="tgwProfilePanel" spacing="8">
+		</g:VerticalPanel>
+		<g:VerticalPanel addStyleNames="{style.statusPanel}" ui:field="tgwProfilePanel" spacing="8">
 			<g:HorizontalPanel width="100%">
 				<g:cell horizontalAlignment="ALIGN_LEFT" verticalAlignment="ALIGN_MIDDLE">
 					<g:Label addStyleNames="{style.mediumLabel}">Profiles associated to this Transit Gateway:</g:Label>
