@@ -97,7 +97,7 @@
 					</g:row>
 					<g:row>
 						<g:customCell>
-							<g:Label addStyleNames="{style.label}">VPN Profile ID:</g:Label>
+							<g:Label addStyleNames="{style.label}">Reference ID:</g:Label>
 						</g:customCell>
 						<g:customCell>
 							<g:TextBox
@@ -120,6 +120,24 @@
 			<g:cell horizontalAlignment="ALIGN_LEFT"
 				verticalAlignment="ALIGN_TOP">
 
+				<g:VerticalPanel>
+				<g:VerticalPanel addStyleNames="{style.statusPanel}" ui:field="tgwInfoOuterPanel">
+					<g:cell horizontalAlignment="ALIGN_LEFT"
+						verticalAlignment="ALIGN_TOP">
+						<g:Grid ui:field="tgwInfoHeaderGrid" cellSpacing="8">
+							<g:row>
+						    	<g:customCell>
+									<g:Label addStyleNames="{style.mediumLabel}">Transit Gateway Information for this VPC</g:Label>
+						    	</g:customCell>
+								<g:customCell>
+									<g:PushButton ui:field="tgwRefreshButton" debugId="tgwRefreshButton" text="Refresh" 
+										addStyleNames="{style.refreshButton}"
+										title="Refresh Transit Gateway Connection info"/>
+								</g:customCell>
+							</g:row>
+						</g:Grid>
+					</g:cell>
+				</g:VerticalPanel>
 				<g:VerticalPanel addStyleNames="{style.statusPanel}" ui:field="vpnInfoOuterPanel">
 					<g:cell horizontalAlignment="ALIGN_LEFT"
 						verticalAlignment="ALIGN_TOP">
@@ -196,6 +214,7 @@
 							</g:row>
 						</g:Grid>				   		
 			   		</g:cell>
+				</g:VerticalPanel>
 				</g:VerticalPanel>
 			</g:cell>
 			<g:cell horizontalAlignment="ALIGN_LEFT"

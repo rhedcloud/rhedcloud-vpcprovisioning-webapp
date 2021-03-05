@@ -86,7 +86,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 				presenter.getVpc().setVpcId(vpcIdTB.getText());
 				presenter.getVpc().setType(vpcTypeLB.getSelectedValue());
 				presenter.getVpc().setCidr(cidrTB.getText());
-				presenter.getVpc().setVpnConnectionProfileId(vpnProfileIdTB.getText());
+				presenter.getVpc().setReferenceId(vpnProfileIdTB.getText());
 				presenter.getVpc().setPurpose(purposeTA.getText());
 				presenter.getVpc().setRegion(regionLB.getSelectedValue());
 				presenter.registerVpc();
@@ -293,6 +293,12 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 
 	@Override
 	public void initPage() {
+		if (presenter.getVpc() != null && presenter.getVpc().isVpnConnected()) {
+			vpnProfileIdTB.setTitle("VPN Connection Profile ID");
+		}
+		else {
+			vpnProfileIdTB.setTitle("Transit Gateway Connection Profile ID");
+		}
 		vpcIdTB.setText("");
 		cidrTB.setText("");
 		vpnProfileIdTB.setText("");
@@ -362,7 +368,7 @@ public class DesktopRegisterVpc extends ViewImplBase implements RegisterVpcView 
 		if (vpc.getCidr() == null || vpc.getCidr().length() == 0) {
 			fields.add(cidrTB);
 		}
-		if (vpc.getVpnConnectionProfileId() == null || vpc.getVpnConnectionProfileId().length() == 0) {
+		if (vpc.getReferenceId() == null || vpc.getReferenceId().length() == 0) {
 			fields.add(vpnProfileIdTB);
 		}
 		if (vpc.getPurpose() == null || vpc.getPurpose().length() == 0) {

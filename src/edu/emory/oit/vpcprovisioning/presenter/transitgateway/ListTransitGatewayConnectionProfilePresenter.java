@@ -261,12 +261,12 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 
 	@Override
 	public void vpcpConfirmOkay() {
-		getView().showMessageToUser("Coming soon");
-		if (true) {
-			return;
-		}
+//		getView().showMessageToUser("Coming soon");
+//		if (true) {
+//			return;
+//		}
 		if (selectedSummaries != null) {
-			// VPN Connection Profile Delete
+			// TGW Connection Profile Delete
 			showStatus = false;
 			deletedCount = 0;
 			totalToDelete = selectedSummaries.size();
@@ -317,211 +317,39 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 				showDeleteListStatus();
 			}
 		}
-		else if (selectedRequisition != null){
-			// NOTE:  this isn't used any more and we shouldn't get here
-			// is a VPN Connection de-provision (generate)
-//			AsyncCallback<TransitGatewayConnectionDeprovisioningPojo> callback = new AsyncCallback<TransitGatewayConnectionDeprovisioningPojo>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					getView().hidePleaseWaitDialog();
-//					GWT.log("Exception generating the TransitGatewayConnectionDeprovisioning", caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server generating the TransitGatewayConnectionDeprovisioning.  Message " +
-//							"from server is: " + caught.getMessage());
-//				}
-//
-//				@Override
-//				public void onSuccess(TransitGatewayConnectionDeprovisioningPojo result) {
-//					getView().hidePleaseWaitDialog();
-//					// it was a generate, we'll take them to the VPNCP status view
-//					final TransitGatewayConnectionDeprovisioningPojo vpncdp = result;
-//					GWT.log("VPNCDP was generated on the server, showing status page.  "
-//							+ "VPNCDP is: " + vpncdp);
-//					TransitGatewayConnectionProvisioningSummaryPojo vpncpSummary = new TransitGatewayConnectionProvisioningSummaryPojo();
-//					vpncpSummary.setDeprovisioning(vpncdp);
-//					ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
-//				}
-//			};
-//			getView().showPleaseWaitDialog("Generating VPC Deprovisioning object...");
-//			VpcProvisioningService.Util.getInstance().generateTransitGatewayConnectionDeprovisioning(selectedTransitGatewayConnectionRequisition, callback);
-		}
-		else if (selectedVpcId != null) {
-			// NOTE:  this isn't used any more and we shouldn't get here
-//			getView().showPleaseWaitDialog("Deprovisioning VPN Connection for VPC " + selectedVpcId);
-//			// VPN deprovision for a given vpcid
-//			// do a TransitGatewayConnection.Query for the given vpc
-//			// do a TransitGatewayConnectionDeprovisioning.Generate passing the TransitGatewayConnection that was returned.
-//			
-//			AsyncCallback<TransitGatewayConnectionQueryResultPojo> cb = new AsyncCallback<TransitGatewayConnectionQueryResultPojo>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					getView().hidePleaseWaitDialog();
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server retrieving the VPN Connection for VPC ID " + 
-//							selectedVpcId + ".  Message " +
-//							"from server is: " + caught.getMessage());
-//				}
-//
-//				@Override
-//				public void onSuccess(TransitGatewayConnectionQueryResultPojo result) {
-//					if (result.getResults().size() == 0) {
-//						getView().hidePleaseWaitDialog();
-//						getView().showMessageToUser("Could not find a VPN Connection for the VPC "
-//								+ "id " + selectedVpcId + ".  Processing cannot continue.");
-//						return;
-//					}
-//					TransitGatewayConnectionPojo vpn = result.getResults().get(0);
-//					AsyncCallback<TransitGatewayConnectionDeprovisioningPojo> de_cb = new AsyncCallback<TransitGatewayConnectionDeprovisioningPojo>() {
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							getView().hidePleaseWaitDialog();
-//							GWT.log("Exception generating the TransitGatewayConnectionDeprovisioning", caught);
-//							getView().showMessageToUser("There was an exception on the " +
-//									"server generating the TransitGatewayConnectionDeprovisioning.  Message " +
-//									"from server is: " + caught.getMessage());
-//						}
-//
-//						@Override
-//						public void onSuccess(TransitGatewayConnectionDeprovisioningPojo result) {
-//							// go to the status page
-//							getView().hidePleaseWaitDialog();
-//							TransitGatewayConnectionProvisioningSummaryPojo vpncpSummary = new TransitGatewayConnectionProvisioningSummaryPojo();
-//							vpncpSummary.setDeprovisioning(result);
-//							ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
-//						}
-//					};
-//					VpcProvisioningService.Util.getInstance().generateTransitGatewayConnectionDeprovisioning(vpn, de_cb);
-//				}
-//			};
-//			TransitGatewayConnectionQueryFilterPojo filter = new TransitGatewayConnectionQueryFilterPojo();
-//			filter.setVpcId(selectedVpcId);
-//			VpcProvisioningService.Util.getInstance().getTransitGatewayConnectionsForFilter(filter, cb);
-		}
 		else if (selectedAssignment != null) {
-			// TODO:  deprovision the transit gateway assignment
-//			getView().showPleaseWaitDialog("Deprovisioning VPN Connection for VPC " + selectedAssignment.getOwnerId());
-//			AsyncCallback<TransitGatewayConnectionDeprovisioningPojo> de_cb = new AsyncCallback<TransitGatewayConnectionDeprovisioningPojo>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					getView().hidePleaseWaitDialog();
-//					GWT.log("Exception generating the TransitGatewayConnectionDeprovisioning", caught);
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server generating the TransitGatewayConnectionDeprovisioning.  Message " +
-//							"from server is: " + caught.getMessage());
-//				}
-//
-//				@Override
-//				public void onSuccess(TransitGatewayConnectionDeprovisioningPojo result) {
-//					// go to the status page
-//					getView().hidePleaseWaitDialog();
-//					TransitGatewayConnectionProvisioningSummaryPojo vpncpSummary = new TransitGatewayConnectionProvisioningSummaryPojo();
-//					vpncpSummary.setDeprovisioning(result);
-//					ActionEvent.fire(eventBus, ActionNames.VPNCDP_GENERATED, vpncpSummary);
-//				}
-//			};
-//			VpcProvisioningService.Util.getInstance().generateTransitGatewayConnectionDeprovisioning(selectedAssignment, de_cb);
-		}
-		else if (selectedSummary != null && isAssignmentDelete) {
-			// query for a TransitGatewayConnection by assignment.ownerId
-			// if a TransitGatewayConnection does not exist, delete the assignment
-			// else show a message to the user
+			// TGW profile assignment delete
+			getView().showPleaseWaitDialog("Deleting TGW profile assignment VPC " + selectedAssignment.getOwnerId());
+			AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> de_cb = new AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					getView().hidePleaseWaitDialog();
+					GWT.log("Exception generating the TransitGatewayConnectionDeprovisioning", caught);
+					getView().showMessageToUser("There was an exception on the " +
+							"server deleting the TransitGatewayConnectionProfileAssignment.  Message " +
+							"from server is: " + caught.getMessage());
+				}
 
-			// uncomment this just to test the row refresh
-//			getView().showPleaseWaitDialog("Retrieving the VPN Connection Profile: " + selectedSummary.getProfile().getTransitGatewayConnectionProfileId());
-//			GWT.log("[vpcpConfirmOkay] telling view to refresh rowNumber: " + selectedRowNumber);
-//			selectedSummary.setAssignment(null);
-//    		getView().refreshTableRow(selectedRowNumber, selectedSummary);
-//          getView().hidePleaseWaitDialog();
-
-//            AsyncCallback<TransitGatewayConnectionQueryResultPojo> vpn_cb = new AsyncCallback<TransitGatewayConnectionQueryResultPojo>() {
-//				@Override
-//				public void onFailure(Throwable caught) {
-//					getView().hidePleaseWaitDialog();
-//					getView().showMessageToUser("There was an exception on the " +
-//							"server checking for a TransitGatewayConnection.  Message " +
-//							"from server is: " + caught.getMessage());
-//				}
-//
-//				@Override
-//				public void onSuccess(TransitGatewayConnectionQueryResultPojo result) {
-//					if (result.getResults().size() == 0) {
-//						// it is safe to delete the assignment
-//						AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> delete_assignment_cb = new AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo>() {
-//							@Override
-//							public void onFailure(Throwable caught) {
-//								getView().hidePleaseWaitDialog();
-//								getView().showMessageToUser("There was an exception on the " +
-//										"server deleting the TransitGatewayConnectionProfileAssignment.  Message " +
-//										"from server is: " + caught.getMessage());
-//							}
-//
-//							@Override
-//							public void onSuccess(TransitGatewayConnectionProfileAssignmentPojo result) {
-//								// now get the summary for this profile again
-//								AsyncCallback<TransitGatewayConnectionProfileQueryResultPojo> vpn_summary_cb = new AsyncCallback<TransitGatewayConnectionProfileQueryResultPojo>() {
-//									@Override
-//									public void onFailure(Throwable caught) {
-//						                getView().hidePleaseWaitDialog();
-//						                getView().hidePleaseWaitPanel();
-//										getView().showMessageToUser("There was an exception on the " +
-//												"server retrieving the VPN Connection Profile.  " +
-//												"<p>Message from server is: " + caught.getMessage() + "</p>");
-//									}
-//
-//									@Override
-//									public void onSuccess(TransitGatewayConnectionProfileQueryResultPojo result) {
-//										TransitGatewayConnectionProfileSummaryPojo summary = result.getResults().get(0);
-//										GWT.log("[vpcpConfirmOkay] telling view to refresh rowNumber: " 
-//											+ selectedRowNumber 
-//											+ " for profile id: " 
-//											+ summary.getProfile().getTransitGatewayConnectionProfileId());
-//						                getView().hidePleaseWaitDialog();
-//						                getView().hidePleaseWaitPanel();
-//						        		getView().refreshTableRow(selectedRowNumber, summary);
-//									}
-//								};
-//
-//								TransitGatewayConnectionProfileQueryFilterPojo vcp_filter = new TransitGatewayConnectionProfileQueryFilterPojo();
-//								vcp_filter.setTransitGatewayConnectionProfileId(selectedSummary.getProfile().getTransitGatewayConnectionProfileId());
-//				                getView().hidePleaseWaitDialog();
-//								getView().showPleaseWaitDialog("Retrieving the VPN Connection Profile: " + vcp_filter.getTransitGatewayConnectionProfileId());
-//								VpcProvisioningService.Util.getInstance().getTransitGatewayConnectionProfilesForFilter(vcp_filter, vpn_summary_cb);
-//							}
-//						};
-//		                getView().hidePleaseWaitDialog();
-//						getView().showPleaseWaitDialog("Deleting the VPN Connection Profile Assignment for VPC " + selectedSummary.getAssignment().getOwnerId());
-//						VpcProvisioningService.Util.getInstance().deleteTransitGatewayConnectionProfileAssignment(selectedSummary.getAssignment(), delete_assignment_cb);
-//					}
-//					else {
-//						// show message to user
-//		                getView().hidePleaseWaitDialog();
-//						getView().showMessageToUser("This profile appears to have a VPN Connection associated "
-//							+ "to it.  Therefore, the assignment cannot be deleted until that connection "
-//							+ "has been de-provisioned.  If you still want to remove this assignment, please "
-//							+ "deprovision the VPN connection first.");
-//					}
-//				}
-//			};
-//			getView().showPleaseWaitDialog("Checking for a TransitGatewayConnection associated to VPC " + selectedSummary.getAssignment().getOwnerId());
-//			TransitGatewayConnectionProfileQueryFilterPojo vpn_filter = new TransitGatewayConnectionProfileQueryFilterPojo();
-//			vpn_filter.setVpcId(selectedSummary.getAssignment().getOwnerId());
-//			vpn_filter.set
-//			VpcProvisioningService.Util.getInstance().getTransitGatewayConnectionsForFilter(vpn_filter, vpn_cb);
+				@Override
+				public void onSuccess(TransitGatewayConnectionProfileAssignmentPojo result) {
+					getView().hidePleaseWaitDialog();
+					getView().showMessageToUser("TGW Profile assignment was "
+						+ "deleted and the associated profile is now available "
+						+ "for use again.");
+				}
+			};
+			VpcProvisioningService.Util.getInstance().deleteTransitGatewayConnectionProfileAssignment(selectedAssignment, de_cb);
 		}
 	}
 
 	@Override
 	public void vpcpConfirmCancel() {
 		if (selectedSummaries != null) {
-			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection Profile was NOT deleted");
-		}
-		else if (selectedVpcId != null){
-			// is a de-provision
-			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection was NOT de-provisioned");
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  TGW Connection Profile was NOT deleted");
 		}
 		else if (selectedAssignment != null) {
 			// is a de-provision
-			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  VPN Connection was NOT de-provisioned");
+			getView().showStatus(getView().getStatusMessageSource(), "Operation cancelled.  TGW Connection Assignment was NOT deleted");
 		}
 	}
 
@@ -651,7 +479,7 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 		selectedSummaries = null;
 		selectedRequisition = null;
 		selectedVpcId = null;
-		selectedAssignment = null;
+		selectedAssignment = summary.getAssignment();
 		isAssignmentDelete = true;
 		selectedRowNumber = rowNumber;
 		GWT.log("[deleteTransitGatewayConnectionProfileAssignment] selectedRowNumber is: " + rowNumber);

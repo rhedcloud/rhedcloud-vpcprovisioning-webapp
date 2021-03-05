@@ -1469,7 +1469,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		moa.setRegion(pojo.getRegion());
 		moa.setCidr(pojo.getCidr());
-		moa.setVpnConnectionProfileId(pojo.getVpnConnectionProfileId());
+		moa.setReferenceId(pojo.getReferenceId());
+		moa.setVpcConnectionMethod(pojo.getVpcConnectionMethod());
 		moa.setPurpose(pojo.getPurpose());
 		this.setMoaCreateInfo(moa, pojo);
 		this.setMoaUpdateInfo(moa, pojo);
@@ -1491,7 +1492,8 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		pojo.setVpcId(moa.getVpcId());
 		pojo.setType(moa.getType());
 		pojo.setCidr(moa.getCidr());
-		pojo.setVpnConnectionProfileId(moa.getVpnConnectionProfileId());
+		pojo.setReferenceId(moa.getReferenceId());
+		pojo.setVpcConnectionMethod(moa.getVpcConnectionMethod());
 		pojo.setPurpose(moa.getPurpose());
 
 		for (com.amazon.aws.moa.objects.resources.v1_0.Property mp : (List<com.amazon.aws.moa.objects.resources.v1_0.Property>) moa
@@ -14442,7 +14444,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			info("doing the TransitGatewayConnectionProfile.create...");
 			info("creating transit gateway: " + moa.toXmlString());
-//			this.doCreate(moa, getNetworkOpsRequestService());
+			this.doCreate(moa, getNetworkOpsRequestService());
 			info("TransitGatewayConnectionProfile.create is complete...");
 
 			return transitGatewayConnectionProfile;
@@ -14467,14 +14469,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
-//		catch (EnterpriseObjectCreateException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (JMSException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		}
+		catch (EnterpriseObjectCreateException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
@@ -14490,7 +14492,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			info("doing the TransitGatewayConnectionProfile.delete...");
 			info("deleting transit gateway connection profile: " + moa.toXmlString());
-//			this.doDelete(moa, getNetworkOpsRequestService());
+			this.doDelete(moa, getNetworkOpsRequestService());
 			info("TransitGatewayConnectionProfile.delete is complete...");
 
 			return transitGatewayConnectionProfile;
@@ -14515,14 +14517,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
-//		catch (EnterpriseObjectDeleteException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (JMSException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		}
+		catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 	}
 
 	@Override
@@ -14545,7 +14547,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			info("doing the update...");
 			info("updating transit gateway connection profile: " + newData.toXmlString());
-//            doUpdate(newData, getNetworkOpsRequestService());
+            doUpdate(newData, getNetworkOpsRequestService());
 			info("update is complete...");
 		}
 		catch (Throwable t) {

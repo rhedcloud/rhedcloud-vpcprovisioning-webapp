@@ -65,7 +65,7 @@
 				</g:row>
 				<g:row>
 					<g:customCell>
-						<g:Label addStyleNames="{style.label}">VPN Profile ID:</g:Label>
+						<g:Label addStyleNames="{style.label}">Reference ID:</g:Label>
 					</g:customCell>
 					<g:customCell>
 						<g:TextBox

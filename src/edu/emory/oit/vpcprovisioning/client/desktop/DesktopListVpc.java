@@ -279,7 +279,6 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 	}
 	private void initVpcListTableColumns(ListHandler<VpcPojo> sortHandler) {
 		GWT.log("initializing VPC list table columns...");
-		
 	    Column<VpcPojo, Boolean> checkColumn = new Column<VpcPojo, Boolean>(
 		        new CheckboxCell(true, false)) {
 		      @Override
@@ -414,22 +413,40 @@ public class DesktopListVpc extends ViewImplBase implements ListVpcView {
 			});
 			vpcListTable.addColumn(cidrColumn, "CIDR");
 		
+		// vpc connection type
+		Column<VpcPojo, String> connectionMethodColumn = 
+				new Column<VpcPojo, String> (new TextCell()) {
+
+			@Override
+			public String getValue(VpcPojo object) {
+				return object.getVpcConnectionMethod();
+			}
+		};
+		connectionMethodColumn.setSortable(true);
+		sortHandler.setComparator(connectionMethodColumn, new Comparator<VpcPojo>() {
+			public int compare(VpcPojo o1, VpcPojo o2) {
+				return o1.getVpcConnectionMethod().compareTo(o2.getVpcConnectionMethod());
+			}
+		});
+		vpcListTable.addColumn(connectionMethodColumn, "VPC Connection Method");
+			
 		// vpn profile
 		Column<VpcPojo, String> vpnProfileColumn = 
 				new Column<VpcPojo, String> (new TextCell()) {
 
 			@Override
 			public String getValue(VpcPojo object) {
-				return object.getVpnConnectionProfileId();
+				return object.getReferenceId();
 			}
 		};
 		vpnProfileColumn.setSortable(true);
 		sortHandler.setComparator(vpnProfileColumn, new Comparator<VpcPojo>() {
 			public int compare(VpcPojo o1, VpcPojo o2) {
-				return o1.getVpnConnectionProfileId().compareTo(o2.getVpnConnectionProfileId());
+				return o1.getReferenceId().compareTo(o2.getReferenceId());
 			}
 		});
-		vpcListTable.addColumn(vpnProfileColumn, "VPN Profile ID");
+		// TODO: add field updater that shows some info about this TGW/VPN Connection Profile?
+		vpcListTable.addColumn(vpnProfileColumn, "Reference ID");
 		
 		// create user
 		Column<VpcPojo, String> createUserColumn = 

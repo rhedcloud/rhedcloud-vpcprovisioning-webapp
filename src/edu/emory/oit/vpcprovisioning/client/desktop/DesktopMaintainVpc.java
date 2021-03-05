@@ -113,6 +113,10 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiField TextBox propertyValueTF;
 	@UiField Button addPropertyButton;
 	@UiField FlexTable propertiesTable;
+	
+	// Transit Gateway connection info
+	@UiField VerticalPanel tgwInfoOuterPanel;
+	@UiField PushButton tgwRefreshButton;
 
 //	private boolean firstCidrWidget = true;
 	private boolean firstElasticIpWidget = true;
@@ -132,6 +136,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			vpcTabPanel.remove(1);
 		}
 		
+		setRefreshButtonImage(tgwRefreshButton);
 		setRefreshButtonImage(refreshButton);
 		Image expandImg = new Image("images/expand.png");
 		expandImg.setWidth("30px");
@@ -158,7 +163,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 					presenter.getVpc().setVpcId(vpcIdTB.getText());
 					presenter.getVpc().setType(vpcTypeLB.getSelectedValue());
 					presenter.getVpc().setCidr(cidrTB.getText());
-					presenter.getVpc().setVpnConnectionProfileId(vpnProfileIdTB.getText());
+					presenter.getVpc().setReferenceId(vpnProfileIdTB.getText());
 					presenter.getVpc().setPurpose(purposeTA.getText());
 					presenter.getVpc().setRegion(regionLB.getSelectedValue());
 					// admin net ids are added as they're added in the interface
@@ -442,6 +447,18 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	public void initPage() {
 		this.setFieldViolations(false);
 		
+		// if it's VPN connect, show VPN info otherwise show TGW info
+		if (presenter.getVpc() != null && presenter.getVpc().isVpnConnected()) {
+			vpnProfileIdTB.setTitle("VPN Connection Profile ID");
+			tgwInfoOuterPanel.setVisible(false);;
+			vpnInfoOuterPanel.setVisible(true);;
+		}
+		else {
+			vpnProfileIdTB.setTitle("Transit Gateway Connection Profile ID");
+			vpnInfoOuterPanel.setVisible(false);;
+			tgwInfoOuterPanel.setVisible(true);;
+		}
+		
 		if (editing) {
 			GWT.log("maintain VPC view initPage.  editing");
 			
@@ -461,7 +478,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 				vpcIdTB.setText(presenter.getVpc().getVpcId());
 				cidrTB.setText(presenter.getVpc().getCidr());
 				purposeTA.setText(presenter.getVpc().getPurpose());
-				vpnProfileIdTB.setText(presenter.getVpc().getVpnConnectionProfileId());
+				vpnProfileIdTB.setText(presenter.getVpc().getReferenceId());
 			}
 			
 			if (vpcTabPanel.getSelectedIndex() == 0) {
@@ -685,7 +702,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 			this.setFieldViolations(true);
 			fields.add(cidrTB);
 		}
-		if (vpc.getVpnConnectionProfileId() == null || vpc.getVpnConnectionProfileId().length() == 0) {
+		if (vpc.getReferenceId() == null || vpc.getReferenceId().length() == 0) {
 			this.setFieldViolations(true);
 			fields.add(vpnProfileIdTB);
 		}

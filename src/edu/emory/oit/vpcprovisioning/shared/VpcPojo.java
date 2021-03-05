@@ -19,10 +19,11 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 //	String complianceClass;
 	List<String> customerAdminNetIdList = new java.util.ArrayList<String>();
 	String cidr;
-	String vpnConnectionProfileId;
+	String referenceId;
 	String purpose;
 	String region;
 	List<PropertyPojo> properties = new java.util.ArrayList<PropertyPojo>();
+	String vpcConnectionMethod;
 	VpcPojo baseline;
 	
 	public static final ProvidesKey<VpcPojo> KEY_PROVIDER = new ProvidesKey<VpcPojo>() {
@@ -93,12 +94,12 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 		this.cidr = cidr;
 	}
 
-	public String getVpnConnectionProfileId() {
-		return vpnConnectionProfileId;
+	public String getReferenceId() {
+		return referenceId;
 	}
 
-	public void setVpnConnectionProfileId(String vpnConnectionProfileId) {
-		this.vpnConnectionProfileId = vpnConnectionProfileId;
+	public void setReferenceId(String vpnConnectionProfileId) {
+		this.referenceId = vpnConnectionProfileId;
 	}
 
 	public String getAccountName() {
@@ -133,12 +134,30 @@ public class VpcPojo extends SharedObject implements IsSerializable, Comparable<
 		this.properties = properties;
 	}
 
-//	public String getComplianceClass() {
-//		return complianceClass;
-//	}
-//
-//	public void setComplianceClass(String complianceClass) {
-//		this.complianceClass = complianceClass;
-//	}
+	public String getVpcConnectionMethod() {
+		return vpcConnectionMethod;
+	}
 
+	public void setVpcConnectionMethod(String vpcConnectionMethod) {
+		this.vpcConnectionMethod = vpcConnectionMethod;
+	}
+
+	public boolean isVpnConnected() {
+		if (vpcConnectionMethod == null) {
+			return false;
+		}
+		if (vpcConnectionMethod.equalsIgnoreCase("vpn")) {
+			return true;
+		}
+		return false;
+	}
+	public boolean isTgwConnected() {
+		if (vpcConnectionMethod == null) {
+			return true;
+		}
+		if (vpcConnectionMethod.equalsIgnoreCase("tgw")) {
+			return true;
+		}
+		return false;
+	}
 }
