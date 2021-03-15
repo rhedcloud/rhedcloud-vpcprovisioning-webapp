@@ -135,6 +135,17 @@
 										title="Refresh Transit Gateway Connection info"/>
 								</g:customCell>
 							</g:row>
+							<g:row>
+						    	<g:customCell>
+									<g:Label addStyleNames="{style.label}">VPC:  TGW Status:</g:Label>
+						    	</g:customCell>
+						    	<g:customCell>
+									<g:Label ui:field="vpcTgwStatusLabel" addStyleNames="{style.label}">status text goes here</g:Label>
+						    	</g:customCell>
+						    	<g:customCell>
+    								<g:Image ui:field="vpcTgwStatusImage" width="16px" height="16px"/>						    		
+						    	</g:customCell>
+							</g:row>
 						</g:Grid>
 					</g:cell>
 				</g:VerticalPanel>

@@ -162,6 +162,7 @@ import edu.emory.moa.jmsobjects.network.v1_0.StaticNatProvisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.TransitGateway;
 import edu.emory.moa.jmsobjects.network.v1_0.TransitGatewayConnectionProfile;
 import edu.emory.moa.jmsobjects.network.v1_0.TransitGatewayConnectionProfileAssignment;
+import edu.emory.moa.jmsobjects.network.v1_0.TransitGatewayStatus;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnection;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionDeprovisioning;
 import edu.emory.moa.jmsobjects.network.v1_0.VpnConnectionProfile;
@@ -197,6 +198,7 @@ import edu.emory.moa.objects.resources.v1_0.TransitGatewayConnectionProfileAssig
 import edu.emory.moa.objects.resources.v1_0.TransitGatewayConnectionProfileQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.TransitGatewayProfile;
 import edu.emory.moa.objects.resources.v1_0.TransitGatewayQuerySpecification;
+import edu.emory.moa.objects.resources.v1_0.TransitGatewayStatusQuerySpecification;
 import edu.emory.moa.objects.resources.v1_0.TunnelInterface;
 import edu.emory.moa.objects.resources.v1_0.TunnelProfile;
 import edu.emory.moa.objects.resources.v1_0.VpnConnectionDeprovisioningQuerySpecification;
@@ -14799,6 +14801,81 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		Collections.sort(results);
 		return results;
+	}
+
+	@Override
+	public TransitGatewayStatusQueryResultPojo getTransitGatewayStatusForFilter(
+			TransitGatewayStatusQueryFilterPojo filter) throws RpcException {
+
+		TransitGatewayStatusQueryResultPojo result = new TransitGatewayStatusQueryResultPojo();
+		List<TransitGatewayStatusPojo> pojos = new java.util.ArrayList<TransitGatewayStatusPojo>();
+
+		try {
+			TransitGatewayStatusQuerySpecification queryObject = (TransitGatewayStatusQuerySpecification) getObject(
+					Constants.MOA_TRANSIT_GATEWAY_STATUS_QUERY_SPEC);
+			TransitGatewayStatus actionable = (TransitGatewayStatus) getObject(Constants.MOA_TRANSIT_GATEWAY_STATUS);
+
+			if (filter != null) {
+				queryObject.setAccountId(filter.getAccountId());
+				queryObject.setVpcId(filter.getVpcId());
+				info("[getTransitGatewayStatusForFilter] getting items for filter: " + queryObject.toXmlString());
+			}
+			else {
+				info("[getTransitGatewayStatusForFilter] no filter passed in.  Getting all Transit Gateway Status objects");
+			}
+
+			Properties props = getAppConfig().getProperties(GENERAL_PROPERTIES);
+			String s_interval = props.getProperty("transitGatewayListTimeoutMillis", "300000");
+			int interval = Integer.parseInt(s_interval);
+
+			RequestService reqSvc = this.getAWSRequestService();
+			info("setting RequestService's timeout to: " + interval + " milliseconds");
+			((PointToPointProducer) reqSvc).setRequestTimeoutInterval(interval);
+
+			info("[getTransitGatewayStatusForFilter] query spec: " + queryObject.toXmlString());
+			@SuppressWarnings("unchecked")
+			List<TransitGatewayStatus> moas = actionable.query(queryObject, reqSvc);
+
+			info("[getTransitGatewayStatusForFilter] got " + moas.size() + " Transit Gateway Status objects back from the server.");
+			for (TransitGatewayStatus moa : moas) {
+				TransitGatewayStatusPojo pojo = new TransitGatewayStatusPojo();
+				this.populateTransitGatewayStatusPojo(moa, pojo);
+				pojos.add(pojo);
+			}
+
+			Collections.sort(pojos);
+			result.setResults(pojos);
+			result.setFilterUsed(filter);
+			return result;
+		}
+		catch (EnterpriseConfigurationObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		catch (EnterpriseFieldException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		catch (EnterpriseObjectQueryException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+		catch (XmlEnterpriseObjectException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
+	}
+
+	private void populateTransitGatewayStatusPojo(TransitGatewayStatus moa, TransitGatewayStatusPojo pojo) {
+		pojo.setAccountId(moa.getAccountId());
+		pojo.setRegion(moa.getRegion());
+		pojo.setTgwAttachmentStatus(moa.getTgwAttachmentStatus());
+		pojo.setTgwStatus(moa.getTgwStatus());
+		pojo.setTransitGatewayId(moa.getTransitGatewayId());
 	}
 
 }

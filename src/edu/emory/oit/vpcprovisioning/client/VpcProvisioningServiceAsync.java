@@ -312,4 +312,5 @@ public interface VpcProvisioningServiceAsync {
 	void generateTransitGatewayConnectionProfileAssignment(TransitGatewayConnectionProfileAssignmentRequisitionPojo requisition, AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> callback);
 	void deleteTransitGatewayConnectionProfileAssignment(TransitGatewayConnectionProfileAssignmentPojo transitGatewayConnectionProfileAssignment, AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> callback);
 	void getEnvironmentItems(AsyncCallback<List<String>> callback);
+	void getTransitGatewayStatusForFilter(TransitGatewayStatusQueryFilterPojo filter, AsyncCallback<TransitGatewayStatusQueryResultPojo> callback);
 }

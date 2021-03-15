@@ -582,7 +582,7 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 
 		// CIDR id column
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> cidrIdColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextInputCell()) {
+				new TextCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
@@ -606,7 +606,7 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 
 		// region column
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> regionColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextInputCell()) {
+				new TextCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
@@ -630,7 +630,7 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 
 		// transit gateway id column (link)
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> transitGatewayIdColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextInputCell()) {
+				new TextCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
@@ -653,8 +653,10 @@ public class DesktopListTransitGatewayConnectionProfile extends ViewImplBase imp
 		listTable.addColumn(transitGatewayIdColumn, "Transit Gateway ID");
 
 		// CIDR Range column
+//		Column<TransitGatewayConnectionProfileSummaryPojo, String> cidrRangeColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
+//				new TextInputCell()) {
 		Column<TransitGatewayConnectionProfileSummaryPojo, String> cidrRangeColumn = new Column<TransitGatewayConnectionProfileSummaryPojo, String>(
-				new TextInputCell()) {
+				new TextCell()) {
 
 			@Override
 			public String getValue(TransitGatewayConnectionProfileSummaryPojo object) {
