@@ -503,7 +503,12 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 
 			@Override
 			public void onSuccess(TransitGatewayStatusQueryResultPojo result) {
-				getView().setTgwStatus(result.getResults().get(0).toHTML());
+				if (result.getResults().size() > 0) {
+					getView().setTgwStatus(result.getResults().get(0).toHTML());
+				}
+				else {
+					getView().setTgwStatus("<b>There is no Transit Gateway status associated to this VPC</b>");
+				}
 				getView().hideTgwStatusPleaseWaitDialog();
 			}
 		};

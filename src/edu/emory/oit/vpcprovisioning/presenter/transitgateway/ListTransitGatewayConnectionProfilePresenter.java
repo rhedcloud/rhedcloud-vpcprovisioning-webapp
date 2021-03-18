@@ -331,6 +331,7 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 
 				@Override
 				public void onSuccess(TransitGatewayConnectionProfileAssignmentPojo result) {
+					refreshList(userLoggedIn);
 					getView().hidePleaseWaitDialog();
 					getView().showMessageToUser("TGW Profile assignment was "
 						+ "deleted and the associated profile is now available "
@@ -490,16 +491,23 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 
 	@Override
 	public void getTransitGatewayStatusForVpc(String vpcId) {
-//		getView().showMessageToUser("Comming soon");
+		getView().showPleaseWaitDialog("Retrieving Transit Gateway Information");
 		AsyncCallback<TransitGatewayStatusQueryResultPojo> cb = new AsyncCallback<TransitGatewayStatusQueryResultPojo>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				// TODO Auto-generated method stub
+				getView().hidePleaseWaitDialog();
 			}
 
 			@Override
 			public void onSuccess(TransitGatewayStatusQueryResultPojo result) {
-				getView().showMessageToUser(result.getResults().get(0).toHTML());
+				getView().hidePleaseWaitDialog();
+				if (result.getResults().size() > 0) {
+					getView().showMessageToUser(result.getResults().get(0).toHTML());
+				}
+				else {
+					getView().showMessageToUser("There are no Transit Gateways associated to this profile");
+				}
 			}
 		};
 		TransitGatewayStatusQueryFilterPojo filter = new TransitGatewayStatusQueryFilterPojo();

@@ -9751,8 +9751,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getVpnConnectionProfilesForFilter] got " + moas.size()
 					+ " VPN COnnection profiles back from the ESB.");
 
-			List<VpnConnectionProfilePojo> profiles_to_cache = new java.util.ArrayList<VpnConnectionProfilePojo>();
-
 			for (VpnConnectionProfile moa : moas) {
 				VpnConnectionProfileSummaryPojo summary = new VpnConnectionProfileSummaryPojo();
 
@@ -9762,7 +9760,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateVpnConnectionProfilePojo(moa, baseline);
 				pojo.setBaseline(baseline);
 				summary.setProfile(pojo);
-				profiles_to_cache.add(pojo);
 
 				assignmentLoop:
 				for (VpnConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
@@ -9774,9 +9771,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				}
 				summaries.add(summary);
 			}
-			// cache the profiles for later since they don't change often
-			// they'll be cached for this session only
-//			Cache.getCache().put(Constants.VPN_CONNECTION_PROFILES + getCurrentSessionId(), profiles_to_cache);
 
 			Collections.sort(summaries);
 			result.setResults(summaries);
@@ -14311,34 +14305,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 		TransitGatewayConnectionProfileAssignmentQueryResultPojo eia_result = this
 				.getTransitGatewayProfileAssignmentsForFilter(eia_filter);
 
-		// check the cache for cached VpnConnectionProfiles (by current session id)
-		// if they've already been cached, just get them from there
-		// and pull back any assignments for those
-		List<TransitGatewayConnectionProfilePojo> cached_profiles = new java.util.ArrayList<TransitGatewayConnectionProfilePojo>();
-		if (cached_profiles != null && cached_profiles.size() > 0) {
-			info("[getTransitGatewayConnectionProfilesForFilter] using cached TransitGatewayConnectionProfile objects");
-			for (TransitGatewayConnectionProfilePojo profile : cached_profiles) {
-				TransitGatewayConnectionProfileSummaryPojo summary = new TransitGatewayConnectionProfileSummaryPojo();
-				summary.setProfile(profile);
-				assignmentLoop:
-				for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
-					if (assignment.getTransitGatewayConnectionProfileId()
-							.equals(profile.getTransitGatewayConnectionProfileId())) {
-						profile.setAssigned(true);
-						summary.setAssignment(assignment);
-						break assignmentLoop;
-					}
-				}
-				summaries.add(summary);
-			}
-			Collections.sort(summaries);
-			result.setResults(summaries);
-			result.setFilterUsed(filter);
-			return result;
-		}
-		else {
-			info("[getTransitGatewayConnectionProfilesForFilter] getting TransitGatewayConnectionProfile objects from the service");
-		}
+		info("[getTransitGatewayConnectionProfilesForFilter] getting TransitGatewayConnectionProfile objects from the service");
 
 		try {
 			TransitGatewayConnectionProfileQuerySpecification queryObject = (TransitGatewayConnectionProfileQuerySpecification) getObject(
@@ -14364,8 +14331,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			info("[getTransitGatewayConnectionProfilesForFilter] got " + moas.size()
 					+ " Transit Gateway Connection profiles back from the ESB.");
 
-			List<TransitGatewayConnectionProfilePojo> profiles_to_cache = new java.util.ArrayList<TransitGatewayConnectionProfilePojo>();
-
 			for (TransitGatewayConnectionProfile moa : moas) {
 				TransitGatewayConnectionProfileSummaryPojo summary = new TransitGatewayConnectionProfileSummaryPojo();
 
@@ -14375,7 +14340,6 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 				this.populateTransitGatewayConnectionProfilePojo(moa, baseline);
 				pojo.setBaseline(baseline);
 				summary.setProfile(pojo);
-				profiles_to_cache.add(pojo);
 
 				assignmentLoop:
 				for (TransitGatewayConnectionProfileAssignmentPojo assignment : eia_result.getResults()) {
