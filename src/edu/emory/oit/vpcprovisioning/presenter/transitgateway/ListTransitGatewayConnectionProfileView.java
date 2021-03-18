@@ -2,6 +2,7 @@ package edu.emory.oit.vpcprovisioning.presenter.transitgateway;
 
 import java.util.List;
 
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -81,4 +82,5 @@ public interface ListTransitGatewayConnectionProfileView extends IsWidget, View 
 	void initPage();
 	void refreshTableRow(int rowNumber, TransitGatewayConnectionProfileSummaryPojo summary);
 	void setProfileSummaryHTML(String summaryHTML);
+	void showMessageToUser(String title, String message, Focusable postFocus);
 }

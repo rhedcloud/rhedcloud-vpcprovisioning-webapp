@@ -503,7 +503,7 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 			public void onSuccess(TransitGatewayStatusQueryResultPojo result) {
 				getView().hidePleaseWaitDialog();
 				if (result.getResults().size() > 0) {
-					getView().showMessageToUser(result.getResults().get(0).toHTML());
+					getView().showMessageToUser("Transit Gateway Status", result.getResults().get(0).toHTML(), null);
 				}
 				else {
 					getView().showMessageToUser("There are no Transit Gateways associated to this profile");
