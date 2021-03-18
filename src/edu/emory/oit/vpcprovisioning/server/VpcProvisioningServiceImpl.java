@@ -14735,7 +14735,7 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 			info("doing the TransitGatewayConnectionProfileAssignment.delete...");
 			info("deleting transit gateway connection profile Assignment: " + moa.toXmlString());
-//			this.doDelete(moa, getNetworkOpsRequestService());
+			this.doDelete(moa, getNetworkOpsRequestService());
 			info("TransitGatewayConnectionProfileAssignment.delete is complete...");
 
 			return transitGatewayConnectionProfileAssignment;
@@ -14760,14 +14760,14 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 			e.printStackTrace();
 			throw new RpcException(e);
 		}
-//		catch (EnterpriseObjectDeleteException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		} 
-//		catch (JMSException e) {
-//			e.printStackTrace();
-//			throw new RpcException(e);
-//		}
+		catch (EnterpriseObjectDeleteException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		} 
+		catch (JMSException e) {
+			e.printStackTrace();
+			throw new RpcException(e);
+		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RpcException(e);
