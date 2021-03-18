@@ -11,8 +11,6 @@ import com.google.web.bindery.event.shared.EventBus;
 import edu.emory.oit.vpcprovisioning.client.ClientFactory;
 import edu.emory.oit.vpcprovisioning.client.VpcProvisioningService;
 import edu.emory.oit.vpcprovisioning.client.common.VpcpConfirm;
-import edu.emory.oit.vpcprovisioning.client.event.ActionEvent;
-import edu.emory.oit.vpcprovisioning.client.event.ActionNames;
 import edu.emory.oit.vpcprovisioning.client.event.TransitGatewayConnectionProfileListUpdateEvent;
 import edu.emory.oit.vpcprovisioning.presenter.PresenterBase;
 import edu.emory.oit.vpcprovisioning.presenter.vpc.ListVpcPresenter;
@@ -22,7 +20,8 @@ import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileSummaryPojo;
-import edu.emory.oit.vpcprovisioning.shared.TransitGatewayPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayStatusQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayStatusQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
 
@@ -491,99 +490,21 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 
 	@Override
 	public void getTransitGatewayStatusForVpc(String vpcId) {
-		getView().showMessageToUser("Comming soon");
-//		AsyncCallback<TransitGatewayConnectionQueryResultPojo> vpn_cb = new AsyncCallback<TransitGatewayConnectionQueryResultPojo>() {
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				getView().hidePleaseWaitDialog();
-//				getView().showMessageToUser("There was an exception on the " +
-//						"server checking for a TransitGatewayConnection.  Message " +
-//						"from server is: " + caught.getMessage());
-//			}
-//
-//			@Override
-//			public void onSuccess(TransitGatewayConnectionQueryResultPojo result) {
-//                getView().hidePleaseWaitDialog();
-//				if (result.getResults().size() == 0) {
-//					getView().showMessageToUser("A VPN Connection DOES NOT exist for the selected profile/assignment");
-//				}
-//				else {
-//					// show message to user
-//					TransitGatewayConnectionPojo vpn1=null;
-//					TransitGatewayConnectionPojo vpn2=null;
-//					if (result.getResults().size() == 2) {
-//						vpn1 = result.getResults().get(0);
-//						vpn2 = result.getResults().get(1);
-//					}
-//					else if (result.getResults().size() == 1) {
-//						vpn1 = result.getResults().get(0);
-//					}
-//					
-//					// get the tunnel status from the not null vpn1 and/or vpn2 objects
-//					boolean tunnel1Good=false;
-//					boolean tunnel2Good=false;
-//					if (vpn1 != null) {
-//						if (vpn1.getTunnelInterfaces().size() > 0) {
-//							tunnel1Good = vpn1.getTunnelInterfaces().get(0).isOperational();
-//						}
-//					}
-//					if (vpn2 != null) {
-//						if (vpn2.getTunnelInterfaces().size() > 0) {
-//							tunnel2Good = vpn2.getTunnelInterfaces().get(0).isOperational();
-//						}
-//					}
-//					
-//					String tunnel1Html;
-//					if (tunnel1Good) {
-//						tunnel1Html = 
-//								"<table cellspacing=\"8\"><tr><td>"
-//								+ "Tunnel 1 is: Operational"
-//								+ "</td><td>"
-//								+ "<img src=\"images/green_circle_icon.png\" width=\"16\" height=\"16\"/>"
-//								+ "</td></tr></table";
-//					}
-//					else {
-//						tunnel1Html = 
-//								"<table cellspacing=\"8\"><tr><td>"
-//								+ "Tunnel 1 is: Not Operational"
-//								+ "</td><td>"
-//								+ "<img src=\"images/red_circle_icon.jpg\" width=\"16\" height=\"16\"/>"
-//								+ "</td></tr></table";
-//					}
-//							 
-//					String tunnel2Html;
-//					if (tunnel2Good) {
-//						tunnel2Html =
-//								"<table cellspacing=\"8\"><tr><td>"
-//								+ "Tunnel 2 is: Operational"
-//								+ "</td><td>"
-//								+ "<img src=\"images/green_circle_icon.png\" width=\"16\" height=\"16\"/>"
-//								+ "</td></tr></table";
-//					}
-//					else {
-//						tunnel2Html = 
-//								"<table cellspacing=\"8\"><tr><td>"
-//								+ "Tunnel 2 is: Not Operational"
-//								+ "</td><td>"
-//								+ "<img src=\"images/red_circle_icon.jpg\" width=\"16\" height=\"16\"/>"
-//								+ "</td></tr></table";
-//					}
-//					
-//					getView().showMessageToUser(
-//							"A VPN Connection DOES exist for the selected profile/assignment.  "
-//							+ "<p>"
-//							+ tunnel1Html
-//							+ tunnel2Html
-//							+ "</p>"
-//							+ "<p>For more information, please visit the VPC Details page for the VPC "
-//							+ "associated to this profile</p>");
-//				}
-//			}
-//		};
-//		getView().showPleaseWaitDialog("Checking for a TransitGatewayConnection associated to VPC " + vpcId);
-//		TransitGatewayConnectionQueryFilterPojo vpn_filter = new TransitGatewayConnectionQueryFilterPojo();
-//		vpn_filter.setVpcId(vpcId);
-//		VpcProvisioningService.Util.getInstance().getTransitGatewayConnectionsForFilter(vpn_filter, vpn_cb);
+//		getView().showMessageToUser("Comming soon");
+		AsyncCallback<TransitGatewayStatusQueryResultPojo> cb = new AsyncCallback<TransitGatewayStatusQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				// TODO Auto-generated method stub
+			}
+
+			@Override
+			public void onSuccess(TransitGatewayStatusQueryResultPojo result) {
+				getView().showMessageToUser(result.getResults().get(0).toHTML());
+			}
+		};
+		TransitGatewayStatusQueryFilterPojo filter = new TransitGatewayStatusQueryFilterPojo();
+		filter.setVpcId(vpcId);
+		VpcProvisioningService.Util.getInstance().getTransitGatewayStatusForFilter(filter, cb);
 	}
 
 	@Override

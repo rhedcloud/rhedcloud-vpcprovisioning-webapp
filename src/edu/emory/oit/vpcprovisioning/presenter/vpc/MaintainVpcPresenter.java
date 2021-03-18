@@ -19,6 +19,8 @@ import edu.emory.oit.vpcprovisioning.shared.Constants;
 import edu.emory.oit.vpcprovisioning.shared.PropertyPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartPojo;
 import edu.emory.oit.vpcprovisioning.shared.SpeedChartQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayStatusQueryFilterPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayStatusQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TunnelInterfacePojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
 import edu.emory.oit.vpcprovisioning.shared.VpcPojo;
@@ -89,7 +91,12 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 		getView().initDataEntryPanels();
 		
 		if (isEditing) {
-			refreshVpnConnectionInfo();
+			if (vpc != null && vpc.isVpnConnected()) {
+				refreshVpnConnectionInfo();
+			}
+			else {
+				refreshTgwStatus();
+			}
 		}
 		
 		AsyncCallback<List<AWSRegionPojo>> regionCB = new AsyncCallback<List<AWSRegionPojo>>() {
@@ -479,6 +486,32 @@ public class MaintainVpcPresenter extends PresenterBase implements MaintainVpcVi
 		VpnConnectionQueryFilterPojo vpnFilter = new VpnConnectionQueryFilterPojo();
 		vpnFilter.setVpcId(getVpcId());
 		VpcProvisioningService.Util.getInstance().getVpnConnectionsForFilter(vpnFilter, vpnConnectionCB);
+	}
+
+
+	@Override
+	public void refreshTgwStatus() {
+		AsyncCallback<TransitGatewayStatusQueryResultPojo> cb = new AsyncCallback<TransitGatewayStatusQueryResultPojo>() {
+			@Override
+			public void onFailure(Throwable caught) {
+				getView().hideTgwStatusPleaseWaitDialog();
+				getView().setTgwStatus("<b>An Error Occurred refreshing the Transit Gateway Status</b>");
+				getView().showMessageToUser("There was an exception on the " +
+						"server retrieving the transit gateway status information for this VPC.  " +
+						"<p>Message from server is: " + caught.getMessage() + "</p>");
+			}
+
+			@Override
+			public void onSuccess(TransitGatewayStatusQueryResultPojo result) {
+				getView().setTgwStatus(result.getResults().get(0).toHTML());
+				getView().hideTgwStatusPleaseWaitDialog();
+			}
+		};
+		getView().showTgwStatusPleaseWaitDialog("Refreshing Transit Gateway Status...");
+		getView().setTgwRefreshing();
+		TransitGatewayStatusQueryFilterPojo filter = new TransitGatewayStatusQueryFilterPojo();
+		filter.setVpcId(vpc.getVpcId());
+		VpcProvisioningService.Util.getInstance().getTransitGatewayStatusForFilter(filter, cb);
 	}
 
 	@Override

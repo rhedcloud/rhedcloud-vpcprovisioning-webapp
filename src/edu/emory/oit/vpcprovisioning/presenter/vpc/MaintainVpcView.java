@@ -44,6 +44,7 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 		
 //		public VpnConnectionPojo getVpnConnection();
 		public void refreshVpnConnectionInfo();
+		public void refreshTgwStatus();
 		
 		public void setSelectedProperty(PropertyPojo prop);
 		public PropertyPojo getSelectedProperty();
@@ -108,4 +109,9 @@ public interface MaintainVpcView extends Editor<VpcPojo>, AcceptsOneWidget, IsWi
 	void setTunnel1StatusGood();
 	void setVpnRefreshing();
 	void setVpnInfo(String vpnInfoHtml);
+	
+	void setTgwStatus(String tgwStatusHtml);
+	void setTgwRefreshing();
+	void showTgwStatusPleaseWaitDialog(String message);
+	void hideTgwStatusPleaseWaitDialog();
 }

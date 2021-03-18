@@ -137,6 +137,16 @@
 							</g:row>
 							<g:row>
 						    	<g:customCell>
+						   			<g:DecoratorPanel>
+						   				<g:ScrollPanel ui:field="tgwStatusPanel">
+						   					<g:HTML><b>Refreshing...</b></g:HTML>
+						   				</g:ScrollPanel>
+						   			</g:DecoratorPanel>
+								</g:customCell>
+							</g:row>
+							<!-- 
+							<g:row>
+						    	<g:customCell>
 									<g:Label addStyleNames="{style.label}">VPC:  TGW Status:</g:Label>
 						    	</g:customCell>
 						    	<g:customCell>
@@ -146,6 +156,7 @@
     								<g:Image ui:field="vpcTgwStatusImage" width="16px" height="16px"/>						    		
 						    	</g:customCell>
 							</g:row>
+							 -->
 						</g:Grid>
 					</g:cell>
 				</g:VerticalPanel>

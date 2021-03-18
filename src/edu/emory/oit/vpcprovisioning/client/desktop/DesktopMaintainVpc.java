@@ -63,6 +63,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	String speedTypeBeingTyped=null;
 	Tree vpn_tree;
 	PopupPanel vpnPleaseWaitDialog;
+	PopupPanel tgwPleaseWaitDialog;
 	
 	@UiField HorizontalPanel pleaseWaitPanel;
 	@UiField Button okayButton;
@@ -117,6 +118,7 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	// Transit Gateway connection info
 	@UiField VerticalPanel tgwInfoOuterPanel;
 	@UiField PushButton tgwRefreshButton;
+	@UiField ScrollPanel tgwStatusPanel;
 
 //	private boolean firstCidrWidget = true;
 	private boolean firstElasticIpWidget = true;
@@ -338,6 +340,11 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@UiHandler("refreshButton")
 	void refreshButtonClicked(ClickEvent e) {
 		presenter.refreshVpnConnectionInfo();
+	}
+
+	@UiHandler("tgwRefreshButton")
+	void tgwRefreshButtonClicked(ClickEvent e) {
+		presenter.refreshTgwStatus();
 	}
 
 	@UiHandler ("vpcReqSpeedTypeTB")
@@ -909,7 +916,6 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 		vpnPleaseWaitDialog.setWidget(vp);
 		vpnPleaseWaitDialog.center();
 		vpnPleaseWaitDialog.show();
-//		vpnPleaseWaitDialog.showRelativeTo(vpnInfoOuterPanel);
 	}
 
 	@Override
@@ -957,5 +963,44 @@ public class DesktopMaintainVpc extends ViewImplBase implements MaintainVpcView 
 	@Override
 	public void setVpnInfo(String vpnInfoHtml) {
 		vpnInfoPanel.setWidget(new HTML(vpnInfoHtml));
+	}
+
+	@Override
+	public void setTgwStatus(String tgwStatusHtml) {
+		tgwStatusPanel.setWidget(new HTML(tgwStatusHtml));
+	}
+
+	@Override
+	public void setTgwRefreshing() {
+		setTgwStatus("<b>Refreshing...</b>");
+	}
+
+	@Override
+	public void showTgwStatusPleaseWaitDialog(String message) {
+		if (tgwPleaseWaitDialog == null) {
+			tgwPleaseWaitDialog = new PopupPanel(false);
+		}
+		else {
+			tgwPleaseWaitDialog.clear();
+		}
+		VerticalPanel vp = new VerticalPanel();
+		vp.getElement().getStyle().setBackgroundColor("#f1f1f1");
+		Image img = new Image();
+		img.setUrl("images/ajax-loader.gif");
+		vp.add(img);
+		HTML h = new HTML(message);
+		vp.add(h);
+		vp.setCellHorizontalAlignment(img, HasHorizontalAlignment.ALIGN_CENTER);
+		vp.setCellHorizontalAlignment(h, HasHorizontalAlignment.ALIGN_CENTER);
+		tgwPleaseWaitDialog.setWidget(vp);
+		tgwPleaseWaitDialog.center();
+		tgwPleaseWaitDialog.show();
+	}
+
+	@Override
+	public void hideTgwStatusPleaseWaitDialog() {
+		if (tgwPleaseWaitDialog != null) {
+			tgwPleaseWaitDialog.hide();
+		}
 	}
 }

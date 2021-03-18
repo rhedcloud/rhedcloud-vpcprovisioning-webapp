@@ -14809,6 +14809,20 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 
 		TransitGatewayStatusQueryResultPojo result = new TransitGatewayStatusQueryResultPojo();
 		List<TransitGatewayStatusPojo> pojos = new java.util.ArrayList<TransitGatewayStatusPojo>();
+		
+//		if (true) {
+//			TransitGatewayStatusPojo pojo = new TransitGatewayStatusPojo();
+//			
+//			pojo.setAccountId("account_id");
+//			pojo.setTransitGatewayId("transit_gateway_id");
+//			pojo.setTgwStatus("available");
+//			pojo.setTgwAttachmentStatus("unavailable");
+//			
+//			pojos.add(pojo);
+//			result.setResults(pojos);
+//			result.setFilterUsed(filter);
+//			return result;
+//		}
 
 		try {
 			TransitGatewayStatusQuerySpecification queryObject = (TransitGatewayStatusQuerySpecification) getObject(
@@ -14873,9 +14887,22 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private void populateTransitGatewayStatusPojo(TransitGatewayStatus moa, TransitGatewayStatusPojo pojo) {
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setRegion(moa.getRegion());
+		pojo.setTransitGatewayId(moa.getTransitGatewayId());
+		pojo.setTransitGatewayAttachmentId("comming soon");
 		pojo.setTgwAttachmentStatus(moa.getTgwAttachmentStatus());
 		pojo.setTgwStatus(moa.getTgwStatus());
-		pojo.setTransitGatewayId(moa.getTransitGatewayId());
+		pojo.setTgwAssociationCorrect("comming soon");
+		pojo.setTgwAssociationStatus("comming soon");
+		pojo.setTgwPropagationCorrect("comming soon");
+		
+		pojo.setInvalidTransitGatewayProfile(toBooleanFromString(moa.getInvalidTransitGatewayProfile()));
+		pojo.setMissingConnectionProfile(toBooleanFromString(moa.getMissingConnectionProfile()));
+		pojo.setMissingConnectionProfileAssignment(toBooleanFromString(moa.getMissingConnectionProfileAssignment()));
+		pojo.setMissingTransitGateway(toBooleanFromString(moa.getMissingTransitGateway()));
+		pojo.setVpcId(moa.getVpcId());
+		pojo.setWrongTransitGateway(toBooleanFromString(moa.getWrongTransitGateway()));
+		pojo.setWrongTransitGatewayAttachment(toBooleanFromString(moa.getWrongTransitGatewayAttachment()));
+
 	}
 
 }
