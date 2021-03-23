@@ -14851,22 +14851,23 @@ public class VpcProvisioningServiceImpl extends RemoteServiceServlet implements 
 	private void populateTransitGatewayStatusPojo(TransitGatewayStatus moa, TransitGatewayStatusPojo pojo) {
 		pojo.setAccountId(moa.getAccountId());
 		pojo.setRegion(moa.getRegion());
-		pojo.setTransitGatewayId(moa.getTransitGatewayId());
-		pojo.setTransitGatewayAttachmentId("comming soon");
-		pojo.setTgwAttachmentStatus(moa.getTgwAttachmentStatus());
-		pojo.setTgwStatus(moa.getTgwStatus());
-		pojo.setTgwAssociationCorrect("comming soon");
-		pojo.setTgwAssociationStatus("comming soon");
-		pojo.setTgwPropagationCorrect("comming soon");
-		
-		pojo.setInvalidTransitGatewayProfile(toBooleanFromString(moa.getInvalidTransitGatewayProfile()));
-		pojo.setMissingConnectionProfile(toBooleanFromString(moa.getMissingConnectionProfile()));
-		pojo.setMissingConnectionProfileAssignment(toBooleanFromString(moa.getMissingConnectionProfileAssignment()));
-		pojo.setMissingTransitGateway(toBooleanFromString(moa.getMissingTransitGateway()));
 		pojo.setVpcId(moa.getVpcId());
+		pojo.setTransitGatewayId(moa.getTransitGatewayId());
+		pojo.setTgwStatus(moa.getTgwStatus());
+		pojo.setTgwAttachmentId(moa.getTgwAttachmentId());
+		pojo.setTgwAttachmentStatus(moa.getTgwAttachmentStatus());
+		pojo.setTgwAttachmentAssociationStatus(moa.getTgwAttachmentAssociationStatus());
+		pojo.setTgwAssociationCorrect(moa.getTgwAttachmentAssociationCorrect());
+		pojo.setTgwPropagationCorrect(moa.getTgwAttachmentPropagationCorrect());
+		pojo.setMissingConnectionProfileAssignment(toBooleanFromString(moa.getMissingConnectionProfileAssignment()));
+		pojo.setMissingConnectionProfile(toBooleanFromString(moa.getMissingConnectionProfile()));
 		pojo.setWrongTransitGateway(toBooleanFromString(moa.getWrongTransitGateway()));
+		pojo.setInvalidTransitGatewayProfile(toBooleanFromString(moa.getInvalidTransitGatewayProfile()));
+		pojo.setMissingTransitGateway(toBooleanFromString(moa.getMissingTransitGateway()));
+		pojo.setMissingTransitGatewayAttachment(toBooleanFromString(moa.getMissingTransitGatewayAttachment()));
 		pojo.setWrongTransitGatewayAttachment(toBooleanFromString(moa.getWrongTransitGatewayAttachment()));
-
+		pojo.setMissingTgwAttachmentAssociation(toBooleanFromString(moa.getMissingTgwAttachmentAssociation()));
+		
 	}
 
 }

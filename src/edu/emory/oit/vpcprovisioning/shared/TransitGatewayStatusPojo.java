@@ -23,14 +23,19 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 			VpcId, 
 			TransitGatewayId?, 
 			TgwStatus?, 
+			TgwAttachmentId?, 
 			TgwAttachmentStatus?, 
+			TgwAttachmentAssociationStatus?, 
+			TgwAttachmentAssociationCorrect?, 
+			TgwAttachmentPropagationCorrect?, 
 			MissingConnectionProfileAssignment?, 
 			MissingConnectionProfile?, 
 			WrongTransitGateway?, 
 			InvalidTransitGatewayProfile?, 
 			MissingTransitGateway?, 
 			MissingTransitGatewayAttachment?, 
-			WrongTransitGatewayAttachment?)>
+			WrongTransitGatewayAttachment?, 
+			MissingTgwAttachmentAssociation?)>
 	 */
 	String accountId;
 	String region;
@@ -38,10 +43,11 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 	String tgwStatus;
 	String tgwAttachmentStatus;
 	String vpcId;
-	String transitGatewayAttachmentId;
 	String tgwAssociationStatus;
 	String tgwAssociationCorrect;
 	String tgwPropagationCorrect;
+	String tgwAttachmentId;
+	String tgwAttachmentAssociationStatus;
 	
 	boolean invalidTransitGatewayProfile=false;
 	boolean missingTransitGateway=false;
@@ -50,6 +56,10 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 	boolean missingConnectionProfile=false;
 	boolean wrongTransitGateway=false;
 	boolean wrongTransitGatewayAttachment=false;
+	
+	boolean tgwAttachmentAssociationCorrect=false;
+	boolean tgwAttachmentPropagationCorrect=false;
+	boolean missingTgwAttachmentAssociation=false;
 	
 	@Override
 	public int compareTo(TransitGatewayStatusPojo o) {
@@ -121,7 +131,7 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 		sbuf.append("<b>Transit Gateway Attachment ID:</b>  ");
 		sbuf.append("</td>");
 		sbuf.append("<td>");
-		sbuf.append(transitGatewayAttachmentId);
+		sbuf.append(tgwAttachmentId);
 		sbuf.append("</td>");
 		
 		// TGW status
@@ -339,14 +349,6 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 		this.wrongTransitGatewayAttachment = wrongTransitGatewayAttachment;
 	}
 
-	public String getTransitGatewayAttachmentId() {
-		return transitGatewayAttachmentId;
-	}
-
-	public void setTransitGatewayAttachmentId(String transitGatewayAttachmentId) {
-		this.transitGatewayAttachmentId = transitGatewayAttachmentId;
-	}
-
 	public String getTgwAssociationStatus() {
 		return tgwAssociationStatus;
 	}
@@ -369,5 +371,45 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 
 	public void setTgwPropagationCorrect(String tgwPropagationCorrect) {
 		this.tgwPropagationCorrect = tgwPropagationCorrect;
+	}
+
+	public String getTgwAttachmentId() {
+		return tgwAttachmentId;
+	}
+
+	public void setTgwAttachmentId(String tgwAttachmentId) {
+		this.tgwAttachmentId = tgwAttachmentId;
+	}
+
+	public String getTgwAttachmentAssociationStatus() {
+		return tgwAttachmentAssociationStatus;
+	}
+
+	public void setTgwAttachmentAssociationStatus(String tgwAttachmentAssociationStatus) {
+		this.tgwAttachmentAssociationStatus = tgwAttachmentAssociationStatus;
+	}
+
+	public boolean isTgwAttachmentAssociationCorrect() {
+		return tgwAttachmentAssociationCorrect;
+	}
+
+	public void setTgwAttachmentAssociationCorrect(boolean tgwAttachmentAssociationCorrect) {
+		this.tgwAttachmentAssociationCorrect = tgwAttachmentAssociationCorrect;
+	}
+
+	public boolean isTgwAttachmentPropagationCorrect() {
+		return tgwAttachmentPropagationCorrect;
+	}
+
+	public void setTgwAttachmentPropagationCorrect(boolean tgwAttachmentPropagationCorrect) {
+		this.tgwAttachmentPropagationCorrect = tgwAttachmentPropagationCorrect;
+	}
+
+	public boolean isMissingTgwAttachmentAssociation() {
+		return missingTgwAttachmentAssociation;
+	}
+
+	public void setMissingTgwAttachmentAssociation(boolean missingTgwAttachmentAssociation) {
+		this.missingTgwAttachmentAssociation = missingTgwAttachmentAssociation;
 	}
 }
