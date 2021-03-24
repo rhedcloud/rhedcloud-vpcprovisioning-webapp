@@ -119,7 +119,7 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 		sbuf.append("<b>Transit Gateway Status:</b>  ");
 		sbuf.append("</td>");
 		sbuf.append("<td>");
-		if (tgwStatus.equalsIgnoreCase("available")) {
+		if (tgwStatus != null && tgwStatus.equalsIgnoreCase("available")) {
 			sbuf.append("<img src=\"images/green_circle_icon.png\" "
 					+ "alt=\"Green Circle\" width=\"16\" height=\"16\" "
 					+ "title=\"" + tgwStatus + "\" "
@@ -140,7 +140,7 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 		sbuf.append("<b>Attachment Status:</b>  ");
 		sbuf.append("</td>");
 		sbuf.append("<td>");
-		if (tgwAttachmentStatus.equalsIgnoreCase("available")) {
+		if (tgwAttachmentStatus != null && tgwAttachmentStatus.equalsIgnoreCase("available")) {
 			sbuf.append("<img src=\"images/green_circle_icon.png\" "
 					+ "alt=\"Green Circle\" width=\"16\" height=\"16\" "
 					+ "title=\"" + tgwAttachmentStatus + "\" "
@@ -161,7 +161,7 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 		sbuf.append("<b>Association Status:</b>  ");
 		sbuf.append("</td>");
 		sbuf.append("<td>");
-		if (tgwAssociationStatus.equalsIgnoreCase("associated")) {
+		if (tgwAssociationStatus != null && tgwAssociationStatus.equalsIgnoreCase("associated")) {
 			sbuf.append("<img src=\"images/green_circle_icon.png\" "
 					+ "alt=\"Green Circle\" width=\"16\" height=\"16\" "
 					+ "title=\"" + tgwAssociationStatus + "\" "
@@ -182,7 +182,7 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 		sbuf.append("<b>Association Correct:</b>  ");
 		sbuf.append("</td>");
 		sbuf.append("<td>");
-		if (tgwAssociationCorrect.equalsIgnoreCase("correct")) {
+		if (tgwAssociationCorrect != null && tgwAssociationCorrect.equalsIgnoreCase("correct")) {
 			sbuf.append("<img src=\"images/green_circle_icon.png\" "
 					+ "alt=\"Green Circle\" width=\"16\" height=\"16\" "
 					+ "title=\"" + tgwAssociationCorrect + "\" "
@@ -203,7 +203,7 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 		sbuf.append("<b>Propagation Correct:</b>  ");
 		sbuf.append("</td>");
 		sbuf.append("<td>");
-		if (tgwPropagationCorrect.equalsIgnoreCase("correct")) {
+		if (tgwPropagationCorrect != null && tgwPropagationCorrect.equalsIgnoreCase("correct")) {
 			sbuf.append("<img src=\"images/green_circle_icon.png\" "
 					+ "alt=\"Green Circle\" width=\"16\" height=\"16\" "
 					+ "title=\"" + tgwPropagationCorrect + "\" "
