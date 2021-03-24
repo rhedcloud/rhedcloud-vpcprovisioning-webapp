@@ -16,27 +16,6 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 	public TransitGatewayStatusPojo() {
 	}
 
-	/*
-		<!ELEMENT TransitGatewayStatus (
-			AccountId, 
-			Region, 
-			VpcId, 
-			TransitGatewayId?, 
-			TgwStatus?, 
-			TgwAttachmentId?, 
-			TgwAttachmentStatus?, 
-			TgwAttachmentAssociationStatus?, 
-			TgwAttachmentAssociationCorrect?, 
-			TgwAttachmentPropagationCorrect?, 
-			MissingConnectionProfileAssignment?, 
-			MissingConnectionProfile?, 
-			WrongTransitGateway?, 
-			InvalidTransitGatewayProfile?, 
-			MissingTransitGateway?, 
-			MissingTransitGatewayAttachment?, 
-			WrongTransitGatewayAttachment?, 
-			MissingTgwAttachmentAssociation?)>
-	 */
 	String accountId;
 	String region;
 	String transitGatewayId;
@@ -411,5 +390,24 @@ public class TransitGatewayStatusPojo extends SharedObject implements IsSerializ
 
 	public void setMissingTgwAttachmentAssociation(boolean missingTgwAttachmentAssociation) {
 		this.missingTgwAttachmentAssociation = missingTgwAttachmentAssociation;
+	}
+	
+	public boolean isFunctionalTgw() {
+		if (tgwStatus != null &&
+			tgwAttachmentStatus != null &&
+			tgwAssociationStatus != null &&
+			tgwAssociationCorrect != null &&
+			tgwPropagationCorrect != null) {
+			
+			if (tgwStatus.equalsIgnoreCase("available") &&
+				tgwAttachmentStatus.equalsIgnoreCase("available") && 
+				tgwAssociationStatus.equalsIgnoreCase("associated") && 
+				tgwAssociationCorrect.equalsIgnoreCase("correct") && 
+				tgwPropagationCorrect.equalsIgnoreCase("correct")) {
+					
+				return true;
+			}
+		}
+		return false;
 	}
 }

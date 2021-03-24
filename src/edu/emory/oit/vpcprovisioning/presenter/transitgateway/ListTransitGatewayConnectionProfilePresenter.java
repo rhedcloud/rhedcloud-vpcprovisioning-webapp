@@ -20,6 +20,7 @@ import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfilePojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayConnectionProfileSummaryPojo;
+import edu.emory.oit.vpcprovisioning.shared.TransitGatewayStatusPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayStatusQueryFilterPojo;
 import edu.emory.oit.vpcprovisioning.shared.TransitGatewayStatusQueryResultPojo;
 import edu.emory.oit.vpcprovisioning.shared.UserAccountPojo;
@@ -319,26 +320,60 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 		else if (selectedAssignment != null) {
 			// TGW profile assignment delete
 			getView().showPleaseWaitDialog("Deleting TGW profile assignment VPC " + selectedAssignment.getOwnerId());
-			AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> de_cb = new AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo>() {
+			
+			AsyncCallback<TransitGatewayStatusQueryResultPojo> status_cb = new AsyncCallback<TransitGatewayStatusQueryResultPojo>() {
 				@Override
 				public void onFailure(Throwable caught) {
 					getView().hidePleaseWaitDialog();
-					GWT.log("Exception generating the TransitGatewayConnectionDeprovisioning", caught);
-					getView().showMessageToUser("There was an exception on the " +
-							"server deleting the TransitGatewayConnectionProfileAssignment.  Message " +
-							"from server is: " + caught.getMessage());
+					getView().showMessageToUser("There was an exception on the " 
+							+ "server checking the status of the TransitGateway "
+							+ "associated to this assignment.  Message " 
+							+ "from server is: " + caught.getMessage());
 				}
 
 				@Override
-				public void onSuccess(TransitGatewayConnectionProfileAssignmentPojo result) {
-					refreshList(userLoggedIn);
-					getView().hidePleaseWaitDialog();
-					getView().showMessageToUser("TGW Profile assignment was "
-						+ "deleted and the associated profile is now available "
-						+ "for use again.");
+				public void onSuccess(TransitGatewayStatusQueryResultPojo result) {
+					if (result != null && result.getResults().size() > 0) {
+						TransitGatewayStatusPojo status = result.getResults().get(0);
+						if (status.isFunctionalTgw()) {
+							// they can't delete it because the TGW is a functional TGW
+							getView().hidePleaseWaitDialog();
+							getView().showMessageToUser("Can't Delete Assignment", 
+								"The selected assignment is currently assigned "
+								+ "to a functioning transit gateway.  Therefore, "
+								+ "you cannot delete this assignment until the "
+								+ "transit gateway has been deprovisioned.", null);
+						}
+						else {
+							// they can delete it.
+							getView().hidePleaseWaitDialog();
+							getView().showPleaseWaitDialog("Deleting TGW profile assignment VPC " + selectedAssignment.getOwnerId());
+							AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> de_cb = new AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo>() {
+								@Override
+								public void onFailure(Throwable caught) {
+									getView().hidePleaseWaitDialog();
+									getView().showMessageToUser("There was an exception on the " +
+											"server deleting the TransitGatewayConnectionProfileAssignment.  Message " +
+											"from server is: " + caught.getMessage());
+								}
+
+								@Override
+								public void onSuccess(TransitGatewayConnectionProfileAssignmentPojo result) {
+									refreshList(userLoggedIn);
+									getView().hidePleaseWaitDialog();
+									getView().showMessageToUser("TGW Profile assignment was "
+										+ "deleted and the associated profile is now available "
+										+ "for use again.");
+								}
+							};
+							VpcProvisioningService.Util.getInstance().deleteTransitGatewayConnectionProfileAssignment(selectedAssignment, de_cb);
+						}
+					}
 				}
 			};
-			VpcProvisioningService.Util.getInstance().deleteTransitGatewayConnectionProfileAssignment(selectedAssignment, de_cb);
+			TransitGatewayStatusQueryFilterPojo stat_filter = new TransitGatewayStatusQueryFilterPojo();
+			stat_filter.setVpcId(selectedAssignment.getOwnerId());
+			VpcProvisioningService.Util.getInstance().getTransitGatewayStatusForFilter(stat_filter, status_cb);
 		}
 	}
 
