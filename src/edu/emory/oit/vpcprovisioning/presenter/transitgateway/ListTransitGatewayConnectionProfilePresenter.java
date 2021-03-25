@@ -347,34 +347,26 @@ public class ListTransitGatewayConnectionProfilePresenter extends PresenterBase 
 						else {
 							// they can delete it.
 							getView().hidePleaseWaitDialog();
-							if (true) {
-								getView().showMessageToUser("TGW Profile assignment WOULD BE "
-										+ "deleted and the associated profile WOULD now available "
-										+ "for use again.");
-								return;
-							}
-							else {
-								getView().showPleaseWaitDialog("Deleting TGW profile assignment VPC " + selectedAssignment.getOwnerId());
-								AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> de_cb = new AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo>() {
-									@Override
-									public void onFailure(Throwable caught) {
-										getView().hidePleaseWaitDialog();
-										getView().showMessageToUser("There was an exception on the " +
-												"server deleting the TransitGatewayConnectionProfileAssignment.  Message " +
-												"from server is: " + caught.getMessage());
-									}
+							getView().showPleaseWaitDialog("Deleting TGW profile assignment VPC " + selectedAssignment.getOwnerId());
+							AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo> de_cb = new AsyncCallback<TransitGatewayConnectionProfileAssignmentPojo>() {
+								@Override
+								public void onFailure(Throwable caught) {
+									getView().hidePleaseWaitDialog();
+									getView().showMessageToUser("There was an exception on the " +
+											"server deleting the TransitGatewayConnectionProfileAssignment.  Message " +
+											"from server is: " + caught.getMessage());
+								}
 
-									@Override
-									public void onSuccess(TransitGatewayConnectionProfileAssignmentPojo result) {
-										refreshList(userLoggedIn);
-										getView().hidePleaseWaitDialog();
-										getView().showMessageToUser("TGW Profile assignment was "
-											+ "deleted and the associated profile is now available "
-											+ "for use again.");
-									}
-								};
-								VpcProvisioningService.Util.getInstance().deleteTransitGatewayConnectionProfileAssignment(selectedAssignment, de_cb);
-							}
+								@Override
+								public void onSuccess(TransitGatewayConnectionProfileAssignmentPojo result) {
+									refreshList(userLoggedIn);
+									getView().hidePleaseWaitDialog();
+									getView().showMessageToUser("TGW Profile assignment was "
+										+ "deleted and the associated profile is now available "
+										+ "for use again.");
+								}
+							};
+							VpcProvisioningService.Util.getInstance().deleteTransitGatewayConnectionProfileAssignment(selectedAssignment, de_cb);
 						}
 					}
 				}
